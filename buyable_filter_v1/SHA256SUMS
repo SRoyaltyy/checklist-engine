@@ -1,3 +1,4 @@
 f39b1cb6ff2cfbfd94d37d35d87215476961f8766d9b0fe3bea44b2cd5fb8b25  BUYABLE_FILTER_V1.md
 ffec7c4aeee5f0629bbde0173ad950ba6b634e727121f800c4ade4ff38465057  buyable_filter.py
 3c1ed970286e7998574748391604033c65d330efcfd9a82a49d47788b745a5a2  drop_list.csv (uncompressed; gunzip drop_list.csv.gz)
+5a6cb756b7b71c1658b89524a6c2349136ad6132c642a88d8e91be4566963239  drop_list_v2.csv (uncompressed; ETF rule partial: 14 ETFs only; mcap not applied)
