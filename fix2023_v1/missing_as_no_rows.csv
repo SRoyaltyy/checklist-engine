@@ -1,0 +1,266 @@
+list,row_id,col,label,n_answered,n_yes_all
+master,MKT-JA-008,MKT-JA-008,Market-wide: VIX term structure,2408833,0
+master,PV-TF-282,PV-TF-282,Bollinger/volatility: Realized vol 20d,2408833,0
+map,FV-GB-2211,FV-GB-2211,ZB leveraged funds net,2408833,0
+map,FV-GB-2217,FV-GB-2217,ZB leveraged funds net,2408833,0
+map,FV-GB-2218,FV-GB-2218,ZB leveraged funds net,2408833,0
+map,MKT-JA-008,MKT-JA-008,mac_VIX term structure,2408833,0
+map,MKT-JA-615-BUT,MKT-JA-615-BUT,Exhaustion: SPY up streak length extreme (BUT momentum),2408833,0
+map,MKT-JA-620,MKT-JA-620,Exhaustion: SPY down streak,2408833,0
+map,MKT-JA-637-BUT,MKT-JA-637-BUT,Exhaustion: QQQ up streak length extreme (BUT momentum),2408833,0
+map,MKT-JA-642,MKT-JA-642,Exhaustion: QQQ down streak,2408833,0
+map,MKT-JA-657-BUT,MKT-JA-657-BUT,Exhaustion: IWM up streak length extreme (BUT momentum),2408833,0
+map,MKT-JA-667-BUT,MKT-JA-667-BUT,Exhaustion: IWM down streak length extreme (BUT momentum),2408833,0
+map,MKT-JA-687-BUT,MKT-JA-687-BUT,Exhaustion: VIX down streak length extreme (BUT momentum),2408833,0
+map,MKT-JA-730,MKT-JA-730,Outlier: SPY red outlier 4x,2408833,0
+map,MKT-JA-730-BUT,MKT-JA-730-BUT,Outlier: SPY red outlier 4x (BUT snap-back),2408833,0
+map,MKT-JA-836,MKT-JA-836,Outlier: SPY green outlier 4x,2408833,0
+map,MKT-JA-849-BUT,MKT-JA-849-BUT,Outlier: SPY green outlier top5 (BUT snap-back),2408833,0
+map,MKT-JA-947,MKT-JA-947,Outlier: QQQ red outlier 4x then opposite outlier,2408833,0
+map,MKT-JA-947-BUT,MKT-JA-947-BUT,Outlier: QQQ red outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MKT-JA-1033,MKT-JA-1033,Outlier: QQQ green outlier 4x,2408833,0
+map,MKT-JA-1086,MKT-JA-1086,Outlier: QQQ green outlier top1 second same-color,2408833,0
+map,MKT-JA-1086-BUT,MKT-JA-1086-BUT,Outlier: QQQ green outlier top1 second same-color (BUT snap-back),2408833,0
+map,MKT-JA-1110,MKT-JA-1110,Outlier: IWM red outlier 3x,2408833,0
+map,MKT-JA-1137,MKT-JA-1137,Outlier: IWM red outlier 4x,2408833,0
+map,MKT-JA-1137-BUT,MKT-JA-1137-BUT,Outlier: IWM red outlier 4x (BUT snap-back),2408833,0
+map,MKT-JA-1138,MKT-JA-1138,Outlier: IWM red outlier 4x,2408833,0
+map,MKT-JA-1146,MKT-JA-1146,Outlier: IWM red outlier 4x second same-color,2408833,0
+map,MKT-JA-1147,MKT-JA-1147,Outlier: IWM red outlier 4x then opposite outlier,2408833,0
+map,MKT-JA-1147-BUT,MKT-JA-1147-BUT,Outlier: IWM red outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MKT-JA-1187,MKT-JA-1187,Outlier: IWM red outlier top1 then opposite outlier,2408833,0
+map,MKT-JA-1236-BUT,MKT-JA-1236-BUT,Outlier: IWM green outlier 4x (BUT snap-back),2408833,0
+map,MKT-JA-1247,MKT-JA-1247,Outlier: IWM green outlier 4x then opposite outlier,2408833,0
+map,MKT-JA-1249,MKT-JA-1249,Outlier: IWM green outlier top5,2408833,0
+map,MKT-JA-1345,MKT-JA-1345,Outlier: VIX red outlier 4x gap filled,2408833,0
+map,MKT-JA-1345-BUT,MKT-JA-1345-BUT,Outlier: VIX red outlier 4x gap filled (BUT snap-back),2408833,0
+map,MKT-JA-1346,MKT-JA-1346,Outlier: VIX red outlier 4x second same-color,2408833,0
+map,MKT-JA-1346-BUT,MKT-JA-1346-BUT,Outlier: VIX red outlier 4x second same-color (BUT snap-back),2408833,0
+map,MKT-JA-1370,MKT-JA-1370,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1370-BUT,MKT-JA-1370-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1373,MKT-JA-1373,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1373-BUT,MKT-JA-1373-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1375,MKT-JA-1375,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1375-BUT,MKT-JA-1375-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1377,MKT-JA-1377,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1377-BUT,MKT-JA-1377-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1379,MKT-JA-1379,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1379-BUT,MKT-JA-1379-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1381,MKT-JA-1381,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1381-BUT,MKT-JA-1381-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1382,MKT-JA-1382,Outlier: VIX red outlier top1,2408833,0
+map,MKT-JA-1382-BUT,MKT-JA-1382-BUT,Outlier: VIX red outlier top1 (BUT snap-back),2408833,0
+map,MKT-JA-1385,MKT-JA-1385,Outlier: VIX red outlier top1 gap filled,2408833,0
+map,MKT-JA-1385-BUT,MKT-JA-1385-BUT,Outlier: VIX red outlier top1 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-408-BUT,MAC-JA-408-BUT,Exhaustion: Dollar index up streak length extreme (BUT momentum),2408833,0
+map,MAC-JA-418-BUT,MAC-JA-418-BUT,Exhaustion: Dollar index down streak length extreme (BUT momentum),2408833,0
+map,MAC-JA-428-BUT,MAC-JA-428-BUT,Exhaustion: WTI crude up streak length extreme (BUT momentum),2408833,0
+map,MAC-JA-448-BUT,MAC-JA-448-BUT,Exhaustion: Gold up streak length extreme (BUT momentum),2408833,0
+map,MAC-JA-544,MAC-JA-544,Outlier: 10y yield red outlier 3x,2408833,0
+map,MAC-JA-544-BUT,MAC-JA-544-BUT,Outlier: 10y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-545,MAC-JA-545,Outlier: 10y yield red outlier 3x,2408833,0
+map,MAC-JA-545-BUT,MAC-JA-545-BUT,Outlier: 10y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-548,MAC-JA-548,Outlier: 10y yield red outlier 3x,2408833,0
+map,MAC-JA-548-BUT,MAC-JA-548-BUT,Outlier: 10y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-592,MAC-JA-592,Outlier: 10y yield red outlier top5,2408833,0
+map,MAC-JA-592-BUT,MAC-JA-592-BUT,Outlier: 10y yield red outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-608,MAC-JA-608,Outlier: 10y yield red outlier top1,2408833,0
+map,MAC-JA-608-BUT,MAC-JA-608-BUT,Outlier: 10y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-640,MAC-JA-640,Outlier: 10y yield green outlier 3x,2408833,0
+map,MAC-JA-640-BUT,MAC-JA-640-BUT,Outlier: 10y yield green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-648,MAC-JA-648,Outlier: 10y yield green outlier 3x,2408833,0
+map,MAC-JA-648-BUT,MAC-JA-648-BUT,Outlier: 10y yield green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-678,MAC-JA-678,Outlier: 10y yield green outlier 4x then opposite outlier,2408833,0
+map,MAC-JA-678-BUT,MAC-JA-678-BUT,Outlier: 10y yield green outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MAC-JA-688,MAC-JA-688,Outlier: 10y yield green outlier top5,2408833,0
+map,MAC-JA-688-BUT,MAC-JA-688-BUT,Outlier: 10y yield green outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-692,MAC-JA-692,Outlier: 10y yield green outlier top5,2408833,0
+map,MAC-JA-692-BUT,MAC-JA-692-BUT,Outlier: 10y yield green outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-700,MAC-JA-700,Outlier: 10y yield green outlier top1,2408833,0
+map,MAC-JA-700-BUT,MAC-JA-700-BUT,Outlier: 10y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-704,MAC-JA-704,Outlier: 10y yield green outlier top1,2408833,0
+map,MAC-JA-704-BUT,MAC-JA-704-BUT,Outlier: 10y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-708,MAC-JA-708,Outlier: 10y yield green outlier top1,2408833,0
+map,MAC-JA-708-BUT,MAC-JA-708-BUT,Outlier: 10y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-728,MAC-JA-728,Outlier: 2y yield red outlier 2x,2408833,0
+map,MAC-JA-728-BUT,MAC-JA-728-BUT,Outlier: 2y yield red outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-732,MAC-JA-732,Outlier: 2y yield red outlier 2x,2408833,0
+map,MAC-JA-732-BUT,MAC-JA-732-BUT,Outlier: 2y yield red outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-740,MAC-JA-740,Outlier: 2y yield red outlier 3x,2408833,0
+map,MAC-JA-740-BUT,MAC-JA-740-BUT,Outlier: 2y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-744,MAC-JA-744,Outlier: 2y yield red outlier 3x,2408833,0
+map,MAC-JA-744-BUT,MAC-JA-744-BUT,Outlier: 2y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-748,MAC-JA-748,Outlier: 2y yield red outlier 3x,2408833,0
+map,MAC-JA-748-BUT,MAC-JA-748-BUT,Outlier: 2y yield red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-772,MAC-JA-772,Outlier: 2y yield red outlier 4x,2408833,0
+map,MAC-JA-772-BUT,MAC-JA-772-BUT,Outlier: 2y yield red outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-788,MAC-JA-788,Outlier: 2y yield red outlier top5,2408833,0
+map,MAC-JA-788-BUT,MAC-JA-788-BUT,Outlier: 2y yield red outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-792,MAC-JA-792,Outlier: 2y yield red outlier top5,2408833,0
+map,MAC-JA-792-BUT,MAC-JA-792-BUT,Outlier: 2y yield red outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-800,MAC-JA-800,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-800-BUT,MAC-JA-800-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-804,MAC-JA-804,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-804-BUT,MAC-JA-804-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-808,MAC-JA-808,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-808-BUT,MAC-JA-808-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-809,MAC-JA-809,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-809-BUT,MAC-JA-809-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-812,MAC-JA-812,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-812-BUT,MAC-JA-812-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-813,MAC-JA-813,Outlier: 2y yield red outlier top1,2408833,0
+map,MAC-JA-813-BUT,MAC-JA-813-BUT,Outlier: 2y yield red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-820,MAC-JA-820,Outlier: 2y yield green outlier 2x,2408833,0
+map,MAC-JA-820-BUT,MAC-JA-820-BUT,Outlier: 2y yield green outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-824,MAC-JA-824,Outlier: 2y yield green outlier 2x,2408833,0
+map,MAC-JA-824-BUT,MAC-JA-824-BUT,Outlier: 2y yield green outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-828,MAC-JA-828,Outlier: 2y yield green outlier 2x,2408833,0
+map,MAC-JA-828-BUT,MAC-JA-828-BUT,Outlier: 2y yield green outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-832,MAC-JA-832,Outlier: 2y yield green outlier 2x,2408833,0
+map,MAC-JA-832-BUT,MAC-JA-832-BUT,Outlier: 2y yield green outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-840,MAC-JA-840,Outlier: 2y yield green outlier 3x,2408833,0
+map,MAC-JA-840-BUT,MAC-JA-840-BUT,Outlier: 2y yield green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-844,MAC-JA-844,Outlier: 2y yield green outlier 3x,2408833,0
+map,MAC-JA-844-BUT,MAC-JA-844-BUT,Outlier: 2y yield green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-848,MAC-JA-848,Outlier: 2y yield green outlier 3x,2408833,0
+map,MAC-JA-848-BUT,MAC-JA-848-BUT,Outlier: 2y yield green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-872,MAC-JA-872,Outlier: 2y yield green outlier 4x,2408833,0
+map,MAC-JA-872-BUT,MAC-JA-872-BUT,Outlier: 2y yield green outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-880,MAC-JA-880,Outlier: 2y yield green outlier top5,2408833,0
+map,MAC-JA-880-BUT,MAC-JA-880-BUT,Outlier: 2y yield green outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-888,MAC-JA-888,Outlier: 2y yield green outlier top5,2408833,0
+map,MAC-JA-888-BUT,MAC-JA-888-BUT,Outlier: 2y yield green outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-892,MAC-JA-892,Outlier: 2y yield green outlier top5,2408833,0
+map,MAC-JA-892-BUT,MAC-JA-892-BUT,Outlier: 2y yield green outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-904,MAC-JA-904,Outlier: 2y yield green outlier top1,2408833,0
+map,MAC-JA-904-BUT,MAC-JA-904-BUT,Outlier: 2y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-908,MAC-JA-908,Outlier: 2y yield green outlier top1,2408833,0
+map,MAC-JA-908-BUT,MAC-JA-908-BUT,Outlier: 2y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-912,MAC-JA-912,Outlier: 2y yield green outlier top1,2408833,0
+map,MAC-JA-912-BUT,MAC-JA-912-BUT,Outlier: 2y yield green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-921,MAC-JA-921,Outlier: DXY red outlier 2x,2408833,0
+map,MAC-JA-921-BUT,MAC-JA-921-BUT,Outlier: DXY red outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-941,MAC-JA-941,Outlier: DXY red outlier 3x,2408833,0
+map,MAC-JA-941-BUT,MAC-JA-941-BUT,Outlier: DXY red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-969,MAC-JA-969,Outlier: DXY red outlier 4x,2408833,0
+map,MAC-JA-969-BUT,MAC-JA-969-BUT,Outlier: DXY red outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-973,MAC-JA-973,Outlier: DXY red outlier 4x,2408833,0
+map,MAC-JA-973-BUT,MAC-JA-973-BUT,Outlier: DXY red outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-974,MAC-JA-974,Outlier: DXY red outlier 4x,2408833,0
+map,MAC-JA-974-BUT,MAC-JA-974-BUT,Outlier: DXY red outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-975,MAC-JA-975,Outlier: DXY red outlier 4x gap open,2408833,0
+map,MAC-JA-975-BUT,MAC-JA-975-BUT,Outlier: DXY red outlier 4x gap open (BUT snap-back),2408833,0
+map,MAC-JA-976,MAC-JA-976,Outlier: DXY red outlier 4x gap filled,2408833,0
+map,MAC-JA-976-BUT,MAC-JA-976-BUT,Outlier: DXY red outlier 4x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-977,MAC-JA-977,Outlier: DXY red outlier 4x second same-color,2408833,0
+map,MAC-JA-977-BUT,MAC-JA-977-BUT,Outlier: DXY red outlier 4x second same-color (BUT snap-back),2408833,0
+map,MAC-JA-978,MAC-JA-978,Outlier: DXY red outlier 4x then opposite outlier,2408833,0
+map,MAC-JA-978-BUT,MAC-JA-978-BUT,Outlier: DXY red outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MAC-JA-981,MAC-JA-981,Outlier: DXY red outlier top5,2408833,0
+map,MAC-JA-981-BUT,MAC-JA-981-BUT,Outlier: DXY red outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-1001,MAC-JA-1001,Outlier: DXY red outlier top1,2408833,0
+map,MAC-JA-1001-BUT,MAC-JA-1001-BUT,Outlier: DXY red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-1015,MAC-JA-1015,Outlier: DXY red outlier top1 gap open,2408833,0
+map,MAC-JA-1015-BUT,MAC-JA-1015-BUT,Outlier: DXY red outlier top1 gap open (BUT snap-back),2408833,0
+map,MAC-JA-1016,MAC-JA-1016,Outlier: DXY red outlier top1 gap filled,2408833,0
+map,MAC-JA-1016-BUT,MAC-JA-1016-BUT,Outlier: DXY red outlier top1 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1020,MAC-JA-1020,Outlier: DXY green outlier 2x,2408833,0
+map,MAC-JA-1020-BUT,MAC-JA-1020-BUT,Outlier: DXY green outlier 2x (BUT snap-back),2408833,0
+map,MAC-JA-1175,MAC-JA-1175,Outlier: WTI crude red outlier 4x gap open,2408833,0
+map,MAC-JA-1175-BUT,MAC-JA-1175-BUT,Outlier: WTI crude red outlier 4x gap open (BUT snap-back),2408833,0
+map,MAC-JA-1356,MAC-JA-1356,Outlier: Gold red outlier 3x gap filled,2408833,0
+map,MAC-JA-1375,MAC-JA-1375,Outlier: Gold red outlier 4x gap open,2408833,0
+map,MAC-JA-1375-BUT,MAC-JA-1375-BUT,Outlier: Gold red outlier 4x gap open (BUT snap-back),2408833,0
+map,MAC-JA-1376,MAC-JA-1376,Outlier: Gold red outlier 4x gap filled,2408833,0
+map,MAC-JA-1376-BUT,MAC-JA-1376-BUT,Outlier: Gold red outlier 4x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1381,MAC-JA-1381,Outlier: Gold red outlier top5,2408833,0
+map,MAC-JA-1381-BUT,MAC-JA-1381-BUT,Outlier: Gold red outlier top5 (BUT snap-back),2408833,0
+map,MAC-JA-1516,MAC-JA-1516,Outlier: Gold green outlier top1 gap filled,2408833,0
+map,MAC-JA-1516-BUT,MAC-JA-1516-BUT,Outlier: Gold green outlier top1 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1541,MAC-JA-1541,Outlier: Copper red outlier 3x,2408833,0
+map,MAC-JA-1541-BUT,MAC-JA-1541-BUT,Outlier: Copper red outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-1577,MAC-JA-1577,Outlier: Copper red outlier 4x second same-color,2408833,0
+map,MAC-JA-1577-BUT,MAC-JA-1577-BUT,Outlier: Copper red outlier 4x second same-color (BUT snap-back),2408833,0
+map,MAC-JA-1601,MAC-JA-1601,Outlier: Copper red outlier top1,2408833,0
+map,MAC-JA-1601-BUT,MAC-JA-1601-BUT,Outlier: Copper red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-1640,MAC-JA-1640,Outlier: Copper green outlier 3x,2408833,0
+map,MAC-JA-1640-BUT,MAC-JA-1640-BUT,Outlier: Copper green outlier 3x (BUT snap-back),2408833,0
+map,MAC-JA-1678,MAC-JA-1678,Outlier: Copper green outlier 4x then opposite outlier,2408833,0
+map,MAC-JA-1678-BUT,MAC-JA-1678-BUT,Outlier: Copper green outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MAC-JA-1700,MAC-JA-1700,Outlier: Copper green outlier top1,2408833,0
+map,MAC-JA-1700-BUT,MAC-JA-1700-BUT,Outlier: Copper green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-1761,MAC-JA-1761,Outlier: HYG red outlier 4x,2408833,0
+map,MAC-JA-1761-BUT,MAC-JA-1761-BUT,Outlier: HYG red outlier 4x (BUT snap-back),2408833,0
+map,MAC-JA-1778,MAC-JA-1778,Outlier: HYG red outlier 4x then opposite outlier,2408833,0
+map,MAC-JA-1778-BUT,MAC-JA-1778-BUT,Outlier: HYG red outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MAC-JA-1801,MAC-JA-1801,Outlier: HYG red outlier top1,2408833,0
+map,MAC-JA-1801-BUT,MAC-JA-1801-BUT,Outlier: HYG red outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-1935,MAC-JA-1935,Outlier: Bitcoin red outlier 2x gap open,2408833,0
+map,MAC-JA-1935-BUT,MAC-JA-1935-BUT,Outlier: Bitcoin red outlier 2x gap open (BUT snap-back),2408833,0
+map,MAC-JA-1936,MAC-JA-1936,Outlier: Bitcoin red outlier 2x gap filled,2408833,0
+map,MAC-JA-1936-BUT,MAC-JA-1936-BUT,Outlier: Bitcoin red outlier 2x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1955,MAC-JA-1955,Outlier: Bitcoin red outlier 3x gap open,2408833,0
+map,MAC-JA-1955-BUT,MAC-JA-1955-BUT,Outlier: Bitcoin red outlier 3x gap open (BUT snap-back),2408833,0
+map,MAC-JA-1956,MAC-JA-1956,Outlier: Bitcoin red outlier 3x gap filled,2408833,0
+map,MAC-JA-1956-BUT,MAC-JA-1956-BUT,Outlier: Bitcoin red outlier 3x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1975,MAC-JA-1975,Outlier: Bitcoin red outlier 4x gap open,2408833,0
+map,MAC-JA-1975-BUT,MAC-JA-1975-BUT,Outlier: Bitcoin red outlier 4x gap open (BUT snap-back),2408833,0
+map,MAC-JA-1976,MAC-JA-1976,Outlier: Bitcoin red outlier 4x gap filled,2408833,0
+map,MAC-JA-1976-BUT,MAC-JA-1976-BUT,Outlier: Bitcoin red outlier 4x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-1978,MAC-JA-1978,Outlier: Bitcoin red outlier 4x then opposite outlier,2408833,0
+map,MAC-JA-1978-BUT,MAC-JA-1978-BUT,Outlier: Bitcoin red outlier 4x then opposite outlier (BUT snap-back),2408833,0
+map,MAC-JA-1995,MAC-JA-1995,Outlier: Bitcoin red outlier top5 gap open,2408833,0
+map,MAC-JA-1995-BUT,MAC-JA-1995-BUT,Outlier: Bitcoin red outlier top5 gap open (BUT snap-back),2408833,0
+map,MAC-JA-1996,MAC-JA-1996,Outlier: Bitcoin red outlier top5 gap filled,2408833,0
+map,MAC-JA-1996-BUT,MAC-JA-1996-BUT,Outlier: Bitcoin red outlier top5 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2015,MAC-JA-2015,Outlier: Bitcoin red outlier top1 gap open,2408833,0
+map,MAC-JA-2015-BUT,MAC-JA-2015-BUT,Outlier: Bitcoin red outlier top1 gap open (BUT snap-back),2408833,0
+map,MAC-JA-2016,MAC-JA-2016,Outlier: Bitcoin red outlier top1 gap filled,2408833,0
+map,MAC-JA-2016-BUT,MAC-JA-2016-BUT,Outlier: Bitcoin red outlier top1 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2035,MAC-JA-2035,Outlier: Bitcoin green outlier 2x gap open,2408833,0
+map,MAC-JA-2035-BUT,MAC-JA-2035-BUT,Outlier: Bitcoin green outlier 2x gap open (BUT snap-back),2408833,0
+map,MAC-JA-2036,MAC-JA-2036,Outlier: Bitcoin green outlier 2x gap filled,2408833,0
+map,MAC-JA-2036-BUT,MAC-JA-2036-BUT,Outlier: Bitcoin green outlier 2x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2055,MAC-JA-2055,Outlier: Bitcoin green outlier 3x gap open,2408833,0
+map,MAC-JA-2055-BUT,MAC-JA-2055-BUT,Outlier: Bitcoin green outlier 3x gap open (BUT snap-back),2408833,0
+map,MAC-JA-2056,MAC-JA-2056,Outlier: Bitcoin green outlier 3x gap filled,2408833,0
+map,MAC-JA-2056-BUT,MAC-JA-2056-BUT,Outlier: Bitcoin green outlier 3x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2075,MAC-JA-2075,Outlier: Bitcoin green outlier 4x gap open,2408833,0
+map,MAC-JA-2075-BUT,MAC-JA-2075-BUT,Outlier: Bitcoin green outlier 4x gap open (BUT snap-back),2408833,0
+map,MAC-JA-2076,MAC-JA-2076,Outlier: Bitcoin green outlier 4x gap filled,2408833,0
+map,MAC-JA-2076-BUT,MAC-JA-2076-BUT,Outlier: Bitcoin green outlier 4x gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2095,MAC-JA-2095,Outlier: Bitcoin green outlier top5 gap open,2408833,0
+map,MAC-JA-2095-BUT,MAC-JA-2095-BUT,Outlier: Bitcoin green outlier top5 gap open (BUT snap-back),2408833,0
+map,MAC-JA-2096,MAC-JA-2096,Outlier: Bitcoin green outlier top5 gap filled,2408833,0
+map,MAC-JA-2096-BUT,MAC-JA-2096-BUT,Outlier: Bitcoin green outlier top5 gap filled (BUT snap-back),2408833,0
+map,MAC-JA-2100,MAC-JA-2100,Outlier: Bitcoin green outlier top1,2408833,0
+map,MAC-JA-2100-BUT,MAC-JA-2100-BUT,Outlier: Bitcoin green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-2103,MAC-JA-2103,Outlier: Bitcoin green outlier top1,2408833,0
+map,MAC-JA-2103-BUT,MAC-JA-2103-BUT,Outlier: Bitcoin green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-2108,MAC-JA-2108,Outlier: Bitcoin green outlier top1,2408833,0
+map,MAC-JA-2108-BUT,MAC-JA-2108-BUT,Outlier: Bitcoin green outlier top1 (BUT snap-back),2408833,0
+map,MAC-JA-2115,MAC-JA-2115,Outlier: Bitcoin green outlier top1 gap open,2408833,0
+map,MAC-JA-2115-BUT,MAC-JA-2115-BUT,Outlier: Bitcoin green outlier top1 gap open (BUT snap-back),2408833,0
+map,MAC-JA-2116,MAC-JA-2116,Outlier: Bitcoin green outlier top1 gap filled,2408833,0
+map,MAC-JA-2116-BUT,MAC-JA-2116-BUT,Outlier: Bitcoin green outlier top1 gap filled (BUT snap-back),2408833,0
+map,VOL-TR-00073-C|1,VOL-TR-00073-C|1,Relative volume,2396389,0
+map,VOL-TR-00073-C|3,VOL-TR-00073-C|3,Relative volume,2391428,0
+map,VOL-TR-00073-C|5,VOL-TR-00073-C|5,Relative volume,2386516,0
+map,VOL-TR-00073-C|10,VOL-TR-00073-C|10,Relative volume,2374648,0
+map,VOL-TR-00073-C|20,VOL-TR-00073-C|20,Relative volume,2352586,0
+map,VOL-TR-00073-C|60,VOL-TR-00073-C|60,Relative volume,2266447,0
+map,VOL-TR-00074-BUT-C|1,VOL-TR-00074-BUT-C|1,Relative volume,2396389,0
+map,VOL-TR-00074-BUT-C|3,VOL-TR-00074-BUT-C|3,Relative volume,2391428,0
+map,VOL-TR-00074-BUT-C|5,VOL-TR-00074-BUT-C|5,Relative volume,2386516,0
+map,VOL-TR-00074-BUT-C|10,VOL-TR-00074-BUT-C|10,Relative volume,2374648,0
+map,VOL-TR-00074-BUT-C|20,VOL-TR-00074-BUT-C|20,Relative volume,2352586,0
+map,VOL-TR-00074-BUT-C|60,VOL-TR-00074-BUT-C|60,Relative volume,2266447,0
+map,nb4-PDS-NB-036-W0-EVT-BUT,nb4-PDS-NB-036-W0-EVT-BUT,Inside day after big move,1970427,0
+map,nb4-BRW-NB-057-W0-EVT-BUT,nb4-BRW-NB-057-W0-EVT-BUT,SSR triggered,1970427,0
+map,nb4-OPX-NB-071-W0-EVT-BUT,nb4-OPX-NB-071-W0-EVT-BUT,Monthly options expiry (3rd Friday),1970427,0
+map,nb4-OPX-NB-072-W0-EVT-BUT,nb4-OPX-NB-072-W0-EVT-BUT,Weekly options expiry (Friday),1970427,0
+map,nb4-OPX-NB-073-W0-EVT-BUT,nb4-OPX-NB-073-W0-EVT-BUT,Quad witching,1970427,0
+map,nb4-EVT-NB-075-W0-EVT-BUT,nb4-EVT-NB-075-W0-EVT-BUT,Day-2 after 20% spike,1970427,0
+map,nb4-EVT-NB-076-W0-EVT-BUT,nb4-EVT-NB-076-W0-EVT-BUT,Up on SPY down day,1970427,0
+map,nb4-OPX-NB-072-T20-CNT-BUT,nb4-OPX-NB-072-T20-CNT-BUT,Weekly options expiry (Friday),1970427,0
+map,nb4-OPX-NB-073-T20-CNT,nb4-OPX-NB-073-T20-CNT,Quad witching,1970427,0
