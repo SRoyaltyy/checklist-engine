@@ -50,3 +50,4 @@ Also on the box but not here: engine output CSVs (`checklist_brainstorm/engine`,
 | File | Location | sha256 |
 |---|---|---|
 | path_bank_v2.tar.gz | Drive `1RVBDpoSNkBKXDI5JNhhDbUvCb-6QgBS3` | `7e8d2694…d54f1` (New Bot) |
+| casebook/casebook_practice_2020_24.tar.gz | New Bot practice casebook 2020–24 (HINT) | Drive 1gVwKZmxv6JQw6Qc0ShAa0-4UtOBK0tPF | 22d165a7ae7dc30f129c9da4700d0c1fa970580f49acd5fc0473e936fec5a53c |
