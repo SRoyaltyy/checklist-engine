@@ -1,0 +1,820 @@
+id,data_type,variant,known_before_open,added_by,status,match_method,confidence,reason,owner
+CDL-001,Candlestick,Green:red ratio,Yes,Grok Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+IND-001,Moving averages,SMA stack,Yes,Grok Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+OSC-001,Overbought/oversold,RSI(14),Yes,Grok Bot,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+MAC-JA-001,Rates,10y Treasury yield,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-003,Rates,10y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-004,Rates,10y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-005,Rates,2y Treasury yield,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-007,Rates,2y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-008,Rates,2y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-009,Rates,30y Treasury yield,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-011,Rates,30y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-012,Rates,30y Treasury yield,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-013,Rates,10y real yield (TIPS),Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-015,Rates,10y real yield (TIPS),Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-016,Rates,10y real yield (TIPS),Yes,James,BLOCKED,coverage_ledger reason,high,needs Rates data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-017,Rates,10y yield overnight futures (ZN),Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MAC-JA-018,Rates,Rate sensitivity interaction,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-019,Yield curve,2s10s curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-020,Yield curve,2s10s curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-021,Yield curve,2s10s curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-022,Yield curve,2s10s curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-023,Yield curve,3m10y curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-024,Yield curve,3m10y curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-025,Yield curve,3m10y curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-026,Yield curve,3m10y curve,Yes,James,BLOCKED,coverage_ledger reason,high,needs Yield curve data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-027,Cross-asset,US Dollar index,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-028,Cross-asset,US Dollar index,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+MAC-JA-029,Cross-asset,US Dollar index,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-030,Cross-asset,US Dollar index,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-031,Cross-asset,USD/JPY,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-032,Cross-asset,USD/JPY,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MAC-JA-033,Cross-asset,USD/JPY,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-034,Cross-asset,USD/JPY,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-035,Cross-asset,Crude oil WTI,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-036,Cross-asset,Crude oil WTI,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-037,Cross-asset,Crude oil WTI,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-038,Cross-asset,Crude oil WTI,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-039,Cross-asset,Gold,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-040,Cross-asset,Gold,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+MAC-JA-041,Cross-asset,Gold,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-042,Cross-asset,Gold,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-043,Cross-asset,Copper,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MAC-JA-044,Cross-asset,Copper,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MAC-JA-045,Cross-asset,Copper,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-046,Cross-asset,Copper,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-047,Cross-asset,Oil x energy stock,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MAC-JA-048,Cross-asset,Copper/gold ratio,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-049,Cross-asset,Stock-bond correlation,Yes,James,BLOCKED,coverage_ledger reason,high,needs Cross-asset data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-050,Credit,HY OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-051,Credit,HY OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-052,Credit,HY OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-053,Credit,IG OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-054,Credit,IG OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-055,Credit,IG OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-056,Credit,CCC OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-057,Credit,CCC OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-058,Credit,CCC OAS,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-059,Credit,HYG/IEF ratio,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-060,Credit,High-leverage stock under credit stress,Yes,James,BLOCKED,coverage_ledger reason,high,needs Credit data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-061,Financial conditions,Chicago Fed NFCI,Yes,James,BLOCKED,coverage_ledger reason,high,needs Financial conditions data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-062,Financial conditions,St. Louis Fed stress index,Yes,James,BLOCKED,coverage_ledger reason,high,needs Financial conditions data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-063,Liquidity,Fed balance sheet net liquidity,Yes,James,BLOCKED,coverage_ledger reason,high,needs Liquidity data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-064,Liquidity,Reverse repo usage,Yes,James,BLOCKED,coverage_ledger reason,high,needs Liquidity data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-065,Macro surprise,CPI headline MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-066,Macro surprise,CPI headline MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-067,Macro surprise,Core CPI MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-068,Macro surprise,Core CPI MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-069,Macro surprise,PPI MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-070,Macro surprise,PPI MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-071,Macro surprise,Nonfarm payrolls,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-072,Macro surprise,Unemployment rate,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-073,Macro surprise,Initial jobless claims,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-074,Macro surprise,Retail sales MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-075,Macro surprise,ISM manufacturing PMI,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-076,Macro surprise,ISM services PMI,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-077,Macro surprise,Core PCE MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-078,Macro surprise,Core PCE MoM,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-079,Macro surprise,JOLTS openings,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-080,Macro surprise,GDP advance,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-081,Macro surprise,Citi Economic Surprise Index US,Yes,James,BLOCKED,coverage_ledger reason,high,needs Macro surprise data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-082,Fed,Fed funds futures implied cuts,Yes,James,BLOCKED,coverage_ledger reason,high,needs Fed data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-083,Fed,Fedspeak,Yes,James,BLOCKED,coverage_ledger reason,high,needs Fed data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-084,Fed,Policy stance,Yes,James,BLOCKED,coverage_ledger reason,high,needs Fed data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MAC-JA-085,Inflation expectations,10y breakeven,Yes,James,BLOCKED,coverage_ledger reason,high,needs Inflation expectations data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-001,Calendar,FOMC decision day,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+CAL-JA-002,Calendar,Day after FOMC,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+CAL-JA-003,Calendar,Day before FOMC,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-004,Calendar,CPI release day,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-005,Calendar,NFP release day,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-006,Calendar,Monthly opex day,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-007,Calendar,Opex week,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-008,Calendar,Week after opex,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-009,Calendar,Quad witching,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-010,Calendar,VIX expiration,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-011,Calendar,S&P quarterly rebalance effective,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-012,Calendar,S&P rebalance deletion,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-013,Calendar,Russell reconstitution,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-014,Calendar,Russell recon deletion,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-015,Calendar,Month end,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-016,Calendar,Turn of month,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-017,Calendar,Mid-month,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-018,Calendar,Quarter end rebalance,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-019,Calendar,Quarter start,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-020,Calendar,Pre-holiday,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-021,Calendar,Post-holiday,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-022,Calendar,Half-day session,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-023,Calendar,Monday,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+CAL-JA-024,Calendar,Tuesday,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+CAL-JA-025,Calendar,Friday,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+CAL-JA-026,Calendar,Santa rally window,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-027,Calendar,September,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-028,Calendar,Nov-Apr half,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-029,Calendar,January small caps,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-030,Calendar,Tax-loss season,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-031,Calendar,Tax-loss reversal,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-032,Calendar,Earnings season peak,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-033,Calendar,Stock earnings tomorrow,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-034,Calendar,Stock earnings today pre-market,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-035,Calendar,Post-earnings drift,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-036,Calendar,Sector peers reporting,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-037,Calendar,Election day,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-038,Calendar,Treasury refunding,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-039,Calendar,Ex-dividend day,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-040,Calendar,Index inclusion announcement,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-041,Calendar,Lockup expiry,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-042,Calendar,Fed blackout,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+CAL-JA-043,Calendar,Jackson Hole,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-044,Calendar,Buyback blackout,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-045,Calendar,Day-of-year seasonality,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-046,Calendar,Stock own seasonality,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAL-JA-047,Calendar,Days since last FOMC,Yes,James,BLOCKED,coverage_ledger reason,high,needs Calendar data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-001,Sector relative strength,Stock vs sector ETF,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-002,Sector relative strength,Sector ETF vs SPY,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-003,Sector relative strength,Stock vs sector ETF,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-004,Sector relative strength,Sector ETF vs SPY,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-005,Sector relative strength,Stock vs sector ETF,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-006,Sector relative strength,Sector ETF vs SPY,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-007,Sector relative strength,Stock vs sector ETF,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-008,Sector relative strength,Sector ETF vs SPY,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-009,Sector relative strength,Stock vs sector ratio trend,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-010,Sector relative strength,Stock vs sector ratio,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+SEC-JA-011,Sector relative strength,Stock vs sector ratio,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-012,Sector divergence,"Stock down, sector up",Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-013,Sector divergence,"Stock up, sector down",Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-014,Sector gap,Stock pre-market gap vs sector ETF gap,Yes,James,BLOCKED,coverage_ledger reason,high,needs Sector gap data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-015,Sector gap,Stock pre-market gap vs sector ETF gap,Yes,James,BLOCKED,coverage_ledger reason,high,needs Sector gap data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-016,Sector breadth,% sector members above SMA50,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+SEC-JA-017,Sector breadth,% sector members above SMA50,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+SEC-JA-018,Sector breadth,% sector members above SMA200,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+SEC-JA-019,Sector breadth,Sector A/D line,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+SEC-JA-020,Sector breadth,Sector new highs minus lows,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+SEC-JA-021,Rotation,Sector rank,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rotation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-022,Rotation,Sector rank,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rotation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-023,Rotation,Sector rank change,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rotation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-024,Rotation,Cyclicals vs defensives,Yes,James,BLOCKED,coverage_ledger reason,high,needs Rotation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-025,Rotation,Growth vs value,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-026,Rotation,Small vs large,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-027,Rotation,Semis lead,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-028,Industry group,Industry momentum,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-029,Industry group,Industry momentum,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-030,Industry group,Industry vs stock,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+SEC-JA-031,Industry group,Peer earnings read-through,Yes,James,BLOCKED,coverage_ledger reason,high,needs after-hours prints of industry peers,post-lock live (no free 2020-24 minute data)
+SEC-JA-032,Sector volatility,Sector ETF ATR,Yes,James,BLOCKED,coverage_ledger reason (id also in map v5.1),high,engine row present but NR on every 2020-24 setup cell (source has no 2020-24 history),post-lock live snapshots (Finviz/source starts Aug 2026)
+SEC-JA-033,Sector correlation,Stock-sector correlation,Yes,James,BLOCKED,coverage_ledger reason,high,needs Sector correlation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SEC-JA-034,Sector flows,Sector ETF shares outstanding,Yes,James,BLOCKED,coverage_ledger reason,high,needs Sector flows data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-001,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-002,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-003,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-004,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-005,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-006,Market-wide,VIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-007,Market-wide,VIX term structure,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-008,Market-wide,VIX term structure,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 147,986 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-009,Market-wide,VIX term structure,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-010,Market-wide,VIX term structure,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-011,Market-wide,VIX futures,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-012,Market-wide,VVIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-013,Market-wide,VVIX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-014,Market-wide,SKEW,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-015,Market-wide,VIX vs realized,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-016,Market-wide,Stock IV vs VIX,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-017,Market-wide,ES futures gap,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-018,Market-wide,ES futures gap,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-019,Market-wide,ES futures gap,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-020,Market-wide,NQ futures gap,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-021,Market-wide,RTY futures gap,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-022,Market-wide,Futures divergence,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+MKT-JA-023,Market-wide,Beta-adjusted expected open,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+MKT-JA-024,Market-wide,Overnight range,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-025,Market-wide,SPY prior day,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-026,Market-wide,SPY prior day,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-027,Market-wide,SPY streak,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-028,Market-wide,SPY streak,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-029,Market-wide,SPY trend,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-030,Market-wide,SPY trend,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-031,Market-wide,SPY drawdown,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-032,Market-wide,SPY RSI(2),Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-033,Market-wide,SPY RSI(2),Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-034,Market-wide,SPY realized vol,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-035,Market-wide,NYSE A/D,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-036,Market-wide,NYSE A/D,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-037,Market-wide,Breadth thrust,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-038,Market-wide,McClellan Oscillator,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-039,Market-wide,McClellan Oscillator,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-040,Market-wide,Cumulative A/D,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-041,Market-wide,% above SMA50,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-042,Market-wide,% above SMA50,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-043,Market-wide,% above SMA200,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-044,Market-wide,% above SMA20,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-045,Market-wide,New highs/lows,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-046,Market-wide,New highs/lows,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-047,Market-wide,Hindenburg omen,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-048,Market-wide,Up/down volume,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-049,Market-wide,TRIN,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-050,Market-wide,Equal vs cap weight,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-051,Market-wide,Equity put/call,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-052,Market-wide,Equity put/call,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-053,Market-wide,Total put/call,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-054,Market-wide,Index put/call,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-055,Market-wide,CNN Fear & Greed,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-056,Market-wide,CNN Fear & Greed,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-057,Market-wide,AAII sentiment,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-058,Market-wide,AAII sentiment,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-059,Market-wide,NAAIM exposure,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-060,Market-wide,CFTC ES positioning,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-061,Market-wide,Dealer gamma (GEX),Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-062,Market-wide,0DTE volume,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-JA-063,Market-wide,Nikkei session,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-064,Market-wide,Nikkei session,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-065,Market-wide,Hang Seng/China,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,6 item x group x horizon tests,
+MKT-JA-066,Market-wide,KOSPI/TAIEX,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-067,Market-wide,Euro Stoxx 50,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-068,Market-wide,Euro Stoxx 50,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-069,Market-wide,DAX vs ES,Yes,James,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking (id also in map v5.1)",high,"answered on 31,212 setup cells",James (add to step-3 test; answers exist)
+MKT-JA-070,Market-wide,Global breadth,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-071,Market-wide,Bitcoin overnight,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-072,Market-wide,Bitcoin overnight,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-073,Market-wide,Bitcoin weekend,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-074,Market-wide,ETH/BTC,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-075,Market-wide,Market beta regime,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,12 item x group x horizon tests,
+MKT-JA-076,Market-wide,Market momentum interaction,Yes,James,TESTED,id match in item_ranking.csv.gz (James step-3) (id also in map v5.1),high,3 item x group x horizon tests,
+MKT-JA-077,Market-wide,Stock vs SPY gap,Yes,James,BLOCKED,coverage_ledger reason,high,needs Market-wide data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-MB-001,Market sentiment,AAII bull-bear spread,Yes (Thursday release),Manager Bot,BLOCKED,coverage_ledger reason,high,needs Market sentiment data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-MB-002,Market sentiment,AAII bull-bear spread,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Market sentiment data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-MB-003,Market sentiment,CNN Fear & Greed,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Market sentiment data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-MB-004,Market sentiment,CNN Fear & Greed,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Market sentiment data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+MKT-MB-005,Market sentiment,Put/call ratio (equity),Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Market sentiment data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-MB-002,Analyst,Target vs price,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-MB-003,Analyst,Estimate revisions,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-MB-001,Analyst,Rating change,Yes,Manager Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-003,Pre-market,Gap in ATR units,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-004,Pre-market,Premarket relative volume,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-005,Pre-market,Premarket volume vs float,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-006,Pre-market,Premarket dollar volume,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-007,Pre-market,Premarket high fade,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-008,Pre-market,Premarket holds near high,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-009,Pre-market,Gap vs prior-day range,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-010,Pre-market,Gap into prior-day range,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PMK-NB-012,Pre-market,Premarket spread,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Pre-market data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+AHR-NB-001,After-hours,Post-close move,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs After-hours data not on box point-in-time for 2020-24,post-lock live (no free 2020-24 minute data)
+AHR-NB-002,After-hours,After-hours reversal,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs After-hours data not on box point-in-time for 2020-24,post-lock live (no free 2020-24 minute data)
+AHR-NB-003,After-hours,AH volume spike,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs After-hours data not on box point-in-time for 2020-24,post-lock live (no free 2020-24 minute data)
+STR-NB-001,Prior-day structure,Close location value,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+STR-NB-002,Prior-day structure,Close location value weak,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+STR-NB-004,Prior-day structure,Inside day after big move,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+STR-NB-005,Prior-day structure,Closed at last-hour high,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs intraday last-hour bars,post-lock live (no free 2020-24 minute data)
+STR-NB-006,Prior-day structure,Prior-day close vs VWAP,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs intraday VWAP,post-lock live (no free 2020-24 minute data)
+STR-NB-007,Prior-day structure,Anchored VWAP from earnings,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs earnings dates (AVWAP anchor) not on box point-in-time,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+STR-NB-008,Prior-day structure,Round-number proximity,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+STR-NB-009,Prior-day structure,$1 compliance line,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+STR-NB-011,Prior-day structure,Halt history,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs LULD halt records,New Bot (halts)
+CAP-NB-001,Corporate action,Reverse split recent,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-002,Corporate action,Reverse split announced,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-003,Corporate action,Forward split announced,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-004,Corporate action,Ex-dividend tomorrow/today,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-005,Corporate action,Special dividend,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-006,Corporate action,Dividend cut/suspension,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+CAP-NB-007,Corporate action,Buyback authorization,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate action data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-001,Share supply,Active S-3 shelf,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-002,Share supply,ATM program active,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-003,Share supply,Recent offering priced,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-004,Share supply,Share count growth,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-005,Share supply,Warrant overhang,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-006,Share supply,Convertible notes,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-008,Share supply,Days since IPO,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-009,Share supply,De-SPAC age,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-010,Share supply,Float tiny,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+SUP-NB-011,Share supply,Float change,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Share supply data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+IDX-NB-002,Index membership,Index deletion announced,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Index membership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+IDX-NB-003,Index membership,Russell recon candidate,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Index membership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+IDX-NB-004,Index membership,Index effective day,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Index membership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ETF-NB-001,ETF ownership,ETF ownership share,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs ETF ownership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ETF-NB-002,ETF flows,Top holder ETF net creation,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs ETF flows data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ETF-NB-003,ETF flows,Leveraged single-stock ETF exists,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs ETF flows data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+BRW-NB-001,Securities lending,Borrow fee high,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Securities lending data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+BRW-NB-002,Securities lending,Borrow fee jump,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Securities lending data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+BRW-NB-003,Securities lending,Shares available to borrow,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Securities lending data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+BRW-NB-004,Securities lending,Utilization,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Securities lending data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+BRW-NB-005,Securities lending,Reg SHO threshold list,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Securities lending data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-NB-001,Analyst,Upgrade pre-market,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-NB-002,Analyst,Downgrade pre-market,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-NB-003,Analyst,PT raise size,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-NB-005,Analyst,Initiation,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-NB-007,Analyst,Coverage count,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ERN-NB-002,Earnings,Reports after close today,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-003,Earnings,Days to earnings,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-004,Earnings,EPS surprise,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-005,Earnings,Revenue surprise,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-006,Earnings,Guidance raise,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-007,Earnings,Guidance cut,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-009,Earnings,Earnings gap faded,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+ERN-NB-010,Earnings,Historical earnings move,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+EVT-NB-001,Biotech catalyst,PDUFA date upcoming,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Biotech catalyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-002,Biotech catalyst,AdCom meeting,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Biotech catalyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-004,Biotech catalyst,Cash runway,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Biotech catalyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-005,Corporate event,Investor conference presenting,Partial,New Bot,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Partial),none (fails timing rule; redefine or drop)
+EVT-NB-006,Corporate event,Investor/analyst day,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate event data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-008,Corporate event,Pending deal spread,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate event data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-009,Corporate event,CEO/CFO departure,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate event data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-010,Corporate event,Auditor change / NT 10-K,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate event data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-NB-011,Corporate event,Delisting notice,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Corporate event data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-NB-001,Size bucket,Market cap bucket,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Size bucket data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-NB-002,Price bucket,Penny stock,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Price bucket data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-NB-003,Price bucket,High-priced,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Price bucket data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-NB-004,Profitability,Unprofitable,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Profitability data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-NB-005,Revenue,Revenue growth,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Revenue data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+REL-NB-002,Relative strength,Stock vs SPY on down days,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+REL-NB-003,Correlation,Beta breakdown,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Correlation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+REL-NB-004,Correlation,Peer divergence,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Correlation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+REL-NB-006,ADR / dual listing,Home-market move,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs ADR / dual listing data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+REL-NB-007,Crypto proxy,BTC overnight for crypto equities,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Crypto proxy data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+REL-NB-008,Commodity proxy,Commodity overnight for producers,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs Commodity proxy data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+HST-NB-001,Own history,Prior extreme moves,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+HST-NB-002,Own history,Post-spike day-2 behavior,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+HST-NB-003,Own history,Days since 52w low reversal,Yes,New Bot,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+HST-NB-004,Own history,Stock-specific seasonality,Yes,New Bot,BLOCKED,coverage_ledger reason,high,needs 10 years of same-month history; price file starts 2020-01-02,Taskforce (Stooq 10y history)
+HST-NB-005,Own history,Consecutive gap direction,Yes,New Bot,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+FND-TR-001,Valuation,Forward P/E change,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-002,Valuation,Forward P/E vs trailing P/E,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-003,Valuation,Earnings yield (EP),Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-004,Valuation,P/S,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-005,Valuation,PEG,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-006,Valuation,P/FCF,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Valuation data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-007,Growth,EPS next Y growth,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Growth data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-008,Growth,EPS next Y growth,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Growth data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-009,Growth,Sales Q/Q,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Growth data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-010,Growth,EPS surprise,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Growth data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-011,Growth,Sales surprise,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Growth data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-012,Profitability,Operating margin,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Profitability data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-013,Profitability,ROE,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Profitability data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-014,Balance sheet,Debt/Eq,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Balance sheet data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+FND-TR-015,Balance sheet,Current ratio,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Balance sheet data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-001,Ownership,Insider ownership,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Ownership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-002,Ownership,Insider transactions,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Ownership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-003,Ownership,Institutional transactions,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Ownership data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-004,Short interest,Short float,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-005,Short interest,Short ratio (days to cover),Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-006,Short interest,Short float change,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+OWN-TR-007,Float,Shares float,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Float data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-TR-001,Analyst,Recommendation,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-TR-002,Analyst,Recommendation change,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-TR-003,Analyst,Target price gap,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+ANL-TR-004,Analyst,Target price change,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Analyst data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+EVT-TR-001,Earnings,Earnings date,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+EVT-TR-002,Earnings,Earnings timing,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Earnings data not on box point-in-time for 2020-24,Taskforce using New Bot new-bot_earn_tags.csv (READY)
+PRC-TR-001,Performance,Perf week,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Performance data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-002,Performance,Perf month,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Performance data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-003,Performance,Perf YTD vs sector,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Performance data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-004,Volatility,Volatility W vs M,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Volatility data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-005,Volatility,ATR %,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Volatility data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-006,Volatility,Beta,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Volatility data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PRC-TR-007,Gap,Prior-day gap,Yes,Theme Radar,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PRC-TR-008,Change from open,Prior-day change from open,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Change from open data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+VOL-TR-001,Volume,Relative volume,Yes,Theme Radar,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+VOL-TR-002,Volume,Avg volume,Yes,Theme Radar,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+TEC-TR-001,Moving averages,Distance from SMA200,Yes,Theme Radar,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+TEC-TR-002,Moving averages,SMA20 vs SMA50,Yes,Theme Radar,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+TEC-TR-003,Oscillator,RSI(14),Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Oscillator data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+TEC-TR-004,Oscillator,RSI(14),Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Oscillator data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+TEC-TR-005,52w range,52w high distance,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs 52w range data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+TEC-TR-006,52w range,52w low distance,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs 52w range data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+TEC-TR-007,Pattern,Finviz pattern tag,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Pattern data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-001,Theme,Fresh theme appearance,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-002,Theme,Theme heat,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-003,Theme,Theme breadth,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-004,Theme,Composite rank,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-005,Theme,Score delta,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-006,Theme,After-hours activity,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Theme data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-007,Industry,Industry vs stock,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Industry data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+THM-TR-008,Sector,Sector rank,Yes,Theme Radar,BLOCKED,coverage_ledger reason,high,needs Sector data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-001,Candlestick,Doji,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-002,Candlestick,Doji,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-003,Candlestick,Doji,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-004,Candlestick,Hammer,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-005,Candlestick,Hammer,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-006,Candlestick,Hammer,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-007,Candlestick,Shooting star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-008,Candlestick,Shooting star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-009,Candlestick,Shooting star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-010,Candlestick,Bullish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-011,Candlestick,Bullish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-012,Candlestick,Bullish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-013,Candlestick,Bearish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-014,Candlestick,Bearish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-015,Candlestick,Bearish marubozu,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-016,Candlestick,Bullish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-017,Candlestick,Bullish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-018,Candlestick,Bullish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-019,Candlestick,Bearish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-020,Candlestick,Bearish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-021,Candlestick,Bearish engulfing,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-022,Candlestick,Inside bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-023,Candlestick,Inside bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-024,Candlestick,Inside bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-025,Candlestick,Outside bar up,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-026,Candlestick,Outside bar up,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-027,Candlestick,Outside bar up,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-028,Candlestick,Morning star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-029,Candlestick,Morning star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-030,Candlestick,Morning star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-031,Candlestick,Evening star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-032,Candlestick,Evening star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-033,Candlestick,Evening star,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-034,Candlestick,Three white soldiers,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-035,Candlestick,Three white soldiers,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-036,Candlestick,Three white soldiers,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-037,Candlestick,Three black crows,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-038,Candlestick,Three black crows,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-039,Candlestick,Three black crows,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-040,Candlestick,Piercing line,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-041,Candlestick,Piercing line,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-042,Candlestick,Piercing line,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-043,Candlestick,Dark cloud cover,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-044,Candlestick,Dark cloud cover,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-045,Candlestick,Dark cloud cover,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-046,Candlestick,Close near high,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-047,Candlestick,Close near high,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-048,Candlestick,Close near high,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-049,Candlestick,Close near low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-050,Candlestick,Close near low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-051,Candlestick,Close near low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-052,Candlestick,Wide range bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-053,Candlestick,Wide range bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-054,Candlestick,Wide range bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-055,Candlestick,Narrow range NR7,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-056,Candlestick,Narrow range NR7,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-057,Candlestick,Narrow range NR7,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-058,Candlestick,2 consecutive red,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-059,Candlestick,2 consecutive green,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-060,Candlestick,2 consecutive down closes,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-061,Candlestick,3 consecutive red,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-062,Candlestick,3 consecutive green,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-063,Candlestick,3 consecutive down closes,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-064,Candlestick,4 consecutive red,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-065,Candlestick,4 consecutive green,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-066,Candlestick,4 consecutive down closes,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-067,Candlestick,5 consecutive red,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-068,Candlestick,5 consecutive green,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-069,Candlestick,5 consecutive down closes,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-070,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-071,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-072,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-073,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-074,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-075,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-076,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-077,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-078,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-079,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-080,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-081,Candlestick,Green:red ratio,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-082,Gap,Gap up >= 1%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-083,Gap,Gap down >= 1%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-084,Gap,Gap up >= 2%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-085,Gap,Gap down >= 2%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-086,Gap,Gap up >= 4%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-087,Gap,Gap down >= 4%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-088,Gap,Gap up >= 8%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-089,Gap,Gap down >= 8%,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Pre-open: only via 09:25 premarket print; true O is NOT known),none (fails timing rule; redefine or drop)
+PV-TF-090,Gap,Unfilled gap up D-1,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-091,Gap,Unfilled gap down D-1,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-092,Price return,5d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-094,Price return,5d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-096,Price return,5d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-097,Price return,5d return,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-098,Price return,10d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-100,Price return,10d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-102,Price return,10d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-103,Price return,10d return,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-104,Price return,20d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-106,Price return,20d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-108,Price return,20d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-110,Price return,20d return,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-111,Price return,20d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-112,Price return,50d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-114,Price return,50d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-116,Price return,50d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-118,Price return,50d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-119,Price return,50d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-120,Price return,100d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-122,Price return,100d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-124,Price return,100d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-126,Price return,100d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-127,Price return,100d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-128,Price return,200d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-130,Price return,200d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-132,Price return,200d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-134,Price return,200d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-135,Price return,200d return,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-136,Moving averages,Close vs SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-137,Moving averages,Close vs SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-138,Moving averages,Close vs SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-139,Moving averages,SMA5 slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-140,Moving averages,Distance from SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-142,Moving averages,Distance from SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-144,Moving averages,Distance from SMA5,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-146,Moving averages,Close vs SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-147,Moving averages,Close vs SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-148,Moving averages,Close vs SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-149,Moving averages,SMA10 slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-150,Moving averages,Distance from SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-152,Moving averages,Distance from SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-154,Moving averages,Distance from SMA10,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-156,Moving averages,Close vs SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-157,Moving averages,Close vs SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-158,Moving averages,Close vs SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-159,Moving averages,SMA20 slope,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-160,Moving averages,Distance from SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-162,Moving averages,Distance from SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-164,Moving averages,Distance from SMA20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-166,Moving averages,Close vs SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-167,Moving averages,Close vs SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-168,Moving averages,Close vs SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-169,Moving averages,SMA50 slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-170,Moving averages,Distance from SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-172,Moving averages,Distance from SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-174,Moving averages,Distance from SMA50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-176,Moving averages,Close vs SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-177,Moving averages,Close vs SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-178,Moving averages,Close vs SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-179,Moving averages,SMA100 slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-180,Moving averages,Distance from SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-182,Moving averages,Distance from SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-184,Moving averages,Distance from SMA100,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-186,Moving averages,Close vs SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-187,Moving averages,Close vs SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-188,Moving averages,Close vs SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-189,Moving averages,SMA200 slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-190,Moving averages,Distance from SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-192,Moving averages,Distance from SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-194,Moving averages,Distance from SMA200,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-196,Moving averages,SMA5/SMA20 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-197,Moving averages,SMA5/SMA20 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-198,Moving averages,SMA10/SMA50 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-199,Moving averages,SMA10/SMA50 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-200,Moving averages,SMA20/SMA50 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-201,Moving averages,SMA20/SMA50 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-202,Moving averages,SMA50/SMA200 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-203,Moving averages,SMA50/SMA200 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-204,Moving averages,SMA20/SMA100 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-205,Moving averages,SMA20/SMA100 cross,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-206,Moving averages,SMA stack,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-208,Moving averages,EMA9 vs SMA9,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-209,Moving averages,EMA21 vs SMA21,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-210,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-211,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-212,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-213,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-214,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-215,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-216,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-217,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-218,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-219,Overbought/oversold,RSI(2),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-220,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-221,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-222,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-223,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-224,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-225,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-226,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-227,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-228,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-229,Overbought/oversold,RSI(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-230,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-231,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-232,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-233,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-234,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-235,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-236,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-237,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-238,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-239,Overbought/oversold,RSI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-240,Overbought/oversold,RSI14 bullish divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-241,Overbought/oversold,RSI14 bearish divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-242,Overbought/oversold,RSI14 bullish divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-243,Overbought/oversold,RSI14 bearish divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-244,Overbought/oversold,RSI14 bullish divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-245,Overbought/oversold,RSI14 bearish divergence,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-246,Overbought/oversold,"Stochastic %K(5,3)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-247,Overbought/oversold,"Stochastic %K(5,3)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-248,Overbought/oversold,Stoch %K/%D(5),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-249,Overbought/oversold,"Stochastic %K(14,3)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-250,Overbought/oversold,"Stochastic %K(14,3)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-251,Overbought/oversold,Stoch %K/%D(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-252,Overbought/oversold,Williams %R(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-253,Overbought/oversold,CCI(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-254,Overbought/oversold,CCI(14),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-255,Overbought/oversold,Williams %R(20),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-256,Overbought/oversold,CCI(20),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-257,Overbought/oversold,CCI(20),Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-258,Overbought/oversold,"MACD(12,26,9)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-259,Overbought/oversold,"MACD(12,26,9)",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-260,Overbought/oversold,MACD histogram,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-261,Overbought/oversold,MACD divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-262,Trend strength,ADX(14),Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Trend strength data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-264,Bollinger/volatility,"BB(20,2) lower",Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-265,Bollinger/volatility,"BB(20,2) upper",Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-266,Bollinger/volatility,"BB(20,2) re-entry",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-267,Bollinger/volatility,"BB(20,2.5) lower",Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-268,Bollinger/volatility,"BB(20,2.5) upper",Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-269,Bollinger/volatility,"BB(20,2.5) re-entry",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-270,Bollinger/volatility,"BB(10,1.5) lower",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-271,Bollinger/volatility,"BB(10,1.5) upper",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-272,Bollinger/volatility,"BB(10,1.5) re-entry",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-273,Bollinger/volatility,"BB(50,2) lower",Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-274,Bollinger/volatility,"BB(50,2) upper",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-275,Bollinger/volatility,"BB(50,2) re-entry",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-276,Bollinger/volatility,BB width 20,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-277,Bollinger/volatility,BB width 50,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-278,Bollinger/volatility,Realized vol 5d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-279,Bollinger/volatility,ATR14 % of price,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-280,Bollinger/volatility,Realized vol 10d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-281,Bollinger/volatility,ATR14 % of price,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-282,Bollinger/volatility,Realized vol 20d,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-283,Bollinger/volatility,ATR14 % of price,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-284,Bollinger/volatility,Keltner squeeze,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-285,52w hi/lo,52w high proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-286,52w hi/lo,52w low proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-287,52w hi/lo,52w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-288,52w hi/lo,52w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-289,52w hi/lo,52w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-290,52w hi/lo,52w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-291,52w hi/lo,New 52w high,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-292,52w hi/lo,New 52w low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-293,52w hi/lo,Position in 52w range,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-294,52w hi/lo,26w high proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-295,52w hi/lo,26w low proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-296,52w hi/lo,26w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-297,52w hi/lo,26w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-298,52w hi/lo,26w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-299,52w hi/lo,26w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-300,52w hi/lo,New 26w high,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 130,546 setup cells",James (add to step-3 test; answers exist)
+PV-TF-301,52w hi/lo,New 26w low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-302,52w hi/lo,Position in 26w range,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-303,52w hi/lo,13w high proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-304,52w hi/lo,13w low proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-305,52w hi/lo,13w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-306,52w hi/lo,13w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-307,52w hi/lo,13w high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-308,52w hi/lo,13w low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-309,52w hi/lo,New 13w high,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-310,52w hi/lo,New 13w low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-311,52w hi/lo,Position in 13w range,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-312,52w hi/lo,20d high proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-313,52w hi/lo,20d low proximity,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-314,52w hi/lo,20d high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-315,52w hi/lo,20d low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-316,52w hi/lo,20d high proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-317,52w hi/lo,20d low proximity,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-318,52w hi/lo,New 20d high,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-319,52w hi/lo,New 20d low,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-320,52w hi/lo,Position in 20d range,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-321,Volume,Relative volume vs 5d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-322,Volume,Relative volume vs 5d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-323,Volume,Relative volume vs 5d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-324,Volume,Relative volume vs 5d avg,Yes,Trading Bot Taskforce,BUILT_NOT_TESTED,"ledger answered, absent from item_ranking",high,"ported formula (master_pv.py), answered on 145,492 setup cells",James (add to step-3 test; answers exist)
+PV-TF-325,Volume,Volume trend 5d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-326,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-327,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-328,Volume,"Price up, volume down",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-329,Volume,Relative volume vs 10d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-330,Volume,Relative volume vs 10d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-331,Volume,Relative volume vs 10d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-332,Volume,Relative volume vs 10d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-333,Volume,Volume trend 10d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-334,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-335,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-336,Volume,"Price up, volume down",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-337,Volume,Relative volume vs 20d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-338,Volume,Relative volume vs 20d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-339,Volume,Relative volume vs 20d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-340,Volume,Relative volume vs 20d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-341,Volume,Volume trend 20d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-342,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-343,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-344,Volume,"Price up, volume down",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-345,Volume,Relative volume vs 50d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-346,Volume,Relative volume vs 50d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-347,Volume,Relative volume vs 50d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-348,Volume,Relative volume vs 50d avg,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-349,Volume,Volume trend 50d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-350,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-351,Volume,Up-volume share,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-352,Volume,"Price up, volume down",Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-353,Volume,Volume dry-up,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-354,Volume,Dollar volume,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-355,Volume,High-volume red bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-356,Volume,High-volume green bar,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-357,Money flow,MFI(10),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-358,Money flow,MFI(10),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-359,Money flow,CMF(10),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-360,Money flow,CMF(10),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-361,Money flow,OBV,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-362,Money flow,OBV divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-363,Money flow,MFI(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-364,Money flow,MFI(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-365,Money flow,CMF(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-366,Money flow,CMF(14),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-367,Money flow,OBV,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-368,Money flow,OBV divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-369,Money flow,MFI(20),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-370,Money flow,MFI(20),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-371,Money flow,CMF(20),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-372,Money flow,CMF(20),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-373,Money flow,OBV,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-374,Money flow,OBV divergence,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-375,Money flow,A/D line slope,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-376,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-377,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-378,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-379,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-380,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-381,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-382,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-383,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-384,Relative strength,Stock vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-385,Relative strength,RS line vs SPY,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,3 item x group x horizon tests,
+PV-TF-386,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-387,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-388,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-389,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-390,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-391,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-392,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-393,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-394,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-395,Relative strength,RS line vs sector SPDR ETF (Finviz sector map),Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-396,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-397,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-398,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-399,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-400,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-401,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-402,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-403,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-404,Relative strength,Stock vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-405,Relative strength,RS line vs IWM,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,6 item x group x horizon tests,
+PV-TF-406,Relative strength,Cross-sectional rank,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-407,Relative strength,Cross-sectional rank,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,9 item x group x horizon tests,
+PV-TF-408,Relative strength,Cross-sectional rank,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-409,Relative strength,Cross-sectional rank,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-410,Relative strength,Beta 60d,Yes,Trading Bot Taskforce,TESTED,id match in item_ranking.csv.gz (James step-3),high,12 item x group x horizon tests,
+PV-TF-411,Options,IV rank,Yes (EOD D-1 for D),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-412,Options,IV rank,Yes (EOD D-1 for D),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-413,Options,IV30 / HV20,Yes (EOD D-1 for D),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-414,Options,IV30 / HV20,Yes (EOD D-1 for D),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-415,Options,IV change,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-416,Options,IV change,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-417,Options,IV change,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-418,Options,IV term structure,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-419,Options,25d skew,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-420,Options,Call skew,Yes (EOD D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-421,Options,"IV up, price up",Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-422,Options,Put/call volume ratio,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-423,Options,Put/call volume ratio,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-424,Options,Put/call OI ratio,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-425,Options,Option volume vs avg,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-426,Options,OI change,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-427,Options,Unusual call volume,Yes (captured after close D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-428,Options,Implied move vs ATR,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-429,Options,Paid OI/PCR history,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Options data not on box point-in-time for 2020-24,Theme Radar (options; IV v2 2020-24 on Drive 1YIraOFc...)
+PV-TF-430,Short volume,Short volume ratio 1d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-431,Short volume,Short volume ratio 1d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-432,Short volume,SVR 1d vs 60d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-433,Short volume,Short volume ratio 5d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-434,Short volume,Short volume ratio 5d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-435,Short volume,SVR 5d vs 60d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-436,Short volume,Short volume ratio 20d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-437,Short volume,Short volume ratio 20d,Yes (published evening D-1),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-438,Short volume,SVR 20d vs 60d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-439,Short volume,SVR extreme,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-440,Short volume,"Price up, SVR up",Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short volume data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-441,Short interest,Short float >= 20%,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-442,Short interest,Short float >= 30%,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-443,Short interest,Short float < 5%,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-444,Short interest,Days to cover,"Yes, lagged",Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-445,Short interest,SI change,"Yes, lagged",Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Short interest data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-446,FTD,FTD shares/float >= 0.1%,Lagged only: use rows published before D (~2wk lag),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Lagged only: use rows published before D (~2wk lag)),none (fails timing rule; redefine or drop)
+PV-TF-447,FTD,FTD shares/float >= 0.5%,Lagged only: use rows published before D (~2wk lag),Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Lagged only: use rows published before D (~2wk lag)),none (fails timing rule; redefine or drop)
+PV-TF-448,FTD,FTD spike,Lagged only,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Lagged only),none (fails timing rule; redefine or drop)
+PV-TF-449,FTD,FTD T+35 window,Lagged only,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,not known before 09:25 ET on D (Lagged only),none (fails timing rule; redefine or drop)
+PV-TF-450,Insider,Open-market purchase (P) 5d,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-451,Insider,Cluster buy 5d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-452,Insider,Net sell value 5d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-453,Insider,Open-market purchase (P) 30d,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-454,Insider,Cluster buy 30d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-455,Insider,Net sell value 30d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-456,Insider,Open-market purchase (P) 90d,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-457,Insider,Cluster buy 90d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-458,Insider,Net sell value 90d,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-459,Insider,CEO/CFO purchase,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-460,Insider,Buy after drop,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-461,Insider,Buy BUT price falling,Yes,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs Insider data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-462,13F,Holder count change,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs 13F data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-463,13F,Inst % of float,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs 13F data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-464,13F,New positions by top-50 filers,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs 13F data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
+PV-TF-465,13F,Concentration,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,BLOCKED,coverage_ledger reason,high,needs 13F data not on box point-in-time for 2020-24,Taskforce (free-data source check) / James
