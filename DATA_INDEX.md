@@ -12,7 +12,7 @@ All big files live on the box (`/workspace/...`) or Google Drive folder `checkli
 ## Chart-picture `cp_*` tags (2020–24)
 | item | where | sha256 |
 |---|---|---|
-| cp_* build tar | Drive `1UAGlXkq0rCdbXtwuGuuUiyImQBf8PfHm` | — |
+| cp_* build tar | Drive `1UAGlXkq0rCdbXtwuGuuUiyImQBf8PfHm` | `45209602a57b5b72832b475ba6bf1b9c3573fd50c0adf0cfb7125b7edb3725e8` (New Bot, verified 2026-10-22) |
 | tags CSV | inside tar | `54a731b2…0d64` |
 | manifest | inside tar | `5f0c3c43…7e2a` |
 
