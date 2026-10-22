@@ -18,6 +18,9 @@ def main():
     assert sha(PX) == PX_SHA
     M = pq.read_table(PANEL, filters=[("date", ">=", LO), ("date", "<=", HI)]).to_pandas(); assert M.date.max() <= HI
     M["all6"] = (M[HARD].values == 2).all(1)
+    if os.environ.get("OUTCOME_FILE"):  # pluggable outcome (e.g. Taskforce exit rule): parquet/csv with ticker,date,r5,r10,r21 (net returns, entry at D)
+        f = os.environ["OUTCOME_FILE"]; O = pd.read_parquet(f) if f.endswith(".parquet") else pd.read_csv(f, parse_dates=["date"])
+        assert O.date.max() <= HI; M = M.drop(columns=[f"r{h}" for h in HS]).merge(O[["ticker", "date"] + [f"r{h}" for h in HS]], on=["ticker", "date"], how="left")
     if os.path.exists(f"{TMP}/trad.parquet"): T = pd.read_parquet(f"{TMP}/trad.parquet")
     else:
         px = pq.read_table(PX, columns=["ticker", "date", "close", "volume"], filters=[("date", ">=", LO), ("date", "<=", HI)]).to_pandas().drop_duplicates(["ticker", "date"])
