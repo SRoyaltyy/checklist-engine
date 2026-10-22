@@ -35,3 +35,27 @@ Inputs:
 
 ## Caveat (stated in advance)
 The data is survivors-only. This flatters near-low and jumpy stocks: a stock that fell apart and was delisted is missing. Any F1-type win is suspect until live post-lock days are in.
+
+## v1.1 addendum (add-only; written 2026-10-23 ~01:40 HKT, before any trajectory result was computed)
+### 5. DIVERGENCE: the non-price checklist builds while the price stays put
+- **Non-price yes-count.** np_yes(t) = the number of the 796 items answered YES at t, counting only items tagged non-price. The full per-item tag list is in trajectory/item_price_tags.csv: 169 non-price, 627 price.
+  - Non-price families: natr, atrtrend, rngcomp, rngexp, sqzexp, insidecnt, bodymean, uwickmean (range/volatility/candle shape, no direction); bigvolday, vdry, volrel, voltrend (volume).
+  - Excluded as price-direction: ret, retq, slope, accel, upfrac, upstreak, hhfrac, abv*/blw*, xc20*, disth/distl, dsl, nl20/nl60, maxdd, ddrecfrac, maxup1d/maxdn1d, gap*, clvmean, pctbmean, bbup, upvolfrac, rgvol.
+  - No options, short-interest, insider or earnings binary items exist in the computed bank, so none are included.
+- **Windows.** k = 3, 5, 10.
+  - NPUP_k = np_yes(D) − np_yes(D−k) >= 2.
+  - ret_k = close(D−1) / close(D−1−k) − 1.
+  - ADR20 = mean over the 20 bars ending D−1 of (high − low) / close.
+  - Price: FLAT if |ret_k| < ADR20; UP if ret_k >= ADR20; DOWN if ret_k <= −ADR20.
+- **Buckets per k** (entries = run starts, families F5 and F1, as above):
+  - DIV{k} = NPUP_k & FLAT.
+  - DIV{k}_PDOWN = NPUP_k & DOWN.
+  - CTRL{k}_PUP = NPUP_k & UP. This is the control: same score rise, but price up.
+  - CTRL{k}_NORISE = np_yes(D) − np_yes(D−k) <= 0 and np_yes(D) >= the median np_yes(D) of 2020–22 DIV{k} trades in that family (frozen). This is the control: same level, no rise.
+- **Continuous version (k = 5).** dv = pct(np_yes change over 5) − pct(ret_5). Percentiles are taken against the 2020–22 run-start distribution of that family, then frozen. Bucket DIVC_TOP = top fifth of dv (cutoff = 2020–22 80th percentile). Also reported: DIVC_REST.
+- Same dedup, discover 2020–22, check 2023–24, cumulative BH, and both exits.
+
+### 6. Sign source for flips
+- LASTFLIP and FLIP5 use only signs in James's FINDINGS_FREEZE_V1 (commit 3502460, csv sha a8819d1f…e66f) with found_on = 2020-22.
+- All 1,503 rows have found_on 2020-22. The 796 computed items are a subset, so the definitions above already satisfy this restriction.
+- The 311 sheet/master/grid items remain uncomputed, as in SCORE_V1.
