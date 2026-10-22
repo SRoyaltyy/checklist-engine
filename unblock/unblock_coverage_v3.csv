@@ -1,0 +1,299 @@
+id,data_type,variant,owner,status,unblock_verdict,unblock_source_or_reason,tested_result,w2_feature,w2_verdict,w2_reason
+MAC-JA-003,Rates,10y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-004,Rates,10y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-007,Rates,2y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-008,Rates,2y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-011,Rates,30y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-012,Rates,30y Treasury yield,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-015,Rates,10y real yield (TIPS),Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-016,Rates,10y real yield (TIPS),Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-019,Yield curve,2s10s curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-020,Yield curve,2s10s curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-021,Yield curve,2s10s curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-022,Yield curve,2s10s curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-023,Yield curve,3m10y curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-024,Yield curve,3m10y curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-025,Yield curve,3m10y curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-026,Yield curve,3m10y curve,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-029,Cross-asset,US Dollar index,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-030,Cross-asset,US Dollar index,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-033,Cross-asset,USD/JPY,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-034,Cross-asset,USD/JPY,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-037,Cross-asset,Crude oil WTI,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-038,Cross-asset,Crude oil WTI,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-041,Cross-asset,Gold,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-042,Cross-asset,Gold,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-045,Cross-asset,Copper,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-046,Cross-asset,Copper,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-048,Cross-asset,Copper/gold ratio,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-049,Cross-asset,Stock-bond correlation,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-050,Credit,HY OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-051,Credit,HY OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-052,Credit,HY OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-053,Credit,IG OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-054,Credit,IG OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-055,Credit,IG OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-056,Credit,CCC OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-057,Credit,CCC OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-058,Credit,CCC OAS,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-059,Credit,HYG/IEF ratio,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MAC-JA-060,Credit,High-leverage stock under credit stress,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,free FRED ICE OAS history only from 2023-10-23 (licence cut); no 2020-22 period,,,,
+MAC-JA-061,Financial conditions,Chicago Fed NFCI,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-062,Financial conditions,St. Louis Fed stress index,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-063,Liquidity,Fed balance sheet net liquidity,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-064,Liquidity,Reverse repo usage,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-065,Macro surprise,CPI headline MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-066,Macro surprise,CPI headline MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-067,Macro surprise,Core CPI MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-068,Macro surprise,Core CPI MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-069,Macro surprise,PPI MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-070,Macro surprise,PPI MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-071,Macro surprise,Nonfarm payrolls,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-072,Macro surprise,Unemployment rate,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-073,Macro surprise,Initial jobless claims,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-074,Macro surprise,Retail sales MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-075,Macro surprise,ISM manufacturing PMI,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-076,Macro surprise,ISM services PMI,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-077,Macro surprise,Core PCE MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-078,Macro surprise,Core PCE MoM,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-079,Macro surprise,JOLTS openings,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-080,Macro surprise,GDP advance,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-081,Macro surprise,Citi Economic Surprise Index US,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs consensus forecasts; no free dated consensus archive 2020-24,,,,
+MAC-JA-082,Fed,Fed funds futures implied cuts,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free fed funds futures / Fedspeak dated history,,,,
+MAC-JA-083,Fed,Fedspeak,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free fed funds futures / Fedspeak dated history,,,,
+MAC-JA-084,Fed,Policy stance,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+MAC-JA-085,Inflation expectations,10y breakeven,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+CAL-JA-004,Calendar,CPI release day,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,BLS release schedule archive (free); not built this wave,,CPI_DAY,TESTED_FAIL,"wave-2 test, 0 pass"
+CAL-JA-005,Calendar,NFP release day,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,BLS release schedule archive (free); not built this wave,,NFP_DAY,TESTED_FAIL,"wave-2 test, 0 pass"
+CAL-JA-006,Calendar,Monthly opex day,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-007,Calendar,Opex week,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-008,Calendar,Week after opex,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-009,Calendar,Quad witching,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-010,Calendar,VIX expiration,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-012,Calendar,S&P rebalance deletion,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated index-change/lockup announcement archive,,,,
+CAL-JA-013,Calendar,Russell reconstitution,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated index-change/lockup announcement archive,,,,
+CAL-JA-014,Calendar,Russell recon deletion,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated index-change/lockup announcement archive,,,,
+CAL-JA-020,Calendar,Pre-holiday,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-021,Calendar,Post-holiday,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-022,Calendar,Half-day session,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-026,Calendar,Santa rally window,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-027,Calendar,September,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-028,Calendar,Nov-Apr half,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-029,Calendar,January small caps,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated 2020-24 source found,,,,
+CAL-JA-030,Calendar,Tax-loss season,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+CAL-JA-031,Calendar,Tax-loss reversal,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+CAL-JA-032,Calendar,Earnings season peak,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),"not testable: 0 YES rows under pre-registered >=1500/week (max week ~1,300)",,,
+CAL-JA-033,Calendar,Stock earnings tomorrow,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+CAL-JA-034,Calendar,Stock earnings today pre-market,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+CAL-JA-035,Calendar,Post-earnings drift,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+CAL-JA-036,Calendar,Sector peers reporting,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+CAL-JA-037,Calendar,Election day,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-038,Calendar,Treasury refunding,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"Treasury refunding dates (free, fixed list); not built",,,OPEN,no Treasury refunding-date source pulled (not attempted)
+CAL-JA-039,Calendar,Ex-dividend day,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,dividends_2020.parquet,tested: 0 pass,,,
+CAL-JA-040,Calendar,Index inclusion announcement,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated index-change/lockup announcement archive,,,,
+CAL-JA-041,Calendar,Lockup expiry,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated index-change/lockup announcement archive,,,,
+CAL-JA-043,Calendar,Jackson Hole,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,calendar rule (no data),tested: 0 pass,,,
+CAL-JA-044,Calendar,Buyback blackout,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+CAL-JA-045,Calendar,Day-of-year seasonality,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+CAL-JA-046,Calendar,Stock own seasonality,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Stooq 10y monthly,tested: 0 pass,,,
+CAL-JA-047,Calendar,Days since last FOMC,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,FRED,tested: 0 pass,,,
+SEC-JA-014,Sector gap,Stock pre-market gap vs sector ETF gap,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+SEC-JA-015,Sector gap,Stock pre-market gap vs sector ETF gap,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+SEC-JA-021,Rotation,Sector rank,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,free sector ETFs + current Finviz sector map (near-PIT); not built this wave,,SECT_TOP3,TESTED_FAIL,"wave-2 test, 0 pass"
+SEC-JA-022,Rotation,Sector rank,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,same as SEC-JA-021,,SECT_BOT3,TESTED_FAIL,"wave-2 test, 0 pass"
+SEC-JA-023,Rotation,Sector rank change,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,same as SEC-JA-021,,SECT_RANK_UP5,TESTED_FAIL,"wave-2 test, 0 pass"
+SEC-JA-024,Rotation,Cyclicals vs defensives,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,same as SEC-JA-021 + cyclical list,,CYC_DEF_UP,TESTED_FAIL,"wave-2 test, 0 pass"
+SEC-JA-033,Sector correlation,Stock-sector correlation,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,same as SEC-JA-021,,SECT_LOWCORR,TESTED_FAIL,"wave-2 test, 0 pass"
+SEC-JA-034,Sector flows,Sector ETF shares outstanding,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+MKT-JA-014,Market-wide,SKEW,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,Yahoo daily (yfinance),tested: 0 pass,,,
+MKT-JA-016,Market-wide,Stock IV vs VIX,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-029,Market-wide,SPY trend,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+MKT-JA-030,Market-wide,SPY trend,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+MKT-JA-031,Market-wide,SPY drawdown,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+MKT-JA-043,Market-wide,% above SMA200,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+MKT-JA-051,Market-wide,Equity put/call,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-052,Market-wide,Equity put/call,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-053,Market-wide,Total put/call,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-054,Market-wide,Index put/call,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-055,Market-wide,CNN Fear & Greed,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-056,Market-wide,CNN Fear & Greed,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-057,Market-wide,AAII sentiment,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-058,Market-wide,AAII sentiment,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-059,Market-wide,NAAIM exposure,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,NAAIM weekly xlsx (free); not built,,,OPEN,NAAIM page has no downloadable history
+MKT-JA-060,Market-wide,CFTC ES positioning,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,CFTC COT (free); not built,,CFTC_ES_LEVSHORT,TESTED_FAIL,"wave-2 test, 0 pass"
+MKT-JA-061,Market-wide,Dealer gamma (GEX),Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-062,Market-wide,0DTE volume,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-JA-077,Market-wide,Stock vs SPY gap,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes (fails 09:25 data),,,,
+MKT-MB-001,Market sentiment,AAII bull-bear spread,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-MB-002,Market sentiment,AAII bull-bear spread,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-MB-003,Market sentiment,CNN Fear & Greed,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-MB-004,Market sentiment,CNN Fear & Greed,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+MKT-MB-005,Market sentiment,Put/call ratio (equity),Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free 2020-24 history (CBOE P/C free series ended 2019; CNN F&G/AAII/GEX/0DTE/stock IV not free),,,,
+ANL-MB-002,Analyst,Target vs price,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-MB-003,Analyst,Estimate revisions,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-MB-001,Analyst,Rating change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+PMK-NB-003,Pre-market,Gap in ATR units,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-004,Pre-market,Premarket relative volume,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-005,Pre-market,Premarket volume vs float,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-006,Pre-market,Premarket dollar volume,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-007,Pre-market,Premarket high fade,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-008,Pre-market,Premarket holds near high,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-009,Pre-market,Gap vs prior-day range,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-010,Pre-market,Gap into prior-day range,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+PMK-NB-012,Pre-market,Premarket spread,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs pre-market quotes; no free 2020-24 pre-market archive,,,,
+CAP-NB-001,Corporate action,Reverse split recent,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,Yahoo split history per ticker; not built,,,OPEN,no dated split history source <=2024
+CAP-NB-002,Corporate action,Reverse split announced,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+CAP-NB-003,Corporate action,Forward split announced,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"Yahoo split history (effective, not announce); not built",,,OPEN,no split announcement dates
+CAP-NB-004,Corporate action,Ex-dividend tomorrow/today,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,dividends_2020.parquet,tested: 0 pass,,,
+CAP-NB-005,Corporate action,Special dividend,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,dividends_2020.parquet,tested: 0 pass,,,
+CAP-NB-006,Corporate action,Dividend cut/suspension,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,dividends_2020.parquet,tested: 0 pass,,,
+CAP-NB-007,Corporate action,Buyback authorization,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-001,Share supply,Active S-3 shelf,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-002,Share supply,ATM program active,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-003,Share supply,Recent offering priced,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-004,Share supply,Share count growth,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,now buildable from SEC share counts; not built,,SHARES_UP20,TESTED_FAIL,"wave-2 test, 0 pass"
+SUP-NB-005,Share supply,Warrant overhang,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-006,Share supply,Convertible notes,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+SUP-NB-008,Share supply,Days since IPO,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+SUP-NB-009,Share supply,De-SPAC age,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,needs fixed de-SPAC list (EDGAR 8-K); not built,,,OPEN,no de-SPAC completion list
+SUP-NB-010,Share supply,Float tiny,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+SUP-NB-011,Share supply,Float change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+IDX-NB-002,Index membership,Index deletion announced,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+IDX-NB-003,Index membership,Russell recon candidate,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+IDX-NB-004,Index membership,Index effective day,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+ETF-NB-001,ETF ownership,ETF ownership share,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+ETF-NB-002,ETF flows,Top holder ETF net creation,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+ETF-NB-003,ETF flows,Leveraged single-stock ETF exists,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+BRW-NB-001,Securities lending,Borrow fee high,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free borrow-fee/utilisation history,,,,
+BRW-NB-002,Securities lending,Borrow fee jump,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free borrow-fee/utilisation history,,,,
+BRW-NB-003,Securities lending,Shares available to borrow,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free borrow-fee/utilisation history,,,,
+BRW-NB-004,Securities lending,Utilization,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free borrow-fee/utilisation history,,,,
+BRW-NB-005,Securities lending,Reg SHO threshold list,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,Nasdaq/NYSE Reg SHO threshold archives (free); not built,,,OPEN,Reg SHO threshold archives not pulled
+ANL-NB-001,Analyst,Upgrade pre-market,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-NB-002,Analyst,Downgrade pre-market,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-NB-003,Analyst,PT raise size,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-NB-005,Analyst,Initiation,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-NB-007,Analyst,Coverage count,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+EVT-NB-001,Biotech catalyst,PDUFA date upcoming,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated PDUFA/AdCom archive,,,,
+EVT-NB-002,Biotech catalyst,AdCom meeting,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,no free dated PDUFA/AdCom archive,,,,
+EVT-NB-004,Biotech catalyst,Cash runway,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL cash/burn; not built,,CASH_RUNWAY4Q,TESTED_FAIL,"wave-2 test, 0 pass"
+EVT-NB-005,Corporate event,Investor conference presenting,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,DROP: no free dated conference-schedule history; partial knowledge only,,,,
+EVT-NB-006,Corporate event,Investor/analyst day,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+EVT-NB-008,Corporate event,Pending deal spread,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs prose filings or paid index/ETF data; no fixed-label free history,,,,
+EVT-NB-009,Corporate event,CEO/CFO departure,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,EDGAR 8-K item 5.02 index (fixed item code); not built,,EVT_502,TESTED_FAIL,"wave-2 test, 0 pass"
+EVT-NB-010,Corporate event,Auditor change / NT 10-K,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,EDGAR NT 10-K/8-K 4.01 (fixed form codes); not built,,EVT_NT_401,TESTED_FAIL,"wave-2 test, 0 pass"
+EVT-NB-011,Corporate event,Delisting notice,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,EDGAR 8-K item 3.01; not built,,EVT_301,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-NB-001,Size bucket,Market cap bucket,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,now buildable: SEC share counts (New Bot Drive 1VnJMB0eoB2jGWw-z5KeIix1_0rNyiXO4) x price; not built this wave,,MICROCAP,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-NB-002,Price bucket,Penny stock,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+FND-NB-003,Price bucket,High-priced,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+FND-NB-004,Profitability,Unprofitable,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL frames (filing-date PIT); not built,,UNPROFITABLE,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-NB-005,Revenue,Revenue growth,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,REV_YOY30,TESTED_FAIL,"wave-2 test, 0 pass"
+REL-NB-003,Correlation,Beta breakdown,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+REL-NB-004,Correlation,Peer divergence,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,'no news' clause needs news text,,,,
+REL-NB-006,ADR / dual listing,Home-market move,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs home-market ADR mapping + intraday FX,,,,
+REL-NB-007,Crypto proxy,BTC overnight for crypto equities,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,BTC-USD pulled; needs fixed crypto-name list; not built,,,OPEN,needs fixed crypto-name list + overnight BTC at 09:25
+REL-NB-008,Commodity proxy,Commodity overnight for producers,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,futures pulled; needs fixed producer list; not built,,,OPEN,needs producer list + overnight futures at 09:25
+FND-TR-001,Valuation,Forward P/E change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-002,Valuation,Forward P/E vs trailing P/E,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-003,Valuation,Earnings yield (EP),Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL EPS x price; not built,,EY3,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-004,Valuation,P/S,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL revenue x mktcap; not built,,PS_TOP5,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-005,Valuation,PEG,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-006,Valuation,P/FCF,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL cash flow; not built,,PFCF_BAD,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-007,Growth,EPS next Y growth,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-008,Growth,EPS next Y growth,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-009,Growth,Sales Q/Q,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,SALES_QQ20,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-010,Growth,EPS surprise,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-011,Growth,Sales surprise,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+FND-TR-012,Profitability,Operating margin,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,OPM_NEG,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-013,Profitability,ROE,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,ROE20,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-014,Balance sheet,Debt/Eq,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,DE2,TESTED_FAIL,"wave-2 test, 0 pass"
+FND-TR-015,Balance sheet,Current ratio,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,SEC XBRL; not built,,CR_LT1,TESTED_FAIL,"wave-2 test, 0 pass"
+OWN-TR-001,Ownership,Insider ownership,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+OWN-TR-002,Ownership,Insider transactions,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+OWN-TR-003,Ownership,Institutional transactions,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+OWN-TR-004,Short interest,Short float,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+OWN-TR-005,Short interest,Short ratio (days to cover),Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+OWN-TR-006,Short interest,Short float change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+OWN-TR-007,Float,Shares float,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs float/holdings history; no free PIT float series,,,,
+ANL-TR-001,Analyst,Recommendation,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-TR-002,Analyst,Recommendation change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-TR-003,Analyst,Target price gap,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+ANL-TR-004,Analyst,Target price change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,needs analyst estimates/ratings history; no free PIT archive,,,,
+PRC-TR-001,Performance,Perf week,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PRC-TR-002,Performance,Perf month,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PRC-TR-003,Performance,Perf YTD vs sector,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,needs sector map (as SEC-JA-021),,YTD_VS_SECT20,TESTED_FAIL,"wave-2 test, 0 pass"
+PRC-TR-004,Volatility,Volatility W vs M,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PRC-TR-005,Volatility,ATR %,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PRC-TR-006,Volatility,Beta,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PRC-TR-008,Change from open,Prior-day change from open,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+TEC-TR-003,Oscillator,RSI(14),Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+TEC-TR-004,Oscillator,RSI(14),Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+TEC-TR-005,52w range,52w high distance,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+TEC-TR-006,52w range,52w low distance,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+TEC-TR-007,Pattern,Finviz pattern tag,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-001,Theme,Fresh theme appearance,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-002,Theme,Theme heat,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-003,Theme,Theme breadth,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-004,Theme,Composite rank,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-005,Theme,Score delta,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-006,Theme,After-hours activity,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-007,Industry,Industry vs stock,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+THM-TR-008,Sector,Sector rank,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,Theme Radar/Finviz snapshots start Aug 2026; live only,,,,
+PV-TF-082,Gap,Gap up >= 1%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_UP1,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-083,Gap,Gap down >= 1%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_DN1,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-084,Gap,Gap up >= 2%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_UP2,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-085,Gap,Gap down >= 2%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_DN2,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-086,Gap,Gap up >= 4%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_UP4,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-087,Gap,Gap down >= 4%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_DN4,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-088,Gap,Gap up >= 8%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_UP8,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-089,Gap,Gap down >= 8%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,"REDEFINE: use D-1 gap (open D-1 vs close D-2), known before 09:25; true D gap only via live pre-market prints",,GAPD1_DN8,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-262,Trend strength,ADX(14),Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SPY/universe prices,tested: 0 pass,,,
+PV-TF-430,Short volume,Short volume ratio 1d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR1_HI,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-431,Short volume,Short volume ratio 1d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR1_LO,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-432,Short volume,SVR 1d vs 60d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR1_JUMP,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-433,Short volume,Short volume ratio 5d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR5_HI,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-434,Short volume,Short volume ratio 5d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR5_LO,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-435,Short volume,SVR 5d vs 60d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR5_JUMP,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-436,Short volume,Short volume ratio 20d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR20_HI,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-437,Short volume,Short volume ratio 20d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR20_LO,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-438,Short volume,SVR 20d vs 60d,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR20_JUMP,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-439,Short volume,SVR extreme,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,SVR5_TOPDEC,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-440,Short volume,"Price up, SVR up",Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"FINRA daily short-volume files (free, 2020-24); not built this wave",,PRICEUP_SVRUP,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-441,Short interest,Short float >= 20%,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+PV-TF-442,Short interest,Short float >= 30%,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+PV-TF-443,Short interest,Short float < 5%,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+PV-TF-444,Short interest,Days to cover,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+PV-TF-445,Short interest,SI change,Taskforce (free-data source check) / James,BLOCKED,BLOCKED,short interest history: FINRA SI owned by New Bot/Theme Radar rows; not duplicated,,,,
+PV-TF-446,FTD,FTD shares/float >= 0.1%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,REDEFINE: use latest SEC FTD half-month file published before D (~2wk lag); then buildable (free SEC FTD),,FTD_01,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-447,FTD,FTD shares/float >= 0.5%,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,REDEFINE as PV-TF-446,,FTD_05,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-448,FTD,FTD spike,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,REDEFINE as PV-TF-446,,FTD_SPIKE,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-449,FTD,FTD T+35 window,none (fails timing rule; redefine or drop),BLOCKED,FAILS_0925,REDEFINE: T+35 from settle date of a spike in a file published before D,,FTD_T35,TESTED_FAIL,"wave-2 test, 0 pass"
+PV-TF-450,Insider,Open-market purchase (P) 5d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-451,Insider,Cluster buy 5d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-452,Insider,Net sell value 5d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4 | original %-of-mktcap version now buildable with SEC share counts (not re-run),tested: 0 pass,INS_SELL_1PCT_5,TESTED_FAIL,mcap version tested (1% of mkt cap)
+PV-TF-453,Insider,Open-market purchase (P) 30d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-454,Insider,Cluster buy 30d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-455,Insider,Net sell value 30d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4 | original %-of-mktcap version now buildable with SEC share counts (not re-run),tested: 0 pass,INS_SELL_1PCT_30,TESTED_FAIL,mcap version tested (1% of mkt cap)
+PV-TF-456,Insider,Open-market purchase (P) 90d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-457,Insider,Cluster buy 90d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-458,Insider,Net sell value 90d,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4 | original %-of-mktcap version now buildable with SEC share counts (not re-run),tested: 0 pass,INS_SELL_1PCT_90,TESTED_FAIL,mcap version tested (1% of mkt cap)
+PV-TF-459,Insider,CEO/CFO purchase,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-460,Insider,Buy after drop,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-461,Insider,Buy BUT price falling,Taskforce (free-data source check) / James,BLOCKED,BUILT_TESTED,SEC DERA Form 4,tested: 0 pass,,,
+PV-TF-462,13F,Holder count change,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"SEC 13F data sets (free); heavy, not built",,,OPEN,13F holdings not built
+PV-TF-463,13F,Inst % of float,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"SEC 13F data sets (free); heavy, not built",,,OPEN,13F holdings not built
+PV-TF-464,13F,New positions by top-50 filers,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"SEC 13F data sets (free); heavy, not built",,,OPEN,13F holdings not built
+PV-TF-465,13F,Concentration,Taskforce (free-data source check) / James,BLOCKED,BUILDABLE_NOT_BUILT,"SEC 13F data sets (free); heavy, not built",,,OPEN,13F holdings not built
+STR-NB-007,Prior-day structure,Anchored VWAP from earnings,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq calendar + daily bars (VWAP proxy),tested: 0 pass,,,
+ERN-NB-002,Earnings,Reports after close today,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BLOCKED,all 2020-24 Nasdaq rows are time-not-supplied; AMC unknowable,,,,
+ERN-NB-003,Earnings,Days to earnings,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+ERN-NB-004,Earnings,EPS surprise,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+ERN-NB-005,Earnings,Revenue surprise,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BLOCKED,Nasdaq calendar has no revenue/consensus fields,,,,
+ERN-NB-006,Earnings,Guidance raise,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BLOCKED,no fixed-label guidance source (Nasdaq has none; prose banned),,,,
+ERN-NB-007,Earnings,Guidance cut,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BLOCKED,same as ERN-NB-006,,,,
+ERN-NB-009,Earnings,Earnings gap faded,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq calendar + prices,tested: 0 pass,,,
+ERN-NB-010,Earnings,Historical earnings move,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq calendar + prices,tested: 0 pass,,,
+HST-NB-004,Own history,Stock-specific seasonality,Taskforce (Stooq 10y history),BLOCKED,BUILT_TESTED,Stooq 10y monthly (same feature as CAL-JA-046),tested: 0 pass,,,
+EVT-TR-001,Earnings,Earnings date,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BUILT_TESTED,Nasdaq earnings calendar (New Bot),tested: 0 pass,,,
+EVT-TR-002,Earnings,Earnings timing,Taskforce using New Bot new-bot_earn_tags.csv (READY),BLOCKED,BLOCKED,all 2020-24 rows time-not-supplied,,,,
+PV-TF-159,Moving averages,SMA20 slope,,BUILT_NOT_TESTED,(added in v3),,,SMA20_SLOPE_UP,TESTED_FAIL,"wave-2 test, 0 pass"
