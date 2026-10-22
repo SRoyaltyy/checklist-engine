@@ -1,0 +1,15 @@
+refusal check: 2025-01-02 row refused OK
+AAPL rows 1258 | after 140-bar warmup: mean NaN 0.0011, max 0.3470 (ph2_ddrecfrac_5_ge0p1), cols with any NaN 67
+AAPL 10 dates: 2020-07-27, 2021-03-01, 2021-03-10, 2021-03-11, 2021-04-15, 2021-09-16, 2022-06-08, 2023-08-16, 2024-02-22, 2024-03-26 | 5716 answers x (trunc + poisoned D bar) | mismatches 0
+ALDX rows 1258 | after 140-bar warmup: mean NaN 0.0003, max 0.1109 (ph2_ddrecfrac_5_ge0p1), cols with any NaN 51
+ALDX 10 dates: 2020-11-03, 2021-10-07, 2021-12-15, 2022-02-03, 2023-03-16, 2023-07-10, 2023-10-16, 2023-11-06, 2024-01-08, 2024-12-02 | 5716 answers x (trunc + poisoned D bar) | mismatches 0
+NVDA rows 1258 | after 140-bar warmup: mean NaN 0.0006, max 0.2147 (ph2_ddrecfrac_5_ge0p1), cols with any NaN 50
+NVDA 10 dates: 2020-08-06, 2021-02-11, 2021-03-01, 2022-06-29, 2023-03-24, 2023-11-14, 2023-11-20, 2023-12-20, 2024-05-24, 2024-11-18 | 5716 answers x (trunc + poisoned D bar) | mismatches 0
+CELH rows 1258 | after 140-bar warmup: mean NaN 0.0004, max 0.1342 (ph2_ddrecfrac_5_ge0p1), cols with any NaN 42
+CELH 10 dates: 2020-09-01, 2020-12-04, 2022-03-07, 2022-03-22, 2022-04-20, 2022-10-25, 2023-07-12, 2023-09-06, 2024-01-30, 2024-09-13 | 5716 answers x (trunc + poisoned D bar) | mismatches 0
+F rows 1258 | after 140-bar warmup: mean NaN 0.0006, max 0.2030 (ph2_ddrecfrac_5_ge0p1), cols with any NaN 50
+F 10 dates: 2020-11-13, 2021-02-18, 2021-07-02, 2021-08-25, 2022-02-17, 2022-04-21, 2022-07-20, 2022-09-07, 2023-05-26, 2024-09-11 | 5716 answers x (trunc + poisoned D bar) | mismatches 0
+NaN share after warmup, avg over 5 tickers: overall 0.0006; questions >5%: 25; >20%: 8
+worst 10: ph2_ddrecfrac_5_ge0p25=0.202; ph2_ddrecfrac_5_ge0p382=0.202; ph2_ddrecfrac_5_ge0p5=0.202; ph2_ddrecfrac_5_ge0p618=0.202; ph2_ddrecfrac_5_ge0p75=0.202; ph2_ddrecfrac_5_ge0p1=0.202; ph2_ddrecfrac_5_ge1p0=0.202; ph2_ddrecfrac_5_ge0p9=0.202; ph2_ddrecfrac_7_ge0p9=0.095; ph2_ddrecfrac_7_ge0p75=0.095
+family mean NaN (top 10): ddrecfrac=0.034; rgvol=0.007; abv10frac=0.000; abv20frac=0.000; abv50frac=0.000; accel=0.000; atrtrend=0.000; bbdn=0.000; bbup=0.000; bigvolday=0.000
+LEAK TEST PASS

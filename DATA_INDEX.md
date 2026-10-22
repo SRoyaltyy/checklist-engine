@@ -44,3 +44,9 @@ Also on the box but not here: engine output CSVs (`checklist_brainstorm/engine`,
 | File | Location | sha256 |
 |---|---|---|
 | path_bank_v1.tar.gz | Drive `15MzpQAXwLp4abEy11vuOwIFqSp6S_2SL` | `7931e0a01e21154e4d1c1f18015ab7f27b3a74fc7103ad78bc434958f5aabd4e` |
+
+## Path/history question bank v2
+
+| File | Location | sha256 |
+|---|---|---|
+| path_bank_v2.tar.gz | Drive `1RVBDpoSNkBKXDI5JNhhDbUvCb-6QgBS3` | `7e8d2694…d54f1` (New Bot) |
