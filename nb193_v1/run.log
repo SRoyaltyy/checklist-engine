@@ -1,0 +1,14 @@
+tag rows 3565045 tradable 1970427 buyable control days 2408833
+tests 193 family 10498
+status
+FAIL              165
+TOO_RARE           18
+NOT_COMPUTABLE     10
+Name: count, dtype: int64
+noBH near-pass:
+                           row_id  A_d_n    A_d_win  A_c_n    A_c_win    B_d_win    B_c_win  A_d_q  B_d_q
+93      nb4-HIS-NB-029-DUR90-SUP    147  56.462585    864  59.490741  31.972789  44.097222    1.0    1.0
+94  nb4-HIS-NB-029-DUR90-SUP-BUT    147  56.462585    864  59.490741  31.972789  44.097222    1.0    1.0
+Empty DataFrame
+Columns: []
+Index: [row_id, status, grok_status, chunk_src, side_row, n_answered, n_yes, yes_share, A_d_n, A_d_win, A_d_mean, A_d_excess, A_d_p, B_d_n, B_d_win, B_d_mean, B_d_excess, B_d_p, A_c_n, A_c_win, A_c_mean, A_c_excess, A_c_p, B_c_n, B_c_win, B_c_mean, B_c_excess, B_c_p, A_d_q, B_d_q, bh_family, pass_exit_v1_noBH, pass_exit_v1, pass_10d_noBH, pass_10d, flags]
