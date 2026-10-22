@@ -38,3 +38,9 @@ Taskforce spot-check passed: 210/210 truncation PIT checks; ~22% NOT_READY is ex
 Map v5.1: `map_v5_1/six_bucket_map_v5_1.csv` sha `fed2c2599133af3689d4f6754f41e45a16b56e25e57f5e1159cb8e291312956b` (map v4 is lost).
 
 Also on the box but not here: engine output CSVs (`checklist_brainstorm/engine`, `qa`), raw caches, `checklist_brainstorm/data`, `drive/`, `archive/`, `repull/`, `inbox/`.
+
+## Path/history question bank v1
+
+| File | Location | sha256 |
+|---|---|---|
+| path_bank_v1.tar.gz | Drive `15MzpQAXwLp4abEy11vuOwIFqSp6S_2SL` | `7931e0a01e21154e4d1c1f18015ab7f27b3a74fc7103ad78bc434958f5aabd4e` |

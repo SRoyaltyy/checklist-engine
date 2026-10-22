@@ -1,0 +1,265 @@
+id,family,lookback,kind,rule,formula,labels,feature,op,cut
+ph_upstreak_5_ge2,upstreak,5,yesno,longest run of consecutive up closes within lb >= 2 (lb=5),max consecutive close>prevclose in window >= 2,yes|no,upstreak_5,>=,2
+ph_upstreak_5_ge3,upstreak,5,yesno,longest run of consecutive up closes within lb >= 3 (lb=5),max consecutive close>prevclose in window >= 3,yes|no,upstreak_5,>=,3
+ph_upstreak_5_ge5,upstreak,5,yesno,longest run of consecutive up closes within lb >= 5 (lb=5),max consecutive close>prevclose in window >= 5,yes|no,upstreak_5,>=,5
+ph_dnstreak_5_ge2,dnstreak,5,yesno,longest run of consecutive down closes within lb >= 2 (lb=5),max consecutive close<prevclose in window >= 2,yes|no,dnstreak_5,>=,2
+ph_dnstreak_5_ge3,dnstreak,5,yesno,longest run of consecutive down closes within lb >= 3 (lb=5),max consecutive close<prevclose in window >= 3,yes|no,dnstreak_5,>=,3
+ph_dnstreak_5_ge5,dnstreak,5,yesno,longest run of consecutive down closes within lb >= 5 (lb=5),max consecutive close<prevclose in window >= 5,yes|no,dnstreak_5,>=,5
+ph_ddrun_5_ge0p25,ddrun,5,yesno,pullback from lb peak as share of the run into that peak >= 0.25 (lb=5),(maxH-C)/(maxH-min L before peak) >= 0.25,yes|no,ddrun_5,>=,0.25
+ph_ddrun_5_ge0p5,ddrun,5,yesno,pullback from lb peak as share of the run into that peak >= 0.5 (lb=5),(maxH-C)/(maxH-min L before peak) >= 0.5,yes|no,ddrun_5,>=,0.5
+ph_ddrun_5_ge0p75,ddrun,5,yesno,pullback from lb peak as share of the run into that peak >= 0.75 (lb=5),(maxH-C)/(maxH-min L before peak) >= 0.75,yes|no,ddrun_5,>=,0.75
+ph_bbup_5_ge1,bbup,5,yesno,"closes at/above upper BB(20,2) within lb >= 1 (lb=5)",count C>=SMA20+2sd20 >= 1,yes|no,bbup_5,>=,1
+ph_bbup_5_ge3,bbup,5,yesno,"closes at/above upper BB(20,2) within lb >= 3 (lb=5)",count C>=SMA20+2sd20 >= 3,yes|no,bbup_5,>=,3
+ph_bbdn_5_ge1,bbdn,5,yesno,"closes at/below lower BB(20,2) within lb >= 1 (lb=5)",count C<=SMA20-2sd20 >= 1,yes|no,bbdn_5,>=,1
+ph_bbdn_5_ge3,bbdn,5,yesno,"closes at/below lower BB(20,2) within lb >= 3 (lb=5)",count C<=SMA20-2sd20 >= 3,yes|no,bbdn_5,>=,3
+ph_voltrend_5_ge0p8,voltrend,5,yesno,avg volume 2nd half of lb / 1st half >= 0.8 (lb=5),mean V(last lb/2)/mean V(first lb/2) >= 0.8,yes|no,voltrend_5,>=,0.8
+ph_voltrend_5_ge1p25,voltrend,5,yesno,avg volume 2nd half of lb / 1st half >= 1.25 (lb=5),mean V(last lb/2)/mean V(first lb/2) >= 1.25,yes|no,voltrend_5,>=,1.25
+ph_voltrend_5_ge1p5,voltrend,5,yesno,avg volume 2nd half of lb / 1st half >= 1.5 (lb=5),mean V(last lb/2)/mean V(first lb/2) >= 1.5,yes|no,voltrend_5,>=,1.5
+ph_rgvol_5_ge0p67,rgvol,5,yesno,avg green-day volume / avg red-day volume within lb >= 0.67 (lb=5),mean V|C>O / mean V|C<O >= 0.67,yes|no,rgvol_5,>=,0.67
+ph_rgvol_5_ge1p0,rgvol,5,yesno,avg green-day volume / avg red-day volume within lb >= 1.0 (lb=5),mean V|C>O / mean V|C<O >= 1.0,yes|no,rgvol_5,>=,1.0
+ph_rgvol_5_ge1p5,rgvol,5,yesno,avg green-day volume / avg red-day volume within lb >= 1.5 (lb=5),mean V|C>O / mean V|C<O >= 1.5,yes|no,rgvol_5,>=,1.5
+ph_slope_5_gt0,slope,5,yesno,OLS slope of log close over lb is positive > 0 (lb=5),"polyfit(arange(lb),log C,1)[0] > 0",yes|no,slope_5,>,0
+ph_accel_5_gt0,accel,5,yesno,slope of 2nd half of lb minus slope of 1st half > 0 (accelerating) > 0 (lb=5),slope(last half)-slope(first half) > 0,yes|no,accel_5,>,0
+ph_slopeflip_5_eq1,slopeflip,5,yesno,sign of 2nd-half slope differs from 1st-half slope == 1 (lb=5),sign(s2)!=sign(s1) == 1,yes|no,slopeflip_5,==,1
+ph_recov_5_ge0p5,recov,5,yesno,recovery from post-peak trough toward lb peak >= 0.5 (lb=5),"(C-trough)/(maxH-trough), trough=min L after peak >= 0.5",yes|no,recov_5,>=,0.5
+ph_recov_5_ge1p0,recov,5,yesno,recovery from post-peak trough toward lb peak >= 1.0 (lb=5),"(C-trough)/(maxH-trough), trough=min L after peak >= 1.0",yes|no,recov_5,>=,1.0
+ph_recovspd_5_le2,recovspd,5,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 2 (lb=5),days since trough if recov>=0.5 else inf <= 2,yes|no,recovspd_5,<=,2
+ph_recovspd_5_le5,recovspd,5,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 5 (lb=5),days since trough if recov>=0.5 else inf <= 5,yes|no,recovspd_5,<=,5
+ph_gapup_5_ge1,gapup,5,yesno,gap-ups >2% (O/prevC-1) within lb >= 1 (lb=5),count O/C[-1]-1>0.02 >= 1,yes|no,gapup_5,>=,1
+ph_gapup_5_ge2,gapup,5,yesno,gap-ups >2% (O/prevC-1) within lb >= 2 (lb=5),count O/C[-1]-1>0.02 >= 2,yes|no,gapup_5,>=,2
+ph_gapdn_5_ge1,gapdn,5,yesno,gap-downs >2% within lb >= 1 (lb=5),count O/C[-1]-1<-0.02 >= 1,yes|no,gapdn_5,>=,1
+ph_gapdn_5_ge2,gapdn,5,yesno,gap-downs >2% within lb >= 2 (lb=5),count O/C[-1]-1<-0.02 >= 2,yes|no,gapdn_5,>=,2
+ph_rngexp_5_ge0p67,rngexp,5,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 0.67 (lb=5),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 0.67,yes|no,rngexp_5,>=,0.67
+ph_rngexp_5_ge1p0,rngexp,5,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.0 (lb=5),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.0,yes|no,rngexp_5,>=,1.0
+ph_rngexp_5_ge1p5,rngexp,5,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.5 (lb=5),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.5,yes|no,rngexp_5,>=,1.5
+ph_swing_5_label,swing,5,label,swing structure: max-high & min-low of 2nd half vs 1st half of lb (lb=5),H2>H1?HH:LH + L2>L1?HL:LL,HH_HL|HH_LL|LH_HL|LH_LL,swing_5,label,
+ph_swing_5_HH_HL,swing,5,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_HL (lb=5),label==HH_HL,yes|no,swing_5,==,HH_HL
+ph_swing_5_HH_LL,swing,5,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_LL (lb=5),label==HH_LL,yes|no,swing_5,==,HH_LL
+ph_swing_5_LH_HL,swing,5,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_HL (lb=5),label==LH_HL,yes|no,swing_5,==,LH_HL
+ph_swing_5_LH_LL,swing,5,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_LL (lb=5),label==LH_LL,yes|no,swing_5,==,LH_LL
+ph_dsh_5_label,dsh,5,label,"days since lb-high, as fraction of lb (lb=5)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsh_5,label,
+ph_dsh_5_0,dsh,5,yesno,"days since lb-high, as fraction of lb == 0 (lb=5)",label==0,yes|no,dsh_5,==,0
+ph_dsh_5_le25pct,dsh,5,yesno,"days since lb-high, as fraction of lb == le25pct (lb=5)",label==le25pct,yes|no,dsh_5,==,le25pct
+ph_dsh_5_le50pct,dsh,5,yesno,"days since lb-high, as fraction of lb == le50pct (lb=5)",label==le50pct,yes|no,dsh_5,==,le50pct
+ph_dsh_5_le100pct,dsh,5,yesno,"days since lb-high, as fraction of lb == le100pct (lb=5)",label==le100pct,yes|no,dsh_5,==,le100pct
+ph_dsl_5_label,dsl,5,label,"days since lb-low, as fraction of lb (lb=5)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsl_5,label,
+ph_dsl_5_0,dsl,5,yesno,"days since lb-low, as fraction of lb == 0 (lb=5)",label==0,yes|no,dsl_5,==,0
+ph_dsl_5_le25pct,dsl,5,yesno,"days since lb-low, as fraction of lb == le25pct (lb=5)",label==le25pct,yes|no,dsl_5,==,le25pct
+ph_dsl_5_le50pct,dsl,5,yesno,"days since lb-low, as fraction of lb == le50pct (lb=5)",label==le50pct,yes|no,dsl_5,==,le50pct
+ph_dsl_5_le100pct,dsl,5,yesno,"days since lb-low, as fraction of lb == le100pct (lb=5)",label==le100pct,yes|no,dsl_5,==,le100pct
+ph_disth_5_label,disth,5,label,distance below lb high in pct (lb=5),"bins [-1, 0.02, 0.05, 0.1, 0.2, 9] right-closed",lt2|2to5|5to10|10to20|gt20,disth_5,label,
+ph_disth_5_lt2,disth,5,yesno,distance below lb high in pct == lt2 (lb=5),label==lt2,yes|no,disth_5,==,lt2
+ph_disth_5_2to5,disth,5,yesno,distance below lb high in pct == 2to5 (lb=5),label==2to5,yes|no,disth_5,==,2to5
+ph_disth_5_5to10,disth,5,yesno,distance below lb high in pct == 5to10 (lb=5),label==5to10,yes|no,disth_5,==,5to10
+ph_disth_5_10to20,disth,5,yesno,distance below lb high in pct == 10to20 (lb=5),label==10to20,yes|no,disth_5,==,10to20
+ph_disth_5_gt20,disth,5,yesno,distance below lb high in pct == gt20 (lb=5),label==gt20,yes|no,disth_5,==,gt20
+ph_dipatr_5_label,dipatr,5,label,dip depth from lb high to post-peak trough in ATR14 units (lb=5),"bins [-1, 1, 2, 4, 1000000000.0] right-closed",lt1|1to2|2to4|gt4,dipatr_5,label,
+ph_dipatr_5_lt1,dipatr,5,yesno,dip depth from lb high to post-peak trough in ATR14 units == lt1 (lb=5),label==lt1,yes|no,dipatr_5,==,lt1
+ph_dipatr_5_1to2,dipatr,5,yesno,dip depth from lb high to post-peak trough in ATR14 units == 1to2 (lb=5),label==1to2,yes|no,dipatr_5,==,1to2
+ph_dipatr_5_2to4,dipatr,5,yesno,dip depth from lb high to post-peak trough in ATR14 units == 2to4 (lb=5),label==2to4,yes|no,dipatr_5,==,2to4
+ph_dipatr_5_gt4,dipatr,5,yesno,dip depth from lb high to post-peak trough in ATR14 units == gt4 (lb=5),label==gt4,yes|no,dipatr_5,==,gt4
+ph_pctbmean_5_label,pctbmean,5,label,"mean %B(20,2) over lb (lb=5)","bins [-1000000000.0, 0, 0.2, 0.5, 0.8, 1, 1000000000.0] right-closed",lt0|0to20|20to50|50to80|80to100|gt100,pctbmean_5,label,
+ph_pctbmean_5_lt0,pctbmean,5,yesno,"mean %B(20,2) over lb == lt0 (lb=5)",label==lt0,yes|no,pctbmean_5,==,lt0
+ph_pctbmean_5_0to20,pctbmean,5,yesno,"mean %B(20,2) over lb == 0to20 (lb=5)",label==0to20,yes|no,pctbmean_5,==,0to20
+ph_pctbmean_5_20to50,pctbmean,5,yesno,"mean %B(20,2) over lb == 20to50 (lb=5)",label==20to50,yes|no,pctbmean_5,==,20to50
+ph_pctbmean_5_50to80,pctbmean,5,yesno,"mean %B(20,2) over lb == 50to80 (lb=5)",label==50to80,yes|no,pctbmean_5,==,50to80
+ph_pctbmean_5_80to100,pctbmean,5,yesno,"mean %B(20,2) over lb == 80to100 (lb=5)",label==80to100,yes|no,pctbmean_5,==,80to100
+ph_pctbmean_5_gt100,pctbmean,5,yesno,"mean %B(20,2) over lb == gt100 (lb=5)",label==gt100,yes|no,pctbmean_5,==,gt100
+ph_upstreak_10_ge2,upstreak,10,yesno,longest run of consecutive up closes within lb >= 2 (lb=10),max consecutive close>prevclose in window >= 2,yes|no,upstreak_10,>=,2
+ph_upstreak_10_ge3,upstreak,10,yesno,longest run of consecutive up closes within lb >= 3 (lb=10),max consecutive close>prevclose in window >= 3,yes|no,upstreak_10,>=,3
+ph_upstreak_10_ge5,upstreak,10,yesno,longest run of consecutive up closes within lb >= 5 (lb=10),max consecutive close>prevclose in window >= 5,yes|no,upstreak_10,>=,5
+ph_dnstreak_10_ge2,dnstreak,10,yesno,longest run of consecutive down closes within lb >= 2 (lb=10),max consecutive close<prevclose in window >= 2,yes|no,dnstreak_10,>=,2
+ph_dnstreak_10_ge3,dnstreak,10,yesno,longest run of consecutive down closes within lb >= 3 (lb=10),max consecutive close<prevclose in window >= 3,yes|no,dnstreak_10,>=,3
+ph_dnstreak_10_ge5,dnstreak,10,yesno,longest run of consecutive down closes within lb >= 5 (lb=10),max consecutive close<prevclose in window >= 5,yes|no,dnstreak_10,>=,5
+ph_ddrun_10_ge0p25,ddrun,10,yesno,pullback from lb peak as share of the run into that peak >= 0.25 (lb=10),(maxH-C)/(maxH-min L before peak) >= 0.25,yes|no,ddrun_10,>=,0.25
+ph_ddrun_10_ge0p5,ddrun,10,yesno,pullback from lb peak as share of the run into that peak >= 0.5 (lb=10),(maxH-C)/(maxH-min L before peak) >= 0.5,yes|no,ddrun_10,>=,0.5
+ph_ddrun_10_ge0p75,ddrun,10,yesno,pullback from lb peak as share of the run into that peak >= 0.75 (lb=10),(maxH-C)/(maxH-min L before peak) >= 0.75,yes|no,ddrun_10,>=,0.75
+ph_bbup_10_ge1,bbup,10,yesno,"closes at/above upper BB(20,2) within lb >= 1 (lb=10)",count C>=SMA20+2sd20 >= 1,yes|no,bbup_10,>=,1
+ph_bbup_10_ge3,bbup,10,yesno,"closes at/above upper BB(20,2) within lb >= 3 (lb=10)",count C>=SMA20+2sd20 >= 3,yes|no,bbup_10,>=,3
+ph_bbdn_10_ge1,bbdn,10,yesno,"closes at/below lower BB(20,2) within lb >= 1 (lb=10)",count C<=SMA20-2sd20 >= 1,yes|no,bbdn_10,>=,1
+ph_bbdn_10_ge3,bbdn,10,yesno,"closes at/below lower BB(20,2) within lb >= 3 (lb=10)",count C<=SMA20-2sd20 >= 3,yes|no,bbdn_10,>=,3
+ph_voltrend_10_ge0p8,voltrend,10,yesno,avg volume 2nd half of lb / 1st half >= 0.8 (lb=10),mean V(last lb/2)/mean V(first lb/2) >= 0.8,yes|no,voltrend_10,>=,0.8
+ph_voltrend_10_ge1p25,voltrend,10,yesno,avg volume 2nd half of lb / 1st half >= 1.25 (lb=10),mean V(last lb/2)/mean V(first lb/2) >= 1.25,yes|no,voltrend_10,>=,1.25
+ph_voltrend_10_ge1p5,voltrend,10,yesno,avg volume 2nd half of lb / 1st half >= 1.5 (lb=10),mean V(last lb/2)/mean V(first lb/2) >= 1.5,yes|no,voltrend_10,>=,1.5
+ph_rgvol_10_ge0p67,rgvol,10,yesno,avg green-day volume / avg red-day volume within lb >= 0.67 (lb=10),mean V|C>O / mean V|C<O >= 0.67,yes|no,rgvol_10,>=,0.67
+ph_rgvol_10_ge1p0,rgvol,10,yesno,avg green-day volume / avg red-day volume within lb >= 1.0 (lb=10),mean V|C>O / mean V|C<O >= 1.0,yes|no,rgvol_10,>=,1.0
+ph_rgvol_10_ge1p5,rgvol,10,yesno,avg green-day volume / avg red-day volume within lb >= 1.5 (lb=10),mean V|C>O / mean V|C<O >= 1.5,yes|no,rgvol_10,>=,1.5
+ph_slope_10_gt0,slope,10,yesno,OLS slope of log close over lb is positive > 0 (lb=10),"polyfit(arange(lb),log C,1)[0] > 0",yes|no,slope_10,>,0
+ph_accel_10_gt0,accel,10,yesno,slope of 2nd half of lb minus slope of 1st half > 0 (accelerating) > 0 (lb=10),slope(last half)-slope(first half) > 0,yes|no,accel_10,>,0
+ph_slopeflip_10_eq1,slopeflip,10,yesno,sign of 2nd-half slope differs from 1st-half slope == 1 (lb=10),sign(s2)!=sign(s1) == 1,yes|no,slopeflip_10,==,1
+ph_recov_10_ge0p5,recov,10,yesno,recovery from post-peak trough toward lb peak >= 0.5 (lb=10),"(C-trough)/(maxH-trough), trough=min L after peak >= 0.5",yes|no,recov_10,>=,0.5
+ph_recov_10_ge1p0,recov,10,yesno,recovery from post-peak trough toward lb peak >= 1.0 (lb=10),"(C-trough)/(maxH-trough), trough=min L after peak >= 1.0",yes|no,recov_10,>=,1.0
+ph_recovspd_10_le2,recovspd,10,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 2 (lb=10),days since trough if recov>=0.5 else inf <= 2,yes|no,recovspd_10,<=,2
+ph_recovspd_10_le5,recovspd,10,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 5 (lb=10),days since trough if recov>=0.5 else inf <= 5,yes|no,recovspd_10,<=,5
+ph_gapup_10_ge1,gapup,10,yesno,gap-ups >2% (O/prevC-1) within lb >= 1 (lb=10),count O/C[-1]-1>0.02 >= 1,yes|no,gapup_10,>=,1
+ph_gapup_10_ge2,gapup,10,yesno,gap-ups >2% (O/prevC-1) within lb >= 2 (lb=10),count O/C[-1]-1>0.02 >= 2,yes|no,gapup_10,>=,2
+ph_gapdn_10_ge1,gapdn,10,yesno,gap-downs >2% within lb >= 1 (lb=10),count O/C[-1]-1<-0.02 >= 1,yes|no,gapdn_10,>=,1
+ph_gapdn_10_ge2,gapdn,10,yesno,gap-downs >2% within lb >= 2 (lb=10),count O/C[-1]-1<-0.02 >= 2,yes|no,gapdn_10,>=,2
+ph_rngexp_10_ge0p67,rngexp,10,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 0.67 (lb=10),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 0.67,yes|no,rngexp_10,>=,0.67
+ph_rngexp_10_ge1p0,rngexp,10,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.0 (lb=10),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.0,yes|no,rngexp_10,>=,1.0
+ph_rngexp_10_ge1p5,rngexp,10,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.5 (lb=10),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.5,yes|no,rngexp_10,>=,1.5
+ph_swing_10_label,swing,10,label,swing structure: max-high & min-low of 2nd half vs 1st half of lb (lb=10),H2>H1?HH:LH + L2>L1?HL:LL,HH_HL|HH_LL|LH_HL|LH_LL,swing_10,label,
+ph_swing_10_HH_HL,swing,10,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_HL (lb=10),label==HH_HL,yes|no,swing_10,==,HH_HL
+ph_swing_10_HH_LL,swing,10,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_LL (lb=10),label==HH_LL,yes|no,swing_10,==,HH_LL
+ph_swing_10_LH_HL,swing,10,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_HL (lb=10),label==LH_HL,yes|no,swing_10,==,LH_HL
+ph_swing_10_LH_LL,swing,10,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_LL (lb=10),label==LH_LL,yes|no,swing_10,==,LH_LL
+ph_dsh_10_label,dsh,10,label,"days since lb-high, as fraction of lb (lb=10)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsh_10,label,
+ph_dsh_10_0,dsh,10,yesno,"days since lb-high, as fraction of lb == 0 (lb=10)",label==0,yes|no,dsh_10,==,0
+ph_dsh_10_le25pct,dsh,10,yesno,"days since lb-high, as fraction of lb == le25pct (lb=10)",label==le25pct,yes|no,dsh_10,==,le25pct
+ph_dsh_10_le50pct,dsh,10,yesno,"days since lb-high, as fraction of lb == le50pct (lb=10)",label==le50pct,yes|no,dsh_10,==,le50pct
+ph_dsh_10_le100pct,dsh,10,yesno,"days since lb-high, as fraction of lb == le100pct (lb=10)",label==le100pct,yes|no,dsh_10,==,le100pct
+ph_dsl_10_label,dsl,10,label,"days since lb-low, as fraction of lb (lb=10)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsl_10,label,
+ph_dsl_10_0,dsl,10,yesno,"days since lb-low, as fraction of lb == 0 (lb=10)",label==0,yes|no,dsl_10,==,0
+ph_dsl_10_le25pct,dsl,10,yesno,"days since lb-low, as fraction of lb == le25pct (lb=10)",label==le25pct,yes|no,dsl_10,==,le25pct
+ph_dsl_10_le50pct,dsl,10,yesno,"days since lb-low, as fraction of lb == le50pct (lb=10)",label==le50pct,yes|no,dsl_10,==,le50pct
+ph_dsl_10_le100pct,dsl,10,yesno,"days since lb-low, as fraction of lb == le100pct (lb=10)",label==le100pct,yes|no,dsl_10,==,le100pct
+ph_disth_10_label,disth,10,label,distance below lb high in pct (lb=10),"bins [-1, 0.02, 0.05, 0.1, 0.2, 9] right-closed",lt2|2to5|5to10|10to20|gt20,disth_10,label,
+ph_disth_10_lt2,disth,10,yesno,distance below lb high in pct == lt2 (lb=10),label==lt2,yes|no,disth_10,==,lt2
+ph_disth_10_2to5,disth,10,yesno,distance below lb high in pct == 2to5 (lb=10),label==2to5,yes|no,disth_10,==,2to5
+ph_disth_10_5to10,disth,10,yesno,distance below lb high in pct == 5to10 (lb=10),label==5to10,yes|no,disth_10,==,5to10
+ph_disth_10_10to20,disth,10,yesno,distance below lb high in pct == 10to20 (lb=10),label==10to20,yes|no,disth_10,==,10to20
+ph_disth_10_gt20,disth,10,yesno,distance below lb high in pct == gt20 (lb=10),label==gt20,yes|no,disth_10,==,gt20
+ph_dipatr_10_label,dipatr,10,label,dip depth from lb high to post-peak trough in ATR14 units (lb=10),"bins [-1, 1, 2, 4, 1000000000.0] right-closed",lt1|1to2|2to4|gt4,dipatr_10,label,
+ph_dipatr_10_lt1,dipatr,10,yesno,dip depth from lb high to post-peak trough in ATR14 units == lt1 (lb=10),label==lt1,yes|no,dipatr_10,==,lt1
+ph_dipatr_10_1to2,dipatr,10,yesno,dip depth from lb high to post-peak trough in ATR14 units == 1to2 (lb=10),label==1to2,yes|no,dipatr_10,==,1to2
+ph_dipatr_10_2to4,dipatr,10,yesno,dip depth from lb high to post-peak trough in ATR14 units == 2to4 (lb=10),label==2to4,yes|no,dipatr_10,==,2to4
+ph_dipatr_10_gt4,dipatr,10,yesno,dip depth from lb high to post-peak trough in ATR14 units == gt4 (lb=10),label==gt4,yes|no,dipatr_10,==,gt4
+ph_pctbmean_10_label,pctbmean,10,label,"mean %B(20,2) over lb (lb=10)","bins [-1000000000.0, 0, 0.2, 0.5, 0.8, 1, 1000000000.0] right-closed",lt0|0to20|20to50|50to80|80to100|gt100,pctbmean_10,label,
+ph_pctbmean_10_lt0,pctbmean,10,yesno,"mean %B(20,2) over lb == lt0 (lb=10)",label==lt0,yes|no,pctbmean_10,==,lt0
+ph_pctbmean_10_0to20,pctbmean,10,yesno,"mean %B(20,2) over lb == 0to20 (lb=10)",label==0to20,yes|no,pctbmean_10,==,0to20
+ph_pctbmean_10_20to50,pctbmean,10,yesno,"mean %B(20,2) over lb == 20to50 (lb=10)",label==20to50,yes|no,pctbmean_10,==,20to50
+ph_pctbmean_10_50to80,pctbmean,10,yesno,"mean %B(20,2) over lb == 50to80 (lb=10)",label==50to80,yes|no,pctbmean_10,==,50to80
+ph_pctbmean_10_80to100,pctbmean,10,yesno,"mean %B(20,2) over lb == 80to100 (lb=10)",label==80to100,yes|no,pctbmean_10,==,80to100
+ph_pctbmean_10_gt100,pctbmean,10,yesno,"mean %B(20,2) over lb == gt100 (lb=10)",label==gt100,yes|no,pctbmean_10,==,gt100
+ph_upstreak_20_ge2,upstreak,20,yesno,longest run of consecutive up closes within lb >= 2 (lb=20),max consecutive close>prevclose in window >= 2,yes|no,upstreak_20,>=,2
+ph_upstreak_20_ge3,upstreak,20,yesno,longest run of consecutive up closes within lb >= 3 (lb=20),max consecutive close>prevclose in window >= 3,yes|no,upstreak_20,>=,3
+ph_upstreak_20_ge5,upstreak,20,yesno,longest run of consecutive up closes within lb >= 5 (lb=20),max consecutive close>prevclose in window >= 5,yes|no,upstreak_20,>=,5
+ph_dnstreak_20_ge2,dnstreak,20,yesno,longest run of consecutive down closes within lb >= 2 (lb=20),max consecutive close<prevclose in window >= 2,yes|no,dnstreak_20,>=,2
+ph_dnstreak_20_ge3,dnstreak,20,yesno,longest run of consecutive down closes within lb >= 3 (lb=20),max consecutive close<prevclose in window >= 3,yes|no,dnstreak_20,>=,3
+ph_dnstreak_20_ge5,dnstreak,20,yesno,longest run of consecutive down closes within lb >= 5 (lb=20),max consecutive close<prevclose in window >= 5,yes|no,dnstreak_20,>=,5
+ph_ddrun_20_ge0p25,ddrun,20,yesno,pullback from lb peak as share of the run into that peak >= 0.25 (lb=20),(maxH-C)/(maxH-min L before peak) >= 0.25,yes|no,ddrun_20,>=,0.25
+ph_ddrun_20_ge0p5,ddrun,20,yesno,pullback from lb peak as share of the run into that peak >= 0.5 (lb=20),(maxH-C)/(maxH-min L before peak) >= 0.5,yes|no,ddrun_20,>=,0.5
+ph_ddrun_20_ge0p75,ddrun,20,yesno,pullback from lb peak as share of the run into that peak >= 0.75 (lb=20),(maxH-C)/(maxH-min L before peak) >= 0.75,yes|no,ddrun_20,>=,0.75
+ph_bbup_20_ge1,bbup,20,yesno,"closes at/above upper BB(20,2) within lb >= 1 (lb=20)",count C>=SMA20+2sd20 >= 1,yes|no,bbup_20,>=,1
+ph_bbup_20_ge3,bbup,20,yesno,"closes at/above upper BB(20,2) within lb >= 3 (lb=20)",count C>=SMA20+2sd20 >= 3,yes|no,bbup_20,>=,3
+ph_bbdn_20_ge1,bbdn,20,yesno,"closes at/below lower BB(20,2) within lb >= 1 (lb=20)",count C<=SMA20-2sd20 >= 1,yes|no,bbdn_20,>=,1
+ph_bbdn_20_ge3,bbdn,20,yesno,"closes at/below lower BB(20,2) within lb >= 3 (lb=20)",count C<=SMA20-2sd20 >= 3,yes|no,bbdn_20,>=,3
+ph_voltrend_20_ge0p8,voltrend,20,yesno,avg volume 2nd half of lb / 1st half >= 0.8 (lb=20),mean V(last lb/2)/mean V(first lb/2) >= 0.8,yes|no,voltrend_20,>=,0.8
+ph_voltrend_20_ge1p25,voltrend,20,yesno,avg volume 2nd half of lb / 1st half >= 1.25 (lb=20),mean V(last lb/2)/mean V(first lb/2) >= 1.25,yes|no,voltrend_20,>=,1.25
+ph_voltrend_20_ge1p5,voltrend,20,yesno,avg volume 2nd half of lb / 1st half >= 1.5 (lb=20),mean V(last lb/2)/mean V(first lb/2) >= 1.5,yes|no,voltrend_20,>=,1.5
+ph_rgvol_20_ge0p67,rgvol,20,yesno,avg green-day volume / avg red-day volume within lb >= 0.67 (lb=20),mean V|C>O / mean V|C<O >= 0.67,yes|no,rgvol_20,>=,0.67
+ph_rgvol_20_ge1p0,rgvol,20,yesno,avg green-day volume / avg red-day volume within lb >= 1.0 (lb=20),mean V|C>O / mean V|C<O >= 1.0,yes|no,rgvol_20,>=,1.0
+ph_rgvol_20_ge1p5,rgvol,20,yesno,avg green-day volume / avg red-day volume within lb >= 1.5 (lb=20),mean V|C>O / mean V|C<O >= 1.5,yes|no,rgvol_20,>=,1.5
+ph_slope_20_gt0,slope,20,yesno,OLS slope of log close over lb is positive > 0 (lb=20),"polyfit(arange(lb),log C,1)[0] > 0",yes|no,slope_20,>,0
+ph_accel_20_gt0,accel,20,yesno,slope of 2nd half of lb minus slope of 1st half > 0 (accelerating) > 0 (lb=20),slope(last half)-slope(first half) > 0,yes|no,accel_20,>,0
+ph_slopeflip_20_eq1,slopeflip,20,yesno,sign of 2nd-half slope differs from 1st-half slope == 1 (lb=20),sign(s2)!=sign(s1) == 1,yes|no,slopeflip_20,==,1
+ph_recov_20_ge0p5,recov,20,yesno,recovery from post-peak trough toward lb peak >= 0.5 (lb=20),"(C-trough)/(maxH-trough), trough=min L after peak >= 0.5",yes|no,recov_20,>=,0.5
+ph_recov_20_ge1p0,recov,20,yesno,recovery from post-peak trough toward lb peak >= 1.0 (lb=20),"(C-trough)/(maxH-trough), trough=min L after peak >= 1.0",yes|no,recov_20,>=,1.0
+ph_recovspd_20_le2,recovspd,20,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 2 (lb=20),days since trough if recov>=0.5 else inf <= 2,yes|no,recovspd_20,<=,2
+ph_recovspd_20_le5,recovspd,20,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 5 (lb=20),days since trough if recov>=0.5 else inf <= 5,yes|no,recovspd_20,<=,5
+ph_gapup_20_ge1,gapup,20,yesno,gap-ups >2% (O/prevC-1) within lb >= 1 (lb=20),count O/C[-1]-1>0.02 >= 1,yes|no,gapup_20,>=,1
+ph_gapup_20_ge2,gapup,20,yesno,gap-ups >2% (O/prevC-1) within lb >= 2 (lb=20),count O/C[-1]-1>0.02 >= 2,yes|no,gapup_20,>=,2
+ph_gapdn_20_ge1,gapdn,20,yesno,gap-downs >2% within lb >= 1 (lb=20),count O/C[-1]-1<-0.02 >= 1,yes|no,gapdn_20,>=,1
+ph_gapdn_20_ge2,gapdn,20,yesno,gap-downs >2% within lb >= 2 (lb=20),count O/C[-1]-1<-0.02 >= 2,yes|no,gapdn_20,>=,2
+ph_rngexp_20_ge0p67,rngexp,20,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 0.67 (lb=20),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 0.67,yes|no,rngexp_20,>=,0.67
+ph_rngexp_20_ge1p0,rngexp,20,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.0 (lb=20),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.0,yes|no,rngexp_20,>=,1.0
+ph_rngexp_20_ge1p5,rngexp,20,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.5 (lb=20),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.5,yes|no,rngexp_20,>=,1.5
+ph_swing_20_label,swing,20,label,swing structure: max-high & min-low of 2nd half vs 1st half of lb (lb=20),H2>H1?HH:LH + L2>L1?HL:LL,HH_HL|HH_LL|LH_HL|LH_LL,swing_20,label,
+ph_swing_20_HH_HL,swing,20,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_HL (lb=20),label==HH_HL,yes|no,swing_20,==,HH_HL
+ph_swing_20_HH_LL,swing,20,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_LL (lb=20),label==HH_LL,yes|no,swing_20,==,HH_LL
+ph_swing_20_LH_HL,swing,20,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_HL (lb=20),label==LH_HL,yes|no,swing_20,==,LH_HL
+ph_swing_20_LH_LL,swing,20,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_LL (lb=20),label==LH_LL,yes|no,swing_20,==,LH_LL
+ph_dsh_20_label,dsh,20,label,"days since lb-high, as fraction of lb (lb=20)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsh_20,label,
+ph_dsh_20_0,dsh,20,yesno,"days since lb-high, as fraction of lb == 0 (lb=20)",label==0,yes|no,dsh_20,==,0
+ph_dsh_20_le25pct,dsh,20,yesno,"days since lb-high, as fraction of lb == le25pct (lb=20)",label==le25pct,yes|no,dsh_20,==,le25pct
+ph_dsh_20_le50pct,dsh,20,yesno,"days since lb-high, as fraction of lb == le50pct (lb=20)",label==le50pct,yes|no,dsh_20,==,le50pct
+ph_dsh_20_le100pct,dsh,20,yesno,"days since lb-high, as fraction of lb == le100pct (lb=20)",label==le100pct,yes|no,dsh_20,==,le100pct
+ph_dsl_20_label,dsl,20,label,"days since lb-low, as fraction of lb (lb=20)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsl_20,label,
+ph_dsl_20_0,dsl,20,yesno,"days since lb-low, as fraction of lb == 0 (lb=20)",label==0,yes|no,dsl_20,==,0
+ph_dsl_20_le25pct,dsl,20,yesno,"days since lb-low, as fraction of lb == le25pct (lb=20)",label==le25pct,yes|no,dsl_20,==,le25pct
+ph_dsl_20_le50pct,dsl,20,yesno,"days since lb-low, as fraction of lb == le50pct (lb=20)",label==le50pct,yes|no,dsl_20,==,le50pct
+ph_dsl_20_le100pct,dsl,20,yesno,"days since lb-low, as fraction of lb == le100pct (lb=20)",label==le100pct,yes|no,dsl_20,==,le100pct
+ph_disth_20_label,disth,20,label,distance below lb high in pct (lb=20),"bins [-1, 0.02, 0.05, 0.1, 0.2, 9] right-closed",lt2|2to5|5to10|10to20|gt20,disth_20,label,
+ph_disth_20_lt2,disth,20,yesno,distance below lb high in pct == lt2 (lb=20),label==lt2,yes|no,disth_20,==,lt2
+ph_disth_20_2to5,disth,20,yesno,distance below lb high in pct == 2to5 (lb=20),label==2to5,yes|no,disth_20,==,2to5
+ph_disth_20_5to10,disth,20,yesno,distance below lb high in pct == 5to10 (lb=20),label==5to10,yes|no,disth_20,==,5to10
+ph_disth_20_10to20,disth,20,yesno,distance below lb high in pct == 10to20 (lb=20),label==10to20,yes|no,disth_20,==,10to20
+ph_disth_20_gt20,disth,20,yesno,distance below lb high in pct == gt20 (lb=20),label==gt20,yes|no,disth_20,==,gt20
+ph_dipatr_20_label,dipatr,20,label,dip depth from lb high to post-peak trough in ATR14 units (lb=20),"bins [-1, 1, 2, 4, 1000000000.0] right-closed",lt1|1to2|2to4|gt4,dipatr_20,label,
+ph_dipatr_20_lt1,dipatr,20,yesno,dip depth from lb high to post-peak trough in ATR14 units == lt1 (lb=20),label==lt1,yes|no,dipatr_20,==,lt1
+ph_dipatr_20_1to2,dipatr,20,yesno,dip depth from lb high to post-peak trough in ATR14 units == 1to2 (lb=20),label==1to2,yes|no,dipatr_20,==,1to2
+ph_dipatr_20_2to4,dipatr,20,yesno,dip depth from lb high to post-peak trough in ATR14 units == 2to4 (lb=20),label==2to4,yes|no,dipatr_20,==,2to4
+ph_dipatr_20_gt4,dipatr,20,yesno,dip depth from lb high to post-peak trough in ATR14 units == gt4 (lb=20),label==gt4,yes|no,dipatr_20,==,gt4
+ph_pctbmean_20_label,pctbmean,20,label,"mean %B(20,2) over lb (lb=20)","bins [-1000000000.0, 0, 0.2, 0.5, 0.8, 1, 1000000000.0] right-closed",lt0|0to20|20to50|50to80|80to100|gt100,pctbmean_20,label,
+ph_pctbmean_20_lt0,pctbmean,20,yesno,"mean %B(20,2) over lb == lt0 (lb=20)",label==lt0,yes|no,pctbmean_20,==,lt0
+ph_pctbmean_20_0to20,pctbmean,20,yesno,"mean %B(20,2) over lb == 0to20 (lb=20)",label==0to20,yes|no,pctbmean_20,==,0to20
+ph_pctbmean_20_20to50,pctbmean,20,yesno,"mean %B(20,2) over lb == 20to50 (lb=20)",label==20to50,yes|no,pctbmean_20,==,20to50
+ph_pctbmean_20_50to80,pctbmean,20,yesno,"mean %B(20,2) over lb == 50to80 (lb=20)",label==50to80,yes|no,pctbmean_20,==,50to80
+ph_pctbmean_20_80to100,pctbmean,20,yesno,"mean %B(20,2) over lb == 80to100 (lb=20)",label==80to100,yes|no,pctbmean_20,==,80to100
+ph_pctbmean_20_gt100,pctbmean,20,yesno,"mean %B(20,2) over lb == gt100 (lb=20)",label==gt100,yes|no,pctbmean_20,==,gt100
+ph_upstreak_60_ge2,upstreak,60,yesno,longest run of consecutive up closes within lb >= 2 (lb=60),max consecutive close>prevclose in window >= 2,yes|no,upstreak_60,>=,2
+ph_upstreak_60_ge3,upstreak,60,yesno,longest run of consecutive up closes within lb >= 3 (lb=60),max consecutive close>prevclose in window >= 3,yes|no,upstreak_60,>=,3
+ph_upstreak_60_ge5,upstreak,60,yesno,longest run of consecutive up closes within lb >= 5 (lb=60),max consecutive close>prevclose in window >= 5,yes|no,upstreak_60,>=,5
+ph_dnstreak_60_ge2,dnstreak,60,yesno,longest run of consecutive down closes within lb >= 2 (lb=60),max consecutive close<prevclose in window >= 2,yes|no,dnstreak_60,>=,2
+ph_dnstreak_60_ge3,dnstreak,60,yesno,longest run of consecutive down closes within lb >= 3 (lb=60),max consecutive close<prevclose in window >= 3,yes|no,dnstreak_60,>=,3
+ph_dnstreak_60_ge5,dnstreak,60,yesno,longest run of consecutive down closes within lb >= 5 (lb=60),max consecutive close<prevclose in window >= 5,yes|no,dnstreak_60,>=,5
+ph_ddrun_60_ge0p25,ddrun,60,yesno,pullback from lb peak as share of the run into that peak >= 0.25 (lb=60),(maxH-C)/(maxH-min L before peak) >= 0.25,yes|no,ddrun_60,>=,0.25
+ph_ddrun_60_ge0p5,ddrun,60,yesno,pullback from lb peak as share of the run into that peak >= 0.5 (lb=60),(maxH-C)/(maxH-min L before peak) >= 0.5,yes|no,ddrun_60,>=,0.5
+ph_ddrun_60_ge0p75,ddrun,60,yesno,pullback from lb peak as share of the run into that peak >= 0.75 (lb=60),(maxH-C)/(maxH-min L before peak) >= 0.75,yes|no,ddrun_60,>=,0.75
+ph_bbup_60_ge1,bbup,60,yesno,"closes at/above upper BB(20,2) within lb >= 1 (lb=60)",count C>=SMA20+2sd20 >= 1,yes|no,bbup_60,>=,1
+ph_bbup_60_ge3,bbup,60,yesno,"closes at/above upper BB(20,2) within lb >= 3 (lb=60)",count C>=SMA20+2sd20 >= 3,yes|no,bbup_60,>=,3
+ph_bbdn_60_ge1,bbdn,60,yesno,"closes at/below lower BB(20,2) within lb >= 1 (lb=60)",count C<=SMA20-2sd20 >= 1,yes|no,bbdn_60,>=,1
+ph_bbdn_60_ge3,bbdn,60,yesno,"closes at/below lower BB(20,2) within lb >= 3 (lb=60)",count C<=SMA20-2sd20 >= 3,yes|no,bbdn_60,>=,3
+ph_voltrend_60_ge0p8,voltrend,60,yesno,avg volume 2nd half of lb / 1st half >= 0.8 (lb=60),mean V(last lb/2)/mean V(first lb/2) >= 0.8,yes|no,voltrend_60,>=,0.8
+ph_voltrend_60_ge1p25,voltrend,60,yesno,avg volume 2nd half of lb / 1st half >= 1.25 (lb=60),mean V(last lb/2)/mean V(first lb/2) >= 1.25,yes|no,voltrend_60,>=,1.25
+ph_voltrend_60_ge1p5,voltrend,60,yesno,avg volume 2nd half of lb / 1st half >= 1.5 (lb=60),mean V(last lb/2)/mean V(first lb/2) >= 1.5,yes|no,voltrend_60,>=,1.5
+ph_rgvol_60_ge0p67,rgvol,60,yesno,avg green-day volume / avg red-day volume within lb >= 0.67 (lb=60),mean V|C>O / mean V|C<O >= 0.67,yes|no,rgvol_60,>=,0.67
+ph_rgvol_60_ge1p0,rgvol,60,yesno,avg green-day volume / avg red-day volume within lb >= 1.0 (lb=60),mean V|C>O / mean V|C<O >= 1.0,yes|no,rgvol_60,>=,1.0
+ph_rgvol_60_ge1p5,rgvol,60,yesno,avg green-day volume / avg red-day volume within lb >= 1.5 (lb=60),mean V|C>O / mean V|C<O >= 1.5,yes|no,rgvol_60,>=,1.5
+ph_slope_60_gt0,slope,60,yesno,OLS slope of log close over lb is positive > 0 (lb=60),"polyfit(arange(lb),log C,1)[0] > 0",yes|no,slope_60,>,0
+ph_accel_60_gt0,accel,60,yesno,slope of 2nd half of lb minus slope of 1st half > 0 (accelerating) > 0 (lb=60),slope(last half)-slope(first half) > 0,yes|no,accel_60,>,0
+ph_slopeflip_60_eq1,slopeflip,60,yesno,sign of 2nd-half slope differs from 1st-half slope == 1 (lb=60),sign(s2)!=sign(s1) == 1,yes|no,slopeflip_60,==,1
+ph_recov_60_ge0p5,recov,60,yesno,recovery from post-peak trough toward lb peak >= 0.5 (lb=60),"(C-trough)/(maxH-trough), trough=min L after peak >= 0.5",yes|no,recov_60,>=,0.5
+ph_recov_60_ge1p0,recov,60,yesno,recovery from post-peak trough toward lb peak >= 1.0 (lb=60),"(C-trough)/(maxH-trough), trough=min L after peak >= 1.0",yes|no,recov_60,>=,1.0
+ph_recovspd_60_le2,recovspd,60,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 2 (lb=60),days since trough if recov>=0.5 else inf <= 2,yes|no,recovspd_60,<=,2
+ph_recovspd_60_le5,recovspd,60,yesno,days from post-peak trough to now (fast recovery) with recov>=0.5 <= 5 (lb=60),days since trough if recov>=0.5 else inf <= 5,yes|no,recovspd_60,<=,5
+ph_gapup_60_ge1,gapup,60,yesno,gap-ups >2% (O/prevC-1) within lb >= 1 (lb=60),count O/C[-1]-1>0.02 >= 1,yes|no,gapup_60,>=,1
+ph_gapup_60_ge2,gapup,60,yesno,gap-ups >2% (O/prevC-1) within lb >= 2 (lb=60),count O/C[-1]-1>0.02 >= 2,yes|no,gapup_60,>=,2
+ph_gapdn_60_ge1,gapdn,60,yesno,gap-downs >2% within lb >= 1 (lb=60),count O/C[-1]-1<-0.02 >= 1,yes|no,gapdn_60,>=,1
+ph_gapdn_60_ge2,gapdn,60,yesno,gap-downs >2% within lb >= 2 (lb=60),count O/C[-1]-1<-0.02 >= 2,yes|no,gapdn_60,>=,2
+ph_rngexp_60_ge0p67,rngexp,60,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 0.67 (lb=60),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 0.67,yes|no,rngexp_60,>=,0.67
+ph_rngexp_60_ge1p0,rngexp,60,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.0 (lb=60),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.0,yes|no,rngexp_60,>=,1.0
+ph_rngexp_60_ge1p5,rngexp,60,yesno,mean true range last lb / mean TR prior lb (expansion/contraction) >= 1.5 (lb=60),meanTR(t-lb+1..t)/meanTR(t-2lb+1..t-lb) >= 1.5,yes|no,rngexp_60,>=,1.5
+ph_swing_60_label,swing,60,label,swing structure: max-high & min-low of 2nd half vs 1st half of lb (lb=60),H2>H1?HH:LH + L2>L1?HL:LL,HH_HL|HH_LL|LH_HL|LH_LL,swing_60,label,
+ph_swing_60_HH_HL,swing,60,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_HL (lb=60),label==HH_HL,yes|no,swing_60,==,HH_HL
+ph_swing_60_HH_LL,swing,60,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == HH_LL (lb=60),label==HH_LL,yes|no,swing_60,==,HH_LL
+ph_swing_60_LH_HL,swing,60,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_HL (lb=60),label==LH_HL,yes|no,swing_60,==,LH_HL
+ph_swing_60_LH_LL,swing,60,yesno,swing structure: max-high & min-low of 2nd half vs 1st half of lb == LH_LL (lb=60),label==LH_LL,yes|no,swing_60,==,LH_LL
+ph_dsh_60_label,dsh,60,label,"days since lb-high, as fraction of lb (lb=60)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsh_60,label,
+ph_dsh_60_0,dsh,60,yesno,"days since lb-high, as fraction of lb == 0 (lb=60)",label==0,yes|no,dsh_60,==,0
+ph_dsh_60_le25pct,dsh,60,yesno,"days since lb-high, as fraction of lb == le25pct (lb=60)",label==le25pct,yes|no,dsh_60,==,le25pct
+ph_dsh_60_le50pct,dsh,60,yesno,"days since lb-high, as fraction of lb == le50pct (lb=60)",label==le50pct,yes|no,dsh_60,==,le50pct
+ph_dsh_60_le100pct,dsh,60,yesno,"days since lb-high, as fraction of lb == le100pct (lb=60)",label==le100pct,yes|no,dsh_60,==,le100pct
+ph_dsl_60_label,dsl,60,label,"days since lb-low, as fraction of lb (lb=60)","bins [-0.01, 0, 0.25, 0.5, 1.0] right-closed",0|le25pct|le50pct|le100pct,dsl_60,label,
+ph_dsl_60_0,dsl,60,yesno,"days since lb-low, as fraction of lb == 0 (lb=60)",label==0,yes|no,dsl_60,==,0
+ph_dsl_60_le25pct,dsl,60,yesno,"days since lb-low, as fraction of lb == le25pct (lb=60)",label==le25pct,yes|no,dsl_60,==,le25pct
+ph_dsl_60_le50pct,dsl,60,yesno,"days since lb-low, as fraction of lb == le50pct (lb=60)",label==le50pct,yes|no,dsl_60,==,le50pct
+ph_dsl_60_le100pct,dsl,60,yesno,"days since lb-low, as fraction of lb == le100pct (lb=60)",label==le100pct,yes|no,dsl_60,==,le100pct
+ph_disth_60_label,disth,60,label,distance below lb high in pct (lb=60),"bins [-1, 0.02, 0.05, 0.1, 0.2, 9] right-closed",lt2|2to5|5to10|10to20|gt20,disth_60,label,
+ph_disth_60_lt2,disth,60,yesno,distance below lb high in pct == lt2 (lb=60),label==lt2,yes|no,disth_60,==,lt2
+ph_disth_60_2to5,disth,60,yesno,distance below lb high in pct == 2to5 (lb=60),label==2to5,yes|no,disth_60,==,2to5
+ph_disth_60_5to10,disth,60,yesno,distance below lb high in pct == 5to10 (lb=60),label==5to10,yes|no,disth_60,==,5to10
+ph_disth_60_10to20,disth,60,yesno,distance below lb high in pct == 10to20 (lb=60),label==10to20,yes|no,disth_60,==,10to20
+ph_disth_60_gt20,disth,60,yesno,distance below lb high in pct == gt20 (lb=60),label==gt20,yes|no,disth_60,==,gt20
+ph_dipatr_60_label,dipatr,60,label,dip depth from lb high to post-peak trough in ATR14 units (lb=60),"bins [-1, 1, 2, 4, 1000000000.0] right-closed",lt1|1to2|2to4|gt4,dipatr_60,label,
+ph_dipatr_60_lt1,dipatr,60,yesno,dip depth from lb high to post-peak trough in ATR14 units == lt1 (lb=60),label==lt1,yes|no,dipatr_60,==,lt1
+ph_dipatr_60_1to2,dipatr,60,yesno,dip depth from lb high to post-peak trough in ATR14 units == 1to2 (lb=60),label==1to2,yes|no,dipatr_60,==,1to2
+ph_dipatr_60_2to4,dipatr,60,yesno,dip depth from lb high to post-peak trough in ATR14 units == 2to4 (lb=60),label==2to4,yes|no,dipatr_60,==,2to4
+ph_dipatr_60_gt4,dipatr,60,yesno,dip depth from lb high to post-peak trough in ATR14 units == gt4 (lb=60),label==gt4,yes|no,dipatr_60,==,gt4
+ph_pctbmean_60_label,pctbmean,60,label,"mean %B(20,2) over lb (lb=60)","bins [-1000000000.0, 0, 0.2, 0.5, 0.8, 1, 1000000000.0] right-closed",lt0|0to20|20to50|50to80|80to100|gt100,pctbmean_60,label,
+ph_pctbmean_60_lt0,pctbmean,60,yesno,"mean %B(20,2) over lb == lt0 (lb=60)",label==lt0,yes|no,pctbmean_60,==,lt0
+ph_pctbmean_60_0to20,pctbmean,60,yesno,"mean %B(20,2) over lb == 0to20 (lb=60)",label==0to20,yes|no,pctbmean_60,==,0to20
+ph_pctbmean_60_20to50,pctbmean,60,yesno,"mean %B(20,2) over lb == 20to50 (lb=60)",label==20to50,yes|no,pctbmean_60,==,20to50
+ph_pctbmean_60_50to80,pctbmean,60,yesno,"mean %B(20,2) over lb == 50to80 (lb=60)",label==50to80,yes|no,pctbmean_60,==,50to80
+ph_pctbmean_60_80to100,pctbmean,60,yesno,"mean %B(20,2) over lb == 80to100 (lb=60)",label==80to100,yes|no,pctbmean_60,==,80to100
+ph_pctbmean_60_gt100,pctbmean,60,yesno,"mean %B(20,2) over lb == gt100 (lb=60)",label==gt100,yes|no,pctbmean_60,==,gt100

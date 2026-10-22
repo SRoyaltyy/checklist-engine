@@ -1,0 +1,5 @@
+AAPL rows 1258 warm NaN frac max 0.0727 worst ph_rgvol_5_ge0p67
+AAPL 10 dates x (trunc+poisoned D bar) checked
+ALDX rows 1258 warm NaN frac max 0.0576 worst ph_rgvol_5_ge0p67
+ALDX 10 dates x (trunc+poisoned D bar) checked
+LEAK TEST PASS
