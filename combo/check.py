@@ -9,28 +9,37 @@ for v in "AB": C["x"+v] = C["r"+v] - C.groupby("date")["r"+v].transform("mean")
 need = sorted(set(json.load(open("needed_feats.json"))))
 pbn = json.load(open("pb_names.json")); nbn = ["NB2:"+i for i in json.load(open("nb_ids.json"))]
 hn = ["HALT:"+s for s in ["halt_1d","halt_5d","halt_20d","ludp_5d","news_t123_20d","cnt1","cnt2p"]]
-F = np.zeros((len(R), len(names)), np.float32)
+W = {ex: M[ex]["logit"].coef_.ravel() for ex in "AB"}; SC = {ex: np.full(len(R), float(M[ex]["logit"].intercept_[0])) for ex in "AB"}
+TN = set(n for ex in "AB" for n, b in M[ex]["best_leaf"]); TC = {}; NZ = {}
+def put(n, col):
+    col = np.asarray(col, np.float32); NZ[n] = bool(col.any())
+    for ex in "AB": SC[ex] += W[ex][fi[n]] * col
+    if n in TN: TC[n] = col > 0
+PART = {}
+def put_part(n, s, c): PART.setdefault(n, []).append(c)
 pbB = np.load("pb_bits.npy", mmap_mode="r")
 for s in range(0, len(R), 100000):
     U = np.unpackbits(pbB[R[s:s+100000]], axis=1)
     for j, n in enumerate(pbn):
-        if n in fi and n in need: F[s:s+100000, fi[n]] = U[:, j]
+        if n in fi and n in need: put_part(n, s, U[:, j])
+for n, L in PART.items(): put(n, np.concatenate(L))
+del PART
 nbB = np.load("nb2_bits.npy", mmap_mode="r"); haB = np.load("halt_bits.npy", mmap_mode="r")
 for lst, B in ((nbn, nbB), (hn, haB)):
     for j, n in enumerate(lst):
-        if n in fi and n in need: F[:, fi[n]] = B[R, j]
+        if n in fi and n in need: put(n, B[R, j])
 eid = json.load(open("eng_check_ids.json")); EB = np.load("eng_check_yes.npy", mmap_mode="r")
 for j, i in enumerate(eid):
     n = "ENG:"+i
-    if n in fi and n in need: F[:, fi[n]] = EB[ck, j]
-miss = [n for n in need if not F[:, fi[n]].any()]; print("needed", len(need), "all-zero on check", len(miss))
+    if n in fi and n in need: put(n, EB[ck, j])
+miss = [n for n in need if not NZ.get(n, False)]; print("needed", len(need), "all-zero on check", len(miss))
 def inleaf(path):
     m = np.ones(len(R), bool)
-    for n, b in path: m &= (F[:, fi[n]] > 0) == bool(b)
+    for n, b in path: m &= TC[n] == bool(b)
     return m
 rng = np.random.default_rng(13); rows = []
 for ex in "AB":
-    E = M[ex]; sc = E["logit"].decision_function(F)
+    E = M[ex]; sc = SC[ex]
     for rule, m in (("TREE_BEST", inleaf(E["best_leaf"])), ("LOGIT_TOP1", sc >= E["thr1"]), ("LOGIT_TOP10", sc >= E["thr10"])):
         x = C[m]; r = x["r"+ex].values; xx = x["x"+ex].values
         dd = x.groupby("date")["x"+ex].agg(["sum", "count"]); sx, dn = dd["sum"].values, dd["count"].values
