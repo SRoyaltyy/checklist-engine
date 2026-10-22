@@ -1,0 +1,7 @@
+row_id,meaning,lens,indicator,context_lean,source,note
+GK-OPX-IVR-HI,quiet_warning,position: top 20% of own 1y range,IV rank (DoltHub iv_year_low..high),,grok-options,prior not tested; survivors-only; 2020-24 only
+GK-OPX-IVR-LO,bullish,position: bottom 20% of own 1y range,IV rank (DoltHub iv_year_low..high),,grok-options,prior not tested; survivors-only; 2020-24 only
+GK-OPX-IVHV-HI,quiet_warning,fixed threshold,IV/HV > 1.3,,grok-options,prior not tested; survivors-only; 2020-24 only
+GK-OPX-IVHV-LO,bullish,fixed threshold,IV/HV < 0.8,,grok-options,prior not tested; survivors-only; 2020-24 only
+GK-OPX-IVCHG-UP,quiet_warning,change vs prior reading,IV change vs prior DoltHub reading >= +15%,,grok-options,prior not tested; survivors-only; 2020-24 only
+GK-OPX-IVCHG-DN,bullish,change vs prior reading,IV change vs prior DoltHub reading <= -15%,,grok-options,prior not tested; survivors-only; 2020-24 only

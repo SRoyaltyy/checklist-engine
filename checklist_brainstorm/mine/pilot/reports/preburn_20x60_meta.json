@@ -1,0 +1,23 @@
+{
+ "panel": "/workspace/checklist_brainstorm/engine/out/pilot_matrix/preburn/panel_yesno_preburn_james_grok.parquet",
+ "questions": 7027,
+ "yes_rows": 471619,
+ "train": [
+  "2024-01-02",
+  "2024-06-26"
+ ],
+ "test": [
+  "2024-07-03",
+  "2024-12-24"
+ ],
+ "scored": 4416,
+ "clear_test": 556,
+ "clear_families": 348,
+ "clear_both_halves": 92,
+ "n_families_luck": 2141,
+ "bonf_alpha": 2.3353573096683795e-05,
+ "clear_bonf": 145,
+ "label": "pilot; labels not dividend-adjusted; first-look, promote nothing",
+ "clear_test_ge10dates": 13,
+ "clear_bonf_date_clustered": 0
+}

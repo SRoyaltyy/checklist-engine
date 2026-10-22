@@ -1,0 +1,65 @@
+lean cut L5 >= 0.620525062084198
+     period                                state     ex5    lo95    hi95  n_dates    n_obs    raw5                    fresh_src
+0   2020-24                               L5 all -0.0004 -0.0010  0.0001     1212  1065056  0.0017  FRESH_file/approx_countdiff
+1   2020-24           L5 & stock-own jump z>=1.5 -0.0029 -0.0046 -0.0011     1073    44397 -0.0006  FRESH_file/approx_countdiff
+2   2020-24               L5 & stock-own no jump -0.0003 -0.0008  0.0003     1163   959183  0.0013  FRESH_file/approx_countdiff
+3   2020-24  L5 & stock+mkt combined jump z>=1.5 -0.0026 -0.0046 -0.0007     1092    40016 -0.0002  FRESH_file/approx_countdiff
+4   2020-24                L5 & combined no jump -0.0003 -0.0009  0.0002     1203  1007723  0.0018  FRESH_file/approx_countdiff
+5   2020-24                 L5 on mkt-jump dates -0.0028 -0.0049 -0.0006      161    85652 -0.0055  FRESH_file/approx_countdiff
+6      2020                               L5 all -0.0032 -0.0047 -0.0018      219   218882  0.0105  FRESH_file/approx_countdiff
+7      2020           L5 & stock-own jump z>=1.5 -0.0052 -0.0095 -0.0009      188    10641  0.0095  FRESH_file/approx_countdiff
+8      2020               L5 & stock-own no jump -0.0033 -0.0049 -0.0018      210   192317  0.0116  FRESH_file/approx_countdiff
+9      2020  L5 & stock+mkt combined jump z>=1.5 -0.0061 -0.0106 -0.0016      183     9610  0.0085  FRESH_file/approx_countdiff
+10     2020                L5 & combined no jump -0.0033 -0.0048 -0.0017      210   193351  0.0117  FRESH_file/approx_countdiff
+11     2020                 L5 on mkt-jump dates -0.0089 -0.0135 -0.0042       23    18361  0.0063  FRESH_file/approx_countdiff
+12     2021                               L5 all  0.0001 -0.0012  0.0014      252   208021  0.0014                   FRESH_file
+13     2021           L5 & stock-own jump z>=1.5 -0.0033 -0.0069  0.0004      233     7024 -0.0055                   FRESH_file
+14     2021               L5 & stock-own no jump  0.0004 -0.0010  0.0017      242   187091 -0.0007                   FRESH_file
+15     2021  L5 & stock+mkt combined jump z>=1.5 -0.0004 -0.0055  0.0046      234     6411  0.0038                   FRESH_file
+16     2021                L5 & combined no jump  0.0002 -0.0011  0.0015      252   200760  0.0014                   FRESH_file
+17     2021                 L5 on mkt-jump dates -0.0033 -0.0067  0.0002       33    11720  0.0072                   FRESH_file
+18     2022                               L5 all  0.0005 -0.0012  0.0022      245   130441 -0.0086                   FRESH_file
+19     2022           L5 & stock-own jump z>=1.5 -0.0048 -0.0097  0.0000      203     5216 -0.0103                   FRESH_file
+20     2022               L5 & stock-own no jump  0.0002 -0.0015  0.0019      235   120314 -0.0076                   FRESH_file
+21     2022  L5 & stock+mkt combined jump z>=1.5 -0.0058 -0.0113 -0.0003      207     4235 -0.0123                   FRESH_file
+22     2022                L5 & combined no jump  0.0007 -0.0010  0.0024      245   126158 -0.0085                   FRESH_file
+23     2022                 L5 on mkt-jump dates -0.0045 -0.0143  0.0053       31     6959 -0.0110                   FRESH_file
+24     2023                               L5 all -0.0002 -0.0012  0.0007      250   270054  0.0019                   FRESH_file
+25     2023           L5 & stock-own jump z>=1.5 -0.0027 -0.0053 -0.0001      225    11815 -0.0008                   FRESH_file
+26     2023               L5 & stock-own no jump  0.0003 -0.0007  0.0013      240   239130  0.0007                   FRESH_file
+27     2023  L5 & stock+mkt combined jump z>=1.5 -0.0036 -0.0064 -0.0009      236    11929 -0.0027                   FRESH_file
+28     2023                L5 & combined no jump -0.0000 -0.0010  0.0009      250   257887  0.0022                   FRESH_file
+29     2023                 L5 on mkt-jump dates -0.0023 -0.0056  0.0009       36    29817 -0.0123                   FRESH_file
+30     2024                               L5 all  0.0010  0.0002  0.0018      246   237658 -0.0010                   FRESH_file
+31     2024           L5 & stock-own jump z>=1.5  0.0009 -0.0030  0.0047      224     9701 -0.0026                   FRESH_file
+32     2024               L5 & stock-own no jump  0.0009  0.0001  0.0018      236   220331 -0.0006                   FRESH_file
+33     2024  L5 & stock+mkt combined jump z>=1.5  0.0031 -0.0010  0.0072      232     7831 -0.0038                   FRESH_file
+34     2024                L5 & combined no jump  0.0009  0.0001  0.0017      246   229567 -0.0009                   FRESH_file
+35     2024                 L5 on mkt-jump dates  0.0035  0.0004  0.0066       38    18795 -0.0122                   FRESH_file
+     period               state  n_dates    iwm5    lo95    hi95     hit
+0   2020-24            mkt jump      175 -0.0048 -0.0116  0.0019  0.4857
+1   2020-24         no mkt jump     1067  0.0006 -0.0016  0.0028  0.5052
+2   2020-24  jump minus no-jump      175 -0.0055 -0.0126  0.0016     NaN
+3      2020            mkt jump       35 -0.0094 -0.0352  0.0164  0.5143
+4      2020         no mkt jump      208  0.0056 -0.0015  0.0128  0.5529
+5      2020  jump minus no-jump       35 -0.0150 -0.0418  0.0118     NaN
+6      2021            mkt jump       33  0.0086 -0.0027  0.0200  0.6061
+7      2021         no mkt jump      219 -0.0012 -0.0049  0.0026  0.4749
+8      2021  jump minus no-jump       33  0.0098 -0.0021  0.0218     NaN
+9      2022            mkt jump       33 -0.0047 -0.0155  0.0061  0.4242
+10     2022         no mkt jump      218 -0.0059 -0.0109 -0.0009  0.4817
+11     2022  jump minus no-jump       33  0.0012 -0.0106  0.0131     NaN
+12     2023            mkt jump       36 -0.0116 -0.0206 -0.0025  0.3611
+13     2023         no mkt jump      214  0.0024 -0.0015  0.0062  0.5093
+14     2023  jump minus no-jump       36 -0.0140 -0.0238 -0.0042     NaN
+15     2024            mkt jump       38 -0.0061 -0.0180  0.0058  0.5263
+16     2024         no mkt jump      208  0.0026 -0.0015  0.0067  0.5096
+17     2024  jump minus no-jump       38 -0.0087 -0.0213  0.0039     NaN
+year  fresh_src       
+2020  FRESH_file           765216
+      approx_countdiff     143665
+2021  FRESH_file          1019956
+2022  FRESH_file          1096148
+2023  FRESH_file          1126859
+2024  FRESH_file          1181968
+rows 5333812 fin rows 856527

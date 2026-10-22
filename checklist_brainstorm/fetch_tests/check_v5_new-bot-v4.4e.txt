@@ -1,0 +1,18 @@
+# Checklist QA report — PRELIMINARY
+
+Checks: a source, b history_start, c numeric/exact definition, d direction, e known_before_open=Yes, f cross-owner near-dup (>=88%), g BUT twin, h fetch-proven series (qa/src/fetch_proof_*.csv; missing/no_source=FAIL, save_nightly=WARN untestable until ~30 fires), i known_at <= 09:25 ET test day (registry col known_at, was published_at; format D-n HH:MM ET; revised=yes needs first_release_source), j no SEC/EDGAR/filing-derived source (exempt: Finviz export/snapshot, Fed/NYSE/Cboe, fails-to-deliver/FTD), k registry data_form in number|label|date and no parse/extract/transcript/LLM/NLP definitions.
+
+| owner | rows | a | b | c | d | e | f | g | h | i | j | k | h WARN | rows w/ issues | variants | variants w/ gaps |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| James | 9709 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1166 | 0 | 1961 | 1961 |
+| grok-bot-finviz | 2054 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1408 | 0 | 64 | 48 |
+| grok-bot-ratings | 64 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 12 | 12 |
+| manager-bot-numeric-v3 | 336 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 84 | 0 | 4 | 0 |
+| new-bot-v4.4e | 2576 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 656 | 0 | 31 | 18 |
+| theme-radar | 13188 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8234 | 0 | 149 | 4 |
+| trading-bot-taskforce | 43368 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 365 | 23 |
+
+Cross-owner near-duplicate pairs: 0
+
+
+h:untestable until ~30 fires

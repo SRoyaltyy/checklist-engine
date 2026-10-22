@@ -1,0 +1,25 @@
+# Checklist QA report — PRELIMINARY
+
+Checks: a source, b history_start, c numeric/exact definition, d direction, e known_before_open=Yes, f cross-owner near-dup (>=88%), g BUT twin, h fetch-proven series (qa/src/fetch_proof_*.csv; missing/no_source=FAIL, save_nightly=WARN untestable until ~30 fires), i known_at <= 09:25 ET test day (registry col known_at, was published_at; format D-n HH:MM ET; revised=yes needs first_release_source), j no SEC/EDGAR/filing-derived source (exempt: Finviz export/snapshot, Fed/NYSE/Cboe).
+
+| owner | rows | a | b | c | d | e | f | g | h | i | j | h WARN | rows w/ issues | variants | variants w/ gaps |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| James-v5.5c | 8533 | 0 | 0 | 0 | 0 | 0 | 2615 | 0 | 8533 | 0 | 0 | 0 | 8533 | 1791 | 1791 |
+| grok-bot-finviz | 1654 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1654 | 0 | 0 | 0 | 1654 | 60 | 48 |
+| grok-bot-ratings | 64 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 64 | 0 | 0 | 0 | 64 | 12 | 12 |
+| grok-bot-vix-term | 156 | 0 | 0 | 0 | 0 | 0 | 2615 | 0 | 156 | 0 | 0 | 0 | 156 | 6 | 6 |
+| james_tv_tags | 7794 | 7794 | 7794 | 7794 | 7794 | 7794 | 0 | 0 | 7794 | 0 | 0 | 0 | 7794 | 1 | 1 |
+| manager-bot-numeric-v3 | 336 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 336 | 0 | 0 | 0 | 336 | 4 | 0 |
+| new-bot-v4.4g | 650 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 650 | 0 | 0 | 0 | 650 | 31 | 18 |
+| new-bot_tradingview_tags | 2576 | 2576 | 2576 | 2576 | 2576 | 2576 | 0 | 0 | 2576 | 0 | 0 | 0 | 2576 | 31 | 31 |
+| taskforce_tradingview_tags | 54591 | 54591 | 54591 | 54591 | 54591 | 54591 | 0 | 54591 | 54591 | 0 | 0 | 0 | 54591 | 365 | 365 |
+| theme-radar | 13188 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 13188 | 0 | 0 | 0 | 13188 | 149 | 4 |
+| theme_radar_tv_tags | 13188 | 13188 | 13188 | 13188 | 13188 | 13188 | 0 | 0 | 13188 | 0 | 0 | 0 | 13188 | 149 | 149 |
+| trading-bot-taskforce | 43326 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 43326 | 0 | 116 | 0 | 43326 | 365 | 23 |
+| trading-bot-taskforce-timeframes | 224 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 224 | 0 | 0 | 0 | 224 | 48 | 48 |
+| tradingview_master | 296 | 0 | 296 | 296 | 296 | 296 | 0 | 295 | 296 | 0 | 0 | 0 | 296 | 295 | 295 |
+
+Cross-owner near-duplicate pairs: 2615
+
+- James-v5.5c:MKT-JA-007 ~ grok-bot-vix-term:MKT-JA-007 (100%)
+h:not_fetch_proven

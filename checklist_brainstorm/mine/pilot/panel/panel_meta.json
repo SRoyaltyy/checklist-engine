@@ -1,0 +1,18 @@
+{
+  "cut": "grok_preburn_james_grok",
+  "source": "/workspace/checklist_brainstorm/engine/out/pilot_matrix/preburn/panel_yesno_preburn_james_grok.parquet",
+  "n_tickers": 2,
+  "n_sessions": 60,
+  "tickers": [
+    "AAPL",
+    "NVDA"
+  ],
+  "date_min": "2024-01-02",
+  "date_max": "2024-12-24",
+  "n_yes": 32084,
+  "n_unique_row_ids": 3825,
+  "selection_ready": true,
+  "burned_excluded": true,
+  "primary_label": "ret_open_next_open",
+  "fees_bp_side": 10
+}

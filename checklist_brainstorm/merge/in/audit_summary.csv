@@ -1,0 +1,593 @@
+flag,owner,id,variant,detail
+variant_dup_cross_owner,taskforce+theme-radar,,atr14 % of price,"{'taskforce': 20, 'theme-radar': 34}"
+variant_dup_cross_owner,taskforce+theme-radar,,rsi14,"{'taskforce': 20, 'theme-radar': 20}"
+series_two_owners,taskforce+theme-radar,,RSI14,
+series_two_owners,taskforce+theme-radar,,ATR14 % of price,
+sec_news_text_source,taskforce,PV-TFC-1181,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1182,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1183,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1184,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1185,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1186,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1187,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1188,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1189,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1190,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1191,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1192,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1193,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1194,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1195,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1196,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1197,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1198,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1199,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+sec_news_text_source,taskforce,PV-TFC-1200,Halted (any code),"Finviz Elite / Nasdaq halts | matched ""news-pending"" halt code; Nasdaq halts feed, not a news source (low risk)"
+works_after_0806_snapshot,theme-radar,THM-TR-01057-C,"Sector perf rank (1d perf, 1=best of 11)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01057-C,"Sector perf rank (1d perf, 1=best of 11)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01058-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01058-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01069-C,"Sector perf rank (1d perf, 1=best of 11)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01069-C,"Sector perf rank (1d perf, 1=best of 11)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01070-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01070-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01141-C,"Sector perf rank (1d perf, 1=best of 11)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01141-C,"Sector perf rank (1d perf, 1=best of 11)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01142-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01142-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01153-C,"Sector perf rank (1d perf, 1=best of 11)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01153-C,"Sector perf rank (1d perf, 1=best of 11)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01154-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01154-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01177-C,"Sector perf rank (1d perf, 1=best of 11)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01177-C,"Sector perf rank (1d perf, 1=best of 11)",works|works
+works_after_0806_snapshot,theme-radar,THM-TR-01178-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)","2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,THM-TR-01178-BUT-C,"Sector perf rank (1d perf, 1=best of 11) (BUT mirror)",works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00001-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00001-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00002-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00002-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00013-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00013-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00014-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00014-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00025-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00025-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00026-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00026-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00037-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00037-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00038-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00038-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00049-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00049-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00050-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00050-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00061-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00061-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00062-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00062-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00073-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00073-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00074-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00074-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00085-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00085-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00086-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00086-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00097-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00097-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00098-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00098-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00121-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00121-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00122-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00122-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00133-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00133-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00134-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00134-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00145-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00145-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00146-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00146-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00157-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00157-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00158-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00158-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00169-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00169-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00170-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00170-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00181-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00181-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00182-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00182-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00193-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00193-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00194-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00194-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00205-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00205-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00206-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00206-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00217-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00217-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00218-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00218-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00229-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00229-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00230-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00230-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00253-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00253-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00254-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00254-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00265-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00265-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00266-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00266-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00277-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00277-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00278-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00278-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00289-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00289-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00290-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00290-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00301-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00301-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00302-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00302-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00313-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00313-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00314-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00314-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00325-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00325-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00326-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00326-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00337-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00337-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00338-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00338-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00349-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00349-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00350-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00350-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00361-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00361-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00362-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00362-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00385-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00385-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00386-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00386-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00397-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00397-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00398-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00398-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00409-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00409-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00410-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00410-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00421-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00421-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00422-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00422-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00433-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00433-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00434-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00434-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00445-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00445-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00446-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00446-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00457-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00457-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00458-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00458-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00469-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00469-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00470-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00470-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00481-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00481-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00482-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00482-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00493-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00493-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00494-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00494-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00517-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00517-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00518-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00518-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00529-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00529-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00530-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00530-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00541-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00541-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00542-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00542-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00553-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00553-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00554-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00554-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00565-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00565-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00566-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00566-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00577-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00577-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00578-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00578-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00589-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00589-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00590-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00590-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00601-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00601-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00602-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00602-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00613-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00613-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00614-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00614-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00625-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00625-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00626-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00626-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00649-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00649-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00650-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00650-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00661-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00661-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00662-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00662-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00673-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00673-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00674-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00674-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00685-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00685-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00686-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00686-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00697-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00697-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00698-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00698-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00709-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00709-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00710-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00710-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00721-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00721-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00722-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00722-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00733-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00733-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00734-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00734-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00745-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00745-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00746-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00746-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00757-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00757-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00758-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00758-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00781-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00781-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00782-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00782-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00793-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00793-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00794-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00794-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00805-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00805-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00806-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00806-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00817-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00817-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00818-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00818-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00829-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00829-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00830-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00830-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00841-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00841-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00842-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00842-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00853-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00853-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00854-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00854-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00865-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00865-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00866-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00866-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00877-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00877-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00878-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00878-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00889-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00889-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00890-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00890-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00913-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00913-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00914-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00914-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00925-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00925-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00926-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00926-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00937-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00937-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00938-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00938-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00949-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00949-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00950-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00950-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00961-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00961-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00962-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00962-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00973-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00973-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00974-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00974-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00985-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00985-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00986-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00986-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00997-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00997-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-00998-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-00998-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01009-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01009-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01010-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01010-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01021-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01021-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01022-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01022-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01045-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01045-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01046-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01046-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01057-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01057-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01058-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01058-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01069-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01069-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01070-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01070-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01081-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01081-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01082-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01082-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01093-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01093-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01094-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01094-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01105-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01105-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01106-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01106-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01117-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01117-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01118-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01118-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01129-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01129-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01130-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01130-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01141-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01141-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01142-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01142-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01153-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01153-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01154-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01154-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01177-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01177-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-01178-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-01178-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01849-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01849-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01850-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01850-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01861-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01861-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01862-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01862-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01873-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01873-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01874-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01874-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01885-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01885-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01886-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01886-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01897-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01897-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01898-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01898-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01909-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01909-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01910-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01910-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01921-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01921-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01922-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01922-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01933-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01933-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01934-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01934-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01945-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01945-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01946-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01946-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01969-C,Extras: within 3% of all-time high,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01969-C,Extras: within 3% of all-time high,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01970-BUT-C,Extras: within 3% of all-time high (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01970-BUT-C,Extras: within 3% of all-time high (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01981-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01981-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01982-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01982-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01993-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01993-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-01994-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-01994-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02005-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02005-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02006-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02006-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02017-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02017-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02018-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02018-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02029-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02029-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02030-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02030-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02041-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02041-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02042-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02042-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02053-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02053-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02054-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02054-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02065-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02065-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02066-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02066-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02077-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02077-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02078-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02078-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02101-C,Extras: within 10% of all-time low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02101-C,Extras: within 10% of all-time low,works|works
+works_after_0806_snapshot,theme-radar,XTR-TR-02102-BUT-C,Extras: within 10% of all-time low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,XTR-TR-02102-BUT-C,Extras: within 10% of all-time low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0001-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0001-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0001-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0001-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0002-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0002-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0002-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0002-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0013-C,Finviz signal: Top Gainers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0013-C,Finviz signal: Top Gainers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0013-BUT-C,Finviz signal: Top Gainers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0013-BUT-C,Finviz signal: Top Gainers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0016-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0016-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0016-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0016-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0017-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0017-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0017-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0017-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0028-C,Finviz signal: Top Losers,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0028-C,Finviz signal: Top Losers,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0028-BUT-C,Finviz signal: Top Losers (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0028-BUT-C,Finviz signal: Top Losers (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0031-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0031-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0031-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0031-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0032-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0032-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0032-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0032-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0043-C,Finviz signal: New High,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0043-C,Finviz signal: New High,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0043-BUT-C,Finviz signal: New High (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0043-BUT-C,Finviz signal: New High (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0046-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0046-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0046-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0046-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0047-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0047-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0047-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0047-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0058-C,Finviz signal: New Low,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0058-C,Finviz signal: New Low,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0058-BUT-C,Finviz signal: New Low (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0058-BUT-C,Finviz signal: New Low (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0061-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0061-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0061-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0061-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0062-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0062-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0062-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0062-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0073-C,Finviz signal: Most Volatile,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0073-C,Finviz signal: Most Volatile,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0073-BUT-C,Finviz signal: Most Volatile (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0073-BUT-C,Finviz signal: Most Volatile (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0076-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0076-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0076-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0076-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0077-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0077-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0077-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0077-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0088-C,Finviz signal: Most Active,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0088-C,Finviz signal: Most Active,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0088-BUT-C,Finviz signal: Most Active (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0088-BUT-C,Finviz signal: Most Active (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0091-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0091-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0091-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0091-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0092-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0092-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0092-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0092-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0103-C,Finviz signal: Unusual Volume,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0103-C,Finviz signal: Unusual Volume,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0103-BUT-C,Finviz signal: Unusual Volume (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0103-BUT-C,Finviz signal: Unusual Volume (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0106-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0106-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0106-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0106-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0107-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0107-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0107-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0107-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0118-C,Finviz signal: Overbought,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0118-C,Finviz signal: Overbought,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0118-BUT-C,Finviz signal: Overbought (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0118-BUT-C,Finviz signal: Overbought (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0121-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0121-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0121-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0121-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0122-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0122-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0122-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0122-BUT-C,Finviz signal: Oversold (BUT mirror),works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0133-C,Finviz signal: Oversold,"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0133-C,Finviz signal: Oversold,works|works
+works_after_0806_snapshot,theme-radar,SIG-TR-X0133-BUT-C,Finviz signal: Oversold (BUT mirror),"2026-10-21 (data/finviz_extras nightly, theme-radar PR #3)|2026-10-21 (first save per PR #3; not verifiable on main @3843db6) (snapshots); Yahoo backup from 1980-12-12"
+1021_extra_not_save_nightly,theme-radar,SIG-TR-X0133-BUT-C,Finviz signal: Oversold (BUT mirror),works|works

@@ -1,0 +1,82 @@
+effective N (eigen participation ratio) all 140.9 of 459
+avg-linkage clusters |phi|>= 0.8 435   kappa>= 0.8 435
+avg-linkage clusters |phi|>= 0.7 416   kappa>= 0.7 419
+avg-linkage clusters |phi|>= 0.5 353   kappa>= 0.5 365
+avg-linkage clusters |phi|>= 0.3 250   kappa>= 0.3 262
+nearest-neighbour |phi| quantiles [0.15 0.26 0.44 0.59 0.8 ]
+                                         root  sampled_live      eff_n  cl_phi70  cl_kappa80  cl_phi50  cl_phi30
+0          Futures/commodities/FX/crypto bars            65  48.200001        65          65        60        45
+1      Options-implied (VIX family, put/call)            30  13.800000        20          23        17        13
+2  Price/volume (Finviz restatement of OHLCV)            92  58.200001        90          92        81        70
+3              Price/volume (stock/ETF OHLCV)           244  73.699997       216         230       179       120
+4                      Treasury yields (FRED)            28  18.700001        28          28        23        17
+                     family   n  mean_abs_phi  share_pairs_gt50      eff_n  cl50
+6                    Credit   4         0.456             0.333   2.400000     2
+7                    Crypto   5         0.353             0.100   3.200000     4
+21                    Rates   8         0.344             0.143   4.100000     4
+5               Commodities  15         0.172             0.029   9.200000    12
+14              Options/vol  16         0.159             0.167   6.600000     6
+22        Relative strength  12         0.139             0.045   8.000000     9
+17          Overlap/MA (TA)  13         0.136             0.038   8.500000    10
+19                 Position  13         0.128             0.051   9.000000    10
+16      Overbought/oversold  13         0.112             0.000  10.400000    13
+9                       Gap  17         0.102             0.022  12.000000    14
+25       Stretch/exhaustion  13         0.101             0.026   9.900000    11
+11            Momentum (TA)  13         0.100             0.026   9.500000    11
+30              Volume (TA)  12         0.100             0.015   9.100000    11
+13           Moving average  13         0.098             0.000  10.600000    13
+4               Candlestick  13         0.096             0.000  10.900000    13
+29                   Volume  14         0.083             0.022  10.700000    12
+26               Trend (TA)  13         0.081             0.026  10.500000    11
+12               Money flow  13         0.080             0.013  10.600000    12
+28          Volatility (TA)  12         0.069             0.015  10.500000    11
+23                     Risk   4         0.067             0.000   3.800000     4
+20              Prior close   4         0.066             0.000   3.900000     4
+10                       MA  12         0.065             0.030   9.900000    11
+18              Performance  12         0.056             0.000  11.000000    12
+24           Statistic (TA)  13         0.054             0.000  11.900000    13
+1             52-week / ATH  13         0.049             0.013  11.800000    12
+27               Volatility  21         0.041             0.005  18.700001    20
+0                       50d   8         0.031             0.000   7.900000     8
+8                Exhaustion  25         0.029             0.000  23.400000    25
+15                  Outlier  92         0.025             0.003  64.900002    85
+2                       52w   8         0.017             0.000   8.000000     8
+3   Candle pattern (TA-Lib)   7         0.009             0.000   7.000000     7
+249 75
+                 a                      b       phi     kappa         oa           ob                                   va                                 vb             la                   lb
+23656  PV-TFC-0222     PRC-TR-00038-BUT-C  0.703888  0.685072  taskforce  theme-radar     Overnight gap % (completed, D-1)         Opening gap % (BUT mirror)    level (BUT)                cross
+64033  PV-TFC-0702     VOL-TR-00038-BUT-C  0.675942  0.665481  taskforce  theme-radar  Relative volume (V/SMA50, own bars)       Relative volume (BUT mirror)    level (BUT)                cross
+30766  PV-TFC-0261         PRC-TR-01225-C  0.632752  0.595808  taskforce  theme-radar            Change from open (Finviz)   Prior-session change from open %          level                cross
+16272  PV-TFC-0267         PRC-TR-00325-C  0.630209  0.626704  taskforce  theme-radar            Change from open (Finviz)               Prior close change %      div_price  divergence vs price
+40818  PV-TFC-2005         TEC-TR-01249-C  0.585073  0.510032  taskforce  theme-radar               Consecutive red closes                               Beta         change  divergence vs price
+40819  PV-TFC-2005     TEC-TR-01250-BUT-C -0.572289 -0.519356  taskforce  theme-radar               Consecutive red closes                  Beta (BUT mirror)         change  divergence vs price
+70355  PV-TFC-0263         PRC-TR-01225-C  0.559447  0.529763  taskforce  theme-radar            Change from open (Finviz)   Prior-session change from open %        extreme                cross
+23260  PV-TFC-0204     PRC-TR-00302-BUT-C  0.554694  0.505489  taskforce  theme-radar                         Daily return  Prior close change % (BUT mirror)  extreme (BUT)                cross
+23702  PV-TFC-0222  nb4-BRW-NB-057-W0-EVT  0.545714  0.493307  taskforce      new-bot     Overnight gap % (completed, D-1)                      SSR triggered    level (BUT)         event window
+5389   PV-TFC-2244     PRC-TR-00302-BUT-C  0.542144  0.454442  taskforce  theme-radar          Days since last 3% pullback  Prior close change % (BUT mirror)  extreme (BUT)                cross
+                      a                b       phi     kappa         oa         ob                             va                             vb                la                lb
+9052        PV-TFC-2832      PV-TFC-0732  0.983471  0.983468  taskforce  taskforce  Chande momentum oscillator 14                Up-volume share  div_volume (BUT)  div_volume (BUT)
+9063        PV-TFC-2832      PV-TFC-1372  0.963484  0.963466  taskforce  taskforce  Chande momentum oscillator 14    Close vs SMA50 in ATR units  div_volume (BUT)  div_volume (BUT)
+35750       PV-TFC-4988      PV-TFC-4928  0.961308  0.960898  taskforce  taskforce               Volume heatmap z  Price-volume (C*V) vs own avg   div_price (BUT)   div_price (BUT)
+18030       PV-TFC-3372      PV-TFC-1372  0.952337  0.952312  taskforce  taskforce               Close vs TRIMA20    Close vs SMA50 in ATR units  div_volume (BUT)  div_volume (BUT)
+8990        PV-TFC-2832      PV-TFC-3372  0.949398  0.949398  taskforce  taskforce  Chande momentum oscillator 14               Close vs TRIMA20  div_volume (BUT)  div_volume (BUT)
+41931       PV-TFC-0732      PV-TFC-1372  0.948302  0.948264  taskforce  taskforce                Up-volume share    Close vs SMA50 in ATR units  div_volume (BUT)  div_volume (BUT)
+18019       PV-TFC-3372      PV-TFC-0732  0.933539  0.933537  taskforce  taskforce               Close vs TRIMA20                Up-volume share  div_volume (BUT)  div_volume (BUT)
+23777       PV-TFC-2765      PV-TFC-0485  0.931323  0.930712  taskforce  taskforce         PPO(12,26,9) histogram       MACD histogram (12,26,9)            change            change
+31655       PV-TFC-0331      PV-TFC-0631  0.931099  0.931054  taskforce  taskforce                Close vs SMA200          Distance from 52w low        div_volume        div_volume
+37650       PV-TFC-2811      PV-TFC-2971  0.924765  0.924752  taskforce  taskforce       Balance of power (SMA14)     Intraday momentum index 14        div_volume        div_volume
+81240   MKT-JA-1694-BUT  MKT-JA-1672-BUT  0.878242  0.877947      james      james                    VIX3M (BUT)                    VIX9D (BUT)         Timeframe         Timeframe
+31576       PV-TFC-0331      PV-TFC-3331  0.877415  0.877097  taskforce  taskforce                Close vs SMA200         Close vs KAMA(10,2,30)        div_volume        div_volume
+77616   MKT-JA-1686-BUT  MKT-JA-1664-BUT  0.876066  0.874950      james      james                    VIX3M (BUT)                    VIX9D (BUT)         Timeframe         Timeframe
+91250   MKT-JA-1688-BUT  MKT-JA-1666-BUT  0.871351  0.871348      james      james                    VIX3M (BUT)                    VIX9D (BUT)         Timeframe         Timeframe
+32418       PV-TFC-3331      PV-TFC-0631  0.870644  0.870054  taskforce  taskforce         Close vs KAMA(10,2,30)          Distance from 52w low        div_volume        div_volume
+39440       PV-TFC-1445      PV-TFC-3385  0.869942  0.867913  taskforce  taskforce    Close vs EMA20 in ATR units                 Close vs WMA20            change            change
+30825       PV-TFC-2830      PV-TFC-0330  0.866669  0.866594  taskforce  taskforce  Chande momentum oscillator 14                Close vs SMA200  div_sector (BUT)  div_sector (BUT)
+10804       PV-TFC-3395      PV-TFC-3375  0.852652  0.852651  taskforce  taskforce                 Close vs WMA20               Close vs TRIMA20       rank_market       rank_market
+87195       MKT-JA-1687       MKT-JA-079  0.849784  0.849688      james      james                          VIX3M                            VIX         Timeframe         Timeframe
+97995        MKT-JA-087      MKT-JA-1695  0.849248  0.849000      james      james                            VIX                          VIX3M         Timeframe         Timeframe
+70920       PV-TFC-0286      PV-TFC-0406  0.842148  0.841909  taskforce  taskforce                 Close vs SMA20                          RSI14      change (BUT)      change (BUT)
+94233   MKT-JA-1691-BUT  MKT-JA-1669-BUT  0.840446  0.840241      james      james                    VIX3M (BUT)                    VIX9D (BUT)         Timeframe         Timeframe
+102411       MKT-JA-081      MKT-JA-1689  0.837316  0.837069      james      james                            VIX                          VIX3M         Timeframe         Timeframe
+50875       PV-TFC-3385      PV-TFC-0305  0.834676  0.834674  taskforce  taskforce                 Close vs WMA20                 Close vs SMA50            change            change
+2456        PV-TFC-0338      PV-TFC-1378  0.831954  0.831949  taskforce  taskforce                Close vs SMA200    Close vs SMA50 in ATR units       cross (BUT)       cross (BUT)

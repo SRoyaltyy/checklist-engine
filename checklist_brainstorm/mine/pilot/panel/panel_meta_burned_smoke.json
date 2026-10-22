@@ -1,0 +1,9 @@
+{
+  "cut": "seed:50pair_answers_intersect_universe_sessions",
+  "source": "dumps:engine/out/50pair(+r2)",
+  "n_tickers": 22,
+  "n_sessions": 16,
+  "n_labeled": 48926,
+  "n_unique_row_ids": 7578,
+  "note": "Sparse: mostly 1 date/ticker from answer_engine_50pair. Thin james run densifies."
+}

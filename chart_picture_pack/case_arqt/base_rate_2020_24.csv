@@ -1,0 +1,4 @@
+profile,n,n_days,n_tickers,share_rally_ge20,share_up_ge10,share_fell,share_fell_le_m10,win_after_fee,mean_after_fee,median_after_fee,mean_vs_control,median_vs_control,mean_vs_ctrl_2020,mean_vs_ctrl_2021,mean_vs_ctrl_2022,mean_vs_ctrl_2023,mean_vs_ctrl_2024
+ARQT_Oct6-7_pullback,6596,913,2470,0.0552,0.1898,0.4629,0.1201,0.5102,0.0110,0.0023,0.0052,0.0007,-0.0128,0.0115,0.0006,0.0054,0.0060
+ARQT_Oct9_breakout,12124,964,2952,0.0521,0.1807,0.4678,0.1284,0.5066,0.0081,0.0016,0.0048,-0.0002,0.0063,0.0086,0.0017,0.0020,0.0046
+ALL_stock_days,4943845,1223,4762,0.0833,0.1958,0.4992,0.2031,0.4683,-0.0020,-0.0060,-0.0000,-0.0055,0.0000,0.0000,0.0000,0.0000,-0.0000

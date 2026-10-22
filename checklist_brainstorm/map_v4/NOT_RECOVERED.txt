@@ -1,0 +1,1 @@
+map v4 (f10a3103…d382) NOT on Drive (FRIDAY_LOCK_INDEX lists Drive '—'); not recovered.

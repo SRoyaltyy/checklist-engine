@@ -1,0 +1,38 @@
+{
+ "year": 2020,
+ "sessions": 253,
+ "universe": 5423,
+ "tickers_with_any": 1306,
+ "cells_ready": 298336,
+ "cells_fresh": 178647,
+ "cells_stale": 119689,
+ "per_id_yes_ready": {
+  "GK-OPX-IVR-HI": [
+   17410,
+   288526
+  ],
+  "GK-OPX-IVR-LO": [
+   83640,
+   288526
+  ],
+  "GK-OPX-IVHV-HI": [
+   85658,
+   298290
+  ],
+  "GK-OPX-IVHV-LO": [
+   65734,
+   298290
+  ],
+  "GK-OPX-IVCHG-UP": [
+   24372,
+   291194
+  ],
+  "GK-OPX-IVCHG-DN": [
+   17938,
+   291194
+  ]
+ },
+ "dolthub_dates": 155,
+ "dolthub_symbols": 1723,
+ "symbols_unmatched": 417
+}

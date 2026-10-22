@@ -1,0 +1,192 @@
+[
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1792000000&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 11552,
+  "sample_value": "first=1980-12-12 last_close=342.9599914550781 events={'dividends': 92, 'splits': 5}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=0&period2=1792000000&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 10226,
+  "sample_value": "first=1986-03-13 last_close=533.6900024414062 events={'dividends': 91, 'splits': 9}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=0&period2=1792000000&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 8485,
+  "sample_value": "first=1993-01-29 last_close=769.5999755859375 events={'dividends': 136}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261020.txt",
+  "note": "CNMSshvol20261020",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20250102.txt",
+  "note": "CNMSshvol20250102",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20100104.txt",
+  "note": "CNMSshvol20100104",
+  "http_status": 403,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 403"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20090803.txt",
+  "note": "CNMSshvol20090803",
+  "http_status": 403,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 403"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNSQshvol20261020.txt",
+  "note": "FNSQshvol20261020",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNYXshvol20261020.txt",
+  "note": "FNYXshvol20261020",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNQCshvol20261020.txt",
+  "note": "FNQCshvol20261020",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNRAshvol20261020.txt",
+  "note": "FNRAshvol20261020",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "no AAPL",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "regsho_threshold",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20261020.txt",
+  "note": "20261020",
+  "http_status": 200,
+  "rows": 80,
+  "sample_value": "AAPD|DIREXION SHS ETF TR DAILY AAPL|G|Y|N|",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=AAPL",
+  "note": "",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "{'Shs Float': '14.58B', 'Shs Outstand': '14.61B'} ind=['consumerelectronics']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=TSLA",
+  "note": "",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "{'Shs Float': '2.82B', 'Shs Outstand': '3.95B'} ind=['automanufacturers']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=GME",
+  "note": "",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "{'Shs Float': '421.40M', 'Shs Outstand': '449.10M'} ind=['specialtyretail']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-09-28",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 878.204, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpda",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-09-21",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 1017891.0806, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'las",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf/1467271812596.ajax?fileType=csv&fileName=SOXX_holdings&dataType=fund",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "fail",
+  "error": "empty"
+ }
+]

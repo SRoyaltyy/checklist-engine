@@ -1,0 +1,1792 @@
+# Checklist QA report — PRELIMINARY
+
+Checks: a source, b history_start, c numeric/exact definition, d direction, e known_before_open=Yes, f cross-owner near-dup (>=88%), g BUT twin, h fetch-proven series (qa/src/fetch_proof_*.csv; missing/no_source=FAIL, save_nightly=WARN untestable until ~30 fires), i known_at <= 09:25 ET test day (registry col known_at, was published_at; format D-n HH:MM ET; revised=yes needs first_release_source), j no SEC/EDGAR/filing-derived source (exempt: Finviz export/snapshot, Fed/NYSE/Cboe, fails-to-deliver/FTD), k registry data_form in number|label|date and no parse/extract/transcript/LLM/NLP definitions.
+
+| owner | rows | a | b | c | d | e | f | g | h | i | j | k | h WARN | rows w/ issues | variants | variants w/ gaps |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| James-v5.5d | 8314 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1779 | 1779 |
+
+Cross-owner near-duplicate pairs: 0
+
+
+## Variants with coverage gaps
+
+- **James-v5.5d** / % above sma20 (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / % above sma200 (slow outlier of mkt-ja-043) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / % above sma50 (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / % s&p 500 above sma20 (44 rows): tf:60d
+- **James-v5.5d** / % s&p 500 above sma200 (44 rows): tf:60d
+- **James-v5.5d** / % s&p above sma50 (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / % sector members above sma200 (2 rows): tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / % sector members above sma50 (4 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y breakeven (slow outlier of mac-ja-085) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 10y real yield (tips) (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / 10y real yield (tips) (slow outlier of mac-ja-015) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 10y real yield (tips) (slow outlier of mac-ja-016) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 10y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / 10y treasury yield (slow outlier of mac-ja-003) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 10y treasury yield (slow outlier of mac-ja-004) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 10y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / 10y yield days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield overnight futures (zn) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 10y yield red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 10y yield up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 10y yield up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 12m implied cuts (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / 2s10s curve (slow outlier of mac-ja-019) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 2s10s curve (slow outlier of mac-ja-020) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 2s10s curve (slow outlier of mac-ja-021) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 2s10s curve (slow outlier of mac-ja-022) (12 rows): others; tf:3d/10d/60d; method:level/streak/divergence
+- **James-v5.5d** / 2s10s spread (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / 2y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / 2y treasury yield (slow outlier of mac-ja-007) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 2y treasury yield (slow outlier of mac-ja-008) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 2y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / 2y yield days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / 2y yield red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / 2y yield up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / 2y yield up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / 30y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / 30y treasury yield (slow outlier of mac-ja-011) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 30y treasury yield (slow outlier of mac-ja-012) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 30y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / 3m10y curve (slow outlier of mac-ja-023) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 3m10y curve (slow outlier of mac-ja-024) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 3m10y curve (slow outlier of mac-ja-025) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / 3m10y curve (slow outlier of mac-ja-026) (12 rows): others; tf:3d/10d/60d; method:level/streak/divergence
+- **James-v5.5d** / 3m10y spread (44 rows): tf:60d
+- **James-v5.5d** / aud/jpy (44 rows): tf:60d
+- **James-v5.5d** / beta-adjusted expected open (2 rows): others; tf:1d/3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / bitcoin days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin overnight (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / bitcoin red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / bitcoin up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / bitcoin weekend (2 rows): others; tf:1d/3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / breadth thrust (2 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / breadth thrustvix rising (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper (21 rows): others; method:cross/divergence
+- **James-v5.5d** / copper (slow outlier of mac-ja-045) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / copper (slow outlier of mac-ja-046) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / copper days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / copper red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / copper up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / copper up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / copper up, yields down (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / copper/gold ratio (44 rows): tf:60d
+- **James-v5.5d** / copper/gold ratio (slow outlier of mac-ja-048) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / cpi release day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / crude oil wti (4 rows): others; tf:3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / crude oil wti (slow outlier of mac-ja-037) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / crude oil wti (slow outlier of mac-ja-038) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / cumulative a/d (1 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/rank
+- **James-v5.5d** / dax (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / dax vs es (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / day after fomc (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / day before fomc (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / dollar index (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5d** / dollar index days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar index up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / dollar index up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / dollar up, gold up (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / dxy green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / dxy red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / dxy red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / eem (44 rows): tf:60d
+- **James-v5.5d** / equal vs cap weight (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / es down, europe up (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / es futures gap (3 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **James-v5.5d** / es gap-downeurope green (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / es gap-upvix futures up (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / es up, asia down (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / es vs btc overnight (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / eth/btc (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / ethereum (44 rows): tf:60d
+- **James-v5.5d** / eur/usd (44 rows): tf:60d
+- **James-v5.5d** / euro stoxx 50 (21 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / fed blackout (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / fed blackout window (2 rows): self; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / fed funds futures implied cuts (slow outlier of mac-ja-082) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / fomc (4 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / fomc decision = cut (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / fomc decision = hike (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / fomc decision = hold (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / fomc decision day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / fomc decision yesterday (2 rows): self; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / fomc meeting today (2 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / friday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / ftse 100 (44 rows): tf:60d
+- **James-v5.5d** / futures divergence (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / futures gap vs prior-day close location (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / global breadth (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold (21 rows): others; method:cross/divergence
+- **James-v5.5d** / gold (slow outlier of mac-ja-041) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / gold (slow outlier of mac-ja-042) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / gold days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / gold red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / gold up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / gold up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / gold up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / growth vs value (2 rows): others; tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / growth/value ratio (iwf/iwd) (44 rows): tf:60d
+- **James-v5.5d** / half-day session (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / hang seng (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / hang seng/china (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / high beta/low vol ratio (sphb/splv) (44 rows): tf:60d
+- **James-v5.5d** / hindenburg omen (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg price (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / hyg red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / hyg red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / hyg up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / hyg up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / hyg/ief ratio (slow outlier of mac-ja-059) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / iwm days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / iwm red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / iwm up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / iwm up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / iwm/spy ratio (44 rows): tf:60d
+- **James-v5.5d** / kospi (44 rows): tf:60d
+- **James-v5.5d** / kospi/taiex (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / lqd price (44 rows): tf:60d
+- **James-v5.5d** / mac_cpi nsa yoy surprise (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / mac_fomc decision label (18 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / mac_ism mfg pmi surprise (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / market beta regime (2 rows): others; tf:1d/3d/5d/10d/20d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / market momentum interaction (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / mcclellan oscillator (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / mid-month (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / monday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / month end (5 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / move index (44 rows): tf:60d
+- **James-v5.5d** / nasdaq futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / nasdaq new 52w highs minus lows (44 rows): tf:60d
+- **James-v5.5d** / natural gas (44 rows): tf:60d
+- **James-v5.5d** / new highs/lows (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / next-fomc cut probability (44 rows): tf:60d
+- **James-v5.5d** / nfp release day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / nikkei +1%usd/jpy down 1% (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / nikkei 225 (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / nikkei session (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / nq futures gap (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / nq vs rty overnight (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / nyse a/d (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / nyse a/d net (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / nyse advancers minus decliners (44 rows): tf:60d
+- **James-v5.5d** / nyse cumulative a/d line (44 rows): tf:60d
+- **James-v5.5d** / nyse half-day (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / nyse holiday tomorrow (2 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / nyse mcclellan oscillator (44 rows): tf:60d
+- **James-v5.5d** / nyse new highs-lows (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / nyse up/down volume ratio (44 rows): tf:60d
+- **James-v5.5d** / oil up, energy sector down (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / oil x energy stock (1 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / overnight range (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / ovx (oil vix) (44 rows): tf:60d
+- **James-v5.5d** / post-holiday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / pre-holiday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / pre-holidayspy down 3+ days (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / qqq red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / qqq up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / qqq up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / qqq up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / quarter end rebalance (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / quarter start (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / rate sensitivity interaction (2 rows): others; tf:3d/5d/10d/20d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / regional banks kre (44 rows): tf:60d
+- **James-v5.5d** / rsp/spy ratio (44 rows): tf:60d
+- **James-v5.5d** / rty futures gap (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / russell futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / russell recon deletion (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / russell reconstitution (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / s&p futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / s&p quarterly rebalance effective (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / sector a/d line (1 rows): tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/rank
+- **James-v5.5d** / sector etf atr (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / sector etf vs spy (3 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / sector etf vs spy (slow outlier of sec-ja-008) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / sector etf/spy ratio (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5d** / sector new highs minus lows (2 rows): tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / sector top-3sector rsi(14) > 75 (1 rows): self; tf:1d/3d/5d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / sector up, sector breadth down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / semis lead (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / semis/spy ratio (smh/spy) (44 rows): tf:60d
+- **James-v5.5d** / silver (44 rows): tf:60d
+- **James-v5.5d** / small vs large (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / spy 4-day losing streakvix falling (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy 5d high, % above sma50 lower (2 rows): tf:1d/3d/10d/20d/60d; method:level/change/cross/streak/rank
+- **James-v5.5d** / spy 5d low, new lows shrinking (2 rows): tf:1d/3d/10d/20d/60d; method:level/change/cross/streak/rank
+- **James-v5.5d** / spy close (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5d** / spy days since 1% pullback (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / spy days since 1% pullback momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / spy days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy down, breadth up (2 rows): tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / spy drawdown (slow outlier of mkt-ja-031) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / spy green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy prior day (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / spy realized vol (2 rows): others; tf:1d/3d/5d/10d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / spy rsi(2) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / spy streak (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy trend (slow outlier of mkt-ja-029) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / spy trend (slow outlier of mkt-ja-030) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / spy up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / spy up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / spy up, breadth down (2 rows): tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / spy vs hyg (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock beats sector 5dgap-up > 5% today (1 rows): self; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock down, sector etf up (3d) (2 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock down, sector up (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock down, sector up (5d) (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock up, sector down (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock up, sector etf down (3d) (2 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock vs sector etf (3 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / stock vs sector etf (slow outlier of sec-ja-007) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / stock vs sector etf 1d ratio20d trend (2 rows): self; tf:3d/10d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / stock vs sector ratio (slow outlier of sec-ja-010) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / stock vs sector ratio (slow outlier of sec-ja-011) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / stock vs sector ratio trend (slow outlier of sec-ja-009) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf days since 1% pullback (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf days since 1% pullback momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / stock's spdr sector etf up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / stock's spdr sector etf up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / stock-bond correlation (slow outlier of mac-ja-049) (12 rows): tf:3d/10d; method:level/cross/streak/divergence
+- **James-v5.5d** / stock-sector correlation (slow outlier of sec-ja-033) (12 rows): tf:3d/10d; method:level/cross/streak/divergence
+- **James-v5.5d** / taiex (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / tlt price (44 rows): tf:60d
+- **James-v5.5d** / trin (2 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / tuesday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / turn of month (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / turn of monthfomc same day (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / up/down volume (2 rows): others; tf:3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / us dollar index (4 rows): tf:3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / us dollar index (slow outlier of mac-ja-029) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / us dollar index (slow outlier of mac-ja-030) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / usd/cnh (44 rows): tf:60d
+- **James-v5.5d** / usd/jpy (21 rows): others; method:cross/divergence
+- **James-v5.5d** / usd/jpy (slow outlier of mac-ja-033) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / usd/jpy (slow outlier of mac-ja-034) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5d** / vix (25 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / vix days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix down with spy down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/rank
+- **James-v5.5d** / vix futures (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / vix red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / vix up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / vix up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / vix up with spy up (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/rank
+- **James-v5.5d** / vix vs realized (2 rows): others; tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5d** / vix vs vvix (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / vvix (21 rows): others; tf:60d; method:cross
+- **James-v5.5d** / wti crude (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5d** / wti crude days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5d** / wti crude red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5d** / wti crude up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / wti crude up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5d** / wti crude up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5d** / yields up, stocks down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5d** / yields up, stocks up (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank

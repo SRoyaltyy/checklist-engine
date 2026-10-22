@@ -1,0 +1,112 @@
+[
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-09-28",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 878.204, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpda",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-09-21",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 1017891.0806, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'las",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-10-12",
+  "http_status": 204,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 204"
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf/1467271812596.ajax?fileType=csv&fileName=SOXX_holdings&dataType=fund",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261020.txt",
+  "note": "CNMSshvol20261020",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20261020|AAPL|7848414.965306|50613|13247219.306813|B,Q,N",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20250102.txt",
+  "note": "CNMSshvol20250102",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20250102|AAPL|11000653|67952|22651137|B,Q,N",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20180801.txt",
+  "note": "CNMSshvol20180801",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20180801|AAPL|10122147|33603|26971902|Q,N",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNSQshvol20100104.txt",
+  "note": "FNSQshvol20100104",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20100104|AAPL|3148759|7216104|Q",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNYXshvol20100104.txt",
+  "note": "FNYXshvol20100104",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20100104|AAPL|68524|130193|N",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNRAshvol20100104.txt",
+  "note": "FNRAshvol20100104",
+  "http_status": 200,
+  "rows": 1,
+  "sample_value": "20100104|AAPL|49200|82100|D",
+  "passed": "pass",
+  "error": ""
+ }
+]

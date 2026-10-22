@@ -1,0 +1,41 @@
+row_id,base_id,variant,lens,is_but,direction,meaning,bucket,bucket7_squeeze_takeprofit,tag_reason,note,definition
+PV-TFC-0921|1,PV-TFC-0921,Days to cover,level,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N>=8
+PV-TFC-0922|1,PV-TFC-0922,Days to cover,level,True,bullish,bullish,3,yes,owner yes_means,,BUT mirror: YES if X_N<=1
+PV-TFC-0923|1,PV-TFC-0923,Days to cover,extreme,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N >= 95th pct of its own trailing 252-session distribution
+PV-TFC-0924|1,PV-TFC-0924,Days to cover,extreme,True,bullish,bullish,3,yes,owner yes_means,,BUT mirror: YES if X_N <= 5th pct of own 252d
+PV-TFC-0925|1,PV-TFC-0925,Days to cover,change,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X(D-1)-X(D-1-1)>0 and |change|>=0.5*stdev of 1d changes over 252d
+PV-TFC-0926|1,PV-TFC-0926,Days to cover,change,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if change<0 with same magnitude rule
+PV-TFC-0927|1,PV-TFC-0927,Days to cover,div_price,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if dX over 1d>0 AND price ret_1d<0 (bullish divergence)
+PV-TFC-0928|1,PV-TFC-0928,Days to cover,div_price,True,bearish,quiet_warning,4,yes,"meaning wins: SI falling while price up = rally partly short covering, fuel being spent (same meaning as nbx-SI-DIV-COVER-RALLY)",,BUT mirror: YES if dX<0 AND ret_1d>0 (bearish divergence)
+PV-TFC-0929|1,PV-TFC-0929,Days to cover,div_sector,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if dX over 1d>0 AND sector ETF/sector-median dX<0
+PV-TFC-0930|1,PV-TFC-0930,Days to cover,div_sector,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if stock dX<0 while sector dX>0
+PV-TFC-0931|1,PV-TFC-0931,Days to cover,div_volume,False,bullish,bullish,1,yes,owner yes_means,,YES if dX over 1d>0 AND relative volume (avg V_1/SMA50 V)<0.8 (thin)
+PV-TFC-0932|1,PV-TFC-0932,Days to cover,div_volume,True,bearish,loud_bearish,2,yes,owner yes_means,,BUT mirror: YES if dX>0 AND rel volume>=1.5 (confirmed)
+PV-TFC-0933|1,PV-TFC-0933,Days to cover,rank_sector,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N in top 10% of same-GICS-sector stocks that day
+PV-TFC-0934|1,PV-TFC-0934,Days to cover,rank_sector,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if bottom 10% in sector
+PV-TFC-0935|1,PV-TFC-0935,Days to cover,rank_market,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N in top 10% of full ~11.6k universe that day
+PV-TFC-0936|1,PV-TFC-0936,Days to cover,rank_market,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if bottom 10% of universe
+PV-TFC-0937|1,PV-TFC-0937,Days to cover,cross,False,bearish,loud_bearish,2,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),"YES if X crossed above its own SMA3 on D-1 (X(D-2)<=SMA, X(D-1)>SMA)"
+PV-TFC-0938|1,PV-TFC-0938,Days to cover,cross,True,bullish,bullish,1,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),BUT mirror: YES if X crossed below its SMA3 on D-1
+PV-TFC-0939|1,PV-TFC-0939,Days to cover,streak,False,bearish,loud_bearish,2,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),YES if X rose on each of last 3 sessions
+PV-TFC-0940|1,PV-TFC-0940,Days to cover,streak,True,bullish,bullish,1,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),BUT mirror: YES if X fell on each of last 3 sessions
+PV-TFC-0941|1,PV-TFC-0941,Short interest change,level,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N>=0.2
+PV-TFC-0942|1,PV-TFC-0942,Short interest change,level,True,bullish,bullish,3,yes,owner yes_means,,BUT mirror: YES if X_N<=-0.2
+PV-TFC-0943|1,PV-TFC-0943,Short interest change,extreme,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N >= 95th pct of its own trailing 252-session distribution
+PV-TFC-0944|1,PV-TFC-0944,Short interest change,extreme,True,bullish,bullish,3,yes,owner yes_means,,BUT mirror: YES if X_N <= 5th pct of own 252d
+PV-TFC-0945|1,PV-TFC-0945,Short interest change,change,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X(D-1)-X(D-1-1)>0 and |change|>=0.5*stdev of 1d changes over 252d
+PV-TFC-0946|1,PV-TFC-0946,Short interest change,change,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if change<0 with same magnitude rule
+PV-TFC-0947|1,PV-TFC-0947,Short interest change,div_price,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if dX over 1d>0 AND price ret_1d<0 (bullish divergence)
+PV-TFC-0948|1,PV-TFC-0948,Short interest change,div_price,True,bearish,quiet_warning,4,yes,"meaning wins: SI falling while price up = rally partly short covering, fuel being spent (same meaning as nbx-SI-DIV-COVER-RALLY)",,BUT mirror: YES if dX<0 AND ret_1d>0 (bearish divergence)
+PV-TFC-0949|1,PV-TFC-0949,Short interest change,div_sector,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if dX over 1d>0 AND sector ETF/sector-median dX<0
+PV-TFC-0950|1,PV-TFC-0950,Short interest change,div_sector,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if stock dX<0 while sector dX>0
+PV-TFC-0951|1,PV-TFC-0951,Short interest change,div_volume,False,bullish,bullish,1,yes,owner yes_means,,YES if dX over 1d>0 AND relative volume (avg V_1/SMA50 V)<0.8 (thin)
+PV-TFC-0952|1,PV-TFC-0952,Short interest change,div_volume,True,bearish,loud_bearish,2,yes,owner yes_means,,BUT mirror: YES if dX>0 AND rel volume>=1.5 (confirmed)
+PV-TFC-0953|1,PV-TFC-0953,Short interest change,rank_sector,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N in top 10% of same-GICS-sector stocks that day
+PV-TFC-0954|1,PV-TFC-0954,Short interest change,rank_sector,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if bottom 10% in sector
+PV-TFC-0955|1,PV-TFC-0955,Short interest change,rank_market,False,bearish,loud_bearish,2,yes,owner yes_means,,YES if X_N in top 10% of full ~11.6k universe that day
+PV-TFC-0956|1,PV-TFC-0956,Short interest change,rank_market,True,bullish,bullish,1,yes,owner yes_means,,BUT mirror: YES if bottom 10% of universe
+PV-TFC-0957|1,PV-TFC-0957,Short interest change,cross,False,bearish,loud_bearish,2,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),"YES if X crossed above its own SMA3 on D-1 (X(D-2)<=SMA, X(D-1)>SMA)"
+PV-TFC-0958|1,PV-TFC-0958,Short interest change,cross,True,bullish,bullish,1,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),BUT mirror: YES if X crossed below its SMA3 on D-1
+PV-TFC-0959|1,PV-TFC-0959,Short interest change,streak,False,bearish,loud_bearish,2,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),YES if X rose on each of last 3 sessions
+PV-TFC-0960|1,PV-TFC-0960,Short interest change,streak,True,bullish,bullish,1,yes,owner yes_means,cross/streak not applicable at N=1 per definition (expect NOT_READY),BUT mirror: YES if X fell on each of last 3 sessions

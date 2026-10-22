@@ -1,0 +1,37 @@
+period,state,ex5,lo95,hi95,n_dates,n_obs,raw5,fresh_src
+2020-24,L5 all,-0.00041,-0.00095,0.00014,1212,1065056,0.00166,FRESH_file/approx_countdiff
+2020-24,L5 & stock-own jump z>=1.5,-0.00287,-0.00461,-0.00113,1073,44397,-0.00059,FRESH_file/approx_countdiff
+2020-24,L5 & stock-own no jump,-0.00027,-0.00084,0.00029,1163,959183,0.00127,FRESH_file/approx_countdiff
+2020-24,L5 & stock+mkt combined jump z>=1.5,-0.00262,-0.00457,-0.00067,1092,40016,-0.00020,FRESH_file/approx_countdiff
+2020-24,L5 & combined no jump,-0.00031,-0.00086,0.00025,1203,1007723,0.00180,FRESH_file/approx_countdiff
+2020-24,L5 on mkt-jump dates,-0.00275,-0.00491,-0.00060,161,85652,-0.00551,FRESH_file/approx_countdiff
+2020,L5 all,-0.00325,-0.00470,-0.00180,219,218882,0.01054,FRESH_file/approx_countdiff
+2020,L5 & stock-own jump z>=1.5,-0.00522,-0.00954,-0.00091,188,10641,0.00950,FRESH_file/approx_countdiff
+2020,L5 & stock-own no jump,-0.00331,-0.00486,-0.00177,210,192317,0.01165,FRESH_file/approx_countdiff
+2020,L5 & stock+mkt combined jump z>=1.5,-0.00607,-0.01057,-0.00158,183,9610,0.00852,FRESH_file/approx_countdiff
+2020,L5 & combined no jump,-0.00328,-0.00482,-0.00174,210,193351,0.01168,FRESH_file/approx_countdiff
+2020,L5 on mkt-jump dates,-0.00886,-0.01353,-0.00420,23,18361,0.00628,FRESH_file/approx_countdiff
+2021,L5 all,0.00014,-0.00117,0.00145,252,208021,0.00144,FRESH_file
+2021,L5 & stock-own jump z>=1.5,-0.00327,-0.00693,0.00038,233,7024,-0.00546,FRESH_file
+2021,L5 & stock-own no jump,0.00038,-0.00096,0.00172,242,187091,-0.00074,FRESH_file
+2021,L5 & stock+mkt combined jump z>=1.5,-0.00044,-0.00549,0.00461,234,6411,0.00383,FRESH_file
+2021,L5 & combined no jump,0.00018,-0.00113,0.00150,252,200760,0.00140,FRESH_file
+2021,L5 on mkt-jump dates,-0.00327,-0.00672,0.00019,33,11720,0.00724,FRESH_file
+2022,L5 all,0.00047,-0.00124,0.00217,245,130441,-0.00865,FRESH_file
+2022,L5 & stock-own jump z>=1.5,-0.00483,-0.00969,0.00002,203,5216,-0.01032,FRESH_file
+2022,L5 & stock-own no jump,0.00019,-0.00154,0.00191,235,120314,-0.00759,FRESH_file
+2022,L5 & stock+mkt combined jump z>=1.5,-0.00585,-0.01135,-0.00034,207,4235,-0.01225,FRESH_file
+2022,L5 & combined no jump,0.00070,-0.00098,0.00239,245,126158,-0.00851,FRESH_file
+2022,L5 on mkt-jump dates,-0.00452,-0.01433,0.00530,31,6959,-0.01100,FRESH_file
+2023,L5 all,-0.00021,-0.00115,0.00072,250,270054,0.00195,FRESH_file
+2023,L5 & stock-own jump z>=1.5,-0.00272,-0.00534,-0.00009,225,11815,-0.00083,FRESH_file
+2023,L5 & stock-own no jump,0.00030,-0.00066,0.00127,240,239130,0.00069,FRESH_file
+2023,L5 & stock+mkt combined jump z>=1.5,-0.00362,-0.00638,-0.00086,236,11929,-0.00272,FRESH_file
+2023,L5 & combined no jump,-0.00005,-0.00101,0.00091,250,257887,0.00217,FRESH_file
+2023,L5 on mkt-jump dates,-0.00233,-0.00555,0.00088,36,29817,-0.01231,FRESH_file
+2024,L5 all,0.00102,0.00024,0.00181,246,237658,-0.00101,FRESH_file
+2024,L5 & stock-own jump z>=1.5,0.00086,-0.00299,0.00472,224,9701,-0.00260,FRESH_file
+2024,L5 & stock-own no jump,0.00095,0.00014,0.00176,236,220331,-0.00062,FRESH_file
+2024,L5 & stock+mkt combined jump z>=1.5,0.00308,-0.00105,0.00722,232,7831,-0.00382,FRESH_file
+2024,L5 & combined no jump,0.00093,0.00015,0.00172,246,229567,-0.00094,FRESH_file
+2024,L5 on mkt-jump dates,0.00352,0.00043,0.00661,38,18795,-0.01216,FRESH_file

@@ -1,0 +1,21 @@
+PFE 2021-01-27 PV-TF-01990 Close vs SMA200 level (BUT) N=5 X_N=0.03872 X_N<=-0.3 | engine NO | hand NO MATCH | last bar 2021-01-26
+NVDA 2008-06-16 PV-TF-01181 Daily return level N=5 X_N=-0.02366 X_N>=0.05 | engine NO | hand NO MATCH | last bar 2008-06-13
+MSFT 2021-01-27 PV-TF-02029 Close vs SMA200 level N=20 X_N=0.09045 X_N>=0.3 | engine NO | hand NO MATCH | last bar 2021-01-26
+META 2024-05-15 PV-TF-02434 RSI14 level (BUT) N=3 X_N=49.30884 X_N<=20 | engine NO | hand NO MATCH | last bar 2024-05-14
+XOM 2016-08-01 PV-TF-00057 Body % of range level N=10 X_N=0.33340 X_N>=0.8 | engine NO | hand NO MATCH | last bar 2016-07-29
+PFE 2024-05-15 PV-TF-00098 Body % of range level (BUT) N=60 X_N=0.38861 X_N<=0.1 | engine NO | hand NO MATCH | last bar 2024-05-14
+INTC 2008-06-16 PV-TF-02418 RSI14 level (BUT) N=1 X_N=46.21300 X_N<=20 | engine NO | hand NO MATCH | last bar 2008-06-13
+GME 2021-01-27 PV-TF-01798 Close vs SMA20 level (BUT) N=20 X_N=0.59740 X_N<=-0.1 | engine NO | hand NO MATCH | last bar 2021-01-26
+PFE 2024-05-15 PV-TF-01201 Daily return level N=10 X_N=0.01048 X_N>=0.05 | engine NO | hand NO MATCH | last bar 2024-05-14
+F 2024-05-15 PV-TF-03149 Bollinger %B(20,2) level N=5 X_N=0.34182 X_N>=1 | engine NO | hand NO MATCH | last bar 2024-05-14
+--- YES sample (stratified: level + extreme lenses)
+INTC 2024-05-15 PV-TF-01992 Close vs SMA200 extreme (BUT) N=5 X_N=-0.23760 p5=-0.1409 p95=0.3354 | engine YES | hand YES MATCH
+INTC 2024-05-15 PV-TF-01956 Close vs SMA200 extreme (BUT) N=1 X_N=-0.21779 p5=-0.1690 p95=0.3424 | engine YES | hand YES MATCH
+F 2016-08-01 PV-TF-01164 Daily return extreme (BUT) N=3 X_N=-0.02901 p5=-0.0178 p95=0.0179 | engine YES | hand YES MATCH
+GME 2016-08-01 PV-TF-00447 Upper wick share extreme N=60 X_N=0.30401 p5=0.2294 p95=0.3027 | engine YES | hand YES MATCH
+GME 2024-05-15 PV-TF-01723 Close vs SMA20 extreme N=1 X_N=2.13535 p5=-0.1520 p95=0.1853 | engine YES | hand YES MATCH
+XOM 2026-10-21 PV-TF-03577 Distance from 52w high level N=1 X_N=-0.01331 X_N>=-0.02 | engine YES | hand YES MATCH
+GME 2016-08-01 PV-TF-03654 Distance from 52w high level (BUT) N=20 X_N=-0.38839 X_N<=-0.3 | engine YES | hand YES MATCH
+KO 2008-06-16 PV-TF-04149 Relative volume (V/SMA50, own bars) level N=1 X_N=3.00903 X_N>=2 | engine YES | hand YES MATCH
+JPM 2008-06-16 PV-TF-00099 Body % of range extreme N=60 X_N=0.51474 p5=0.3778 p95=0.5057 | engine YES | hand YES MATCH
+WMT 2026-10-21 PV-TF-01203 Daily return extreme N=10 X_N=0.00959 p5=-0.0078 p95=0.0093 | engine YES | hand YES MATCH

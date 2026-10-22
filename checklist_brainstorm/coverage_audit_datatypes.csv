@@ -1,0 +1,91 @@
+data_type,status,rows_matched,slow_series_outlier_only,example_ids,suggested_owner,notes,match_regex
+OHLC price / daily return,covered,6861,False,Grok Bot:FV-GB-0337; Grok Bot:FV-GB-0338; Grok Bot:FV-GB-0339,,,\bclose\b|ohlc|daily return
+Volume / relative volume,covered,1265,False,Grok Bot:FV-GB-1829; Grok Bot:FV-GB-1830; Grok Bot:FV-GB-1831,,,volume|rvol
+Gaps / prior-day structure,covered,445,False,Theme Radar:PRC-TR-00001-C; Theme Radar:PRC-TR-00002-BUT-C; Theme Radar:PRC-TR-00013-C,,,\bgap
+Intraday / opening range,covered,290,False,Taskforce:PV-TFC-0241; Taskforce:PV-TFC-0242; Taskforce:PV-TFC-0243,,,intraday|opening range|first 30|vwap
+Pre-market,covered,316,False,New Bot:PMK-NB-001-T1-THR; New Bot:PMK-NB-001-T1-THR-BUT; New Bot:PMK-NB-001-T1-EXT,,,pre-?market|premarket
+After-hours,covered,260,False,Theme Radar:PRC-TR-00397-C; Theme Radar:PRC-TR-00398-BUT-C; Theme Radar:PRC-TR-00409-C,,,after-?hours|post-?market
+Candlestick patterns,covered,2280,False,Taskforce:PV-TFC-0001; Taskforce:PV-TFC-0002; Taskforce:PV-TFC-0003,,,candle|doji|engulf|hammer
+Chart patterns / S-R,covered,320,False,Theme Radar:TEC-TR-01321-C; Theme Radar:TEC-TR-01322-BUT-C; Theme Radar:TEC-TR-01333-C,,,wedge|channel|double top|head & shoulders|support|resistance
+Options volume / OI,covered,20,False,Taskforce:PV-TFC-0981; Taskforce:PV-TFC-0982; Taskforce:PV-TFC-0983,,,open interest|options volume|call volume|put volume
+Implied volatility / IV rank,covered,42,False,Taskforce:PV-TFC-0941; Taskforce:PV-TFC-0942; Taskforce:PV-TFC-0943,,,implied vol|\biv\b|iv rank|iv percentile
+Options skew,covered,105,False,Taskforce:PV-TFC-0961; Taskforce:PV-TFC-0962; Taskforce:PV-TFC-0963,,,skew
+IV term structure (single stock),covered,24,False,Taskforce:PV-TFC-1541; Taskforce:PV-TFC-1542; Taskforce:PV-TFC-1543,,,term structure|front.?month iv|iv term
+Put/call ratio,covered,168,False,Taskforce:PV-TFC-0981; Taskforce:PV-TFC-0982; Taskforce:PV-TFC-0983,,,put/call|put-call|pcr
+Unusual options activity,missing,0,False,,Taskforce,,unusual option|sweep|block trade
+Max pain / options expiry,covered,19,False,New Bot:OPT-NB-005-T1-THR; New Bot:OPT-NB-005-T1-THR-BUT; New Bot:OPT-NB-006-W0,,,max pain|opex|expiration
+Gamma / dealer positioning (GEX),covered,21,False,Taskforce:PV-TFC-1041; Taskforce:PV-TFC-1042; Taskforce:PV-TFC-1043,,,gamma|gex|dealer
+Short interest,covered,168,False,Theme Radar:OWN-TR-00661-C; Theme Radar:OWN-TR-00662-BUT-C; Theme Radar:OWN-TR-00673-C,,,short interest|days to cover|short float
+Borrow fee / utilization,covered,274,False,Taskforce:PV-TFC-1181; Taskforce:PV-TFC-1182; Taskforce:PV-TFC-1183,,,borrow|utiliz|securities lending
+Fails-to-deliver (FTD),covered,20,False,Taskforce:PV-TFC-1221; Taskforce:PV-TFC-1222; Taskforce:PV-TFC-1223,,,fail.?to.?deliver|\bftd
+FINRA short volume / dark pool,covered,111,False,Taskforce:PV-TFC-1101; Taskforce:PV-TFC-1102; Taskforce:PV-TFC-1103,,,short volume|dark pool|off-exchange|finra|ats
+Short-sale restriction / halts,covered,76,False,Taskforce:PV-TFC-1181; Taskforce:PV-TFC-1182; Taskforce:PV-TFC-1183,,,ssr|short-sale|halt
+Insider Form 4,covered,240,False,Theme Radar:OWN-TR-00001-C; Theme Radar:OWN-TR-00002-BUT-C; Theme Radar:OWN-TR-00013-C,,,insider|form 4
+13F institutional,missing,0,True,,James,,13f|institutional own
+13D/13G activist stakes,missing,0,False,,James,,13d|13g|activist
+Analyst ratings up/downgrades,covered,490,False,Grok Bot:FV-GB-0001; Grok Bot:FV-GB-0002; Grok Bot:FV-GB-0003,,,upgrade|downgrade|rating
+Analyst price targets,covered,466,False,Grok Bot:FV-GB-0113; Grok Bot:FV-GB-0114; Grok Bot:FV-GB-0115,,,price target|target
+EPS/revenue estimate revisions,covered,419,False,Grok Bot:FV-GB-0449; Grok Bot:FV-GB-0450; Grok Bot:FV-GB-0451,,,estimate revision|revision|consensus
+Earnings surprise,covered,70,False,Theme Radar:FND-TR-01057-C; Theme Radar:FND-TR-01058-BUT-C; Theme Radar:FND-TR-01069-C,,,earnings surprise|eps surprise|beat|miss
+Earnings reaction / drift,covered,132,False,Taskforce:PV-TFC-1441; Taskforce:PV-TFC-1442; Taskforce:PV-TFC-1443,,,earnings.*reaction|post-earnings|pead
+Earnings date / clusters,covered,247,False,Theme Radar:SIG-TR-01453-C; Theme Radar:SIG-TR-01454-BUT-C; Theme Radar:SIG-TR-01465-C,,,earnings (before|after|date)|reports? (today|tomorrow)
+Guidance changes,covered,30,False,New Bot:ERN-NB-055-W0-EVT; New Bot:ERN-NB-055-W0-EVT-BUT; New Bot:ERN-NB-056-W0-EVT,,,guidance
+Dilution / offerings / ATM,covered,345,False,Taskforce:PV-TFC-0941; Taskforce:PV-TFC-0942; Taskforce:PV-TFC-0943,,,dilut|offering|\batm\b|s-3|shelf
+Buybacks,missing,0,True,,New Bot,,buyback|repurchase
+Splits / corporate actions,covered,90,False,Taskforce:PV-TFC-3527; Taskforce:PV-TFC-3528; Taskforce:PV-TFC-3553,,,split|spin|corporate action
+M&A / merger arb,covered,22,False,New Bot:EVT-NB-060-W0-EVT; New Bot:EVT-NB-060-W0-EVT-BUT; New Bot:EVT-NB-060-T20-CNT,,,merger|acquisi|takeover
+FDA / biotech catalysts,covered,44,False,New Bot:EVT-NB-057-W0-EVT; New Bot:EVT-NB-057-W0-EVT-BUT; New Bot:EVT-NB-058-W0-EVT,,,fda|pdufa|biotech
+Index rebalance / membership,covered,33,False,New Bot:IDX-NB-047-W0-EVT; New Bot:IDX-NB-047-W0-EVT-BUT; New Bot:IDX-NB-047-T20-CNT,,,rebalanc|index (add|delet|membership)|s&p 500 inclusion
+ETF flows / creations,covered,65,False,New Bot:IDX-NB-049-W0-EVT; New Bot:IDX-NB-049-W0-EVT-BUT; New Bot:IDX-NB-049-T20-CNT,,,etf flow|creation|redemption|fund flow|inflow|outflow
+Float / share count,covered,20,True,New Bot:DIL-NB-045-W0-EVT; New Bot:DIL-NB-045-W0-EVT-BUT; New Bot:DIL-NB-045-T20-CNT,,,float|shares outstanding
+Valuation (P/E etc.) jumps,missing,0,True,,Theme Radar,,p/e|valuation|ev/
+"Fundamentals (margins, growth) jumps",missing,0,True,,Theme Radar,,margin|roe|growth|revenue growth
+"Breadth adv/dec, A/D line",covered,27,False,James:MAC-JA-080; James:SEC-JA-019; James:MKT-JA-035,,James v4 adds,advance|decline|a/d|adv/dec
+New highs / new lows (market),covered,65,False,Theme Radar:SIG-TR-00265-C; Theme Radar:SIG-TR-00266-BUT-C; Theme Radar:SIG-TR-00277-C,,,new highs? .*lows?|nh-nl|new high
+% above moving averages,covered (James v4),4,False,James:MKT-JA-041; James:MKT-JA-042; James:MKT-JA-044,,James v4 adds,% above|percent above|pct above
+McClellan oscillator,covered (James v4),3,False,James:MKT-JA-038; James:MKT-JA-039; James:MKT-JA-047,,James v4 adds,mcclellan
+TRIN / Arms index,covered,11,False,James:MKT-JA-035; James:MKT-JA-036; James:MKT-JA-037,,,trin|arms index
+Up/down volume (market),covered,265,False,Taskforce:PV-TFC-0001; Taskforce:PV-TFC-0002; Taskforce:PV-TFC-0003,,James v4 adds,up/down volume|up volume|tick\b
+VIX level / change,covered,443,False,Grok Bot:FV-GB-1057; Grok Bot:FV-GB-1058; Grok Bot:FV-GB-1201,,,\bvix\b
+VIX9D / VIX3M / term structure,covered,45,False,Taskforce:PV-TFC-1541; Taskforce:PV-TFC-1542; Taskforce:PV-TFC-1543,,James v4 adds,vix9d|vix3m|vix term|contango|backwardation
+VVIX,covered,106,False,Manager Bot:MKT-MB-VVIX-LVL-T1; Manager Bot:MKT-MB-VVIX-LVL-T1-BUT; Manager Bot:MKT-MB-VVIX-EXT-T1,,,vvix
+CBOE SKEW index,covered,85,False,Manager Bot:MKT-MB-SKEW-LVL-T1; Manager Bot:MKT-MB-SKEW-LVL-T1-BUT; Manager Bot:MKT-MB-SKEW-EXT-T1,,James v4 adds,cboe skew|\bskew index
+MOVE index,covered,509,False,Grok Bot:FV-GB-0795; Grok Bot:FV-GB-0796; Grok Bot:FV-GB-0831,,James v4 adds,\bmove index|\bmove\b
+OVX / GVZ,covered (James v4),0,False,,,James v4 adds,\bovx|gvz
+Treasury yields (2y/10y),covered,386,False,Grok Bot:FV-GB-1471; Grok Bot:FV-GB-1472; Grok Bot:FV-GB-1473,,,yield|treasur|10y|2y
+Yield curve slope,covered,19,False,James:MAC-JA-143; James:MAC-JA-144; James:MAC-JA-145,,James v4 adds,curve|2s10s|3m10y
+Credit spreads (HY/IG),covered,447,False,Taskforce:PV-TFC-0341; Taskforce:PV-TFC-0342; Taskforce:PV-TFC-0343,,James v4 adds,credit|spread|hyg|lqd|jnk
+Fed funds futures / cut odds,covered,19,False,James:MAC-JA-295; James:MAC-JA-296; James:MAC-JA-297,,James v4 adds,fed funds|fedwatch|cut odds|rate (cut|hike) prob
+Dollar index / FX majors,covered,368,False,Theme Radar:VOL-TR-00265-C; Theme Radar:VOL-TR-00266-BUT-C; Theme Radar:VOL-TR-00277-C,,James v4 adds,dxy|dollar|eurusd|usdjpy|\bfx\b|yen
+Crude oil,covered,390,False,Grok Bot:FV-GB-1255; Grok Bot:FV-GB-1256; Grok Bot:FV-GB-1257,,,crude|oil|\bcl\b|wti|brent
+Gold,covered,266,False,Grok Bot:FV-GB-1309; Grok Bot:FV-GB-1310; Grok Bot:FV-GB-1311,,,gold
+Natural gas / silver / copper,covered,284,False,Grok Bot:FV-GB-1363; Grok Bot:FV-GB-1364; Grok Bot:FV-GB-1365,,James v4 adds,natural gas|natgas|silver|copper
+Agricultural commodities,missing,0,False,,James,,wheat|corn|soy|agri
+Bitcoin,covered,396,False,Grok Bot:FV-GB-1417; Grok Bot:FV-GB-1418; Grok Bot:FV-GB-1419,,,bitcoin|btc
+Ethereum / other crypto,covered (James v4),4,False,James:MKT-JA-071; James:MKT-JA-072; James:MKT-JA-073,,James v4 adds,ether|eth\b
+Overnight index futures (ES/NQ/RTY),covered,727,False,Grok Bot:FV-GB-0795; Grok Bot:FV-GB-0796; Grok Bot:FV-GB-0831,,James v4 adds,\bes\b|\bnq\b|rty|e-mini|overnight futures|index futures
+Global indices (Asia/Europe),covered,581,False,Theme Radar:TEC-TR-00133-C; Theme Radar:TEC-TR-00134-BUT-C; Theme Radar:TEC-TR-00145-C,,James v4 adds,nikkei|kospi|ftse|dax|hang seng|stoxx|a50|global
+ADR overnight moves,covered,31,False,New Bot:REL-NB-027-T1-THR; New Bot:REL-NB-027-T1-THR-BUT; New Bot:REL-NB-027-T1-EXT,,,\badr
+COT positioning,missing,0,False,,Grok Bot,,\bcot\b|commitment of traders|cftc
+Econ release surprises,covered,429,False,Grok Bot:FV-GB-0785; Grok Bot:FV-GB-0786; Grok Bot:FV-GB-0787,,,surprise|cpi|payroll|nfp|ism|pmi|retail sales
+Jobless claims,covered,37,False,Grok Bot:FV-GB-1001; Grok Bot:FV-GB-1002; Grok Bot:FV-GB-1003,,,jobless|initial claims
+Fed events (FOMC/speeches),covered,61,False,James:MAC-JA-083; James:CAL-JA-001; James:CAL-JA-002,,,fomc|fed\b|powell
+Econ calendar (event days),covered,272,False,Grok Bot:FV-GB-0785; Grok Bot:FV-GB-0786; Grok Bot:FV-GB-0787,,,econ calendar|economic calendar
+AAII sentiment,missing,0,True,,James,,aaii
+NAAIM exposure,missing,0,True,,James,,naaim
+CNN Fear & Greed,covered,105,False,Manager Bot:MKT-MB-FG-LVL-T1; Manager Bot:MKT-MB-FG-LVL-T1-BUT; Manager Bot:MKT-MB-FG-EXT-T1,,,fear ?& ?greed|fear and greed
+Margin debt,missing,0,True,,James,,margin debt
+Money market fund assets,missing,0,True,,James,,money market
+Seasonality / calendar effects,covered,472,False,Grok Bot:FV-GB-0785; Grok Bot:FV-GB-0786; Grok Bot:FV-GB-0787,,,season|day of week|month-end|turn of month|holiday|calendar
+Sector relative strength,covered,1889,False,Grok Bot:FV-GB-0007; Grok Bot:FV-GB-0008; Grok Bot:FV-GB-0021,,,sector
+Industry / theme RS,covered,1345,False,Grok Bot:FV-GB-1729; Grok Bot:FV-GB-1730; Grok Bot:FV-GB-1731,,,industry|theme
+Finviz Groups,covered,496,False,Grok Bot:FV-GB-1729; Grok Bot:FV-GB-1730; Grok Bot:FV-GB-1731,,,finviz group
+"Group ratios (RSP/SPY, IWM/SPY, SMH)",covered,204,False,James:MAC-JA-018; James:SEC-JA-026; James:SEC-JA-027,,James v4 adds,rsp|iwm|smh|kre|equal.?weight
+Correlation / dispersion,covered,34,False,New Bot:ANL-NB-020-T1-THR; New Bot:ANL-NB-020-T1-THR-BUT; New Bot:ANL-NB-020-T1-EXT,,,correlat|dispersion
+Beta / relative to SPY,covered,343,False,Grok Bot:FV-GB-1529; Grok Bot:FV-GB-1530; Grok Bot:FV-GB-1531,,,\bbeta|vs spy|relative to spy
+Volatility (realized/ATR),covered,1394,False,Theme Radar:TEC-TR-00793-C; Theme Radar:TEC-TR-00794-BUT-C; Theme Radar:TEC-TR-00805-C,,,\batr|realized vol|historical vol|bollinger
+News flag / headline count,covered,55,False,Theme Radar:SIG-TR-01981-C; Theme Radar:SIG-TR-01982-BUT-C; Theme Radar:SIG-TR-01993-C,,,news
+Social sentiment (StockTwits/Reddit),missing,0,False,,New Bot,,stocktwits|reddit|social|wallstreetbets
+Google Trends / web attention,missing,0,False,,New Bot,,google trends|search interest|wikipedia
+Retail flow (Robinhood etc.),missing,0,False,,New Bot,,retail flow|robinhood
+Buyback blackout window,thin,2,False,James:CAL-JA-042; James:CAL-JA-044,James,,blackout

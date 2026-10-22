@@ -1,0 +1,820 @@
+id,data_type,variant,lens,timeframe,strict_definition,yes_means (bullish/bearish),source,history_start,known_before_open?,added_by,notes
+CDL-001,Candlestick,Green:red ratio,Above threshold,10 trading days,Count of days with close>open in last 10 completed sessions divided by 10; YES if >= 0.7,Bullish,Daily OHLC (Yahoo/Stooq),1990s,Yes,Grok Bot,example row
+IND-001,Moving averages,SMA stack,Ordering,20/50/80 days,YES if SMA20 > SMA50 > SMA80 on prior close,Bullish,Daily OHLC,1990s,Yes,Grok Bot,example from Cyrus ARQT chart
+OSC-001,Overbought/oversold,RSI(14),Extreme value,14 days,YES if RSI(14) on prior close < 20,Bullish,Daily OHLC,1990s,Yes,Grok Bot,example row
+MAC-JA-001,Rates,10y Treasury yield,Relative change,1 day,YES if DGS10 prior-day change <= -7bp,Bullish,FRED DGS10,1960s+,Yes,James,
+MAC-JA-003,Rates,10y Treasury yield,Timeframe/trend,20 days,YES if DGS10 last value > its 20-day SMA by >= 15bp,Bearish,FRED DGS10,1960s+,Yes,James,
+MAC-JA-004,Rates,10y Treasury yield,Extreme,252 days,YES if DGS10 last value = 252-day high,Bearish,FRED DGS10,1960s+,Yes,James,
+MAC-JA-005,Rates,2y Treasury yield,Relative change,1 day,YES if DGS2 prior-day change <= -7bp,Bullish,FRED DGS2,1960s+,Yes,James,
+MAC-JA-007,Rates,2y Treasury yield,Timeframe/trend,20 days,YES if DGS2 last value > its 20-day SMA by >= 15bp,Bearish,FRED DGS2,1960s+,Yes,James,
+MAC-JA-008,Rates,2y Treasury yield,Extreme,252 days,YES if DGS2 last value = 252-day high,Bearish,FRED DGS2,1960s+,Yes,James,
+MAC-JA-009,Rates,30y Treasury yield,Relative change,1 day,YES if DGS30 prior-day change <= -7bp,Bullish,FRED DGS30,1960s+,Yes,James,
+MAC-JA-011,Rates,30y Treasury yield,Timeframe/trend,20 days,YES if DGS30 last value > its 20-day SMA by >= 15bp,Bearish,FRED DGS30,1960s+,Yes,James,
+MAC-JA-012,Rates,30y Treasury yield,Extreme,252 days,YES if DGS30 last value = 252-day high,Bearish,FRED DGS30,1960s+,Yes,James,
+MAC-JA-013,Rates,10y real yield (TIPS),Relative change,1 day,YES if DFII10 prior-day change <= -7bp,Bullish,FRED DFII10,1960s+,Yes,James,
+MAC-JA-015,Rates,10y real yield (TIPS),Timeframe/trend,20 days,YES if DFII10 last value > its 20-day SMA by >= 15bp,Bearish,FRED DFII10,1960s+,Yes,James,
+MAC-JA-016,Rates,10y real yield (TIPS),Extreme,252 days,YES if DFII10 last value = 252-day high,Bearish,FRED DFII10,1960s+,Yes,James,
+MAC-JA-017,Rates,10y yield overnight futures (ZN),Relative change,Overnight,YES if ZN front-month price at 09:00 ET vs prior 16:00 ET close implies yield down >= 4bp (ZN up >= 0.25pt),Bullish,CME futures,2000s,Yes,James,
+MAC-JA-018,Rates,Rate sensitivity interaction,Divergence,1 day,YES if 10y yield fell >= 5bp prior day AND stock is in XLRE/XLU/IWM or has 60d beta to TLT > 0.3,Bullish,FRED + daily OHLC,2000s,Yes,James,stock-specific interaction
+MAC-JA-019,Yield curve,2s10s curve,Absolute threshold,Level,YES if T10Y2Y < 0 (inverted),Bearish,FRED T10Y2Y,1976+,Yes,James,
+MAC-JA-020,Yield curve,2s10s curve,Relative change,5 days,YES if T10Y2Y rose >= 15bp in 5 days while 2y fell (bull steepener),Bearish,FRED T10Y2Y,1976+,Yes,James,bull steepener often = growth scare
+MAC-JA-021,Yield curve,2s10s curve,Relative change,5 days,YES if T10Y2Y rose >= 15bp in 5 days while 10y rose (bear steepener),Bearish,FRED T10Y2Y,1976+,Yes,James,
+MAC-JA-022,Yield curve,2s10s curve,Crossover,1 day,YES if T10Y2Y crossed from <0 to >=0 within last 20 days (un-inversion),Bearish,FRED T10Y2Y,1976+,Yes,James,
+MAC-JA-023,Yield curve,3m10y curve,Absolute threshold,Level,YES if T10Y3M < 0 (inverted),Bearish,FRED T10Y3M,1976+,Yes,James,
+MAC-JA-024,Yield curve,3m10y curve,Relative change,5 days,YES if T10Y3M rose >= 15bp in 5 days while 2y fell (bull steepener),Bearish,FRED T10Y3M,1976+,Yes,James,bull steepener often = growth scare
+MAC-JA-025,Yield curve,3m10y curve,Relative change,5 days,YES if T10Y3M rose >= 15bp in 5 days while 10y rose (bear steepener),Bearish,FRED T10Y3M,1976+,Yes,James,
+MAC-JA-026,Yield curve,3m10y curve,Crossover,1 day,YES if T10Y3M crossed from <0 to >=0 within last 20 days (un-inversion),Bearish,FRED T10Y3M,1976+,Yes,James,
+MAC-JA-027,Cross-asset,US Dollar index,Relative change,1 day,YES if US Dollar index prior-day % change >= +1 std of its 60d daily returns,Bearish,DXY / DX futures,1980s+,Yes,James,
+MAC-JA-028,Cross-asset,US Dollar index,Relative change,Overnight,YES if US Dollar index 09:00 ET vs prior 16:00 ET change >= +0.75 std of 60d daily returns,Bearish,DXY / DX futures,2000s,Yes,James,
+MAC-JA-029,Cross-asset,US Dollar index,Timeframe/trend,50 days,YES if US Dollar index close > SMA50 and SMA50 rising (5d slope > 0),Bearish,DXY / DX futures,1980s+,Yes,James,
+MAC-JA-030,Cross-asset,US Dollar index,Extreme,252 days,YES if US Dollar index at 252-day low,Bullish,DXY / DX futures,1980s+,Yes,James,
+MAC-JA-031,Cross-asset,USD/JPY,Relative change,1 day,YES if USD/JPY prior-day % change >= +1 std of its 60d daily returns,Bullish,FX,1980s+,Yes,James,
+MAC-JA-032,Cross-asset,USD/JPY,Relative change,Overnight,YES if USD/JPY 09:00 ET vs prior 16:00 ET change >= +0.75 std of 60d daily returns,Bullish,FX,2000s,Yes,James,
+MAC-JA-033,Cross-asset,USD/JPY,Timeframe/trend,50 days,YES if USD/JPY close > SMA50 and SMA50 rising (5d slope > 0),Bullish,FX,1980s+,Yes,James,
+MAC-JA-034,Cross-asset,USD/JPY,Extreme,252 days,YES if USD/JPY at 252-day low,Bearish,FX,1980s+,Yes,James,
+MAC-JA-035,Cross-asset,Crude oil WTI,Relative change,1 day,YES if Crude oil WTI prior-day % change >= +1 std of its 60d daily returns,Bullish,CL futures / DCOILWTICO,1980s+,Yes,James,
+MAC-JA-036,Cross-asset,Crude oil WTI,Relative change,Overnight,YES if Crude oil WTI 09:00 ET vs prior 16:00 ET change >= +0.75 std of 60d daily returns,Bullish,CL futures / DCOILWTICO,2000s,Yes,James,
+MAC-JA-037,Cross-asset,Crude oil WTI,Timeframe/trend,50 days,YES if Crude oil WTI close > SMA50 and SMA50 rising (5d slope > 0),Bullish,CL futures / DCOILWTICO,1980s+,Yes,James,
+MAC-JA-038,Cross-asset,Crude oil WTI,Extreme,252 days,YES if Crude oil WTI at 252-day low,Bearish,CL futures / DCOILWTICO,1980s+,Yes,James,
+MAC-JA-039,Cross-asset,Gold,Relative change,1 day,YES if Gold prior-day % change >= +1 std of its 60d daily returns,Bearish,GC futures,1980s+,Yes,James,
+MAC-JA-040,Cross-asset,Gold,Relative change,Overnight,YES if Gold 09:00 ET vs prior 16:00 ET change >= +0.75 std of 60d daily returns,Bearish,GC futures,2000s,Yes,James,
+MAC-JA-041,Cross-asset,Gold,Timeframe/trend,50 days,YES if Gold close > SMA50 and SMA50 rising (5d slope > 0),Bearish,GC futures,1980s+,Yes,James,
+MAC-JA-042,Cross-asset,Gold,Extreme,252 days,YES if Gold at 252-day low,Bullish,GC futures,1980s+,Yes,James,
+MAC-JA-043,Cross-asset,Copper,Relative change,1 day,YES if Copper prior-day % change >= +1 std of its 60d daily returns,Bullish,HG futures,1980s+,Yes,James,
+MAC-JA-044,Cross-asset,Copper,Relative change,Overnight,YES if Copper 09:00 ET vs prior 16:00 ET change >= +0.75 std of 60d daily returns,Bullish,HG futures,2000s,Yes,James,
+MAC-JA-045,Cross-asset,Copper,Timeframe/trend,50 days,YES if Copper close > SMA50 and SMA50 rising (5d slope > 0),Bullish,HG futures,1980s+,Yes,James,
+MAC-JA-046,Cross-asset,Copper,Extreme,252 days,YES if Copper at 252-day low,Bearish,HG futures,1980s+,Yes,James,
+MAC-JA-047,Cross-asset,Oil x energy stock,Divergence,1 day,YES if CL up >= 2% prior day AND stock in XLE but stock return < XLE return (lagging),Bullish,CME + daily OHLC,2000s,Yes,James,
+MAC-JA-048,Cross-asset,Copper/gold ratio,Relative change,20 days,YES if HG/GC ratio 20-day change > +5%,Bullish,CME,1990s,Yes,James,
+MAC-JA-049,Cross-asset,Stock-bond correlation,Absolute threshold,60 days,"YES if 60d corr(SPY daily ret, TLT daily ret) > +0.3",Bearish,Daily OHLC,2002+,Yes,James,inflation regime
+MAC-JA-050,Credit,HY OAS,Relative change,5 days,YES if BAMLH0A0HYM2 widened >= 25bp (HY/CCC) or >= 8bp (IG) over 5 days,Bearish,FRED BAMLH0A0HYM2,1996+,Yes,James,
+MAC-JA-051,Credit,HY OAS,Extreme,252 days,YES if BAMLH0A0HYM2 at 252-day low (tightest),Bullish,FRED BAMLH0A0HYM2,1996+,Yes,James,
+MAC-JA-052,Credit,HY OAS,Divergence,5 days,YES if SPX at 20d high while BAMLH0A0HYM2 widened over same 5 days,Bearish,FRED BAMLH0A0HYM2,1996+,Yes,James,
+MAC-JA-053,Credit,IG OAS,Relative change,5 days,YES if BAMLC0A0CM widened >= 25bp (HY/CCC) or >= 8bp (IG) over 5 days,Bearish,FRED BAMLC0A0CM,1996+,Yes,James,
+MAC-JA-054,Credit,IG OAS,Extreme,252 days,YES if BAMLC0A0CM at 252-day low (tightest),Bullish,FRED BAMLC0A0CM,1996+,Yes,James,
+MAC-JA-055,Credit,IG OAS,Divergence,5 days,YES if SPX at 20d high while BAMLC0A0CM widened over same 5 days,Bearish,FRED BAMLC0A0CM,1996+,Yes,James,
+MAC-JA-056,Credit,CCC OAS,Relative change,5 days,YES if BAMLH0A3HYC widened >= 25bp (HY/CCC) or >= 8bp (IG) over 5 days,Bearish,FRED BAMLH0A3HYC,1996+,Yes,James,
+MAC-JA-057,Credit,CCC OAS,Extreme,252 days,YES if BAMLH0A3HYC at 252-day low (tightest),Bullish,FRED BAMLH0A3HYC,1996+,Yes,James,
+MAC-JA-058,Credit,CCC OAS,Divergence,5 days,YES if SPX at 20d high while BAMLH0A3HYC widened over same 5 days,Bearish,FRED BAMLH0A3HYC,1996+,Yes,James,
+MAC-JA-059,Credit,HYG/IEF ratio,Timeframe/trend,20 days,YES if HYG/IEF close ratio > its 20d SMA,Bullish,Daily OHLC,2007+,Yes,James,
+MAC-JA-060,Credit,High-leverage stock under credit stress,Interaction,5 days,YES if HY OAS widened >= 25bp in 5d AND stock Debt/Equity > 2,Bearish,FRED + Finviz,2000s,Yes,James,
+MAC-JA-061,Financial conditions,Chicago Fed NFCI,Absolute threshold,Weekly,YES if latest NFCI > 0 (tighter than average),Bearish,FRED NFCI,1971+,Yes,James,
+MAC-JA-062,Financial conditions,St. Louis Fed stress index,Relative change,Weekly,YES if STLFSI4 rose >= 0.5 week over week,Bearish,FRED STLFSI4,1993+,Yes,James,
+MAC-JA-063,Liquidity,Fed balance sheet net liquidity,Relative change,4 weeks,YES if (WALCL - WTREGEN - RRPONTSYD) 4-week change > 0,Bullish,FRED,2003+,Yes,James,
+MAC-JA-064,Liquidity,Reverse repo usage,Relative change,20 days,YES if RRPONTSYD fell >= 10% in 20 days,Bullish,FRED RRPONTSYD,2013+,Yes,James,
+MAC-JA-065,Macro surprise,CPI headline MoM,Surprise vs consensus,Release day,YES if released 08:30 ET actual - consensus median >= +0.1pp (hot),Bearish,BLS/BEA + consensus calendar,1990s+,Yes,James,release before open
+MAC-JA-066,Macro surprise,CPI headline MoM,Surprise vs consensus,Release day,YES if actual - consensus <= -0.1pp (cool),Bullish,BLS/BEA + consensus calendar,1990s+,Yes,James,
+MAC-JA-067,Macro surprise,Core CPI MoM,Surprise vs consensus,Release day,YES if released 08:30 ET actual - consensus median >= +0.1pp (hot),Bearish,BLS/BEA + consensus calendar,1990s+,Yes,James,release before open
+MAC-JA-068,Macro surprise,Core CPI MoM,Surprise vs consensus,Release day,YES if actual - consensus <= -0.1pp (cool),Bullish,BLS/BEA + consensus calendar,1990s+,Yes,James,
+MAC-JA-069,Macro surprise,PPI MoM,Surprise vs consensus,Release day,YES if released 08:30 ET actual - consensus median >= +0.1pp (hot),Bearish,BLS/BEA + consensus calendar,1990s+,Yes,James,release before open
+MAC-JA-070,Macro surprise,PPI MoM,Surprise vs consensus,Release day,YES if actual - consensus <= -0.1pp (cool),Bullish,BLS/BEA + consensus calendar,1990s+,Yes,James,
+MAC-JA-071,Macro surprise,Nonfarm payrolls,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-072,Macro surprise,Unemployment rate,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bearish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-073,Macro surprise,Initial jobless claims,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bearish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-074,Macro surprise,Retail sales MoM,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-075,Macro surprise,ISM manufacturing PMI,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-076,Macro surprise,ISM services PMI,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-077,Macro surprise,Core PCE MoM,Surprise vs consensus,Release day,YES if released 08:30 ET actual - consensus median >= +0.1pp (hot),Bearish,BLS/BEA + consensus calendar,1990s+,Yes,James,release before open
+MAC-JA-078,Macro surprise,Core PCE MoM,Surprise vs consensus,Release day,YES if actual - consensus <= -0.1pp (cool),Bullish,BLS/BEA + consensus calendar,1990s+,Yes,James,
+MAC-JA-079,Macro surprise,JOLTS openings,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-080,Macro surprise,GDP advance,Surprise vs consensus,Release day,YES if (actual - consensus)/std of last 24 surprises >= +1 (stronger economy),Bullish,Agency release + consensus calendar,1990s+,Yes,James,sign flips in inflation-scare regimes
+MAC-JA-081,Macro surprise,Citi Economic Surprise Index US,Absolute threshold,Level,YES if CESI US > +50,Bearish,Bloomberg/Citi,2003+,Yes,James,mean-reverting; contrarian
+MAC-JA-082,Fed,Fed funds futures implied cuts,Relative change,5 days,YES if implied cuts by next 12m rose >= 25bp in 5 days,Bullish,CME FedWatch,2000s,Yes,James,
+MAC-JA-083,Fed,Fedspeak,Event,Prior day,YES if Fed Chair spoke after prior close and 2y yield moved <= -5bp overnight,Bullish,Fed calendar + futures,2010s,Yes,James,
+MAC-JA-084,Fed,Policy stance,Absolute threshold,Level,YES if last FOMC action was a cut within past 90 days,Bullish,Fed,1990s,Yes,James,
+MAC-JA-085,Inflation expectations,10y breakeven,Relative change,20 days,YES if T10YIE rose >= 20bp in 20 days,Bearish,FRED T10YIE,2003+,Yes,James,
+CAL-JA-001,Calendar,FOMC decision day,Event flag,Today,YES if today is an FOMC statement day (14:00 ET),Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pre-FOMC drift
+CAL-JA-002,Calendar,Day after FOMC,Event flag,Today,YES if today is first session after FOMC statement,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-003,Calendar,Day before FOMC,Event flag,Today,YES if FOMC statement is next session,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pre-FOMC drift
+CAL-JA-004,Calendar,CPI release day,Event flag,Today,YES if CPI released 08:30 ET today,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,higher variance
+CAL-JA-005,Calendar,NFP release day,Event flag,Today,YES if Employment Situation released today,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-006,Calendar,Monthly opex day,Event flag,Today,YES if today is 3rd Friday of month,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-007,Calendar,Opex week,Event flag,Today,YES if today is Mon-Thu of monthly opex week,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pin/vanna support
+CAL-JA-008,Calendar,Week after opex,Event flag,Today,YES if today is in week following monthly opex,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,window of weakness
+CAL-JA-009,Calendar,Quad witching,Event flag,Today,YES if today is 3rd Friday of Mar/Jun/Sep/Dec,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-010,Calendar,VIX expiration,Event flag,Today,YES if today is VIX settlement Wednesday,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-011,Calendar,S&P quarterly rebalance effective,Event flag,Today,YES if today is rebalance trade date and stock is being added,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,index add
+CAL-JA-012,Calendar,S&P rebalance deletion,Event flag,Today,YES if today is rebalance trade date and stock is being deleted,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-013,Calendar,Russell reconstitution,Event flag,Today,YES if today is Russell recon day (last Fri June / quarterly from 2026) and stock is an addition,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-014,Calendar,Russell recon deletion,Event flag,Today,YES if Russell recon day and stock is a deletion,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-015,Calendar,Month end,Event flag,Today,YES if today is last trading day of month,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pension flows
+CAL-JA-016,Calendar,Turn of month,Event flag,Today,YES if today is within trading days -1..+3 around month start,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,turn-of-month effect
+CAL-JA-017,Calendar,Mid-month,Event flag,Today,YES if trading day of month in 9..15,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-018,Calendar,Quarter end rebalance,Event flag,Today,YES if within last 3 sessions of quarter AND stock's QTD return in top decile of S&P,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pension selling winners
+CAL-JA-019,Calendar,Quarter start,Event flag,Today,YES if first 3 sessions of quarter,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-020,Calendar,Pre-holiday,Event flag,Today,YES if next day is NYSE holiday,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,pre-holiday effect
+CAL-JA-021,Calendar,Post-holiday,Event flag,Today,YES if prior weekday was NYSE holiday,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-022,Calendar,Half-day session,Event flag,Today,YES if today is NYSE early close,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-023,Calendar,Monday,Event flag,Today,YES if today is Monday,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,weekend effect
+CAL-JA-024,Calendar,Tuesday,Event flag,Today,YES if today is Tuesday,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,turnaround Tuesday
+CAL-JA-025,Calendar,Friday,Event flag,Today,YES if today is Friday,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-026,Calendar,Santa rally window,Event flag,Today,YES if today is within last 5 sessions of Dec or first 2 of Jan,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-027,Calendar,September,Event flag,Today,YES if month is September,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,seasonal
+CAL-JA-028,Calendar,Nov-Apr half,Event flag,Today,YES if month in Nov..Apr,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,Halloween effect
+CAL-JA-029,Calendar,January small caps,Event flag,Today,YES if month is January AND stock market cap < $2B,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,January effect
+CAL-JA-030,Calendar,Tax-loss season,Event flag,Today,YES if date in Dec 1..Dec 20 AND stock YTD return < -30%,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-031,Calendar,Tax-loss reversal,Event flag,Today,YES if first 5 sessions of Jan AND stock prior-year return < -30%,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-032,Calendar,Earnings season peak,Event flag,Today,YES if >= 20% of S&P reports this week,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,dispersion up
+CAL-JA-033,Calendar,Stock earnings tomorrow,Event flag,Today,YES if stock reports after close today or before open tomorrow,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,IV crush/gap risk
+CAL-JA-034,Calendar,Stock earnings today pre-market,Event flag,Today,YES if stock reported before open and pre-market gap > +3%,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-035,Calendar,Post-earnings drift,Event flag,Today,YES if stock reported within last 5 sessions with EPS surprise > +10% and day-1 return > 0,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,PEAD
+CAL-JA-036,Calendar,Sector peers reporting,Event flag,Today,YES if >= 2 top-5 sector peers report today pre-market with avg gap > +2%,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-037,Calendar,Election day,Event flag,Today,YES if US federal election day,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-038,Calendar,Treasury refunding,Event flag,Today,YES if quarterly refunding announcement today,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-039,Calendar,Ex-dividend day,Event flag,Today,YES if today is stock ex-date,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,price drops by dividend
+CAL-JA-040,Calendar,Index inclusion announcement,Event flag,Today,YES if stock announced as S&P addition after prior close,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-041,Calendar,Lockup expiry,Event flag,Today,YES if IPO lockup expires within next 3 sessions,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-042,Calendar,Fed blackout,Event flag,Today,YES if within FOMC blackout period,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,less Fedspeak
+CAL-JA-043,Calendar,Jackson Hole,Event flag,Today,YES if today is Jackson Hole Chair speech day,Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-044,Calendar,Buyback blackout,Event flag,Today,YES if within ~4 weeks pre-earnings for most S&P (est. via earnings calendar),Bearish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,corporate bid absent
+CAL-JA-045,Calendar,Day-of-year seasonality,Event flag,Today,YES if SPX average return on this calendar day-of-year (last 30y) > +0.1%,Bullish,NYSE/Fed/BLS/S&P/earnings calendar,1950s+,Yes,James,
+CAL-JA-046,Calendar,Stock own seasonality,Timeframe,10 years,YES if stock's average return in this calendar month over last 10y > +2% and positive in >= 7/10,Bullish,Daily OHLC,1990s,Yes,James,
+CAL-JA-047,Calendar,Days since last FOMC,Absolute threshold,Count,YES if 0-4 sessions after a cut announcement,Bullish,Fed,1990s,Yes,James,
+SEC-JA-001,Sector relative strength,Stock vs sector ETF,Relative change,1 days,YES if stock 1d return - sector SPDR 1d return >= +5% (scale: 1d +2%),Bearish,Daily OHLC,1999+,Yes,James,"short lookback mean-reverts, long momentum"
+SEC-JA-002,Sector relative strength,Sector ETF vs SPY,Relative change,1 days,YES if stock's sector ETF 1d return - SPY 1d return >= +3% (1d +1%),Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-003,Sector relative strength,Stock vs sector ETF,Relative change,5 days,YES if stock 5d return - sector SPDR 5d return >= +5% (scale: 1d +2%),Bearish,Daily OHLC,1999+,Yes,James,"short lookback mean-reverts, long momentum"
+SEC-JA-004,Sector relative strength,Sector ETF vs SPY,Relative change,5 days,YES if stock's sector ETF 5d return - SPY 5d return >= +3% (1d +1%),Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-005,Sector relative strength,Stock vs sector ETF,Relative change,20 days,YES if stock 20d return - sector SPDR 20d return >= +5% (scale: 1d +2%),Bullish,Daily OHLC,1999+,Yes,James,"short lookback mean-reverts, long momentum"
+SEC-JA-006,Sector relative strength,Sector ETF vs SPY,Relative change,20 days,YES if stock's sector ETF 20d return - SPY 20d return >= +3% (1d +1%),Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-007,Sector relative strength,Stock vs sector ETF,Relative change,60 days,YES if stock 60d return - sector SPDR 60d return >= +5% (scale: 1d +2%),Bullish,Daily OHLC,1999+,Yes,James,"short lookback mean-reverts, long momentum"
+SEC-JA-008,Sector relative strength,Sector ETF vs SPY,Relative change,60 days,YES if stock's sector ETF 60d return - SPY 60d return >= +3% (1d +1%),Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-009,Sector relative strength,Stock vs sector ratio trend,Timeframe/trend,50 days,YES if stock/sectorETF ratio > its SMA50 and SMA50 slope >0,Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-010,Sector relative strength,Stock vs sector ratio,Extreme,252 days,YES if stock/sectorETF ratio at 252-day high,Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-011,Sector relative strength,Stock vs sector ratio,Extreme,252 days,YES if stock/sectorETF ratio at 252-day low,Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-012,Sector divergence,"Stock down, sector up",Divergence,1 day,YES if prior day stock return < -2% while sector ETF > +0.5%,Bullish,Daily OHLC,1999+,Yes,James,idiosyncratic reversal
+SEC-JA-013,Sector divergence,"Stock up, sector down",Divergence,1 day,YES if prior day stock > +2% while sector ETF < -0.5%,Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-014,Sector gap,Stock pre-market gap vs sector ETF gap,Relative change,Pre-market,YES if stock 09:00 ET pre-mkt % change - sector ETF pre-mkt % change >= +3%,Bullish,Pre-market quotes,2010s,Yes,James,
+SEC-JA-015,Sector gap,Stock pre-market gap vs sector ETF gap,Relative change,Pre-market,YES if stock pre-mkt - sector ETF pre-mkt <= -3%,Bearish,Pre-market quotes,2010s,Yes,James,
+SEC-JA-016,Sector breadth,% sector members above SMA50,Absolute threshold,50 days,YES if > 70% of stock's sector constituents close above their SMA50,Bullish,Constituent OHLC,2000s,Yes,James,
+SEC-JA-017,Sector breadth,% sector members above SMA50,Extreme,50 days,YES if < 15% of sector members above SMA50,Bullish,Constituent OHLC,2000s,Yes,James,oversold contrarian
+SEC-JA-018,Sector breadth,% sector members above SMA200,Absolute threshold,200 days,YES if < 30% of sector members above SMA200,Bearish,Constituent OHLC,2000s,Yes,James,
+SEC-JA-019,Sector breadth,Sector A/D line,Divergence,20 days,YES if sector ETF at 20d high but sector cumulative A/D below its 20d high,Bearish,Constituent OHLC,2000s,Yes,James,
+SEC-JA-020,Sector breadth,Sector new highs minus lows,Absolute threshold,1 day,YES if (52w highs - 52w lows)/members in sector > +10%,Bullish,Constituent OHLC,2000s,Yes,James,
+SEC-JA-021,Rotation,Sector rank,Timeframe,20 days,YES if stock's sector ranks top 3 of 11 SPDRs by 20d return,Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-022,Rotation,Sector rank,Timeframe,20 days,YES if stock's sector ranks bottom 3 of 11 by 20d return,Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-023,Rotation,Sector rank change,Relative change,20 days,YES if sector rank improved >= 5 places vs 20 days ago,Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-024,Rotation,Cyclicals vs defensives,Relative change,20 days,YES if (XLY+XLI+XLF)/(XLP+XLU+XLV) 20d change > +3% AND stock is cyclical,Bullish,Daily OHLC,1999+,Yes,James,
+SEC-JA-025,Rotation,Growth vs value,Relative change,20 days,YES if IWF/IWD 20d change > +3% AND stock in Russell 1000 Growth,Bullish,Daily OHLC,2000+,Yes,James,
+SEC-JA-026,Rotation,Small vs large,Relative change,20 days,YES if IWM/SPY 20d change > +3% AND stock mcap < $2B,Bullish,Daily OHLC,2000+,Yes,James,
+SEC-JA-027,Rotation,Semis lead,Relative change,5 days,YES if SMH/SPY 5d change > +3% AND stock in tech,Bullish,Daily OHLC,2000+,Yes,James,
+SEC-JA-028,Industry group,Industry momentum,Timeframe,6 months,YES if stock's Finviz industry 6m performance in top decile of industries,Bullish,Finviz groups,2000s,Yes,James,Moskowitz-Grinblatt
+SEC-JA-029,Industry group,Industry momentum,Timeframe,1 week,YES if industry 1w performance in top decile,Bearish,Finviz groups,2000s,Yes,James,short-term reversal
+SEC-JA-030,Industry group,Industry vs stock,Divergence,1 month,YES if industry 1m perf top quintile and stock 1m perf bottom quintile within industry,Bullish,Finviz,2000s,Yes,James,laggard catch-up
+SEC-JA-031,Industry group,Peer earnings read-through,Event,Prior night,YES if largest industry peer reported after prior close and moved >= +5% AH,Bullish,Earnings calendar + AH quotes,2010s,Yes,James,
+SEC-JA-032,Sector volatility,Sector ETF ATR,Relative change,20 days,YES if sector ETF ATR(14)/ATR(14) 20d ago > 1.5,Bearish,Daily OHLC,1999+,Yes,James,
+SEC-JA-033,Sector correlation,Stock-sector correlation,Absolute threshold,60 days,"YES if 60d corr(stock, sector ETF) < 0.3",Bullish,Daily OHLC,1999+,Yes,James,"idiosyncratic; neutral-ish, check"
+SEC-JA-034,Sector flows,Sector ETF shares outstanding,Relative change,5 days,YES if sector ETF shares outstanding +3% in 5d (creations),Bullish,ETF issuer data,2010s,Yes,James,
+MKT-JA-001,Market-wide,VIX,Absolute threshold,Level,YES if VIX prior close > 30,Bullish,CBOE,1990+,Yes,James,capitulation contrarian
+MKT-JA-002,Market-wide,VIX,Absolute threshold,Level,YES if VIX prior close < 13,Bearish,CBOE,1990+,Yes,James,complacency
+MKT-JA-003,Market-wide,VIX,Relative change,1 day,YES if VIX rose >= 20% prior day,Bullish,CBOE,1990+,Yes,James,spike reversal
+MKT-JA-004,Market-wide,VIX,Relative change,5 days,YES if VIX fell >= 25% in 5 days,Bullish,CBOE,1990+,Yes,James,
+MKT-JA-005,Market-wide,VIX,Extreme,Bollinger,YES if VIX close above its 20d upper Bollinger (2sd) then closed back inside,Bullish,CBOE,1990+,Yes,James,
+MKT-JA-006,Market-wide,VIX,Timeframe/trend,10 days,YES if VIX > its SMA10 by >= 10%,Bullish,CBOE,1990+,Yes,James,Connors VIX stretch
+MKT-JA-007,Market-wide,VIX term structure,Absolute threshold,VIX/VIX3M,YES if VIX/VIX3M > 1.0 (backwardation),Bearish,CBOE,2006+,Yes,James,stress; next-day contrarian bull in some studies
+MKT-JA-008,Market-wide,VIX term structure,Extreme,VIX/VIX3M,YES if VIX/VIX3M > 1.15,Bullish,CBOE,2006+,Yes,James,extreme fear
+MKT-JA-009,Market-wide,VIX term structure,Absolute threshold,VIX9D/VIX,YES if VIX9D/VIX > 1.1,Bearish,CBOE,2011+,Yes,James,
+MKT-JA-010,Market-wide,VIX term structure,Crossover,1 day,YES if VIX/VIX3M crossed back below 1.0 today,Bullish,CBOE,2006+,Yes,James,
+MKT-JA-011,Market-wide,VIX futures,Absolute threshold,Front roll yield,YES if (VX2-VX1)/VX1 > +8% (steep contango),Bullish,CFE,2004+,Yes,James,
+MKT-JA-012,Market-wide,VVIX,Absolute threshold,Level,YES if VVIX > 120,Bearish,CBOE,2007+,Yes,James,
+MKT-JA-013,Market-wide,VVIX,Divergence,5 days,YES if VIX up over 5d but VVIX down >= 5%,Bullish,CBOE,2007+,Yes,James,
+MKT-JA-014,Market-wide,SKEW,Absolute threshold,Level,YES if CBOE SKEW > 150,Bearish,CBOE,1990+,Yes,James,
+MKT-JA-015,Market-wide,VIX vs realized,Relative change,20 days,YES if VIX - SPX 20d realized vol (annualized) > 8,Bullish,CBOE + OHLC,1990+,Yes,James,fear premium rich
+MKT-JA-016,Market-wide,Stock IV vs VIX,Relative change,Level,YES if stock 30d ATM IV / VIX > 3,Bearish,Options chain,2005+,Yes,James,
+MKT-JA-017,Market-wide,ES futures gap,Relative change,Overnight,YES if ES 09:00 ET vs prior 16:00 ET >= +0.5%,Bullish,CME,1997+,Yes,James,
+MKT-JA-018,Market-wide,ES futures gap,Relative change,Overnight,YES if ES overnight change <= -0.5%,Bearish,CME,1997+,Yes,James,
+MKT-JA-019,Market-wide,ES futures gap,Extreme,Overnight,YES if ES overnight <= -1.5%,Bullish,CME,1997+,Yes,James,gap-down fade
+MKT-JA-020,Market-wide,NQ futures gap,Relative change,Overnight,YES if NQ overnight >= +0.7% AND stock is tech (beta to QQQ >1),Bullish,CME,1999+,Yes,James,
+MKT-JA-021,Market-wide,RTY futures gap,Relative change,Overnight,YES if RTY overnight >= +0.7% AND stock mcap < $2B,Bullish,CME,2017+,Yes,James,
+MKT-JA-022,Market-wide,Futures divergence,Divergence,Overnight,YES if NQ overnight - RTY overnight >= +1%,Bearish,CME,2017+,Yes,James,narrow leadership; for small caps
+MKT-JA-023,Market-wide,Beta-adjusted expected open,Relative change,Overnight,YES if stock 60d beta x ES overnight % >= +1%,Bullish,CME + OHLC,2000s,Yes,James,
+MKT-JA-024,Market-wide,Overnight range,Absolute threshold,Overnight,YES if ES overnight high-low range > 1.2%,Bearish,CME,1997+,Yes,James,
+MKT-JA-025,Market-wide,SPY prior day,Relative change,1 day,YES if SPY prior day return <= -2%,Bullish,OHLC,1993+,Yes,James,
+MKT-JA-026,Market-wide,SPY prior day,Relative change,1 day,YES if SPY prior day >= +2%,Bearish,OHLC,1993+,Yes,James,
+MKT-JA-027,Market-wide,SPY streak,Extreme,Streak,YES if SPY down 4+ consecutive sessions,Bullish,OHLC,1993+,Yes,James,
+MKT-JA-028,Market-wide,SPY streak,Extreme,Streak,YES if SPY up 7+ consecutive sessions,Bearish,OHLC,1993+,Yes,James,
+MKT-JA-029,Market-wide,SPY trend,Timeframe/trend,200 days,YES if SPY close > SMA200,Bullish,OHLC,1993+,Yes,James,
+MKT-JA-030,Market-wide,SPY trend,Timeframe/trend,50 days,YES if SPY SMA50 > SMA200 (golden regime),Bullish,OHLC,1993+,Yes,James,
+MKT-JA-031,Market-wide,SPY drawdown,Absolute threshold,252 days,YES if SPY >= 10% below 252d high,Bullish,OHLC,1993+,Yes,James,dip regime
+MKT-JA-032,Market-wide,SPY RSI(2),Extreme,2 days,YES if SPY RSI(2) < 10,Bullish,OHLC,1993+,Yes,James,
+MKT-JA-033,Market-wide,SPY RSI(2),Extreme,2 days,YES if SPY RSI(2) > 90,Bearish,OHLC,1993+,Yes,James,
+MKT-JA-034,Market-wide,SPY realized vol,Absolute threshold,20 days,YES if SPX 20d realized vol > 25%,Bearish,OHLC,1993+,Yes,James,
+MKT-JA-035,Market-wide,NYSE A/D,Absolute threshold,1 day,YES if NYSE advancers/decliners prior day > 3,Bullish,NYSE,1960s+,Yes,James,
+MKT-JA-036,Market-wide,NYSE A/D,Extreme,1 day,YES if decliners/advancers > 4 (90% down day),Bullish,NYSE,1960s+,Yes,James,capitulation
+MKT-JA-037,Market-wide,Breadth thrust,Extreme,10 days,YES if Zweig: 10d EMA of adv/(adv+dec) moved from <0.40 to >0.615 within 10 days,Bullish,NYSE,1940s+,Yes,James,
+MKT-JA-038,Market-wide,McClellan Oscillator,Extreme,19/39 EMA,YES if NYSE McClellan Osc < -100,Bullish,NYSE,1960s+,Yes,James,
+MKT-JA-039,Market-wide,McClellan Oscillator,Extreme,19/39 EMA,YES if McClellan Osc > +100,Bearish,NYSE,1960s+,Yes,James,
+MKT-JA-040,Market-wide,Cumulative A/D,Divergence,20 days,YES if SPX at 20d high but NYSE A/D line not,Bearish,NYSE,1960s+,Yes,James,
+MKT-JA-041,Market-wide,% above SMA50,Extreme,50 days,YES if % S&P500 members above SMA50 < 15%,Bullish,Constituent OHLC,1990s,Yes,James,
+MKT-JA-042,Market-wide,% above SMA50,Extreme,50 days,YES if % above SMA50 > 85%,Bearish,Constituent OHLC,1990s,Yes,James,
+MKT-JA-043,Market-wide,% above SMA200,Absolute threshold,200 days,YES if % S&P500 above SMA200 > 60%,Bullish,Constituent OHLC,1990s,Yes,James,
+MKT-JA-044,Market-wide,% above SMA20,Relative change,5 days,YES if % S&P500 above SMA20 rose >= 30pts in 5 days,Bullish,Constituent OHLC,1990s,Yes,James,
+MKT-JA-045,Market-wide,New highs/lows,Absolute threshold,1 day,YES if NYSE 52w new lows > 400,Bullish,NYSE,1960s+,Yes,James,contrarian
+MKT-JA-046,Market-wide,New highs/lows,Absolute threshold,1 day,YES if NYSE new highs - new lows > 0 for 10 straight days,Bullish,NYSE,1960s+,Yes,James,
+MKT-JA-047,Market-wide,Hindenburg omen,Extreme,1 day,YES if NYSE new highs and new lows both > 2.8% of issues and NYSE above SMA50 and McClellan < 0,Bearish,NYSE,1960s+,Yes,James,
+MKT-JA-048,Market-wide,Up/down volume,Absolute threshold,1 day,YES if NYSE up volume / total volume > 0.9,Bullish,NYSE,1960s+,Yes,James,
+MKT-JA-049,Market-wide,TRIN,Extreme,1 day,YES if Arms index prior close > 2.0,Bullish,NYSE,1960s+,Yes,James,
+MKT-JA-050,Market-wide,Equal vs cap weight,Relative change,20 days,YES if RSP/SPY 20d change > +2%,Bullish,OHLC,2003+,Yes,James,broadening
+MKT-JA-051,Market-wide,Equity put/call,Extreme,1 day,YES if CBOE equity put/call prior day > 0.9,Bullish,CBOE,2003+,Yes,James,
+MKT-JA-052,Market-wide,Equity put/call,Extreme,1 day,YES if equity put/call < 0.45,Bearish,CBOE,2003+,Yes,James,
+MKT-JA-053,Market-wide,Total put/call,Timeframe,10 days,YES if 10d SMA of CBOE total P/C > 1.05,Bullish,CBOE,1995+,Yes,James,
+MKT-JA-054,Market-wide,Index put/call,Relative change,5 days,YES if index P/C 5d avg rose >= 20% vs prior 5d,Bullish,CBOE,1995+,Yes,James,
+MKT-JA-055,Market-wide,CNN Fear & Greed,Extreme,Level,YES if Fear&Greed < 20 (extreme fear),Bullish,CNN,2011+,Yes,James,
+MKT-JA-056,Market-wide,CNN Fear & Greed,Extreme,Level,YES if Fear&Greed > 80,Bearish,CNN,2011+,Yes,James,
+MKT-JA-057,Market-wide,AAII sentiment,Extreme,Weekly,YES if AAII bull-bear spread < -20,Bullish,AAII,1987+,Yes,James,
+MKT-JA-058,Market-wide,AAII sentiment,Extreme,Weekly,YES if AAII bull-bear spread > +30,Bearish,AAII,1987+,Yes,James,
+MKT-JA-059,Market-wide,NAAIM exposure,Extreme,Weekly,YES if NAAIM exposure < 30,Bullish,NAAIM,2006+,Yes,James,
+MKT-JA-060,Market-wide,CFTC ES positioning,Extreme,Weekly,YES if leveraged funds ES net short in bottom 10% of 3y range,Bullish,CFTC COT,2006+,Yes,James,
+MKT-JA-061,Market-wide,Dealer gamma (GEX),Absolute threshold,Level,YES if estimated SPX dealer net gamma < 0,Bearish,Options OI estimate,2010s,Yes,James,higher vol
+MKT-JA-062,Market-wide,0DTE volume,Relative change,20 days,YES if SPX 0DTE share of volume > 20d avg + 2sd,Bearish,CBOE,2022+,Yes,James,
+MKT-JA-063,Market-wide,Nikkei session,Relative change,Overnight,YES if Nikkei 225 session return >= +1%,Bullish,Asia index,1990+,Yes,James,
+MKT-JA-064,Market-wide,Nikkei session,Relative change,Overnight,YES if Nikkei session <= -2%,Bearish,Asia index,1990+,Yes,James,
+MKT-JA-065,Market-wide,Hang Seng/China,Relative change,Overnight,YES if Hang Seng session >= +1.5% AND stock has China revenue/ADR,Bullish,HKEX,1990+,Yes,James,
+MKT-JA-066,Market-wide,KOSPI/TAIEX,Relative change,Overnight,YES if TAIEX >= +1% AND stock is semiconductor,Bullish,Asia index,1990s+,Yes,James,
+MKT-JA-067,Market-wide,Euro Stoxx 50,Relative change,Pre-open,YES if SX5E at 09:00 ET vs prior close >= +0.75%,Bullish,Eurex/STOXX,1990s+,Yes,James,
+MKT-JA-068,Market-wide,Euro Stoxx 50,Relative change,Pre-open,YES if SX5E at 09:00 ET <= -1%,Bearish,Eurex/STOXX,1990s+,Yes,James,
+MKT-JA-069,Market-wide,DAX vs ES,Divergence,Pre-open,YES if DAX up >= 0.5% but ES flat/down (<0),Bearish,Eurex/CME,2000s,Yes,James,
+MKT-JA-070,Market-wide,Global breadth,Absolute threshold,Overnight,"YES if >= 4 of 5 (Nikkei, HSI, KOSPI, DAX, FTSE) positive",Bullish,Index data,2000s,Yes,James,
+MKT-JA-071,Market-wide,Bitcoin overnight,Relative change,Overnight,YES if BTC 16:00->09:00 ET >= +3%,Bullish,Crypto exchanges,2014+,Yes,James,stronger for COIN/MSTR/miners/high-beta
+MKT-JA-072,Market-wide,Bitcoin overnight,Relative change,Overnight,YES if BTC overnight <= -5%,Bearish,Crypto exchanges,2014+,Yes,James,
+MKT-JA-073,Market-wide,Bitcoin weekend,Relative change,Weekend,YES if Monday and BTC Fri16:00->Mon09:00 >= +5% AND stock 60d corr to BTC > 0.4,Bullish,Crypto exchanges,2014+,Yes,James,
+MKT-JA-074,Market-wide,ETH/BTC,Relative change,5 days,YES if ETH/BTC 5d change > +5%,Bullish,Crypto exchanges,2016+,Yes,James,risk appetite
+MKT-JA-075,Market-wide,Market beta regime,Interaction,Level,YES if VIX > 25 AND stock 60d beta > 1.5,Bearish,CBOE + OHLC,2000s,Yes,James,
+MKT-JA-076,Market-wide,Market momentum interaction,Interaction,Overnight,YES if ES overnight > +0.5% AND stock prior day RSI(14) < 30,Bullish,CME + OHLC,2000s,Yes,James,
+MKT-JA-077,Market-wide,Stock vs SPY gap,Relative change,Pre-market,YES if stock pre-mkt % - SPY pre-mkt % >= +4% with no news,Bearish,Pre-market quotes,2010s,Yes,James,gap fade
+MKT-MB-001,Market sentiment,AAII bull-bear spread,Extreme,Weekly,YES if bulls minus bears <= -20 pts,Bullish (contrarian),AAII survey,1987,Yes (Thursday release),Manager Bot,
+MKT-MB-002,Market sentiment,AAII bull-bear spread,Extreme,Weekly,YES if bulls minus bears >= +30 pts,Bearish (contrarian),AAII survey,1987,Yes,Manager Bot,
+MKT-MB-003,Market sentiment,CNN Fear & Greed,Extreme,Prior close,YES if index <= 20 (extreme fear),Bullish (contrarian),CNN,2011,Yes,Manager Bot,
+MKT-MB-004,Market sentiment,CNN Fear & Greed,Extreme,Prior close,YES if index >= 80 (extreme greed),Bearish (contrarian),CNN,2011,Yes,Manager Bot,
+MKT-MB-005,Market sentiment,Put/call ratio (equity),Extreme,Prior close,YES if CBOE equity put/call >= 1.0,Bullish (contrarian),CBOE,2003,Yes,Manager Bot,overlaps Taskforce options lane; dedupe
+ANL-MB-002,Analyst,Target vs price,Absolute,Prior close,YES if mean price target >= 1.5x prior close,Bullish,Finviz Target Price,varies,Yes,Manager Bot,overlaps Theme Radar Finviz lane
+ANL-MB-003,Analyst,Estimate revisions,Relative change,30 days,YES if next-qtr EPS consensus revised up >= 5% in 30d,Bullish,Yahoo/Zacks,varies,Yes,Manager Bot,
+ANL-MB-001,Analyst,Rating change,Category,Since prior close,YES if count of analyst Buy/Strong Buy ratings rose vs 30 days ago (published consensus rating counts),Bullish,Yahoo/Finviz analyst recommendation counts,varies,Yes,Manager Bot,
+PMK-NB-003,Pre-market,Gap in ATR units,Extreme,09:25 ET vs ATR14,abs(premarket price - prior close) / ATR14(prior) >= 1.5,Direction follows gap sign; extreme gaps fade more often,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-004,Pre-market,Premarket relative volume,Relative change,04:00-09:25 ET,premarket share volume today / median premarket volume same window over prior 20 sessions >= 5,Amplifier (confirms gap direction),Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-005,Pre-market,Premarket volume vs float,Absolute threshold,04:00-09:25 ET,premarket volume / float shares >= 10%,Amplifier; small-cap momentum (bullish if gap up),Pre-market quotes (Polygon/Webull/IBKR) + float,2004+,Yes,New Bot,
+PMK-NB-006,Pre-market,Premarket dollar volume,Absolute threshold,04:00-09:25 ET,sum(price*volume) premarket >= $5M,Liquidity filter; neutral,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,tradability gate
+PMK-NB-007,Pre-market,Premarket high fade,Divergence,04:00-09:25 ET,(premarket high - last premarket price)/(premarket high - prior close) >= 0.5 with gap up >=3%,Bearish,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-008,Pre-market,Premarket holds near high,Divergence,04:00-09:25 ET,"last premarket price >= premarket high - 0.2*(premarket high - premarket low), gap up >= 3%",Bullish,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-009,Pre-market,Gap vs prior-day range,Extreme,Prior session,premarket price > prior day high (gap above range),Bullish (breakaway) – ambiguous w/o news,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-010,Pre-market,Gap into prior-day range,Divergence,Prior session,premarket price between prior day low and high (no range break) despite abs gap>=1%,Neutral/low-signal,Pre-market quotes (Polygon/Webull/IBKR),2004+,Yes,New Bot,
+PMK-NB-012,Pre-market,Premarket spread,Absolute threshold,09:25 ET,(ask-bid)/mid at 09:25 >= 1%,Bearish for execution quality; neutral direction,Pre-market quotes (Polygon/Webull/IBKR),2010+,Yes,New Bot,slippage gate
+AHR-NB-001,After-hours,Post-close move,Absolute threshold,16:00-20:00 ET prior day,last after-hours trade / regular close - 1 >= +4%,Bullish (if held into premarket),AH quotes (Polygon),2004+,Yes,New Bot,
+AHR-NB-002,After-hours,After-hours reversal,Divergence,AH prior day vs premarket,sign(AH move) != sign(premarket move at 09:25 vs AH last) and both abs>=2%,Ambiguous; signals news digestion reversal,AH + PM quotes,2004+,Yes,New Bot,
+AHR-NB-003,After-hours,AH volume spike,Relative change,16:00-20:00 ET,AH volume / 20-day median AH volume >= 5,Amplifier,AH quotes,2004+,Yes,New Bot,
+STR-NB-001,Prior-day structure,Close location value,Absolute threshold,Prior day,(close-low)/(high-low) >= 0.9,Bullish (strong close),Daily OHLC,1990s,Yes,New Bot,check vs Taskforce candle rows
+STR-NB-002,Prior-day structure,Close location value weak,Absolute threshold,Prior day,(close-low)/(high-low) <= 0.1,Bearish (or oversold bounce in uptrend – ambiguous),Daily OHLC,1990s,Yes,New Bot,
+STR-NB-004,Prior-day structure,Inside day after big move,Divergence,2 days,prior day H<=H[-1] and L>=L[-1] and abs(ret[-1])>=5%,Continuation of day[-1] direction (weak),Daily OHLC,1990s,Yes,New Bot,
+STR-NB-005,Prior-day structure,Closed at last-hour high,Absolute threshold,15:00-16:00 ET prior,close >= 99% of last-hour high and last-hour return >= +1%,Bullish (late buying),Intraday 1m bars,2004+,Yes,New Bot,
+STR-NB-006,Prior-day structure,Prior-day close vs VWAP,Relative change,Prior day,prior close / prior day VWAP - 1 >= +2%,Bullish,Intraday bars,2004+,Yes,New Bot,
+STR-NB-007,Prior-day structure,Anchored VWAP from earnings,Relative change,Since last earnings day,prior close > AVWAP anchored at last earnings session open,Bullish,Intraday bars + earnings dates,2004+,Yes,New Bot,
+STR-NB-008,Prior-day structure,Round-number proximity,Absolute threshold,Prior close,abs(prior close - nearest integer multiple of $1 (<$20) / $5 (<$100) / $10)/price <= 0.5%,Ambiguous (resistance/support magnet),Daily close,1990s,Yes,New Bot,
+STR-NB-009,Prior-day structure,$1 compliance line,Absolute threshold,Prior close,prior close < $1.00 for >= 20 of last 30 sessions,Bearish (delisting/reverse-split risk),Daily close + Nasdaq rule 5550,1990s,Yes,New Bot,
+STR-NB-011,Prior-day structure,Halt history,Absolute threshold,Prior 5 days,>=1 LULD/volatility halt in last 5 sessions,Ambiguous; high-vol regime,Nasdaq/NYSE halt feed,2012+,Yes,New Bot,
+CAP-NB-001,Corporate action,Reverse split recent,Absolute threshold,Last 30 days,reverse split effective within last 30 calendar days,Bearish,Nasdaq/Polygon splits,2000+,Yes,New Bot,
+CAP-NB-002,Corporate action,Reverse split announced,Absolute threshold,Upcoming 10 days,reverse split effective date in next 10 calendar days,Bearish,8-K / exchange notices,2000+,Yes,New Bot,
+CAP-NB-003,Corporate action,Forward split announced,Absolute threshold,"Announced <=30d, not yet effective",forward split ratio >=2 announced and pending,Bullish,Press releases / splits feed,2000+,Yes,New Bot,
+CAP-NB-004,Corporate action,Ex-dividend tomorrow/today,Absolute threshold,Today,today is ex-date and dividend/price >= 1%,Bearish mechanically (price drops by dividend),Dividend calendar,1990s,Yes,New Bot,adjust gap calc for div
+CAP-NB-005,Corporate action,Special dividend,Absolute threshold,"Announced, ex within 20d",special dividend/price >= 3%,Bullish into ex-date,Dividend feed,1990s,Yes,New Bot,
+CAP-NB-006,Corporate action,Dividend cut/suspension,Absolute threshold,Last 5 days,declared dividend < prior regular dividend,Bearish,Dividend feed,1990s,Yes,New Bot,
+CAP-NB-007,Corporate action,Buyback authorization,Absolute threshold,Last 5 days,new buyback announced >= 5% of market cap,Bullish,Press releases/8-K,2000+,Yes,New Bot,
+SUP-NB-001,Share supply,Active S-3 shelf,Absolute threshold,Effective,effective S-3 shelf with remaining capacity >= 20% of market cap,Bearish,EDGAR S-3/424B,2001+,Yes,New Bot,distinct from Taskforce insider/13F rows
+SUP-NB-002,Share supply,ATM program active,Absolute threshold,Last 90 days,424B5 ATM prospectus filed in last 90d,Bearish (persistent selling into strength),EDGAR 424B5,2001+,Yes,New Bot,
+SUP-NB-003,Share supply,Recent offering priced,Absolute threshold,Last 3 days,underwritten offering priced in last 3 sessions; YES if prior close > offering price,Bullish (offer held) else bearish,EDGAR 424B / PR,2001+,Yes,New Bot,
+SUP-NB-004,Share supply,Share count growth,Relative change,YoY,shares outstanding latest 10-Q / year-ago - 1 >= 20%,Bearish (dilution),10-Q cover / XBRL,2009+,Yes,New Bot,
+SUP-NB-005,Share supply,Warrant overhang,Absolute threshold,Latest filing,exercisable warrants with strike <= 1.2x prior close >= 10% of shares out,Bearish (cap on upside),10-Q/10-K/S-1,2009+,Yes,New Bot,hand-parsed; partial coverage
+SUP-NB-006,Share supply,Convertible notes,Absolute threshold,Latest filing,convertible notes outstanding with conversion price <= 1.2x prior close,Bearish,10-Q/8-K,2009+,Yes,New Bot,
+SUP-NB-008,Share supply,Days since IPO,Absolute threshold,Calendar,days since IPO <= 180,Ambiguous; higher vol,IPO dates,1990s,Yes,New Bot,
+SUP-NB-009,Share supply,De-SPAC age,Absolute threshold,Calendar,ticker is a de-SPAC completed within last 365 days,Bearish (historical drift),SPAC trackers,2019+,Yes,New Bot,
+SUP-NB-010,Share supply,Float tiny,Absolute threshold,Latest,float shares < 10M,Amplifier (squeeze/momentum),Float data,2005+,Yes,New Bot,
+SUP-NB-011,Share supply,Float change,Relative change,30 days,float now / float 30d ago - 1 >= 10%,Bearish,Float history,2010+,Yes,New Bot,
+IDX-NB-002,Index membership,Index deletion announced,Absolute threshold,Pending,deletion from S&P 500/400/600 or Russell announced and pending,Bearish,S&P/FTSE Russell,1990s,Yes,New Bot,
+IDX-NB-003,Index membership,Russell recon candidate,Absolute threshold,May-June,stock projected to move into Russell 2000 on preliminary list,Bullish into recon day,FTSE Russell prelim lists,2000+,Yes,New Bot,
+IDX-NB-004,Index membership,Index effective day,Absolute threshold,Today,today is index rebalance close (MOC imbalance day) for a pending change of this name,Ambiguous (spike then reversal),Index calendars,2000+,Yes,New Bot,
+ETF-NB-001,ETF ownership,ETF ownership share,Absolute threshold,Latest,% of shares held by ETFs >= 25%,Ambiguous; higher correlation to flows,ETF holdings (ETFdb/issuers),2010+,Yes,New Bot,
+ETF-NB-002,ETF flows,Top holder ETF net creation,Relative change,Prior 5 days,net creations of the stock's largest-weight sector ETF over 5d / AUM >= +2%,Bullish,Issuer shares-outstanding daily,2010+,Yes,New Bot,
+ETF-NB-003,ETF flows,Leveraged single-stock ETF exists,Absolute threshold,Latest,a 2x single-stock ETF on this name exists with AUM >= $100M,Amplifier (rebalance flows into close),Issuer sites,2022+,Yes,New Bot,
+BRW-NB-001,Securities lending,Borrow fee high,Absolute threshold,Prior day,indicative borrow fee >= 20% annualized,Ambiguous (squeeze fuel vs informed shorts),IBKR SLB / Ortex / iBorrowDesk,2014+,Yes,New Bot,
+BRW-NB-002,Securities lending,Borrow fee jump,Relative change,5 days,fee today / fee 5d ago >= 2,Bearish near term (new short demand) – ambiguous,iBorrowDesk,2014+,Yes,New Bot,
+BRW-NB-003,Securities lending,Shares available to borrow,Absolute threshold,Prior day,IBKR shortable shares available = 0,Bullish (squeeze fuel),IBKR shortable file,2014+,Yes,New Bot,
+BRW-NB-004,Securities lending,Utilization,Extreme,Prior day,lending utilization >= 90%,Bullish (squeeze) – ambiguous,Ortex/S3,2014+,Yes,New Bot,paid source
+BRW-NB-005,Securities lending,Reg SHO threshold list,Absolute threshold,Today,ticker on exchange Reg SHO threshold list today,Ambiguous,Nasdaq/NYSE threshold lists,2005+,Yes,New Bot,
+ANL-NB-001,Analyst,Upgrade pre-market,Absolute threshold,Since prior close,>=1 rating upgrade published between prior 16:00 and 09:25 ET,Bullish,Benzinga/Finviz ratings,2005+,Yes,New Bot,
+ANL-NB-002,Analyst,Downgrade pre-market,Absolute threshold,Since prior close,>=1 downgrade published since prior close,Bearish,Benzinga ratings,2005+,Yes,New Bot,
+ANL-NB-003,Analyst,PT raise size,Relative change,Since prior close,(new PT / old PT - 1) >= 20% from any analyst,Bullish,Benzinga ratings,2005+,Yes,New Bot,
+ANL-NB-005,Analyst,Initiation,Absolute threshold,Since prior close,new coverage initiated at Buy/Outperform,Bullish,Ratings feed,2005+,Yes,New Bot,
+ANL-NB-007,Analyst,Coverage count,Absolute threshold,Latest,# analysts covering <= 2,Amplifier (info inefficiency),Consensus,2000+,Yes,New Bot,
+ERN-NB-002,Earnings,Reports after close today,Absolute threshold,Today,earnings today AMC,Neutral; avoid holding overnight,Earnings calendar,2000+,Yes,New Bot,
+ERN-NB-003,Earnings,Days to earnings,Absolute threshold,Calendar,next earnings within 1-5 trading days,Weak bullish (pre-earnings run-up),Earnings calendar,2000+,Yes,New Bot,
+ERN-NB-004,Earnings,EPS surprise,Absolute threshold,Last report,(actual - consensus)/abs(consensus) >= 10%,Bullish,Earnings results,2000+,Yes,New Bot,
+ERN-NB-005,Earnings,Revenue surprise,Absolute threshold,Last report,revenue actual / consensus - 1 >= 3%,Bullish,Earnings results,2000+,Yes,New Bot,
+ERN-NB-006,Earnings,Guidance raise,Absolute threshold,Last report,midpoint of new FY guidance > prior guidance midpoint and > consensus,Bullish,PR/transcripts,2005+,Yes,New Bot,
+ERN-NB-007,Earnings,Guidance cut,Absolute threshold,Last report,new guidance midpoint < prior midpoint,Bearish,PR,2005+,Yes,New Bot,
+ERN-NB-009,Earnings,Earnings gap faded,Divergence,Earnings day,earnings-day gap >= +5% but close < open,Bearish,OHLC,2000+,Yes,New Bot,
+ERN-NB-010,Earnings,Historical earnings move,Absolute threshold,Last 8 reports,mean abs earnings-day move >= 10%,Amplifier,OHLC+dates,2000+,Yes,New Bot,
+EVT-NB-001,Biotech catalyst,PDUFA date upcoming,Absolute threshold,Next 10 sessions,FDA PDUFA date within 10 trading days,"Weak bullish run-up, binary risk",BiopharmCatalyst/FDA,2005+,Yes,New Bot,
+EVT-NB-002,Biotech catalyst,AdCom meeting,Absolute threshold,Next 10 sessions,FDA advisory committee meeting scheduled within 10 sessions,Amplifier,FDA calendar,2005+,Yes,New Bot,
+EVT-NB-004,Biotech catalyst,Cash runway,Absolute threshold,Latest 10-Q,cash / quarterly operating burn < 4 quarters,Bearish (dilution coming),XBRL,2009+,Yes,New Bot,
+EVT-NB-005,Corporate event,Investor conference presenting,Absolute threshold,Next 3 sessions,company presenting at a sell-side conference within 3 sessions,Weak bullish,IR calendars,2010+,Partial,New Bot,
+EVT-NB-006,Corporate event,Investor/analyst day,Absolute threshold,Next 5 sessions,company analyst day within 5 sessions,Weak bullish,IR,2010+,Yes,New Bot,
+EVT-NB-008,Corporate event,Pending deal spread,Absolute threshold,Pending acquisition,announced cash deal; (offer - price)/price >= 10%,Bearish (deal-break risk priced),8-K/merger arb,2000+,Yes,New Bot,exclude merger targets from momentum
+EVT-NB-009,Corporate event,CEO/CFO departure,Absolute threshold,Last 5 days,8-K item 5.02 unplanned exec departure,Bearish,EDGAR 8-K,2004+,Yes,New Bot,
+EVT-NB-010,Corporate event,Auditor change / NT 10-K,Absolute threshold,Last 30 days,NT 10-Q/10-K filed or auditor resigned (8-K 4.01),Bearish,EDGAR,2004+,Yes,New Bot,
+EVT-NB-011,Corporate event,Delisting notice,Absolute threshold,Last 30 days,exchange deficiency notice (8-K 3.01),Bearish,EDGAR,2004+,Yes,New Bot,
+FND-NB-001,Size bucket,Market cap bucket,Absolute threshold,Prior close,mkt cap < $300M (micro),Amplifier; higher reversal rates,Prices x shares,1990s,Yes,New Bot,
+FND-NB-002,Price bucket,Penny stock,Absolute threshold,Prior close,prior close < $5,Amplifier; bearish drift on average,Daily close,1990s,Yes,New Bot,
+FND-NB-003,Price bucket,High-priced,Absolute threshold,Prior close,prior close > $500,Lower retail participation; neutral,Daily close,1990s,Yes,New Bot,
+FND-NB-004,Profitability,Unprofitable,Absolute threshold,TTM,TTM net income < 0,Amplifier (rate-sensitive),XBRL,2009+,Yes,New Bot,
+FND-NB-005,Revenue,Revenue growth,Absolute threshold,YoY,latest quarter revenue YoY >= 30%,Bullish,XBRL,2009+,Yes,New Bot,
+REL-NB-002,Relative strength,Stock vs SPY on down days,Divergence,Last 10 SPY down days,stock up on >= 6 of last 10 SPY down days,Bullish,OHLC,1993+,Yes,New Bot,
+REL-NB-003,Correlation,Beta breakdown,Relative change,20 vs 120 days,"abs(corr20(stock,SPY) - corr120) >= 0.4",Ambiguous; idiosyncratic story,OHLC,1993+,Yes,New Bot,
+REL-NB-004,Correlation,Peer divergence,Divergence,Prior day,stock return - median return of top-5 peers same industry <= -5pp with no news,Bullish (mean reversion),OHLC + industry map,2000+,Yes,New Bot,
+REL-NB-006,ADR / dual listing,Home-market move,Relative change,Overnight,for ADRs: home-listing return (FX adjusted) since US close vs ADR close >= +2%,Bullish,Local exchange + FX,2000+,Yes,New Bot,
+REL-NB-007,Crypto proxy,BTC overnight for crypto equities,Relative change,16:00-09:25 ET,"for crypto-linked names (miners, COIN, MSTR): BTC % change overnight >= +3%",Bullish,Crypto spot,2014+,Yes,New Bot,stock-level mapping; James covers market-level
+REL-NB-008,Commodity proxy,Commodity overnight for producers,Relative change,16:00-09:25 ET,for oil/gold/uranium producers: front-month futures % change overnight >= +2%,Bullish,CME futures,2000+,Yes,New Bot,
+HST-NB-001,Own history,Prior extreme moves,Absolute threshold,Last 250 days,# sessions with abs return >= 20% in last 250 >= 3,Amplifier (event-prone),OHLC,1990s,Yes,New Bot,
+HST-NB-002,Own history,Post-spike day-2 behavior,Absolute threshold,Prior day,prior day return >= +20%; use stock's own historical mean day-2 return after +20% days,Bearish on average (fade),OHLC,1990s,Yes,New Bot,
+HST-NB-003,Own history,Days since 52w low reversal,Absolute threshold,Calendar,<= 10 sessions since 52w low and up >= 20% from it,Ambiguous,OHLC,1990s,Yes,New Bot,
+HST-NB-004,Own history,Stock-specific seasonality,Relative change,"Same month, 10 years",stock's mean return in current calendar month over last 10 years >= +3% with >= 7/10 positive,Weak bullish,OHLC,1990s,Yes,New Bot,overfit risk
+HST-NB-005,Own history,Consecutive gap direction,Absolute threshold,Last 3 sessions,3 consecutive gap-ups (open>prior high),Bearish (exhaustion) – ambiguous,OHLC,1990s,Yes,New Bot,
+FND-TR-001,Valuation,Forward P/E change,Relative change,vs T-3,Forward P/E today / forward P/E 3 sessions ago - 1 >= +5% (estimates cut or price up),Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,"theme-radar FPE cell; live shadow 37% win as short, i.e. weak"
+FND-TR-002,Valuation,Forward P/E vs trailing P/E,Divergence,prior snapshot,Forward P/E < 0.8 x trailing P/E (earnings expected to grow),Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-003,Valuation,Earnings yield (EP),Absolute threshold,prior snapshot,1 / trailing P/E >= 0.03,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,Excel EP letter; used in DCP+EP short cell
+FND-TR-004,Valuation,P/S,Extreme,prior snapshot,P/S in top 5% of universe,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-005,Valuation,PEG,Absolute threshold,prior snapshot,0 < PEG < 1,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-006,Valuation,P/FCF,Absolute threshold,prior snapshot,P/FCF negative or > 100,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-007,Growth,EPS next Y growth,Absolute threshold,prior snapshot,EPS next Y > 25%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-008,Growth,EPS next Y growth,Relative change,vs T-5,EPS next Y growth estimate falls >= 5 pts vs 5 sessions ago,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,estimate revision proxy
+FND-TR-009,Growth,Sales Q/Q,Absolute threshold,last reported,Sales Q/Q > 20%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-010,Growth,EPS surprise,Absolute threshold,last report,EPS surprise > +10%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,post-earnings drift
+FND-TR-011,Growth,Sales surprise,Absolute threshold,last report,Sales surprise < -2%,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-012,Profitability,Operating margin,Absolute threshold,TTM,Oper margin < 0,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-013,Profitability,ROE,Absolute threshold,TTM,ROE > 20%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-014,Balance sheet,Debt/Eq,Absolute threshold,last report,Debt/Eq > 2,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+FND-TR-015,Balance sheet,Current ratio,Absolute threshold,last report,Current ratio < 1,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-001,Ownership,Insider ownership,Absolute threshold,prior snapshot,Insider own > 20%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-002,Ownership,Insider transactions,Relative change,6 months,Insider trans < -10% (net selling),Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-003,Ownership,Institutional transactions,Relative change,quarter,Inst trans > +5%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-004,Short interest,Short float,Absolute threshold,bi-monthly,Short float > 20%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,"squeeze fuel; can also mean bearish informed money, test both"
+OWN-TR-005,Short interest,Short ratio (days to cover),Absolute threshold,bi-monthly,Short ratio > 7 days,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-006,Short interest,Short float change,Relative change,vs prior report,Short float up >= 25% relative vs previous report,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+OWN-TR-007,Float,Shares float,Absolute threshold,prior snapshot,Float < 20M shares,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,low-float momentum; volatility both ways
+ANL-TR-001,Analyst,Recommendation,Absolute threshold,prior snapshot,Finviz recom <= 1.8,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+ANL-TR-002,Analyst,Recommendation change,Relative change,vs T-5,Recom rises >= 0.3 (downgrades),Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+ANL-TR-003,Analyst,Target price gap,Absolute threshold,prior close,Target price / price - 1 > 30%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+ANL-TR-004,Analyst,Target price change,Relative change,vs T-5,Target price cut >= 5%,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+EVT-TR-001,Earnings,Earnings date,Calendar,today,Earnings report today (BMO or AMC),Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,used in FPE+earnings-today cell; mostly a volatility flag
+EVT-TR-002,Earnings,Earnings timing,Calendar,today,Earnings BMO today (gap already in the open),Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,direction unclear; test both
+PRC-TR-001,Performance,Perf week,Extreme,5 sessions,Perf W > +30%,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,mean reversion
+PRC-TR-002,Performance,Perf month,Extreme,1 month,Perf M < -30%,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,rebound
+PRC-TR-003,Performance,Perf YTD vs sector,Divergence,YTD,Stock YTD > sector ETF YTD + 20 pts,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,relative strength
+PRC-TR-004,Volatility,Volatility W vs M,Relative change,week vs month,Volatility W > 2 x Volatility M,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+PRC-TR-005,Volatility,ATR %,Absolute threshold,14d,ATR / price > 8%,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+PRC-TR-006,Volatility,Beta,Absolute threshold,5y,Beta > 2,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,pair with VIX regime
+PRC-TR-007,Gap,Prior-day gap,Absolute threshold,T-1,Finviz Gap >= +5%,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,gap fade
+PRC-TR-008,Change from open,Prior-day change from open,Absolute threshold,T-1,Change from open <= -5% (sold all day),Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+VOL-TR-001,Volume,Relative volume,Absolute threshold,T-1,Rel volume >= 3,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,attention spike; sign depends on price change
+VOL-TR-002,Volume,Avg volume,Absolute threshold,3 months,Avg volume < 200k,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,"illiquid, wide spreads"
+TEC-TR-001,Moving averages,Distance from SMA200,Extreme,prior close,Price > 1.5 x SMA200,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+TEC-TR-002,Moving averages,SMA20 vs SMA50,Ordering,prior close,SMA20 above SMA50 (Finviz SMA20 % > SMA50 %),Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+TEC-TR-003,Oscillator,RSI(14),Extreme,prior close,Finviz RSI14 > 80,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+TEC-TR-004,Oscillator,RSI(14),Extreme,prior close,Finviz RSI14 < 20,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+TEC-TR-005,52w range,52w high distance,Absolute threshold,prior close,Within 2% of 52w high,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,breakout
+TEC-TR-006,52w range,52w low distance,Absolute threshold,prior close,Within 2% of 52w low,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+TEC-TR-007,Pattern,Finviz pattern tag,Category,prior close,Finviz pattern = channel up / wedge breakout,Bullish,Finviz screener export (theme-radar daily snapshot),unknown,Yes,Theme Radar,history depends on snapshot coverage
+THM-TR-001,Theme,Fresh theme appearance,Event,T-1,Stock newly appears in a Theme Radar theme (e.g. data-center-power) at T-1 and wasn't in it T-2..T-5,Bearish,Finviz screener export (theme-radar daily snapshot) + theme-radar themes,theme-radar snapshots ~2025,Yes,Theme Radar,basis of DCP short cells; live 75-77% win as short
+THM-TR-002,Theme,Theme heat,Relative change,vs T-5,Theme's member count or composite score up >= 50% vs 5 sessions ago,Bullish,Finviz screener export (theme-radar daily snapshot) + theme-radar composite,theme-radar snapshots ~2025,Yes,Theme Radar,crowding; may flip bearish at extremes
+THM-TR-003,Theme,Theme breadth,Absolute threshold,T-1,Share of theme members up on T-1 >= 80%,Bullish,Finviz screener export (theme-radar daily snapshot) + theme-radar,theme-radar snapshots ~2025,Yes,Theme Radar,
+THM-TR-004,Theme,Composite rank,Absolute threshold,T-1,Stock in top 1% of theme-radar composite_rank,Bullish,theme-radar composite_rank,theme-radar snapshots ~2025,Yes,Theme Radar,
+THM-TR-005,Theme,Score delta,Relative change,T-1 vs T-2,theme-radar score_delta in top 1% of universe,Bullish,theme-radar score_delta,theme-radar snapshots ~2025,Yes,Theme Radar,
+THM-TR-006,Theme,After-hours activity,Event,T-1,No after-hours trade on T-1 for a fresh-theme name,Bearish,Excel avoid_AH flag + theme-radar,theme-radar snapshots ~2025,Yes,Theme Radar,basis of DCP+avoid_AH cell
+THM-TR-007,Industry,Industry vs stock,Divergence,1 week,Finviz industry perf W > +5% while stock perf W < 0,Bearish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,laggard in hot group
+THM-TR-008,Sector,Sector rank,Absolute threshold,1 week,Stock's Finviz sector is top-ranked by perf W,Bullish,Finviz screener export (theme-radar daily snapshot),theme-radar snapshots ~2025,Yes,Theme Radar,
+PV-TF-001,Candlestick,Doji,Pattern present,"prior session, any context","YES if body<=0.1*range on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,Neutral-reversal; YES after 5d decline
+PV-TF-002,Candlestick,Doji,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if body<=0.1*range on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,Neutral-reversal; YES after 5d decline
+PV-TF-003,Candlestick,Doji,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if body<=0.1*range on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,Neutral-reversal; YES after 5d decline
+PV-TF-004,Candlestick,Hammer,Pattern present,"prior session, any context","YES if lw>=2*body AND uw<=0.1*range AND body>0 AND close in top third on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d decline
+PV-TF-005,Candlestick,Hammer,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if lw>=2*body AND uw<=0.1*range AND body>0 AND close in top third on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d decline
+PV-TF-006,Candlestick,Hammer,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if lw>=2*body AND uw<=0.1*range AND body>0 AND close in top third on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d decline
+PV-TF-007,Candlestick,Shooting star,Pattern present,"prior session, any context","YES if uw>=2*body AND lw<=0.1*range AND close in bottom third on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d advance
+PV-TF-008,Candlestick,Shooting star,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if uw>=2*body AND lw<=0.1*range AND close in bottom third on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d advance
+PV-TF-009,Candlestick,Shooting star,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if uw>=2*body AND lw<=0.1*range AND close in bottom third on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,after 5d advance
+PV-TF-010,Candlestick,Bullish marubozu,Pattern present,"prior session, any context","YES if C>O AND body>=0.9*range on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-011,Candlestick,Bullish marubozu,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C>O AND body>=0.9*range on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-012,Candlestick,Bullish marubozu,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C>O AND body>=0.9*range on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-013,Candlestick,Bearish marubozu,Pattern present,"prior session, any context","YES if C<O AND body>=0.9*range on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,giant red candle no wick
+PV-TF-014,Candlestick,Bearish marubozu,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C<O AND body>=0.9*range on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,giant red candle no wick
+PV-TF-015,Candlestick,Bearish marubozu,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C<O AND body>=0.9*range on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,giant red candle no wick
+PV-TF-016,Candlestick,Bullish engulfing,Pattern present,"prior session, any context","YES if C1<O1 AND C>O AND O<=C1 AND C>=O1 (1=prior bar) on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-017,Candlestick,Bullish engulfing,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C1<O1 AND C>O AND O<=C1 AND C>=O1 (1=prior bar) on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-018,Candlestick,Bullish engulfing,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C1<O1 AND C>O AND O<=C1 AND C>=O1 (1=prior bar) on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-019,Candlestick,Bearish engulfing,Pattern present,"prior session, any context","YES if C1>O1 AND C<O AND O>=C1 AND C<=O1 on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-020,Candlestick,Bearish engulfing,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C1>O1 AND C<O AND O>=C1 AND C<=O1 on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-021,Candlestick,Bearish engulfing,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C1>O1 AND C<O AND O>=C1 AND C<=O1 on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-022,Candlestick,Inside bar,Pattern present,"prior session, any context","YES if H<H1 AND L>L1 on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,compression
+PV-TF-023,Candlestick,Inside bar,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if H<H1 AND L>L1 on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,compression
+PV-TF-024,Candlestick,Inside bar,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if H<H1 AND L>L1 on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,compression
+PV-TF-025,Candlestick,Outside bar up,Pattern present,"prior session, any context","YES if H>H1 AND L<L1 AND C>O on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-026,Candlestick,Outside bar up,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if H>H1 AND L<L1 AND C>O on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-027,Candlestick,Outside bar up,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if H>H1 AND L<L1 AND C>O on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-028,Candlestick,Morning star,Pattern present,"prior session, any context","YES if bar2 red body>=0.6*range2; bar1 body<=0.3*range1; bar0 green closes above midpoint of bar2 on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-029,Candlestick,Morning star,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if bar2 red body>=0.6*range2; bar1 body<=0.3*range1; bar0 green closes above midpoint of bar2 on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-030,Candlestick,Morning star,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if bar2 red body>=0.6*range2; bar1 body<=0.3*range1; bar0 green closes above midpoint of bar2 on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-031,Candlestick,Evening star,Pattern present,"prior session, any context","YES if mirror of morning star on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-032,Candlestick,Evening star,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if mirror of morning star on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-033,Candlestick,Evening star,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if mirror of morning star on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-034,Candlestick,Three white soldiers,Pattern present,"prior session, any context","YES if 3 green bars, each C>prior C, each O within prior body on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-035,Candlestick,Three white soldiers,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if 3 green bars, each C>prior C, each O within prior body on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-036,Candlestick,Three white soldiers,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if 3 green bars, each C>prior C, each O within prior body on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-037,Candlestick,Three black crows,Pattern present,"prior session, any context","YES if 3 red bars, each C<prior C, each O within prior body on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-038,Candlestick,Three black crows,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if 3 red bars, each C<prior C, each O within prior body on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-039,Candlestick,Three black crows,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if 3 red bars, each C<prior C, each O within prior body on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-040,Candlestick,Piercing line,Pattern present,"prior session, any context","YES if C1<O1, O<L1, C>(O1+C1)/2, C<O1 on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-041,Candlestick,Piercing line,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C1<O1, O<L1, C>(O1+C1)/2, C<O1 on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-042,Candlestick,Piercing line,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C1<O1, O<L1, C>(O1+C1)/2, C<O1 on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-043,Candlestick,Dark cloud cover,Pattern present,"prior session, any context","YES if C1>O1, O>H1, C<(O1+C1)/2, C>O1 on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-044,Candlestick,Dark cloud cover,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if C1>O1, O>H1, C<(O1+C1)/2, C>O1 on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-045,Candlestick,Dark cloud cover,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if C1>O1, O>H1, C<(O1+C1)/2, C>O1 on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-046,Candlestick,Close near high,Pattern present,"prior session, any context","YES if (C-L)/range>=0.9 on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-047,Candlestick,Close near high,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if (C-L)/range>=0.9 on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-048,Candlestick,Close near high,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if (C-L)/range>=0.9 on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-049,Candlestick,Close near low,Pattern present,"prior session, any context","YES if (C-L)/range<=0.1 on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-050,Candlestick,Close near low,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if (C-L)/range<=0.1 on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-051,Candlestick,Close near low,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if (C-L)/range<=0.1 on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-052,Candlestick,Wide range bar,Pattern present,"prior session, any context","YES if range>=2*ATR14 on D-1 bar, any context",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-053,Candlestick,Wide range bar,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if range>=2*ATR14 on D-1 bar, after 5d decline (C/C5<0.97)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-054,Candlestick,Wide range bar,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if range>=2*ATR14 on D-1 bar, after 5d advance (C/C5>1.03)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-055,Candlestick,Narrow range NR7,Pattern present,"prior session, any context","YES if range is smallest of last 7 on D-1 bar, any context",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,volatility squeeze
+PV-TF-056,Candlestick,Narrow range NR7,Pattern present,"prior session, after 5d decline (C/C5<0.97)","YES if range is smallest of last 7 on D-1 bar, after 5d decline (C/C5<0.97)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,volatility squeeze
+PV-TF-057,Candlestick,Narrow range NR7,Pattern present,"prior session, after 5d advance (C/C5>1.03)","YES if range is smallest of last 7 on D-1 bar, after 5d advance (C/C5>1.03)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,volatility squeeze
+PV-TF-058,Candlestick,2 consecutive red,Streak,adjacent bars,YES if last 2 sessions all C<O,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-059,Candlestick,2 consecutive green,Streak,adjacent bars,YES if last 2 sessions all C>O,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-060,Candlestick,2 consecutive down closes,Streak,adjacent bars,YES if last 2 closes each < prior close,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-061,Candlestick,3 consecutive red,Streak,adjacent bars,YES if last 3 sessions all C<O,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-062,Candlestick,3 consecutive green,Streak,adjacent bars,YES if last 3 sessions all C>O,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-063,Candlestick,3 consecutive down closes,Streak,adjacent bars,YES if last 3 closes each < prior close,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-064,Candlestick,4 consecutive red,Streak,adjacent bars,YES if last 4 sessions all C<O,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-065,Candlestick,4 consecutive green,Streak,adjacent bars,YES if last 4 sessions all C>O,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-066,Candlestick,4 consecutive down closes,Streak,adjacent bars,YES if last 4 closes each < prior close,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-067,Candlestick,5 consecutive red,Streak,adjacent bars,YES if last 5 sessions all C<O,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-068,Candlestick,5 consecutive green,Streak,adjacent bars,YES if last 5 sessions all C>O,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,mean reversion hypothesis
+PV-TF-069,Candlestick,5 consecutive down closes,Streak,adjacent bars,YES if last 5 closes each < prior close,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-070,Candlestick,Green:red ratio,Above threshold,5 days,green days/5 >= 0.7,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-071,Candlestick,Green:red ratio,Below threshold,5 days,green days/5 <= 0.3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-072,Candlestick,Green:red ratio,Change vs prior window,5 vs prior 5,ratio(last 5) - ratio(prior 5) >= 0.3,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-073,Candlestick,Green:red ratio,Above threshold,10 days,green days/10 >= 0.7,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-074,Candlestick,Green:red ratio,Below threshold,10 days,green days/10 <= 0.3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-075,Candlestick,Green:red ratio,Change vs prior window,10 vs prior 10,ratio(last 10) - ratio(prior 10) >= 0.3,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-076,Candlestick,Green:red ratio,Above threshold,20 days,green days/20 >= 0.7,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-077,Candlestick,Green:red ratio,Below threshold,20 days,green days/20 <= 0.3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-078,Candlestick,Green:red ratio,Change vs prior window,20 vs prior 20,ratio(last 20) - ratio(prior 20) >= 0.3,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-079,Candlestick,Green:red ratio,Above threshold,50 days,green days/50 >= 0.7,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-080,Candlestick,Green:red ratio,Below threshold,50 days,green days/50 <= 0.3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-081,Candlestick,Green:red ratio,Change vs prior window,50 vs prior 50,ratio(last 50) - ratio(prior 50) >= 0.3,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-082,Gap,Gap up >= 1%,Absolute threshold,open vs prior close,YES if O/C1-1>=0.01,Bearish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-083,Gap,Gap down >= 1%,Absolute threshold,open vs prior close,YES if O/C1-1<=-0.01,Bullish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-084,Gap,Gap up >= 2%,Absolute threshold,open vs prior close,YES if O/C1-1>=0.02,Bearish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-085,Gap,Gap down >= 2%,Absolute threshold,open vs prior close,YES if O/C1-1<=-0.02,Bullish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-086,Gap,Gap up >= 4%,Absolute threshold,open vs prior close,YES if O/C1-1>=0.04,Bearish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-087,Gap,Gap down >= 4%,Absolute threshold,open vs prior close,YES if O/C1-1<=-0.04,Bullish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-088,Gap,Gap up >= 8%,Absolute threshold,open vs prior close,YES if O/C1-1>=0.08,Bearish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-089,Gap,Gap down >= 8%,Absolute threshold,open vs prior close,YES if O/C1-1<=-0.08,Bullish,Premarket quote (Yahoo/Finviz) for pre-open trial; daily O for pre-close trial,1990s (O); premarket: archive forward,Pre-open: only via 09:25 premarket print; true O is NOT known,Trading Bot Taskforce,fade hypothesis; flag
+PV-TF-090,Gap,Unfilled gap up D-1,Pattern,prior session,L(D-1)>H(D-2),Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-091,Gap,Unfilled gap down D-1,Pattern,prior session,H(D-1)<L(D-2),Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-092,Price return,5d return,Absolute threshold,5 days,C/C[5]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-094,Price return,5d return,Absolute threshold,5 days,C/C[5]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-096,Price return,5d return,Extreme vs own history,5 days in 252d,5d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-097,Price return,5d return,Extreme vs own history,5 days in 252d,5d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-098,Price return,10d return,Absolute threshold,10 days,C/C[10]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-100,Price return,10d return,Absolute threshold,10 days,C/C[10]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-102,Price return,10d return,Extreme vs own history,10 days in 252d,10d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-103,Price return,10d return,Extreme vs own history,10 days in 252d,10d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-104,Price return,20d return,Absolute threshold,20 days,C/C[20]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-106,Price return,20d return,Absolute threshold,20 days,C/C[20]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-108,Price return,20d return,Absolute threshold,20 days,C/C[20]-1 >= 0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-110,Price return,20d return,Extreme vs own history,20 days in 252d,20d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-111,Price return,20d return,Extreme vs own history,20 days in 252d,20d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-112,Price return,50d return,Absolute threshold,50 days,C/C[50]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-114,Price return,50d return,Absolute threshold,50 days,C/C[50]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-116,Price return,50d return,Absolute threshold,50 days,C/C[50]-1 >= 0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-118,Price return,50d return,Extreme vs own history,50 days in 252d,50d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-119,Price return,50d return,Extreme vs own history,50 days in 252d,50d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-120,Price return,100d return,Absolute threshold,100 days,C/C[100]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-122,Price return,100d return,Absolute threshold,100 days,C/C[100]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-124,Price return,100d return,Absolute threshold,100 days,C/C[100]-1 >= 0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-126,Price return,100d return,Extreme vs own history,100 days in 252d,100d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-127,Price return,100d return,Extreme vs own history,100 days in 252d,100d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-128,Price return,200d return,Absolute threshold,200 days,C/C[200]-1 >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-130,Price return,200d return,Absolute threshold,200 days,C/C[200]-1 >= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-132,Price return,200d return,Absolute threshold,200 days,C/C[200]-1 >= 0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-134,Price return,200d return,Extreme vs own history,200 days in 252d,200d return is lowest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-135,Price return,200d return,Extreme vs own history,200 days in 252d,200d return is highest of trailing 252 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,momentum
+PV-TF-136,Moving averages,Close vs SMA5,Above,5,C>SMA5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-137,Moving averages,Close vs SMA5,Cross up,"5, adjacent bars",C>SMA5 AND C1<=SMA5[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-138,Moving averages,Close vs SMA5,Cross down,"5, adjacent bars",C<SMA5 AND C1>=SMA5[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-139,Moving averages,SMA5 slope,Change vs prior point,"5, 5d",SMA5>SMA5[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-140,Moving averages,Distance from SMA5,Extreme,5,C/SMA5-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-142,Moving averages,Distance from SMA5,Extreme,5,C/SMA5-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-144,Moving averages,Distance from SMA5,Extreme,5,C/SMA5-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-146,Moving averages,Close vs SMA10,Above,10,C>SMA10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-147,Moving averages,Close vs SMA10,Cross up,"10, adjacent bars",C>SMA10 AND C1<=SMA10[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-148,Moving averages,Close vs SMA10,Cross down,"10, adjacent bars",C<SMA10 AND C1>=SMA10[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-149,Moving averages,SMA10 slope,Change vs prior point,"10, 5d",SMA10>SMA10[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-150,Moving averages,Distance from SMA10,Extreme,10,C/SMA10-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-152,Moving averages,Distance from SMA10,Extreme,10,C/SMA10-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-154,Moving averages,Distance from SMA10,Extreme,10,C/SMA10-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-156,Moving averages,Close vs SMA20,Above,20,C>SMA20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-157,Moving averages,Close vs SMA20,Cross up,"20, adjacent bars",C>SMA20 AND C1<=SMA20[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-158,Moving averages,Close vs SMA20,Cross down,"20, adjacent bars",C<SMA20 AND C1>=SMA20[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-159,Moving averages,SMA20 slope,Change vs prior point,"20, 5d",SMA20>SMA20[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-160,Moving averages,Distance from SMA20,Extreme,20,C/SMA20-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-162,Moving averages,Distance from SMA20,Extreme,20,C/SMA20-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-164,Moving averages,Distance from SMA20,Extreme,20,C/SMA20-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-166,Moving averages,Close vs SMA50,Above,50,C>SMA50,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-167,Moving averages,Close vs SMA50,Cross up,"50, adjacent bars",C>SMA50 AND C1<=SMA50[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-168,Moving averages,Close vs SMA50,Cross down,"50, adjacent bars",C<SMA50 AND C1>=SMA50[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-169,Moving averages,SMA50 slope,Change vs prior point,"50, 5d",SMA50>SMA50[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-170,Moving averages,Distance from SMA50,Extreme,50,C/SMA50-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-172,Moving averages,Distance from SMA50,Extreme,50,C/SMA50-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-174,Moving averages,Distance from SMA50,Extreme,50,C/SMA50-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-176,Moving averages,Close vs SMA100,Above,100,C>SMA100,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-177,Moving averages,Close vs SMA100,Cross up,"100, adjacent bars",C>SMA100 AND C1<=SMA100[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-178,Moving averages,Close vs SMA100,Cross down,"100, adjacent bars",C<SMA100 AND C1>=SMA100[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-179,Moving averages,SMA100 slope,Change vs prior point,"100, 5d",SMA100>SMA100[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-180,Moving averages,Distance from SMA100,Extreme,100,C/SMA100-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-182,Moving averages,Distance from SMA100,Extreme,100,C/SMA100-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-184,Moving averages,Distance from SMA100,Extreme,100,C/SMA100-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-186,Moving averages,Close vs SMA200,Above,200,C>SMA200,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-187,Moving averages,Close vs SMA200,Cross up,"200, adjacent bars",C>SMA200 AND C1<=SMA200[1],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-188,Moving averages,Close vs SMA200,Cross down,"200, adjacent bars",C<SMA200 AND C1>=SMA200[1],Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-189,Moving averages,SMA200 slope,Change vs prior point,"200, 5d",SMA200>SMA200[5],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-190,Moving averages,Distance from SMA200,Extreme,200,C/SMA200-1 <= -0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-192,Moving averages,Distance from SMA200,Extreme,200,C/SMA200-1 <= -0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-194,Moving averages,Distance from SMA200,Extreme,200,C/SMA200-1 <= -0.2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,stretched below
+PV-TF-196,Moving averages,SMA5/SMA20 cross,Cross up,adjacent bars,SMA5>SMA20 today AND <= yesterday,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-197,Moving averages,SMA5/SMA20 cross,Cross down,adjacent bars,SMA5<SMA20 today AND >= yesterday,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-198,Moving averages,SMA10/SMA50 cross,Cross up,adjacent bars,SMA10>SMA50 today AND <= yesterday,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-199,Moving averages,SMA10/SMA50 cross,Cross down,adjacent bars,SMA10<SMA50 today AND >= yesterday,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-200,Moving averages,SMA20/SMA50 cross,Cross up,adjacent bars,SMA20>SMA50 today AND <= yesterday,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-201,Moving averages,SMA20/SMA50 cross,Cross down,adjacent bars,SMA20<SMA50 today AND >= yesterday,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-202,Moving averages,SMA50/SMA200 cross,Cross up,adjacent bars,SMA50>SMA200 today AND <= yesterday,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,golden cross
+PV-TF-203,Moving averages,SMA50/SMA200 cross,Cross down,adjacent bars,SMA50<SMA200 today AND >= yesterday,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-204,Moving averages,SMA20/SMA100 cross,Cross up,adjacent bars,SMA20>SMA100 today AND <= yesterday,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-205,Moving averages,SMA20/SMA100 cross,Cross down,adjacent bars,SMA20<SMA100 today AND >= yesterday,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-206,Moving averages,SMA stack,Ordering,5/20/50/200,SMA5>SMA20>SMA50>SMA200,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-208,Moving averages,EMA9 vs SMA9,Above,9,EMA9>SMA9,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-209,Moving averages,EMA21 vs SMA21,Above,21,EMA21>SMA21,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-210,Overbought/oversold,RSI(2),Extreme low,2,Wilder RSI(2) < 5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-211,Overbought/oversold,RSI(2),Extreme low,2,Wilder RSI(2) < 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-212,Overbought/oversold,RSI(2),Extreme low,2,Wilder RSI(2) < 20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-213,Overbought/oversold,RSI(2),Extreme low,2,Wilder RSI(2) < 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-214,Overbought/oversold,RSI(2),Extreme high,2,RSI(2) > 70,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-215,Overbought/oversold,RSI(2),Extreme high,2,RSI(2) > 80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-216,Overbought/oversold,RSI(2),Extreme high,2,RSI(2) > 90,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-217,Overbought/oversold,RSI(2),Extreme high,2,RSI(2) > 95,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-218,Overbought/oversold,RSI(2),Change vs prior point,"2, 1 bar",RSI(2)-RSI(2)[1] >= 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-219,Overbought/oversold,RSI(2),Cross,2,RSI(2) crosses up through 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-220,Overbought/oversold,RSI(5),Extreme low,5,Wilder RSI(5) < 5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-221,Overbought/oversold,RSI(5),Extreme low,5,Wilder RSI(5) < 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-222,Overbought/oversold,RSI(5),Extreme low,5,Wilder RSI(5) < 20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-223,Overbought/oversold,RSI(5),Extreme low,5,Wilder RSI(5) < 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-224,Overbought/oversold,RSI(5),Extreme high,5,RSI(5) > 70,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-225,Overbought/oversold,RSI(5),Extreme high,5,RSI(5) > 80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-226,Overbought/oversold,RSI(5),Extreme high,5,RSI(5) > 90,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-227,Overbought/oversold,RSI(5),Extreme high,5,RSI(5) > 95,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-228,Overbought/oversold,RSI(5),Change vs prior point,"5, 1 bar",RSI(5)-RSI(5)[1] >= 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-229,Overbought/oversold,RSI(5),Cross,5,RSI(5) crosses up through 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-230,Overbought/oversold,RSI(14),Extreme low,14,Wilder RSI(14) < 5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-231,Overbought/oversold,RSI(14),Extreme low,14,Wilder RSI(14) < 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-232,Overbought/oversold,RSI(14),Extreme low,14,Wilder RSI(14) < 20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-233,Overbought/oversold,RSI(14),Extreme low,14,Wilder RSI(14) < 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-234,Overbought/oversold,RSI(14),Extreme high,14,RSI(14) > 70,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-235,Overbought/oversold,RSI(14),Extreme high,14,RSI(14) > 80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-236,Overbought/oversold,RSI(14),Extreme high,14,RSI(14) > 90,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-237,Overbought/oversold,RSI(14),Extreme high,14,RSI(14) > 95,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-238,Overbought/oversold,RSI(14),Change vs prior point,"14, 1 bar",RSI(14)-RSI(14)[1] >= 10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-239,Overbought/oversold,RSI(14),Cross,14,RSI(14) crosses up through 30,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-240,Overbought/oversold,RSI14 bullish divergence,Divergence,5 days,C at 5d low AND RSI14 > its value at the prior 5d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-241,Overbought/oversold,RSI14 bearish divergence,Divergence,5 days,C at 5d high AND RSI14 < its value at prior 5d high,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-242,Overbought/oversold,RSI14 bullish divergence,Divergence,10 days,C at 10d low AND RSI14 > its value at the prior 10d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-243,Overbought/oversold,RSI14 bearish divergence,Divergence,10 days,C at 10d high AND RSI14 < its value at prior 10d high,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-244,Overbought/oversold,RSI14 bullish divergence,Divergence,20 days,C at 20d low AND RSI14 > its value at the prior 20d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-245,Overbought/oversold,RSI14 bearish divergence,Divergence,20 days,C at 20d high AND RSI14 < its value at prior 20d high,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-246,Overbought/oversold,"Stochastic %K(5,3)",Extreme low,5,%K<20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-247,Overbought/oversold,"Stochastic %K(5,3)",Extreme high,5,%K>80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-248,Overbought/oversold,Stoch %K/%D(5),Cross up,5,%K crosses above %D below 20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-249,Overbought/oversold,"Stochastic %K(14,3)",Extreme low,14,%K<20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-250,Overbought/oversold,"Stochastic %K(14,3)",Extreme high,14,%K>80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-251,Overbought/oversold,Stoch %K/%D(14),Cross up,14,%K crosses above %D below 20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-252,Overbought/oversold,Williams %R(14),Extreme low,14,%R < -90,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-253,Overbought/oversold,CCI(14),Extreme low,14,CCI < -200,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-254,Overbought/oversold,CCI(14),Extreme high,14,CCI > 200,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-255,Overbought/oversold,Williams %R(20),Extreme low,20,%R < -90,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-256,Overbought/oversold,CCI(20),Extreme low,20,CCI < -200,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-257,Overbought/oversold,CCI(20),Extreme high,20,CCI > 200,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-258,Overbought/oversold,"MACD(12,26,9)",Cross up,adjacent bars,MACD line crosses above signal,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-259,Overbought/oversold,"MACD(12,26,9)",Cross down,adjacent bars,MACD crosses below signal,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-260,Overbought/oversold,MACD histogram,Change vs prior point,3 bars,hist rising 3 bars while <0,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-261,Overbought/oversold,MACD divergence,Divergence,20 days,C new 20d low AND MACD hist > hist at prior 20d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-262,Trend strength,ADX(14),Absolute threshold,14,ADX>25 AND +DI>-DI,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-264,Bollinger/volatility,"BB(20,2) lower",Below band,20,C < SMA20 - 2*SD20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-265,Bollinger/volatility,"BB(20,2) upper",Above band,20,C > SMA20 + 2*SD20,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-266,Bollinger/volatility,"BB(20,2) re-entry",Cross,20,C1 < lower band AND C > lower band,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-267,Bollinger/volatility,"BB(20,2.5) lower",Below band,20,C < SMA20 - 2.5*SD20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-268,Bollinger/volatility,"BB(20,2.5) upper",Above band,20,C > SMA20 + 2.5*SD20,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-269,Bollinger/volatility,"BB(20,2.5) re-entry",Cross,20,C1 < lower band AND C > lower band,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-270,Bollinger/volatility,"BB(10,1.5) lower",Below band,10,C < SMA10 - 1.5*SD10,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-271,Bollinger/volatility,"BB(10,1.5) upper",Above band,10,C > SMA10 + 1.5*SD10,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-272,Bollinger/volatility,"BB(10,1.5) re-entry",Cross,10,C1 < lower band AND C > lower band,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-273,Bollinger/volatility,"BB(50,2) lower",Below band,50,C < SMA50 - 2*SD50,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-274,Bollinger/volatility,"BB(50,2) upper",Above band,50,C > SMA50 + 2*SD50,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-275,Bollinger/volatility,"BB(50,2) re-entry",Cross,50,C1 < lower band AND C > lower band,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-276,Bollinger/volatility,BB width 20,Extreme low,20 in 126d,(4*SD20/SMA20) lowest of 126 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,squeeze
+PV-TF-277,Bollinger/volatility,BB width 50,Extreme low,50 in 126d,(4*SD50/SMA50) lowest of 126 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,squeeze
+PV-TF-278,Bollinger/volatility,Realized vol 5d,Change vs prior,5 vs 60,"stdev(ret,5) >= 2*stdev(ret,60)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-279,Bollinger/volatility,ATR14 % of price,Absolute threshold,14,ATR14/C >= 0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-280,Bollinger/volatility,Realized vol 10d,Change vs prior,10 vs 60,"stdev(ret,10) >= 2*stdev(ret,60)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-281,Bollinger/volatility,ATR14 % of price,Absolute threshold,14,ATR14/C >= 0.1,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-282,Bollinger/volatility,Realized vol 20d,Change vs prior,20 vs 60,"stdev(ret,20) >= 2*stdev(ret,60)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-283,Bollinger/volatility,ATR14 % of price,Absolute threshold,14,ATR14/C >= 0.2,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-284,Bollinger/volatility,Keltner squeeze,Pattern,20,"BB(20,2) inside Keltner(20,1.5 ATR)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-285,52w hi/lo,52w high proximity,Absolute threshold,52w,"C >= (1-0.0)*max(H,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-286,52w hi/lo,52w low proximity,Absolute threshold,52w,"C <= (1+0.0)*min(L,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-287,52w hi/lo,52w high proximity,Absolute threshold,52w,"C >= (1-0.02)*max(H,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-288,52w hi/lo,52w low proximity,Absolute threshold,52w,"C <= (1+0.02)*min(L,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-289,52w hi/lo,52w high proximity,Absolute threshold,52w,"C >= (1-0.05)*max(H,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-290,52w hi/lo,52w low proximity,Absolute threshold,52w,"C <= (1+0.05)*min(L,252)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-291,52w hi/lo,New 52w high,Event,adjacent bars,"H(D-1)>max(H,252) over prior bars",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-292,52w hi/lo,New 52w low,Event,adjacent bars,"L(D-1)<min(L,252) prior",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-293,52w hi/lo,Position in 52w range,Extreme,52w,(C-min L)/(max H-min L) <= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-294,52w hi/lo,26w high proximity,Absolute threshold,26w,"C >= (1-0.0)*max(H,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-295,52w hi/lo,26w low proximity,Absolute threshold,26w,"C <= (1+0.0)*min(L,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-296,52w hi/lo,26w high proximity,Absolute threshold,26w,"C >= (1-0.02)*max(H,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-297,52w hi/lo,26w low proximity,Absolute threshold,26w,"C <= (1+0.02)*min(L,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-298,52w hi/lo,26w high proximity,Absolute threshold,26w,"C >= (1-0.05)*max(H,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-299,52w hi/lo,26w low proximity,Absolute threshold,26w,"C <= (1+0.05)*min(L,126)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-300,52w hi/lo,New 26w high,Event,adjacent bars,"H(D-1)>max(H,126) over prior bars",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-301,52w hi/lo,New 26w low,Event,adjacent bars,"L(D-1)<min(L,126) prior",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-302,52w hi/lo,Position in 26w range,Extreme,26w,(C-min L)/(max H-min L) <= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-303,52w hi/lo,13w high proximity,Absolute threshold,13w,"C >= (1-0.0)*max(H,63)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-304,52w hi/lo,13w low proximity,Absolute threshold,13w,"C <= (1+0.0)*min(L,63)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-305,52w hi/lo,13w high proximity,Absolute threshold,13w,"C >= (1-0.02)*max(H,63)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-306,52w hi/lo,13w low proximity,Absolute threshold,13w,"C <= (1+0.02)*min(L,63)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-307,52w hi/lo,13w high proximity,Absolute threshold,13w,"C >= (1-0.05)*max(H,63)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-308,52w hi/lo,13w low proximity,Absolute threshold,13w,"C <= (1+0.05)*min(L,63)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-309,52w hi/lo,New 13w high,Event,adjacent bars,"H(D-1)>max(H,63) over prior bars",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-310,52w hi/lo,New 13w low,Event,adjacent bars,"L(D-1)<min(L,63) prior",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-311,52w hi/lo,Position in 13w range,Extreme,13w,(C-min L)/(max H-min L) <= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-312,52w hi/lo,20d high proximity,Absolute threshold,20d,"C >= (1-0.0)*max(H,20)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-313,52w hi/lo,20d low proximity,Absolute threshold,20d,"C <= (1+0.0)*min(L,20)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-314,52w hi/lo,20d high proximity,Absolute threshold,20d,"C >= (1-0.02)*max(H,20)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-315,52w hi/lo,20d low proximity,Absolute threshold,20d,"C <= (1+0.02)*min(L,20)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-316,52w hi/lo,20d high proximity,Absolute threshold,20d,"C >= (1-0.05)*max(H,20)",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-317,52w hi/lo,20d low proximity,Absolute threshold,20d,"C <= (1+0.05)*min(L,20)",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-318,52w hi/lo,New 20d high,Event,adjacent bars,"H(D-1)>max(H,20) over prior bars",Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-319,52w hi/lo,New 20d low,Event,adjacent bars,"L(D-1)<min(L,20) prior",Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-320,52w hi/lo,Position in 20d range,Extreme,20d,(C-min L)/(max H-min L) <= 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-321,Volume,Relative volume vs 5d avg,Absolute threshold,5,V(D-1)/avgV5 >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-322,Volume,Relative volume vs 5d avg,Absolute threshold,5,V(D-1)/avgV5 >= 2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-323,Volume,Relative volume vs 5d avg,Absolute threshold,5,V(D-1)/avgV5 >= 3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-324,Volume,Relative volume vs 5d avg,Absolute threshold,5,V(D-1)/avgV5 >= 5,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-325,Volume,Volume trend 5d,Change vs prior,5 vs prior 5,avgV5/avgV5[5] >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-326,Volume,Up-volume share,Above threshold,5,sum V on up days / sum V >= 0.65,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-327,Volume,Up-volume share,Below threshold,5,sum V on up days / sum V <= 0.35,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-328,Volume,"Price up, volume down",Divergence,5,C/C[5]>1.05 AND avgV5<avgV5*0.8,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A up, B not"
+PV-TF-329,Volume,Relative volume vs 10d avg,Absolute threshold,10,V(D-1)/avgV10 >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-330,Volume,Relative volume vs 10d avg,Absolute threshold,10,V(D-1)/avgV10 >= 2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-331,Volume,Relative volume vs 10d avg,Absolute threshold,10,V(D-1)/avgV10 >= 3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-332,Volume,Relative volume vs 10d avg,Absolute threshold,10,V(D-1)/avgV10 >= 5,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-333,Volume,Volume trend 10d,Change vs prior,10 vs prior 10,avgV10/avgV10[10] >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-334,Volume,Up-volume share,Above threshold,10,sum V on up days / sum V >= 0.65,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-335,Volume,Up-volume share,Below threshold,10,sum V on up days / sum V <= 0.35,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-336,Volume,"Price up, volume down",Divergence,10,C/C[10]>1.05 AND avgV5<avgV10*0.8,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A up, B not"
+PV-TF-337,Volume,Relative volume vs 20d avg,Absolute threshold,20,V(D-1)/avgV20 >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-338,Volume,Relative volume vs 20d avg,Absolute threshold,20,V(D-1)/avgV20 >= 2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-339,Volume,Relative volume vs 20d avg,Absolute threshold,20,V(D-1)/avgV20 >= 3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-340,Volume,Relative volume vs 20d avg,Absolute threshold,20,V(D-1)/avgV20 >= 5,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-341,Volume,Volume trend 20d,Change vs prior,20 vs prior 20,avgV20/avgV20[20] >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-342,Volume,Up-volume share,Above threshold,20,sum V on up days / sum V >= 0.65,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-343,Volume,Up-volume share,Below threshold,20,sum V on up days / sum V <= 0.35,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-344,Volume,"Price up, volume down",Divergence,20,C/C[20]>1.05 AND avgV5<avgV20*0.8,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A up, B not"
+PV-TF-345,Volume,Relative volume vs 50d avg,Absolute threshold,50,V(D-1)/avgV50 >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-346,Volume,Relative volume vs 50d avg,Absolute threshold,50,V(D-1)/avgV50 >= 2,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-347,Volume,Relative volume vs 50d avg,Absolute threshold,50,V(D-1)/avgV50 >= 3,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-348,Volume,Relative volume vs 50d avg,Absolute threshold,50,V(D-1)/avgV50 >= 5,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,direction depends on candle; see combos
+PV-TF-349,Volume,Volume trend 50d,Change vs prior,50 vs prior 50,avgV50/avgV50[50] >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-350,Volume,Up-volume share,Above threshold,50,sum V on up days / sum V >= 0.65,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-351,Volume,Up-volume share,Below threshold,50,sum V on up days / sum V <= 0.35,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-352,Volume,"Price up, volume down",Divergence,50,C/C[50]>1.05 AND avgV5<avgV50*0.8,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A up, B not"
+PV-TF-353,Volume,Volume dry-up,Extreme low,20,V(D-1) lowest of 20 days,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-354,Volume,Dollar volume,Absolute threshold,20,>= $5M avg 20d,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,liquidity gate
+PV-TF-355,Volume,High-volume red bar,Combo,1 bar,V>=2*avgV20 AND C<O AND (C-L)/range<0.2,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-356,Volume,High-volume green bar,Combo,1 bar,V>=2*avgV20 AND C>O AND (C-L)/range>0.8,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-357,Money flow,MFI(10),Extreme low,10,MFI<20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-358,Money flow,MFI(10),Extreme high,10,MFI>80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-359,Money flow,CMF(10),Above threshold,10,Chaikin money flow > 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-360,Money flow,CMF(10),Below threshold,10,CMF < -0.1,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-361,Money flow,OBV,Change vs prior,10,OBV > OBV[10],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-362,Money flow,OBV divergence,Divergence,10,C at 10d low AND OBV above its 10d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-363,Money flow,MFI(14),Extreme low,14,MFI<20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-364,Money flow,MFI(14),Extreme high,14,MFI>80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-365,Money flow,CMF(14),Above threshold,14,Chaikin money flow > 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-366,Money flow,CMF(14),Below threshold,14,CMF < -0.1,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-367,Money flow,OBV,Change vs prior,14,OBV > OBV[14],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-368,Money flow,OBV divergence,Divergence,14,C at 14d low AND OBV above its 14d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-369,Money flow,MFI(20),Extreme low,20,MFI<20,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-370,Money flow,MFI(20),Extreme high,20,MFI>80,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-371,Money flow,CMF(20),Above threshold,20,Chaikin money flow > 0.1,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-372,Money flow,CMF(20),Below threshold,20,CMF < -0.1,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-373,Money flow,OBV,Change vs prior,20,OBV > OBV[20],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-374,Money flow,OBV divergence,Divergence,20,C at 20d low AND OBV above its 20d low,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-375,Money flow,A/D line slope,Change vs prior,20,AD > AD[20],Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-376,Relative strength,Stock vs SPY,Above threshold,5,ret5(stock)-ret5(SPY) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-377,Relative strength,Stock vs SPY,Below threshold,5,ret5(stock)-ret5(SPY) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-378,Relative strength,Stock vs SPY,Above threshold,20,ret20(stock)-ret20(SPY) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-379,Relative strength,Stock vs SPY,Below threshold,20,ret20(stock)-ret20(SPY) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-380,Relative strength,Stock vs SPY,Above threshold,60,ret60(stock)-ret60(SPY) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-381,Relative strength,Stock vs SPY,Below threshold,60,ret60(stock)-ret60(SPY) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-382,Relative strength,Stock vs SPY,Above threshold,126,ret126(stock)-ret126(SPY) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-383,Relative strength,Stock vs SPY,Below threshold,126,ret126(stock)-ret126(SPY) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-384,Relative strength,Stock vs SPY,Divergence,5,SPY down >=2% over 5d AND stock up,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-385,Relative strength,RS line vs SPY,New high,252,stock/SPY ratio at 252d high,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-386,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Above threshold,5,ret5(stock)-ret5(sector SPDR ETF (Finviz sector map)) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-387,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Below threshold,5,ret5(stock)-ret5(sector SPDR ETF (Finviz sector map)) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-388,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Above threshold,20,ret20(stock)-ret20(sector SPDR ETF (Finviz sector map)) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-389,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Below threshold,20,ret20(stock)-ret20(sector SPDR ETF (Finviz sector map)) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-390,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Above threshold,60,ret60(stock)-ret60(sector SPDR ETF (Finviz sector map)) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-391,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Below threshold,60,ret60(stock)-ret60(sector SPDR ETF (Finviz sector map)) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-392,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Above threshold,126,ret126(stock)-ret126(sector SPDR ETF (Finviz sector map)) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-393,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Below threshold,126,ret126(stock)-ret126(sector SPDR ETF (Finviz sector map)) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-394,Relative strength,Stock vs sector SPDR ETF (Finviz sector map),Divergence,5,sector SPDR ETF (Finviz sector map) down >=2% over 5d AND stock up,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-395,Relative strength,RS line vs sector SPDR ETF (Finviz sector map),New high,252,stock/sector SPDR ETF (Finviz sector map) ratio at 252d high,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-396,Relative strength,Stock vs IWM,Above threshold,5,ret5(stock)-ret5(IWM) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-397,Relative strength,Stock vs IWM,Below threshold,5,ret5(stock)-ret5(IWM) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-398,Relative strength,Stock vs IWM,Above threshold,20,ret20(stock)-ret20(IWM) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-399,Relative strength,Stock vs IWM,Below threshold,20,ret20(stock)-ret20(IWM) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-400,Relative strength,Stock vs IWM,Above threshold,60,ret60(stock)-ret60(IWM) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-401,Relative strength,Stock vs IWM,Below threshold,60,ret60(stock)-ret60(IWM) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-402,Relative strength,Stock vs IWM,Above threshold,126,ret126(stock)-ret126(IWM) >= 0.05,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-403,Relative strength,Stock vs IWM,Below threshold,126,ret126(stock)-ret126(IWM) <= -0.05,Bearish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-404,Relative strength,Stock vs IWM,Divergence,5,IWM down >=2% over 5d AND stock up,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,"A down, B not"
+PV-TF-405,Relative strength,RS line vs IWM,New high,252,stock/IWM ratio at 252d high,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-406,Relative strength,Cross-sectional rank,Extreme,20,ret20 in top decile of same-day universe,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-407,Relative strength,Cross-sectional rank,Extreme,20,ret20 in bottom decile,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,reversal
+PV-TF-408,Relative strength,Cross-sectional rank,Extreme,60,ret60 in top decile of same-day universe,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,
+PV-TF-409,Relative strength,Cross-sectional rank,Extreme,60,ret60 in bottom decile,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,reversal
+PV-TF-410,Relative strength,Beta 60d,Absolute threshold,60,beta to SPY >= 1.5,Bullish,"Daily OHLC (Yahoo/Stooq, free)",1990s,Yes,Trading Bot Taskforce,regime-conditional
+PV-TF-411,Options,IV rank,Extreme low,252d,(IV-IVmin252)/(IVmax252-IVmin252) <= 0.2,Bullish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1 for D),Trading Bot Taskforce,M/W/F only before ~2024-10; ~1.5k names
+PV-TF-412,Options,IV rank,Extreme high,252d,(IV-IVmin252)/(IVmax252-IVmin252) >= 0.8,Bullish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1 for D),Trading Bot Taskforce,M/W/F only before ~2024-10; ~1.5k names
+PV-TF-413,Options,IV30 / HV20,Extreme low,20d,IV_current/hv_current <= 0.8,Bullish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1 for D),Trading Bot Taskforce,M/W/F only before ~2024-10; ~1.5k names
+PV-TF-414,Options,IV30 / HV20,Extreme high,20d,IV_current/hv_current >= 1.5,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1 for D),Trading Bot Taskforce,M/W/F only before ~2024-10; ~1.5k names
+PV-TF-415,Options,IV change,Change vs prior point,1 days,IV/IV[1]-1 >= 0.2,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-416,Options,IV change,Change vs prior point,5 days,IV/IV[5]-1 >= 0.2,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-417,Options,IV change,Change vs prior point,20 days,IV/IV[20]-1 >= 0.2,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-418,Options,IV term structure,Inversion,~2wk vs ~7wk,near-expiry IV > far-expiry IV by 10%,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-419,Options,25d skew,Extreme high,252d,put25d IV - call25d IV in top decile of own 252d,Bearish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-420,Options,Call skew,Above threshold,1d,call25d IV > put25d IV,Bullish,DoltHub post-no-preference/options (free),2019-02,Yes (EOD D-1),Trading Bot Taskforce,
+PV-TF-421,Options,"IV up, price up",Divergence,5,IV +15% over 5d AND C up over 5d,Bullish,DoltHub post-no-preference/options (free),2019-02,Yes,Trading Bot Taskforce,
+PV-TF-422,Options,Put/call volume ratio,Absolute threshold,1d / 5d,put vol/call vol >= 2,Bearish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-423,Options,Put/call volume ratio,Absolute threshold,1d / 5d,put vol/call vol <= 0.3,Bullish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-424,Options,Put/call OI ratio,Absolute threshold,1d / 5d,put OI/call OI >= 1.5,Bearish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-425,Options,Option volume vs avg,Absolute threshold,1d / 5d,total opt vol / avg20 >= 3,Bullish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-426,Options,OI change,Absolute threshold,1d / 5d,total OI / OI[5] >= 1.3,Bullish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-427,Options,Unusual call volume,Absolute threshold,1d / 5d,any call strike vol > 5*OI,Bullish,Yahoo chains archived by data_snapshots_daily (free),2026-10 (archive forward),Yes (captured after close D-1),Trading Bot Taskforce,no history; top 300 names only
+PV-TF-428,Options,Implied move vs ATR,Above threshold,nearest expiry,ATM straddle/C > 1.5*ATR14/C,Bearish,Yahoo chains archived by data_snapshots_daily (free),2026-10,Yes,Trading Bot Taskforce,
+PV-TF-429,Options,Paid OI/PCR history,n/a,n/a,HistoricalData.net/ORATS per-contract OI 2002+,Bullish,"PAID — flagged, not bought",2002,Yes,Trading Bot Taskforce,PAID
+PV-TF-430,Short volume,Short volume ratio 1d,Absolute threshold,1,sum ShortVol/sum TotalVol >= 0.6,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-431,Short volume,Short volume ratio 1d,Absolute threshold,1,sum ShortVol/sum TotalVol <= 0.3,Bullish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-432,Short volume,SVR 1d vs 60d,Change vs prior,1 vs 60,SVR1 - SVR60 >= 0.1,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes,Trading Bot Taskforce,
+PV-TF-433,Short volume,Short volume ratio 5d,Absolute threshold,5,sum ShortVol/sum TotalVol >= 0.6,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-434,Short volume,Short volume ratio 5d,Absolute threshold,5,sum ShortVol/sum TotalVol <= 0.3,Bullish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-435,Short volume,SVR 5d vs 60d,Change vs prior,5 vs 60,SVR5 - SVR60 >= 0.1,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes,Trading Bot Taskforce,
+PV-TF-436,Short volume,Short volume ratio 20d,Absolute threshold,20,sum ShortVol/sum TotalVol >= 0.6,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-437,Short volume,Short volume ratio 20d,Absolute threshold,20,sum ShortVol/sum TotalVol <= 0.3,Bullish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes (published evening D-1),Trading Bot Taskforce,
+PV-TF-438,Short volume,SVR 20d vs 60d,Change vs prior,20 vs 60,SVR20 - SVR60 >= 0.1,Bearish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes,Trading Bot Taskforce,
+PV-TF-439,Short volume,SVR extreme,Extreme,252,SVR5 top decile of own 252d,Bullish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes,Trading Bot Taskforce,squeeze hypothesis
+PV-TF-440,Short volume,"Price up, SVR up",Divergence,5,C up 5d AND SVR5 up 0.1,Bullish,FINRA Reg SHO CNMSshvol daily (free),2018-08,Yes,Trading Bot Taskforce,
+PV-TF-441,Short interest,Short float >= 20%,Absolute threshold,bi-monthly,short interest/float >= 0.2,Bullish,FINRA short interest / Finviz v=131 snapshot,FINRA 2017+ (U); Finviz 2026-10,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,
+PV-TF-442,Short interest,Short float >= 30%,Absolute threshold,bi-monthly,short interest/float >= 0.3,Bullish,FINRA short interest / Finviz v=131 snapshot,FINRA 2017+ (U); Finviz 2026-10,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,
+PV-TF-443,Short interest,Short float < 5%,Absolute threshold,bi-monthly,short interest/float < 0.05,Bullish,FINRA short interest / Finviz v=131 snapshot,FINRA 2017+ (U); Finviz 2026-10,"Yes, ~2 wk stale; use settlement date + publication lag",Trading Bot Taskforce,
+PV-TF-444,Short interest,Days to cover,Absolute threshold,bi-monthly,SI/avgV20 >= 7,Bullish,FINRA short interest,2017+ (U),"Yes, lagged",Trading Bot Taskforce,
+PV-TF-445,Short interest,SI change,Change vs prior,2 reports,SI/SI_prev - 1 >= 0.2,Bearish,FINRA short interest,2017+ (U),"Yes, lagged",Trading Bot Taskforce,
+PV-TF-446,FTD,FTD shares/float >= 0.1%,Absolute threshold,latest available,sum FTD over latest published half-month / float,Bullish,"SEC FTD (free, UA header)",2004,Lagged only: use rows published before D (~2wk lag),Trading Bot Taskforce,
+PV-TF-447,FTD,FTD shares/float >= 0.5%,Absolute threshold,latest available,sum FTD over latest published half-month / float,Bullish,"SEC FTD (free, UA header)",2004,Lagged only: use rows published before D (~2wk lag),Trading Bot Taskforce,
+PV-TF-448,FTD,FTD spike,Change vs prior,half-month,FTD half-month / prior >= 3,Bullish,"SEC FTD (free, UA header)",2004,Lagged only,Trading Bot Taskforce,
+PV-TF-449,FTD,FTD T+35 window,Calendar,35 cal days,D is 33-37 days after a FTD spike settle date,Bullish,"SEC FTD (free, UA header)",2004,Lagged only,Trading Bot Taskforce,forced-buy-in hypothesis
+PV-TF-450,Insider,Open-market purchase (P) 5d,Event,5 days,any Form 4 code P accepted < 09:25 ET D in last 5d,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,
+PV-TF-451,Insider,Cluster buy 5d,Absolute threshold,5,>=3 distinct insiders code P,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-452,Insider,Net sell value 5d,Absolute threshold,5,sum S value (ex 10b5-1) >= 1% mkt cap,Bearish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-453,Insider,Open-market purchase (P) 30d,Event,30 days,any Form 4 code P accepted < 09:25 ET D in last 30d,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,
+PV-TF-454,Insider,Cluster buy 30d,Absolute threshold,30,>=3 distinct insiders code P,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-455,Insider,Net sell value 30d,Absolute threshold,30,sum S value (ex 10b5-1) >= 1% mkt cap,Bearish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-456,Insider,Open-market purchase (P) 90d,Event,90 days,any Form 4 code P accepted < 09:25 ET D in last 90d,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes if acceptance < 09:25 ET,Trading Bot Taskforce,
+PV-TF-457,Insider,Cluster buy 90d,Absolute threshold,90,>=3 distinct insiders code P,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-458,Insider,Net sell value 90d,Absolute threshold,90,sum S value (ex 10b5-1) >= 1% mkt cap,Bearish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-459,Insider,CEO/CFO purchase,Event,30,code P by officer title CEO/CFO,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,
+PV-TF-460,Insider,Buy after drop,Combo,20,code P AND ret20 <= -15%,Bullish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,AND support
+PV-TF-461,Insider,Buy BUT price falling,Contrary,5,code P in 5d BUT C below SMA50,Bearish,SEC Form 3/4/5 data sets + EDGAR acceptance time (free),2006Q1,Yes,Trading Bot Taskforce,BUT contrary
+PV-TF-462,13F,Holder count change,Absolute/Change,quarterly,# 13F holders vs prior qtr +20%,Bullish,SEC 13F data sets (free),2013,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,slow
+PV-TF-463,13F,Inst % of float,Absolute/Change,quarterly,13F shares/float >= 0.8,Bearish,SEC 13F data sets (free),2013,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,slow
+PV-TF-464,13F,New positions by top-50 filers,Absolute/Change,quarterly,>=2 new,Bullish,SEC 13F data sets (free),2013,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,slow
+PV-TF-465,13F,Concentration,Absolute/Change,quarterly,top5 holders/13F total >= 0.5,Bearish,SEC 13F data sets (free),2013,Yes only after 45-day filing deadline / actual filing date,Trading Bot Taskforce,slow

@@ -1,0 +1,13 @@
+year,sector,rows,fund_rows_removed,tr_joined,fresh_src
+2021,Basic_Materials,57387,0,True,FRESH_file
+2021,Communication_Services,50249,0,True,FRESH_file
+2021,Consumer_Cyclical,103812,0,True,FRESH_file
+2021,Consumer_Defensive,47165,0,True,FRESH_file
+2021,Energy,51620,0,True,FRESH_file
+2021,Financial,166304,592796,True,FRESH_file
+2021,Healthcare,196371,0,True,FRESH_file
+2021,Industrials,127065,0,True,FRESH_file
+2021,Real_Estate,52551,0,True,FRESH_file
+2021,Technology,142389,0,True,FRESH_file
+2021,Unknown,2268,0,True,FRESH_file
+2021,Utilities,22775,0,True,FRESH_file

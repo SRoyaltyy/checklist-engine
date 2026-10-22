@@ -1,0 +1,26 @@
+taskforce pairs: same lens/diff indicator mean|phi| 0.185 share>0.5 0.094
+same indicator/diff lens 0.134 0.036
+diff both 0.054 0.001
+  lens change               pairs  231 mean|phi| 0.27 share>0.5 0.16
+  lens change (BUT)         pairs  136 mean|phi| 0.16 share>0.5 0.03
+  lens cross                pairs   15 mean|phi| 0.14 share>0.5 0.00
+  lens cross (BUT)          pairs  171 mean|phi| 0.10 share>0.5 0.04
+  lens div_price            pairs   10 mean|phi| 0.24 share>0.5 0.00
+  lens div_price (BUT)      pairs   36 mean|phi| 0.30 share>0.5 0.22
+  lens div_sector           pairs   21 mean|phi| 0.04 share>0.5 0.00
+  lens div_sector (BUT)     pairs  105 mean|phi| 0.08 share>0.5 0.03
+  lens div_volume           pairs   91 mean|phi| 0.30 share>0.5 0.16
+  lens div_volume (BUT)     pairs   66 mean|phi| 0.54 share>0.5 0.45
+  lens extreme              pairs  120 mean|phi| 0.14 share>0.5 0.01
+  lens extreme (BUT)        pairs   55 mean|phi| 0.12 share>0.5 0.04
+  lens level                pairs   55 mean|phi| 0.08 share>0.5 0.02
+  lens level (BUT)          pairs   28 mean|phi| 0.03 share>0.5 0.00
+  lens rank_market          pairs  136 mean|phi| 0.23 share>0.5 0.12
+  lens rank_market (BUT)    pairs  171 mean|phi| 0.13 share>0.5 0.05
+  lens streak               pairs   91 mean|phi| 0.18 share>0.5 0.12
+subset 50 effN 40.1
+subset 100 effN 71.0
+subset 200 effN 100.2
+subset 300 effN 122.5
+subset 400 effN 133.1
+subset 459 effN 140.9

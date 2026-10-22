@@ -1,0 +1,12 @@
+state,ex5,lo95,hi95,n_dates,n_obs
+L5 all,0.00118,0.00035,0.00201,246,200848
+L5 & stock-only jump (v3 def),-0.00002,-0.00365,0.00361,223,8348
+L5 & stock-only no jump,0.00110,0.00026,0.00195,236,185894
+L5 & combined stk+mkt jump,0.00173,-0.00230,0.00575,221,6405
+L5 & combined no jump,0.00103,0.00019,0.00188,236,187837
+L5 & stock jump & NOT combined jump,-0.00256,-0.00766,0.00254,158,2925
+L5 & combined jump & NOT stock jump,0.00382,-0.00478,0.01241,87,982
+L5 on mkt-jump dates (m_jumpz>=1.5),0.00247,-0.00079,0.00572,35,13873
+L5 on non-mkt-jump dates,0.00097,0.00009,0.00185,201,180617
+L5 & combined fresh top third,0.00199,0.00073,0.00325,245,69061
+L5 & combined fresh bottom third,0.00050,-0.00061,0.00161,241,70837

@@ -1,0 +1,30 @@
+{
+ "year": 2021,
+ "sector": "Basic_Materials",
+ "ids": [
+  "GK-OPX-IVR-HI",
+  "GK-OPX-IVR-LO",
+  "GK-OPX-IVHV-HI",
+  "GK-OPX-IVHV-LO",
+  "GK-OPX-IVCHG-UP",
+  "GK-OPX-IVCHG-DN"
+ ],
+ "defs": {
+  "GK-OPX-IVR-HI": "IV rank (iv_current within its own DoltHub 1y iv_year_low..high) >= 0.80",
+  "GK-OPX-IVR-LO": "IV rank <= 0.20",
+  "GK-OPX-IVHV-HI": "iv_current / hv_current > 1.3",
+  "GK-OPX-IVHV-LO": "iv_current / hv_current < 0.8",
+  "GK-OPX-IVCHG-UP": "iv_current / iv_current of the ticker's prior DoltHub reading (<=7 cal days earlier) - 1 >= +0.15",
+  "GK-OPX-IVCHG-DN": "same change <= -0.15"
+ },
+ "n_ids": 6,
+ "survivor_only": true,
+ "survivor_note": "DoltHub repo created 2021-04-20; rows dated before are a one-day backfill (which names included is not point-in-time)",
+ "source": "dolthub post-no-preference/options volatility_history",
+ "pit_rule": "Grok options (DoltHub volatility_history) YES/NO engine, 2020-2024 ONLY. survivor_only=true.\nPoint-in-time: a DoltHub row dated D (end-of-day, committed ~02:35 ET next day) is usable for the 09:25 ET decision of the\nfirst trading session strictly after D. For session S we take the latest D < S per ticker.\nlag = sessions between S and the first session after D. lag=0 -> fresh (stale=0); lag 1..2 -> carried forward, stale=1;\nlag>2 or no reading -> NOT_READY for every question (Manager Bot rule 2026-10-22: carry max 2 trading days).\nIn 2020..~Oct-2024 DoltHub is Mon/Wed/Fri only, so Wed and Fri sessions are typically stale=1.\nCodes 0=NR 1=NO 2=YES packed 2-bit 4/byte along ids (nb_year.pack). Universe/sector files = New Bot 2024 survivor set.",
+ "layout": "rows ticker-major then date; packed 2-bit 0=NR 1=NO 2=YES; stale=1 carried reading (lag 1-2 sessions); lag=99 none",
+ "n_tickers": 290,
+ "n_cells": 73080,
+ "raw_file": "raw/vol_history_2021.csv",
+ "version": "v2_rebuild_2026-10-22"
+}

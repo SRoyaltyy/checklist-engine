@@ -1,0 +1,13 @@
+sector,tickers,fund_tickers_removed,rows_removed,not_in_snapshot
+Basic_Materials,258,0,0,0
+Communication_Services,234,0,0,0
+Consumer_Cyclical,494,0,0,0
+Consumer_Defensive,217,0,0,0
+Energy,232,0,0,0
+Financial,4656,3920,892402,0
+Healthcare,966,0,0,0
+Industrials,617,0,0,0
+Real_Estate,237,0,0,0
+Technology,701,0,0,0
+Unknown,11,0,0,11
+Utilities,102,0,0,0

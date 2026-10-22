@@ -1,0 +1,59 @@
+ticker-dates with no history: [('COIN', '2008-06-16'), ('COIN', '2016-08-01'), ('COIN', '2021-01-27'), ('META', '2008-06-16'), ('NAUT', '2008-06-16'), ('NAUT', '2016-08-01'), ('PLTR', '2008-06-16'), ('PLTR', '2016-08-01'), ('TSLA', '2008-06-16')]
+== all 100 5185900
+answer
+NO           0.5666
+NOT_READY    0.3345
+YES          0.0988
+answer      NO  NOT_READY     YES
+fam                              
+PV-TF   0.5770     0.3391  0.0839
+PV-TFC  0.5088     0.3171  0.1741
+PV-TFX  0.7025     0.1018  0.1958
+== listed only 4719169
+answer
+NO           0.6227
+NOT_READY    0.2687
+YES          0.1086
+answer      NO  NOT_READY     YES
+fam                              
+PV-TF   0.6341     0.2737  0.0922
+PV-TFC  0.5591     0.2496  0.1913
+PV-TFX  0.7719     0.0130  0.2151
+reason
+needs_cross_section_universe      831467
+source_not_wired                  203840
+not_implemented                   176904
+insufficient_history               33826
+not_applicable                     17680
+sector_etf_XLC_not_trading_yet      4378
+reason
+needs_cross_section_universe:rank_sector                 415324
+needs_cross_section_universe:rank_market                 414687
+source_not_wired:nasdaq_trader_halts_feed                 96096
+source_not_wired:finviz_elite_earnings                    37128
+insufficient_history:252d                                 25518
+source_not_wired:finra_short_interest                     24752
+not_applicable:relative_variant_on_sector_etf             12584
+source_not_wired:finra_regsho_daily_files                 12376
+source_not_wired:finra_short_interest_and_float           12376
+source_not_wired:sec_ftd_files                            12376
+not_implemented:Close vs Holt-Winter MA                    9828
+not_implemented:Close vs Jurik MA 7                        9828
+not_implemented:Hurst exponent 100                         9828
+not_implemented:Even better sinewave (40,10)               9828
+not_implemented:Ehlers reflex 20                           9828
+not_implemented:Ehlers trendflex 20                        9828
+not_implemented:ATR trailing stop side                     9828
+not_implemented:Holt-Winter channel position               9828
+not_implemented:Klinger volume oscillator / avg V          9828
+not_implemented:Inertia (RVI 14 linreg 20)                 9828
+not_implemented:QQE line minus signal                      9828
+not_implemented:Jurik RSX 14                               9828
+not_implemented:Smart money concept: order-block side      9828
+not_implemented:Schaff trend cycle (10,23,50)              9828
+not_implemented:True momentum oscillator 14                9828
+date
+2008-06-16     32
+2021-01-27    184
+2024-05-15     48
+dtype: int64

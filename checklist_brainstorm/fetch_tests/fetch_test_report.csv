@@ -1,0 +1,99 @@
+series,url,test_point,http_status,rows,sample_value,result,error
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=max&interval=1d&events=div,split",,200,169,"first=1984-12-01 last_close=344.8550109863281 events={'dividends': 92, 'splits': 5}",pass,
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/MSFT?range=max&interval=1d&events=div,split",,200,164,"first=1986-03-01 last_close=532.7100219726562 events={'dividends': 91, 'splits': 9}",pass,
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=max&interval=1d&events=div,split",,200,197,first=2010-07-01 last_close=387.06500244140625 events={'splits': 2},pass,
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=max&interval=1d&events=div,split",,200,406,first=1993-02-01 last_close=774.1599731445312 events={'dividends': 136},pass,
+yahoo_1m_prepost,https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=5d&interval=1m&includePrePost=true,,200,3825,first=2026-10-15 last_close=344.85528564453125 events={},pass,
+yahoo_1m_prepost,https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1m&includePrePost=true,,200,4325,first=2026-10-15 last_close=221.66000366210938 events={},pass,
+yahoo_1m_prepost,https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=5d&interval=1m&includePrePost=true,,200,4188,first=2026-10-15 last_close=774.1900024414062 events={},pass,
+yahoo_1m_prepost,https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1792008000&period2=1792094400&interval=1m&includePrePost=true,earliest 2026-10-15,200,862,first=2026-10-14 last_close=341.9100036621094 events={},pass,
+yahoo_1m_prepost,https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1788206400&period2=1788292800&interval=1m&includePrePost=true,expect fail >30d,422,0,,fail,HTTP 422
+yahoo_1h_futures,https://query1.finance.yahoo.com/v8/finance/chart/NG=F?range=730d&interval=1h,,200,17395,first=2024-05-30 last_close=2.7990000247955322 events={},pass,
+yahoo_1h_futures,https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=60d&interval=1h,,200,1432,first=2026-08-12 last_close=97.2300033569336 events={},pass,
+yahoo_home_fx,https://query1.finance.yahoo.com/v8/finance/chart/7203.T?range=max&interval=1d,,200,330,first=1999-05-31 last_close=3094.0 events={},pass,
+yahoo_home_fx,https://query1.finance.yahoo.com/v8/finance/chart/JPY=X?range=1mo&interval=1d,,200,24,first=2026-09-20 last_close=158.1490020751953 events={},pass,
+nasdaq_earnings,https://api.nasdaq.com/api/calendar/earnings?date=2026-10-21,2026-10-21,200,91,"{'lastYearRptDt': '10/29/2025', 'lastYearEPS': '$7.25', 'time': 'time-after-hours', 'symbol': 'META', 'name': 'Meta Plat",pass,
+nasdaq_earnings,https://api.nasdaq.com/api/calendar/earnings?date=2025-10-30,2025-10-30,200,304,"{'eps': '$1.85', 'surprise': '6.94', 'time': 'time-not-supplied', 'symbol': 'AAPL', 'name': 'Apple Inc.', 'marketCap': '",pass,
+nasdaq_earnings,https://api.nasdaq.com/api/calendar/earnings?date=2012-10-22,2012-10-22,200,51,"{'eps': '$2.27', 'surprise': '2.71', 'time': 'time-not-supplied', 'symbol': 'CAT', 'name': 'Caterpillar, Inc.', 'marketC",pass,
+nasdaq_earnings,https://api.nasdaq.com/api/calendar/earnings?date=2012-10-19,2012-10-19,200,17,"{'eps': '$0.36', 'surprise': 'N/A', 'time': 'time-not-supplied', 'symbol': 'GE', 'name': 'GE Aerospace', 'marketCap': '$",pass,
+nasdaq_earnings_surprise,https://api.nasdaq.com/api/company/AAPL/earnings-surprise,,200,4,"{'fiscalQtrEnd': 'Jun 2026', 'dateReported': '7/30/2026', 'eps': 1.91, 'consensusForecast': '1.88', 'percentageSurprise'",pass,
+nasdaq_earnings_surprise,https://api.nasdaq.com/api/company/JPM/earnings-surprise,,200,4,"{'fiscalQtrEnd': 'Sep 2026', 'dateReported': '10/13/2026', 'eps': 5.75, 'consensusForecast': '5.94', 'percentageSurprise",pass,
+nasdaq_earnings_surprise,https://api.nasdaq.com/api/company/NFLX/earnings-surprise,,200,4,"{'fiscalQtrEnd': 'Sep 2026', 'dateReported': '10/20/2026', 'eps': 0.87, 'consensusForecast': '0.82', 'percentageSurprise",pass,
+nasdaq_dividends,https://api.nasdaq.com/api/calendar/dividends?date=2026-10-21,2026-10-21,200,36,"{'companyName': '2x Solana ETF', 'symbol': 'SOLT', 'dividend_Ex_Date': '10/21/2026', 'payment_Date': '10/22/2026', 'reco",pass,
+nasdaq_dividends,https://api.nasdaq.com/api/calendar/dividends?date=2025-06-02,2025-06-02,200,128,"{'companyName': 'AB Core Plus Bond ETF', 'symbol': 'CPLS', 'dividend_Ex_Date': '6/02/2025', 'payment_Date': '6/05/2025',",pass,
+nasdaq_dividends,https://api.nasdaq.com/api/calendar/dividends?date=2016-03-15,2016-03-15,200,17,"{'companyName': 'BlackRock TCP Capital Corp. Common Stock', 'symbol': 'TCPC', 'dividend_Ex_Date': '3/15/2016', 'payment_",pass,
+nasdaq_dividends,https://api.nasdaq.com/api/calendar/dividends?date=2016-03-14,2016-03-14,200,12,"{'companyName': 'Allient Inc. Common Stock', 'symbol': 'ALNT', 'dividend_Ex_Date': '3/14/2016', 'payment_Date': '3/29/20",pass,
+nasdaq_dividends,https://api.nasdaq.com/api/calendar/dividends?date=2015-03-16,2015-03-16,200,7,"{'companyName': 'Allient Inc. Common Stock', 'symbol': 'ALNT', 'dividend_Ex_Date': '3/16/2015', 'payment_Date': '3/31/20",pass,
+nasdaq_splits,https://api.nasdaq.com/api/calendar/splits,,200,14,"{'symbol': 'EFG', 'name': 'iShares MSCI EAFE Growth ETF', 'ratio': '3 : 1', 'executionDate': '11/05/2026'}",pass,
+nasdaq_splits,https://api.nasdaq.com/api/calendar/splits?date=2026-10-21,?date=2026-10-21,200,14,"{'symbol': 'EFG', 'name': 'iShares MSCI EAFE Growth ETF', 'ratio': '3 : 1', 'executionDate': '11/05/2026'}",pass,
+nasdaq_splits,https://api.nasdaq.com/api/calendar/splits?date=2020-08-31,?date=2020-08-31,200,456,"{'symbol': 'ZCSH', 'name': 'Grayscale Zcash Trust The Zcash ETF The Zcash ETF Shares', 'ratio': '3 : 1', 'executionDate'",pass,
+nasdaq_ipo,https://api.nasdaq.com/api/ipo/calendar?date=2026-09,2026-09,200,11,"{'dealID': '1400711-119247', 'proposedTickerSymbol': 'ACCV', 'companyName': 'Accelevation Holdings Corp.', 'proposedExch",pass,
+nasdaq_ipo,https://api.nasdaq.com/api/ipo/calendar?date=2015-01,2015-01,200,15,"{'dealID': '953529-77326', 'proposedTickerSymbol': 'SHAK', 'companyName': 'Shake Shack Inc.', 'proposedExchange': 'New Y",pass,
+nasdaq_ipo,https://api.nasdaq.com/api/ipo/calendar?date=2010-06,2010-06,200,15,"{'dealID': '831059-64496', 'proposedTickerSymbol': 'HSFT', 'companyName': 'Pactera Technology International Ltd.', 'prop",pass,
+nasdaq_ipo,https://api.nasdaq.com/api/ipo/calendar?date=2010-05,2010-05,200,14,"{'dealID': '824263-63652', 'proposedTickerSymbol': 'GNMK', 'companyName': 'GenMark Diagnostics, Inc.', 'proposedExchange",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-10-05,204,0,,fail,HTTP 204
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2025-06-02,200,5,"{'totalWeeklyShareQuantity': 84224, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpdate",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2022-01-03,200,5,"{'totalWeeklyShareQuantity': 34214047, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpd",pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNRAshvol20261021.txt,FNRAshvol20261021,403,0,,fail,HTTP 403
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNRAshvol20250102.txt,FNRAshvol20250102,200,2,no AAPL,pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNRAshvol20100104.txt,FNRAshvol20100104,200,3237,no AAPL,pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261021.txt,CNMSshvol20261021,403,0,,fail,HTTP 403
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20100104.txt,CNMSshvol20100104,403,0,,fail,HTTP 403
+nasdaqtrader_halts,https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=10202026,10202026,200,36,"['BRZE', 'BKHAU', 'MF']",pass,
+nasdaqtrader_halts,https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=06022025,06022025,200,51,"['KYMR', 'IRD', 'RITR']",pass,
+nasdaqtrader_halts,https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=01022020,01022020,200,9,"['NVCN', 'PULM', 'WHLM']",pass,
+regsho_threshold,https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20261021.txt,20261021,200,883,,pass,
+regsho_threshold,https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20250102.txt,20250102,200,64,AAPD|DIREXION SHS ETF TR DAILY AAPL|G|Y|N|,pass,
+regsho_threshold,https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20080102.txt,20080102,200,254,ABVG|ABV GOLD INC COM STK|u|Y|N|,pass,
+ssr_shorthalts,https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20261021.txt,20261021,200,223,"SDST,Stardust Power Inc. Cmn,R,10/20/2026 9:30:00 AM",pass,
+ssr_shorthalts,https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20250102.txt,20250102,200,686,"GBBKR,Global Blockchain Acquisiti Rt,R,1/2/2025 3:58:00 AM",pass,
+ssr_shorthalts,https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20110228.txt,20110228,200,36,"XIDEW,Exide Technologies,Q,2/28/2011 9:30:00 AM",pass,
+nyse_holidays,https://www.nyse.com/markets/hours-calendars,,200,7,GoodFriday/Thanksgiving mentions,pass,
+finviz_quote,https://finviz.com/quote.ashx?t=AAPL,,200,0,"{'Shs Float': None, 'Shs Outstand': None} ind=['consumerelectronics']",fail,empty
+finviz_quote,https://finviz.com/quote.ashx?t=TSLA,,200,0,"{'Shs Float': None, 'Shs Outstand': None} ind=['automanufacturers']",fail,empty
+finviz_quote,https://finviz.com/quote.ashx?t=GME,,200,0,"{'Shs Float': None, 'Shs Outstand': None} ind=['specialtyretail']",fail,empty
+ishares_holdings,https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund,,200,1644,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",pass,
+ishares_holdings,https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund&asOfDate=20250102,historic asOfDate,200,1644,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",pass,
+spdr_holdings,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlk.xlsx,,200,166,"{'Name': 'NVIDIA CORP', 'Ticker': 'NVDA', 'Identifier': '67066G104', 'SEDOL': '2379504', 'Weight': 15.448579, 'Sector': ",pass,
+spdr_holdings,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlf.xlsx,,200,168,"{'Name': 'BERKSHIRE HATHAWAY INC CL B', 'Ticker': 'BRK.B', 'Identifier': '084670702', 'SEDOL': '2073390', 'Weight': 12.8",pass,
+cboe_options,https://cdn.cboe.com/api/global/delayed_quotes/options/AAPL.json,,200,3352,"{'option': 'AAPL261021C00250000', 'bid': 93.3, 'bid_size': 228.0, 'ask': 95.75, 'ask_size': 38.0, 'iv': 0.0, 'open_inter",pass,
+cboe_options,https://cdn.cboe.com/api/global/delayed_quotes/options/MSFT.json,,200,3832,"{'option': 'MSFT261021C00420000', 'bid': 111.55, 'bid_size': 94.0, 'ask': 113.75, 'ask_size': 25.0, 'iv': 0.0, 'open_int",pass,
+cboe_options,https://cdn.cboe.com/api/global/delayed_quotes/options/TSLA.json,,200,4912,"{'option': 'TSLA261023C00050000', 'bid': 334.95, 'bid_size': 63.0, 'ask': 338.4, 'ask_size': 16.0, 'iv': 0.0, 'open_inte",pass,
+stooq_daily,https://stooq.com/q/d/l/?s=aapl.us&i=d,,,0,,fail,"Failed to perform, curl: (35) BoringSSL SSL_connect: Connection closed abruptly (SSL_ERROR_SYSCALL; error queue empty) in connection to stooq.com:443."
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1792000000&interval=1d&events=div,split",,200,11552,"first=1980-12-12 last_close=342.9599914550781 events={'dividends': 92, 'splits': 5}",pass,
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=0&period2=1792000000&interval=1d&events=div,split",,200,10226,"first=1986-03-13 last_close=533.6900024414062 events={'dividends': 91, 'splits': 9}",pass,
+yahoo_daily,"https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=0&period2=1792000000&interval=1d&events=div,split",,200,8485,first=1993-01-29 last_close=769.5999755859375 events={'dividends': 136},pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261020.txt,CNMSshvol20261020,200,0,no AAPL,fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20250102.txt,CNMSshvol20250102,200,0,no AAPL,fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20100104.txt,CNMSshvol20100104,403,0,,fail,HTTP 403
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20090803.txt,CNMSshvol20090803,403,0,,fail,HTTP 403
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNSQshvol20261020.txt,FNSQshvol20261020,200,0,no AAPL,fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNYXshvol20261020.txt,FNYXshvol20261020,200,0,no AAPL,fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNQCshvol20261020.txt,FNQCshvol20261020,200,0,no AAPL,fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNRAshvol20261020.txt,FNRAshvol20261020,200,0,no AAPL,fail,empty
+regsho_threshold,https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20261020.txt,20261020,200,80,AAPD|DIREXION SHS ETF TR DAILY AAPL|G|Y|N|,pass,
+finviz_quote,https://finviz.com/quote.ashx?t=AAPL,,200,1,"{'Shs Float': '14.58B', 'Shs Outstand': '14.61B'} ind=['consumerelectronics']",pass,
+finviz_quote,https://finviz.com/quote.ashx?t=TSLA,,200,1,"{'Shs Float': '2.82B', 'Shs Outstand': '3.95B'} ind=['automanufacturers']",pass,
+finviz_quote,https://finviz.com/quote.ashx?t=GME,,200,1,"{'Shs Float': '421.40M', 'Shs Outstand': '449.10M'} ind=['specialtyretail']",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-09-28,200,5,"{'totalWeeklyShareQuantity': 878.204, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpda",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-09-21,200,5,"{'totalWeeklyShareQuantity': 1017891.0806, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'las",pass,
+ishares_holdings,https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund,,200,0,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",fail,empty
+ishares_holdings,https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf/1467271812596.ajax?fileType=csv&fileName=SOXX_holdings&dataType=fund,,200,0,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",fail,empty
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-09-28,200,5,"{'totalWeeklyShareQuantity': 878.204, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpda",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-09-21,200,5,"{'totalWeeklyShareQuantity': 1017891.0806, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'las",pass,
+finra_ats_weekly,https://api.finra.org/data/group/otcMarket/name/weeklySummary,2026-10-12,204,0,,fail,HTTP 204
+ishares_holdings,https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund,,200,0,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",fail,empty
+ishares_holdings,https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf/1467271812596.ajax?fileType=csv&fileName=SOXX_holdings&dataType=fund,,200,0,"['<!DOCTYPE html>', '<html xmlns=""http://www.w3.org/1999/xhtml"" prefix=""og: http://ogp.me/ns#"" lang=""en-US"" xml:lang=""en",fail,empty
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261020.txt,CNMSshvol20261020,200,1,"20261020|AAPL|7848414.965306|50613|13247219.306813|B,Q,N",pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20250102.txt,CNMSshvol20250102,200,1,"20250102|AAPL|11000653|67952|22651137|B,Q,N",pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/CNMSshvol20180801.txt,CNMSshvol20180801,200,1,"20180801|AAPL|10122147|33603|26971902|Q,N",pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNSQshvol20100104.txt,FNSQshvol20100104,200,1,20100104|AAPL|3148759|7216104|Q,pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNYXshvol20100104.txt,FNYXshvol20100104,200,1,20100104|AAPL|68524|130193|N,pass,
+finra_regsho_daily,https://cdn.finra.org/equity/regsho/daily/FNRAshvol20100104.txt,FNRAshvol20100104,200,1,20100104|AAPL|49200|82100|D,pass,
+theme_radar_snapshot (finviz_daily.yml),github SRoyaltyy/theme-radar data/snapshots/2026-08-06.csv,2026-08-06,200,11.5k+,A Revenue Surprise=2.03,pass,
+theme_radar_snapshot (finviz_daily.yml),github SRoyaltyy/theme-radar data/snapshots/2026-09-15.csv,2026-09-15,200,11.5k+,11633 rows,pass,
+theme_radar_snapshot (finviz_daily.yml),github SRoyaltyy/theme-radar data/snapshots/2026-10-20.csv,2026-10-20,200,11.5k+,"A=1.98, 3854 non-empty",pass,
+theme_radar_finviz_extras,github SRoyaltyy/theme-radar data/finviz_extras/,last night,404,0,,fail,folder not created yet; first run ~04:30 HKT 10-22
+options_expiry_calc,rule; cross-check Cboe AAPL/MSFT/TSLA chains,"2026-11-20,2026-12-18",200,2,both in Cboe chain,pass,
+dividend_crosscheck_yahoo,Yahoo events=div CPLS/EYEG/SDSI,2025-06-02,200,3,CPLS 0.1425 vs 0.143 same date,pass,
+finviz_elite_export,n/a,,,0,,not_tested,no token on box; only GitHub Actions secrets

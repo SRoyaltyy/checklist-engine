@@ -1,0 +1,38 @@
+{
+ "year": 2022,
+ "sessions": 251,
+ "universe": 5423,
+ "tickers_with_any": 1306,
+ "cells_ready": 300942,
+ "cells_fresh": 175025,
+ "cells_stale": 125917,
+ "per_id_yes_ready": {
+  "GK-OPX-IVR-HI": [
+   25098,
+   299322
+  ],
+  "GK-OPX-IVR-LO": [
+   46126,
+   299322
+  ],
+  "GK-OPX-IVHV-HI": [
+   72683,
+   300825
+  ],
+  "GK-OPX-IVHV-LO": [
+   33170,
+   300825
+  ],
+  "GK-OPX-IVCHG-UP": [
+   20249,
+   290774
+  ],
+  "GK-OPX-IVCHG-DN": [
+   15962,
+   290774
+  ]
+ },
+ "dolthub_dates": 152,
+ "dolthub_symbols": 1605,
+ "symbols_unmatched": 300
+}

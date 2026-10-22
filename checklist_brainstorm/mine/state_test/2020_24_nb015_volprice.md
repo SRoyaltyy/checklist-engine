@@ -1,0 +1,31 @@
+# PDS-NB-015 with volatility and price held steady, 2020–24 (Taskforce)
+
+Script: nbv2/nb015_volprice.py. Dates 2020-01-02..2024-12-20 only; no 2025–26 file read. Entry = open of D+1, exit = open of D+6, as in the v2 score.
+Control = ready-NO stock-days on the same date in the same cell. Buckets are set per date and known through close D: ATR% = 20-day ATR / close D (quintiles), price = close D (quintiles), prior-1-day return close D−1→D (10 buckets). All versions use the same sample. CIs are clustered by date. L5 = lean ≥ 0.6205.
+
+**Verdict:** holding ATR% and price steady removes about 60–75% of the RNK and RNK-BUT edge and about 85% of the THR-BUT edge.
+- T1-RNK: −0.96% → −0.25%. Still significant, but the sign is ++−−− (positive in 2020 and 2021).
+- T1-RNK-BUT: +0.75% → +0.38%. Still +++++, and +0.36% inside L5. This is the only clean survivor.
+- T1-THR-BUT: +0.55% → +0.07–0.08%, with mixed signs; inside L5 the CI includes 0. It collapses toward 0.
+- YES composition: 78% of RNK-BUT YES days are in the lowest price quintile, and 66% of RNK YES days are in the highest price quintile. So the raw effect was largely a price-level effect.
+
+| id                        | control                    | scope   |    resid |     lo95 |     hi95 |   n_dates |   n_obs | signs   |    y2020 |    y2021 |    y2022 |    y2023 |    y2024 |
+|:--------------------------|:---------------------------|:--------|---------:|---------:|---------:|----------:|--------:|:--------|---------:|---------:|---------:|---------:|---------:|
+| nb4-PDS-NB-015-T1-RNK     | raw same-date              | all     | -0.00956 | -0.0106  | -0.00852 |      1237 |  449375 | -----   | -0.00042 | -0.00604 | -0.01067 | -0.013   | -0.01502 |
+| nb4-PDS-NB-015-T1-RNK     | raw same-date              | L5      | -0.0065  | -0.00817 | -0.00483 |      1164 |   67774 | -----   | -0.00373 | -0.00317 | -0.01038 | -0.00805 | -0.00828 |
+| nb4-PDS-NB-015-T1-RNK     | ATR%x5 * price x5          | all     | -0.00254 | -0.00338 | -0.0017  |      1237 |  449375 | ++---   |  0.0011  |  0.00122 | -0.00205 | -0.00571 | -0.00594 |
+| nb4-PDS-NB-015-T1-RNK     | ATR%x5 * price x5          | L5      | -0.00184 | -0.00316 | -0.00052 |      1164 |   67774 | ++---   |  5e-05   |  0.00136 | -0.00477 | -0.00383 | -0.00281 |
+| nb4-PDS-NB-015-T1-RNK     | ATR%x5 * price x5 * r1 x10 | all     | -0.00253 | -0.00341 | -0.00165 |      1237 |  442413 | ++---   |  0.00098 |  0.00144 | -0.00209 | -0.00545 | -0.00635 |
+| nb4-PDS-NB-015-T1-RNK     | ATR%x5 * price x5 * r1 x10 | L5      | -0.00158 | -0.00294 | -0.00021 |      1164 |   67191 | ++---   |  0.00079 |  0.0021  | -0.00439 | -0.0039  | -0.00306 |
+| nb4-PDS-NB-015-T1-RNK-BUT | raw same-date              | all     |  0.0075  |  0.00682 |  0.00818 |      1237 |  451306 | +++++   |  0.01078 |  0.00503 |  0.00574 |  0.00721 |  0.00922 |
+| nb4-PDS-NB-015-T1-RNK-BUT | raw same-date              | L5      |  0.00796 |  0.00678 |  0.00915 |      1163 |   71169 | +++++   |  0.01197 |  0.00769 |  0.00649 |  0.00418 |  0.0101  |
+| nb4-PDS-NB-015-T1-RNK-BUT | ATR%x5 * price x5          | all     |  0.00383 |  0.00333 |  0.00433 |      1237 |  451306 | +++++   |  0.0066  |  0.00162 |  0.00249 |  0.00357 |  0.00525 |
+| nb4-PDS-NB-015-T1-RNK-BUT | ATR%x5 * price x5          | L5      |  0.00356 |  0.00259 |  0.00454 |      1163 |   71169 | +++++   |  0.00632 |  0.00269 |  0.00172 |  0.00146 |  0.00549 |
+| nb4-PDS-NB-015-T1-RNK-BUT | ATR%x5 * price x5 * r1 x10 | all     |  0.00384 |  0.00335 |  0.00433 |      1237 |  440890 | +++++   |  0.00668 |  0.0017  |  0.00247 |  0.00357 |  0.00522 |
+| nb4-PDS-NB-015-T1-RNK-BUT | ATR%x5 * price x5 * r1 x10 | L5      |  0.00363 |  0.00262 |  0.00464 |      1162 |   69066 | +++++   |  0.00684 |  0.00263 |  0.00175 |  0.00158 |  0.00524 |
+| nb4-PDS-NB-015-T1-THR-BUT | raw same-date              | all     |  0.00548 |  0.00502 |  0.00594 |      1237 | 3138118 | +++++   |  0.0031  |  0.00455 |  0.00581 |  0.00593 |  0.00701 |
+| nb4-PDS-NB-015-T1-THR-BUT | raw same-date              | L5      |  0.00523 |  0.00438 |  0.00608 |      1196 |  624918 | +++++   |  0.00151 |  0.00486 |  0.0068  |  0.00501 |  0.00776 |
+| nb4-PDS-NB-015-T1-THR-BUT | ATR%x5 * price x5          | all     |  0.0008  |  0.00048 |  0.00111 |      1237 | 3126024 | --+++   | -3e-05   | -5e-05   |  0.00129 |  0.00082 |  0.00154 |
+| nb4-PDS-NB-015-T1-THR-BUT | ATR%x5 * price x5          | L5      |  0.00037 | -0.00018 |  0.00092 |      1196 |  622739 | --+++   | -0.00103 | -0.00046 |  0.00054 |  0.00033 |  0.00201 |
+| nb4-PDS-NB-015-T1-THR-BUT | ATR%x5 * price x5 * r1 x10 | all     |  0.00074 |  0.00039 |  0.00108 |      1237 | 2811294 | +-+++   |  0.00047 | -0.00033 |  0.00088 |  0.00089 |  0.00144 |
+| nb4-PDS-NB-015-T1-THR-BUT | ATR%x5 * price x5 * r1 x10 | L5      |  0.00024 | -0.00032 |  0.0008  |      1196 |  562254 | --+++   | -0.00096 | -0.00051 |  0.0002  |  0.00032 |  0.00163 |

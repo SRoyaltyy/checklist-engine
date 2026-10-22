@@ -1,0 +1,612 @@
+[
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=max&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 169,
+  "sample_value": "first=1984-12-01 last_close=344.8550109863281 events={'dividends': 92, 'splits': 5}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?range=max&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 164,
+  "sample_value": "first=1986-03-01 last_close=532.7100219726562 events={'dividends': 91, 'splits': 9}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=max&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 197,
+  "sample_value": "first=2010-07-01 last_close=387.06500244140625 events={'splits': 2}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_daily",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=max&interval=1d&events=div,split",
+  "note": "",
+  "http_status": 200,
+  "rows": 406,
+  "sample_value": "first=1993-02-01 last_close=774.1599731445312 events={'dividends': 136}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1m_prepost",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=5d&interval=1m&includePrePost=true",
+  "note": "",
+  "http_status": 200,
+  "rows": 3825,
+  "sample_value": "first=2026-10-15 last_close=344.85528564453125 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1m_prepost",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1m&includePrePost=true",
+  "note": "",
+  "http_status": 200,
+  "rows": 4325,
+  "sample_value": "first=2026-10-15 last_close=221.66000366210938 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1m_prepost",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=5d&interval=1m&includePrePost=true",
+  "note": "",
+  "http_status": 200,
+  "rows": 4188,
+  "sample_value": "first=2026-10-15 last_close=774.1900024414062 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1m_prepost",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1792008000&period2=1792094400&interval=1m&includePrePost=true",
+  "note": "earliest 2026-10-15",
+  "http_status": 200,
+  "rows": 862,
+  "sample_value": "first=2026-10-14 last_close=341.9100036621094 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1m_prepost",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1788206400&period2=1788292800&interval=1m&includePrePost=true",
+  "note": "expect fail >30d",
+  "http_status": 422,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 422"
+ },
+ {
+  "key": "yahoo_1h_futures",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NG=F?range=730d&interval=1h",
+  "note": "",
+  "http_status": 200,
+  "rows": 17395,
+  "sample_value": "first=2024-05-30 last_close=2.7990000247955322 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_1h_futures",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=60d&interval=1h",
+  "note": "",
+  "http_status": 200,
+  "rows": 1432,
+  "sample_value": "first=2026-08-12 last_close=97.2300033569336 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_home_fx",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/7203.T?range=max&interval=1d",
+  "note": "",
+  "http_status": 200,
+  "rows": 330,
+  "sample_value": "first=1999-05-31 last_close=3094.0 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "yahoo_home_fx",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/JPY=X?range=1mo&interval=1d",
+  "note": "",
+  "http_status": 200,
+  "rows": 24,
+  "sample_value": "first=2026-09-20 last_close=158.1490020751953 events={}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings",
+  "url": "https://api.nasdaq.com/api/calendar/earnings?date=2026-10-21",
+  "note": "2026-10-21",
+  "http_status": 200,
+  "rows": 91,
+  "sample_value": "{'lastYearRptDt': '10/29/2025', 'lastYearEPS': '$7.25', 'time': 'time-after-hours', 'symbol': 'META', 'name': 'Meta Plat",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings",
+  "url": "https://api.nasdaq.com/api/calendar/earnings?date=2025-10-30",
+  "note": "2025-10-30",
+  "http_status": 200,
+  "rows": 304,
+  "sample_value": "{'eps': '$1.85', 'surprise': '6.94', 'time': 'time-not-supplied', 'symbol': 'AAPL', 'name': 'Apple Inc.', 'marketCap': '",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings",
+  "url": "https://api.nasdaq.com/api/calendar/earnings?date=2012-10-22",
+  "note": "2012-10-22",
+  "http_status": 200,
+  "rows": 51,
+  "sample_value": "{'eps': '$2.27', 'surprise': '2.71', 'time': 'time-not-supplied', 'symbol': 'CAT', 'name': 'Caterpillar, Inc.', 'marketC",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings",
+  "url": "https://api.nasdaq.com/api/calendar/earnings?date=2012-10-19",
+  "note": "2012-10-19",
+  "http_status": 200,
+  "rows": 17,
+  "sample_value": "{'eps': '$0.36', 'surprise': 'N/A', 'time': 'time-not-supplied', 'symbol': 'GE', 'name': 'GE Aerospace', 'marketCap': '$",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings_surprise",
+  "url": "https://api.nasdaq.com/api/company/AAPL/earnings-surprise",
+  "note": "",
+  "http_status": 200,
+  "rows": 4,
+  "sample_value": "{'fiscalQtrEnd': 'Jun 2026', 'dateReported': '7/30/2026', 'eps': 1.91, 'consensusForecast': '1.88', 'percentageSurprise'",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings_surprise",
+  "url": "https://api.nasdaq.com/api/company/JPM/earnings-surprise",
+  "note": "",
+  "http_status": 200,
+  "rows": 4,
+  "sample_value": "{'fiscalQtrEnd': 'Sep 2026', 'dateReported': '10/13/2026', 'eps': 5.75, 'consensusForecast': '5.94', 'percentageSurprise",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_earnings_surprise",
+  "url": "https://api.nasdaq.com/api/company/NFLX/earnings-surprise",
+  "note": "",
+  "http_status": 200,
+  "rows": 4,
+  "sample_value": "{'fiscalQtrEnd': 'Sep 2026', 'dateReported': '10/20/2026', 'eps': 0.87, 'consensusForecast': '0.82', 'percentageSurprise",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_dividends",
+  "url": "https://api.nasdaq.com/api/calendar/dividends?date=2026-10-21",
+  "note": "2026-10-21",
+  "http_status": 200,
+  "rows": 36,
+  "sample_value": "{'companyName': '2x Solana ETF', 'symbol': 'SOLT', 'dividend_Ex_Date': '10/21/2026', 'payment_Date': '10/22/2026', 'reco",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_dividends",
+  "url": "https://api.nasdaq.com/api/calendar/dividends?date=2025-06-02",
+  "note": "2025-06-02",
+  "http_status": 200,
+  "rows": 128,
+  "sample_value": "{'companyName': 'AB Core Plus Bond ETF', 'symbol': 'CPLS', 'dividend_Ex_Date': '6/02/2025', 'payment_Date': '6/05/2025',",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_dividends",
+  "url": "https://api.nasdaq.com/api/calendar/dividends?date=2016-03-15",
+  "note": "2016-03-15",
+  "http_status": 200,
+  "rows": 17,
+  "sample_value": "{'companyName': 'BlackRock TCP Capital Corp. Common Stock', 'symbol': 'TCPC', 'dividend_Ex_Date': '3/15/2016', 'payment_",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_dividends",
+  "url": "https://api.nasdaq.com/api/calendar/dividends?date=2016-03-14",
+  "note": "2016-03-14",
+  "http_status": 200,
+  "rows": 12,
+  "sample_value": "{'companyName': 'Allient Inc. Common Stock', 'symbol': 'ALNT', 'dividend_Ex_Date': '3/14/2016', 'payment_Date': '3/29/20",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_dividends",
+  "url": "https://api.nasdaq.com/api/calendar/dividends?date=2015-03-16",
+  "note": "2015-03-16",
+  "http_status": 200,
+  "rows": 7,
+  "sample_value": "{'companyName': 'Allient Inc. Common Stock', 'symbol': 'ALNT', 'dividend_Ex_Date': '3/16/2015', 'payment_Date': '3/31/20",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_splits",
+  "url": "https://api.nasdaq.com/api/calendar/splits",
+  "note": "",
+  "http_status": 200,
+  "rows": 14,
+  "sample_value": "{'symbol': 'EFG', 'name': 'iShares MSCI EAFE Growth ETF', 'ratio': '3 : 1', 'executionDate': '11/05/2026'}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_splits",
+  "url": "https://api.nasdaq.com/api/calendar/splits?date=2026-10-21",
+  "note": "?date=2026-10-21",
+  "http_status": 200,
+  "rows": 14,
+  "sample_value": "{'symbol': 'EFG', 'name': 'iShares MSCI EAFE Growth ETF', 'ratio': '3 : 1', 'executionDate': '11/05/2026'}",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_splits",
+  "url": "https://api.nasdaq.com/api/calendar/splits?date=2020-08-31",
+  "note": "?date=2020-08-31",
+  "http_status": 200,
+  "rows": 456,
+  "sample_value": "{'symbol': 'ZCSH', 'name': 'Grayscale Zcash Trust The Zcash ETF The Zcash ETF Shares', 'ratio': '3 : 1', 'executionDate'",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_ipo",
+  "url": "https://api.nasdaq.com/api/ipo/calendar?date=2026-09",
+  "note": "2026-09",
+  "http_status": 200,
+  "rows": 11,
+  "sample_value": "{'dealID': '1400711-119247', 'proposedTickerSymbol': 'ACCV', 'companyName': 'Accelevation Holdings Corp.', 'proposedExch",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_ipo",
+  "url": "https://api.nasdaq.com/api/ipo/calendar?date=2015-01",
+  "note": "2015-01",
+  "http_status": 200,
+  "rows": 15,
+  "sample_value": "{'dealID': '953529-77326', 'proposedTickerSymbol': 'SHAK', 'companyName': 'Shake Shack Inc.', 'proposedExchange': 'New Y",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_ipo",
+  "url": "https://api.nasdaq.com/api/ipo/calendar?date=2010-06",
+  "note": "2010-06",
+  "http_status": 200,
+  "rows": 15,
+  "sample_value": "{'dealID': '831059-64496', 'proposedTickerSymbol': 'HSFT', 'companyName': 'Pactera Technology International Ltd.', 'prop",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaq_ipo",
+  "url": "https://api.nasdaq.com/api/ipo/calendar?date=2010-05",
+  "note": "2010-05",
+  "http_status": 200,
+  "rows": 14,
+  "sample_value": "{'dealID': '824263-63652', 'proposedTickerSymbol': 'GNMK', 'companyName': 'GenMark Diagnostics, Inc.', 'proposedExchange",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2026-10-05",
+  "http_status": 204,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 204"
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2025-06-02",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 84224, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpdate",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_ats_weekly",
+  "url": "https://api.finra.org/data/group/otcMarket/name/weeklySummary",
+  "note": "2022-01-03",
+  "http_status": 200,
+  "rows": 5,
+  "sample_value": "{'totalWeeklyShareQuantity': 34214047, 'issueSymbolIdentifier': 'AAPL', 'issueName': 'Apple Inc. Common Stock', 'lastUpd",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNRAshvol20261021.txt",
+  "note": "FNRAshvol20261021",
+  "http_status": 403,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 403"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNRAshvol20250102.txt",
+  "note": "FNRAshvol20250102",
+  "http_status": 200,
+  "rows": 2,
+  "sample_value": "no AAPL",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/FNRAshvol20100104.txt",
+  "note": "FNRAshvol20100104",
+  "http_status": 200,
+  "rows": 3237,
+  "sample_value": "no AAPL",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20261021.txt",
+  "note": "CNMSshvol20261021",
+  "http_status": 403,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 403"
+ },
+ {
+  "key": "finra_regsho_daily",
+  "url": "https://cdn.finra.org/equity/regsho/daily/CNMSshvol20100104.txt",
+  "note": "CNMSshvol20100104",
+  "http_status": 403,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "HTTP 403"
+ },
+ {
+  "key": "nasdaqtrader_halts",
+  "url": "https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=10202026",
+  "note": "10202026",
+  "http_status": 200,
+  "rows": 36,
+  "sample_value": "['BRZE', 'BKHAU', 'MF']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaqtrader_halts",
+  "url": "https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=06022025",
+  "note": "06022025",
+  "http_status": 200,
+  "rows": 51,
+  "sample_value": "['KYMR', 'IRD', 'RITR']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nasdaqtrader_halts",
+  "url": "https://www.nasdaqtrader.com/rss.aspx?feed=tradehalts&haltdate=01022020",
+  "note": "01022020",
+  "http_status": 200,
+  "rows": 9,
+  "sample_value": "['NVCN', 'PULM', 'WHLM']",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "regsho_threshold",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20261021.txt",
+  "note": "20261021",
+  "http_status": 200,
+  "rows": 883,
+  "sample_value": "",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "regsho_threshold",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20250102.txt",
+  "note": "20250102",
+  "http_status": 200,
+  "rows": 64,
+  "sample_value": "AAPD|DIREXION SHS ETF TR DAILY AAPL|G|Y|N|",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "regsho_threshold",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/regsho/nasdaqth20080102.txt",
+  "note": "20080102",
+  "http_status": 200,
+  "rows": 254,
+  "sample_value": "ABVG|ABV GOLD INC COM STK|u|Y|N|",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "ssr_shorthalts",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20261021.txt",
+  "note": "20261021",
+  "http_status": 200,
+  "rows": 223,
+  "sample_value": "SDST,Stardust Power Inc. Cmn,R,10/20/2026 9:30:00 AM",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "ssr_shorthalts",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20250102.txt",
+  "note": "20250102",
+  "http_status": 200,
+  "rows": 686,
+  "sample_value": "GBBKR,Global Blockchain Acquisiti Rt,R,1/2/2025 3:58:00 AM",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "ssr_shorthalts",
+  "url": "https://www.nasdaqtrader.com/dynamic/symdir/shorthalts/shorthalts20110228.txt",
+  "note": "20110228",
+  "http_status": 200,
+  "rows": 36,
+  "sample_value": "XIDEW,Exide Technologies,Q,2/28/2011 9:30:00 AM",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "nyse_holidays",
+  "url": "https://www.nyse.com/markets/hours-calendars",
+  "note": "",
+  "http_status": 200,
+  "rows": 7,
+  "sample_value": "GoodFriday/Thanksgiving mentions",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=AAPL",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "{'Shs Float': None, 'Shs Outstand': None} ind=['consumerelectronics']",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=TSLA",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "{'Shs Float': None, 'Shs Outstand': None} ind=['automanufacturers']",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "finviz_quote",
+  "url": "https://finviz.com/quote.ashx?t=GME",
+  "note": "",
+  "http_status": 200,
+  "rows": 0,
+  "sample_value": "{'Shs Float': None, 'Shs Outstand': None} ind=['specialtyretail']",
+  "passed": "fail",
+  "error": "empty"
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund",
+  "note": "",
+  "http_status": 200,
+  "rows": 1644,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "ishares_holdings",
+  "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/1467271812596.ajax?fileType=csv&fileName=IVV_holdings&dataType=fund&asOfDate=20250102",
+  "note": "historic asOfDate",
+  "http_status": 200,
+  "rows": 1644,
+  "sample_value": "['<!DOCTYPE html>', '<html xmlns=\"http://www.w3.org/1999/xhtml\" prefix=\"og: http://ogp.me/ns#\" lang=\"en-US\" xml:lang=\"en",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "spdr_holdings",
+  "url": "https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlk.xlsx",
+  "note": "",
+  "http_status": 200,
+  "rows": 166,
+  "sample_value": "{'Name': 'NVIDIA CORP', 'Ticker': 'NVDA', 'Identifier': '67066G104', 'SEDOL': '2379504', 'Weight': 15.448579, 'Sector': ",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "spdr_holdings",
+  "url": "https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlf.xlsx",
+  "note": "",
+  "http_status": 200,
+  "rows": 168,
+  "sample_value": "{'Name': 'BERKSHIRE HATHAWAY INC CL B', 'Ticker': 'BRK.B', 'Identifier': '084670702', 'SEDOL': '2073390', 'Weight': 12.8",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "cboe_options",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/AAPL.json",
+  "note": "",
+  "http_status": 200,
+  "rows": 3352,
+  "sample_value": "{'option': 'AAPL261021C00250000', 'bid': 93.3, 'bid_size': 228.0, 'ask': 95.75, 'ask_size': 38.0, 'iv': 0.0, 'open_inter",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "cboe_options",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/MSFT.json",
+  "note": "",
+  "http_status": 200,
+  "rows": 3832,
+  "sample_value": "{'option': 'MSFT261021C00420000', 'bid': 111.55, 'bid_size': 94.0, 'ask': 113.75, 'ask_size': 25.0, 'iv': 0.0, 'open_int",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "cboe_options",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/TSLA.json",
+  "note": "",
+  "http_status": 200,
+  "rows": 4912,
+  "sample_value": "{'option': 'TSLA261023C00050000', 'bid': 334.95, 'bid_size': 63.0, 'ask': 338.4, 'ask_size': 16.0, 'iv': 0.0, 'open_inte",
+  "passed": "pass",
+  "error": ""
+ },
+ {
+  "key": "stooq_daily",
+  "url": "https://stooq.com/q/d/l/?s=aapl.us&i=d",
+  "note": "",
+  "http_status": null,
+  "rows": 0,
+  "sample_value": "",
+  "passed": "fail",
+  "error": "Failed to perform, curl: (35) BoringSSL SSL_connect: Connection closed abruptly (SSL_ERROR_SYSCALL; error queue empty) in connection to stooq.com:443."
+ }
+]

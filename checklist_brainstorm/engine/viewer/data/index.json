@@ -1,0 +1,17 @@
+[
+{
+"ticker": "AAPL",
+"date": "2026-10-21",
+"file": "AAPL_2026-10-21.json"
+},
+{
+"ticker": "CRMT",
+"date": "2026-10-21",
+"file": "CRMT_2026-10-21.json"
+},
+{
+"ticker": "NVDA",
+"date": "2026-10-21",
+"file": "NVDA_2026-10-21.json"
+}
+]

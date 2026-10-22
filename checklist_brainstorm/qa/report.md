@@ -1,0 +1,4617 @@
+# Checklist QA report — PRELIMINARY
+
+Checks: a source, b history_start, c numeric/exact definition, d direction, e known_before_open=Yes, f cross-owner near-dup (>=88%), g BUT twin, h fetch-proven series (qa/src/fetch_proof_*.csv; missing/no_source=FAIL, save_nightly=WARN untestable until ~30 fires), i known_at <= 09:25 ET test day (registry col known_at, was published_at; format D-n HH:MM ET; revised=yes needs first_release_source), j no SEC/EDGAR/filing-derived source (exempt: Finviz export/snapshot, Fed/NYSE/Cboe, fails-to-deliver/FTD), k registry data_form in number|label|date and no parse/extract/transcript/LLM/NLP definitions.
+
+| owner | rows | a | b | c | d | e | f | g | h | i | j | k | h WARN | rows w/ issues | variants | variants w/ gaps |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| James-v5.5c | 8533 | 0 | 0 | 0 | 0 | 0 | 2497 | 0 | 0 | 0 | 0 | 0 | 0 | 1280 | 1791 | 1791 |
+| grok-bot-finviz | 1654 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1008 | 0 | 60 | 48 |
+| grok-bot-ratings | 64 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 12 | 12 |
+| grok-bot-vix-term | 156 | 0 | 0 | 0 | 0 | 0 | 2497 | 0 | 0 | 0 | 0 | 0 | 0 | 156 | 6 | 6 |
+| manager-bot-numeric-v3 | 336 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 84 | 0 | 4 | 0 |
+| theme-radar | 13188 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8234 | 0 | 149 | 4 |
+| trading-bot-taskforce | 43326 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 365 | 23 |
+| trading-bot-taskforce-timeframes | 52560 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2367 | 2367 |
+| tradingview_master | 296 | 0 | 296 | 296 | 296 | 296 | 0 | 295 | 294 | 0 | 0 | 0 | 0 | 296 | 295 | 295 |
+
+Cross-owner near-duplicate pairs: 2497
+
+- James-v5.5c:MKT-JA-007 ~ grok-bot-vix-term:MKT-JA-007 (100%)
+- James-v5.5c:MKT-JA-008 ~ grok-bot-vix-term:MKT-JA-008 (100%)
+- James-v5.5c:MKT-JA-009 ~ grok-bot-vix-term:MKT-JA-009 (100%)
+- James-v5.5c:MKT-JA-010 ~ grok-bot-vix-term:MKT-JA-010 (100%)
+- James-v5.5c:MKT-JA-079 ~ grok-bot-vix-term:MKT-JA-1665 (99%)
+- James-v5.5c:MKT-JA-079 ~ grok-bot-vix-term:MKT-JA-1687 (99%)
+- James-v5.5c:MKT-JA-117 ~ grok-bot-vix-term:MKT-JA-1665 (98%)
+- James-v5.5c:MKT-JA-117 ~ grok-bot-vix-term:MKT-JA-1687 (98%)
+- James-v5.5c:MKT-JA-193 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MKT-JA-193 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MKT-JA-307 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MKT-JA-307 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MKT-JA-326 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MKT-JA-326 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MKT-JA-345 ~ grok-bot-vix-term:MKT-JA-1665 (97%)
+- James-v5.5c:MKT-JA-345 ~ grok-bot-vix-term:MKT-JA-1687 (97%)
+- James-v5.5c:MKT-JA-383 ~ grok-bot-vix-term:MKT-JA-1665 (98%)
+- James-v5.5c:MKT-JA-383 ~ grok-bot-vix-term:MKT-JA-1687 (98%)
+- James-v5.5c:MKT-JA-1665 ~ grok-bot-vix-term:MKT-JA-1665 (100%)
+- James-v5.5c:MKT-JA-1665 ~ grok-bot-vix-term:MKT-JA-1687 (99%)
+- James-v5.5c:MKT-JA-1687 ~ grok-bot-vix-term:MKT-JA-1665 (99%)
+- James-v5.5c:MKT-JA-1687 ~ grok-bot-vix-term:MKT-JA-1687 (100%)
+- James-v5.5c:MKT-JA-1797 ~ grok-bot-vix-term:MKT-JA-1665 (98%)
+- James-v5.5c:MKT-JA-1797 ~ grok-bot-vix-term:MKT-JA-1687 (98%)
+- James-v5.5c:MKT-JA-1863 ~ grok-bot-vix-term:MKT-JA-1665 (98%)
+- James-v5.5c:MKT-JA-1863 ~ grok-bot-vix-term:MKT-JA-1687 (99%)
+- James-v5.5c:MAC-JA-087 ~ grok-bot-vix-term:MKT-JA-1665 (97%)
+- James-v5.5c:MAC-JA-087 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-106 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MAC-JA-106 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-125 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MAC-JA-125 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-182 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MAC-JA-182 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-201 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MAC-JA-201 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-220 ~ grok-bot-vix-term:MKT-JA-1665 (97%)
+- James-v5.5c:MAC-JA-220 ~ grok-bot-vix-term:MKT-JA-1687 (97%)
+- James-v5.5c:MAC-JA-239 ~ grok-bot-vix-term:MKT-JA-1665 (97%)
+- James-v5.5c:MAC-JA-239 ~ grok-bot-vix-term:MKT-JA-1687 (97%)
+- James-v5.5c:MAC-JA-277 ~ grok-bot-vix-term:MKT-JA-1665 (96%)
+- James-v5.5c:MAC-JA-277 ~ grok-bot-vix-term:MKT-JA-1687 (96%)
+- James-v5.5c:MAC-JA-2318 ~ grok-bot-vix-term:MKT-JA-1665 (97%)
+- James-v5.5c:MAC-JA-2318 ~ grok-bot-vix-term:MKT-JA-1687 (97%)
+- James-v5.5c:MKT-JA-081 ~ grok-bot-vix-term:MKT-JA-1667 (99%)
+- James-v5.5c:MKT-JA-081 ~ grok-bot-vix-term:MKT-JA-1689 (99%)
+- James-v5.5c:MKT-JA-119 ~ grok-bot-vix-term:MKT-JA-1667 (98%)
+- James-v5.5c:MKT-JA-119 ~ grok-bot-vix-term:MKT-JA-1689 (98%)
+- James-v5.5c:MKT-JA-195 ~ grok-bot-vix-term:MKT-JA-1667 (96%)
+- James-v5.5c:MKT-JA-195 ~ grok-bot-vix-term:MKT-JA-1689 (96%)
+
+## Variants with coverage gaps
+
+- **James-v5.5c** / % above sma20 (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / % above sma200 (slow outlier of mkt-ja-043) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / % above sma50 (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / % s&p 500 above sma20 (44 rows): tf:60d
+- **James-v5.5c** / % s&p 500 above sma200 (44 rows): tf:60d
+- **James-v5.5c** / % s&p above sma50 (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / % sector members above sma200 (2 rows): tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / % sector members above sma50 (4 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y breakeven (slow outlier of mac-ja-085) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 10y real yield (tips) (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / 10y real yield (tips) (slow outlier of mac-ja-015) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 10y real yield (tips) (slow outlier of mac-ja-016) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 10y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / 10y treasury yield (slow outlier of mac-ja-003) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 10y treasury yield (slow outlier of mac-ja-004) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 10y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / 10y yield days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield overnight futures (zn) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 10y yield red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 10y yield up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 10y yield up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 12m implied cuts (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / 2s10s curve (slow outlier of mac-ja-019) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 2s10s curve (slow outlier of mac-ja-020) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 2s10s curve (slow outlier of mac-ja-021) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 2s10s curve (slow outlier of mac-ja-022) (12 rows): others; tf:3d/10d/60d; method:level/streak/divergence
+- **James-v5.5c** / 2s10s spread (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / 2y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / 2y treasury yield (slow outlier of mac-ja-007) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 2y treasury yield (slow outlier of mac-ja-008) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 2y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / 2y yield days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / 2y yield red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / 2y yield up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / 2y yield up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / 30y treasury yield (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / 30y treasury yield (slow outlier of mac-ja-011) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 30y treasury yield (slow outlier of mac-ja-012) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 30y yield (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / 3m10y curve (slow outlier of mac-ja-023) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 3m10y curve (slow outlier of mac-ja-024) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 3m10y curve (slow outlier of mac-ja-025) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / 3m10y curve (slow outlier of mac-ja-026) (12 rows): others; tf:3d/10d/60d; method:level/streak/divergence
+- **James-v5.5c** / 3m10y spread (44 rows): tf:60d
+- **James-v5.5c** / aud/jpy (44 rows): tf:60d
+- **James-v5.5c** / beta-adjusted expected open (2 rows): others; tf:1d/3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / bitcoin days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin overnight (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / bitcoin red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / bitcoin up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / bitcoin weekend (2 rows): others; tf:1d/3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / breadth thrust (2 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / breadth thrustvix rising (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / cboe total put/call (44 rows): tf:60d
+- **James-v5.5c** / cftc es positioning (slow outlier of mkt-ja-060) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / copper (21 rows): others; method:cross/divergence
+- **James-v5.5c** / copper (slow outlier of mac-ja-045) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / copper (slow outlier of mac-ja-046) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / copper days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / copper red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / copper up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / copper up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / copper up, yields down (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / copper/gold ratio (44 rows): tf:60d
+- **James-v5.5c** / copper/gold ratio (slow outlier of mac-ja-048) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / cpi release day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / crude oil wti (4 rows): others; tf:3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / crude oil wti (slow outlier of mac-ja-037) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / crude oil wti (slow outlier of mac-ja-038) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / cumulative a/d (1 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/rank
+- **James-v5.5c** / dax (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / dax vs es (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / day after fomc (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / day before fomc (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / dollar index (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5c** / dollar index days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar index up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / dollar index up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / dollar up, gold up (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / dxy green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / dxy red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / dxy red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / eem (44 rows): tf:60d
+- **James-v5.5c** / equal vs cap weight (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / equity p/c > 0.9index p/c low (1 rows): self; tf:1d/3d/5d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / es down, europe up (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / es futures gap (3 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **James-v5.5c** / es gap-downeurope green (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / es gap-upvix futures up (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / es up, asia down (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / es vs btc overnight (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / eth/btc (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / ethereum (44 rows): tf:60d
+- **James-v5.5c** / eur/usd (44 rows): tf:60d
+- **James-v5.5c** / euro stoxx 50 (21 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / fed blackout (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / fed blackout window (2 rows): self; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / fed funds futures implied cuts (slow outlier of mac-ja-082) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / fomc (4 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / fomc decision = cut (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / fomc decision = hike (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / fomc decision = hold (6 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / fomc decision day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / fomc decision yesterday (2 rows): self; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / fomc meeting today (2 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / friday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / ftse 100 (44 rows): tf:60d
+- **James-v5.5c** / futures divergence (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / futures gap vs prior-day close location (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / global breadth (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold (21 rows): others; method:cross/divergence
+- **James-v5.5c** / gold (slow outlier of mac-ja-041) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / gold (slow outlier of mac-ja-042) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / gold days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / gold red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / gold up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / gold up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / gold up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / growth vs value (2 rows): others; tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / growth/value ratio (iwf/iwd) (44 rows): tf:60d
+- **James-v5.5c** / half-day session (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / hang seng (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / hang seng/china (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / high beta/low vol ratio (sphb/splv) (44 rows): tf:60d
+- **James-v5.5c** / hindenburg omen (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg price (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / hyg red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / hyg red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / hyg up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / hyg up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / hyg/ief ratio (slow outlier of mac-ja-059) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / index put/call (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / iwm days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / iwm red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / iwm up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / iwm up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / iwm/spy ratio (44 rows): tf:60d
+- **James-v5.5c** / kospi (44 rows): tf:60d
+- **James-v5.5c** / kospi/taiex (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / lqd price (44 rows): tf:60d
+- **James-v5.5c** / mac_cpi nsa yoy surprise (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / mac_fomc decision label (18 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / mac_ism mfg pmi surprise (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / mac_vix term structure (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/streak/divergence/rank
+- **James-v5.5c** / market beta regime (2 rows): others; tf:1d/3d/5d/10d/20d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / market momentum interaction (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / mcclellan oscillator (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / mid-month (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / monday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / month end (5 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / move index (44 rows): tf:60d
+- **James-v5.5c** / nasdaq futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / nasdaq new 52w highs minus lows (44 rows): tf:60d
+- **James-v5.5c** / natural gas (44 rows): tf:60d
+- **James-v5.5c** / new highs/lows (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / next-fomc cut probability (44 rows): tf:60d
+- **James-v5.5c** / nfp release day (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / nikkei +1%usd/jpy down 1% (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / nikkei 225 (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / nikkei session (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / nq futures gap (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / nq vs rty overnight (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / nyse a/d (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / nyse a/d net (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / nyse advancers minus decliners (44 rows): tf:60d
+- **James-v5.5c** / nyse cumulative a/d line (44 rows): tf:60d
+- **James-v5.5c** / nyse half-day (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / nyse holiday tomorrow (2 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / nyse mcclellan oscillator (44 rows): tf:60d
+- **James-v5.5c** / nyse new highs-lows (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / nyse up/down volume ratio (44 rows): tf:60d
+- **James-v5.5c** / oil up, energy sector down (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / oil x energy stock (1 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / overnight range (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / ovx (oil vix) (44 rows): tf:60d
+- **James-v5.5c** / post-holiday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / pre-holiday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / pre-holidayspy down 3+ days (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / put/call vs spy (2 rows): tf:3d/10d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / qqq days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / qqq red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / qqq up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / qqq up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / qqq up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / quarter end rebalance (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / quarter start (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / rate sensitivity interaction (2 rows): others; tf:3d/5d/10d/20d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / regional banks kre (44 rows): tf:60d
+- **James-v5.5c** / rsp/spy ratio (44 rows): tf:60d
+- **James-v5.5c** / rty futures gap (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / russell futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / russell recon deletion (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / russell reconstitution (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / s&p futures (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / s&p quarterly rebalance effective (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / sector a/d line (1 rows): tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/rank
+- **James-v5.5c** / sector etf atr (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / sector etf vs spy (3 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / sector etf vs spy (slow outlier of sec-ja-008) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / sector etf/spy ratio (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5c** / sector new highs minus lows (2 rows): tf:3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / sector top-3sector rsi(14) > 75 (1 rows): self; tf:1d/3d/5d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / sector up, sector breadth down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / semis lead (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / semis/spy ratio (smh/spy) (44 rows): tf:60d
+- **James-v5.5c** / silver (44 rows): tf:60d
+- **James-v5.5c** / small vs large (2 rows): tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / spy 4-day losing streakvix falling (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy 5d high, % above sma50 lower (2 rows): tf:1d/3d/10d/20d/60d; method:level/change/cross/streak/rank
+- **James-v5.5c** / spy 5d low, new lows shrinking (2 rows): tf:1d/3d/10d/20d/60d; method:level/change/cross/streak/rank
+- **James-v5.5c** / spy close (19 rows): tf:60d; method:cross/divergence
+- **James-v5.5c** / spy days since 1% pullback (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / spy days since 1% pullback momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / spy days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy down, breadth up (2 rows): tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / spy drawdown (slow outlier of mkt-ja-031) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / spy green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy prior day (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / spy realized vol (2 rows): others; tf:1d/3d/5d/10d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / spy rsi(2) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / spy streak (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy trend (slow outlier of mkt-ja-029) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / spy trend (slow outlier of mkt-ja-030) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / spy up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / spy up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / spy up, breadth down (2 rows): tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / spy vs hyg (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock beats sector 5dgap-up > 5% today (1 rows): self; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock down, sector etf up (3d) (2 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock down, sector up (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock down, sector up (5d) (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock up, sector down (2 rows): tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock up, sector etf down (3d) (2 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock vs sector etf (3 rows): tf:3d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / stock vs sector etf (slow outlier of sec-ja-007) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / stock vs sector etf 1d ratio20d trend (2 rows): self; tf:3d/10d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / stock vs sector ratio (slow outlier of sec-ja-010) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / stock vs sector ratio (slow outlier of sec-ja-011) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / stock vs sector ratio trend (slow outlier of sec-ja-009) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf days since 1% pullback (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf days since 1% pullback momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf days without new 20d high (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf days without new 20d high momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf days without new 20d low (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf days without new 20d low momentum) (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf down streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf down streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf down streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf green outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf in bottom bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf in bottom bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf in top bollinger quarter (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf in top bollinger quarter momentum) (1 rows): tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf outside lower bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf outside lower bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf outside upper bollinger (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf outside upper bollinger momentum) (2 rows): tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 2x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 3x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier 4x then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top1 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 gap filled (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 gap filled snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 gap open (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 gap open snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 second same-color (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 second same-color snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 snap-back) (16 rows): tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 then opposite outlier (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf red outlier top5 then opposite outlier snap-back) (1 rows): tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / stock's spdr sector etf up streak (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf up streak length extreme (1 rows): tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / stock's spdr sector etf up streak momentum) (5 rows): tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / stock-bond correlation (slow outlier of mac-ja-049) (12 rows): tf:3d/10d; method:level/cross/streak/divergence
+- **James-v5.5c** / stock-sector correlation (slow outlier of sec-ja-033) (12 rows): tf:3d/10d; method:level/cross/streak/divergence
+- **James-v5.5c** / taiex (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / tlt price (44 rows): tf:60d
+- **James-v5.5c** / total put/call (2 rows): others; tf:1d/3d/5d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / trin (2 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / tuesday (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / turn of month (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / turn of monthfomc same day (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / up/down volume (2 rows): others; tf:3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / us dollar index (4 rows): tf:3d/5d/10d/20d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / us dollar index (slow outlier of mac-ja-029) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / us dollar index (slow outlier of mac-ja-030) (12 rows): tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / usd/cnh (44 rows): tf:60d
+- **James-v5.5c** / usd/jpy (21 rows): others; method:cross/divergence
+- **James-v5.5c** / usd/jpy (slow outlier of mac-ja-033) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / usd/jpy (slow outlier of mac-ja-034) (12 rows): others; tf:3d/10d/60d; method:level/cross/streak/divergence
+- **James-v5.5c** / vix (25 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / vix > 30term in backwardation rising (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix down with spy down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/rank
+- **James-v5.5c** / vix futures (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:extreme/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / vix red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / vix term slope (vix3m - vix, pts) (44 rows): tf:60d
+- **James-v5.5c** / vix up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / vix up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / vix up with spy up (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/cross/streak/rank
+- **James-v5.5c** / vix vs realized (2 rows): others; tf:1d/3d/5d/10d/60d; method:level/extreme/cross/streak/divergence/rank
+- **James-v5.5c** / vix vs vvix (2 rows): others; tf:3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / vix/vix3m ratio (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / vix3m (44 rows): tf:60d
+- **James-v5.5c** / vix9d (44 rows): tf:60d
+- **James-v5.5c** / vvix (21 rows): others; tf:60d; method:cross
+- **James-v5.5c** / wti crude (19 rows): others; tf:60d; method:cross/divergence
+- **James-v5.5c** / wti crude days without new 20d high (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude days without new 20d high momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude days without new 20d low (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude days without new 20d low momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude down streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude down streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude down streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude down streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude green outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude green outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude in bottom bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude in bottom bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude in top bollinger quarter (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude in top bollinger quarter momentum) (1 rows): others; tf:1d/3d/10d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude outside lower bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude outside lower bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude outside upper bollinger (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude outside upper bollinger momentum) (2 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 2x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 3x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier 4x then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **James-v5.5c** / wti crude red outlier top1 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top1 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 gap filled (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 gap filled snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 gap open (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 gap open snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 second same-color (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 second same-color snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 snap-back) (16 rows): others; tf:20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 then opposite outlier (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude red outlier top5 then opposite outlier snap-back) (1 rows): others; tf:1d/3d/5d/20d/60d; method:level/change/cross/streak/divergence
+- **James-v5.5c** / wti crude up streak (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / wti crude up streak length extreme (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude up streak length extreme momentum) (1 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **James-v5.5c** / wti crude up streak momentum) (5 rows): others; tf:1d/10d/20d/60d; method:level/extreme/change/cross/divergence/rank
+- **James-v5.5c** / yields up, stocks down (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **James-v5.5c** / yields up, stocks up (2 rows): tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/rank
+- **grok-bot-finviz** / 6e asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / 6e commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / 6e leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / 6j asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / 6j commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / 6j leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / btc asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / btc commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / btc leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / cl large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / cl managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / cl producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / dx asset managers net (4 rows): tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / dx commercials net (4 rows): tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / dx leveraged funds net (12 rows): tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / es asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / es commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / es leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / gc large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / gc managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / gc producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / hg large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / hg managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / hg producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / ng large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / ng managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / ng producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / nq asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / nq commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / nq leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / rty asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / rty commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / rty leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / vx asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / vx commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / vx leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / zb asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zb commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zb leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / zc large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zc managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / zc producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zn asset managers net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zn commercials net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zn leveraged funds net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / zs large spec (non-commercial) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-finviz** / zs managed money net (12 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/rank
+- **grok-bot-finviz** / zs producer/merchant (commercials) net (4 rows): others; tf:1d/3d/5d/10d/20d/60d; method:level/cross/streak/divergence/rank
+- **grok-bot-ratings** / 3+ actions in a week (2 rows): self; others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / any initiation in window (8 rows): self; others; tf:10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / any upgrade in window (8 rows): others; tf:10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / buy to hold move (6 rows): self; tf:3d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / cluster of actions (2 rows): others; tf:1d/3d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / initiated at buy vs sell (6 rows): self; others; tf:3d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / reiterated after target cut (6 rows): self; others; tf:3d/10d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / same-day target cuts (2 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / sell label move (6 rows): others; tf:3d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / target change vs price (6 rows): others; tf:1d/3d/10d; method:extreme/change/streak/divergence/rank
+- **grok-bot-ratings** / target crosses price (6 rows): others; tf:3d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **grok-bot-ratings** / upgrade to buy label (6 rows): others; tf:3d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **grok-bot-vix-term** / mac_vix term structure (4 rows): others; tf:3d/5d/10d/20d/60d; method:change/streak/divergence/rank
+- **grok-bot-vix-term** / vix > 30term in backwardation rising (1 rows): self; others; tf:3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **grok-bot-vix-term** / vix term slope (vix3m - vix, pts) (44 rows): tf:60d
+- **grok-bot-vix-term** / vix/vix3m ratio (19 rows): others; tf:60d; method:cross/divergence
+- **grok-bot-vix-term** / vix3m (44 rows): tf:60d
+- **grok-bot-vix-term** / vix9d (44 rows): tf:60d
+- **theme-radar** / index membership change: djia (6 rows): tf:3d/10d/60d; method:level/extreme/streak/divergence/rank
+- **theme-radar** / index membership change: ndx (6 rows): tf:3d/10d/60d; method:level/extreme/streak/divergence/rank
+- **theme-radar** / index membership change: rut (6 rows): tf:3d/10d/60d; method:level/extreme/streak/divergence/rank
+- **theme-radar** / index membership change: s&p 500 (6 rows): tf:3d/10d/60d; method:level/extreme/streak/divergence/rank
+- **trading-bot-taskforce** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce** / d-1 close vs green outlier candle (88 rows): others; tf:3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / d-1 close vs red outlier candle (88 rows): others; tf:3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / days since last green outlier (110 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / days since last red outlier (110 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / down streak + red outlier closing near low (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce** / down streak, no outlier, shrinking volume (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce** / green outlier cluster (88 rows): others; tf:1d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / green outlier follow-through share (88 rows): others; tf:1d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / green outlier gap unfilled (22 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / green outlier level retested (66 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / green outlier within last n days (132 rows): others; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / red outlier cluster (88 rows): others; tf:1d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / red outlier follow-through share (88 rows): others; tf:1d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / red outlier gap unfilled (22 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / red outlier level retested (66 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / red outlier within last n days (132 rows): others; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / stretch >3 atr + recent up-outlier (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / up streak + up-outlier on rising volume (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce** / up streak, no outlier, shrinking bodies (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce** / up streak, no outlier, shrinking volume (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce** / volume since green outlier vs outlier volume (44 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce** / volume since red outlier vs outlier volume (44 rows): others; tf:1d/3d/5d/10d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +di minus -di (14) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / +dm minus -dm (14) / atr14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aberration band position [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / acceleration bands position (20) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accelerator oscillator [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accumulation/distriion line change [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accumulation/distriion line change [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accumulation/distriion line change [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / accumulation/distriion line change [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adx14 trend strength [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / adxr14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / alphatrend side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / apo(12,26) / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer ma trend (8,21) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer obv fast-slow [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer obv fast-slow [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer obv fast-slow [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / archer obv fast-slow [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / aroon up minus down (25) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr trailing stop side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / atr14 % of price [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / average daily range % 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / awesome oscillator / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / balance of power (sma14) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bearish engulfing [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bearish engulfing [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bearish engulfing [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bearish engulfing [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / beta vs spy 60d [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bias vs sma26 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / body % of range [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (20,2) quartile [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b (50,2) quartile [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger %b(20,2) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger bandwidth [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [2-day bars, completed] (2 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [2-day bars, period-to-date partial] (2 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [3-day bars, completed] (2 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [3-day bars, period-to-date partial] (2 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [monthly bars, completed] (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [monthly bars, period-to-date partial] (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [weekly bars, completed] (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / bollinger(20,2) squeeze: bandwidth in own-1y bottom 10% [weekly bars, period-to-date partial] (2 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence
+- **trading-bot-taskforce-timeframes** / brar ar(26) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / brar ar(26) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bullish engulfing [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bullish engulfing [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bullish engulfing [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / bullish engulfing [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / candle z-score (body z vs 30d) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cci20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl2crows [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl2crows [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl2crows [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl2crows [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3blackcrows [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3blackcrows [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3blackcrows [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3blackcrows [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3inside [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3inside [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3inside [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3inside [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3linestrike [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3linestrike [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3linestrike [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3linestrike [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3outside [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3outside [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3outside [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3outside [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3starsinsouth [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3starsinsouth [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3starsinsouth [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3starsinsouth [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3whitesoldiers [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3whitesoldiers [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3whitesoldiers [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdl3whitesoldiers [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlabandonedbaby [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlabandonedbaby [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlabandonedbaby [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlabandonedbaby [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdladvanceblock [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdladvanceblock [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdladvanceblock [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdladvanceblock [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbelthold [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbelthold [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbelthold [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbelthold [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbreakaway [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbreakaway [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbreakaway [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlbreakaway [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlclosingmarubozu [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlclosingmarubozu [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlclosingmarubozu [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlclosingmarubozu [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlconcealbabyswall [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlconcealbabyswall [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlconcealbabyswall [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlconcealbabyswall [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlcounterattack [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlcounterattack [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlcounterattack [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlcounterattack [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldarkcloudcover [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldarkcloudcover [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldarkcloudcover [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldarkcloudcover [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldoji [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldoji [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldoji [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldoji [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldojistar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldojistar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldojistar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldojistar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldragonflydoji [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldragonflydoji [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldragonflydoji [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdldragonflydoji [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningdojistar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningdojistar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningdojistar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningdojistar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningstar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningstar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningstar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdleveningstar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgapsidesidewhite [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgapsidesidewhite [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgapsidesidewhite [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgapsidesidewhite [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgravestonedoji [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgravestonedoji [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgravestonedoji [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlgravestonedoji [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhangingman [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhangingman [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhangingman [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhangingman [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharami [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharami [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharami [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharami [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharamicross [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharamicross [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharamicross [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlharamicross [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhighwave [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhighwave [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhighwave [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhighwave [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkake [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkake [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkake [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkake [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkakemod [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkakemod [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkakemod [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhikkakemod [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhomingpigeon [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhomingpigeon [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhomingpigeon [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlhomingpigeon [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlidentical3crows [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlidentical3crows [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlidentical3crows [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlidentical3crows [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinneck [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinneck [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinneck [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinneck [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinvertedhammer [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinvertedhammer [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinvertedhammer [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlinvertedhammer [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkicking [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkicking [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkicking [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkicking [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkickingbylength [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkickingbylength [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkickingbylength [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlkickingbylength [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlladderbottom [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlladderbottom [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlladderbottom [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlladderbottom [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongleggeddoji [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongleggeddoji [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongleggeddoji [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongleggeddoji [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongline [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongline [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongline [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdllongline [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmarubozu [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmarubozu [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmarubozu [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmarubozu [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmatchinglow [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmatchinglow [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmatchinglow [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmatchinglow [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmathold [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmathold [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmathold [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmathold [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningdojistar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningdojistar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningdojistar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningdojistar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningstar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningstar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningstar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlmorningstar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlonneck [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlonneck [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlonneck [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlonneck [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlpiercing [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlpiercing [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlpiercing [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlpiercing [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrickshawman [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrickshawman [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrickshawman [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrickshawman [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrisefall3methods [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrisefall3methods [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrisefall3methods [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlrisefall3methods [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlseparatinglines [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlseparatinglines [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlseparatinglines [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlseparatinglines [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshootingstar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshootingstar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshootingstar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshootingstar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshortline [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshortline [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshortline [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlshortline [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlspinningtop [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlspinningtop [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlspinningtop [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlspinningtop [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlstalledpattern [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlstalledpattern [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlstalledpattern [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlstalledpattern [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlsticksandwich [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlsticksandwich [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlsticksandwich [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlsticksandwich [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltakuri [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltakuri [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltakuri [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltakuri [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltasukigap [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltasukigap [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltasukigap [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltasukigap [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlthrusting [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlthrusting [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlthrusting [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlthrusting [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltristar [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltristar [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltristar [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdltristar [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlunique3river [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlunique3river [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlunique3river [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlunique3river [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlupsidegap2crows [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlupsidegap2crows [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlupsidegap2crows [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlupsidegap2crows [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlxsidegap3methods [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlxsidegap3methods [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlxsidegap3methods [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cdlxsidegap3methods [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / center of gravity 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin money flow 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin money flow 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin money flow 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin money flow 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin oscillator (3,10) / avg v [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin oscillator (3,10) / avg v [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin oscillator (3,10) / avg v [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin oscillator (3,10) / avg v [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chaikin volatility 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande forecast oscillator 9 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande kroll stop side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum (up-only smoothing) 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chande momentum oscillator 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / chandelier exit side (22,3) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / change from open (finviz) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / choppiness index 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs alma(9,0.85,6) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 5-bar swing pivot [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 5-bar swing pivot [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 5-bar swing pivot [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 5-bar swing pivot [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w high [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w high [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w high [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w high [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w low [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w low [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w low [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs anchored vwap from last 52w low [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r1 [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot r2 [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s1 [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs classic pivot s2 [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs dema20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ehlers super smoother 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema10 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema100 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [2-day bars, completed] (29 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [2-day bars, period-to-date partial] (27 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [3-day bars, completed] (29 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [3-day bars, period-to-date partial] (27 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [monthly bars, completed] (29 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [monthly bars, period-to-date partial] (27 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [weekly bars, completed] (29 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema20 in atr units [weekly bars, period-to-date partial] (27 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema200 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs ema50 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs fibonacci wma 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hilbert instantaneous trendline [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs hma20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs holt-winter ma [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs jurik ma 7 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs kama(10,2,30) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs linear regression line 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs mcginley dynamic 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midpoint 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs midprice 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs pascal wma 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs regression stdev channel (all data to d-1) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rma (wilder ma) 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling 50% quantile 30 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs rolling median 30 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sine wma 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma10 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma100 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma20 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma200 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs sma50 in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs smoothed ma 7 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs symmetric wma 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs t3(5,0.7) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs tema20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs time series forecast 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [2-day bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [3-day bars, period-to-date partial] (17 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [monthly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs trima20 [weekly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vidya 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 20d [2-day bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 20d [3-day bars, completed] (30 rows): tf:10d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 20d [monthly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 20d [weekly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 60d [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 60d [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 60d [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs volume-profile poc 60d [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vwma20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vwma20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vwma20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs vwma20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [2-day bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [3-day bars, period-to-date partial] (17 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [monthly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs wma20 [weekly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close vs zlema20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / close z-score 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / connors rsi (3,2,100) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [2-day bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [3-day bars, period-to-date partial] (42 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [monthly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [monthly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [weekly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive green closes [weekly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [2-day bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [3-day bars, period-to-date partial] (42 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [monthly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [monthly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [weekly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive higher highs [weekly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [2-day bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [3-day bars, period-to-date partial] (42 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [monthly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [monthly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [weekly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive lower lows [weekly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [2-day bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [3-day bars, period-to-date partial] (42 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [monthly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [monthly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [weekly bars, completed] (44 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / consecutive red closes [weekly bars, period-to-date partial] (42 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / coppock curve [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation trend indicator 12 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / correlation vs spy 60d [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / cumulative streak move in atr [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [2-day bars, completed] (88 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [2-day bars, period-to-date partial] (72 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [3-day bars, completed] (88 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [3-day bars, period-to-date partial] (72 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [monthly bars, completed] (88 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [monthly bars, period-to-date partial] (72 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [weekly bars, completed] (88 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs green outlier candle [weekly bars, period-to-date partial] (72 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [2-day bars, completed] (88 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [2-day bars, period-to-date partial] (72 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [3-day bars, completed] (88 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [3-day bars, period-to-date partial] (72 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [monthly bars, completed] (88 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [monthly bars, period-to-date partial] (72 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [weekly bars, completed] (88 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / d-1 close vs red outlier candle [weekly bars, period-to-date partial] (72 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / daily return [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / daily return [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days above sma50 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days below sma50 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside lower bollinger (20,2) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days outside upper bollinger (20,2) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 above 70 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days rsi14 below 30 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% bounce [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last 3% pullback [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / days since last green outlier [2-day bars, completed] (110 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [2-day bars, period-to-date partial] (90 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [3-day bars, completed] (110 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [3-day bars, period-to-date partial] (90 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [monthly bars, completed] (110 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [monthly bars, period-to-date partial] (90 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [weekly bars, completed] (110 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last green outlier [weekly bars, period-to-date partial] (90 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [2-day bars, completed] (110 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [2-day bars, period-to-date partial] (90 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [3-day bars, completed] (110 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [3-day bars, period-to-date partial] (90 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [monthly bars, completed] (110 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [monthly bars, period-to-date partial] (90 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [weekly bars, completed] (110 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / days since last red outlier [weekly bars, period-to-date partial] (90 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / detrended price oscillator 20 / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w high in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from 52w low in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from all-time high [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / distance from ath in atr units [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dollar volume (c*v, own bars) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dollar volume (c*v, own bars) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dollar volume (c*v, own bars) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dollar volume (c*v, own bars) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [2-day bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [3-day bars, completed] (30 rows): tf:10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [3-day bars, period-to-date partial] (28 rows): tf:10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [monthly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [weekly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / donchian 55d channel position [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [2-day bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [3-day bars, period-to-date partial] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [monthly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak + red outlier closing near low [weekly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak, no outlier, shrinking volume [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak, no outlier, shrinking volume [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak, no outlier, shrinking volume [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / down streak, no outlier, shrinking volume [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / dx14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / dx14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ease of movement 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ease of movement 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ease of movement 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ease of movement 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers reflex 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ehlers trendflex 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder ray bull-bear power / atr [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / elder thermometer ratio [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ema9 vs ema21 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / even better sinewave (40,10) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / exhaustion count (td-style 9) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fast stochastic %k(5,3) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 10d swing [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 20d swing [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 252d swing [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fibonacci zone of 60d swing [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / fisher transform 9 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / force index 13 / dollar vol [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / force index 13 / dollar vol [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / force index 13 / dollar vol [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / force index 13 / dollar vol [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / forecast oscillator 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gann hilo activator side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / gap fill status [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / garman-klass vol 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / giant red no-pushback candle [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / giant red no-pushback candle [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / giant red no-pushback candle [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / giant red no-pushback candle [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green outlier cluster [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier cluster [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier follow-through share [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier gap unfilled [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [2-day bars, completed] (66 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [2-day bars, period-to-date partial] (54 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [3-day bars, completed] (66 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [3-day bars, period-to-date partial] (54 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [monthly bars, completed] (66 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [monthly bars, period-to-date partial] (54 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [weekly bars, completed] (66 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier level retested [weekly bars, period-to-date partial] (54 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green outlier within last n days [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / green:red candle ratio [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hammer [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hammer [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hammer [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hammer [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / heikin-ashi colour streak [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle period [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert dominant cycle phase [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert phasor in-phase minus quadrature / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert sine vs lead sine [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hilbert trend vs cycle mode [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / historical vol 20 (close-to-close, annualised) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / holt-winter channel position [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / hurst exponent 100 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ichimoku cloud position [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / inertia (rvi 14 linreg 20) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / intraday momentum index 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / jurik rsx 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kaufman efficiency ratio 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kdj j line (9,3,3) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / keltner channel position (ema20, 2xatr10) [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / klinger volume oscillator / avg v [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / klinger volume oscillator / avg v [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / klinger volume oscillator / avg v [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / klinger volume oscillator / avg v [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / kst minus signal [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear decay of signal 5 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression angle 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression r2 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / linear regression slope 20 / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / long run (fast & slow ma rising) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / lower wick share (pushback) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd (ema 5,35,5) histogram / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / macd histogram (12,26,9) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mama vs fama spread [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / market facilitation index vs own avg [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / market facilitation index vs own avg [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / market facilitation index vs own avg [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / market facilitation index vs own avg [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mass index (9,25) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mean absolute deviation 30 / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mfi14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mfi14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mfi14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / mfi14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / momentum 10 / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / natr14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / negative volume index vs ema255 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / negative volume index vs ema255 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / negative volume index vs ema255 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / negative volume index vs ema255 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w high event [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / new 52w low event [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / obv change [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / obv change [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / obv change [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / obv change [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / outside bollinger band (50,2) [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / overnight gap % (completed, d-1) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parabolic sar side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / parkinson vol 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / percentage volume oscillator (12,26) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / percentage volume oscillator (12,26) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / percentage volume oscillator (12,26) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / percentage volume oscillator (12,26) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 10d high-low range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 20d high-low range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 252d high-low range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 5d high-low range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in 60d high-low range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in all-time range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 20d [2-day bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 20d [3-day bars, completed] (30 rows): tf:10d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 20d [monthly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 20d [weekly bars, completed] (30 rows): tf:3d/10d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 60d [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 60d [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 60d [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / position in value area 60d [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / positive volume index vs ema255 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / positive volume index vs ema255 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / positive volume index vs ema255 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / positive volume index vs ema255 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [2-day bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [2-day bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [3-day bars, completed] (19 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [3-day bars, period-to-date partial] (17 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [monthly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [monthly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [weekly bars, completed] (19 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ppo(12,26,9) histogram [weekly bars, period-to-date partial] (17 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / pretty good oscillator 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price distance / c [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price slope 1 (normalised) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price volume trend change / avg v [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price volume trend change / avg v [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price volume trend change / avg v [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price volume trend change / avg v [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume (c*v) vs own avg [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume (c*v) vs own avg [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume (c*v) vs own avg [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume (c*v) vs own avg [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume rank [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume rank [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume rank [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / price-volume rank [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / prior-day range position [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / psychological line 12 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qqe line minus signal [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / qstick 10 / atr [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rally age vs own median [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rally age vs own median [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rally age vs own median [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rally age vs own median [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / random walk index high minus low 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / range vs atr14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rate of change 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / realized vol 10d vs 60d [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / red outlier cluster [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier cluster [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier follow-through share [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier gap unfilled [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [2-day bars, completed] (66 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [2-day bars, period-to-date partial] (54 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [3-day bars, completed] (66 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [3-day bars, period-to-date partial] (54 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [monthly bars, completed] (66 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [monthly bars, period-to-date partial] (54 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [weekly bars, completed] (66 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier level retested [weekly bars, period-to-date partial] (54 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [2-day bars, completed] (22 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [3-day bars, completed] (22 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [monthly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [monthly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [weekly bars, completed] (22 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / red outlier within last n days [weekly bars, period-to-date partial] (18 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative vigor index minus signal [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [2-day bars, completed] (20 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [3-day bars, completed] (20 rows): tf:5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [monthly bars, completed] (20 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [weekly bars, completed] (20 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volatility index 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volume (v/sma50, own bars) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volume (v/sma50, own bars) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volume (v/sma50, own bars) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / relative volume (v/sma50, own bars) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return entropy 10 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return kurtosis 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return skew 20 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return variance 20 (annualised) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs sector etf [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / return vs spy [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 20d range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi14 position in own 60d range [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / rsi2 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / schaff trend cycle (10,23,50) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / short run (fast & slow ma falling) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / signed body % (close location) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 slope [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / sma20 vs sma50 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / smart money concept: order-block side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / smart money concept: order-block side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / smart money concept: order-block side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / smart money concept: order-block side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / squeeze pro tightness [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [2-day bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [2-day bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [3-day bars, completed] (30 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [3-day bars, period-to-date partial] (28 rows): tf:10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [monthly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [monthly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [weekly bars, completed] (30 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stacked mas [weekly bars, period-to-date partial] (28 rows): tf:3d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic %k(14,3) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochastic momentum index (10,3,3) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stochrsi(14,14,3,3) %k [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [2-day bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [3-day bars, period-to-date partial] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [monthly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch >3 atr + recent up-outlier [weekly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / stretch: sma20 distance in atr, own percentile [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly decreasing over n [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / strictly increasing over n [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / supertrend (10,3) side [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / time segmented volume / avg v [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / time segmented volume / avg v [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / time segmented volume / avg v [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / time segmented volume / avg v [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: down streak on shrinking volume [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: down streak on shrinking volume [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: down streak on shrinking volume [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: down streak on shrinking volume [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: growing upper wick on up streak [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new high without rsi high [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: new low without rsi low [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on down streak [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: shrinking bodies on up streak [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: up streak on shrinking volume [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: up streak on shrinking volume [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: up streak on shrinking volume [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / tired run: up streak on shrinking volume [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / trix 15 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true momentum oscillator 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / true strength index (25,13) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ttm squeeze on [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ulcer index 14 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / ultimate oscillator (7,14,28) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / up streak + up-outlier on rising volume [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak + up-outlier on rising volume [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak + up-outlier on rising volume [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak + up-outlier on rising volume [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [2-day bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [3-day bars, period-to-date partial] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [monthly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking bodies [weekly bars, period-to-date partial] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking volume [2-day bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking volume [3-day bars, completed] (26 rows): tf:5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking volume [monthly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up streak, no outlier, shrinking volume [weekly bars, completed] (26 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/divergence/rank
+- **trading-bot-taskforce-timeframes** / up-volume share [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / up-volume share [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / up-volume share [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / up-volume share [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / upper wick share [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vertical horizontal filter 28 [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix level [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vix term structure [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / volume heatmap z [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / volume heatmap z [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / volume heatmap z [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / volume since green outlier vs outlier volume [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since green outlier vs outlier volume [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since green outlier vs outlier volume [monthly bars, completed] (44 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since green outlier vs outlier volume [weekly bars, completed] (44 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since red outlier vs outlier volume [2-day bars, completed] (44 rows): tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since red outlier vs outlier volume [3-day bars, completed] (44 rows): tf:5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since red outlier vs outlier volume [monthly bars, completed] (44 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / volume since red outlier vs outlier volume [weekly bars, completed] (44 rows): others; tf:3d/5d/10d/20d/60d; method:level/change/cross/streak/divergence/rank
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / vortex vi+ minus vi- (14) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams %r(14) [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams accumulation/distriion change [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams accumulation/distriion change [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams accumulation/distriion change [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams accumulation/distriion change [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [2-day bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [3-day bars, period-to-date partial] (18 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [monthly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams alligator spread [weekly bars, period-to-date partial] (18 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams fractal (5-bar) [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams fractal (5-bar) [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams fractal (5-bar) [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / williams fractal (5-bar) [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / zigzag 5% leg direction and age [2-day bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / zigzag 5% leg direction and age [3-day bars, completed] (20 rows): tf:5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / zigzag 5% leg direction and age [monthly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **trading-bot-taskforce-timeframes** / zigzag 5% leg direction and age [weekly bars, completed] (20 rows): tf:3d/5d/10d/20d/60d
+- **tradingview_master** / 1 year active supply % (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / 24-hour volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / abandoned baby - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / abandoned baby - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / accumulation distriion (adl) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / active addresses with contracts (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / addresses with balance ≥ x (% of supply) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / addresses with balance ≥ x (usd) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / advance/decline line (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / advance/decline ratio (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / advance/decline ratio (bars) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / all chart patterns (flags, wedges, triangles, double top/bottom, head & shoulders, rectangle) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / altman z / piotroski f / beneish (pine scores) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / analyst estimates (eps/revenue forecasts) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / analyst price forecast (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / anchored / auto anchored volume profile (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / arnaud legoux moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / aroon indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / aroon oscillator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / auto fib extension (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / auto fib retracement (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / auto key levels (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / auto pitchfork (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / auto trendlines (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / average daily range (adr) indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / average directional index (adx) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / average transaction volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / average true range (atr) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / awesome oscillator (ao) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / balance of power (bop) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / balance sheet (cash, debt, book value, current ratio) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bars / ohlc (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / basis (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bbtrend (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / block height (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / blocks mined (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bollinger bands %b (%b) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bollinger bands (bb) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bollinger bandwidth (bbw) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bollinger bars (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / bull bear power (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / candles (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / cash flow statement (free cash flow, capex, buybacks) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chaikin money flow (cmf) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chaikin oscillator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chande kroll stop (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chande momentum oscillator (cmo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chandelier exit (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / chop zone (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / choppiness index (chop) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / columns (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / commodity channel index (cci) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / compare symbol / relative performance vs another symbol (e.g. spy, sector etf) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / connors rsi (crsi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / coppock curve (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / correlation coefficient (cc) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / created utxos (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / cumulative volume delta (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / cumulative volume index (cvi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / dark cloud cover - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / detrended price oscillator (dpo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / difficulty (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / directional movement (dmi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / dividend event (ex-date, amount) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / dividend yield (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / dividends per share / payout (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / doji (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / doji star - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / doji star - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / donchian channels (dc) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / double exponential moving average (ema) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / downside tasuki gap - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / dragonfly doji - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / earnings event (date, eps actual vs estimate) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ease of movement (eom) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / el salvador government balance (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / elder's force index (efi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / elliott waves pattern (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / engulfing - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / engulfing - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / enterprise value / ev-ebitda (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / envelope (env) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / etf balances (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / etf flows (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum new deposits (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum new unique depositors (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum new value staked (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum total number of deposits (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum total unique depositors (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ethereum total value staked (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / evening doji star - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / evening star - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / exponential moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / falling three methods - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / falling window - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / fisher transform (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / fixed range volume profile (poc, value area) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / funding rate: a guide to market sentiment (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / gravestone doji - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / hammer - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / hanging man - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / harami - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / harami - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / harami cross - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / harami cross - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / hash rate (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / heikin ashi (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / held tokens in addresses ≥ x (% of supply) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / held tokens in addresses ≥ x (tokens) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / held tokens in addresses ≥ x (usd) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / high-low (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / historical volatility (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / hollow candles (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / hull moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ichimoku cloud (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / index price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / inverted hammer - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / kagi (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / kaufman's adaptive moving average (kama) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / keltner channels (kc) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / kicking - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / kicking - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / klinger oscillator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / know sure thing (kst) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / large transaction volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / learn using seasonals (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / least squares moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / line / line with markers / step line / area / hlc area / baseline (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / line break (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / linear regression (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / liquidation data: what to watch and why it matters (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / long / short ratio accounts (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / long lower shadow - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / long short accounts % (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / long upper shadow - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ma cross (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mark price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / market breadth symbols (s5fi/s5th/s5tw % above ma, new highs minus lows) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / market cap / p/e / p/b / p/s / earnings yield (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / marubozu black - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / marubozu white - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mass index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mcginley dynamic (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean block interval (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean block size in bytes (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean gas used (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean transaction fees (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean transaction gas limit (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean transaction gas price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean transaction size in bytes (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean transfer volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean utxo value created (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / mean utxo value spent (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median block interval (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median gas used (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median transaction fees (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median transaction gas limit (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median transaction gas price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median transfer volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median utxo value created (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / median utxo value spent (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / momentum (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / money flow (mfi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / moon phases (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / morning doji star - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / morning star - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / moving average convergence divergence (macd) indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / moving average ribbon (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / moving averages (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / movingavg cross (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / movingavg2line cross (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / multi-time period charts indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / negative volume index (nvi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / net volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / on balance volume (obv) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / on neck - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / open interest (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / other symbol's own chart (index/etf/futures/vix/crypto candles used as a market signal) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / parabolic sar (sar) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / percentage price oscillator (ppo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / percentage volume oscillator (pvo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / performance (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / periodic volume profile (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / piercing - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / pivot points high low (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / pivot points standard (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / point & figure (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / positive volume index (pvi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / power-law model (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / premium (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / price momentum oscillator (pmo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / price target - indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / price volume trend (pvt) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / pring's special k (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / range bars (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rank correlation index (rci) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rate of change (roc) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rci ribbon (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / realized market cap (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / receiving addresses (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / relative strength index (rsi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / relative vigor index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / relative volatility index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / relative volume at time (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / renko (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / request.earnings / dividends / splits series (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / request.economic (macro series) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / request.footprint (volume footprint) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / request.security_lower_tf (intrabar) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / return on equity / assets / invested capital (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / revenue, eps, net income, margins (income statement) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rising three methods - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rising window - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker - adx breakout (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker - knoxville divergence (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker intraday pivot points (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker missed pivot points (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker reversal (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rob booker ziv ghost pivots (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rsi divergence indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / rvt ratio, 90 days (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / seasonality (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / sending addresses (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / session volume profile (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / shares outstanding / float (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / shooting star - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / short interest / days to cover (not a built-in tradingview chart item; pine financials do not list it) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / short volume ratio (finra daily) — only via community script, not a tradingview built-in (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / simple moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / smi ergodic indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / smi ergodic oscillator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / smoothed moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / spent output profit ratio (sopr) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / spent utxos (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / spinning top black (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / spinning top white (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / split event (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / stochastic (stoch) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / stochastic momentum index (smi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / stochastic rsi (stoch rsi) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / stock-to-flow ratio in usd (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / supertrend (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / supply equality ratio (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / technical ratings (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / three black crows - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / three white soldiers - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / time weighted average price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / top trader long/short accounts (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / top trader long/short accounts ratio (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / top trader long/short positions (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / top trader long/short positions ratio (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total block size in bytes (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total gas used (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total transactions size in bytes (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total utxo value created (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total utxo value spent (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / total utxos (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / trading sessions (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / transaction fees (2 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / transaction rate (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / transfer count (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / transfer rate (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / trend strength index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / tri star - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / tri star - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / triple ema (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / trix (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / true strength index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / tweezer bottom - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / tweezer top - bearish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ulcer index (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / ultimate oscillator (uo) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / understanding crypto open interest (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / up/down volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / upside tasuki gap - bullish (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / us spot crypto etf balances (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / us spot crypto etf flows (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / visible average price (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / visible range volume profile (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volatility stop (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume candles (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume delta (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume footprint / tpo (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume weighted average price (vwap) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / volume-weighted moving average (vwma) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / vortex indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / vwap auto anchored (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / weighted moving average (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / williams %r (%r) (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / williams alligator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / williams fractal indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / woodies cci (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
+- **tradingview_master** / zigzag indicator (1 rows): self; others; tf:1d/3d/5d/10d/20d/60d; method:level/extreme/change/cross/streak/divergence/rank
