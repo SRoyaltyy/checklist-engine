@@ -55,7 +55,7 @@ def main():
     cells = pd.read_parquet(f"{TMP}/cells.parquet"); ci = pd.Index(cells.ticker + "|" + cells.date.dt.strftime("%Y-%m-%d"))
     pos = ci.get_indexer(E.ticker + "|" + E.date.dt.strftime("%Y-%m-%d")); assert (pos >= 0).all()
     blocks, names, src = [], [], []
-    for k, lab in [("JG", "sheet:JG (James v8.2 ticker rows)"), ("NB", "sheet:NB (New Bot)"), ("TR", "sheet:TR (Theme Radar)"), ("SHARED", "sheet:SHARED (market rows)"), ("PB2", "path bank v2 question")]:
+    for k, lab in [("JG", "sheet:JG (James v8.2 ticker rows)"), ("NB", "sheet:NB (New Bot)"), ("TR", "sheet:TR (Theme Radar)"), ("SHARED", "sheet:SHARED (market rows)"), ("PB2", "path bank v2 question"), ("MPV", "master.csv price/volume row (ported formula)")]:
         z = np.load(f"{TMP}/A_{k}.npz"); blocks.append(z["A"][pos]); names += list(z["ids"]); src += [lab] * len(z["ids"])
     blocks.append(np.where(E[SQ].values, 2, 1).astype(np.uint8)); names += SQ; src += ["sheet:chart-picture v2 story Q"] * len(SQ)
     NW = pd.concat([pd.read_parquet(f"{TMP}/new.parquet"), pd.read_parquet(f"{TMP}/new2.parquet")], axis=1).iloc[pos].reset_index(drop=True)
@@ -84,24 +84,24 @@ def main():
     R.sort_values("p").to_csv(f"{OUT}/item_ranking.csv.gz", index=False, float_format="%.5g")
     # 2) pairing at primary h: every winner -> nearest loser in same setup: same date first, then nearest date; then Hamming on story Qs; then ticker
     keep = E[f"ex{PRIMARY}"].notna().values; A = A[keep]; E = E[keep].reset_index(drop=True); E["win"] = E[f"ex{PRIMARY}"] > 0
+    if os.environ.get("PERMUTE_NULL"):  # audit: shuffle win labels within setup x date (seeded) -> pairing-artifact null
+        rng = np.random.default_rng(20261022); w = E.win.values.copy()
+        for _, ix in E.groupby(["group", "date"]).indices.items(): w[ix] = rng.permutation(w[ix])
+        E["win"] = w
     cbk = set()
     for f in glob.glob(f"{CB}/R*_sample.csv"):
         c = pd.read_csv(f); cbk |= set(c.ticker + "|" + c.date)
     P = []
     Ek = (E.ticker + "|" + E.date.dt.strftime("%Y-%m-%d")).values; Eq = E[SQ].values.astype(np.int8); dn = E.date.values.astype("datetime64[D]").astype(np.int64)
-    for g in RULES:
-        idx = np.flatnonzero((E.group == g).values); w = idx[E.win.values[idx]]; l = idx[~E.win.values[idx]]
-        l = l[np.lexsort((Ek[l], dn[l]))]; ld = dn[l]
-        for i in w:
-            a, b = np.searchsorted(ld, dn[i] - 7), np.searchsorted(ld, dn[i] + 8); cand = l[a:b]
-            if not len(cand): continue
-            gap = np.abs(dn[cand] - dn[i]); ham = (Eq[cand] != Eq[i]).sum(1)
-            j = cand[np.lexsort((Ek[cand], ham, gap))[0]]; P.append((g, i, j, int(np.abs(dn[j] - dn[i])), int((Eq[j] != Eq[i]).sum())))
-        # casebook losers also get their nearest winner
-        for i in l:
-            if Ek[i] in cbk:
-                cand = w[(np.abs(dn[w] - dn[i]) <= 7)]
-                if len(cand): j = cand[np.lexsort((Ek[cand], (Eq[cand] != Eq[i]).sum(1), np.abs(dn[cand] - dn[i])))[0]]; P.append((g, j, i, int(abs(dn[j] - dn[i])), int((Eq[j] != Eq[i]).sum())))
+    # FIXED 2026-10-22 (audit): symmetric 1:1 pairing. Old rule (winner-anchored, losers reused, tie-break on story-Q Hamming)
+    # produced ~80% "winner favour" for story Qs even with shuffled win labels -> artifact, retracted. Now: same setup, SAME date,
+    # winners and losers each ordered by a fixed hash of the ticker, zipped 1:1 without reuse. No tested item is used in matching.
+    import zlib
+    hk = np.array([zlib.crc32(t.encode()) for t in E.ticker.values], np.int64)
+    for (g, d), ix in E.groupby(["group", "date"]).indices.items():
+        w = ix[E.win.values[ix]]; l = ix[~E.win.values[ix]]
+        w = w[np.lexsort((Ek[w], hk[w]))]; l = l[np.lexsort((Ek[l], hk[l]))]
+        for a, b in zip(w, l): P.append((g, a, b, 0, int((Eq[a] != Eq[b]).sum())))
     P = pd.DataFrame(P, columns=["group", "wi", "li", "date_gap_days", "storyq_hamming"]).drop_duplicates(["group", "wi", "li"]).reset_index(drop=True)
     Aw = A[P.wi.values]; Al = A[P.li.values]; both = (Aw > 0) & (Al > 0); dif = both & (Aw != Al)
     fav = dif & (Aw > Al); unf = dif & (Aw < Al)   # winner YES/higher tercile vs loser NO/lower
@@ -112,6 +112,7 @@ def main():
         ag.append(pd.DataFrame(dict(group=g, item=names, source=src, n_pairs=m.sum(), n_differ=nd, winner_yes_loser_no=nf, winner_no_loser_yes=nu, winner_favour_pct=nf / np.maximum(nd, 1) * 100, p=pv)))
     AG = pd.concat(ag, ignore_index=True); AG = AG[AG.p.notna()].copy(); AG["q_bh"] = bh(AG.p.values)
     AG["HINT_candidate"] = (AG.winner_favour_pct > 55) & (AG.n_differ >= 30) & (AG.q_bh < 0.1)
+    if os.environ.get("PERMUTE_NULL"): AG.sort_values("p").to_csv(f"{OUT}/pair_item_aggregate_NULL.csv.gz", index=False, float_format="%.5g"); print("null done"); return
     AG.sort_values("p").to_csv(f"{OUT}/pair_item_aggregate.csv.gz", index=False, float_format="%.5g")
     # honesty split: discover on pairs whose winner date is 2020-22, confirm on 2023-24 (same direction, BH over the discovered set)
     yr = E.date.dt.year.values[P.wi.values]; hs = []
@@ -141,7 +142,7 @@ def main():
     D = pd.DataFrame(rows); D.to_csv(f"{OUT}/pair_diffs.csv.gz", index=False)
     D.to_parquet(f"{TMP}/pairs.parquet")
     # report
-    L += ["", f"## Pairs (h={PRIMARY}d primary): every winner paired with its nearest loser in the same setup (same date first, ±7 days max, then fewest story-question differences, then ticker)", "",
+    L += ["", f"## Pairs (h={PRIMARY}d primary): symmetric 1:1 winner–loser pairs, same setup and same date, fixed ticker-hash order, no reuse (audit fix; old winner-anchored pairing retracted)", "",
           "| setup | tradable events | winners | pairs | median items differing | casebook pairs |", "|---|---|---|---|---|---|"]
     for g in RULES:
         d = D[D.setup == g]; L.append(f"| {g} | {(E.group == g).sum():,} | {E.win[E.group == g].sum():,} | {len(d):,} | {d.n_items_differ.median():.0f} | {d.casebook.sum()} |")
