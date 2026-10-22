@@ -32,7 +32,7 @@ def main():
     L = ["# Look-alike win/loss mining — PRACTICE 2020–24, **HINT only** (not evidence; 2025–26 sealed until the lock)", "",
          f"Prices `universe_2020_survivors.parquet` sha `{PX_SHA[:8]}…{PX_SHA[-5:]}` (verified). Rows 2020-01-01..2024-12-31 only (asserted). Every feature uses bars < D; entry open D, exit open D+h, net of 30bp/side.",
          "Win = stock net return beats the same-day mean of tradable matched controls (same base filter, rule = NO). Deterministic: no sampling, no seed needed (ties broken by ticker).", "",
-         "## Tradability filter — Taskforce `buyable_filter_v1/drop_list_v2.csv.gz` (sha 5a6cb756…63239)", "",
+         "See `LOOKBACK_GRID.md` (fixed lookback grid, recorded before computing).", "", "## Tradability filter — Taskforce `buyable_filter_v1/drop_list_v2.csv.gz` (sha 5a6cb756…63239)", "",
          "Fullscan PREREG §6 liquid gate (avg vol ≥ 500k, vol > 0, SPAC rule) as built by Taskforce. **ETF rule PARTIAL** (only SPY/QQQ/IWM + 11 sector SPDRs). **Market cap ≥ $100M NOT YET APPLIED** (awaits SEC share counts).",
          "Applied to cases AND controls before any scoring, pairing or charting. Drop-list rows dated > 2024 discarded on read. Earlier provisional run with own filter (incl. mcap proxy) superseded.", "",
          "### Exclusions (stock-days removed; a day can fail several rules)", "", "| setup | n before | n after | removed | " + " | ".join(F) + " |", "|" + "---|" * (4 + len(F))]
@@ -61,11 +61,25 @@ def main():
     for k, lab in [("JG", "sheet:JG (James v8.2 ticker rows)"), ("NB", "sheet:NB (New Bot)"), ("TR", "sheet:TR (Theme Radar)"), ("SHARED", "sheet:SHARED (market rows)"), ("PB2", "path bank v2 question"), ("MPV", "master.csv price/volume row (ported formula)")]:
         z = np.load(f"{TMP}/A_{k}.npz"); blocks.append(z["A"][pos]); names += list(z["ids"]); src += [lab] * len(z["ids"])
     blocks.append(np.where(E[SQ].values, 2, 1).astype(np.uint8)); names += SQ; src += ["sheet:chart-picture v2 story Q"] * len(SQ)
-    NW = pd.concat([pd.read_parquet(f"{TMP}/new.parquet"), pd.read_parquet(f"{TMP}/new2.parquet")], axis=1).iloc[pos].reset_index(drop=True)
+    NW = pd.concat([pd.read_parquet(f"{TMP}/new.parquet"), pd.read_parquet(f"{TMP}/new2.parquet"), pd.read_parquet(f"{TMP}/grid.parquet"), pd.read_parquet(f"{TMP}/path2.parquet")], axis=1).iloc[pos].reset_index(drop=True)
+    # shape template + nearest-neighbour win share (template / neighbours from 2020-22 events only; leave-one-out inside 2020-22)
+    ZP = np.load(f"{TMP}/zpath.npz"); yrs = E.date.dt.year.values; exv = E[f"ex{PRIMARY}"].values
+    for L_, key in ((60, "z60"), (126, "z126")):
+        Z = ZP[key][pos]; sh_ = np.full(len(E), np.nan); nn_ = np.full(len(E), np.nan)
+        for g in RULES:
+            gi = np.flatnonzero((E.group == g).values & ~np.isnan(Z[:, 0])); tr = gi[(yrs[gi] <= 2022) & ~np.isnan(exv[gi])]
+            if len(tr) < 50: continue
+            T = Z[tr][exv[tr] > 0].mean(0); T = (T - T.mean()) / T.std()
+            sh_[gi] = (Z[gi] * T).mean(1) / np.maximum(Z[gi].std(1), 1e-9)
+            Xt = Z[tr].astype(np.float32); wt = (exv[tr] > 0).astype(np.float32); n2 = (Xt ** 2).sum(1)
+            for c0 in range(0, len(gi), 2000):
+                q = gi[c0:c0 + 2000]; Xq = Z[q].astype(np.float32); dd = (Xq ** 2).sum(1)[:, None] + n2[None, :] - 2 * Xq @ Xt.T
+                dd[q[:, None] == tr[None, :]] = np.inf; k = np.argpartition(dd, 25, axis=1)[:, :25]; nn_[q] = wt[k].mean(1)
+        NW[f"shape{L_}"] = sh_; NW[f"nn_win{L_}"] = nn_
     tc = np.zeros((len(E), NW.shape[1]), np.uint8)
     for j, col in enumerate(NW):
         v = NW[col].values; ok = ~np.isnan(v); q1, q2 = np.nanquantile(v, [1 / 3, 2 / 3]); tc[ok, j] = 1 + (v[ok] > q1) + (v[ok] > q2)
-    blocks.append(tc); names += [f"{c} [NEW, tercile]" for c in NW]; src += ["NEW (not on sheet)"] * NW.shape[1]
+    blocks.append(tc); names += [f"{c} [NEW, tercile]" for c in NW]; src += ["lookback grid (LOOKBACK_GRID.md)" if c.startswith("grid_") else "path-level v2 / shape (LOOKBACK_GRID.md)" if c.startswith(("path2_", "shape", "nn_win")) else "NEW (not on sheet)" for c in NW]
     A = np.concatenate(blocks, 1); names = np.array(names); src = np.array(src); K = len(names)
     # 1) per-item win rate ranking: YES vs NO (NEW rows: top vs bottom tercile)
     rk = []
@@ -73,7 +87,7 @@ def main():
         gi = (E.group == g).values
         for h in HS:
             y = E[f"ex{h}"].values; ok = gi & ~np.isnan(y); W = (y[ok] > 0).astype(np.float32); Ag = A[ok]
-            isnew = np.char.startswith(names, "new_"); hiC = np.where(isnew, 3, 2); loC = np.where(isnew, 1, 1)
+            isnew = (np.char.find(names, "[NEW") >= 0); hiC = np.where(isnew, 3, 2); loC = np.where(isnew, 1, 1)
             Hm = (Ag == hiC); Lm = (Ag == loC)
             nH = Hm.sum(0); nL = Lm.sum(0); wH = W @ Hm; wL = W @ Lm
             pH = wH / np.maximum(nH, 1); pL = wL / np.maximum(nL, 1); pp = (wH + wL) / np.maximum(nH + nL, 1)
@@ -85,6 +99,20 @@ def main():
     R["best_n"] = np.where(R.diff_pp >= 0, R.n_yes_or_top, R.n_no_or_bottom)
     R["HINT_candidate"] = (R.best_win > 55) & (R.best_n >= 30) & (R.q_bh < 0.1)
     R.sort_values("p").to_csv(f"{OUT}/item_ranking.csv.gz", index=False, float_format="%.5g")
+    # 1b) per sentence: frequency among winners vs losers (tradable events, h=PRIMARY), global BH over every item x setup
+    fq = []
+    for g in RULES:
+        gi = (E.group == g).values; y = E[f"ex{PRIMARY}"].values; ok = gi & ~np.isnan(y); W = y[ok] > 0; Ag = A[ok]
+        isnew = (np.char.find(names, "[NEW") >= 0); hiC = np.where(isnew, 3, 2)
+        Wf = W.astype(np.float32); Lf = (~W).astype(np.float32); K_ = Ag.shape[1]; nw, nl, yw, yl = (np.zeros(K_) for _ in range(4))
+        for c0 in range(0, K_, 1500):
+            sl = slice(c0, c0 + 1500); ans = (Ag[:, sl] > 0).astype(np.float32); yes = (Ag[:, sl] == hiC[sl]).astype(np.float32)
+            nw[sl] = Wf @ ans; nl[sl] = Lf @ ans; yw[sl] = Wf @ yes; yl[sl] = Lf @ yes
+        pw = yw / np.maximum(nw, 1); pl = yl / np.maximum(nl, 1); pp = (yw + yl) / np.maximum(nw + nl, 1)
+        se = np.sqrt(pp * (1 - pp) * (1 / np.maximum(nw, 1) + 1 / np.maximum(nl, 1))); z = np.where(se > 0, (pw - pl) / np.where(se > 0, se, 1), 0)
+        fq.append(pd.DataFrame(dict(group=g, item=names, source=src, n_win=nw, yes_pct_winners=pw * 100, n_lose=nl, yes_pct_losers=pl * 100, p=2 * norm.sf(np.abs(z)), ok=(yw + yl >= 30) & (nw >= 30) & (nl >= 30))))
+    FQ = pd.concat(fq, ignore_index=True); FQ = FQ[FQ.ok].drop(columns="ok"); FQ["q_bh_global"] = bh(FQ.p.values)
+    FQ.sort_values("p").to_csv(f"{OUT}/sentence_freq_win_vs_loss.csv.gz", index=False, float_format="%.5g")
     # 2) pairing at primary h: every winner -> nearest loser in same setup: same date first, then nearest date; then Hamming on story Qs; then ticker
     keep = E[f"ex{PRIMARY}"].notna().values; A = A[keep]; E = E[keep].reset_index(drop=True); E["win"] = E[f"ex{PRIMARY}"] > 0
     if os.environ.get("PERMUTE_NULL"):  # audit: shuffle win labels within setup x date (seeded) -> pairing-artifact null
@@ -137,7 +165,7 @@ def main():
     code = {0: "NR", 1: "NO", 2: "YES", 3: "T3"}
     rows = []
     for r in P.itertuples():
-        wi, li = r.wi, r.li; it = [f"{n}: W={code[A[wi, col[n]]] if not n.startswith('new_') else 'T' + str(A[wi, col[n]])} L={code[A[li, col[n]]] if not n.startswith('new_') else 'T' + str(A[li, col[n]])}"
+        wi, li = r.wi, r.li; it = [f"{n}: W={code[A[wi, col[n]]] if not ('[NEW' in n) else 'T' + str(A[wi, col[n]])} L={code[A[li, col[n]]] if not ('[NEW' in n) else 'T' + str(A[li, col[n]])}"
                                   for n in top[r.group] if A[wi, col[n]] > 0 and A[li, col[n]] > 0 and A[wi, col[n]] != A[li, col[n]]]
         rows.append(dict(pair_id=f"{r.group}_{r.Index:06d}", setup=r.group, winner=E.ticker[wi], winner_date=E.date[wi].date(), winner_ex10_pct=round(E.ex10[wi] * 100, 2), winner_net10_pct=round(E.r10[wi] * 100, 2),
                          loser=E.ticker[li], loser_date=E.date[li].date(), loser_ex10_pct=round(E.ex10[li] * 100, 2), loser_net10_pct=round(E.r10[li] * 100, 2), date_gap_days=r.date_gap_days, storyq_hamming=r.storyq_hamming,
@@ -153,6 +181,12 @@ def main():
         out = ["| " + " | ".join(hdr) + " |", "|" + "---|" * len(hdr)]
         for r in X.itertuples(): out.append("| " + " | ".join(str(getattr(r, c)) if not isinstance(getattr(r, c), float) else f"{getattr(r, c):.3g}" for c in cols) + " |")
         return out
+    L += ["", "## Per sentence: how often it is YES (top tercile for NEW/grid rows) among winners vs losers (h=10d, tradable setup days; global BH over all items × setups) — `sentence_freq_win_vs_loss.csv.gz`", "",
+          f"Tested: {len(FQ):,}; q<0.1: {(FQ.q_bh_global < 0.1).sum():,}. Top 12 per setup (TR `|N` duplicates hidden):", "",
+          "| setup | sentence | source | YES % winners | YES % losers | n win / n lose | q (global BH) |", "|---|---|---|---|---|---|---|"]
+    for g in RULES:
+        for r in FQ[(FQ.group == g) & ~FQ.item.str.contains(r"\|(?:1|3|5|20|60)$")].sort_values("p").head(12).itertuples():
+            L.append(f"| {g} | {r.item} | {r.source} | {r.yes_pct_winners:.1f} | {r.yes_pct_losers:.1f} | {r.n_win:,} / {r.n_lose:,} | {r.q_bh_global:.2g} |")
     L += ["", "## Honesty split (pair sign test): discover on 2020–22 pairs, confirm on 2023–24 pairs", "",
           f"Tested in discovery (n_differ ≥ 30): {len(HS_):,}. Discovered (q<0.1 BH, |favour−50| > 5pp): {len(D1):,}. **Still hold on 2023–24** (same direction, >5pp, n ≥ 30, q<0.1 BH over discovered set): **{int(D1.holds.sum()):,}**.", "",
           "| setup | item | source | disc n | disc winner-favour % | conf n | conf winner-favour % | q conf |", "|---|---|---|---|---|---|---|---|"]
@@ -169,7 +203,7 @@ def main():
     X = R.sort_values("p").head(25)
     L += tbl(X, ["group", "h", "item", "source", "n_yes_or_top", "win_yes_or_top", "n_no_or_bottom", "win_no_or_bottom", "base_win", "cohen_h", "q_bh", "HINT_candidate"], ["setup", "h", "item", "source", "n YES/top", "win% YES/top", "n NO/bottom", "win% NO/bottom", "base win%", "effect h", "q", "HINT"])
     L += ["", "### Cyrus's NEW rows (chains, 40-bar trend/drawdown, 2-month trend, red:green ratio, last green vs red body, RSI, MACD, RVOL, BB, SMA distance) — best horizon per setup", ""]
-    X = R[R.source.str.startswith("NEW")].sort_values("p").groupby(["group", "item"]).head(1).sort_values("p").head(30)
+    X = R[R.source.str.contains("NEW|grid|path-level")].sort_values("p").groupby(["group", "item"]).head(1).sort_values("p").head(30)
     L += tbl(X, ["group", "h", "item", "n_yes_or_top", "win_yes_or_top", "n_no_or_bottom", "win_no_or_bottom", "cohen_h", "q_bh"], ["setup", "h", "item", "n top", "win% top", "n bottom", "win% bottom", "effect h", "q"])
     L += ["", "Files: `item_ranking.csv.gz` (every item × setup × h), `pair_item_aggregate.csv.gz`, `pair_diffs.csv.gz` (one row per pair; `top_items_differing` lists that setup's top-40 aggregate items where W and L differ: YES/NO, or T1–T3 terciles for NEW rows).",
           "Coverage: sheet items = every row answered by the universe engine for 2020–24 (JG 1,478 ticker rows incl. BUT variants, NB 614, TR 2,808 row|N keys, SHARED 8,176 market rows) + 9 chart-picture story questions; the 6 chart-pass checks are the setup itself. NR answers are skipped, never guessed. SHARED rows rarely differ within a pair because pairs share the date.", ""]
