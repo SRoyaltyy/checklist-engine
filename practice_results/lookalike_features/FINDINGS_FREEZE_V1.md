@@ -27,7 +27,7 @@ The 10-day findings mostly do NOT survive the exit-v1 label: of 1,498 10-day pas
 | q8_in_all6 | ph2_pctbmean_25_ge0p7 | mean %B(20,2) over lb >= 0.7 (lb=25) :: mean (C-lowerBB)/(4sd20) >= 0.7 | winner-leaning | 63.2 (185) | 65.8 (114) |
 
 ## Columns (CSV)
-item, setup, source, definition (exact formula / strict definition from its source list), coding (YES vs NO, or top vs bottom tercile), direction,
+item, found_on (every row was discovered on 2020–22 pairs only; 2023–24 served only to confirm — safe for Taskforce's 2020–22-only selection), setup, source, definition (exact formula / strict definition from its source list), coding (YES vs NO, or top vs bottom tercile), direction,
 pass_10d, pass_exit_v1, n / winner-favour % / q for discover (2020–22) and confirm (2023–24) under each label (effect size = favour − 50 pp),
 flag_SURVIVOR_BIAS_RISK, family_bigmove_highvol_loser, q5_longer_base.
 

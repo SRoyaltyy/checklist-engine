@@ -39,7 +39,8 @@ F["family_bigmove_highvol_loser"] = (best < 50) & txt.str.contains(r"maxup1d|max
 F["q5_longer_base"] = F.item.str.startswith("path2_base_len") & (F.group == "q5_in_all6")
 for p in ("10d", "v1"):
     F[f"effect_disc_pp_{p}"] = F[f"fav_disc_{p}"] - 50; F[f"effect_conf_pp_{p}"] = F[f"fav_conf_{p}"] - 50
-out = F[["item", "group", "source", "definition", "coding", "direction", "pass_10d", "pass_exit_v1",
+F["found_on"] = "2020-22 (discovered on 2020-22 pairs only; 2023-24 used only to confirm)"
+out = F[["item", "found_on", "group", "source", "definition", "coding", "direction", "pass_10d", "pass_exit_v1",
          "n_disc_10d", "fav_disc_10d", "n_conf_10d", "fav_conf_10d", "q_conf_10d", "n_disc_v1", "fav_disc_v1", "n_conf_v1", "fav_conf_v1", "q_conf_v1",
          "flag_SURVIVOR_BIAS_RISK", "family_bigmove_highvol_loser", "q5_longer_base"]].rename(columns={"group": "setup"}).sort_values(["setup", "q_conf_10d"])
 out.to_csv("FINDINGS_FREEZE_V1.csv", index=False, float_format="%.4g"); print(len(out), out.pass_10d.sum(), out.pass_exit_v1.sum(), (out.pass_10d & out.pass_exit_v1).sum(), out.flag_SURVIVOR_BIAS_RISK.sum(), out.family_bigmove_highvol_loser.sum(), out.q5_longer_base.sum())

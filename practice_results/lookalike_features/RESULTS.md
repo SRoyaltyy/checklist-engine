@@ -432,5 +432,5 @@ Taskforce owns the exit-rule grid. To regrade every pair with their rule: `OUTCO
 
 ## Visuals
 
-- One PNG per fixed pair (25,128) in `pairs/<setup>/` (sample in repo; full set on Drive `checklist_engine_chunks`, see `pairs/README.md`). The earlier Drive tar parts (`lookalike_pairs_pngs_2020_24_HINT.tar.part00–15`) show the **retracted** pairing.
+- One PNG per fixed pair (25,128) in `pairs/<setup>/` (sample in repo; full set on Drive `checklist_engine_chunks`, see `pairs/README.md`). The earlier Drive tar parts of the retracted pairing were moved to Drive trash on 2026-10-23.
 - Reproduce: `build.py` → `new2.py` → `pb2.py` → `master_pv.py` → `mpv_mask.py` → `grid.py` → `path2.py` → `TASKFORCE_DROP=… analyze.py` (`PERMUTE_NULL=1` for the null) → `charts.py` → `coverage.py`.
