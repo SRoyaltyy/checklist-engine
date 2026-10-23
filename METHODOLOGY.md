@@ -37,6 +37,10 @@
 | Tradeable-stock filter | [`buyable_filter_v1/`](buyable_filter_v1/BUYABLE_FILTER_V1.md) |
 | Old practice results | `practice_results/` |
 | Older experiments | `lookalike/`, `combo/`, `path_bank*/`, `chart_picture_pack/`, `checklist_brainstorm/` |
+| Theme Radar research shorts (daily plans and scorecard) | repo [`SRoyaltyy/theme-radar`](https://github.com/SRoyaltyy/theme-radar), `research/shadow_log/` |
+| F4TR insider tags 2020–24 | Drive file id `19PtFPKG4O6wBnR5IaEUP0d9PxL0w83cq` |
+| F4TR insider tar 2025–26 | Drive file id `1WAKjsY9SWnKFw61fFAuprs-7Mpy0gEWh`. **SEALED, do not open** |
+| F4TR casebook | theme-radar PR #17; Drive file id `12uJhWTLllB2djHY2BqEsbzxlHeVTc6fm` |
 | Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
 
 **Data access.** The repo doesn't include the price data. Ask Cyrus to share the two Drive folders above with you.
