@@ -4,7 +4,7 @@
 **Who and why.** Cyrus Fung, based in Hong Kong, trades US stocks. A team of AI assistants works on this for him ("the War room": James, New Bot, Theme Radar, Grok Bot, Trading Bot Taskforce, Manager Bot). He wants a **scanner**: code that asks thousands of fixed yes/no questions about every US stock each day, and learns which answers have been followed by profitable trades.
 
 **The repos.**
-- `SRoyaltyy/checklist-engine` (this repo) holds the question tree, the engine, the results, and this doc.
+- `SRoyaltyy/checklist-engine` (this repo) holds the question tree, the results, and this doc. The engine code arrives before Step A.
 - `SRoyaltyy/fullscan` is a separate, live daily stock-picking pipeline. It supplies the tradeable-stock filter. Don't merge the two.
 - `SRoyaltyy/theme-radar` is a separate theme and sector scorer. Don't merge it either.
 
@@ -40,7 +40,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - **Tradeable stocks only.** On each day D, a stock is dropped if it fails the fullscan liquidity filter or is worth under $100M, using split-fixed share counts. Peer groups get the same filter.
 - For 553 tickers whose market cap looks wrong, only the dollar-volume filter is used. `integrity/quarantine.csv` is always honored.
 - Every question is yes/no or picks from a fixed list of labels. No reading of free text.
-- **No peeking.** Answers for day D use data up to the close of D−1, plus pre-open data. A leak test checks this.
+- **No peeking.** Answers for day D use data up to the close of D−1, plus pre-open data. A leak test for this is planned but **not built yet**.
 
 ## 3. Question tree
 - Questions are nested like folders: data type → timeframe → derivative → how it's analysed.
@@ -58,6 +58,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - **2025–26 stays sealed.** It gets one shot at the very end.
 
 ## 6. Plan
+- **Status (2026-10-23):** Step A has **not started**. It waits for Cyrus to say "start Step A" to Taskforce. The scanner engine code is **not in this repo yet**. It is on Taskforce's machine and will be pushed here before Step A.
 - **Step A:** full 2020–24 run at default cutoffs, keeping full rows. Output goes to Drive in parts of about 1GB.
 - **Step B:** sweep the cutoff grid on 2020–22, tallies only.
 - **Step C:** confirm the winners on 2023–24.
