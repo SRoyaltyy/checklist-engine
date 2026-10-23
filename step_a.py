@@ -5,6 +5,7 @@ ticker in RAM -> build trade rows -> score -> write small result file -> drop. R
 Disk floor checked before each chunk: 7GB free 17:00-21:00 HKT, 2GB otherwise; it waits if below.
 usage: CHECKLIST_DATA_DIR=... OUT_DIR=... python3 step_a.py [--workers 5] [--chunk 400] [--tickers A,B]"""
 import os, sys, time, json, shutil, argparse, warnings, datetime as dt; warnings.filterwarnings('ignore')
+os.environ.setdefault('Q_TIMEOUT_S', '120')          # one question on one ticker may not take > 2 min; recorded as error
 os.environ.setdefault('GRID_FILE', '/nonexistent')            # Step A = default cutoffs only (grid sweep is Step B)
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -37,6 +38,15 @@ def w_score(j):
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--workers', type=int, default=5); ap.add_argument('--chunk', type=int, default=400)
     ap.add_argument('--tickers'); a = ap.parse_args()
+    import threading
+    def heartbeat():
+        lw, lm = time.time(), time.monotonic()
+        while True:
+            time.sleep(300); w, m = time.time(), time.monotonic(); ok, free, need = disk_ok(os.environ.get('OUT_DIR', '/workspace'))
+            gap = (w - lw) - (m - lm)
+            log(f"heartbeat: alive, disk {free:.1f}GB free (floor {need}GB), load {os.getloadavg()[0]:.1f}" + (f", box was paused ~{gap/60:.0f} min" if gap > 60 else ''))
+            lw, lm = w, m
+    threading.Thread(target=heartbeat, daemon=True).start()
     OUT = os.environ.get('OUT_DIR', '/workspace/step_a_out'); os.makedirs(f'{OUT}/chunks', exist_ok=True); t0 = time.time()
     log('HISTORY_BUCKETS sha OK', E.H71.load_buckets()); E.load_history(E.HISTF); E.GRIDV.update(E.load_grid()); log('grid', E.GRIDV)
     plan, rep = E.tf_plan(); log('coverage', rep)

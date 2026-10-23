@@ -108,6 +108,11 @@ def kbars(d, k, o):
     return r.iloc[pos].reset_index(drop=True), pos
 
 USES = {}; GRIDV = {}
+import signal
+QTIMEOUT = float(os.environ.get('Q_TIMEOUT_S', '0'))   # per-question time limit (seconds, per ticker); 0 = off
+class QuestionTimeout(Exception): pass
+def _alarm(sig, frm): raise QuestionTimeout(f'question took > {QTIMEOUT}s')
+if QTIMEOUT: signal.signal(signal.SIGALRM, _alarm)
 def run_ticker(tk, d, C, plan):
     d = d.reset_index(drop=True); T = len(d); cols = {}; err = {}
     REGd = {(v, f): (labels, fn) for (v, f, labels, fn, lbs) in REG}; HISTd = {(v, hv) for (lt, v, hv, labels, lbs) in HIST}
@@ -130,8 +135,12 @@ def run_ticker(tk, d, C, plan):
                     return f"H|{v}|{hv}|{k}d|{N}", H71.hist(hv, ML[mk], I, N, v)
                 for N in Ns:
                     P.used = set()
-                    try: name, a = one(N)
+                    try:
+                        if QTIMEOUT: signal.setitimer(signal.ITIMER_REAL, QTIMEOUT)
+                        name, a = one(N)
                     except Exception as e: err[f"{key}|{k}d|{N}"] = repr(e)[:160]; continue
+                    finally:
+                        if QTIMEOUT: signal.setitimer(signal.ITIMER_REAL, 0)
                     if a is None: continue
                     if len(a) != len(pos): err[f"{key}|{k}d|{N}"] = f'length {len(a)} != bars {len(pos)}'; continue
                     used = USES.setdefault(key, set()); used |= P.used
