@@ -357,8 +357,8 @@ R4=[
 for t,v,f in R4: _app(t,v,f)
 
 # ---------- lever 5 ----------
-H=["shape","divergence_sync","order_of_events","speed","change_of_state","time_since","route","character_change","retests","squeeze_release","stage","vs_own_past","lead_lag","timeframe_agreement","shock_recovery"]
-HK={"divergence_sync":{"divergence"},"speed":{"acceleration","second_order"},"change_of_state":{"zone_transition"},"time_since":{"timing"},"route":{"sequence"},"character_change":{"character"},"retests":{"interaction"},"vs_own_past":{"chain_history","character"},"shape":{"shape"}}
+H=["shape","divergence_sync","order_of_events","speed","change_of_state","time_since","route","character_change","retests","retest_count","squeeze_release","stage","vs_own_past","lead_lag","timeframe_agreement","shock_recovery"]
+HK={"divergence_sync":{"divergence"},"speed":{"acceleration","second_order"},"change_of_state":{"zone_transition"},"time_since":{"timing"},"route":{"sequence"},"character_change":{"character"},"retests":{"interaction"},"retest_count":{"interaction"},"vs_own_past":{"chain_history","character"},"shape":{"shape"}}
 DROP={}
 def drop(types,hv,why):
   for t in types: DROP[(t,hv)]=why
@@ -370,6 +370,8 @@ drop(["market_condition"],"lead_lag","is the benchmark itself");drop(["market_co
 drop(["setup_score"],"retests","score has no levels");drop(["setup_score"],"lead_lag","score vs sector score not built");drop(["setup_score"],"timeframe_agreement","score defined on 1d only");drop(["setup_score"],"shape","would be a lookalike input")
 drop(["extremes"],"squeeze_release","use volatility type");drop(["return_path"],"retests","returns have no levels")
 drop(["candles","support_resistance","extremes","range_position"],"lead_lag","lead/lag lives in relative_strength");drop(["volatility"],"retests","vol has no levels")
+for (_t,_h),_w in list(DROP.items()):
+  if _h=="retests": DROP[(_t,"retest_count")]=_w
 LOOK={"shape"}  # lookalike inputs (need future returns of twins)
 SRC="current_sector_label (survivors-only, known leak risk)";PF="excludes names failing liquidity + $100M rule as of D-1; no-share-count names kept"
 CC={("daily_returns","staircase_shelves"):"case_chart1",("MA_group(10/20/50/200)","deepest_pullback_ma"):"case_chart1",("MA_group(10/20/50/200)","full_bull_streak"):"case_chart1",("RSI14","rsi_floor"):"case_chart1",("RSI12","length_fan"):"case_chart1",
@@ -425,92 +427,68 @@ with open("DIAL_TABLE_v2.7.1.csv","w",newline="") as fh: w=csv.writer(fh,lineter
 with open("HISTORY_LEVER_v2.7.1.csv","w",newline="") as fh: w=csv.writer(fh,lineterminator="\n");w.writerow(["lever1_type","variant","history_value","status","reason","question_families"]);w.writerows(hrows)
 import json;json.dump({"rows":len(rows),"base":dict(base),"base_total":sum(base.values()),"fam":dict(fam),"fam_total":sum(fam.values()),"checks_fail":[c for c in checks if c[3]!="yes"],"nvariants":len(checks),"invalid":[(u,b,tfok(u,b,0)) for u in U for b in B if tfok(u,b,0)],"hstatus":dict(collections.Counter(r[3] for r in hrows))},open("counts_v2.7.1.json","w"),indent=0)
 
-# ================= v2.7.1: LOCKED history answer buckets (questions unchanged vs v2.7) =================
-# Conventions for every rule below (all bars dated < D):
-#  W = the question's window: last B bars of U-day candles ending D-1; N = B; k = max(1, N//10); thirds = first/last floor(N/3) bars of W.
-#  X = the variant's primary series, Y = its paired series (VARIANT_SERIES_v2.7.1.csv).
-#  unit = ATR14 (same U-day candles, at D-1) when X is a price series; else sX = std of 1-bar changes of X over the 250 bars before W (min 60 valid, else answer n_a).
-#  slope = OLS slope of X over W in unit/bar; t = its t-stat; pivot = PIV rule above. Any bucket needing data that is missing -> n_a.
-#  n_a is checked first whatever its listed position; then rules top to bottom, first match wins -> buckets are mutually exclusive and exhaustive.
+
+# ================= v2.7.1: LOCKED history answer buckets =================
+# Conventions (all bars dated < D): W = last B bars of U-day candles ending D-1; N = B; k = max(1,N//10); thirds = first/last floor(N/3) bars of W.
+# X = variant primary series, Y = paired series, bench per VARIANT_SERIES_v2.7.1.csv. unit = ATR14 (same candles, at D-1) for price series,
+# else sX = std of 1-bar changes of X over the 250 bars before W. slope/t = OLS slope of X over W and its t-stat. pivot = PIV rule.
+# Missing data (any input NaN / too little history) -> engine code -1 ("n_a"); n_a is NOT an answer bucket.
+# Buckets are evaluated top to bottom; first match wins -> mutually exclusive and exhaustive.
+# Each bucket: locked_label | one-line rule | engine_label(s) in facets_v26.HLAB that map to it ("new" = no engine equivalent)
 HB={
-"divergence_sync":["bull_div|last 2 pivot lows of C in W: C lower low AND X higher low (by >=0.25 unit)",
- "bear_div|last 2 pivot highs of C in W: C higher high AND X lower high (by >=0.25 unit)",
- "in_sync|sign(slope C)==sign(slope X) and |t|>2 for both",
- "none|otherwise",
- "n_a|<2 pivots of the needed kind or X missing"],
-"order_of_events":["high_first|argmax(X in W) < argmin(X in W) and max-min >= 1 unit",
- "low_first|argmin(X in W) < argmax(X in W) and max-min >= 1 unit",
- "flat|max(X in W)-min(X in W) < 1 unit",
- "n_a|X missing on >20% of W"],
-"speed":["up_speeding|net=X[-1]-X[0] >= +0.5 unit and |dX last third|/|dX first third| > 1.5",
- "up_slowing|net >= +0.5 unit and ratio < 0.67",
- "up_steady|net >= +0.5 unit and 0.67<=ratio<=1.5",
- "down_speeding|net <= -0.5 unit and ratio > 1.5",
- "down_slowing|net <= -0.5 unit and ratio < 0.67",
- "down_steady|net <= -0.5 unit and 0.67<=ratio<=1.5",
- "flat|otherwise (|net| < 0.5 unit; ratio with zero first-third change counts as >1.5)"],
-"change_of_state":["moved_up|tercile(X at last bar of W) > tercile(X at first bar of W); terciles of X over the 250 bars before W",
- "moved_down|tercile(last) < tercile(first)",
- "stayed_high|both in top tercile",
- "stayed_mid|both in middle tercile",
- "stayed_low|both in bottom tercile",
- "n_a|<60 bars of X before W"],
-"time_since":["up_recent|last cross of X above its 250-bar median (taken at the cross bar) is in last third of W",
- "up_mid|last cross is upward and in middle third",
- "up_old|last cross is upward and in first third",
- "down_recent|last cross is downward and in last third",
- "down_mid|last cross downward, middle third",
- "down_old|last cross downward, first third",
- "none|no cross of the median in W"],
-"route":["flat|max(X)-min(X) in W < 1 unit",
- "up_down|interior max >= max(X[0],X[-1]) + 0.5 unit and X[-1] < max by >= 0.5 unit and argmax in middle 80% of W",
- "down_up|interior min <= min(X[0],X[-1]) - 0.5 unit and argmin in middle 80% of W",
- "straight_up|X[-1]-X[0] >= 0.5 unit",
- "straight_down|X[-1]-X[0] <= -0.5 unit",
- "flat_end|otherwise (wandered >=1 unit but ended within 0.5 unit of start with no qualifying interior extreme)"],
-"character_change":["wilder|std(dX in W)/std(dX over 250 bars before W) > 1.5",
- "calmer|ratio < 0.67",
- "same|0.67<=ratio<=1.5",
- "n_a|<60 bars before W or <5 valid changes in W"],
-"retests":["n_a|no pivot of X before the last third of W",
- "none|levels = latest pivot low and latest pivot high of X before the last third of W; no later bar of W within 0.5 unit of either",
- "broke_down|most recently touched level is the pivot low and some close after that touch < level - 0.5 unit",
- "broke_up|most recently touched level is the pivot high and some close after that touch > level + 0.5 unit",
- "support_held|most recently touched level is the pivot low and no close after the touch < level - 0.5 unit",
- "resistance_held|most recently touched level is the pivot high and no close after the touch > level + 0.5 unit"],
-"squeeze_release":["released_up|squeeze = rolling-k-bar range of X < 20th pct of its own prior 250 values somewhere in W; then a close of X > squeeze-high + 0.5 unit after it",
- "released_down|squeeze then close of X < squeeze-low - 0.5 unit",
- "still_squeezed|squeeze present at D-1 (no release yet)",
- "none|no squeeze bar in W",
- "n_a|<60 bars of X before W"],
-"stage":["advance|M = SMA(X, max(10,N//2)); X[-1] > M[-1] and slope(M over last third) > +0.1 unit/bar... normalised: >+0.05 unit/bar",
- "decline|X[-1] < M[-1] and slope(M, last third) < -0.05 unit/bar",
- "top||slope(M, last third)| <= 0.05 unit/bar and slope(M, first two thirds) > +0.05 unit/bar",
- "bottom|flat last third and slope(M, first two thirds) < -0.05 unit/bar",
- "base|otherwise (flat throughout or mixed position)",
- "n_a|M not defined at start of W"],
-"vs_own_past":["above_usual|percentile of mean(X in W) among rolling N-bar means of X over 250 bars before W > 80",
- "usual|20..80",
- "below_usual|< 20",
- "n_a|<60 bars before W"],
-"lead_lag":["leads|lag L* = argmax corr(dX[t], dBench[t+L]) over L in [-k..k] (Bench = SPY or the variant's bench column); L* > 0 and max corr >= 0.2",
- "lags|L* < 0 and max corr >= 0.2",
- "together|L* = 0 and max corr >= 0.2",
- "none|max corr < 0.2",
- "n_a|<20 paired valid bars in W"],
-"timeframe_agreement":["agree_up|sign(slope X over W)=+ and sign(slope X over the 3N-bar window ending D-1)=+, both |t|>2",
- "agree_down|both - with |t|>2",
- "disagree|both |t|>2 with opposite signs",
- "flat|otherwise (either |t|<=2)",
- "n_a|3N bars of X not available"],
-"shock_recovery":["up_shock_recovered|shock = latest bar in W with |dX| > 3 unit; up if dX>0; share retraced by D-1 = (X_shock_end - X[-1])/(dX) > 0.75",
- "up_shock_partial|up shock, retraced 0.25..0.75",
- "up_shock_holding|up shock, retraced < 0.25",
- "down_shock_recovered|down shock, recovered share > 0.75",
- "down_shock_partial|down shock, 0.25..0.75",
- "down_shock_holding|down shock, < 0.25",
- "none|no bar with |dX| > 3 unit in W"]}
-HB["stage"][0]="advance|M = SMA(X, max(10,N//2)); X[-1] > M[-1] and slope(M over last third) > +0.05 unit/bar"
+"divergence_sync":[("bull_div","last 2 pivot lows of C in W: C lower low AND X higher low by >=0.25 unit","bull"),
+ ("bear_div","last 2 pivot highs of C in W: C higher high AND X lower high by >=0.25 unit","bear"),
+ ("none","otherwise (incl. moving in sync; in_sync dropped)","none")],
+"order_of_events":[("high_first","argmax(X in W) < argmin(X in W) and max-min >= 1 unit","high_first"),
+ ("low_first","argmin(X in W) < argmax(X in W) and max-min >= 1 unit","low_first"),
+ ("none","max(X in W)-min(X in W) < 1 unit","new")],
+"speed":[("up_speeding","net=X[-1]-X[0] >= +0.5 unit and ratio=|dX last third|/|dX first third| > 1.5","speeding"),
+ ("up_slowing","net >= +0.5 unit and ratio < 0.67","slowing"),
+ ("up_steady","net >= +0.5 unit and 0.67<=ratio<=1.5","steady"),
+ ("down_speeding","net <= -0.5 unit and ratio > 1.5","speeding"),
+ ("down_slowing","net <= -0.5 unit and ratio < 0.67","slowing"),
+ ("down_steady","net <= -0.5 unit and 0.67<=ratio<=1.5","steady"),
+ ("flat","|net| < 0.5 unit","new")],
+"change_of_state":[("moved_up","tercile(X at last bar of W) above tercile(X at first bar); terciles of X over the 250 bars before W","low>mid|low>high|mid>high"),
+ ("moved_down","tercile(last) below tercile(first)","high>mid|high>low|mid>low"),
+ ("stayed_high","both in top tercile","high>high"),("stayed_mid","both in middle tercile","mid>mid"),("stayed_low","both in bottom tercile","low>low")],
+"time_since":[("up_recent","last cross of X above its 250-bar median is in the last third of W","<5"),
+ ("up_mid","last cross upward, middle third","5-20"),("up_old","last cross upward, first third",">20"),
+ ("down_recent","last cross downward, last third","<5"),("down_mid","last cross downward, middle third","5-20"),
+ ("down_old","last cross downward, first third",">20"),("none","no cross of the median in W","none")],
+"route":[("up_down","interior max >= max(X[0],X[-1]) + 1 unit with argmax in middle 80% of W","27 H/M/L routes dropped"),
+ ("down_up","interior min <= min(X[0],X[-1]) - 1 unit with argmin in middle 80% of W","27 H/M/L routes dropped"),
+ ("straight_up","X[-1]-X[0] >= +1 unit","27 H/M/L routes dropped"),
+ ("straight_down","X[-1]-X[0] <= -1 unit","27 H/M/L routes dropped"),
+ ("flat","otherwise: net move |X[-1]-X[0]| < 1 unit over the lookback","27 H/M/L routes dropped")],
+"character_change":[("wilder","std(dX in W)/std(dX over 250 bars before W) > 1.5","wilder"),
+ ("calmer","ratio < 0.67","calmer"),("same","0.67<=ratio<=1.5","same")],
+"retests":[("held","level = latest pivot (high or low) of X before last third of W that was later touched (within 0.5 unit); no close beyond it by >0.5 unit after the touch","new (engine 0/1/2+ -> retest_count)"),
+ ("failed","touched level later closed beyond by >0.5 unit","new"),
+ ("none","no pivot level touched after the pivot","new")],
+"retest_count":[("0","touches of the latest pivot level of X (within 0.5 unit, new touch = after >=1 bar away) after the pivot, within W: 0","0"),
+ ("1","exactly 1 touch","1"),("2+","2 or more touches","2+")],
+"squeeze_release":[("released_up","squeeze = rolling-k range of X < 20th pct of its own prior 250 values somewhere in W; later close of X > squeeze high + 0.5 unit","releasing"),
+ ("released_down","squeeze then close < squeeze low - 0.5 unit","releasing"),
+ ("still_squeezed","squeeze present at D-1, no release","squeezing"),
+ ("none","no squeeze bar in W","neither")],
+"stage":[("advance","M=SMA(X,max(10,N//2)); X[-1]>M[-1] and slope(M, last third) > +0.05 unit/bar","rising"),
+ ("decline","X[-1]<M[-1] and slope(M, last third) < -0.05 unit/bar","falling"),
+ ("top","|slope(M, last third)|<=0.05 and slope(M, first two thirds) > +0.05 unit/bar","topping"),
+ ("bottom","|slope(M, last third)|<=0.05 and slope(M, first two thirds) < -0.05 unit/bar","bottoming"),
+ ("base","otherwise","new")],
+"vs_own_past":[("above_usual","pct of mean(X in W) among rolling N-bar means over 250 bars before W > 80","high"),
+ ("usual","20..80","normal"),("below_usual","< 20","low")],
+"lead_lag":[("leads","L* = argmax over L in [-k..k] of corr(dX[t], dBench[t+L]); L*>0 and corr>=0.2","stock_led"),
+ ("lags","L*<0 and corr>=0.2","spy_led"),("together","L*=0 and corr>=0.2","together"),("none","max corr < 0.2","new")],
+"timeframe_agreement":[("agree_up","slope X over W and over the 3N-bar window both + with |t|>2","agree_up"),
+ ("agree_down","both - with |t|>2","agree_down"),("disagree","otherwise","disagree")],
+"shock_recovery":[("up_shock_held","shock = latest bar in W with |dX| > 3 unit, not the last bar; up shock and retraced share by D-1 < 0.25","up_shock_held"),
+ ("up_shock_faded","up shock, retraced > 0.75","up_shock_faded"),
+ ("down_shock_held","down shock, recovered share < 0.25","down_shock_held"),
+ ("down_shock_recovered","down shock, recovered > 0.75","down_shock_recovered"),
+ ("partial","either direction, retraced/recovered 0.25..0.75","new"),
+ ("none","no bar with |dX| > 3 unit in W (or only on the last bar)","none")]}
 VS={"candles":("C (close)","RVOL20","price"),"volume":(None,"C","flow"),"moving_averages":("(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14)","C","price-relative"),
 "range_position":("position of C in the band/channel/swing (0..1; Fib: retracement share)","C","bounded"),"extremes":("C (drawdown: (C-peak)/ATR14; big_picture: weekly C)","RVOL20","price"),
 "overbought_oversold":(None,"C","oscillator"),"momentum":(None,"C","oscillator"),"volatility":("ATR14% (squeeze: BB width/KC width)","C","volatility"),
@@ -523,19 +501,18 @@ BENCH={"vs_sector_peers":"sector median C","vs_theme_peers":"theme median C"}
 app=collections.defaultdict(set)
 for r in hrows:
   if r[3]=="keep": app[r[2]].add(r[0])
+HBS={h:"{"+",".join(b for b,_,_ in HB[h])+"}" for h in HB}
 with open("HISTORY_BUCKETS_v2.7.1.csv","w",newline="") as fh:
-  w=csv.writer(fh,lineterminator="\n");w.writerow(["history_value","applies_to_lever1_types","buckets","bucket","rule"])
+  w=csv.writer(fh,lineterminator="\n");w.writerow(["history_value","applies_to_lever1_types","buckets","bucket","rule","engine_label","locked_label"])
   for h in H:
-    if h not in HB: continue
-    bs=[x.split("|",1) for x in HB[h]];names="{"+",".join(b for b,_ in bs)+"}"
-    for b,rule in bs: w.writerow([h,"|".join(sorted(app[h])),names,b,rule])
+    if h in HB:
+      for b,rule,el in HB[h]: w.writerow([h,"|".join(sorted(app[h])),HBS[h],b,rule,el,b])
 with open("VARIANT_SERIES_v2.7.1.csv","w",newline="") as fh:
   w=csv.writer(fh,lineterminator="\n");w.writerow(["lever1_type","variant","X_primary_series","Y_paired_series","bench","unit"])
   for t,vs in T.items():
     for v,*_ in vs:
       x,y,kind=VS[t];x=VX.get(t,{}).get(v,x)
       w.writerow([t,v,x,y,BENCH.get(v,"SPY C"),"ATR14" if kind in("price","price-relative") else "sX (std of 1-bar changes of X, 250 bars before W)"])
-HBS={h:"{"+",".join(x.split("|")[0] for x in HB[h])+"}" for h in HB}
 with open("HISTORY_LEVER_v2.7.1.csv","w",newline="") as fh:
   w=csv.writer(fh,lineterminator="\n");w.writerow(["lever1_type","variant","history_value","status","reason","question_families","answer_set"])
   for r in hrows: w.writerow(r+[HBS.get(r[2],"") if r[3]=="keep" else ""])

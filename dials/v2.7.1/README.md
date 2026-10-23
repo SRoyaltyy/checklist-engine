@@ -1,27 +1,26 @@
-# checklist dials v2.7.1 — history answer buckets LOCKED
+# checklist dials v2.7.1 — history answer buckets LOCKED (+ retest_count)
 
-v2.7.1 = v2.7 + locked answer buckets for every kept history_value. **Questions, names and counts are unchanged: 14,643 = 6,654 base + 7,989 history** (`counts_v2.7.1.json` is identical to v2.7 `counts.json`; `DIAL_TABLE_v2.7.1.csv` is byte-identical to `DIAL_TABLE_v2.7.csv`; `HISTORY_LEVER_v2.7.1.csv` = v2.7 columns unchanged + `answer_set`). Frozen v2.7 files are untouched.
+**Totals: 15,093 questions = 6,654 base + 8,439 history (v2.7: 14,643 = 6,654 + 7,989; delta +450, all from the new history question `retest_count`).**
+All 14,643 v2.7 questions keep their names/ids. `DIAL_TABLE_v2.7.1.csv` is byte-identical to v2.7. `HISTORY_LEVER_v2.7.1.csv` = v2.7 rows unchanged + 28 `retest_count` keep rows (+ its drop/lookalike rows) + `answer_set` column. Frozen v2.7 files untouched.
 
-## Changelog (v2.7 -> v2.7.1)
-- Added `HISTORY_BUCKETS_v2.7.1.csv`: 14 history_values x locked buckets, one deterministic one-line rule per bucket (shape stays lookalike_input, not a question).
-- Added `VARIANT_SERIES_v2.7.1.csv`: for each of 54 variants, the primary series X, paired series Y, bench, and unit (ATR14 for price series, else sX = std of 1-bar changes over the 250 bars before the window).
-- `gen4_v2.7.1.py`: v2.7 generator unchanged in question logic; output names -> v2.7.1; appends bucket emission.
-- Conventions: all bars < D; window W = last B bars of U-day candles ending D-1; k = max(1,N//10); thirds of W; n_a checked first, then rules top to bottom, first match wins (mutually exclusive + exhaustive). Directional values mirror bull/bear (up_/down_, support/resistance, high_first/low_first).
-- Tree regenerated (`tree/`), "proposed:" removed.
-
-Rebuild: `cd <dir> && python3 gen4_v2.7.1.py && python3 build_question_tree_v2.7.1.py` (the build script has box paths at the top).
+## Changelog (v2.7 -> v2.7.1), per Manager's final calls
+- Locked buckets for all 15 question-bearing history_values in `HISTORY_BUCKETS_v2.7.1.csv` (one-line rule per bucket, plus `engine_label -> locked_label` map for renaming in Taskforce's engine `facets_v26.HLAB`).
+- Labels for speed/time_since/character_change/stage/change_of_state/vs_own_past/lead_lag use New Bot wording; engine labels mapped.
+- divergence_sync: in_sync dropped (folds into none). order_of_events: high_first/low_first/none. route: 27 H/M/L routes dropped -> up_down/down_up/straight_up/straight_down/flat (flat = net move < 1 unit). retests: held/failed/none. NEW history_value retest_count {0,1,2+} on the same variants/timeframes as retests (+450 questions). squeeze_release: released_up/released_down/still_squeezed/none. shock_recovery: engine's 5 + partial. timeframe_agreement unchanged.
+- Missing data = engine -1 ("n_a"), not an answer bucket. All rules bars < D; sizes in ATR14 for price series, else sX (std of 1-bar changes, 250 bars before window). First match wins.
+- `VARIANT_SERIES_v2.7.1.csv`: primary series X, paired Y, bench and unit per variant.
+- Tree regenerated in `tree/`.
 
 ## sha256
 ```
-98445deea9c0c3b8780c03e4c416de86f72d5fd426d29dc7302c611f91e81c4e  gen4_v2.7.1.py
-7a89f672973cda6543ecf60a6f607682fb3470efc810ab80571b0d387dccf903  build_question_tree_v2.7.1.py
+d53ca18651aa5bc128765fbf37fead299826bab2e036d76106ba7fd3af60827a  gen4_v2.7.1.py
+6f3e498da4a923f2c0c16710baa4f3c489b5d706c25695598a232aa9563aacd2  build_question_tree_v2.7.1.py
 41bad6b6313591b04988ab44b376078e86d1c8f81812caef5805aef6ed851e30  DIAL_TABLE_v2.7.1.csv
-fb0ebab7646f4c4dd1542865594e896b4f7bb4a1d9f0839cdc3faa2715593c53  HISTORY_BUCKETS_v2.7.1.csv
-727ac15836352c4ca3953438693f6fea297625cc6987b10f77c4c38e172205e2  HISTORY_LEVER_v2.7.1.csv
+d8adbb466dfc809e8084dd47fcea7c59b6ab2749c7f23e7e7d9f74b590e49f69  HISTORY_BUCKETS_v2.7.1.csv
+10d096f53eb870b75bee338eecafd24e179199ae43650b876b1022f8f17c8ac3  HISTORY_LEVER_v2.7.1.csv
 ac0a2e5ded7771e4515be6c1b789eb6bd2a953841963c59a7c78d81e5cd85e77  VARIANT_SERIES_v2.7.1.csv
-c0bd4fcd7dea28117d12d339d9dc7978cab827f45075add17a43394004bf8be2  counts_v2.7.1.json
-9f864a003e481a5c71805a33fc60b2da31d05bb81c7a840e4deee286940c3a35  tree/QUESTION_TREE_v2.7.1.csv
-05347c0df6ccf78b9e27186397f0fac63db6cf984e8ef8d8b7b9ef40726eaa1f  tree/QUESTION_TREE_v2.7.1.html
-3c27b3f945e06709f18879bf4221379f65cd80be500336da8444457c9dd5238e  tree/QUESTION_TREE_v2.7.1.md
-c5d15d6a118bbf84f4d9c1bfe511a951518204eee3b5ddca732b9867d7ba3f24  ../v2.7 gen4_v2.7.py (parent, unchanged)
+df5efe175c082121beab558d8da0eec3eae1ce31c55cedb0fd9df484e2943dff  counts_v2.7.1.json
+85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292  tree/QUESTION_TREE_v2.7.1.csv
+f5019a2bdfcdfe0a3cc3b062b68c7270af28ecc4cdbffe220269fbcc8eb4f3bf  tree/QUESTION_TREE_v2.7.1.html
+2ece27af7d13414103ae66210c1afb7dd7bc70ebb81afc732952050f32cfd557  tree/QUESTION_TREE_v2.7.1.md
 ```

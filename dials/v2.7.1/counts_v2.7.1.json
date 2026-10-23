@@ -21,15 +21,15 @@
 },
 "base_total": 6654,
 "fam": {
-"candles": 204,
-"volume": 1411,
-"moving_averages": 1003,
-"range_position": 765,
-"extremes": 540,
-"overbought_oversold": 918,
-"momentum": 678,
+"candles": 221,
+"volume": 1513,
+"moving_averages": 1020,
+"range_position": 816,
+"extremes": 582,
+"overbought_oversold": 1020,
+"momentum": 729,
 "volatility": 306,
-"relative_strength": 561,
+"relative_strength": 612,
 "support_resistance": 665,
 "return_path": 187,
 "liquidity_float": 88,
@@ -37,9 +37,9 @@
 "market_condition": 153,
 "setup_score": 90,
 "events": 180,
-"phase_list": 238
+"phase_list": 255
 },
-"fam_total": 7989,
+"fam_total": 8439,
 "checks_fail": [],
 "nvariants": 54,
 "invalid": [
@@ -140,8 +140,8 @@
 ]
 ],
 "hstatus": {
-"drop": 236,
-"keep": 532,
+"drop": 262,
+"keep": 560,
 "lookalike_input": 42
 }
 }
