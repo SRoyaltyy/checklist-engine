@@ -24,8 +24,9 @@ CID = {'C414_divergence_sync__atr0p25':'div_unit','C415_order_of_events__atr1':'
  'C440_ALL_HISTORY__scalar3':'hist_thirds','C441_ALL_HISTORY__bars250':'hist_250'}
 
 import json, hashlib
-PINS = '/workspace/checklist_engine/dials_pins.json'   # bump a version = edit path+sha256 here only
+PINS = __import__('os').path.join(__import__('os').path.dirname(__import__('os').path.abspath(__file__)), 'dials_pins.json')   # bump a version = edit path+sha256 here only
 def pinned(name):
-    p = json.load(open(PINS))[name]; s = hashlib.sha256(open(p['path'], 'rb').read()).hexdigest()
+    from datapaths import D
+    p = json.load(open(PINS))[name]; p['path'] = D(p['path']); s = hashlib.sha256(open(p['path'], 'rb').read()).hexdigest()
     if s != p['sha256']: raise SystemExit(f'{name} sha mismatch: {s} != pinned {p["sha256"]} - not running')
     return p['path']

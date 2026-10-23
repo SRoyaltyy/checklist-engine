@@ -84,3 +84,9 @@ The table counts 14,588 questions across all bar sizes and lookbacks. This build
   - mcap_unknown (18): implied mcap above $4T (ADR vs ordinary share counts, or units). Mcap is treated as unknown, so the filter uses dollar volume only.
   - flag (553): SEC share count jumped more than 8× in one month with no matching split. Kept, with mcap_suspect=True.
   - keep_unverified (10: BLFS CCO CYCN LPSN PSKY QNCX QRVO SLP VTAK WBD): Yahoo's history for these starts 2026-07-17, so there is no outside price to check against. These look like real long-lived names, so they are kept.
+
+## Run it anywhere (no code edits)
+```bash
+mkdir data && gh release download data-2020-24-v1 -R SRoyaltyy/checklist-engine -D data && (cd data && sha256sum -c SHA256SUMS) && CHECKLIST_DATA_DIR=$PWD/data OUT_DIR=$PWD/out python3 engine.py --tickers KO
+```
+`CHECKLIST_DATA_DIR` points every input at that folder; leave it unset to use the original `/workspace/...` paths. Data stops at 2024-12-31 (2025–26 sealed). Known gaps: `pump_fade_cycles` and `multi_year_position` still error, and the leak test is not built yet.

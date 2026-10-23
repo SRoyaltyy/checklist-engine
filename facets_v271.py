@@ -1,11 +1,12 @@
+from datapaths import D
 """v2.7.1 history questions coded straight from HISTORY_BUCKETS_v2.7.1_FINAL.csv (sha d8adbb46...9f69, hard-checked).
 Rules tested in file order, first match wins; missing data -> -1 (n_a). Window W = last N bars (of k-day bars) ending at t;
 engine shifts one bar so W ends D-1. unit = ATR14 for price series, else sX = std of 1-bar changes of X over the 250 bars before W."""
 import numpy as np, pandas as pd, talib, hashlib, re
 from facets import W, ok, tstat_slope
 from params import P
-BUCKETS = '/workspace/checklist_dials/v2.7.1/HISTORY_BUCKETS_v2.7.1_FINAL.csv'
-VSER = '/workspace/checklist_dials/v2.7.1/VARIANT_SERIES_v2.7.1.csv'
+BUCKETS = D('/workspace/checklist_dials/v2.7.1/HISTORY_BUCKETS_v2.7.1_FINAL.csv')
+VSER = D('/workspace/checklist_dials/v2.7.1/VARIANT_SERIES_v2.7.1.csv')
 SHA_HEAD, SHA_TAIL = 'd8adbb46', '9f69'
 LAB = {}; APPLIES = {}; UNIT_ATR = set(); FILE_SHA = None
 

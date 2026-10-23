@@ -1,7 +1,9 @@
 """Checklist engine, dials 1-4 + lever 5 history (DIAL_TABLE v2.7 / HISTORY_LEVER v2.6).
 Answers only. No outcomes and no returns-after-D are computed anywhere in this file. Data stops at 2024-12-31 (2025-26 sealed).
 usage: python3 engine.py --tickers AAPL,MSFT,...   (smoke)   |   python3 engine.py --all  (full run; not yet authorised)"""
-import sys as _s; _s.path.insert(0, '/workspace/checklist_engine/integrity'); import mcap_fix as MF
+import os
+from datapaths import D
+import sys as _s; _s.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'integrity')); import mcap_fix as MF
 import sys, os, time, json, argparse, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import facets, facets_ext, facets_cal, facets_v26, facets_v27
@@ -10,36 +12,36 @@ import facets_v271 as H71
 from params import P, DEFAULTS, CROSS, set_params
 HIST = []
 END = pd.Timestamp('2024-12-31'); START = pd.Timestamp('2020-01-02')
-QUAR = '/workspace/checklist_engine/integrity/quarantine.csv'
-DIALS = '/workspace/checklist_dials/DIAL_TABLE_v2.7.csv'; HISTF = '/workspace/checklist_dials/v2.7.1/HISTORY_LEVER_v2.7.1.csv'
+QUAR = D('/workspace/checklist_engine/integrity/quarantine.csv')
+DIALS = D('/workspace/checklist_dials/DIAL_TABLE_v2.7.csv'); HISTF = D('/workspace/checklist_dials/v2.7.1/HISTORY_LEVER_v2.7.1.csv')
 OUT = os.environ.get('OUT_DIR', '/workspace/checklist_engine/answers_2020_24')
 
 def load_context():
-    etf = pd.read_parquet('/workspace/pricehist/etf_2015.parquet'); etf = etf[etf.date <= END]
+    etf = pd.read_parquet(D('/workspace/pricehist/etf_2015.parquet')); etf = etf[etf.date <= END]
     spy = etf[etf.ticker == 'SPY'].set_index('date').close.sort_index()
-    vix = pd.read_parquet('/workspace/data/fred/VIXCLS.parquet').set_index('date').value.sort_index()
+    vix = pd.read_parquet(D('/workspace/data/fred/VIXCLS.parquet')).set_index('date').value.sort_index()
     vix.index = pd.to_datetime(vix.index); vix = vix[vix.index <= END]
-    sh = pd.read_parquet('/workspace/mcap/nb_tags_v2/sec_shares_out_filed_le_2024.parquet')
+    sh = pd.read_parquet(D('/workspace/mcap/nb_tags_v2/sec_shares_out_filed_le_2024.parquet'))
     sh['filed'] = pd.to_datetime(sh.filed); sh = sh[(sh.filed <= END) & (sh.val > 0)].sort_values('filed')
-    rs = pd.read_csv('/workspace/regsho_nasdaq_th_2020_24.csv', usecols=['date', 'symbol']); rs['date'] = pd.to_datetime(rs.date.astype(str))
+    rs = pd.read_csv(D('/workspace/regsho_nasdaq_th_2020_24.csv'), usecols=['date', 'symbol']); rs['date'] = pd.to_datetime(rs.date.astype(str))
     rs = rs[rs.date <= END]
-    br = '/workspace/checklist_engine/breadth_2020_24.parquet'
+    br = D('/workspace/checklist_engine/breadth_2020_24.parquet')
     if os.path.exists(br): breadth = pd.read_parquet(br).breadth
     else:
-        u = pd.read_parquet('/workspace/pricehist/universe_2020_survivors.parquet', columns=['ticker', 'date', 'close'], filters=[('date', '<=', END)])
+        u = pd.read_parquet(D('/workspace/pricehist/universe_2020_survivors.parquet'), columns=['ticker', 'date', 'close'], filters=[('date', '<=', END)])
         px = u.pivot_table(index='date', columns='ticker', values='close'); m = px.rolling(50).mean()
         breadth = ((px > m).sum(1) / m.notna().sum(1)).where(m.notna().sum(1) > 100); breadth.to_frame('breadth').to_parquet(br)
     return dict(spy=spy, vix=vix, shares=sh, regsho=rs, breadth=breadth, sessions=spy.index.values)
 
 def load_bars(tickers=None):
     f = [('date', '<=', END)] + ([('ticker', 'in', tickers)] if tickers else [])
-    u = pd.read_parquet('/workspace/pricehist/universe_2020_survivors.parquet', filters=f)
-    p = pd.read_parquet('/workspace/updown/bars_all.parquet', filters=[('date', '<', START)] + ([('ticker', 'in', tickers)] if tickers else []))
+    u = pd.read_parquet(D('/workspace/pricehist/universe_2020_survivors.parquet'), filters=f)
+    p = pd.read_parquet(D('/workspace/updown/bars_all.parquet'), filters=[('date', '<', START)] + ([('ticker', 'in', tickers)] if tickers else []))
     cols = ['ticker', 'date', 'open', 'high', 'low', 'close', 'volume']
     b = pd.concat([p[cols], u[cols]]); b['ticker'] = b.ticker.astype(str)
     return b.drop_duplicates(['ticker', 'date']).sort_values(['ticker', 'date'])
 
-TREE = '/workspace/checklist_dials/v2.7.1/QUESTION_TREE_v2.7.1.csv'   # v2.7.1 FINAL (Drive 1fuvR3MLfADWUXIpT996xG6CrUec539s-)
+TREE = D('/workspace/checklist_dials/v2.7.1/QUESTION_TREE_v2.7.1.csv')   # v2.7.1 FINAL (Drive 1fuvR3MLfADWUXIpT996xG6CrUec539s-)
 GRID = os.environ.get('GRID_FILE', '/workspace/checklist_engine/grid.csv')
 
 def load_history(path):
