@@ -1,5 +1,29 @@
 # Methodology: the checklist scanner
 
+## 0. Start here if you have no context (e.g. you are Kimi)
+**Who and why.** Cyrus Fung, based in Hong Kong, trades US stocks. A team of AI assistants works on this for him ("the War room": James, New Bot, Theme Radar, Grok Bot, Trading Bot Taskforce, Manager Bot). He wants a **scanner**: code that asks thousands of fixed yes/no questions about every US stock each day, and learns which answers have been followed by profitable trades.
+
+**The repos.**
+- `SRoyaltyy/checklist-engine` (this repo) holds the question tree, the engine, the results, and this doc.
+- `SRoyaltyy/fullscan` is a separate, live daily stock-picking pipeline. It supplies the tradeable-stock filter. Don't merge the two.
+- `SRoyaltyy/theme-radar` is a separate theme and sector scorer. Don't merge it either.
+
+**Words used below.**
+- *Question + answer*: one checklist item and one of its fixed answers, e.g. "route over last 20 days = up_down".
+- *Case*: one stock on one day D where an answer was true. *Trade*: buy at D's open, then apply exit rule v1.
+- *Cutoff*: a number inside a question's definition (e.g. a "leg" is at least 3 ATR). We test many versions of each.
+- *ATR*: average true range, meaning a stock's typical daily move. *SMA, RSI, MACD, RVOL, Bollinger*: standard chart indicators.
+- *Practice data* is 2020–24. The *sealed exam* is 2025–26, which no one reads until after Fri 2026-10-23 23:00 HKT and which is used only once.
+- *Luck bar*: with this many tries, some answers will look good by chance. The bar is how strong a result has to be to count.
+- *bp*: basis point, 0.01%.
+
+**House rules.**
+- No secrets in the repo.
+- The only valid price file is sha `fb9bbe69…` (see [DATA_INDEX.md](DATA_INDEX.md)).
+- Frozen question files are add-only.
+- Rules get committed before any results are computed.
+- Sealed buy/sell records in fullscan are never rewritten.
+
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ## 1. Goal
@@ -55,6 +79,13 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - **Theme Radar F4TR insider casebook.** 2,154 cases, no edge found. See [theme-radar PR #17](https://github.com/SRoyaltyy/theme-radar/pull/17) and [practice_results/2020_24_f4tr_score.md](practice_results/2020_24_f4tr_score.md).
 - **Short interest and options.** 110 tests, 0 passed.
 - **Old smoke test was invalid.** It used made-up history labels. That is now fixed.
+- **Old pass bar dropped.** The earlier rule (win rate over 55%, n ≥ 30, 5/10/21-day holds, matched-stock controls) was replaced by expected profit vs the same-day market, using exit rule v1.
+- **Dead stocks.** We didn't buy Polygon data and stopped hunting free delisted data, so results are survivors-only.
+- **Bots reading charts by eye** was replaced by code, because eye-reading used up too much Grok usage.
+- **Cutoff clean-up.** v2.7.2 had 441 cutoffs (208,837 versions). These were cut to 232 (154,667).
+- **Chart-picture questions** are on hold. The v2 rebuild starts after 23:00 HKT on 2020–24 only.
+- **Grok Bot up/down calls.** Rounds 1–3 found no reliable pre-open direction call. v4 predicted *how big* a move would be, not its direction. The D8 ranker is paper-tracked only. The six-bucket map v1–v5 builders were lost in a disk wipe.
+- **Manager's list.** NFLX-lane packs found nothing usable. Combos v1/v2 found no edge. The lookalike pass cleared 0 of 156.
 - **7-stock smoke test.** 12,285 columns in 192s. It was a pipe test only, with no win/loss results.
 
 ## 10. Known gaps
@@ -64,4 +95,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - "Last 2 pivots" is not a cutoff yet.
 
 ## 11. Takeaways and luck check (James)
-_To be filled in by James on this branch._
+- The ledger is [dials/TAKEAWAYS.csv](dials/TAKEAWAYS.csv), with one row per idea tried. Status is one of: hint, fluke, holding, resolved, note or on_hold. As of 2026-10-23 it has 27 rows: 22 hint, 2 fluke, 0 holding, 1 resolved, 1 note and 1 on_hold.
+- Number of tries: 650,660 question × version × answer cells across the full grid, or 58,977 at the default cutoffs. Combining questions later adds more tries, and the luck bar is recomputed when that happens.
+- At the full grid the bar is about 5.4 standard errors (about 2,900 setups at a 55% win rate). At the default cutoffs it is about 5.0 (about 2,500). The try count is updated from Taskforce's real column numbers once Step A runs.
+- A ledger row moves to "holding" only if it clears the bar on 2020–22, holds unchanged on 2023–24, and then survives the single 2025–26 shot.
