@@ -1,0 +1,31 @@
+{
+ "n_cutoffs": 441,
+ "by_scope": {
+  "dial": 412,
+  "history": 26,
+  "history_convention": 3
+ },
+ "by_unit": {
+  "pct": 44,
+  "bars": 84,
+  "scalar": 234,
+  "atr": 62,
+  "mult": 15,
+  "dollar": 1,
+  "sigma": 1
+ },
+ "grid_size_hist": {
+  "3": 4,
+  "4": 138,
+  "5": 299
+ },
+ "sum_grid_values": 2059,
+ "questions": 15093,
+ "questions_with_cutoffs": 12168,
+ "total_one_at_a_time": 208837,
+ "mult_one_at_a_time": 13.837,
+ "total_full_cross": 419856708,
+ "mult_full_cross": "10^4.44",
+ "max_versions_one_question_full_cross": 16000000,
+ "global_full_cross_all_cutoffs": "10^294.0"
+}
