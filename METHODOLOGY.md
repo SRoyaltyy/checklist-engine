@@ -51,6 +51,7 @@
 **Data access.** The repo doesn't include the price data. Ask Cyrus to share the two Drive folders above with you.
 
 **House rules.**
+- 2025–26 stock-split dates are used only as metadata in `mcap_fix.py` to fix share counts. No 2025–26 prices or outcomes are read before the lock.
 - No secrets in the repo.
 - Don't open 2025–26 data before the lock, and then only once.
 - The only valid price file is sha `fb9bbe69…` (see [DATA_INDEX.md](DATA_INDEX.md)).
@@ -77,6 +78,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - **No peeking.** Answers for day D use data up to the close of D−1, plus pre-open data. A leak test for this is planned but **not built yet**.
 
 ## 3. Question tree
+- The tree is built from **dials 1–4 plus the history lever**: (1) data type, (2) timeframe, (3) derivative, (4) facets, plus "how it got here" history questions. The locked breakdown is in `dials/v2.7.1/README.md`. Step A covers about 2,023 daily columns, not the whole tree.
 - Questions are nested like folders: data type → timeframe → derivative → how it's analysed.
 - **v2.7.1** has **15,093 questions**: 6,654 base and 8,439 history. Answer file sha `d8adbb46…`.
 - **Cutoff grid v2.7.2.2** has **232 cutoffs** and **154,667 versions**, swept one at a time (commit `67844a6`).
@@ -85,6 +87,10 @@ This file explains, in plain English, what the scanner is for, how it works, and
 ## 4. Outcomes
 - For every case: the 30-day close, the best and worst point within 30 days, and the exit rule v1 result.
 - For each question + answer, the tallies keep: n, wins, average win, average loss, total profit, the share of profit from the top 5% of trades, and the market's result over the same days.
+
+- **Censoring.** A case whose 15-day exit or 30-day outcome runs past the end of the data is NOT_READY and is left out. This applies the same way at every boundary, including the 2025–26 exam. Each question keeps a NOT_READY tally.
+- **Benchmark (frozen).** The equal-weight average return of the same filtered tradeable stocks over the same days and the same exit rule. SPY is reported alongside but isn't the bar.
+- **Execution realism.** A +20% exit fills at the open if the stock gaps through it. Results are also reported with an extra 20bp of slippage. Passing cases are reported by market-cap band, because survivor-only edge in $100–300M names may fade live.
 
 ## 5. Time splits
 - **Discover** on 2020–22.
@@ -102,6 +108,13 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - 650,660 tries means a result must be about 5.4 standard errors out. That is roughly 2,500–2,900 setups.
 - Measure the gap over the market, not over 50%. Cap how much any single trade can move the average.
 - Also run a softer check, and label each result by which check it passed.
+
+- **Not independent (Kimi review #1).** The same stock on nearby days and same-day market shocks shrink the real sample size. Standard errors are grouped by day and by stock, and a block bootstrap is run as well. The bar must pass on those, not on the raw count.
+- Near-duplicate cutoffs make the bar conservative. This is stated, and no action is needed.
+
+## 7b. Combining model (pre-registered)
+- Use only answers that were confirmed on 2023–24. Fit a logistic or tally model on 2020–22, show a calibration table on 2023–24, and freeze it before the 2025–26 shot.
+- **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum, and record which questions flipped. Discover on 2020–22 only. It adds tries to the luck bar.
 
 ## 8. Disk and resources
 - Keep 7GB free between 17:00 and 21:00 HKT, and 2GB at other times. If free space is below that, pause between parts.
