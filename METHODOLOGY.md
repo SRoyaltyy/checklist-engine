@@ -114,7 +114,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ## 7b. Combining model (pre-registered)
 - Use only answers that were confirmed on 2023–24. Fit a logistic or tally model on 2020–22, show a calibration table on 2023–24, and freeze it before the 2025–26 shot.
-- **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum, and record which questions flipped. Discover on 2020–22 only. It adds tries to the luck bar.
+- **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum. The probability only exists after the combining model is fitted, so this is tested on 2023–24 only. The flip counts (questions turning bullish vs bearish since yesterday) and yesterday's price move come straight from the saved answers, so they go into Step A as ordinary questions. Both add tries to the luck bar.
 
 ## 8. Disk and resources
 - Keep 7GB free between 17:00 and 21:00 HKT, and 2GB at other times. If free space is below that, pause between parts.
