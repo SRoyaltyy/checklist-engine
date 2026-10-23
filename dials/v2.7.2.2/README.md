@@ -4,12 +4,12 @@ This version reviews `dials/v2.7.2/CUTOFF_GRID_v2.7.2.csv`. Question IDs are unc
 
 - 442 cutoffs went in (441 + C442 squeeze width).
 - 55 were dropped as structural or noise. Each one has a reason in `CUTOFF_DROPPED_v2.7.2.2.csv`.
-- 189 rows were merged into 34 shared cutoffs (prefix `S_`).
+- 190 rows were merged into 35 shared cutoffs (prefix `S_`).
 - 197 were kept as facet-specific cutoffs.
-- **That leaves 231 cutoffs.** Grid sizes: {'3': 2, '4': 72, '5': 157}.
+- **That leaves 232 cutoffs.** Grid sizes: {3: 2, 4: 72, 5: 158}.
 
-- One-at-a-time (recommended): **151,879** question-versions, x10.063. v2.7.2 had 208,837.
-- Full cross per question: 30,779,060 versions; the worst single question has 800,000.
+- One-at-a-time (recommended): **154,667** question-versions, x10.248. v2.7.2 had 208,837.
+- Full cross per question: 31,127,560 versions; the worst single question has 800,000.
 - 11,812 of 15,093 questions use at least one cutoff.
 
 ## Drop reasons
