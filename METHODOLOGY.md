@@ -31,11 +31,15 @@
 | Scanner engine code | branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) |
 | Question tree and cutoff grid | `dials/` (v2.7.1, v2.7.2.2) |
 | Ideas tried and their status | [`dials/TAKEAWAYS.csv`](dials/TAKEAWAYS.csv) |
-| Big data files (prices, answers) and their sha256 | [`DATA_INDEX.md`](DATA_INDEX.md). The files themselves are on Cyrus's Google Drive |
+| Big data files and their sha256 | [`DATA_INDEX.md`](DATA_INDEX.md) |
+| Price history (only valid file sha `fb9bbe69…`) | Cyrus's Google Drive, folder `pricehist-backup` |
+| Locked question/answer files and run output parts (~1GB each) | Cyrus's Google Drive, folder `checklist_engine_chunks` |
 | Tradeable-stock filter | [`buyable_filter_v1/`](buyable_filter_v1/BUYABLE_FILTER_V1.md) |
 | Old practice results | `practice_results/` |
 | Older experiments | `lookalike/`, `combo/`, `path_bank*/`, `chart_picture_pack/`, `checklist_brainstorm/` |
 | Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
+
+**Data access.** The repo doesn't include the price data. Ask Cyrus to share the two Drive folders above with you.
 
 **House rules.**
 - No secrets in the repo.
