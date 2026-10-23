@@ -1,0 +1,55 @@
+lever1_type,variant,X_primary_series,Y_paired_series,bench,unit
+candles,OHLC,C (close),RVOL20,SPY C,ATR14
+volume,RVOL20,RVOL20,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,dollar_volume,C*V,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,up_down_volume,sumV(up)/sumV(down) rolling 10,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,OBV,OBV,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,AD_line,A/D line,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,MFI14,MFI14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,VWAP_anchored,(C-VWAP)/ATR14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volume,volume_profile,(C-POC)/ATR14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+moving_averages,SMA20,(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14),C,SPY C,ATR14
+moving_averages,SMA50,(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14),C,SPY C,ATR14
+moving_averages,SMA200,(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14),C,SPY C,ATR14
+moving_averages,EMA21,(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14),C,SPY C,ATR14
+moving_averages,MA_group(10/20/50/200),(C-MA)/ATR14 (MA_group: SMA10-SMA200 spread/ATR14),C,SPY C,ATR14
+range_position,Bollinger20_2,position of C in the band/channel/swing (0..1; Fib: retracement share),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+range_position,Fibonacci_swing,position of C in the band/channel/swing (0..1; Fib: retracement share),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+range_position,Donchian20,position of C in the band/channel/swing (0..1; Fib: retracement share),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+range_position,HiLo_window,position of C in the band/channel/swing (0..1; Fib: retracement share),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+extremes,new_highs_lows,C (drawdown: (C-peak)/ATR14; big_picture: weekly C),RVOL20,SPY C,ATR14
+extremes,drawdown,C (drawdown: (C-peak)/ATR14; big_picture: weekly C),RVOL20,SPY C,ATR14
+extremes,big_picture,C (drawdown: (C-peak)/ATR14; big_picture: weekly C),RVOL20,SPY C,ATR14
+extremes,base_and_run,C (drawdown: (C-peak)/ATR14; big_picture: weekly C),RVOL20,SPY C,ATR14
+extremes,52w_range,C (drawdown: (C-peak)/ATR14; big_picture: weekly C),RVOL20,SPY C,ATR14
+overbought_oversold,RSI6,RSI6,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+overbought_oversold,RSI12,RSI12,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+overbought_oversold,RSI24,RSI24,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+overbought_oversold,RSI14,RSI14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+overbought_oversold,Stoch14_3,Stoch14_3,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+overbought_oversold,WilliamsR14,WilliamsR14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+momentum,MACD12_26_9,MACD histogram,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+momentum,ROC20,ROC20,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+momentum,ADX14,ADX14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+momentum,Ichimoku,(C-cloud mid)/ATR14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volatility,ATR14,ATR14% (squeeze: BB width/KC width),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+volatility,squeeze(BB_in_Keltner),ATR14% (squeeze: BB width/KC width),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+relative_strength,vs_SPY,RS line = C / bench C,bench C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+relative_strength,vs_sector_peers,RS line = C / bench C,bench C,sector median C,"sX (std of 1-bar changes of X, 250 bars before W)"
+relative_strength,vs_theme_peers,RS line = C / bench C,bench C,theme median C,"sX (std of 1-bar changes of X, 250 bars before W)"
+support_resistance,prior_pivots,C (distance to nearest landmark in ATR14),RVOL20,SPY C,ATR14
+support_resistance,old_ranges_breakdowns,C (distance to nearest landmark in ATR14),RVOL20,SPY C,ATR14
+support_resistance,unfilled_gaps,C (distance to nearest landmark in ATR14),RVOL20,SPY C,ATR14
+support_resistance,round_numbers(merged price level),C (distance to nearest landmark in ATR14),RVOL20,SPY C,ATR14
+return_path,daily_returns,daily return ln(C/Cprev),SPY return,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+liquidity_float,float_turnover,turnover = V / float,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+calendar,calendar_context,quarter position (bar index in quarter / quarter length),none,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+market_condition,SPY_VIX,SPY C (VIX for vix facets),VIX,SPY C,ATR14
+setup_score,checklist_score_path,daily setup score (count of bullish checklist answers),C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,earnings,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,form4,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,short_interest,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,halts,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,reg_sho,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+events,analyst_actions,"rolling count of the variant's events, keyed by publication date",C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
+phase_list,3ATR_legs,signed size of the current phase in ATR14,C,SPY C,"sX (std of 1-bar changes of X, 250 bars before W)"
