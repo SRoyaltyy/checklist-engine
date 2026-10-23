@@ -2,3 +2,5 @@ answers_2020_24/
 __pycache__/
 *.parquet
 integrity/yraw*
+out_*/
+*.log
