@@ -1,0 +1,26 @@
+id,pattern,source_charts,contradicting_charts,status,n_for,n_against,outcomes_ret30_V1,date_added,note
+TF01,"panic low (crash/news gap, first big-volume bounce) recovers; eye readers called it a failure 3/3",5 BE +30.4% V1 n/a;8 IOVA +58.9%;9 SFIX +1.2% (best +52%),,hint,3,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF02,slow bleed to 2y low with calming daily swings recovers; fresh one-day shock (gap) keeps falling,5 BE +30.4%,6 TER -13.7% (fits the shock half),hint,1,1,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF03,RSI higher at second low (divergence) predicts bounce - did NOT line up,,"6 TER -13.7%;10 ASAN +57.4% (no divergence, rallied)",fluke,0,2,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF04,"breakout close above window high after higher-low base, volume on the push, works even with RSI>90",3 NVO +17.3%;10 ASAN +57.4%,,hint,2,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF05,blow-off top on record red volume: top real but timing late (+20% more first),"7 MRNA -8.0% (best +21%, worst -27%)",,hint,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF06,open gap overhead acts as a wall - did NOT hold,,8 IOVA +58.9% with 7-pt open gap,fluke,0,1,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF07,crash that keeps going after trend break,2 CHWY -23.1%,,hint,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF08,slow grind up with price/RSI divergence fades / chop stays flat,1 EWT -0.9%;4 ANGL -1.8%,,hint,2,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF09,"score by best/worst and V1 too, not only 30d close (SFIX +52% then flat)",9 SFIX,,hint,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+TF10,chart 44 MVIS price history looks wrong (close 187 in 2021),44 MVIS,,on_hold,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+JA01,steady climb never closing below MA30 then faded,20 TRGP -8.6% LOSE;40 JETS -7.3% LOSE,,hint,2,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+JA02,slow fade with no panic day at the end kept falling,26 RWM -11.2% LOSE,,hint,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+JA03,big-volume crash then quiet flat stretch with volume back to normal fell more,41 SLQT -27.7% LOSE,,hint,1,0,see source_charts,2026-10-23,eyeball only; never CONFIRMED until engine test
+JA04,new window high on drying-up volume is a warning - did NOT hold,,48 SIG +51.9% WIN,hint,0,1,see source_charts,2026-10-23,Theme Radar row; eyeball only
+JA05,gap fully given back is bearish - did NOT hold,,42 YETI +31.3% WIN,hint,0,1,see source_charts,2026-10-23,eyeball only
+JA06,setup day gaps down through old base is bearish - did NOT hold,,49 CVE +40.4% WIN,hint,0,1,see source_charts,2026-10-23,Manager row; eyeball only
+JA07,speeding-up slide into setup day bounced (volume rising vs flat made no difference),35 MCD +13.9% WIN;39 KRG +13.7% WIN,,hint,2,0,see source_charts,2026-10-23,eyeball only
+JA08,shrinking bounces with all averages down is bearish - did NOT hold,,32 ARWR +9.9% WIN,hint,0,1,see source_charts,2026-10-23,Theme Radar row; eyeball only
+JA09,breakout retest: close above old high did not separate outcomes; test pullback volume vs run volume,38 IEX +3.0% WIN,36 KKR -2.3% LOSE,hint,1,1,see source_charts,2026-10-23,Taskforce/Manager row
+JA10,fast giveback of a long rise (12d down vs 50d up),17 HUBB +12.8% 30d but LOSE V1,,hint,1,0,see source_charts,2026-10-23,30d and V1 labels disagree
+JA11,flat ledge after recovery with volume drying drifted up,18 EMB +3.6% WIN,,hint,1,0,see source_charts,2026-10-23,eyeball only
+JA12,wick size on biggest-volume day,33 MSGS +0.3% WIN,,hint,1,0,see source_charts,2026-10-23,Theme Radar row
+JA13,blow-off top on biggest volume then retest bounce at ~0.7x blow-off volume fell,47 XNCR -8.8% LOSE,,hint,1,0,see source_charts,2026-10-23,Theme Radar row
+JA14,insider open-market buys (P) in prior 90d before big runs,8 IOVA +58.9%;9 SFIX +1.2% (best +52%);10 ASAN +57.4%,5 BE +30.4% (sales only),hint,3,1,see source_charts,2026-10-23,dial-1 data; Form 4 P/S non-derivative
+JA15,calm random sample rarely hits +20% in 15d (0/30); jumpy 4/10,11-40;41-50,,note,0,0,see source_charts,2026-10-23,post-lock note only; exit rule unchanged
