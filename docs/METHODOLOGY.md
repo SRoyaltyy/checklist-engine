@@ -87,6 +87,8 @@ With this many questions, some look good by pure chance.
   - Short-interest short-ratio: 0 passed.
   - F4TR: unscored.
   - Warnings kept as warnings: trading halts, Reg SHO threshold list, short interest.
+- **Theme Radar F4TR insider casebook:** 2,154 cases, no edge ([theme-radar PR #17](https://github.com/SRoyaltyy/theme-radar/pull/17)).
+- **Theme Radar short-interest and options tests:** 110 tests, 0 passed.
 - **Delisted-stock purchase (Polygon):** skipped.
 - **Chart-picture `cp_*` tags:** v1 lost in a box wipe; v2 rebuild pending from `CHART_PICTURE_V2_FORMULAS.md`.
 - **Manual chart reading by bots:** replaced by code because of Grok usage cost.
