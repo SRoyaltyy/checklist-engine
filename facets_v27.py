@@ -68,10 +68,10 @@ def range_box(I, N, k=2):
 PF = [f"{n}:{p}" for n in ('0', '1', '2', '3+') for p in ('lower_peaks', 'higher_peaks', 'mixed', 'n/a')]
 DR = [f"{n}:{p}" for n in ('0', '1', '2', '3+') for p in ('higher_troughs', 'lower_troughs', 'mixed', 'n/a')]
 def _cycles(I, N, up):
-    P = phases_asof(I); c = I['c']; T = len(c); out = np.full(T, -1, np.int16)
+    PH = phases_asof(I); c = I['c']; T = len(c); out = np.full(T, -1, np.int16)
     labs = (0, 2) if up else (1, 3)
     for t in range(N, T):
-        ps = P[t]
+        ps = PH[t]
         if ps is None or np.isnan(c[t]): continue
         lo0 = t - N + 1; mv = [p for p in ps if p['lab'] in labs and abs(p['size']) >= P['leg_atr'] and p['s'] >= lo0 and p['e'] <= t]
         ext = []

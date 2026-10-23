@@ -61,8 +61,13 @@ def series(I, v):
             from facets_v26 import phases_asof
             Ps = phases_asof(I); return np.array([ps[-1]['size'] if ps else np.nan for ps in Ps])
         if v == 'calendar_context' and 'dates' in I:
-            d = pd.DatetimeIndex(I['dates']); q = d.to_period('Q'); s = pd.Series(1, index=d).groupby(q).cumcount().to_numpy()
-            n = pd.Series(1, index=d).groupby(q).transform('size').to_numpy(); return s/n
+            # LEAK FIX: share of the quarter elapsed, using the exchange calendar (known in advance), not this stock's own bar count
+            # for the whole quarter (that counted bars after D).
+            d = pd.DatetimeIndex(I['dates']); S = pd.DatetimeIndex(I['sessions']) if 'sessions' in I else d
+            sq = pd.Series(1, index=S).groupby(S.to_period('Q')); first = sq.apply(lambda g: g.index[0]); size = sq.size()
+            q = d.to_period('Q'); f0 = pd.DatetimeIndex(first.reindex(q).values)
+            s = np.searchsorted(S.values, d.values) - np.searchsorted(S.values, f0.values)
+            n = size.reindex(q).to_numpy(float); return s/n
     return None   # vs_sector_peers, vs_theme_peers, VWAP_anchored, volume_profile, Fibonacci_swing, events, checklist_score_path: no series yet
 
 def unit_of(I, v, X, N):

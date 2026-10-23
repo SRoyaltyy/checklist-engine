@@ -1,19 +1,19 @@
 # Checklist engine (dials 1-4 + history lever) — plain-words guide
 
-**Status (Fri 23 Oct 2026, ~14:10 HKT):** the code is built and smoke-tested on 6 stocks. It has **not** been run on the full list. It has **not** been joined to any outcomes, and no edge or backtest stats have been run. That waits for Cyrus to sign off on the cutoffs and for the 23:00 HKT unlock.
+**Status (Fri 23 Oct 2026, ~21:45 HKT):** leak test passes on the 5 sample stocks (`tests/test_leak.py`), the `pump_fade_cycles` and `multi_year_position` crashes are fixed (KO: 0 errors), trades + scoring are in `scoring/trades.py`, and Step A (`step_a.py`, discover 2020-22 only, default cutoffs) has been launched on the full survivors list.
 
 ## What it does
 For every stock on every trading day D from 2020 to 2024, it answers a long list of fixed questions about the chart. Example: "Did RSI6 go from oversold to normal over the last 20 bars?" Every answer is a small number, and `codebook.json` turns each number back into its label. **-1 means "can't answer"**, usually because there isn't enough history yet.
 
 ## Rules it follows
-- **No peeking.** The answer for day D only uses bars from before D. Each answer is worked out at the close of the day before and then shifted forward one day.
+- **No peeking.** The answer for day D only uses bars from before D. Each answer is worked out at the close of the day before and then shifted forward one day. `tests/test_leak.py` proves it: it cuts a stock's bars off at D, recomputes, and checks the D row is identical to the full-data run. (It caught one leak: `calendar_context` used the stock's bar count for the whole quarter; it now uses the exchange calendar.)
 - **2025-26 stays sealed.** Data is cut at 2024-12-31, and the code never loads anything later.
 - **Train/check split.** The `split` column says `discover_2020_22` or `check_2023_24`.
 - **Survivors-only universe.** Stocks that were delisted (for example NKLA and MULN) aren't in the price file, so they get no rows.
 - **Filter.** `passes_filter` is true when the stock's market cap on D-1 is unknown or at least $100M, AND its median 20-day dollar volume is at least $1M. The $1M liquidity line is our own guess and can be changed. Rows that fail the filter are kept but flagged, so nothing gets deleted.
 - **History flags.** `history_short_252` / `history_short_756` mean fewer than 1 or 3 years of bars before D. Stocks that only start in 2020 have no 2018-19 warm-up bars.
 - **Sizes are in ATR.** Every size is measured in the stock's own ATR14, its typical daily move.
-- **RSI.** RSI uses 6/12/24, with 14 as a variant. The 30bp fee isn't used here because this engine only produces answers, with no trades.
+- **RSI.** RSI uses 6/12/24, with 14 as a variant. Trades and the 30bp-each-way fee live in `scoring/trades.py`, not in the answer engine.
 
 ## Phase list (new in 2.6)
 The chart is cut into phases:
@@ -36,10 +36,21 @@ Each variant gets one "main line", for example the RSI value, the distance from 
 - Other columns: ticker, date, bars_before_D, the history_short flags, mcap_D1, dollar_vol_med20_D1, passes_filter and split.
 
 ## How big this is
-The table counts 14,588 questions across all bar sizes and lookbacks. This build covers **daily bars only, at lookbacks 10/20/60** (plus 1 for "as of now" questions), which comes to **2,023 answer columns** (868 dial + 1,155 history).
+- Question tree v2.7.1: **15,093 questions** (6,654 base + 8,439 history).
+- Built: **13,526** of them (5,087 base + all 8,439 history), plus 33 extra engine lookbacks = **13,559 answer columns at default cutoffs**, on bar sizes 1-20 days. With the default `grid.csv` (leg_atr x long_trend cross) KO gets 13,828 columns.
+- Not built: 1,567 base questions (see below).
+- Speed: KO alone, all columns, 2020-24: about 36s.
 
-- Dial rows built: 309 of 433.
-- History keep rows built: 385 of 532.
+## Trades and scoring (`scoring/trades.py`)
+- Trade = buy at D's open. Exit rule v1: sell at +20% (at the open if it gaps through), else at the close of day 15 (D = day 1). Fees 30bp each way.
+- **not_ready**: the stock must have a bar on every market session D..D+29 inside the window being scored (end of data, end of the 2022 discover window, gaps, delistings). Otherwise the case is dropped from scoring and counted.
+- bench = equal-weight mean of the same-day trades of stocks that pass the filter and are ready. SPY is reported as `spy_ret`.
+- Trade rows: ticker, date, ret, bench, question_id, answer, exit_day, spy_ret, period. Grouped by question + answer and scored with James's `stats/luck_check.py` `score()` (commit c2ae4fe, imported unchanged). Win-rate floor 40%, also 35/45/50.
+- To save time, `score()` is only called when a cheap upper bound on its z (max of plain and by-day clustered SE) is >= 3. Below that the answer cannot reach the 5.4 bar, so it is marked failed with `full=False`.
+
+## Step A (`step_a.py`)
+`CHECKLIST_DATA_DIR=$PWD/data OUT_DIR=$PWD/step_a_out nohup python3 step_a.py --workers 5 --chunk 400 > step_a.log 2>&1 &`
+Bars are cut at 2022-12-31 first. Questions run in chunks of 400 and only scores are written (full answers would be about 40GB). It can be resumed, and it pauses if free disk is below the floor (7GB 17:00-21:00 HKT, 2GB otherwise). Output: `trade_base_discover.parquet`, `chunks/scores_NNN.parquet`, `PROGRESS.json`, and at the end `STEP_A_SCORES_discover_2020_22.parquet`.
 
 ## Not built yet, and why
 - **Bar sizes 2-20 days.** Not built; it would multiply the size by about 10.
@@ -47,6 +58,7 @@ The table counts 14,588 questions across all bar sizes and lookbacks. This build
 - **Earnings, form4, short interest, halts.** These need a careful "known before D" date join. Deferred.
 - **Sector and theme peers.** Today's sector label leaks the future, and themes need clustering first.
 - **rank_route.** Needs the whole cross-section ranked each day.
+- **Flip counts and yesterday's move.** These are not in tree v2.7.1, so Step A does not include them.
 - **Need a pivot-level engine first:**
   - Fibonacci, volume_profile, prior_pivots (including fail_fail_break), old_ranges_breakdowns and unfilled_gaps
   - most of base_and_run (pause_vs_run and shelf_depth are built), and drawdown's second_leg/capitulation/shape

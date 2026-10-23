@@ -133,6 +133,7 @@ def run_ticker(tk, d, C, plan):
                     try: name, a = one(N)
                     except Exception as e: err[f"{key}|{k}d|{N}"] = repr(e)[:160]; continue
                     if a is None: continue
+                    if len(a) != len(pos): err[f"{key}|{k}d|{N}"] = f'length {len(a)} != bars {len(pos)}'; continue
                     used = USES.setdefault(key, set()); used |= P.used
                     for suf, o in settings_for(used, GRIDV):
                         if all(DEFAULTS[q] == x for q, x in o.items()): a2 = a
@@ -147,18 +148,23 @@ def run_ticker(tk, d, C, plan):
     dates = d.date.values; A.insert(0, 'date', dates); A.insert(0, 'ticker', tk)
     A['bars_before_D'] = np.arange(T).astype(np.int32)
     A['history_short_252'] = A.bars_before_D < 252; A['history_short_756'] = A.bars_before_D < 756
-    I = make_I(d, tk, C)
+    F = filter_cols(tk, d, C)
+    for c in ('mcap_D1', 'dollar_vol_med20_D1', 'passes_filter'): A[c] = F[c].values
+    A = A[(A.date >= START) & (A.date <= END)]
+    A['mcap_suspect'] = tk in C.get('mcap_jump', ())
+    A['split'] = np.where(A.date <= pd.Timestamp('2022-12-31'), 'discover_2020_22', 'check_2023_24')
+    return A, err
+
+def filter_cols(tk, d, C):
+    """Tradeable filter for day D, known at D-1: mcap (split-fixed) >= $100M (unknown passes) and median 20d $vol >= $1M."""
+    d = d.reset_index(drop=True); I = make_I(d, tk, C)
     dv = pd.Series(I['dv']).rolling(20).median().shift(1).values
     mcap = (pd.Series(I['craw'] * I['shares']).shift(1)).values
     if tk in C.get('mcap_bad', ()): mcap[:] = np.nan          # ADR/units problem: mcap unknown
     suspect = tk in C.get('mcap_jump', ())
-    A['mcap_D1'] = mcap.astype(np.float32); A['dollar_vol_med20_D1'] = dv.astype(np.float32)
     # 553 suspect-mcap names: dollar-volume-only filter (mcap not trusted)
-    A['passes_filter'] = (dv >= 1e6) if suspect else ((np.isnan(mcap) | (mcap >= 1e8)) & (dv >= 1e6))
-    A = A[(A.date >= START) & (A.date <= END)]
-    A['mcap_suspect'] = suspect
-    A['split'] = np.where(A.date <= pd.Timestamp('2022-12-31'), 'discover_2020_22', 'check_2023_24')
-    return A, err
+    pf = (dv >= 1e6) if suspect else ((np.isnan(mcap) | (mcap >= 1e8)) & (dv >= 1e6))
+    return pd.DataFrame(dict(date=d.date.values, mcap_D1=mcap.astype(np.float32), dollar_vol_med20_D1=dv.astype(np.float32), passes_filter=pf))
 
 def codebook(plan):
     lab = {('B', v, f): labels for (v, f, labels, fn, lbs) in REG}; lab.update({('H', v, hv): labels for (lt, v, hv, labels, lbs) in HIST})

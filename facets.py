@@ -884,7 +884,7 @@ def _rollmin(x, n):
     import pandas as pd; return pd.Series(x).rolling(n, min_periods=n).min().to_numpy()
 @facet('big_picture', 'multi_year_position', [f"{a}x{b}" for a in ['1y', '2y', '3y'] for b in ['top_quartile', 'mid', 'bottom_quartile']], lbs=(252, 504, 756))
 def bp_myp(I, N):
-    h, l = _rollmax(I['h'], N), _rollmin(I['l'], N); p = (I['c'] - l)/(h - l + 1e-12); y = {252: 0, 504: 1, 756: 2}[N]
+    h, l = _rollmax(I['h'], N), _rollmin(I['l'], N); p = (I['c'] - l)/(h - l + 1e-12); y = 0 if N <= 252 else (1 if N <= 504 else 2)   # tree also asks short windows (e.g. 5d x 10): bucket by size, no KeyError
     k = np.where(p > .75, 0, np.where(p < .25, 2, 1)); out = (y*3 + k).astype(np.int8); out[np.isnan(h)] = -1; return out
 @facet('big_picture', 'dist_from_high', ['<10%', '10-50%', '>50%'], lbs=(756,))
 def bp_dh(I, N):
