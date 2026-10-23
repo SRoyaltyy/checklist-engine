@@ -41,6 +41,11 @@
 | F4TR insider tags 2020–24 | Drive file id `19PtFPKG4O6wBnR5IaEUP0d9PxL0w83cq` |
 | F4TR insider tar 2025–26 | Drive file id `1WAKjsY9SWnKFw61fFAuprs-7Mpy0gEWh`. **SEALED, do not open** |
 | F4TR casebook | theme-radar PR #17; Drive file id `12uJhWTLllB2djHY2BqEsbzxlHeVTc6fm` |
+| Nasdaq earnings answers 2020–24 (tags sha `08f15079…ebe42cc`) | Drive file id `1iE6J8sJlGWJLIYKY7iDTyJQ8hrrA5bjr` |
+| Earnings calendar 2025-01→2026-06 (manifest sha `ee6e836a…915d`) | Drive `15whNbyvIE8Q_3QV_B92EuyadbRnEcP-N`. **SEALED, do not open** |
+| New Bot chunks 2025-01→2026-06 (manifest sha `784e00ac…6e45`) | Drive `14XOz6w9QgNKHoSKC_mTD4xhKWie8FuiA`. **SEALED, do not open** |
+| Chart-picture v2 formulas (sha `0badaa4a…0c05`) | Drive `1pSFAIKcP2EWjieXbG01yVJj6pt-3EeOo` |
+| Lock index v3 | Drive `14vtWrL3tfPvXUuFP781BQ9sqEwbI-1uH` |
 | Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
 
 **Data access.** The repo doesn't include the price data. Ask Cyrus to share the two Drive folders above with you.
