@@ -17,8 +17,29 @@
 - *Luck bar*: with this many tries, some answers will look good by chance. The bar is how strong a result has to be to count.
 - *bp*: basis point, 0.01%.
 
+**What we're doing right now.** We're running every checklist question on 2020–24 practice data (Steps A to C in §6) to find question + answer pairs whose trades make money on average after fees and beat the market on the same days. Nothing has passed yet.
+
+**What to look for (your job, Kimi).**
+1. Any answer whose expected profit beats the same-day market and clears the luck bar (§7) on 2020–22, and then holds unchanged on 2023–24.
+2. Mistakes in our method: peeking at future data, untradeable stocks slipping in, or a few huge trades carrying a result.
+3. Which cutoff definitions give an edge, and under what conditions (Cyrus: "try all definitions").
+
+**Where things are.**
+| What | Where |
+|---|---|
+| Method (this file) | `METHODOLOGY.md` |
+| Scanner engine code | branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) |
+| Question tree and cutoff grid | `dials/` (v2.7.1, v2.7.2.2) |
+| Ideas tried and their status | [`dials/TAKEAWAYS.csv`](dials/TAKEAWAYS.csv) |
+| Big data files (prices, answers) and their sha256 | [`DATA_INDEX.md`](DATA_INDEX.md). The files themselves are on Cyrus's Google Drive |
+| Tradeable-stock filter | [`buyable_filter_v1/`](buyable_filter_v1/BUYABLE_FILTER_V1.md) |
+| Old practice results | `practice_results/` |
+| Older experiments | `lookalike/`, `combo/`, `path_bank*/`, `chart_picture_pack/`, `checklist_brainstorm/` |
+| Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
+
 **House rules.**
 - No secrets in the repo.
+- Don't open 2025–26 data before the lock, and then only once.
 - The only valid price file is sha `fb9bbe69…` (see [DATA_INDEX.md](DATA_INDEX.md)).
 - Frozen question files are add-only.
 - Rules get committed before any results are computed.
