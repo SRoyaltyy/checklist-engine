@@ -159,7 +159,7 @@ def filter_cols(tk, d, C):
     """Tradeable filter for day D, known at D-1: mcap (split-fixed) >= $100M (unknown passes) and median 20d $vol >= $1M."""
     d = d.reset_index(drop=True); I = make_I(d, tk, C)
     dv = pd.Series(I['dv']).rolling(20).median().shift(1).values
-    mcap = (pd.Series(I['craw'] * I['shares']).shift(1)).values
+    mcap = np.array(pd.Series(I['craw'] * I['shares']).shift(1).values, float)   # writable copy (mcap_bad tickers set it to nan)
     if tk in C.get('mcap_bad', ()): mcap[:] = np.nan          # ADR/units problem: mcap unknown
     suspect = tk in C.get('mcap_jump', ())
     # 553 suspect-mcap names: dollar-volume-only filter (mcap not trusted)
