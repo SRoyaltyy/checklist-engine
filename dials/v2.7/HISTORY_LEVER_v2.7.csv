@@ -1,0 +1,811 @@
+lever1_type,variant,history_value,status,reason,question_families
+candles,OHLC,shape,drop,duplicate of existing facet kind shape,0
+candles,OHLC,divergence_sync,keep,,17
+candles,OHLC,order_of_events,keep,,17
+candles,OHLC,speed,keep,,17
+candles,OHLC,change_of_state,keep,,17
+candles,OHLC,time_since,keep,,17
+candles,OHLC,route,keep,,17
+candles,OHLC,character_change,keep,,17
+candles,OHLC,retests,keep,,17
+candles,OHLC,squeeze_release,keep,,17
+candles,OHLC,stage,keep,,17
+candles,OHLC,vs_own_past,drop,duplicate of existing facet kind chain_history,0
+candles,OHLC,lead_lag,drop,lead/lag lives in relative_strength,0
+candles,OHLC,timeframe_agreement,keep,,17
+candles,OHLC,shock_recovery,keep,,17
+volume,RVOL20,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,RVOL20,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volume,RVOL20,order_of_events,keep,,17
+volume,RVOL20,speed,keep,,17
+volume,RVOL20,change_of_state,keep,,17
+volume,RVOL20,time_since,keep,,17
+volume,RVOL20,route,drop,duplicate of existing facet kind sequence,0
+volume,RVOL20,character_change,drop,duplicate of existing facet kind character,0
+volume,RVOL20,retests,keep,,17
+volume,RVOL20,squeeze_release,keep,,17
+volume,RVOL20,stage,keep,,17
+volume,RVOL20,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,RVOL20,lead_lag,keep,,17
+volume,RVOL20,timeframe_agreement,keep,,17
+volume,RVOL20,shock_recovery,keep,,17
+volume,dollar_volume,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,dollar_volume,divergence_sync,keep,,17
+volume,dollar_volume,order_of_events,keep,,17
+volume,dollar_volume,speed,drop,duplicate of existing facet kind acceleration,0
+volume,dollar_volume,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volume,dollar_volume,time_since,keep,,17
+volume,dollar_volume,route,keep,,17
+volume,dollar_volume,character_change,drop,duplicate of existing facet kind character,0
+volume,dollar_volume,retests,keep,,17
+volume,dollar_volume,squeeze_release,keep,,17
+volume,dollar_volume,stage,keep,,17
+volume,dollar_volume,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,dollar_volume,lead_lag,keep,,17
+volume,dollar_volume,timeframe_agreement,keep,,17
+volume,dollar_volume,shock_recovery,keep,,17
+volume,up_down_volume,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,up_down_volume,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volume,up_down_volume,order_of_events,keep,,17
+volume,up_down_volume,speed,keep,,17
+volume,up_down_volume,change_of_state,keep,,17
+volume,up_down_volume,time_since,keep,,17
+volume,up_down_volume,route,keep,,17
+volume,up_down_volume,character_change,drop,duplicate of existing facet kind character,0
+volume,up_down_volume,retests,keep,,17
+volume,up_down_volume,squeeze_release,keep,,17
+volume,up_down_volume,stage,keep,,17
+volume,up_down_volume,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,up_down_volume,lead_lag,keep,,17
+volume,up_down_volume,timeframe_agreement,keep,,17
+volume,up_down_volume,shock_recovery,keep,,17
+volume,OBV,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,OBV,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volume,OBV,order_of_events,keep,,17
+volume,OBV,speed,drop,duplicate of existing facet kind acceleration,0
+volume,OBV,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volume,OBV,time_since,keep,,17
+volume,OBV,route,keep,,17
+volume,OBV,character_change,drop,duplicate of existing facet kind character,0
+volume,OBV,retests,keep,,17
+volume,OBV,squeeze_release,keep,,17
+volume,OBV,stage,keep,,17
+volume,OBV,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,OBV,lead_lag,keep,,17
+volume,OBV,timeframe_agreement,keep,,17
+volume,OBV,shock_recovery,keep,,17
+volume,AD_line,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,AD_line,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volume,AD_line,order_of_events,keep,,17
+volume,AD_line,speed,drop,duplicate of existing facet kind acceleration,0
+volume,AD_line,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volume,AD_line,time_since,keep,,17
+volume,AD_line,route,keep,,17
+volume,AD_line,character_change,drop,duplicate of existing facet kind character,0
+volume,AD_line,retests,keep,,17
+volume,AD_line,squeeze_release,keep,,17
+volume,AD_line,stage,keep,,17
+volume,AD_line,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,AD_line,lead_lag,keep,,17
+volume,AD_line,timeframe_agreement,keep,,17
+volume,AD_line,shock_recovery,keep,,17
+volume,MFI14,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,MFI14,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volume,MFI14,order_of_events,keep,,17
+volume,MFI14,speed,drop,duplicate of existing facet kind acceleration,0
+volume,MFI14,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volume,MFI14,time_since,keep,,17
+volume,MFI14,route,keep,,17
+volume,MFI14,character_change,drop,duplicate of existing facet kind character,0
+volume,MFI14,retests,keep,,17
+volume,MFI14,squeeze_release,keep,,17
+volume,MFI14,stage,keep,,17
+volume,MFI14,vs_own_past,drop,duplicate of existing facet kind character,0
+volume,MFI14,lead_lag,keep,,17
+volume,MFI14,timeframe_agreement,keep,,17
+volume,MFI14,shock_recovery,keep,,17
+volume,VWAP_anchored,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volume,VWAP_anchored,divergence_sync,keep,,17
+volume,VWAP_anchored,order_of_events,keep,,17
+volume,VWAP_anchored,speed,keep,,17
+volume,VWAP_anchored,change_of_state,keep,,17
+volume,VWAP_anchored,time_since,keep,,17
+volume,VWAP_anchored,route,keep,,17
+volume,VWAP_anchored,character_change,keep,,17
+volume,VWAP_anchored,retests,drop,duplicate of existing facet kind interaction,0
+volume,VWAP_anchored,squeeze_release,keep,,17
+volume,VWAP_anchored,stage,keep,,17
+volume,VWAP_anchored,vs_own_past,keep,,17
+volume,VWAP_anchored,lead_lag,keep,,17
+volume,VWAP_anchored,timeframe_agreement,keep,,17
+volume,VWAP_anchored,shock_recovery,keep,,17
+volume,volume_profile,shape,drop,duplicate of existing facet kind shape,0
+volume,volume_profile,divergence_sync,keep,,17
+volume,volume_profile,order_of_events,keep,,17
+volume,volume_profile,speed,keep,,17
+volume,volume_profile,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volume,volume_profile,time_since,keep,,17
+volume,volume_profile,route,keep,,17
+volume,volume_profile,character_change,keep,,17
+volume,volume_profile,retests,drop,duplicate of existing facet kind interaction,0
+volume,volume_profile,squeeze_release,keep,,17
+volume,volume_profile,stage,keep,,17
+volume,volume_profile,vs_own_past,keep,,17
+volume,volume_profile,lead_lag,keep,,17
+volume,volume_profile,timeframe_agreement,keep,,17
+volume,volume_profile,shock_recovery,keep,,17
+moving_averages,SMA20,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+moving_averages,SMA20,divergence_sync,keep,,17
+moving_averages,SMA20,order_of_events,keep,,17
+moving_averages,SMA20,speed,drop,duplicate of existing facet kind acceleration,0
+moving_averages,SMA20,change_of_state,keep,,17
+moving_averages,SMA20,time_since,keep,,17
+moving_averages,SMA20,route,keep,,17
+moving_averages,SMA20,character_change,keep,,17
+moving_averages,SMA20,retests,drop,duplicate of existing facet kind interaction,0
+moving_averages,SMA20,squeeze_release,keep,,17
+moving_averages,SMA20,stage,keep,,17
+moving_averages,SMA20,vs_own_past,keep,,17
+moving_averages,SMA20,lead_lag,keep,,17
+moving_averages,SMA20,timeframe_agreement,keep,,17
+moving_averages,SMA20,shock_recovery,keep,,17
+moving_averages,SMA50,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+moving_averages,SMA50,divergence_sync,keep,,17
+moving_averages,SMA50,order_of_events,keep,,17
+moving_averages,SMA50,speed,drop,duplicate of existing facet kind acceleration,0
+moving_averages,SMA50,change_of_state,keep,,17
+moving_averages,SMA50,time_since,keep,,17
+moving_averages,SMA50,route,keep,,17
+moving_averages,SMA50,character_change,keep,,17
+moving_averages,SMA50,retests,drop,duplicate of existing facet kind interaction,0
+moving_averages,SMA50,squeeze_release,keep,,17
+moving_averages,SMA50,stage,keep,,17
+moving_averages,SMA50,vs_own_past,keep,,17
+moving_averages,SMA50,lead_lag,keep,,17
+moving_averages,SMA50,timeframe_agreement,keep,,17
+moving_averages,SMA50,shock_recovery,keep,,17
+moving_averages,SMA200,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+moving_averages,SMA200,divergence_sync,keep,,17
+moving_averages,SMA200,order_of_events,keep,,17
+moving_averages,SMA200,speed,drop,duplicate of existing facet kind acceleration,0
+moving_averages,SMA200,change_of_state,keep,,17
+moving_averages,SMA200,time_since,keep,,17
+moving_averages,SMA200,route,keep,,17
+moving_averages,SMA200,character_change,keep,,17
+moving_averages,SMA200,retests,drop,duplicate of existing facet kind interaction,0
+moving_averages,SMA200,squeeze_release,keep,,17
+moving_averages,SMA200,stage,keep,,17
+moving_averages,SMA200,vs_own_past,keep,,17
+moving_averages,SMA200,lead_lag,keep,,17
+moving_averages,SMA200,timeframe_agreement,keep,,17
+moving_averages,SMA200,shock_recovery,keep,,17
+moving_averages,EMA21,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+moving_averages,EMA21,divergence_sync,keep,,17
+moving_averages,EMA21,order_of_events,keep,,17
+moving_averages,EMA21,speed,drop,duplicate of existing facet kind acceleration,0
+moving_averages,EMA21,change_of_state,keep,,17
+moving_averages,EMA21,time_since,keep,,17
+moving_averages,EMA21,route,keep,,17
+moving_averages,EMA21,character_change,keep,,17
+moving_averages,EMA21,retests,drop,duplicate of existing facet kind interaction,0
+moving_averages,EMA21,squeeze_release,keep,,17
+moving_averages,EMA21,stage,keep,,17
+moving_averages,EMA21,vs_own_past,keep,,17
+moving_averages,EMA21,lead_lag,keep,,17
+moving_averages,EMA21,timeframe_agreement,keep,,17
+moving_averages,EMA21,shock_recovery,keep,,17
+moving_averages,MA_group(10/20/50/200),shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+moving_averages,MA_group(10/20/50/200),divergence_sync,keep,,17
+moving_averages,MA_group(10/20/50/200),order_of_events,keep,,17
+moving_averages,MA_group(10/20/50/200),speed,drop,duplicate of existing facet kind acceleration,0
+moving_averages,MA_group(10/20/50/200),change_of_state,drop,duplicate of existing facet kind zone_transition,0
+moving_averages,MA_group(10/20/50/200),time_since,drop,duplicate of existing facet kind timing,0
+moving_averages,MA_group(10/20/50/200),route,keep,,17
+moving_averages,MA_group(10/20/50/200),character_change,keep,,17
+moving_averages,MA_group(10/20/50/200),retests,keep,,17
+moving_averages,MA_group(10/20/50/200),squeeze_release,keep,,17
+moving_averages,MA_group(10/20/50/200),stage,keep,,17
+moving_averages,MA_group(10/20/50/200),vs_own_past,keep,,17
+moving_averages,MA_group(10/20/50/200),lead_lag,keep,,17
+moving_averages,MA_group(10/20/50/200),timeframe_agreement,keep,,17
+moving_averages,MA_group(10/20/50/200),shock_recovery,keep,,17
+range_position,Bollinger20_2,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+range_position,Bollinger20_2,divergence_sync,keep,,17
+range_position,Bollinger20_2,order_of_events,keep,,17
+range_position,Bollinger20_2,speed,keep,,17
+range_position,Bollinger20_2,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+range_position,Bollinger20_2,time_since,keep,,17
+range_position,Bollinger20_2,route,keep,,17
+range_position,Bollinger20_2,character_change,keep,,17
+range_position,Bollinger20_2,retests,keep,,17
+range_position,Bollinger20_2,squeeze_release,keep,,17
+range_position,Bollinger20_2,stage,keep,,17
+range_position,Bollinger20_2,vs_own_past,keep,,17
+range_position,Bollinger20_2,lead_lag,drop,lead/lag lives in relative_strength,0
+range_position,Bollinger20_2,timeframe_agreement,keep,,17
+range_position,Bollinger20_2,shock_recovery,keep,,17
+range_position,Fibonacci_swing,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+range_position,Fibonacci_swing,divergence_sync,keep,,17
+range_position,Fibonacci_swing,order_of_events,keep,,17
+range_position,Fibonacci_swing,speed,keep,,17
+range_position,Fibonacci_swing,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+range_position,Fibonacci_swing,time_since,keep,,17
+range_position,Fibonacci_swing,route,keep,,17
+range_position,Fibonacci_swing,character_change,keep,,17
+range_position,Fibonacci_swing,retests,drop,duplicate of existing facet kind interaction,0
+range_position,Fibonacci_swing,squeeze_release,keep,,17
+range_position,Fibonacci_swing,stage,keep,,17
+range_position,Fibonacci_swing,vs_own_past,keep,,17
+range_position,Fibonacci_swing,lead_lag,drop,lead/lag lives in relative_strength,0
+range_position,Fibonacci_swing,timeframe_agreement,keep,,17
+range_position,Fibonacci_swing,shock_recovery,keep,,17
+range_position,Donchian20,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+range_position,Donchian20,divergence_sync,keep,,17
+range_position,Donchian20,order_of_events,keep,,17
+range_position,Donchian20,speed,keep,,17
+range_position,Donchian20,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+range_position,Donchian20,time_since,keep,,17
+range_position,Donchian20,route,drop,duplicate of existing facet kind sequence,0
+range_position,Donchian20,character_change,keep,,17
+range_position,Donchian20,retests,keep,,17
+range_position,Donchian20,squeeze_release,keep,,17
+range_position,Donchian20,stage,keep,,17
+range_position,Donchian20,vs_own_past,keep,,17
+range_position,Donchian20,lead_lag,drop,lead/lag lives in relative_strength,0
+range_position,Donchian20,timeframe_agreement,keep,,17
+range_position,Donchian20,shock_recovery,keep,,17
+range_position,HiLo_window,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+range_position,HiLo_window,divergence_sync,keep,,17
+range_position,HiLo_window,order_of_events,keep,,17
+range_position,HiLo_window,speed,keep,,17
+range_position,HiLo_window,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+range_position,HiLo_window,time_since,keep,,17
+range_position,HiLo_window,route,drop,duplicate of existing facet kind sequence,0
+range_position,HiLo_window,character_change,keep,,17
+range_position,HiLo_window,retests,keep,,17
+range_position,HiLo_window,squeeze_release,keep,,17
+range_position,HiLo_window,stage,keep,,17
+range_position,HiLo_window,vs_own_past,keep,,17
+range_position,HiLo_window,lead_lag,drop,lead/lag lives in relative_strength,0
+range_position,HiLo_window,timeframe_agreement,keep,,17
+range_position,HiLo_window,shock_recovery,keep,,17
+extremes,new_highs_lows,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+extremes,new_highs_lows,divergence_sync,keep,,14
+extremes,new_highs_lows,order_of_events,keep,,14
+extremes,new_highs_lows,speed,keep,,14
+extremes,new_highs_lows,change_of_state,keep,,14
+extremes,new_highs_lows,time_since,drop,duplicate of existing facet kind timing,0
+extremes,new_highs_lows,route,drop,duplicate of existing facet kind sequence,0
+extremes,new_highs_lows,character_change,keep,,14
+extremes,new_highs_lows,retests,keep,,14
+extremes,new_highs_lows,squeeze_release,drop,use volatility type,0
+extremes,new_highs_lows,stage,keep,,14
+extremes,new_highs_lows,vs_own_past,keep,,14
+extremes,new_highs_lows,lead_lag,drop,lead/lag lives in relative_strength,0
+extremes,new_highs_lows,timeframe_agreement,keep,,14
+extremes,new_highs_lows,shock_recovery,keep,,14
+extremes,drawdown,shape,drop,duplicate of existing facet kind shape,0
+extremes,drawdown,divergence_sync,keep,,14
+extremes,drawdown,order_of_events,keep,,14
+extremes,drawdown,speed,drop,duplicate of existing facet kind acceleration,0
+extremes,drawdown,change_of_state,keep,,14
+extremes,drawdown,time_since,keep,,14
+extremes,drawdown,route,keep,,14
+extremes,drawdown,character_change,drop,duplicate of existing facet kind character,0
+extremes,drawdown,retests,keep,,14
+extremes,drawdown,squeeze_release,drop,use volatility type,0
+extremes,drawdown,stage,keep,,14
+extremes,drawdown,vs_own_past,drop,duplicate of existing facet kind character,0
+extremes,drawdown,lead_lag,drop,lead/lag lives in relative_strength,0
+extremes,drawdown,timeframe_agreement,keep,,14
+extremes,drawdown,shock_recovery,keep,,14
+extremes,big_picture,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+extremes,big_picture,divergence_sync,keep,,6
+extremes,big_picture,order_of_events,keep,,6
+extremes,big_picture,speed,keep,,6
+extremes,big_picture,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+extremes,big_picture,time_since,drop,duplicate of existing facet kind timing,0
+extremes,big_picture,route,keep,,6
+extremes,big_picture,character_change,keep,,6
+extremes,big_picture,retests,keep,,6
+extremes,big_picture,squeeze_release,drop,use volatility type,0
+extremes,big_picture,stage,keep,,6
+extremes,big_picture,vs_own_past,keep,,6
+extremes,big_picture,lead_lag,drop,lead/lag lives in relative_strength,0
+extremes,big_picture,timeframe_agreement,keep,,6
+extremes,big_picture,shock_recovery,keep,,6
+extremes,base_and_run,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+extremes,base_and_run,divergence_sync,keep,,8
+extremes,base_and_run,order_of_events,keep,,8
+extremes,base_and_run,speed,keep,,8
+extremes,base_and_run,change_of_state,keep,,8
+extremes,base_and_run,time_since,drop,duplicate of existing facet kind timing,0
+extremes,base_and_run,route,keep,,8
+extremes,base_and_run,character_change,keep,,8
+extremes,base_and_run,retests,keep,,8
+extremes,base_and_run,squeeze_release,drop,use volatility type,0
+extremes,base_and_run,stage,keep,,8
+extremes,base_and_run,vs_own_past,keep,,8
+extremes,base_and_run,lead_lag,drop,lead/lag lives in relative_strength,0
+extremes,base_and_run,timeframe_agreement,keep,,8
+extremes,base_and_run,shock_recovery,keep,,8
+extremes,52w_range,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+extremes,52w_range,divergence_sync,keep,,14
+extremes,52w_range,order_of_events,keep,,14
+extremes,52w_range,speed,drop,duplicate of existing facet kind acceleration,0
+extremes,52w_range,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+extremes,52w_range,time_since,keep,,14
+extremes,52w_range,route,keep,,14
+extremes,52w_range,character_change,keep,,14
+extremes,52w_range,retests,drop,duplicate of existing facet kind interaction,0
+extremes,52w_range,squeeze_release,drop,use volatility type,0
+extremes,52w_range,stage,keep,,14
+extremes,52w_range,vs_own_past,keep,,14
+extremes,52w_range,lead_lag,drop,lead/lag lives in relative_strength,0
+extremes,52w_range,timeframe_agreement,keep,,14
+extremes,52w_range,shock_recovery,keep,,14
+overbought_oversold,RSI6,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,RSI6,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,RSI6,order_of_events,keep,,17
+overbought_oversold,RSI6,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,RSI6,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,RSI6,time_since,keep,,17
+overbought_oversold,RSI6,route,keep,,17
+overbought_oversold,RSI6,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI6,retests,keep,,17
+overbought_oversold,RSI6,squeeze_release,keep,,17
+overbought_oversold,RSI6,stage,keep,,17
+overbought_oversold,RSI6,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI6,lead_lag,keep,,17
+overbought_oversold,RSI6,timeframe_agreement,keep,,17
+overbought_oversold,RSI6,shock_recovery,keep,,17
+overbought_oversold,RSI12,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,RSI12,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,RSI12,order_of_events,keep,,17
+overbought_oversold,RSI12,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,RSI12,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,RSI12,time_since,keep,,17
+overbought_oversold,RSI12,route,keep,,17
+overbought_oversold,RSI12,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI12,retests,keep,,17
+overbought_oversold,RSI12,squeeze_release,keep,,17
+overbought_oversold,RSI12,stage,keep,,17
+overbought_oversold,RSI12,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI12,lead_lag,keep,,17
+overbought_oversold,RSI12,timeframe_agreement,keep,,17
+overbought_oversold,RSI12,shock_recovery,keep,,17
+overbought_oversold,RSI24,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,RSI24,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,RSI24,order_of_events,keep,,17
+overbought_oversold,RSI24,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,RSI24,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,RSI24,time_since,keep,,17
+overbought_oversold,RSI24,route,keep,,17
+overbought_oversold,RSI24,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI24,retests,keep,,17
+overbought_oversold,RSI24,squeeze_release,keep,,17
+overbought_oversold,RSI24,stage,keep,,17
+overbought_oversold,RSI24,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI24,lead_lag,keep,,17
+overbought_oversold,RSI24,timeframe_agreement,keep,,17
+overbought_oversold,RSI24,shock_recovery,keep,,17
+overbought_oversold,RSI14,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,RSI14,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,RSI14,order_of_events,keep,,17
+overbought_oversold,RSI14,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,RSI14,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,RSI14,time_since,keep,,17
+overbought_oversold,RSI14,route,keep,,17
+overbought_oversold,RSI14,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI14,retests,keep,,17
+overbought_oversold,RSI14,squeeze_release,keep,,17
+overbought_oversold,RSI14,stage,keep,,17
+overbought_oversold,RSI14,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,RSI14,lead_lag,keep,,17
+overbought_oversold,RSI14,timeframe_agreement,keep,,17
+overbought_oversold,RSI14,shock_recovery,keep,,17
+overbought_oversold,Stoch14_3,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,Stoch14_3,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,Stoch14_3,order_of_events,keep,,17
+overbought_oversold,Stoch14_3,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,Stoch14_3,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,Stoch14_3,time_since,keep,,17
+overbought_oversold,Stoch14_3,route,keep,,17
+overbought_oversold,Stoch14_3,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,Stoch14_3,retests,keep,,17
+overbought_oversold,Stoch14_3,squeeze_release,keep,,17
+overbought_oversold,Stoch14_3,stage,keep,,17
+overbought_oversold,Stoch14_3,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,Stoch14_3,lead_lag,keep,,17
+overbought_oversold,Stoch14_3,timeframe_agreement,keep,,17
+overbought_oversold,Stoch14_3,shock_recovery,keep,,17
+overbought_oversold,WilliamsR14,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+overbought_oversold,WilliamsR14,divergence_sync,drop,duplicate of existing facet kind divergence,0
+overbought_oversold,WilliamsR14,order_of_events,keep,,17
+overbought_oversold,WilliamsR14,speed,drop,duplicate of existing facet kind acceleration,0
+overbought_oversold,WilliamsR14,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+overbought_oversold,WilliamsR14,time_since,keep,,17
+overbought_oversold,WilliamsR14,route,keep,,17
+overbought_oversold,WilliamsR14,character_change,drop,duplicate of existing facet kind character,0
+overbought_oversold,WilliamsR14,retests,keep,,17
+overbought_oversold,WilliamsR14,squeeze_release,keep,,17
+overbought_oversold,WilliamsR14,stage,keep,,17
+overbought_oversold,WilliamsR14,vs_own_past,drop,duplicate of existing facet kind character,0
+overbought_oversold,WilliamsR14,lead_lag,keep,,17
+overbought_oversold,WilliamsR14,timeframe_agreement,keep,,17
+overbought_oversold,WilliamsR14,shock_recovery,keep,,17
+momentum,MACD12_26_9,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+momentum,MACD12_26_9,divergence_sync,drop,duplicate of existing facet kind divergence,0
+momentum,MACD12_26_9,order_of_events,keep,,17
+momentum,MACD12_26_9,speed,drop,duplicate of existing facet kind acceleration,0
+momentum,MACD12_26_9,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+momentum,MACD12_26_9,time_since,keep,,17
+momentum,MACD12_26_9,route,keep,,17
+momentum,MACD12_26_9,character_change,drop,duplicate of existing facet kind character,0
+momentum,MACD12_26_9,retests,keep,,17
+momentum,MACD12_26_9,squeeze_release,keep,,17
+momentum,MACD12_26_9,stage,keep,,17
+momentum,MACD12_26_9,vs_own_past,drop,duplicate of existing facet kind character,0
+momentum,MACD12_26_9,lead_lag,keep,,17
+momentum,MACD12_26_9,timeframe_agreement,keep,,17
+momentum,MACD12_26_9,shock_recovery,keep,,17
+momentum,ROC20,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+momentum,ROC20,divergence_sync,drop,duplicate of existing facet kind divergence,0
+momentum,ROC20,order_of_events,keep,,17
+momentum,ROC20,speed,drop,duplicate of existing facet kind acceleration,0
+momentum,ROC20,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+momentum,ROC20,time_since,keep,,17
+momentum,ROC20,route,keep,,17
+momentum,ROC20,character_change,drop,duplicate of existing facet kind character,0
+momentum,ROC20,retests,keep,,17
+momentum,ROC20,squeeze_release,keep,,17
+momentum,ROC20,stage,keep,,17
+momentum,ROC20,vs_own_past,drop,duplicate of existing facet kind character,0
+momentum,ROC20,lead_lag,keep,,17
+momentum,ROC20,timeframe_agreement,keep,,17
+momentum,ROC20,shock_recovery,keep,,17
+momentum,ADX14,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+momentum,ADX14,divergence_sync,keep,,17
+momentum,ADX14,order_of_events,keep,,17
+momentum,ADX14,speed,drop,duplicate of existing facet kind acceleration,0
+momentum,ADX14,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+momentum,ADX14,time_since,keep,,17
+momentum,ADX14,route,keep,,17
+momentum,ADX14,character_change,keep,,17
+momentum,ADX14,retests,keep,,17
+momentum,ADX14,squeeze_release,keep,,17
+momentum,ADX14,stage,keep,,17
+momentum,ADX14,vs_own_past,keep,,17
+momentum,ADX14,lead_lag,keep,,17
+momentum,ADX14,timeframe_agreement,keep,,17
+momentum,ADX14,shock_recovery,keep,,17
+momentum,Ichimoku,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+momentum,Ichimoku,divergence_sync,keep,,14
+momentum,Ichimoku,order_of_events,keep,,14
+momentum,Ichimoku,speed,keep,,14
+momentum,Ichimoku,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+momentum,Ichimoku,time_since,keep,,14
+momentum,Ichimoku,route,keep,,14
+momentum,Ichimoku,character_change,keep,,14
+momentum,Ichimoku,retests,drop,duplicate of existing facet kind interaction,0
+momentum,Ichimoku,squeeze_release,keep,,14
+momentum,Ichimoku,stage,keep,,14
+momentum,Ichimoku,vs_own_past,keep,,14
+momentum,Ichimoku,lead_lag,keep,,14
+momentum,Ichimoku,timeframe_agreement,keep,,14
+momentum,Ichimoku,shock_recovery,keep,,14
+volatility,ATR14,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volatility,ATR14,divergence_sync,drop,duplicate of existing facet kind divergence,0
+volatility,ATR14,order_of_events,keep,,17
+volatility,ATR14,speed,drop,duplicate of existing facet kind acceleration,0
+volatility,ATR14,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volatility,ATR14,time_since,keep,,17
+volatility,ATR14,route,keep,,17
+volatility,ATR14,character_change,drop,duplicate of existing facet kind character,0
+volatility,ATR14,retests,drop,vol has no levels,0
+volatility,ATR14,squeeze_release,keep,,17
+volatility,ATR14,stage,keep,,17
+volatility,ATR14,vs_own_past,drop,duplicate of existing facet kind character,0
+volatility,ATR14,lead_lag,keep,,17
+volatility,ATR14,timeframe_agreement,keep,,17
+volatility,ATR14,shock_recovery,keep,,17
+volatility,squeeze(BB_in_Keltner),shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+volatility,squeeze(BB_in_Keltner),divergence_sync,keep,,17
+volatility,squeeze(BB_in_Keltner),order_of_events,keep,,17
+volatility,squeeze(BB_in_Keltner),speed,keep,,17
+volatility,squeeze(BB_in_Keltner),change_of_state,drop,duplicate of existing facet kind zone_transition,0
+volatility,squeeze(BB_in_Keltner),time_since,keep,,17
+volatility,squeeze(BB_in_Keltner),route,keep,,17
+volatility,squeeze(BB_in_Keltner),character_change,drop,duplicate of existing facet kind character,0
+volatility,squeeze(BB_in_Keltner),retests,drop,vol has no levels,0
+volatility,squeeze(BB_in_Keltner),squeeze_release,keep,,17
+volatility,squeeze(BB_in_Keltner),stage,keep,,17
+volatility,squeeze(BB_in_Keltner),vs_own_past,drop,duplicate of existing facet kind character,0
+volatility,squeeze(BB_in_Keltner),lead_lag,keep,,17
+volatility,squeeze(BB_in_Keltner),timeframe_agreement,keep,,17
+volatility,squeeze(BB_in_Keltner),shock_recovery,keep,,17
+relative_strength,vs_SPY,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+relative_strength,vs_SPY,divergence_sync,drop,duplicate of existing facet kind divergence,0
+relative_strength,vs_SPY,order_of_events,keep,,17
+relative_strength,vs_SPY,speed,drop,"duplicate of existing facet kind second_order,acceleration",0
+relative_strength,vs_SPY,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+relative_strength,vs_SPY,time_since,keep,,17
+relative_strength,vs_SPY,route,keep,,17
+relative_strength,vs_SPY,character_change,keep,,17
+relative_strength,vs_SPY,retests,keep,,17
+relative_strength,vs_SPY,squeeze_release,keep,,17
+relative_strength,vs_SPY,stage,keep,,17
+relative_strength,vs_SPY,vs_own_past,keep,,17
+relative_strength,vs_SPY,lead_lag,keep,,17
+relative_strength,vs_SPY,timeframe_agreement,keep,,17
+relative_strength,vs_SPY,shock_recovery,keep,,17
+relative_strength,vs_sector_peers,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+relative_strength,vs_sector_peers,divergence_sync,drop,duplicate of existing facet kind divergence,0
+relative_strength,vs_sector_peers,order_of_events,keep,,17
+relative_strength,vs_sector_peers,speed,drop,"duplicate of existing facet kind second_order,acceleration",0
+relative_strength,vs_sector_peers,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+relative_strength,vs_sector_peers,time_since,keep,,17
+relative_strength,vs_sector_peers,route,keep,,17
+relative_strength,vs_sector_peers,character_change,keep,,17
+relative_strength,vs_sector_peers,retests,keep,,17
+relative_strength,vs_sector_peers,squeeze_release,keep,,17
+relative_strength,vs_sector_peers,stage,keep,,17
+relative_strength,vs_sector_peers,vs_own_past,keep,,17
+relative_strength,vs_sector_peers,lead_lag,keep,,17
+relative_strength,vs_sector_peers,timeframe_agreement,keep,,17
+relative_strength,vs_sector_peers,shock_recovery,keep,,17
+relative_strength,vs_theme_peers,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+relative_strength,vs_theme_peers,divergence_sync,drop,duplicate of existing facet kind divergence,0
+relative_strength,vs_theme_peers,order_of_events,keep,,17
+relative_strength,vs_theme_peers,speed,drop,"duplicate of existing facet kind second_order,acceleration",0
+relative_strength,vs_theme_peers,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+relative_strength,vs_theme_peers,time_since,keep,,17
+relative_strength,vs_theme_peers,route,keep,,17
+relative_strength,vs_theme_peers,character_change,keep,,17
+relative_strength,vs_theme_peers,retests,keep,,17
+relative_strength,vs_theme_peers,squeeze_release,keep,,17
+relative_strength,vs_theme_peers,stage,keep,,17
+relative_strength,vs_theme_peers,vs_own_past,keep,,17
+relative_strength,vs_theme_peers,lead_lag,keep,,17
+relative_strength,vs_theme_peers,timeframe_agreement,keep,,17
+relative_strength,vs_theme_peers,shock_recovery,keep,,17
+support_resistance,prior_pivots,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+support_resistance,prior_pivots,divergence_sync,keep,,17
+support_resistance,prior_pivots,order_of_events,keep,,17
+support_resistance,prior_pivots,speed,drop,duplicate of existing facet kind acceleration,0
+support_resistance,prior_pivots,change_of_state,keep,,17
+support_resistance,prior_pivots,time_since,keep,,17
+support_resistance,prior_pivots,route,keep,,17
+support_resistance,prior_pivots,character_change,keep,,17
+support_resistance,prior_pivots,retests,drop,duplicate of existing facet kind interaction,0
+support_resistance,prior_pivots,squeeze_release,keep,,17
+support_resistance,prior_pivots,stage,keep,,17
+support_resistance,prior_pivots,vs_own_past,keep,,17
+support_resistance,prior_pivots,lead_lag,drop,lead/lag lives in relative_strength,0
+support_resistance,prior_pivots,timeframe_agreement,keep,,17
+support_resistance,prior_pivots,shock_recovery,keep,,17
+support_resistance,old_ranges_breakdowns,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+support_resistance,old_ranges_breakdowns,divergence_sync,keep,,14
+support_resistance,old_ranges_breakdowns,order_of_events,keep,,14
+support_resistance,old_ranges_breakdowns,speed,keep,,14
+support_resistance,old_ranges_breakdowns,change_of_state,keep,,14
+support_resistance,old_ranges_breakdowns,time_since,drop,duplicate of existing facet kind timing,0
+support_resistance,old_ranges_breakdowns,route,keep,,14
+support_resistance,old_ranges_breakdowns,character_change,keep,,14
+support_resistance,old_ranges_breakdowns,retests,drop,duplicate of existing facet kind interaction,0
+support_resistance,old_ranges_breakdowns,squeeze_release,keep,,14
+support_resistance,old_ranges_breakdowns,stage,keep,,14
+support_resistance,old_ranges_breakdowns,vs_own_past,keep,,14
+support_resistance,old_ranges_breakdowns,lead_lag,drop,lead/lag lives in relative_strength,0
+support_resistance,old_ranges_breakdowns,timeframe_agreement,keep,,14
+support_resistance,old_ranges_breakdowns,shock_recovery,keep,,14
+support_resistance,unfilled_gaps,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+support_resistance,unfilled_gaps,divergence_sync,keep,,14
+support_resistance,unfilled_gaps,order_of_events,keep,,14
+support_resistance,unfilled_gaps,speed,keep,,14
+support_resistance,unfilled_gaps,change_of_state,keep,,14
+support_resistance,unfilled_gaps,time_since,drop,duplicate of existing facet kind timing,0
+support_resistance,unfilled_gaps,route,keep,,14
+support_resistance,unfilled_gaps,character_change,keep,,14
+support_resistance,unfilled_gaps,retests,drop,duplicate of existing facet kind interaction,0
+support_resistance,unfilled_gaps,squeeze_release,keep,,14
+support_resistance,unfilled_gaps,stage,keep,,14
+support_resistance,unfilled_gaps,vs_own_past,keep,,14
+support_resistance,unfilled_gaps,lead_lag,drop,lead/lag lives in relative_strength,0
+support_resistance,unfilled_gaps,timeframe_agreement,keep,,14
+support_resistance,unfilled_gaps,shock_recovery,keep,,14
+support_resistance,round_numbers(merged price level),shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+support_resistance,round_numbers(merged price level),divergence_sync,keep,,17
+support_resistance,round_numbers(merged price level),order_of_events,keep,,17
+support_resistance,round_numbers(merged price level),speed,keep,,17
+support_resistance,round_numbers(merged price level),change_of_state,drop,duplicate of existing facet kind zone_transition,0
+support_resistance,round_numbers(merged price level),time_since,keep,,17
+support_resistance,round_numbers(merged price level),route,drop,duplicate of existing facet kind sequence,0
+support_resistance,round_numbers(merged price level),character_change,keep,,17
+support_resistance,round_numbers(merged price level),retests,drop,duplicate of existing facet kind interaction,0
+support_resistance,round_numbers(merged price level),squeeze_release,keep,,17
+support_resistance,round_numbers(merged price level),stage,keep,,17
+support_resistance,round_numbers(merged price level),vs_own_past,keep,,17
+support_resistance,round_numbers(merged price level),lead_lag,drop,lead/lag lives in relative_strength,0
+support_resistance,round_numbers(merged price level),timeframe_agreement,keep,,17
+support_resistance,round_numbers(merged price level),shock_recovery,keep,,17
+return_path,daily_returns,shape,drop,duplicate of existing facet kind shape,0
+return_path,daily_returns,divergence_sync,keep,,17
+return_path,daily_returns,order_of_events,keep,,17
+return_path,daily_returns,speed,drop,duplicate of existing facet kind acceleration,0
+return_path,daily_returns,change_of_state,keep,,17
+return_path,daily_returns,time_since,keep,,17
+return_path,daily_returns,route,drop,duplicate of existing facet kind sequence,0
+return_path,daily_returns,character_change,keep,,17
+return_path,daily_returns,retests,drop,returns have no levels,0
+return_path,daily_returns,squeeze_release,keep,,17
+return_path,daily_returns,stage,keep,,17
+return_path,daily_returns,vs_own_past,keep,,17
+return_path,daily_returns,lead_lag,keep,,17
+return_path,daily_returns,timeframe_agreement,keep,,17
+return_path,daily_returns,shock_recovery,keep,,17
+liquidity_float,float_turnover,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+liquidity_float,float_turnover,divergence_sync,keep,,11
+liquidity_float,float_turnover,order_of_events,keep,,11
+liquidity_float,float_turnover,speed,keep,,11
+liquidity_float,float_turnover,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+liquidity_float,float_turnover,time_since,keep,,11
+liquidity_float,float_turnover,route,keep,,11
+liquidity_float,float_turnover,character_change,drop,duplicate of existing facet kind character,0
+liquidity_float,float_turnover,retests,drop,no levels,0
+liquidity_float,float_turnover,squeeze_release,keep,,11
+liquidity_float,float_turnover,stage,drop,stage is a price concept,0
+liquidity_float,float_turnover,vs_own_past,drop,duplicate of existing facet kind character,0
+liquidity_float,float_turnover,lead_lag,drop,float isn't benchmarked,0
+liquidity_float,float_turnover,timeframe_agreement,keep,,11
+liquidity_float,float_turnover,shock_recovery,keep,,11
+calendar,calendar_context,shape,drop,calendar has no curve,0
+calendar,calendar_context,divergence_sync,drop,no paired line,0
+calendar,calendar_context,order_of_events,drop,only 1 event kind,0
+calendar,calendar_context,speed,drop,no magnitude,0
+calendar,calendar_context,change_of_state,keep,,2
+calendar,calendar_context,time_since,drop,duplicate of existing facet kind timing,0
+calendar,calendar_context,route,drop,no path,0
+calendar,calendar_context,character_change,drop,duplicate of existing facet kind character,0
+calendar,calendar_context,retests,drop,no levels,0
+calendar,calendar_context,squeeze_release,drop,no volatility,0
+calendar,calendar_context,stage,drop,no trend,0
+calendar,calendar_context,vs_own_past,drop,duplicate of existing facet kind character,0
+calendar,calendar_context,lead_lag,drop,not a price series,0
+calendar,calendar_context,timeframe_agreement,drop,calendar is timeframe-free,0
+calendar,calendar_context,shock_recovery,drop,no shocks,0
+market_condition,SPY_VIX,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+market_condition,SPY_VIX,divergence_sync,drop,duplicate of existing facet kind divergence,0
+market_condition,SPY_VIX,order_of_events,keep,,17
+market_condition,SPY_VIX,speed,drop,duplicate of existing facet kind acceleration,0
+market_condition,SPY_VIX,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+market_condition,SPY_VIX,time_since,keep,,17
+market_condition,SPY_VIX,route,keep,,17
+market_condition,SPY_VIX,character_change,keep,,17
+market_condition,SPY_VIX,retests,drop,SPY levels belong to price types,0
+market_condition,SPY_VIX,squeeze_release,keep,,17
+market_condition,SPY_VIX,stage,keep,,17
+market_condition,SPY_VIX,vs_own_past,keep,,17
+market_condition,SPY_VIX,lead_lag,drop,is the benchmark itself,0
+market_condition,SPY_VIX,timeframe_agreement,keep,,17
+market_condition,SPY_VIX,shock_recovery,keep,,17
+setup_score,checklist_score_path,shape,drop,would be a lookalike input,0
+setup_score,checklist_score_path,divergence_sync,drop,duplicate of existing facet kind divergence,0
+setup_score,checklist_score_path,order_of_events,keep,,15
+setup_score,checklist_score_path,speed,drop,duplicate of existing facet kind acceleration,0
+setup_score,checklist_score_path,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+setup_score,checklist_score_path,time_since,keep,,15
+setup_score,checklist_score_path,route,keep,,15
+setup_score,checklist_score_path,character_change,drop,duplicate of existing facet kind character,0
+setup_score,checklist_score_path,retests,drop,score has no levels,0
+setup_score,checklist_score_path,squeeze_release,keep,,15
+setup_score,checklist_score_path,stage,keep,,15
+setup_score,checklist_score_path,vs_own_past,drop,duplicate of existing facet kind character,0
+setup_score,checklist_score_path,lead_lag,drop,score vs sector score not built,0
+setup_score,checklist_score_path,timeframe_agreement,drop,score defined on 1d only,0
+setup_score,checklist_score_path,shock_recovery,keep,,15
+events,earnings,shape,drop,"events are sparse, no curve",0
+events,earnings,divergence_sync,keep,,4
+events,earnings,order_of_events,keep,,4
+events,earnings,speed,keep,,4
+events,earnings,change_of_state,keep,,4
+events,earnings,time_since,drop,duplicate of existing facet kind timing,0
+events,earnings,route,drop,duplicate of existing facet kind sequence,0
+events,earnings,character_change,keep,,4
+events,earnings,retests,drop,no price levels,0
+events,earnings,squeeze_release,drop,no volatility line,0
+events,earnings,stage,keep,,4
+events,earnings,vs_own_past,keep,,4
+events,earnings,lead_lag,drop,sparse; can't estimate habit,0
+events,earnings,timeframe_agreement,drop,1-day units only,0
+events,earnings,shock_recovery,keep,,4
+events,form4,shape,drop,"events are sparse, no curve",0
+events,form4,divergence_sync,keep,,4
+events,form4,order_of_events,keep,,4
+events,form4,speed,keep,,4
+events,form4,change_of_state,keep,,4
+events,form4,time_since,drop,duplicate of existing facet kind timing,0
+events,form4,route,drop,duplicate of existing facet kind sequence,0
+events,form4,character_change,keep,,4
+events,form4,retests,drop,no price levels,0
+events,form4,squeeze_release,drop,no volatility line,0
+events,form4,stage,keep,,4
+events,form4,vs_own_past,keep,,4
+events,form4,lead_lag,drop,sparse; can't estimate habit,0
+events,form4,timeframe_agreement,drop,1-day units only,0
+events,form4,shock_recovery,keep,,4
+events,short_interest,shape,drop,"events are sparse, no curve",0
+events,short_interest,divergence_sync,drop,duplicate of existing facet kind divergence,0
+events,short_interest,order_of_events,keep,,4
+events,short_interest,speed,keep,,4
+events,short_interest,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+events,short_interest,time_since,keep,,4
+events,short_interest,route,keep,,4
+events,short_interest,character_change,drop,duplicate of existing facet kind character,0
+events,short_interest,retests,drop,no price levels,0
+events,short_interest,squeeze_release,drop,no volatility line,0
+events,short_interest,stage,keep,,4
+events,short_interest,vs_own_past,drop,duplicate of existing facet kind character,0
+events,short_interest,lead_lag,drop,sparse; can't estimate habit,0
+events,short_interest,timeframe_agreement,drop,1-day units only,0
+events,short_interest,shock_recovery,keep,,4
+events,halts,shape,drop,"events are sparse, no curve",0
+events,halts,divergence_sync,keep,,4
+events,halts,order_of_events,keep,,4
+events,halts,speed,keep,,4
+events,halts,change_of_state,keep,,4
+events,halts,time_since,drop,duplicate of existing facet kind timing,0
+events,halts,route,drop,duplicate of existing facet kind sequence,0
+events,halts,character_change,keep,,4
+events,halts,retests,drop,no price levels,0
+events,halts,squeeze_release,drop,no volatility line,0
+events,halts,stage,keep,,4
+events,halts,vs_own_past,keep,,4
+events,halts,lead_lag,drop,sparse; can't estimate habit,0
+events,halts,timeframe_agreement,drop,1-day units only,0
+events,halts,shock_recovery,keep,,4
+events,reg_sho,shape,drop,"events are sparse, no curve",0
+events,reg_sho,divergence_sync,keep,,4
+events,reg_sho,order_of_events,keep,,4
+events,reg_sho,speed,keep,,4
+events,reg_sho,change_of_state,drop,duplicate of existing facet kind zone_transition,0
+events,reg_sho,time_since,keep,,4
+events,reg_sho,route,keep,,4
+events,reg_sho,character_change,drop,duplicate of existing facet kind character,0
+events,reg_sho,retests,drop,no price levels,0
+events,reg_sho,squeeze_release,drop,no volatility line,0
+events,reg_sho,stage,keep,,4
+events,reg_sho,vs_own_past,drop,duplicate of existing facet kind character,0
+events,reg_sho,lead_lag,drop,sparse; can't estimate habit,0
+events,reg_sho,timeframe_agreement,drop,1-day units only,0
+events,reg_sho,shock_recovery,keep,,4
+events,analyst_actions,shape,drop,"events are sparse, no curve",0
+events,analyst_actions,divergence_sync,keep,,4
+events,analyst_actions,order_of_events,keep,,4
+events,analyst_actions,speed,keep,,4
+events,analyst_actions,change_of_state,keep,,4
+events,analyst_actions,time_since,drop,duplicate of existing facet kind timing,0
+events,analyst_actions,route,drop,duplicate of existing facet kind sequence,0
+events,analyst_actions,character_change,keep,,4
+events,analyst_actions,retests,drop,no price levels,0
+events,analyst_actions,squeeze_release,drop,no volatility line,0
+events,analyst_actions,stage,keep,,4
+events,analyst_actions,vs_own_past,keep,,4
+events,analyst_actions,lead_lag,drop,sparse; can't estimate habit,0
+events,analyst_actions,timeframe_agreement,drop,1-day units only,0
+events,analyst_actions,shock_recovery,keep,,4
+phase_list,3ATR_legs,shape,lookalike_input,"needs twins' future returns -> lookalike input, not a yes/no question",0
+phase_list,3ATR_legs,divergence_sync,keep,,17
+phase_list,3ATR_legs,order_of_events,keep,,17
+phase_list,3ATR_legs,speed,keep,,17
+phase_list,3ATR_legs,change_of_state,keep,,17
+phase_list,3ATR_legs,time_since,keep,,17
+phase_list,3ATR_legs,route,keep,,17
+phase_list,3ATR_legs,character_change,keep,,17
+phase_list,3ATR_legs,retests,keep,,17
+phase_list,3ATR_legs,squeeze_release,keep,,17
+phase_list,3ATR_legs,stage,keep,,17
+phase_list,3ATR_legs,vs_own_past,keep,,17
+phase_list,3ATR_legs,lead_lag,keep,,17
+phase_list,3ATR_legs,timeframe_agreement,keep,,17
+phase_list,3ATR_legs,shock_recovery,keep,,17
