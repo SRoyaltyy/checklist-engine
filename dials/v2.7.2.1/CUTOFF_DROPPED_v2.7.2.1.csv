@@ -1,0 +1,56 @@
+cutoff_id,where_used,current_default,reason
+C003_pattern_1d_mix__bars1,dial:candles|OHLC|pattern_1d_mix,1,pattern size = facet identity
+C004_pattern_2d_mix__bars2,dial:candles|OHLC|pattern_2d_mix,2,pattern size = facet identity
+C005_pattern_3d_seen__bars3,dial:candles|OHLC|pattern_3d_seen,3,pattern size = facet identity
+C010_cup_handle__bars3,dial:candles|OHLC|cup_handle,3,thirds split = structural
+C016_flag__bars4,dial:candles|OHLC|flag,4,pole length as share of window = structural split
+C050_concentration__scalar3,dial:volume|dollar_volume|concentration,3,facet identity (top-3 days)
+C059_zone_route__scalar9,dial:volume|OBV|zone_route;dial:volume|AD_line|zone_route;dial:volume|MFI14|zone_route;dial:overbought_oversold|RSI6|zone_route;dial:overbought_oversold|RSI12|zone_route;dial:overbought_oversold|RSI24|zone_route;dial:overbought_oversold|RSI14|zone_route;dial:overbought_oversold|Stoch14_3|zone_route;dial:overbought_oversold|WilliamsR14|zone_route;dial:momentum|MACD12_26_9|zone_route;dial:momentum|ROC20|zone_route,9,count of start->end pairs (descriptive)
+C066_price_divergence__scalar2,dial:volume|OBV|price_divergence;dial:volume|AD_line|price_divergence;dial:volume|MFI14|price_divergence;dial:overbought_oversold|RSI6|price_divergence;dial:overbought_oversold|RSI12|price_divergence;dial:overbought_oversold|RSI24|price_divergence;dial:overbought_oversold|RSI14|price_divergence;dial:overbought_oversold|Stoch14_3|price_divergence;dial:overbought_oversold|WilliamsR14|price_divergence;dial:momentum|MACD12_26_9|price_divergence;dial:momentum|ROC20|price_divergence,2,two pivots = minimum to define a swing (structural)
+C074_speed__scalar3,dial:volume|OBV|speed;dial:volume|AD_line|speed;dial:volume|MFI14|speed;dial:overbought_oversold|RSI6|speed;dial:overbought_oversold|RSI12|speed;dial:overbought_oversold|RSI24|speed;dial:overbought_oversold|RSI14|speed;dial:overbought_oversold|Stoch14_3|speed;dial:overbought_oversold|WilliamsR14|speed;dial:momentum|MACD12_26_9|speed;dial:momentum|ROC20|speed,3,thirds index (structural)
+C088_cross_count__scalar3,dial:moving_averages|SMA20|cross_count;dial:moving_averages|SMA50|cross_count;dial:moving_averages|SMA200|cross_count;dial:moving_averages|EMA21|cross_count,3,derived bin edge (= previous edge + 1)
+C090_cross_count__scalar6,dial:moving_averages|SMA20|cross_count;dial:moving_averages|SMA50|cross_count;dial:moving_averages|SMA200|cross_count;dial:moving_averages|EMA21|cross_count,6,derived bin edge (= previous edge + 1)
+C094_bunching_route__scalar10,dial:moving_averages|MA_group(10/20/50/200)|bunching_route,10,MA set membership (identity)
+C095_bunching_route__scalar20,dial:moving_averages|MA_group(10/20/50/200)|bunching_route,20,MA set membership (identity)
+C096_bunching_route__scalar30,dial:moving_averages|MA_group(10/20/50/200)|bunching_route,30,MA set membership (identity)
+C097_stack_route__scalar4,dial:moving_averages|MA_group(10/20/50/200)|stack_route,4,MA set membership (identity)
+C098_stack_route__scalar2,dial:moving_averages|MA_group(10/20/50/200)|stack_route,2,MA set membership (identity)
+C105_bounce_ceiling__scalar2,dial:moving_averages|MA_group(10/20/50/200)|bounce_ceiling,2,derived bin edge (= previous edge + 1)
+C111_level_held__scalar23p6,dial:range_position|Fibonacci_swing|level_held,23.6,Fibonacci level identities
+C112_level_held__scalar38p2,dial:range_position|Fibonacci_swing|level_held,38.2,Fibonacci level identities
+C113_level_held__scalar50,dial:range_position|Fibonacci_swing|level_held,50,Fibonacci level identities
+C114_level_held__scalar78p6,dial:range_position|Fibonacci_swing|level_held,78.6,Fibonacci level identities
+C115_level_touches__scalar2,dial:range_position|Fibonacci_swing|level_touches,2,derived bin edge (= previous edge + 1)
+C132_count__scalar3,dial:extremes|new_highs_lows|count,3,derived bin edge (= previous edge + 1)
+C165_multi_year_position__bars756,dial:extremes|big_picture|multi_year_position,756,"data-availability requirement, not a cutoff"
+C166_weekly_trend__bars756,dial:extremes|big_picture|weekly_trend,756,"data-availability requirement, not a cutoff"
+C170_dist_from_high__bars756,dial:extremes|big_picture|dist_from_high,756,"data-availability requirement, not a cutoff"
+C173_ath_age__bars756,dial:extremes|big_picture|ath_age,756,"data-availability requirement, not a cutoff"
+C176_weekly_stack__bars756,dial:extremes|big_picture|weekly_stack,756,"data-availability requirement, not a cutoff"
+C177_range_route__bars756,dial:extremes|big_picture|range_route,756,"data-availability requirement, not a cutoff"
+C239_cloud_route__bars26,dial:momentum|Ichimoku|cloud_route,26,Ichimoku displacement = indicator identity
+C240_chikou_route__bars26,dial:momentum|Ichimoku|chikou_route,26,Ichimoku displacement = indicator identity
+C281_landmark_count__atr2,dial:support_resistance|old_ranges_breakdowns|landmark_count,2,derived bin edge (= previous edge + 1)
+C282_landmark_count__scalar2,dial:support_resistance|old_ranges_breakdowns|landmark_count,2,derived bin edge (= previous edge + 1)
+C314_opex__scalar6,dial:calendar|calendar_context|opex,6,derived bin edge (= previous edge + 1)
+C322_streak__scalar2,dial:events|earnings|streak,2,derived bin edge (= previous edge + 1)
+C325_insider_count__scalar2,dial:events|form4|insider_count,2,derived bin edge (= previous edge + 1)
+C338_report_count_rising__scalar2,dial:events|short_interest|report_count_rising,2,derived bin edge (= previous edge + 1)
+C342_halt_count__scalar2,dial:events|halts|halt_count,2,derived bin edge (= previous edge + 1)
+C345_phase_count__scalar3,dial:phase_list|3ATR_legs|phase_count,3,restates leg_atr (merged)
+C346_phase_count__scalar2,dial:phase_list|3ATR_legs|phase_count,2,derived bin edge (= previous edge + 1)
+C347_phase_count__scalar4,dial:phase_list|3ATR_legs|phase_count,4,derived bin edge (= previous edge + 1)
+C349_phase_count__scalar7,dial:phase_list|3ATR_legs|phase_count,7,derived bin edge (= previous edge + 1)
+C357_last_phase__scalar3,dial:phase_list|3ATR_legs|last_phase,3,restates leg_atr (merged)
+C363_phase_seq3__scalar3,dial:phase_list|3ATR_legs|phase_seq3,3,seq length = facet identity
+C373_len_vs_prev__scalar3,dial:phase_list|3ATR_legs|len_vs_prev,3,restates leg_atr (merged)
+C382_size_vs_prev__scalar3,dial:phase_list|3ATR_legs|size_vs_prev,3,restates leg_atr (merged)
+C391_vol_vs_prev__scalar3,dial:phase_list|3ATR_legs|vol_vs_prev,3,restates leg_atr (merged)
+C398_speed_vs_prev__scalar3,dial:phase_list|3ATR_legs|speed_vs_prev,3,restates leg_atr (merged)
+C407_pump_fade_cycles__scalar3,dial:phase_list|3ATR_legs|pump_fade_cycles,3,derived bin edge (= previous edge + 1)
+C413_divergence_sync__scalar2,history:divergence_sync,2,two pivots = minimum to define a swing (structural)
+C420_route__pct80,history:route,80,interior-extreme guard (structural)
+C426_retest_count__bars1,history:retest_count,1,touch separation 1 bar = structural
+C430_stage__scalar10,history:stage,10,MA length tied to window = structural
+C431_stage__scalar2,history:stage,2,MA length tied to window = structural
+C440_ALL_HISTORY__scalar3,history_convention:ALL_HISTORY,3,thirds split = structural
