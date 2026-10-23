@@ -48,7 +48,7 @@
 | Lock index v3 | Drive `14vtWrL3tfPvXUuFP781BQ9sqEwbI-1uH` |
 | Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
 
-**Data access.** The repo doesn't include the price data. Ask Cyrus to share the two Drive folders above with you.
+**Data access.** The 2020–24 inputs the engine reads (11 files plus a checksum list, survivors only, nothing after 2024-12-31) are on the release page [data-2020-24-v1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/data-2020-24-v1). The engine expects fixed folder paths, so point them at wherever you save the files; the release page says which file goes where. The Drive folders above are the master copies.
 
 **House rules.**
 - 2025–26 stock-split dates are used only as metadata in `mcap_fix.py` to fix share counts. No 2025–26 prices or outcomes are read before the lock.
