@@ -95,6 +95,7 @@ if __name__ == '__main__':
         done = ci + 1; el = time.time() - t0
         log(f'chunk {ci+1}/{len(chunks)}: {len(G["cols"])} q, {len(errs)} errors, {time.time()-tc:.0f}s; elapsed {el/3600:.2f}h')
         json.dump(dict(chunk=ci + 1, of=len(chunks), elapsed_h=round(el / 3600, 2), updated=dt.datetime.now().isoformat()), open(f'{OUT}/PROGRESS.json', 'w'))
-    R = pd.concat([pd.read_parquet(f'{OUT}/chunks/scores_{i:03d}.parquet') for i in range(len(chunks))])
+    R = pd.concat([pd.read_parquet(f'{OUT}/chunks/scores_{i:03d}.parquet') for i in range(len(chunks))]
+                  + ([pd.read_parquet(f'{OUT}/chunks/scores_cp_v2.parquet')] if os.path.exists(f'{OUT}/chunks/scores_cp_v2.parquet') else []))   # + chart-picture v2 extras (scoring/cp_v2_extra.py)
     R.to_parquet(f'{OUT}/STEP_A_SCORES_discover_2020_22.parquet', index=False)
     log('DONE', len(R), 'question+answer rows;', {f'passes_{int(f*100)}': int(R[f'passes_{int(f*100)}'].sum()) for f in TR.FLOORS})
