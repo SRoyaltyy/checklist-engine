@@ -58,7 +58,9 @@ def w_score(jm):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--workers', type=int, default=5); ap.add_argument('--chunk', type=int, default=400)
-    ap.add_argument('--tickers'); a = ap.parse_args()
+    ap.add_argument('--tickers'); ap.add_argument('--only', default=None,
+        help='comma-separated chunk indices to (re)build; default all. Launch plumbing for the parallel runner matrix - no math change.')
+    a = ap.parse_args()
     import threading
     def heartbeat():
         lw, lm = time.time(), time.monotonic()
@@ -97,7 +99,11 @@ if __name__ == '__main__':
     del base   # free ~1-2GB before the chunk loops; k has everything the scoring needs
     items = sorted(((key, kn) for key, tfs in plan.items() for kn in tfs), key=lambda x: (x[1][0], x[0], x[1][1]))
     chunks = [items[i:i + a.chunk] for i in range(0, len(items), a.chunk)]; log(f'{len(items)} questions in {len(chunks)} chunks')
+    only = {int(x) for x in a.only.split(',')} if a.only else None
+    if only is not None:
+        log('--only', sorted(only))
     for ci, ch in enumerate(chunks):
+        if only is not None and ci not in only: continue
         fo = f'{OUT}/chunks/scores_{ci:03d}.parquet'
         fa = f'{OUT}/chunks/answers_{ci:03d}.npz'
         if os.path.exists(fo) and (not SAVE or os.path.exists(fa)): continue
@@ -132,7 +138,8 @@ if __name__ == '__main__':
         done = ci + 1; el = time.time() - t0
         log(f'chunk {ci+1}/{len(chunks)}: {len(G["cols"])} q, {len(errs)} errors, {time.time()-tc:.0f}s; elapsed {el/3600:.2f}h')
         json.dump(dict(chunk=ci + 1, of=len(chunks), elapsed_h=round(el / 3600, 2), updated=dt.datetime.now().isoformat()), open(f'{OUT}/PROGRESS.json', 'w'))
-    R = pd.concat([pd.read_parquet(f'{OUT}/chunks/scores_{i:03d}.parquet') for i in range(len(chunks))]
-                  + ([pd.read_parquet(f'{OUT}/chunks/scores_cp_v2.parquet')] if os.path.exists(f'{OUT}/chunks/scores_cp_v2.parquet') else []))   # + chart-picture v2 extras (scoring/cp_v2_extra.py)
-    R.to_parquet(f'{OUT}/STEP_A_SCORES_discover_2020_22.parquet', index=False)
-    log('DONE', len(R), 'question+answer rows;', {f'passes_{int(f*100)}': int(R[f'passes_{int(f*100)}'].sum()) for f in TR.FLOORS})
+    if only is None:   # partial (--only) runs leave the concat to the full-run workflow
+        R = pd.concat([pd.read_parquet(f'{OUT}/chunks/scores_{i:03d}.parquet') for i in range(len(chunks))]
+                      + ([pd.read_parquet(f'{OUT}/chunks/scores_cp_v2.parquet')] if os.path.exists(f'{OUT}/chunks/scores_cp_v2.parquet') else []))   # + chart-picture v2 extras (scoring/cp_v2_extra.py)
+        R.to_parquet(f'{OUT}/STEP_A_SCORES_discover_2020_22.parquet', index=False)
+        log('DONE', len(R), 'question+answer rows;', {f'passes_{int(f*100)}': int(R[f'passes_{int(f*100)}'].sum()) for f in TR.FLOORS})

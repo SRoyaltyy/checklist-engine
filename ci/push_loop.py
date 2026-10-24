@@ -57,7 +57,15 @@ def push_piece(nnn, ch):
     if sh('git', '-C', clone, 'status', '--porcelain', 'step_a/').stdout.strip():
         sh('git', '-C', clone, '-c', 'user.name=step-a-bot', '-c', 'user.email=step-a-bot@users.noreply.github.com',
            'commit', '-q', '-m', f'Step A piece {int(nnn) + 1}/34 checkpoint')
-        sh('git', '-C', clone, 'push', '-q', 'origin', 'results-push:' + rb)
+        for attempt in range(6):   # matrix jobs push concurrently; rebase over each other and retry
+            r = sh('git', '-C', clone, 'push', '-q', 'origin', 'results-push:' + rb, check=False)
+            if r.returncode == 0:
+                break
+            sh('git', '-C', clone, 'fetch', '-q', 'origin', rb, check=False)
+            sh('git', '-C', clone, 'rebase', '-q', f'origin/{rb}', check=False)
+            time.sleep(5 + attempt * 10)
+        else:
+            raise RuntimeError(f'push failed after retries: {r.stderr[-300:]}')
     ans = os.path.join(ch, f'answers_{nnn}.npz')
     if os.path.exists(ans):
         rel = api(f"/releases/tags/{os.environ.get('RELEASE', 'data-2020-24-v1')}")
