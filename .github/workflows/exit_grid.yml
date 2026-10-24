@@ -99,3 +99,18 @@ jobs:
           I: ${{ matrix.i }}
           YEAR: ${{ matrix.y }}
         run: bash ci/exit_grid_chunk.sh
+  shortlist:
+    needs: [grid, gridyearly]
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + deps
+        run: python3 -m pip install -q --upgrade pip pandas numpy pyarrow
+      - name: Shortlist on 2020-21 fit (prereg §3-5), partial-tolerant
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/exit_grid_shortlist.sh
