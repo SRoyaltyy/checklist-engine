@@ -115,6 +115,14 @@ This file is the single source of truth; the newest entry overrides any pasted p
   - **What is proven**: matrix + per-chunk grid workflows are registered and dispatching; the combiner runs end-to-end on sample data; the serial run's checkpoint format is untouched (only launch plumbing changed).
   - **What is still open**: the chunk-1 identity proof (verify run) has not reported yet; first grid legs depend on `trade_base_rows.parquet` landing via `beb393b` (first queued leg that pushes); the combiner has no runner workflow yet (code + smoke test done); Step A pieces 9/34 done at dispatch time.
 
+- **2026-10-25 ~00:05 HKT — combiner runner workflow live; three bugs found in first live legs and fixed.**
+  - **What changed**
+    - `scoring/combine.py` v2 (`cb80b8a` on `kimi/exit-grid`): answers streamed per chunk (~43GB concat would not fit a runner); smoke-tested end-to-end again on the local sample.
+    - `ci/combine_run.sh` + `.github/workflows/combiner.yml` (`cb80b8a`, registered on `main` in `78cd10f`; YAML colon-in-step-name parse fix `b42e86e`/`5866590`; name-only gate `c49ce3e`): hourly gate checks all 34 answers chunks + grid precompute, fits on 2020-21 (one 2022 check), publishes to release `combine-2020-22-v1`.
+    - `.github/workflows/step_a.yml` (`26c700c` on branch and main): added `actions: write` — the first finished leg's grid dispatch failed 403 (GITHUB_TOKEN denies cross-workflow dispatch without it).
+  - **Run ids**: combiner gate run `40107225696` completed SUCCESS (listed 31 missing chunks, no-opped cleanly). Matrix run `40105028128`: first leg done — piece (3) finished in 31 min with 0 errors, `scores_003.parquet` + `answers_003.npz` published; 13 legs concurrent at last check.
+  - **What is still open**: `trade_base_rows.parquet` push pending (first leg ran pre-`beb393b` code); grid dispatches for chunks 0/1/3 need backfill once base rows land; verify proof and leak verdict still pending.
+
 ## 1. Goal
 - Find checklist question + answer pairs that make money on average per trade.
 - **Expected profit** = win% × average win − loss% × average loss. Fees of 30bp each way are taken off first.
