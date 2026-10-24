@@ -19,21 +19,31 @@ def disk_ok(path):
     free = shutil.disk_usage(path).free / 1e9; h = dt.datetime.now().hour; need = 7 if 17 <= h < 21 else 2
     return free >= need, free, need
 
-def w_base(tk):
-    d = G['B'][tk]; t = TR.ticker_trades(tk, d, G['C']['sessions'], 'discover')
-    F = E.filter_cols(tk, d, G['C']).set_index('date'); t = t.join(F[['passes_filter', 'mcap_D1']], on='date'); return t
+def _init_child(plan, cols):
+    """Windows-spawn compat: Pool workers re-import this module and start with empty globals (Unix fork would
+    inherit them). Restore engine state and the small shared objects in each worker. Plumbing only — no formula,
+    data, or scoring changes. C is rebuilt from the data folder per worker (cheap) instead of being pickled."""
+    os.environ.setdefault('GRID_FILE', '/nonexistent')
+    E.H71.load_buckets(); E.HIST.clear(); E.load_history(E.HISTF); E.GRIDV.clear(); E.GRIDV.update(E.load_grid())
+    c = E.load_context()
+    c['shares_by'] = {k: g for k, g in c['shares'].groupby('ticker')}
+    c['regsho_by'] = {k: g.date.values for k, g in c['regsho'].groupby('symbol')}
+    q = pd.read_csv(E.QUAR); c['mcap_bad'] = set(q[q.action == 'mcap_unknown'].ticker); c['mcap_jump'] = set(q[q.action == 'flag'].ticker)
+    G['C'], G['plan'], G['cols'] = c, plan, cols
 
-def w_answers(tk):
-    d = G['B'][tk]; idx = G['keep'].get(tk)
+def w_base(t):
+    tk, d = t          # task carries its own bars (spawn-safe; fork used to read them from G['B'])
+    tr = TR.ticker_trades(tk, d, G['C']['sessions'], 'discover')
+    F = E.filter_cols(tk, d, G['C']).set_index('date'); return tr.join(F[['passes_filter', 'mcap_D1']], on='date')
+
+def w_answers(t):
+    tk, d, idx = t
     if idx is None: return tk, None, {}
     A, err = E.run_ticker(tk, d, G['C'], G['plan']); A = A.set_index('date').reindex(idx)
     M = np.full((len(idx), len(G['cols'])), -1, np.int8)
     for j, c in enumerate(G['cols']):
         if c in A.columns: M[:, j] = A[c].fillna(-1).to_numpy(np.int8)
     return tk, M, err
-
-def w_score(j):
-    rows = TR.trade_rows(G['base'], G['M'][:, j], G['cols'][j]); return TR.score_question(rows, G['L'])
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--workers', type=int, default=5); ap.add_argument('--chunk', type=int, default=400)
@@ -85,16 +95,20 @@ if __name__ == '__main__':
         G['plan'] = sub
         G['cols'] = [(f"H|{key[1]}|{key[2]}" if key[0] == 'H' else f"{key[1]}|{key[2]}") + f"|{kn[0]}d|{kn[1]}" for key, kn in ch]
         tc = time.time()
-        with Pool(a.workers) as p: res = p.map(w_answers, list(G['keep']), chunksize=10)
-        M = np.full((len(k), len(G['cols'])), -1, np.int8); off = 0; errs = {}
-        for tk, m, e in res:
-            if m is not None: M[off:off + len(m)] = m; off += len(m)
-            errs.update({f'{tk}:{x}': v for x, v in e.items()})
-        assert off == len(k); res = None; G['M'] = M
+        tasks = [(tk, G['B'][tk], idx) for tk, idx in G['keep'].items()]
+        with Pool(a.workers, initializer=_init_child, initargs=(sub, G['cols'])) as p:
+            M = np.full((len(k), len(G['cols'])), -1, np.int8); off = 0; errs = {}
+            for tk, m, e in p.imap(w_answers, tasks, chunksize=10):   # imap: fill M streaming, no full result list in RAM
+                if m is not None: M[off:off + len(m)] = m; off += len(m)
+                errs.update({f'{tk}:{x}': v for x, v in e.items()})
+        del tasks
+        assert off == len(k)
         if SAVE:   # every day's answer for every question (-1 = blank), row order = trade_base_rows.parquet; for the combining step
             np.savez_compressed(fa + '.tmp.npz', M=M, cols=np.array(G['cols'])); os.replace(fa + '.tmp.npz', fa)
-        with Pool(a.workers) as p: S = sum(p.map(w_score, range(len(G['cols']))), [])
-        G['M'] = M = None
+        S = []
+        for j in range(len(G['cols'])):   # scoring in the parent: shipping M to workers would copy ~1.1GB per worker
+            S += TR.score_question(TR.trade_rows(k, M[:, j], G['cols'][j]), L)
+        M = None
         pd.DataFrame(S).to_parquet(fo + '.tmp', index=False); os.replace(fo + '.tmp', fo)
         json.dump(errs, open(f'{OUT}/chunks/errors_{ci:03d}.json', 'w'))
         done = ci + 1; el = time.time() - t0

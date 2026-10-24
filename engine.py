@@ -110,9 +110,13 @@ def kbars(d, k, o):
 USES = {}; GRIDV = {}
 import signal
 QTIMEOUT = float(os.environ.get('Q_TIMEOUT_S', '0'))   # per-question time limit (seconds, per ticker); 0 = off
+_HAS_ALRM = hasattr(signal, 'SIGALRM') and hasattr(signal, 'setitimer')   # Unix only; Windows: timeout off, run unpatched formulas
 class QuestionTimeout(Exception): pass
 def _alarm(sig, frm): raise QuestionTimeout(f'question took > {QTIMEOUT}s')
-if QTIMEOUT: signal.signal(signal.SIGALRM, _alarm)
+if QTIMEOUT and _HAS_ALRM: signal.signal(signal.SIGALRM, _alarm)
+elif QTIMEOUT and not os.environ.get('KIMI_TIMEOUT_WARNED'):
+    os.environ['KIMI_TIMEOUT_WARNED'] = '1'   # env is inherited by spawned workers: warn once per run, not once per worker
+    print('WARNING: Q_TIMEOUT_S set but SIGALRM unavailable on this platform; per-question timeout disabled', flush=True)
 def run_ticker(tk, d, C, plan):
     d = d.reset_index(drop=True); T = len(d); cols = {}; err = {}
     REGd = {(v, f): (labels, fn) for (v, f, labels, fn, lbs) in REG}; HISTd = {(v, hv) for (lt, v, hv, labels, lbs) in HIST}
@@ -136,11 +140,11 @@ def run_ticker(tk, d, C, plan):
                 for N in Ns:
                     P.used = set()
                     try:
-                        if QTIMEOUT: signal.setitimer(signal.ITIMER_REAL, QTIMEOUT)
+                        if QTIMEOUT and _HAS_ALRM: signal.setitimer(signal.ITIMER_REAL, QTIMEOUT)
                         name, a = one(N)
                     except Exception as e: err[f"{key}|{k}d|{N}"] = repr(e)[:160]; continue
                     finally:
-                        if QTIMEOUT: signal.setitimer(signal.ITIMER_REAL, 0)
+                        if QTIMEOUT and _HAS_ALRM: signal.setitimer(signal.ITIMER_REAL, 0)
                     if a is None: continue
                     if len(a) != len(pos): err[f"{key}|{k}d|{N}"] = f'length {len(a)} != bars {len(pos)}'; continue
                     used = USES.setdefault(key, set()); used |= P.used
