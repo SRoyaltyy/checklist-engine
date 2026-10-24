@@ -113,7 +113,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - Near-duplicate cutoffs make the bar conservative. This is stated, and no action is needed.
 
 ## 7b. Combining model (pre-registered)
-- Use only answers that were confirmed on 2023–24. Fit a logistic or tally model on 2020–22, show a calibration table on 2023–24, and freeze it before the 2025–26 shot.
+- Fit a logistic or tally model on 2020–22 using every question that isn't junk (see "Single questions vs combinations" below): shortlist and tune on 2020–21, check on 2022. Test the final combined model once on 2023–24 and show its calibration table there. Freeze it before the 2025–26 shot.
 - **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum. The probability only exists after the combining model is fitted, so this is tested on 2023–24 only. The flip counts (questions turning bullish vs bearish since yesterday) and yesterday's price move come straight from the saved answers, so they go into Step A as ordinary questions. Both add tries to the luck bar.
 
 ### Single questions vs combinations (Cyrus 2026-10-24)
