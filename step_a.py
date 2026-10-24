@@ -46,6 +46,16 @@ def w_answers(t):
         if c in A.columns: M[:, j] = A[c].fillna(-1).to_numpy(np.int8)
     return tk, M, err
 
+def _init_score(kk, _unused):
+    """Scoring-phase workers: trade rows + a fresh luck-check module (module objects don't
+    pickle, so each worker rebuilds it identically via TR.luck_check())."""
+    G['k'] = kk
+    G['L'] = TR.luck_check()
+
+def w_score(jm):
+    col, m = jm
+    return TR.score_question(TR.trade_rows(G['k'], m, col), G['L'])
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--workers', type=int, default=5); ap.add_argument('--chunk', type=int, default=400)
     ap.add_argument('--tickers'); a = ap.parse_args()
@@ -113,8 +123,9 @@ if __name__ == '__main__':
         if SAVE:   # every day's answer for every question (-1 = blank), row order = trade_base_rows.parquet; for the combining step
             np.savez_compressed(fa + '.tmp.npz', M=M, cols=np.array(G['cols'])); os.replace(fa + '.tmp.npz', fa)
         S = []
-        for j in range(len(G['cols'])):   # scoring in the parent: shipping M to workers would copy ~1.1GB per worker
-            S += TR.score_question(TR.trade_rows(k, M[:, j], G['cols'][j]), L)
+        with Pool(min(a.workers, 4), initializer=_init_score, initargs=(k, L)) as p:   # per-question independent; answers pool already closed
+            for part in p.imap(w_score, [(G['cols'][j], M[:, j]) for j in range(len(G['cols']))], chunksize=8):
+                S += part
         M = None
         pd.DataFrame(S).to_parquet(fo + '.tmp', index=False); os.replace(fo + '.tmp', fo)
         json.dump(errs, open(f'{OUT}/chunks/errors_{ci:03d}.json', 'w'))
