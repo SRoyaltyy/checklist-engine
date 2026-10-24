@@ -65,6 +65,14 @@ def own_pct(x, look=250):
 def thirds_pos(idx, N):
     return np.where(idx < N/3, 0, np.where(idx < 2*N/3, 1, 2))
 
+def _sh(x, k):
+    """shift right by k with NaN fill; k >= len(x) -> all NaN, len(x). Short-history tickers
+    used to get len-k arrays here and broadcast-crash (fixed 2026-10-24, Kimi)."""
+    x = np.asarray(x, float)
+    if not k: return x
+    if k >= len(x): return np.full(len(x), np.nan)
+    return np.r_[np.full(k, np.nan), x[:-k]]
+
 # ------------------------------------------------------------------ indicators
 def indicators(d):
     o, h, l, c, v = (d[k].to_numpy(dtype=float) for k in ('open', 'high', 'low', 'close', 'volume'))
@@ -92,7 +100,7 @@ def indicators(d):
     hh = lambda n: talib.MAX(h, n); ll = lambda n: talib.MIN(l, n)
     I['tenkan'] = (hh(9) + ll(9))/2; I['kijun'] = (hh(26) + ll(26))/2
     sa = (I['tenkan'] + I['kijun'])/2; sb = (hh(52) + ll(52))/2
-    sh = lambda x, k: np.r_[np.full(k, np.nan), x[:-k]]
+    sh = _sh
     I['spa'] = sh(sa, 26); I['spb'] = sh(sb, 26)
     I['typ_rng_med60'] = pd_median(I['rng'], 60)
     return I
@@ -648,7 +656,7 @@ def ich_ta(I, N):
     return pick([s > .6, s > 0, np.ones(len(s), bool)], ok(S))
 @facet('Ichimoku', 'chikou_route', ['improving', 'worsening', 'same'])
 def ich_ch(I, N):
-    c = I['c']; ch = c - np.r_[np.full(26, np.nan), c[:-26]]; S = W(np.sign(ch), N); a, b = S[:, 0], S[:, -1]
+    c = I['c']; ch = c - _sh(c, 26); S = W(np.sign(ch), N); a, b = S[:, 0], S[:, -1]
     return pick([b > a, b < a, np.ones(len(S), bool)], ok(S))
 @facet('Ichimoku', 'kijun_tests', ['support_held', 'resistance_held', 'broke', 'none'])
 def ich_kt(I, N):
@@ -897,7 +905,7 @@ def _weekly(I):
     c = I['c']; return talib.SMA(c, 50), talib.SMA(c, 100), talib.SMA(c, 200)  # ~10/20/40-week MAs from daily bars
 @facet('big_picture', 'weekly_trend', ['rising', 'falling', 'flat'], lbs=(100,))
 def bp_wt(I, N):
-    a, b, c = _weekly(I); r = b/np.r_[np.full(N, np.nan), b[:-N]] - 1; return pick([r > .03, r < -.03, np.ones(len(r), bool)], ~np.isnan(r))
+    a, b, c = _weekly(I); r = b/_sh(b, N) - 1; return pick([r > .03, r < -.03, np.ones(len(r), bool)], ~np.isnan(r))
 @facet('big_picture', 'weekly_stack', ['bull', 'bear', 'mixed'], lbs=(1,))
 def bp_ws(I, N):
     a, b, c = _weekly(I); return pick([(a > b) & (b > c), (a < b) & (b < c), np.ones(len(a), bool)], ~np.isnan(c))

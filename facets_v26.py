@@ -2,7 +2,7 @@
 lever-5 history questions (HISTORY_LEVER_v2.6 'keep' rows) as generic questions on each variant's main line.
 All sizes are in the stock's own ATR14. Everything as of close of bar t; engine shifts by 1 bar."""
 import numpy as np, talib
-from facets import REG, facet, W, pick, ok, tstat_slope, pairs, own_pct
+from facets import REG, facet, W, pick, ok, tstat_slope, pairs, own_pct, _sh
 from params import P
 
 # ---------------- phase list ----------------
@@ -156,7 +156,7 @@ def nh_gs(I, N):
 def rv_abs(I, N):
     c, pc, a, rv = I['c'], I['pc'], I['atr'], I['rvol']
     with np.errstate(all='ignore'): day = (rv > 3) & (np.abs(c - pc) < .5*a)
-    prior = c / np.r_[np.full(10, np.nan), c[:-10]] - 1
+    prior = c / _sh(c, 10) - 1
     D, P = W(day.astype(float), N), W(prior, N); T = len(c); out = np.full(T, -1, np.int8)
     for t in np.where(ok(D))[0]:
         i = np.where(D[t] == 1)[0]
@@ -351,7 +351,7 @@ def hist_answer(hv, s, I, N, unit=None):
             S = W(I['spy'], N); i = np.argmin(np.nan_to_num(X, nan=np.inf), 1); j = np.argmin(np.nan_to_num(S, nan=np.inf), 1)
             return pick([i < j - 1, j < i - 1, one], v & ok(S))
         if hv == 'timeframe_agreement':
-            a = s - np.r_[np.full(10, np.nan), s[:-10]]; b = s - np.r_[np.full(60, np.nan), s[:-60]]
+            a = s - _sh(s, 10); b = s - _sh(s, 60)
             return pick([(a > 0) & (b > 0), (a < 0) & (b < 0), one], ~np.isnan(a) & ~np.isnan(b))
         if hv == 'shock_recovery':
             # given back fraction g of the shock: <1/3 held, 1/3-2/3 partial, >2/3 faded (up) / recovered (down)

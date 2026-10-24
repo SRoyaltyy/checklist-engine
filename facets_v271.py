@@ -79,7 +79,12 @@ def unit_of(I, v, X, N):
     return np.where(d > 0, d, np.nan)
 
 def _sh(x, k):
-    x = np.asarray(x, float); return np.r_[np.full(k, np.nan), x[:-k]] if k else x
+    """shift right by k, fill first k with NaN, drop last k. k >= len(x) -> all NaN, len(x)
+    (short-history tickers used to get len-k arrays here and broadcast-crash the history questions)."""
+    x = np.asarray(x, float)
+    if not k: return x
+    if k >= len(x): return np.full(len(x), np.nan)
+    return np.r_[np.full(k, np.nan), x[:-k]]
 
 def _last_true_idx(m):
     """per row of bool matrix: last column index that is True, else -1"""
