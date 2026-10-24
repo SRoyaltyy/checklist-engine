@@ -36,13 +36,26 @@ print('downloaded', name, a['size'])
 PY
 }
 
-# gate 1: every Step A answers chunk must be published
+# gate 1: every Step A answers chunk must be published (check names only - no downloads yet)
+names=$(python3 - "$RELEASE" <<'PY'
+import sys, json, os, urllib.request
+tok = os.environ['GITHUB_TOKEN']
+api = f"https://api.github.com/repos/{os.environ['GH_REPO']}"
+rel = json.load(urllib.request.urlopen(urllib.request.Request(f"{api}/releases/tags/{sys.argv[1]}",
+                             headers={'Authorization': f'token {tok}'})))
+print('\n'.join(a['name'] for a in rel['assets']))
+PY
+)
 missing=0
 for i in $(seq 0 33); do
     n=$(printf 'answers_%03d.npz' "$i")
-    dl "$RELEASE" "$n" "$W/answers" || missing=1
+    echo "$names" | grep -qx "$n" || { echo "missing $n"; missing=1; }
 done
 [ "$missing" -eq 0 ] || { echo 'Step A answers not complete yet; nothing to do'; exit 0; }
+# all present: download them for real
+for i in $(seq 0 33); do
+    dl "$RELEASE" "$(printf 'answers_%03d.npz' "$i")" "$W/answers"
+done
 
 # trade base rows (results branch first, release fallback) - same as exit_grid_prep.sh
 git fetch -q origin results/step-a-2020-22
