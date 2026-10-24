@@ -1,7 +1,8 @@
-# Combiner (combining model) runner job - fits the world-state model once ALL Step A answers
-# chunks exist, publishes model artifacts to release combine-2020-22-v1 (METHODOLOGY 0b:
-# "write and test the combining model code now, so probabilities come out the moment the
-# answers finish"). Hourly schedule re-checks the gate; every gate exit is a clean no-op.
+# Combiner (combining model) fit - one matrix job per model target so the two fits run in
+# parallel on free runners (a single job fitting both would need ~5.4h > the 360-min cap;
+# measured 2.7 min/iter at 400k trades x 15k questions). Gates on ALL Step A answers chunks +
+# grid precompute; publishes model_<target>.npz + model.json to MODEL_RELEASE. The second
+# target to finish dispatches combiner_predict.
 name: combiner
 on:
   workflow_dispatch:
@@ -9,6 +10,7 @@ on:
     - cron: '53 * * * *'
 permissions:
   contents: write
+  actions: write
 env:
   RELEASE: data-2020-24-v1
   GRID_RELEASE: grid-2020-22-v1
@@ -17,6 +19,10 @@ jobs:
   fit:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [logistic, ridge]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,8 +37,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: bash ci/fetch_release.sh "$RELEASE" "$RUNNER_TEMP/data"
-      - name: Fit combining model when all inputs are ready
+      - name: Fit combining model (${{ matrix.target }}) when all inputs are ready
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          TARGET: ${{ matrix.target }}
         run: bash ci/combine_run.sh
