@@ -4,7 +4,7 @@
 **Who and why.** Cyrus Fung, based in Hong Kong, trades US stocks. A team of AI assistants works on this for him ("the War room": James, New Bot, Theme Radar, Grok Bot, Trading Bot Taskforce, Manager Bot). He wants a **scanner**: code that asks thousands of fixed yes/no questions about every US stock each day, and learns which answers have been followed by profitable trades.
 
 **The repos.**
-- `SRoyaltyy/checklist-engine` (this repo) holds the question tree, the results, and this doc. The scanner engine code is on branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) (commit `ccf66b6`).
+- `SRoyaltyy/checklist-engine` (this repo) holds the question tree, the results, and this doc. The scanner engine code is on branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) (use commit `487387f` or later).
 - `SRoyaltyy/fullscan` is a separate, live daily stock-picking pipeline. It supplies the tradeable-stock filter. Don't merge the two.
 - `SRoyaltyy/theme-radar` is a separate theme and sector scorer. Don't merge it either.
 
@@ -61,6 +61,16 @@
 
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
+### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-24 08:45 HKT (Taskforce): Step A handoff.**
+  - Engine: branch `engine/v2.7.2.2` @ `487387f`. Run `python3 step_a.py --workers N --chunk 400` with `CHECKLIST_DATA_DIR` and `OUT_DIR` set. Bars are cut at 2022-12-31 inside the script.
+  - `487387f` saves every stock-day's answer to every question: `chunks/answers_NNN.npz` (int8, -1 = blank, 0/1 = answer) plus `chunks/trade_base_rows.parquet` (the ticker and date of each row). Saving is on by default (`SAVE_ANSWERS=1`). Pieces that have scores but no answers file get re-run automatically, so pieces 0–8 from `results/step-a-2020-22` will be redone.
+  - Push `scores_NNN.parquet` and `errors_NNN.json` to `results/step-a-2020-22`. Upload `answers_*.npz` (about 100–250MB each) as **release assets**, never git (GitHub rejects files over 100MB).
+  - Already fixed, don't redo: the calendar_context leak (`tests/test_leak.py`, 20 cut points, 0 differences), the multi_year_position and pump_fade_cycles crashes (`032c6e3`), mcap-unknown stocks (`bd36a24`), and the 120s per-question timeout plus 5-minute heartbeat (`7371812`).
+  - Still open: about 300–550 "can't answer" errors per piece on stocks with short histories (`errors_NNN.json`); a code fix only.
+  - Universe: 7,238 stocks, 2,845,186 trades that are filtered and ready, and 208,497 set aside as not ready. 34 pieces of 400 questions each, plus `scores_cp_v2.parquet` (8 chart-picture tags, none pass).
+  - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
+
 ## 1. Goal
 - Find checklist question + answer pairs that make money on average per trade.
 - **Expected profit** = win% × average win − loss% × average loss. Fees of 30bp each way are taken off first.
@@ -98,7 +108,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - **2025–26 stays sealed.** It gets one shot at the very end.
 
 ## 6. Plan
-- **Status (2026-10-23):** Step A has **not started**. It waits for Cyrus to say "start Step A" to Taskforce. The scanner engine code is on branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) (commit `ccf66b6`). It isn't merged.
+- **Status (2026-10-23):** Step A has **not started**. It waits for Cyrus to say "start Step A" to Taskforce. The scanner engine code is on branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) (use commit `487387f` or later). It isn't merged.
 - **Step A:** full 2020–24 run at default cutoffs, keeping full rows. Output goes to Drive in parts of about 1GB.
 - **Step B:** sweep the cutoff grid on 2020–22, tallies only.
 - **Step C:** confirm the winners on 2023–24.
