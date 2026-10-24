@@ -7,6 +7,7 @@ set -euo pipefail
 W="$RUNNER_TEMP"
 TAG="${MODEL_RELEASE:-combine-2020-22-v1}"
 GRID_TAG="${GRID_RELEASE:-grid-2020-22-v1}"
+TARGET="${TARGET:?need TARGET (logistic|ridge)}"
 bash ci/fetch_release.sh "$RELEASE" "$W/data"
 export CHECKLIST_DATA_DIR="$W/data" GRID_FILE=/nonexistent
 
@@ -71,13 +72,20 @@ dl "$GRID_TAG" meta.json "$W/grid_pre"
 dl "$GRID_TAG" bench_pre.npz "$W/grid_pre"
 
 # already published?
-if python3 ci/release_assets.py have "$TAG" model.npz model.json check_2022.json; then
-    echo 'combining model already published; nothing to do'
+if python3 ci/release_assets.py have "$TAG" "model_${TARGET}.npz" model.json; then
+    echo "combining model ($TARGET) already published; nothing to do"
     exit 0
 fi
 
 python3 scoring/combine.py fit --answers "$W/answers" --base "$W/trade_base_rows.parquet" \
     --pre "$W/grid_pre" --bench "$W/grid_pre/bench_pre.npz" --out "$W/model" \
-    --max-trades 400000 --cells-per-trade 12 --iters 60
-python3 ci/release_assets.py upload "$TAG" "$W/model/model.npz" "$W/model/model.json" "$W/model/check_2022.json"
-echo 'combiner fit done and published to' "$TAG"
+    --max-trades 400000 --cells-per-trade 12 --iters 60 --target "$TARGET"
+python3 ci/release_assets.py upload "$TAG" "$W/model/model_${TARGET}.npz" "$W/model/model.json"
+echo "combiner fit ($TARGET) done and published to $TAG"
+
+# if the sibling target is also published, kick the predict phase
+if python3 ci/release_assets.py have "$TAG" "model_$([ "$TARGET" = logistic ] && echo ridge || echo logistic).npz"; then
+    curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
+        "https://api.github.com/repos/${GH_REPO}/actions/workflows/combiner_predict.yml/dispatches" \
+        -d '{"ref":"kimi/exit-grid"}' -o /dev/null -w "predict dispatch:%{http_code}\n"
+fi

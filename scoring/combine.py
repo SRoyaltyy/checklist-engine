@@ -143,7 +143,7 @@ class Featurizer:
         off = 0
         for j, lev in enumerate(self.levels):
             if lev is None: continue
-            lut[j, lev.astype(np.int64)] = beta[off:off + len(lev)]
+            lut[j, (lev.astype(np.int64) + 256) % 256] = beta[off:off + len(lev)]
             off += len(lev)
         assert off == len(beta)
         return lut
@@ -158,12 +158,12 @@ class Featurizer:
                 j1 = min(j0 + B, M.shape[1])
                 g0, g1 = off_col + j0, off_col + j1
                 blk = M[:, j0:j1].astype(np.int32)
-                key = blk + 256 * np.arange(g0, g1, dtype=np.int32)[None, :]
-                sums = np.bincount(key.ravel(), weights=np.repeat(s, j1 - j0), minlength=256 * g1)
+                key = (blk + 1) + 257 * np.arange(g0, g1, dtype=np.int32)[None, :]
+                sums = np.bincount(key.ravel(), weights=np.repeat(s, j1 - j0), minlength=257 * g1)
                 for gj in range(g0, g1):
                     lev = self.levels[gj]
                     if lev is None: continue
-                    g[off_feat:off_feat + len(lev)] = sums[256 * gj + lev.astype(np.int64)]
+                    g[off_feat:off_feat + len(lev)] = sums[257 * gj + 1 + lev.astype(np.int64)]
                     off_feat += len(lev)
             off_col += M.shape[1]
         assert off_col == len(self.cols) and off_feat == self.n_feat
@@ -182,7 +182,7 @@ class Featurizer:
                 luts_b = lut[off_col + j0: off_col + j1]             # (b, 256)
                 for r0 in range(0, n, row_block):
                     r1 = min(r0 + row_block, n)
-                    blk = M[r0:r1, j0:j1].astype(np.int64)
+                    blk = M[r0:r1, j0:j1].astype(np.int64) & 255         # int8 codes wrap into [0,255]
                     out[r0:r1] += np.take_along_axis(
                         luts_b[None, :, :], blk[:, :, None], 2)[:, :, 0].sum(1)
             off_col += M.shape[1]
@@ -340,20 +340,25 @@ def cmd_fit(a):
     tidx, cid, ret = build_rows(pre_fit, len(fit_idx), a.cells_per_trade)
     log('fit rows:', len(tidx), f'({len(fit_idx)} trades x {a.cells_per_trade} pairs x 30 holds)')
     os.makedirs(a.out, exist_ok=True)
-    lut_l, gamma_l, alpha_l, hist_l = fit_model(F, parts_fit, tidx, cid, ret, cells, rf, iters=a.iters, target='logistic')
-    lut_r, gamma_r, alpha_r, hist_r = fit_model(F, parts_fit, tidx, cid, ret, cells, rf, iters=a.iters, target='ridge')
+    targets = ['logistic', 'ridge'] if a.target == 'both' else [a.target]
+    models = {}
+    for t in targets:
+        lut, gamma, alpha, hist = fit_model(F, parts_fit, tidx, cid, ret, cells, rf, iters=a.iters, target=t)
+        np.savez_compressed(os.path.join(a.out, f'model_{t}.npz'),
+                            lut=lut, gamma=gamma, alpha=alpha, hist=hist)
+        models[t] = (lut, gamma, alpha)
     del parts_fit
     json.dump(dict(cols=cols, levels=[None if l is None else l.tolist() for l in F.levels],
-                   junk=F.junk.tolist(), gamma_log=gamma_l.tolist(), alpha_log=alpha_l,
-                   gamma_ridge=gamma_r.tolist(), alpha_ridge=alpha_r, hist_log=hist_l, hist_ridge=hist_r,
+                   junk=F.junk.tolist(), targets=targets,
                    cells=cells.tolist(), fit_years=a.fit_years, check_year=a.check_year,
                    max_trades=a.max_trades, cells_per_trade=a.cells_per_trade),
               open(os.path.join(a.out, 'model.json'), 'w'))
-    np.savez_compressed(os.path.join(a.out, 'model.npz'), lut_log=lut_l, lut_ridge=lut_r)
     log('model saved to', a.out)
-    if a.check_year and len(check_idx):
+    if a.check_year and len(check_idx) and len(targets) == 2:
         parts_chk = [(M, c) for M, c in iter_answers(a.answers, keep=check_idx)]
         pre_chk = load_pre(a.pre, check_idx)
+        lut_l, gamma_l, alpha_l = models['logistic']
+        lut_r, gamma_r, alpha_r = models['ridge']
         ts_l = F.predict_parts(parts_chk, lut_l); ts_r = F.predict_parts(parts_chk, lut_r)
         summary, _ = surface_summary(ts_l, ts_r, gamma_l, gamma_r, alpha_l, alpha_r,
                                      pre_chk, cells, rf, bench_pre, f'check-{a.check_year}')
@@ -368,8 +373,10 @@ def cmd_predict(a):
     F = Featurizer(meta['cols'])
     F.levels = [None if l is None else np.array(l, np.int16) for l in meta['levels']]
     F.junk = np.array(meta['junk'], bool)
-    W = np.load(os.path.join(a.model, 'model.npz'))
-    gamma_l = np.array(meta['gamma_log']); gamma_r = np.array(meta['gamma_ridge'])
+    WL = np.load(os.path.join(a.model, 'model_logistic.npz'))
+    WR = np.load(os.path.join(a.model, 'model_ridge.npz'))
+    gamma_l, alpha_l = WL['gamma'], float(WL['alpha'])
+    gamma_r, alpha_r = WR['gamma'], float(WR['alpha'])
     cells = np.array(meta['cells'], np.int16)
     rf = np.stack([cells[:, 0] / 30.0, cells[:, 1] / 30.0, cells[:, 2] / 30.0,
                    (cells[:, 2] == 0).astype(np.float32)], 1).astype(np.float32)
@@ -379,8 +386,8 @@ def cmd_predict(a):
     # one streaming pass over the answers: accumulate trade scores for every trade
     ts_l = np.zeros(len(base)); ts_r = np.zeros(len(base))
     for M, _c in iter_answers(a.answers):
-        F.predict_parts([(M, _c)], W['lut_log'], out=ts_l)
-        F.predict_parts([(M, _c)], W['lut_ridge'], out=ts_r)
+        F.predict_parts([(M, _c)], WL['lut'], out=ts_l)
+        F.predict_parts([(M, _c)], WR['lut'], out=ts_r)
     os.makedirs(a.out, exist_ok=True)
     summaries = []
     for y in sorted(np.unique(year)):
@@ -388,7 +395,7 @@ def cmd_predict(a):
         pd_y = dict(**{k: (pre_d[k][:, idx] if pre_d[k].ndim == 2 else pre_d[k][idx])
                        for k in ('tp_day', 'tp_ret', 'sl_day', 'sl_ret', 'clos', 'didx')})
         summary, det = surface_summary(ts_l[idx], ts_r[idx], gamma_l, gamma_r,
-                                       meta['alpha_log'], meta['alpha_ridge'],
+                                       alpha_l, alpha_r,
                                        pd_y, cells, rf, bench_pre, f'year-{y}')
         df = pd.DataFrame(dict(ticker=base.ticker.to_numpy()[idx], date=base.date.to_numpy()[idx],
                                tp=cells[det['cell']][:, 0], hold=cells[det['cell']][:, 1],
@@ -409,6 +416,8 @@ if __name__ == '__main__':
     f.add_argument('--pre', default='grid_pre'); f.add_argument('--bench', default='grid_pre/bench_pre.npz')
     f.add_argument('--out', default='model'); f.add_argument('--max-trades', type=int, default=400000)
     f.add_argument('--cells-per-trade', type=int, default=12); f.add_argument('--iters', type=int, default=60)
+    f.add_argument('--target', choices=['both', 'logistic', 'ridge'], default='both',
+                   help='which model to fit; the runner matrix fits one target per job in parallel')
     f.add_argument('--fit-years', type=int, nargs='+', default=[2020, 2021]); f.add_argument('--check-year', type=int, default=2022)
     p = sub.add_parser('predict')
     p.add_argument('--model', required=True); p.add_argument('--answers', required=True)
