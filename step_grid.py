@@ -167,7 +167,7 @@ def chunk(args):
 
     didx = d['didx']
     out_rows = {k: [] for k in ('qid', 'ans', 'tp', 'hold', 'stop')}
-    stats = {k: [] for k in ('n', 'win_cnt', 'win_sum', 'sum_ret', 'sum_bench', 'sum_spy')}
+    stats = {k: [] for k in ('n', 'win_cnt', 'win_sum', 'sum_ret', 'sum_bench', 'sum_spy', 'sum_sq')}
     QB = 100                                                # questions per matmul batch (float32 (QB*2, n) ~ 2.2GB)
     for mi in range(X.NTP):
         for si in range(-1, X.NSL):
@@ -195,6 +195,7 @@ def chunk(args):
                     win_sum = G @ np.where(win, rm, 0.0).T
                     sum_bench = G @ bm.T
                     sum_spy = G @ sm.T
+                    sum_sq = G @ (rm * rm).T
                     k = len(cols[qs])
                     out_rows['qid'].append(np.repeat(cols[qs], X.NH))
                     out_rows['ans'].append(np.tile(np.full(k, ans, np.int8), X.NH))
@@ -207,6 +208,7 @@ def chunk(args):
                     stats['sum_ret'].append(np.asarray(sum_ret, np.float64).ravel())
                     stats['sum_bench'].append(np.asarray(sum_bench, np.float64).ravel())
                     stats['sum_spy'].append(np.asarray(sum_spy, np.float64).ravel())
+                    stats['sum_sq'].append(np.asarray(sum_sq, np.float64).ravel())
         log(f'chunk {args.i}: m={X.TP_PCTS[mi]:.0%} done')
     df = pd.DataFrame({k: np.concatenate(v) for k, v in out_rows.items()})
     for k, v in stats.items():
