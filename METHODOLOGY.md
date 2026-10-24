@@ -62,6 +62,11 @@
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+This file is the single source of truth; the newest entry overrides any pasted prompt.
+- **2026-10-24 ~08:50 HKT (Cyrus via Grok Bot): combining rules and reminders.**
+  - Combining rules: see "Single questions vs combinations" and §7b. Shortlist on 2020-21, test pairs and the combining model on 2022, and use 2023-24 once for the final test. Failing alone doesn't drop a question.
+  - Don't store `answers_*.npz` on the shared bot computer (only about 8.8GB free). All the answers files together are 3-8GB.
+  - Hard rules unchanged: 2020-22 only for scoring, nothing from 2025 on, yes/no or fixed-set answers only, no free text.
 - **2026-10-24 08:45 HKT (Taskforce): Step A handoff.**
   - Engine: branch `engine/v2.7.2.2` @ `487387f`. Run `python3 step_a.py --workers N --chunk 400` with `CHECKLIST_DATA_DIR` and `OUT_DIR` set. Bars are cut at 2022-12-31 inside the script.
   - `487387f` saves every stock-day's answer to every question: `chunks/answers_NNN.npz` (int8, -1 = blank, 0/1 = answer) plus `chunks/trade_base_rows.parquet` (the ticker and date of each row). Saving is on by default (`SAVE_ANSWERS=1`). Pieces that have scores but no answers file get re-run automatically, so pieces 0–8 from `results/step-a-2020-22` will be redone.
@@ -70,17 +75,6 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - Still open: about 300–550 "can't answer" errors per piece on stocks with short histories (`errors_NNN.json`); a code fix only.
   - Universe: 7,238 stocks, 2,845,186 trades that are filtered and ready, and 208,497 set aside as not ready. 34 pieces of 400 questions each, plus `scores_cp_v2.parquet` (8 chart-picture tags, none pass).
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
-
-## Latest updates for Kimi (newest first)
-This file is the single source of truth; the newest entry overrides any pasted prompt.
-
-### 2026-10-24 ~08:45 HKT
-- **Step A code:** use branch engine/v2.7.2.2 at commit 487387f or later, not d411307. It saves every stock-day's answer to every question in chunks/answers_NNN.npz (blank = -1), plus trade_base_rows.parquet, which maps rows to stock and date. Pieces that have scores but no answers file get rerun automatically, so the 9 finished pieces (0-8) get redone. Command: `python3 step_a.py --workers 5 --chunk 400`.
-- **Storage:** each answers file is about 100-250MB, 3-8GB in total. GitHub rejects files over 100MB in git, so push the scores_/errors_ files to branch results/step-a-2020-22 and upload answers_*.npz as release assets. Don't store them on the shared bot computer (only about 8.8GB free).
-- **Start signal:** post "Kimi started Step A" in the War room when it's running. Taskforce then stops its local copy.
-- **Combining rules:** see "Single questions vs combinations" and §7b. Shortlist on 2020-21, test pairs and the combining model on 2022, and use 2023-24 once for the final test. Failing alone doesn't drop a question.
-- **Crashes:** the two crashes (multi_year_position, pump_fade_cycles) are already fixed in 032c6e3.
-- **Hard rules unchanged:** 2020-22 only for scoring, nothing from 2025 on, yes/no or fixed-set answers only, no free text.
 
 ## 1. Goal
 - Find checklist question + answer pairs that make money on average per trade.
