@@ -38,6 +38,42 @@ def remote_state():
             state.setdefault(a['name'][len('answers_'):-len('.npz')], {})['answers'] = True
     return state
 
+def push_with_retry(clone, rb, msg):
+    for attempt in range(6):   # matrix jobs push concurrently; rebase over each other and retry
+        r = sh('git', '-C', clone, 'push', '-q', 'origin', 'results-push:' + rb, check=False)
+        if r.returncode == 0:
+            return
+        sh('git', '-C', clone, 'fetch', '-q', 'origin', rb, check=False)
+        sh('git', '-C', clone, 'rebase', '-q', f'origin/{rb}', check=False)
+        time.sleep(5 + attempt * 10)
+    raise RuntimeError(f'push failed after retries: {msg}: {r.stderr[-300:]}')
+
+
+def push_base(ch):
+    """trade_base_rows.parquet is written by every engine start but was never pushed; the
+    exit-grid prep needs it. Push it once (idempotent via cat-file check)."""
+    import shutil
+    rb = os.environ.get('RESULTS_BRANCH', 'results/step-a-2020-22')
+    src = os.path.join(ch, 'trade_base_rows.parquet')
+    if not os.path.exists(src):
+        return
+    if sh('git', 'cat-file', '-e', f'origin/{rb}:step_a/trade_base_rows.parquet', check=False).returncode == 0:
+        return
+    clone = os.path.join(os.environ.get('RUNNER_TEMP', '/tmp'), 'results-clone')
+    if not os.path.exists(clone):
+        sh('git', 'clone', '-q', f"https://x-access-token:{os.environ['GITHUB_TOKEN']}@github.com/{os.environ['GH_REPO']}.git", clone)
+    sh('git', '-C', clone, 'fetch', '-q', 'origin', rb)
+    sh('git', '-C', clone, 'checkout', '-q', '-B', 'results-push', f'origin/{rb}')
+    os.makedirs(os.path.join(clone, 'step_a'), exist_ok=True)
+    shutil.copy(src, os.path.join(clone, 'step_a'))
+    sh('git', '-C', clone, 'add', '-f', 'step_a/trade_base_rows.parquet')
+    if sh('git', '-C', clone, 'status', '--porcelain', 'step_a/').stdout.strip():
+        sh('git', '-C', clone, '-c', 'user.name=step-a-bot', '-c', 'user.email=step-a-bot@users.noreply.github.com',
+           'commit', '-q', '-m', 'Step A trade base rows (input for exit-grid prep)')
+        push_with_retry(clone, rb, 'trade_base_rows.parquet')
+    print('trade_base_rows.parquet pushed', flush=True)
+
+
 def push_piece(nnn, ch):
     """commit scores+errors to results branch; upload answers npz. Idempotent per piece."""
     rb = os.environ.get('RESULTS_BRANCH', 'results/step-a-2020-22')
@@ -57,15 +93,7 @@ def push_piece(nnn, ch):
     if sh('git', '-C', clone, 'status', '--porcelain', 'step_a/').stdout.strip():
         sh('git', '-C', clone, '-c', 'user.name=step-a-bot', '-c', 'user.email=step-a-bot@users.noreply.github.com',
            'commit', '-q', '-m', f'Step A piece {int(nnn) + 1}/34 checkpoint')
-        for attempt in range(6):   # matrix jobs push concurrently; rebase over each other and retry
-            r = sh('git', '-C', clone, 'push', '-q', 'origin', 'results-push:' + rb, check=False)
-            if r.returncode == 0:
-                break
-            sh('git', '-C', clone, 'fetch', '-q', 'origin', rb, check=False)
-            sh('git', '-C', clone, 'rebase', '-q', f'origin/{rb}', check=False)
-            time.sleep(5 + attempt * 10)
-        else:
-            raise RuntimeError(f'push failed after retries: {r.stderr[-300:]}')
+        push_with_retry(clone, rb, f'piece {nnn}')
     ans = os.path.join(ch, f'answers_{nnn}.npz')
     if os.path.exists(ans):
         rel = api(f"/releases/tags/{os.environ.get('RELEASE', 'data-2020-24-v1')}")
@@ -80,6 +108,10 @@ def push_piece(nnn, ch):
     print(f'checkpointed piece {int(nnn) + 1}', flush=True)
 
 def sweep(ch, state):
+    try:
+        push_base(ch)
+    except Exception as e:
+        print('push_base failed:', repr(e)[:200], flush=True)
     for f in sorted(glob.glob(os.path.join(ch, 'scores_*.parquet'))):
         nnn = os.path.basename(f)[len('scores_'):-len('.parquet')]
         have = state.get(nnn, {})
