@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: kimi/exit-grid
-      - name: Python + deps (no TA-Lib: the combiner only reads npz/parquet)
+      - name: Python + deps (no TA-Lib; the combiner only reads npz/parquet)
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential
           python3 -m pip install -q --upgrade pip
