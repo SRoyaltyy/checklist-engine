@@ -1,6 +1,6 @@
 """Step A: every built question at default cutoffs, full survivors universe, DISCOVER window 2020-01-02..2022-12-31 only.
 Bars are cut at 2022-12-31 before anything is computed, so 2023-24 (confirm) and 2025-26 (sealed) are never touched.
-Disk: answers are never stored in full (would be ~40GB). Questions are processed in chunks: compute the chunk for every
+Disk: answers are saved per chunk as compressed int8 (answers_NNN.npz, SAVE_ANSWERS=1 default; chunks with scores but no answers are re-run). Questions are processed in chunks: compute the chunk for every
 ticker in RAM -> build trade rows -> score -> write small result file -> drop. Resumable (finished chunks are skipped).
 Disk floor checked before each chunk: 7GB free 17:00-21:00 HKT, 2GB otherwise; it waits if below.
 usage: CHECKLIST_DATA_DIR=... OUT_DIR=... python3 step_a.py [--workers 5] [--chunk 400] [--tickers A,B]"""
@@ -65,6 +65,8 @@ if __name__ == '__main__':
         base = TR.add_bench(base, spy.reset_index(drop=True), C['sessions'], 'discover'); base.to_parquet(bp, index=False)
     k = base[base.ready & base.passes_filter & base.bench.notna()].sort_values(['ticker', 'date']).reset_index(drop=True)
     log(f"base: {len(base)} cases, not_ready {int((~base.ready).sum())}, filtered+ready trades {len(k)}, tickers {k.ticker.nunique()}")
+    SAVE = os.environ.get('SAVE_ANSWERS', '1') == '1'
+    if SAVE: k[['ticker', 'date']].to_parquet(f'{OUT}/chunks/trade_base_rows.parquet', index=False)
     G['base'] = k; G['keep'] = {t: pd.DatetimeIndex(g.date) for t, g in k.groupby('ticker', sort=False)}
     json.dump(dict(cases=len(base), not_ready=int((~base.ready).sum()), fail_filter=int((~base.passes_filter).sum()), trades=len(k),
                    bench_mean=float(k.drop_duplicates('date').bench.mean())), open(f'{OUT}/base_summary.json', 'w'), indent=1)
@@ -72,7 +74,8 @@ if __name__ == '__main__':
     chunks = [items[i:i + a.chunk] for i in range(0, len(items), a.chunk)]; log(f'{len(items)} questions in {len(chunks)} chunks')
     for ci, ch in enumerate(chunks):
         fo = f'{OUT}/chunks/scores_{ci:03d}.parquet'
-        if os.path.exists(fo): continue
+        fa = f'{OUT}/chunks/answers_{ci:03d}.npz'
+        if os.path.exists(fo) and (not SAVE or os.path.exists(fa)): continue
         while True:
             ok, free, need = disk_ok(OUT)
             if ok: break
@@ -88,6 +91,8 @@ if __name__ == '__main__':
             if m is not None: M[off:off + len(m)] = m; off += len(m)
             errs.update({f'{tk}:{x}': v for x, v in e.items()})
         assert off == len(k); res = None; G['M'] = M
+        if SAVE:   # every day's answer for every question (-1 = blank), row order = trade_base_rows.parquet; for the combining step
+            np.savez_compressed(fa + '.tmp.npz', M=M, cols=np.array(G['cols'])); os.replace(fa + '.tmp.npz', fa)
         with Pool(a.workers) as p: S = sum(p.map(w_score, range(len(G['cols']))), [])
         G['M'] = M = None
         pd.DataFrame(S).to_parquet(fo + '.tmp', index=False); os.replace(fo + '.tmp', fo)
