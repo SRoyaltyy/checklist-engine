@@ -1,0 +1,69 @@
+# Per-chunk exit-grid trigger (METHODOLOGY 0b 22:50: start each chunk's grid as soon as its answers land).
+# Dispatched by the step-a piece leg after it uploads answers; also manually dispatchable with a chunk index.
+# Prep is idempotent (have-check) so legs can fire at any time. Output: grid_NNN.parquet + gridy_NNN_YYYY.parquet
+# on release grid-2020-22-v1. Four legs per chunk (full window + 2020/2021/2022) run in parallel.
+name: grid-chunk
+on:
+  workflow_dispatch:
+    inputs:
+      i:
+        required: true
+        type: string
+        description: 'chunk index 0-33'
+permissions:
+  contents: write
+env:
+  RELEASE: data-2020-24-v1
+  GRID_RELEASE: grid-2020-22-v1
+jobs:
+  prep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Prep grid precompute + benchmark (idempotent)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/exit_grid_prep.sh
+  grid:
+    needs: prep
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        y: ['', '2020', '2021', '2022']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Aggregate chunk ${{ inputs.i }} year '${{ matrix.y }}' across the 26,100-rule grid
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          I: ${{ inputs.i }}
+          YEAR: ${{ matrix.y }}
+        run: bash ci/exit_grid_chunk.sh
