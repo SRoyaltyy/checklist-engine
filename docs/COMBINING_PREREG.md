@@ -1,50 +1,79 @@
 # Pre-registration: the combining model ("world state" probability)
 
 **Status:** pre-registered BEFORE any Step A results are looked at (2026-10-24).
-**Owner corrections folded in (Cyrus, 2026-10-24 ~10:00 HKT):**
-1. Exit rules are NOT fixed. A grid of exit profit margins and exit dates is tested.
+**Owner corrections folded in (Cyrus, 2026-10-24):**
+1. Exit rules are NOT fixed and NOT a sparse grid — test every margin 2–30%, every hold
+   1–30 sessions, and a stop-loss dimension (every stop 2–30% or none): 29×30×30 = 26,100
+   cells. No cherry-picked points anywhere.
 2. Dynamic exit is the rule, not the exception: within the hold period, if the price reaches the
    target at any point, we sell early — the goal is already achieved.
-3. The model's output is a **probability of an aggregate win**: given the world state as of the
-   setup cutoff, P(this trade makes money after fees). "Aggregate win" covers both modes —
-   high win rate at ordinary margin, OR lower win rate with high win margin. Expected profit
-   after fees is the quantity that subsumes both modes, so it is the target.
+3. The model's output is a **probability of an aggregate win for every parameter tuple**:
+   given the world state as of the setup cutoff, P(this trade makes money after fees) using
+   margin A, hold B, stop C. "Aggregate win" covers both modes — high win rate at ordinary
+   margin, OR lower win rate with high win margin. Expected profit after fees ranks the
+   strategies; P(win) is the reported chance.
+4. End goal: the **state → strategy map** — the suitable exit policy for every possible
+   world state.
 
 ---
 
 ## 1. What the model predicts
 
-For stock s, setup day D, and exit policy (m, h):
+For stock s, setup day D, and exit policy (m, h, s) — margin, max hold, stop:
 
-> **p(s, D, m, h) = P( trade profit after fees > 0 )**
-> under exit policy (m, h), given the world state at the close of D−1 plus pre-open data.
+> **p(s, D, m, h, s) = P( trade profit after fees > 0 )**
+> under exit policy (m, h, s), given the world state at the close of D−1 plus pre-open data.
+
+The probability is **not one number** — it is a chance for every parameter tuple: a
+26,100-point surface over the strategy space for every stock-day (Cyrus: "find the suitable
+strategy for every possible state").
 
 Secondary output (reported, not the pass gate):
 
-> **E[ profit after fees ]** (ridge regression) — captures how big wins are, not just whether.
+> **E[ profit after fees | state, m, h, s ]** (ridge regression) — needed to CHOOSE the
+> strategy: rank cells by expected profit after fees, report P(win) as the chance. A cell
+> with 45% wins at +20%/−2% beats one with 55% wins at +4%/−15%; only EV sees that.
 
-The methodology's market-beating condition stays a **pass gate on top of the probability**:
-a cell/setup only counts if its realized expected profit also beats the same-day benchmark
+The end goal is the **state → strategy map**: for each stock-day, the exit policy that
+maximises expected profit after fees given its world state. The methodology's market-beating
+condition stays a **pass gate on top**: a cell/setup only counts if its realized expected
+profit also beats the same-day benchmark
 (equal-weight filtered+ready stocks, same exit policy). SPY is reported alongside, not the bar.
 
-## 2. Exit policies (the grid)
+## 2. Exit policies (the FULL grid — no cherry-picked points)
 
-An exit policy is a pair (margin m, max hold h) in sessions:
+An exit policy is a triple (margin m, max hold h, stop s), all three swept exhaustively
+(Cyrus 2026-10-24: "test all margins, not just a few numbers"; same for sell dates; add
+stop-loss). **No sparse grid anywhere — every value is tested.**
 
-- **m ∈ {10, 15, 20, 25, 30, 40} %** (profit target)
-- **h ∈ {5, 10, 15, 20, 30}** sessions
-- 30 cells total. Cell (20%, 15d) = legacy "exit rule v1" — kept as the continuity anchor.
+- **m ∈ {2, 3, …, 30} %** — profit target, every integer from 2 to 30 (29 values)
+- **h ∈ {1, 2, …, 30}** sessions — max hold, every value (30 values)
+- **s ∈ {2, 3, …, 30} % ∪ {none}** — stop loss, every integer from 2 to 30 plus "no stop" (30 values)
+- **29 × 30 × 30 = 26,100 cells.** Cell (20%, 15d, none) = legacy "exit rule v1" — continuity anchor.
 
-**Dynamic exit semantics (identical to the existing fill logic in `scoring/trades.py`, just
-parameterised — no fill-formula change):** sell at +m% the first time the target is reached;
-if the stock gaps through the target, the fill is at the open of that day; if the target is
-never reached, exit at the close of day h. Fees 30bp each way. All results also reported with
-+20bp extra slippage. Censoring (outcome window past end of data ⇒ NOT_READY) applies per cell.
+**Dynamic exit semantics (identical in spirit to the existing fill logic in `scoring/trades.py`,
+parameterised — no fill-formula change):** walk the hold window day by day in order —
 
-**Why the grid does not need a question re-run:** question answers (the world state) do not
-depend on the exit policy. Step A's saved `answers_*.npz` + `trade_base_rows.parquet` + the
-bars are sufficient; the grid only changes trade outcomes. Implementation: a scoring-side
-pass over the same trade rows, one column of outcomes per cell.
+1. If the day's **low ≤ stop s** first: sell at s (a gap through the stop fills at that day's open).
+2. Else if the day's **high ≥ target m**: sell at m (a gap through the target fills at that day's open).
+3. If the window ends with neither hit: exit at the close of day h.
+4. Same-day stop-and-target both possible: count the **stop first** (conservative — the stop
+   is the fill you would actually get without knowing the day's high came after the low).
+5. Fees 30bp each way. All results also reported with +20bp extra slippage. Censoring
+   (window past end of data ⇒ NOT_READY) applies per cell.
+
+**Why the full grid is affordable:** the world state (answers) does not depend on exit policy,
+so no question re-run — the grid only re-derives trade outcomes from bars. Computationally it
+is ~26k cells over the same 2.85M trade rows, but the three parameters collapse: for each
+(m, s) pair (841 of them) one vectorised pass over the 30-day path matrix finds each trade's
+first-above-target day and first-below-stop day; every hold h then resolves analytically
+(hit before h, censored at h, or stopped). Total work ≈ 841 passes, minutes not weeks.
+
+**Multiple-testing accounting (important, §11):** 26,100 correlated cells. They are NOT
+26,100 separate "works alone" claims — no per-cell-alone claims are made from the grid at
+all. The grid is the strategy space; the single inferential object is the **state →
+strategy map** (below), which gets its one test on 2023–24. Cells still count toward the
+try ledger for any claim that a SPECIFIC cell works.
 
 ## 3. World state (input features)
 
@@ -78,14 +107,22 @@ The old fixed floors (35/40/45/50% main 40%) become **reporting bands**, not the
 ## 6. Multiple testing (luck bar) accounting
 
 - The 5.4-SE bar applies only to single-question-alone claims (unchanged).
-- Exit grid: 30 cells on the SAME saved answers. Cells are correlated, but we still count
-  them: the combining-model family claim must clear the bar computed with 30× the cells.
+- The 26,100-cell exit grid is the strategy space, not 26,100 hypotheses: no per-cell-alone
+  claims are made from it. Any claim that one SPECIFIC cell works counts it toward the bar.
+- The single inferential object is the state → strategy map. It gets exactly one test on
+  2023–24 (after the 2022 check), same discipline as the combining model itself.
 - Every pair we could have tried counts toward the bar (§7b); the named-pairs list is fixed
   in advance on the 2022 check, not mined afterwards.
 - Adding flip/yesterday/state-change studies recomputes the try count per §11.
 
 ## 7. Deliverable
 
-For every (s, D) in 2022 check and 2023–24 test: p(s, D, m, h) per cell, plus realised
-outcome per cell. The "world state" readout: given everything we know at the cutoff, the
-probability this trade — placed HERE — wins, for whichever exit policy we choose.
+For every (s, D) in the 2022 check and the 2023–24 test: the full surface
+p(s, D, m, h, s) and E[profit | state, m, h, s] over all 26,100 cells, plus the realised
+outcome per cell. Read two ways:
+
+- **Chance surface:** given everything known at the cutoff, the probability this trade —
+  placed HERE — wins, for every margin, hold, and stop we might choose.
+- **Strategy map:** for every world state, the suitable exit policy — the (m, h, s) that
+  maximises expected profit after fees — so the scanner outputs not just "buy?" but
+  "buy, and manage it THIS way."

@@ -11,7 +11,7 @@ signal. Yesterday p = 45%, today p = 60%: is that telling us something?
 For stock s and day D (after the combining model is frozen on 2020–22):
 
 > **Δp(s, D) = p(s, D) − p(s, D−1)**, where p is the frozen model's probability
-> for the continuity cell (20%, 15d).
+> for the continuity cell (m=20%, h=15d, stop=none) — legacy exit rule v1.
 
 The stock's own recent return is **residualised out first** (regress Δp on the stock's
 last-5/10/20-session return; use the residual) so the input is not just momentum in disguise.
