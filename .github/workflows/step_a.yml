@@ -15,6 +15,7 @@ on:
     - cron: '23 */6 * * *'
 permissions:
   contents: write
+  actions: write   # piece legs dispatch grid_chunk.yml for their chunk (403 without this)
 env:
   RELEASE: data-2020-24-v1
   RESULTS_BRANCH: results/step-a-2020-22
