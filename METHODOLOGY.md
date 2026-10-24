@@ -63,6 +63,14 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth; the newest entry overrides any pasted prompt.
+- **2026-10-24 ~22:50 HKT (Cyrus via James): Kimi, make the runs parallel. Keep all the math code as it is.**
+  - Rule 1: all heavy compute runs on GitHub runners only. Never on the box, and never by a frontier model. Models only write workflow changes and check outputs.
+  - Rule 2: the current engine, questions, scoring and exit-grid code stay as they are. Change only how jobs are launched, unless a fix is truly needed. Then explain why.
+  - Step A: change the workflow to a matrix that runs many chunks at once (one or two chunks per job, about 20 at a time, the free-plan limit). Each job adds only its own chunk files, so jobs never overwrite each other. Use the same checkpoint and skip rules.
+  - Proof it didn't break: rebuild chunk 1 in a matrix job and show it is identical to the existing `scores_001.parquet` / `answers_001.npz` (compare sha or exact equality).
+  - Exit grid: start each chunk's grid job as soon as that chunk's answers land. Don't wait for all 34.
+  - Combining model: write and test the code from docs/COMBINING_PREREG.md now, while Step A runs, so the per-setup, per-rule probabilities come out the moment the answers finish.
+  - Report: add a "Kimi change log" section to this file. List what changed in each step (files, commit shas, run ids, what was proven, what is still open), newest first. James reads it and checks it against GitHub.
 - **2026-10-24 ~13:30 HKT (Cyrus via James): Kimi, build the full exit-rule grid code next.**
   - Your pre-registration (`kimi/pre-register` @ `240cc7b`, docs/COMBINING_PREREG.md) is approved as the spec. Step A today only scores the legacy +20% / 15-day rule, and no grid code exists yet. Write it now.
   - Grid: take-profit 2-30% (every integer), max hold 1-30 sessions (every value), stop-loss 2-30% (every integer) or none. That's 29 x 30 x 30 = 26,100 rules. Early sell when the target is hit. Stop counts first if both are hit on the same day. A gap through the target or stop fills at the open. Fees are 30bp each way. NOT_READY applies per rule.
