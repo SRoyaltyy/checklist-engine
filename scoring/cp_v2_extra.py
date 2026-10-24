@@ -5,7 +5,12 @@ of that stock (trade buys at that day's open) - no peeking. Rows dated after 202
 import os, sys, hashlib, json, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scoring import trades as TR
-SRC = '/workspace/checklist_brainstorm/engine/cp_v2/cp_v2_tags_2020_24.csv'
+import os
+SRC = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '/workspace/checklist_brainstorm/engine/cp_v2'),
+                   'cp_v2_tags_2020_24.csv')
+if SRC.endswith('.csv') and not os.path.exists(SRC) and os.path.exists(SRC + '.xz'):
+    import lzma, shutil
+    with lzma.open(SRC + '.xz', 'rb') as f_in, open(SRC, 'wb') as f_out: shutil.copyfileobj(f_in, f_out)
 SHA = '24f970859b4a5d9d69b04bf3bbf9bc81fb1d6ffe885a9b0787a7f6ef0cc30b8e'
 Q = ['cp_mid_slope_up', 'cp_gr_body20', 'cp_pctB', 'cp_dip_atr', 'cp_days_since_h20', 'cp_dd_vs_run', 'cp_redgreen_vol10', 'cp_hard_all']
 if __name__ == '__main__':
