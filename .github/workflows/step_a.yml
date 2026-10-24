@@ -34,9 +34,9 @@ jobs:
             && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
           python3 -m pip install -q TA-Lib pandas numpy pyarrow
       - name: Download data release + verify
-        run: ci/fetch_release.sh "$RELEASE" "$RUNNER_TEMP/data"
+        run: bash ci/fetch_release.sh "$RELEASE" "$RUNNER_TEMP/data"
       - name: Run Step A with checkpoint push (resumes from branch+release)
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: ci/run_step_a.sh
+        run: bash ci/run_step_a.sh
