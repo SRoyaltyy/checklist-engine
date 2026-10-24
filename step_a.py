@@ -22,7 +22,8 @@ def disk_ok(path):
 def _init_child(plan, cols):
     """Windows-spawn compat: Pool workers re-import this module and start with empty globals (Unix fork would
     inherit them). Restore engine state and the small shared objects in each worker. Plumbing only — no formula,
-    data, or scoring changes. C is rebuilt from the data folder per worker (cheap) instead of being pickled."""
+    data, or scoring changes. C is rebuilt from the data folder per worker (cheap) instead of being pickled.
+    plan/cols may be None (base phase doesn't need them)."""
     os.environ.setdefault('GRID_FILE', '/nonexistent')
     E.H71.load_buckets(); E.HIST.clear(); E.load_history(E.HISTF); E.GRIDV.clear(); E.GRIDV.update(E.load_grid())
     c = E.load_context()
@@ -53,8 +54,10 @@ if __name__ == '__main__':
         lw, lm = time.time(), time.monotonic()
         while True:
             time.sleep(300); w, m = time.time(), time.monotonic(); ok, free, need = disk_ok(os.environ.get('OUT_DIR', '/workspace'))
+            try: load = f", load {os.getloadavg()[0]:.1f}"
+            except (AttributeError, OSError): load = ""   # no getloadavg on Windows
             gap = (w - lw) - (m - lm)
-            log(f"heartbeat: alive, disk {free:.1f}GB free (floor {need}GB), load {os.getloadavg()[0]:.1f}" + (f", box was paused ~{gap/60:.0f} min" if gap > 60 else ''))
+            log(f"heartbeat: alive, disk {free:.1f}GB free (floor {need}GB){load}" + (f", box was paused ~{gap/60:.0f} min" if gap > 60 else ''))
             lw, lm = w, m
     threading.Thread(target=heartbeat, daemon=True).start()
     OUT = os.environ.get('OUT_DIR', '/workspace/step_a_out'); os.makedirs(f'{OUT}/chunks', exist_ok=True); t0 = time.time()
@@ -70,7 +73,8 @@ if __name__ == '__main__':
     bp = f'{OUT}/trade_base_discover.parquet'
     if os.path.exists(bp): base = pd.read_parquet(bp)
     else:
-        with Pool(a.workers) as p: base = pd.concat(p.map(w_base, list(G['B']), chunksize=20))
+        with Pool(a.workers, initializer=_init_child, initargs=(None, None)) as p:
+            base = pd.concat(p.map(w_base, [(tk, G['B'][tk]) for tk in G['B']], chunksize=20))
         etf = pd.read_parquet(E.D('/workspace/pricehist/etf_2015.parquet')); spy = etf[(etf.ticker == 'SPY') & (etf.date <= WEND)].sort_values('date')
         base = TR.add_bench(base, spy.reset_index(drop=True), C['sessions'], 'discover'); base.to_parquet(bp, index=False)
     k = base[base.ready & base.passes_filter & base.bench.notna()].sort_values(['ticker', 'date']).reset_index(drop=True)
