@@ -63,6 +63,13 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth; the newest entry overrides any pasted prompt.
+- **2026-10-24 ~13:30 HKT (Cyrus via James): Kimi, build the full exit-rule grid code next.**
+  - Your pre-registration (`kimi/pre-register` @ `240cc7b`, docs/COMBINING_PREREG.md) is approved as the spec. Step A today only scores the legacy +20% / 15-day rule, and no grid code exists yet. Write it now.
+  - Grid: take-profit 2-30% (every integer), max hold 1-30 sessions (every value), stop-loss 2-30% (every integer) or none. That's 29 x 30 x 30 = 26,100 rules. Early sell when the target is hit. Stop counts first if both are hit on the same day. A gap through the target or stop fills at the open. Fees are 30bp each way. NOT_READY applies per rule.
+  - Reuse Step A's saved answers (`answers_NNN.npz` + `trade_base_rows.parquet`). Don't recompute the questions. Use the per-trade first-hit-day method so the whole grid is a few passes over the data, not 26k separate runs.
+  - Output: for every setup x rule, report n, win%, avg win, avg loss, expected profit after fees, and the same-day benchmark. Keep the 40% win-rate floor (also show 35/45/50).
+  - Splits and luck bar: tune and pick on 2020-21, check once on 2022 with nothing tweaked afterwards, and test the state-to-rule map once on 2023-24. The grid is exempt from per-rule luck counting ONLY under that single 2023-24 test. Any claim that one specific rule works counts every rule tried toward the bar.
+  - Add a test that rule (20%, 15d, no stop) reproduces `scoring/trades.py` exit_v1 exactly. Push to a `kimi/exit-grid` branch and open a PR.
 - **2026-10-24 ~13:25 HKT (Cyrus via James): exit-rule grid is separate from the question combinations.**
   - A *setup* is a combination of question answers. The *trade rule* (buy/sell strategy) is a separate axis and has nothing to do with the questions.
   - Score every setup under every trade rule: all hold times, all take-profit levels, with early profit-taking enabled. One setup therefore has several win probabilities / expected profits, one per trade rule. The +20% / day-15 rule is only one point on this grid.
