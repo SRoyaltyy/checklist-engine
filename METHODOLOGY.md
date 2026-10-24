@@ -116,6 +116,14 @@ This file explains, in plain English, what the scanner is for, how it works, and
 - Use only answers that were confirmed on 2023–24. Fit a logistic or tally model on 2020–22, show a calibration table on 2023–24, and freeze it before the 2025–26 shot.
 - **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum. The probability only exists after the combining model is fitted, so this is tested on 2023–24 only. The flip counts (questions turning bullish vs bearish since yesterday) and yesterday's price move come straight from the saved answers, so they go into Step A as ordinary questions. Both add tries to the luck bar.
 
+### Single questions vs combinations (Cyrus 2026-10-24)
+- The 5.4 luck bar applies only to claiming that ONE question works alone.
+- Step A is not a filter for the combiner. Every question goes into the pre-registered combining model, except junk ones: more than 95% blank, or answering "yes" on more than 95% or fewer than 0.5% of days.
+- Step A must save every question's daily yes/no answers, not just summary scores, so the combiner gets the full pool.
+- We don't brute-force test pairs or triples. There are about 113M pairs, and the luck bar would explode. Instead, one combining model is trained on 2020-22 and gets a single test on 2023-24, so no huge luck bar applies.
+- Selection split: shortlist and tune on 2020-21, check any named pairs and the combining model on 2022, and touch 2023-24 only for the single final test. Every pair we could have tried counts toward the luck bar.
+- "Nothing passes alone" is not the verdict. The verdict is the combined score on 2023-24.
+
 ## 8. Disk and resources
 - Keep 7GB free between 17:00 and 21:00 HKT, and 2GB at other times. If free space is below that, pause between parts.
 
