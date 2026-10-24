@@ -84,6 +84,7 @@ if __name__ == '__main__':
     G['base'] = k; G['keep'] = {t: pd.DatetimeIndex(g.date) for t, g in k.groupby('ticker', sort=False)}
     json.dump(dict(cases=len(base), not_ready=int((~base.ready).sum()), fail_filter=int((~base.passes_filter).sum()), trades=len(k),
                    bench_mean=float(k.drop_duplicates('date').bench.mean())), open(f'{OUT}/base_summary.json', 'w'), indent=1)
+    del base   # free ~1-2GB before the chunk loops; k has everything the scoring needs
     items = sorted(((key, kn) for key, tfs in plan.items() for kn in tfs), key=lambda x: (x[1][0], x[0], x[1][1]))
     chunks = [items[i:i + a.chunk] for i in range(0, len(items), a.chunk)]; log(f'{len(items)} questions in {len(chunks)} chunks')
     for ci, ch in enumerate(chunks):
@@ -101,10 +102,12 @@ if __name__ == '__main__':
         tc = time.time()
         tasks = [(tk, G['B'][tk], idx) for tk, idx in G['keep'].items()]
         with Pool(a.workers, initializer=_init_child, initargs=(sub, G['cols'])) as p:
-            M = np.full((len(k), len(G['cols'])), -1, np.int8); off = 0; errs = {}
+            M = np.full((len(k), len(G['cols'])), -1, np.int8); off = 0; errs = {}; nc = 0
             for tk, m, e in p.imap(w_answers, tasks, chunksize=10):   # imap: fill M streaming, no full result list in RAM
                 if m is not None: M[off:off + len(m)] = m; off += len(m)
                 errs.update({f'{tk}:{x}': v for x, v in e.items()})
+                nc += 1
+                if nc % 250 == 0: log(f'  chunk {ci+1}: {nc}/{len(tasks)} tickers, {off}/{len(k)} rows, {len(errs)} errors')
         del tasks
         assert off == len(k)
         if SAVE:   # every day's answer for every question (-1 = blank), row order = trade_base_rows.parquet; for the combining step
