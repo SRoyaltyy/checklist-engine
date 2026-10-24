@@ -5,14 +5,17 @@
 set -euo pipefail
 TAG="${GRID_RELEASE:?need GRID_RELEASE}"
 I="$(printf '%03d' "${I:?need I}")"
+YEAR="${YEAR:-}"                       # empty = full discover window; else restrict to that calendar year
 W="$RUNNER_TEMP"
+OUT_NAME="grid_${I}.parquet"
+[ -n "$YEAR" ] && OUT_NAME="gridy_${I}_${YEAR}.parquet"
 # does Step A's answers chunk exist on the data release yet?
 if ! python3 ci/release_assets.py have "$RELEASE" "answers_${I}.npz"; then
     echo "answers_${I}.npz not on $RELEASE yet (Step A still running); skipping"
     exit 0
 fi
-if python3 ci/release_assets.py have "$TAG" "grid_${I}.parquet"; then
-    echo "grid_${I}.parquet already uploaded; nothing to do"
+if python3 ci/release_assets.py have "$TAG" "$OUT_NAME"; then
+    echo "$OUT_NAME already uploaded; nothing to do"
     exit 0
 fi
 python3 ci/release_assets.py get "$TAG" "$W/grid_pre"          # shards + meta + bench tables
@@ -33,7 +36,9 @@ with urllib.request.urlopen(req) as r, open(os.path.join(sys.argv[3], sys.argv[2
 print('downloaded', sys.argv[2], a['size'])
 PY
 export GRID_FILE=/nonexistent
+YEAR_ARGS=""
+[ -n "$YEAR" ] && YEAR_ARGS="--year $YEAR"
 python3 step_grid.py chunk --i "$((10#$I))" --answers "$W/answers_${I}.npz" \
-    --pre "$W/grid_pre" --bench "$W/grid_pre/bench_pre.npz" --out "$W/grid_chunks"
-python3 ci/release_assets.py upload "$TAG" "$W/grid_chunks/grid_${I}.parquet"
-echo "chunk $I done"
+    --pre "$W/grid_pre" --bench "$W/grid_pre/bench_pre.npz" --out "$W/grid_chunks" $YEAR_ARGS
+python3 ci/release_assets.py upload "$TAG" "$W/grid_chunks/$OUT_NAME"
+echo "chunk $I (year=${YEAR:-all}) done"

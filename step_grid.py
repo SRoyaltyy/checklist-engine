@@ -148,7 +148,9 @@ def spy_cnt(spy, nd):
 
 
 def chunk(args):
-    """Aggregate one answers chunk across the whole grid. Output long-form parquet per chunk."""
+    """Aggregate one answers chunk across the whole grid. Output long-form parquet per chunk.
+    --year Y restricts to trades of that calendar year (for the 2020-21 fit / 2022 check splits);
+    writes gridy_NNN_YYYY.parquet instead. Per-rule per-date benchmark is year-agnostic (same-day)."""
     d = load_pre(args.pre)
     B = np.load(args.bench)
     bench_all, spy_all = B['bench'], B['spy']                 # (NTP, 1+NSL, NH, nd)
@@ -156,9 +158,14 @@ def chunk(args):
     A = np.load(args.answers)
     M, cols = A['M'], A['cols']
     assert M.shape[0] == n, (M.shape, n)
-    meta = json.load(open(os.path.join(args.pre, 'meta.json')))
-    didx = d['didx']
+    ysel = None
+    if args.year:
+        meta = json.load(open(os.path.join(args.pre, 'meta.json')))
+        ty = pd.DatetimeIndex(pd.to_datetime(meta['dates'])).year.to_numpy()[d['didx']]
+        ysel = ty == args.year
+        log(f'year {args.year}: {int(ysel.sum())} of {n} trades')
 
+    didx = d['didx']
     out_rows = {k: [] for k in ('qid', 'ans', 'tp', 'hold', 'stop')}
     stats = {k: [] for k in ('n', 'win_cnt', 'win_sum', 'sum_ret', 'sum_bench', 'sum_spy')}
     QB = 100                                                # questions per matmul batch (float32 (QB*2, n) ~ 2.2GB)
@@ -169,9 +176,13 @@ def chunk(args):
                                 d['clos'], sl_none=si < 0)
             bm = bench_all[mi, si + 1][:, didx]             # (NH, n) benchmark for this rule per trade
             sm = spy_all[mi, si + 1][:, didx]
+            if ysel is not None:
+                rm, bm, sm = rm[:, ysel], bm[:, ysel], sm[:, ysel]
             for q0 in range(0, len(cols), QB):
                 qs = slice(q0, min(q0 + QB, len(cols)))
                 Mq = M[:, qs]
+                if ysel is not None:
+                    Mq = Mq[ysel]
                 G0 = np.ascontiguousarray((Mq == 0).T, dtype=np.float32)
                 G1 = np.ascontiguousarray((Mq == 1).T, dtype=np.float32)
                 for G, ans in ((G0, 0), (G1, 1)):
@@ -201,7 +212,7 @@ def chunk(args):
     for k, v in stats.items():
         df[k] = np.concatenate(v)
     os.makedirs(args.out, exist_ok=True)
-    p = os.path.join(args.out, f'grid_{args.i:03d}.parquet')
+    p = os.path.join(args.out, (f'gridy_{args.i:03d}_{args.year}.parquet' if args.year else f'grid_{args.i:03d}.parquet'))
     df.to_parquet(p, index=False)
     log('wrote', p, len(df), 'rows')
 
@@ -214,6 +225,7 @@ if __name__ == '__main__':
     ap.add_argument('--bench', default='grid_pre/bench_pre.npz')
     ap.add_argument('--out', default='grid_chunks')
     ap.add_argument('--i', type=int, default=0)
+    ap.add_argument('--year', type=int, default=None)
     ap.add_argument('--answers', default=None)
     a = ap.parse_args()
     os.environ.setdefault('CHECKLIST_DATA_DIR', os.environ.get('CHECKLIST_DATA_DIR', 'data-2020-24-v1'))

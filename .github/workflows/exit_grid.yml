@@ -68,3 +68,34 @@ jobs:
           GH_REPO: ${{ github.repository }}
           I: ${{ matrix.i }}
         run: bash ci/exit_grid_chunk.sh
+  gridyearly:
+    needs: prep
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+        y: [2020, 2021, 2022]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Aggregate chunk ${{ matrix.i }} year ${{ matrix.y }} (fit/check splits)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          I: ${{ matrix.i }}
+          YEAR: ${{ matrix.y }}
+        run: bash ci/exit_grid_chunk.sh
