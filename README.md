@@ -2,6 +2,8 @@
 
 **Private.** This is a handoff archive so another AI (e.g. Kimi) can continue Cyrus Fung's "War room" checklist / probabilistic-model work from cold.
 
+> **Replaced method (2026-10-23):** the pass rule below (win rate > 50–55%, n ≥ 30, matched controls, 5/10/21-day holds) is out of date. The current method is expected profit vs the same-day market, with exit rule v1 and a 40% win-rate floor. **Start with [METHODOLOGY.md](METHODOLOGY.md) §0.**
+
 ## What it is
 A big bank of **yes/no checklist questions** about US stocks (snapshot state, plus "how it got here" path questions and macro state). Each is scored against forward returns (up to 1 month, which is Cyrus's max horizon), against matched controls, after 30 bp/side fees, with BH correction. It passes only if win rate > 50% after fees and n ≥ 30. **2020–24 is practice; 2025–26 is the sealed exam**, opened only after the Fri 2026-10-23 23:00 HKT lock. SEC data: only binary/fixed-set fields, no free text. Details: [METHODOLOGY.md](METHODOLOGY.md).
 
