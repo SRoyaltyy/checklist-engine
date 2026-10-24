@@ -95,6 +95,26 @@ This file is the single source of truth; the newest entry overrides any pasted p
   - Universe: 7,238 stocks, 2,845,186 trades that are filtered and ready, and 208,497 set aside as not ready. 34 pieces of 400 questions each, plus `scores_cp_v2.parquet` (8 chart-picture tags, none pass).
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
+## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+
+- **2026-10-24 ~23:15 HKT — Parallel Step A live; combiner code written; two infra bugs found and fixed.**
+  - **What changed**
+    - `step_a.py` gained `--only` (run a subset of chunks; launch plumbing only, no math change). Commit `e8f9402` on `kimi/step-a-wincompat`.
+    - `ci/run_step_a_piece.sh` (new): one matrix leg = one chunk. Seeds only its own piece from `results/step-a-2020-22` + the release, runs the engine for that chunk, checkpoints scores+errors to the results branch and answers to the release, then dispatches that chunk's `grid_chunk.yml` jobs. Same `e8f9402`.
+    - `ci/push_loop.py`: push retries with fetch+rebase (up to 20 legs push the results branch concurrently). `e8f9402`.
+    - `.github/workflows/step_a.yml`: 34-leg matrix, `max-parallel: 20`, `fail-fast: false`, no concurrency group (legs must not cancel each other); optional `verify` dispatch input runs only the identity proof. `e8f9402` (branch) + `0aebb69` (registered on `main` — workflows only run from the default branch).
+    - `.github/workflows/grid_chunk.yml` (new, registered on `main` in `0aebb69`): per-chunk exit grid (full window + 2020/2021/2022), prep is idempotent, legs skip cleanly if answers aren't up yet.
+    - `ci/push_loop.py` (`beb393b` on `kimi/step-a-wincompat`): also pushes `trade_base_rows.parquet` — the engine writes it on every start but it was never pushed, and `ci/exit_grid_prep.sh` needs it.
+    - `ci/exit_grid_prep.sh` (`05b85b3` on `kimi/exit-grid`): robust base-rows fetch (results branch, else single-asset release download, else a clear message).
+    - `scoring/combine.py` (`d726c38` on `kimi/exit-grid`): the combining model per `docs/COMBINING_PREREG.md` — one-hot per fixed-set answer level (junk = >95% blank or a level on >95%/<0.5% of days), rule params (m, h, stop) as features, logistic p(win) + ridge E[profit] in a joint trade-score + rule-score form so the 26,100-cell surface is an outer sum. numpy/pandas only. Smoke-tested end-to-end on the local 800-trade sample: losses decrease, 2022 check (Brier + calibration deciles + EV vs benchmark) and per-year strategy maps are produced.
+  - **Run ids**
+    - Old serial Step A run `40096584458`: cancelled (replaced by the matrix).
+    - Matrix run `40105028128` (34 legs, one chunk each, dispatched 2026-10-24 23:00 HKT): in progress.
+    - Verify run `40105030811` (rebuilds chunk 1 in a matrix-style job, sha + content comparison vs existing `scores_001.parquet` / `answers_001.npz`): queued behind the matrix; **result pending**.
+    - Leak sweep run `40099037308` (60 tickers x 12 stress cut dates): still in progress; verdict to PR #5.
+  - **What is proven**: matrix + per-chunk grid workflows are registered and dispatching; the combiner runs end-to-end on sample data; the serial run's checkpoint format is untouched (only launch plumbing changed).
+  - **What is still open**: the chunk-1 identity proof (verify run) has not reported yet; first grid legs depend on `trade_base_rows.parquet` landing via `beb393b` (first queued leg that pushes); the combiner has no runner workflow yet (code + smoke test done); Step A pieces 9/34 done at dispatch time.
+
 ## 1. Goal
 - Find checklist question + answer pairs that make money on average per trade.
 - **Expected profit** = win% × average win − loss% × average loss. Fees of 30bp each way are taken off first.
