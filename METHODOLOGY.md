@@ -63,6 +63,10 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth; the newest entry overrides any pasted prompt.
+- **2026-10-24 ~13:25 HKT (Cyrus via James): exit-rule grid is separate from the question combinations.**
+  - A *setup* is a combination of question answers. The *trade rule* (buy/sell strategy) is a separate axis and has nothing to do with the questions.
+  - Score every setup under every trade rule: all hold times, all take-profit levels, with early profit-taking enabled. One setup therefore has several win probabilities / expected profits, one per trade rule. The +20% / day-15 rule is only one point on this grid.
+  - Luck bar: every (setup x trade rule) pair tried counts as a try. Pick the trade rule on 2020-21 only, confirm on 2022, and use 2023-24 once. Same fees (30bp each way), the same 40% win-rate floor, and the same NOT_READY rule (the window must cover the longest hold).
 - **2026-10-24 ~08:50 HKT (Cyrus via Grok Bot): combining rules and reminders.**
   - Combining rules: see "Single questions vs combinations" and §7b. Shortlist on 2020-21, test pairs and the combining model on 2022, and use 2023-24 once for the final test. Failing alone doesn't drop a question.
   - Don't store `answers_*.npz` on the shared bot computer (only about 8.8GB free). All the answers files together are 3-8GB.
