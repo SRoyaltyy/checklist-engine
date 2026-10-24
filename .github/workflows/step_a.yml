@@ -1,0 +1,42 @@
+# Step A on GitHub's runner (manual or scheduled). Checkpoint-resume: every finished chunk is
+# pushed to results/step-a-2020-22 (scores+errors) and its answers npz uploaded to release
+# data-2020-24-v1 as it finishes; a fresh run seeds from both, so a cut-off run continues
+# seamlessly. One job window processes as many chunks as fit in ~5h, then stops cleanly.
+name: step-a
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'   # every 6h at :23 — off-peak minute; earlier runs seed later ones
+concurrency:
+  group: step-a
+  cancel-in-progress: false
+permissions:
+  contents: write
+env:
+  RELEASE: data-2020-24-v1
+  RESULTS_BRANCH: results/step-a-2020-22
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350           # hard job cap is 360; stop the engine ~10 min before
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/step-a-wincompat
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Download data release + verify
+        run: ci/fetch_release.sh "$RELEASE" "$RUNNER_TEMP/data"
+      - name: Run Step A with checkpoint push (resumes from branch+release)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: ci/run_step_a.sh
