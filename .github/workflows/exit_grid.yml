@@ -1,0 +1,116 @@
+# Exit-grid on GitHub runners (see METHODOLOGY 0b 2026-10-24 ~13:30 and docs/COMBINING_PREREG.md).
+# prep builds per-trade first-hit arrays + per-date benchmark tables once and uploads them to release grid-2020-22-v1;
+# the matrix then aggregates each answers chunk across the full 26,100-rule grid and uploads grid_NNN.parquet.
+# Everything is idempotent and checkpointed: a cut-off run resumes seamlessly on the next trigger.
+# Consumes only 2020-22 (discover) data; 2023-24 / 2025-26 are never opened.
+name: exit-grid
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '53 */6 * * *'   # off-peak minute, interleaved with step-a's :23
+concurrency:
+  group: exit-grid
+  cancel-in-progress: false
+permissions:
+  contents: write
+env:
+  RELEASE: data-2020-24-v1
+  GRID_RELEASE: grid-2020-22-v1
+jobs:
+  prep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Prep grid precompute + benchmark (idempotent)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/exit_grid_prep.sh
+  grid:
+    needs: prep
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Aggregate chunk ${{ matrix.i }} across the 26,100-rule grid
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          I: ${{ matrix.i }}
+        run: bash ci/exit_grid_chunk.sh
+  gridyearly:
+    needs: prep
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+        y: [2020, 2021, 2022]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Aggregate chunk ${{ matrix.i }} year ${{ matrix.y }} (fit/check splits)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          I: ${{ matrix.i }}
+          YEAR: ${{ matrix.y }}
+        run: bash ci/exit_grid_chunk.sh
+  shortlist:
+    needs: [grid, gridyearly]
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + deps
+        run: python3 -m pip install -q --upgrade pip pandas numpy pyarrow
+      - name: Shortlist on 2020-21 fit (prereg §3-5), partial-tolerant
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/exit_grid_shortlist.sh
