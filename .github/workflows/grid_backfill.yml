@@ -5,8 +5,7 @@
 name: grid-backfill
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '47 * * * *'
+# hourly schedule disabled 2026-10-25 ~16:45 HKT per 0b (cron spam holds runner slots during grid phase); its job (dispatch grid_chunk for missing pieces) is covered by the queued legs; workflow_dispatch retained for manual sweeps
 permissions:
   actions: write
   contents: read
