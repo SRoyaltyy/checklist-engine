@@ -109,6 +109,75 @@ def compute_talib(o, h, l, c, v, funcs):
             continue
     return out
 
+# ---------------- Block A2: TradingView computed extras (OHLCV-derived M-items) ----------------
+def _ema_np(x, n):
+    """TA-Lib-style EMA: alpha = 2/(n+1), seeded with the first value (pandas
+    ewm(span=n, adjust=False) matches TA-Lib after the seed burn-in)."""
+    return pd.Series(x).ewm(span=n, adjust=False).mean().to_numpy(dtype=np.float64)
+
+def _spearman_rank_last(y):
+    """Spearman rank correlation of y (price) vs time index, TV-RCI convention:
+    price ranked DESCENDING (highest price = rank 1), time ascending.
+    RCI = (1 - 6*sum(d^2) / (n^3 - n)) * 100, over the last n=len(y) bars."""
+    n = len(y)
+    if n < 3:
+        return np.nan
+    price_rank = np.empty(n, dtype=np.float64)
+    price_rank[np.argsort(-y)] = np.arange(1, n + 1, dtype=np.float64)  # descending
+    time_rank = (n - np.arange(n)).astype(np.float64)   # newest bar = rank 1 (TV convention)
+    d2 = ((price_rank - time_rank) ** 2).sum()
+    return (1.0 - 6.0 * d2 / (n ** 3 - n)) * 100.0
+
+def compute_tv_extra(o, h, l, c, v):
+    """TradingView master items marked missing-fetchable that are pure OHLCV math.
+    Returns dict column -> array, all aligned to the bars (caller shifts by one).
+    Deterministic, no external data. M-item ids in comments."""
+    out = {}
+    # M133 PMO: double-smoothed ROC(1). roc1% -> EMA35 -> EMA20 -> EMA10 = PMO line;
+    # signal = EMA10(PMO). (Scaling conventions differ across vendors; what matters
+    # for the questions is the line/signal crossover and direction.)
+    roc1 = np.zeros(len(c), dtype=np.float64)
+    roc1[1:] = 100.0 * (c[1:] - c[:-1]) / np.where(c[:-1] == 0, np.nan, c[:-1])
+    pmo = _ema_np(_ema_np(_ema_np(roc1, 35), 20), 10)
+    pmo_sig = _ema_np(pmo, 10)
+    out['tv_pmo'] = pmo.astype(np.float32)
+    out['tv_pmo_sig'] = pmo_sig.astype(np.float32)
+    out['tv_pmo_x'] = (pmo > pmo_sig).astype(np.float32)          # bull crossover state
+    # M137 / M139 RCI + RCI ribbon: Spearman(close, time) over 9 / 26 / 52 bars.
+    for w in (9, 26, 52):
+        rci = np.full(len(c), np.nan, dtype=np.float64)
+        for t in range(w - 1, len(c)):
+            rci[t] = _spearman_rank_last(c[t - w + 1:t + 1])
+        out[f'tv_rci{w}'] = rci.astype(np.float32)
+    out['tv_rci_ribbon_up'] = ((out['tv_rci9'] > out['tv_rci26']) &
+                               (out['tv_rci26'] > out['tv_rci52'])).astype(np.float32)
+    # M009 Advance/Decline Ratio (Bars): own-bar advancers vs decliners over 14 bars.
+    up = (c[1:] > c[:-1]).astype(np.float64); dn = (c[1:] < c[:-1]).astype(np.float64)
+    up_s = pd.Series(np.r_[0.0, up]).rolling(14, min_periods=14).sum().to_numpy()
+    dn_s = pd.Series(np.r_[0.0, dn]).rolling(14, min_periods=14).sum().to_numpy()
+    with np.errstate(divide='ignore', invalid='ignore'):
+        ratio = np.where((up_s + dn_s) > 0, up_s / np.where(dn_s == 0, np.nan, dn_s), np.nan)
+    out['tv_adbars_up14'] = up_s.astype(np.float32)
+    out['tv_adbars_dn14'] = dn_s.astype(np.float32)
+    out['tv_adbars_ratio14'] = ratio.astype(np.float32)
+    # M265 Tweezer Bottom / M266 Tweezer Top: 2-bar matching lows/highs (tolerance
+    # 0.1% of the level) with a direction confirmation bar.
+    tol_l = l * 1e-3; tol_h = h * 1e-3
+    out['tv_tweezer_bottom'] = np.r_[0.0, ((np.abs(l[1:] - l[:-1]) <= tol_l[1:]) &
+                                           (c[1:] > c[:-1])).astype(np.float32)]
+    out['tv_tweezer_top'] = np.r_[0.0, ((np.abs(h[1:] - h[:-1]) <= tol_h[1:]) &
+                                        (c[1:] < c[:-1])).astype(np.float32)]
+    # M237 Falling Window (bearish gap between bars): today's high below yesterday's low.
+    out['tv_falling_window'] = np.r_[0.0, (h[1:] < l[:-1]).astype(np.float32)]
+    return out
+
+def moon_age(dates):
+    """M113 Moon Phases: pure calendar. Days since the 2000-01-06 18:14 UTC new moon,
+    mod the synodic month (29.530588853 d). Computed from the row date itself, so no
+    shift-by-one is applied by the caller (calendar facts are knowable at open)."""
+    days = (pd.to_datetime(dates) - pd.Timestamp('2000-01-06 18:14:00')).total_seconds() / 86400.0
+    return (days % 29.530588853).astype(np.float32)
+
 # ---------------- Block B: sector/style ETF overlays ----------------
 def etf_wide():
     """All 14 ETFs (SPY, QQQ, IWM, 11 SPDRs) as wide daily columns.
@@ -802,6 +871,10 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
         cols = compute_talib(o, h, l, c, v, funcs)
         for k, arr in cols.items():
             df[k] = np.r_[np.nan, arr[:-1]]          # shift-by-one: D sees bars <= D-1
+        for k, arr in compute_tv_extra(o, h, l, c, v).items():
+            df[k] = np.r_[np.nan, arr[:-1]]          # same shift; bar-derived only
+    # M113 Moon Phases: calendar-derived, computed from the row's own date (no shift).
+    df['tv_moon_age'] = moon_age(df['date'].to_numpy())
     if mkt is not None:
         mcols = [c for c in mkt.columns if c != 'date']
         key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: mkt date < D
