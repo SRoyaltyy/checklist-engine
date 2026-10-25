@@ -90,21 +90,6 @@ def screen(answers, cols, fit_rows, y_fit, min_level_count, screen_t, top_k):
     return feats, pool[:top_k]
 
 
-def pair_cells(Ma, Mb, la, lb, min_cell):
-    """contingency over levels la x lb on fit rows; returns dict (ia,ib) -> (mask_rows, count)."""
-    cells = {}
-    for ia, va in enumerate(la):
-        ma = Ma == va
-        if not ma.any():
-            continue
-        for ib, vb in enumerate(lb):
-            m = ma & (Mb == vb)
-            n = int(m.sum())
-            if n >= min_cell:
-                cells[(ia, ib)] = n
-    return cells
-
-
 def fit_pair(design, win, n_feat):
     """Logistic p(win) on a small 0/1 design (n x k) via Newton (few iterations)."""
     Xd = np.asarray(design, np.float64)
@@ -130,59 +115,97 @@ def ev_of_beta(Xd, beta, y):
     return float((p * y).sum() / p.sum()) if p.sum() > 0 else np.nan
 
 
-def run_pair(feats, answers, q_a, q_b, fit_rows, check_rows, y_fit, y_chk, min_cell):
-    """One pair: mains-only vs mains+interactions logistic; returns dict or None."""
-    la, lb = feats.levels[q_a], feats.levels[q_b]
-    if la is None or lb is None:
-        return None
-    Ma = Mb = None
+def _col_of(answers, q):
     off = 0
     for M, c in answers:
-        w = slice(off, off + M.shape[1])
-        if w.start <= q_a < w.stop:
-            Ma = M[:, q_a - w.start]
-        if w.start <= q_b < w.stop:
-            Mb = M[:, q_b - w.start]
-        off = w.stop
-    if Ma is None or Mb is None:
+        if off <= q < off + M.shape[1]:
+            return M[:, q - off]
+        off += M.shape[1]
+    return None
+
+
+def run_group(feats, answers, qs, fit_rows, check_rows, y_fit, y_chk, min_cell):
+    """One question group (pair or triple): mains-only vs mains+interactions logistic.
+    Interaction dummies = full joint cells over kept levels with count >= min_cell."""
+    levs = []
+    Ms = []
+    for q in qs:
+        l = feats.levels[q]
+        M = _col_of(answers, q)
+        if l is None or M is None or len(l) == 0:
+            return None
+        levs.append(l)
+        Ms.append(M)
+    Mf = [M[fit_rows] for M in Ms]
+    # joint contingency over the kept-level product
+    from itertools import product
+    keys = []
+    # per-question level codes (vectorized)
+    def codes_of(M, l):
+        ls = np.sort(l)
+        si = np.clip(np.searchsorted(ls, M), 0, len(ls) - 1)
+        match = (ls[si] == M) & np.isin(M, ls)
+        return np.where(match, si, -1)
+    codes_fit = np.stack([codes_of(M, l) for M, l in zip(Mf, levs)], 1)
+    n_m = sum(len(l) for l in levs)
+    for combo in product(*[range(len(l)) for l in levs]):
+        m = np.ones(len(fit_rows), bool)
+        for j, cj in enumerate(combo):
+            m &= codes_fit[:, j] == cj
+        if int(m.sum()) >= min_cell:
+            keys.append(combo)
+    if len(keys) < 2:
         return None
-    Maf, Mbf = Ma[fit_rows], Mb[fit_rows]
-    cells = pair_cells(Maf, Mbf, la, lb, min_cell)
-    if len(cells) < 2:
-        return None
-    n_m = len(la) + len(lb)
-    n_i = len(cells)
-    keys = list(cells)
-    # build design on fit rows
+    n_i = len(keys)
     n = len(fit_rows)
     D0 = np.zeros((n, n_m + n_i))
-    for i, v in enumerate(la):
-        D0[:, i] = (Maf == v)
-    for j, v in enumerate(lb):
-        D0[:, len(la) + j] = (Mbf == v)
-    for k, (ia, ib) in enumerate(keys):
-        D0[:, n_m + k] = (Maf == la[ia]) & (Mbf == lb[ib])
+    o = 0
+    for j, (M, l) in enumerate(zip(Mf, levs)):
+        for i, v in enumerate(l):
+            D0[:, o + i] = (M == v)
+        o += len(l)
+    for k, combo in enumerate(keys):
+        m = np.ones(n, bool)
+        for j, cj in enumerate(combo):
+            m &= codes_fit[:, j] == cj
+        D0[:, n_m + k] = m
     win_fit = (y_fit > 0).astype(np.float64)
     b0 = fit_pair(D0[:, :n_m], win_fit, n_m)
     b1 = fit_pair(D0, win_fit, n_m + n_i)
     lift_fit = ev_of_beta(D0, b1, y_fit) - ev_of_beta(D0[:, :n_m], b0, y_fit)
     if not np.isfinite(lift_fit):
         return None
-    # check-year evaluation (untouched): same design columns on check rows
-    Mac, Mbc = Ma[check_rows], Mb[check_rows]
+    Mc = [M[check_rows] for M in Ms]
+    codes_chk = np.stack([codes_of(M, l) for M, l in zip(Mc, levs)], 1)
     nc = len(check_rows)
     Dc0 = np.zeros((nc, n_m + n_i))
-    for i, v in enumerate(la):
-        Dc0[:, i] = (Mac == v)
-    for j, v in enumerate(lb):
-        Dc0[:, len(la) + j] = (Mbc == v)
-    for k, (ia, ib) in enumerate(keys):
-        Dc0[:, n_m + k] = (Mac == la[ia]) & (Mbc == lb[ib])
+    o = 0
+    for j, (M, l) in enumerate(zip(Mc, levs)):
+        for i, v in enumerate(l):
+            Dc0[:, o + i] = (M == v)
+        o += len(l)
+    for k, combo in enumerate(keys):
+        m = np.ones(nc, bool)
+        for j, cj in enumerate(combo):
+            m &= codes_chk[:, j] == cj
+        Dc0[:, n_m + k] = m
     win_chk = (y_chk > 0).astype(np.float64)
     lift_chk = ev_of_beta(Dc0, b1, y_chk) - ev_of_beta(Dc0[:, :n_m], b0, y_chk)
-    return dict(q_a=q_a, q_b=q_b, n_cells=n_i, min_cell=min_cell,
-                lift_fit=lift_fit, lift_check=lift_chk,
-                n_fit=int(D0[:, n_m:].sum()), n_check=int(Dc0[:, n_m:].sum()))
+    out = dict(n_cells=n_i, min_cell=min_cell, lift_fit=lift_fit, lift_check=lift_chk,
+               n_fit=int(D0[:, n_m:].sum()), n_check=int(Dc0[:, n_m:].sum()), k=len(qs))
+    for i, q in enumerate(qs):
+        out[f'q{i}'] = q
+    return out
+
+
+def run_pair(feats, answers, q_a, q_b, fit_rows, check_rows, y_fit, y_chk, min_cell):
+    """One pair: mains-only vs mains+interactions logistic; returns dict or None."""
+    r = run_group(feats, answers, (q_a, q_b), fit_rows, check_rows, y_fit, y_chk, min_cell)
+    if r is None:
+        return None
+    return dict(q_a=q_a, q_b=q_b, n_cells=r['n_cells'], min_cell=r['min_cell'],
+                lift_fit=r['lift_fit'], lift_check=r['lift_check'],
+                n_fit=r['n_fit'], n_check=r['n_check'])
 
 
 def main():
@@ -198,6 +221,8 @@ def main():
     ap.add_argument('--min-level-count', type=int, default=20)
     ap.add_argument('--min-cell', type=int, default=30)
     ap.add_argument('--max-pairs', type=int, default=200000)
+    ap.add_argument('--triple-pool', type=int, default=40)
+    ap.add_argument('--max-triples', type=int, default=50000)
     ap.add_argument('--cols', default=None, help='optional comma list of question ids to restrict (smoke)')
     a = ap.parse_args()
 
@@ -241,6 +266,27 @@ def main():
     if len(df):
         surv = df[df.lift_check > 0]
         log('pair survivors (check lift > 0):', len(surv), 'of', len(df))
+        # ---- stage 3: triples from pair survivors (bounded pool by survivor frequency) ----
+        from collections import Counter
+        freq = Counter(list(surv.q_a) + list(surv.q_b))
+        tpool = [q for q, _ in freq.most_common(a.triple_pool)]
+        log('triple pool:', len(tpool), 'questions from', len(surv), 'surviving pairs')
+        trows, ttried = [], 0
+        for combo3 in __import__('itertools').combinations(range(len(tpool)), 3):
+            if ttried >= a.max_triples:
+                break
+            ttried += 1
+            qs3 = tuple(tpool[i] for i in combo3)
+            r = run_group(feats, answers, qs3, fit_rows, check_rows, y_fit, y_chk, a.min_cell)
+            if r:
+                for i, q in enumerate(qs3):
+                    r[f'qid_{i}'] = cols[q]
+                trows.append(r)
+        log('triples tried', ttried, 'kept', len(trows))
+        if trows:
+            tdf = pd.DataFrame(trows).sort_values('lift_fit', ascending=False)
+            tdf.to_csv(a.out.replace('.csv', '_triples.csv'), index=False)
+            log('triple survivors (check lift > 0):', int((tdf.lift_check > 0).sum()), 'of', len(tdf))
     log('wrote', a.out)
 
 
