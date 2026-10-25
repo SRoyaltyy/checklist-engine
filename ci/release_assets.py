@@ -4,7 +4,7 @@
   get <tag> <dest>          download every asset of the release into dest
   getmatch <tag> <dest> <pat>...  download only assets whose name matches a glob pattern
   upload <tag> <file>...    upload each file as an asset if its name is not already taken (release created if missing)
-  rm <tag> <name>...         delete named assets (for forced reruns)
+  rm <tag> <name-or-glob>... delete named assets or glob matches (for forced reruns)
 Env note: FORCE_UPLOAD=1 makes upload replace same-named assets (delete+upload), for dictionary-fix reruns.
 Env: GITHUB_TOKEN, GH_REPO."""
 import json, os, sys, urllib.request
@@ -95,13 +95,16 @@ def main():
             urllib.request.urlopen(r)
             print('uploaded', name, len(data))
     elif cmd == 'rm':
+        import fnmatch
         ids = {a['name']: a['id'] for a in rel['assets']}
-        for name in sys.argv[3:]:
-            if name in ids:
+        for pat in sys.argv[3:]:
+            hits = [n for n in ids if n == pat or fnmatch.fnmatch(n, pat)]
+            if not hits:
+                print('not found', pat)
+                continue
+            for name in hits:
                 req(f'/releases/assets/{ids[name]}', method='DELETE')
                 print('deleted', name)
-            else:
-                print('not found', name)
     else:
         sys.exit(f'unknown cmd {cmd}')
 
