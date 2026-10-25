@@ -242,6 +242,115 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                       np.where((cci14[1:] > 0) & (cci14[:-1] <= 0), 1.0,
                                np.where((cci14[1:] < 0) & (cci14[:-1] >= 0), -1.0, 0.0)))
     out['tv_cci_zx'] = zx.astype(np.float32)
+    # M032 Bollinger Bars (%B): close position inside the 20,2 band, may exceed 0..1.
+    bb_up, bb_mid2, bb_lo2 = talib.BBANDS(c, timeperiod=20, nbdevup=2.0, nbdevdn=2.0)
+    bbw = np.where(bb_up > bb_lo2, bb_up - bb_lo2, np.nan)
+    out['tv_bb_pos'] = ((c - bb_lo2) / bbw).astype(np.float32)
+    # M136 Pring's Special K (approximation): sum of SMA10-smoothed ROCs over spans
+    # {10,15,20,30,40,65}. TV's exact weight table is proprietary; flagged.
+    spec_k = np.zeros(len(c), dtype=np.float64)
+    for span in (10, 15, 20, 30, 40, 65):
+        roc = np.zeros(len(c), dtype=np.float64)
+        roc[span:] = 100.0 * (c[span:] - c[:-span]) / np.where(c[:-span] == 0, np.nan, c[:-span])
+        spec_k += pd.Series(roc).rolling(10, min_periods=10).mean().fillna(0.0).to_numpy()
+    out['tv_spec_k'] = spec_k.astype(np.float32)
+    # M168 Technical Ratings (approximation of TV's published composite): MA half =
+    # mean sign(close-MA) over SMA10/20 + EMA10/20/30/50/100/200; oscillator half =
+    # RSI14 vs 50, CCI14 vs 0, MACD hist sign, STOCH k>d, ADX>25 ? sign(+DI-DI) : 0,
+    # WILLR14 vs -50. tv_tr_total in [-1,1].
+    mas = [pd.Series(c).rolling(nn, min_periods=nn).mean().to_numpy() for nn in (10, 20)] + \
+          [_ema_np(c, nn) for nn in (10, 20, 30, 50, 100, 200)]
+    cn = np.broadcast_to(c, (8, len(c)))
+    ma_score = np.nanmean(np.sign(cn - np.vstack(mas)), axis=0)
+    rsi14 = talib.RSI(c, timeperiod=14)
+    pdi = talib.PLUS_DI(h, l, c, timeperiod=14)
+    mdi = talib.MINUS_DI(h, l, c, timeperiod=14)
+    wr14 = talib.WILLR(h, l, c, timeperiod=14)
+    osc = np.vstack([np.sign(rsi14 - 50.0), np.sign(cci14), np.sign(mhist),
+                     np.sign(sk - sd), np.where(adx14 > 25.0, np.sign(pdi - mdi), 0.0),
+                     np.sign(wr14 + 50.0)])
+    osc_score = np.nanmean(osc, axis=0)
+    out['tv_tr_ma'] = ma_score.astype(np.float32)
+    out['tv_tr_osc'] = osc_score.astype(np.float32)
+    out['tv_tr_total'] = (np.nan_to_num(ma_score) * 0.5 + np.nan_to_num(osc_score) * 0.5).astype(np.float32)
+    if dates is not None:
+        # M154/M082 Seasonality: expanding PIT historical up-day frequency for the
+        # same calendar month / day-of-week (only bars strictly before t count).
+        dt = pd.to_datetime(dates)
+        upf = np.r_[np.nan, (np.diff(c) > 0).astype(np.float64)]
+        nn_f = ~np.isnan(upf)
+        u0 = np.nan_to_num(upf)
+        for key, colname in ((dt.month.to_numpy(), 'tv_seas_mo_up'),
+                             (dt.dayofweek.to_numpy(), 'tv_seas_dow_up')):
+            ks = pd.Series(key)
+            g_nn = nn_f.astype(np.float64); g_nn = pd.Series(g_nn).groupby(ks).cumsum().to_numpy()  # incl current
+            g_u = pd.Series(u0).groupby(ks).cumsum().to_numpy()
+            prior_n = g_nn - nn_f.astype(np.float64)
+            prior_sum = g_u - u0
+            seas = np.where(prior_n > 0, prior_sum / np.where(prior_n > 0, prior_n, np.nan), np.nan)
+            out[colname] = seas.astype(np.float32)
+    # M218 3-Line Break direction (approximation: close vs the 3 prior closes).
+    lb_dir = np.zeros(len(c), dtype=np.float64)
+    cur = 0.0
+    for t in range(3, len(c)):
+        if c[t] > max(c[t - 3:t]):
+            cur = 1.0
+        elif c[t] < min(c[t - 3:t]):
+            cur = -1.0
+        lb_dir[t] = cur
+    out['tv_lb_dir'] = lb_dir.astype(np.float32)
+    # M219 Kagi direction: 4% reversal from the running extreme (close-only).
+    kg_dir = np.zeros(len(c), dtype=np.float64)
+    cur = 1.0 if len(c) > 1 and c[1] >= c[0] else -1.0
+    ext = c[0]
+    kg_dir[0] = cur
+    for t in range(1, len(c)):
+        if cur > 0:
+            ext = max(ext, c[t])
+            if c[t] < ext * 0.96:
+                cur = -1.0; ext = c[t]
+        else:
+            ext = min(ext, c[t])
+            if c[t] > ext * 1.04:
+                cur = 1.0; ext = c[t]
+        kg_dir[t] = cur
+    out['tv_kagi_dir'] = kg_dir.astype(np.float32)
+    # M217 Renko: ATR(14) bricks; direction state + bricks since last direction flip.
+    atr14 = talib.ATR(h, l, c, timeperiod=14)
+    rk_dir = np.zeros(len(c), dtype=np.float64)
+    rk_n = np.zeros(len(c), dtype=np.float64)
+    state = 0.0; last_brick = c[0]; nbf = 0.0
+    for t in range(1, len(c)):
+        box = atr14[t] if not np.isnan(atr14[t]) and atr14[t] > 0 else 0.0
+        if box > 0:
+            while c[t] >= last_brick + box:
+                last_brick += box
+                if state < 0:
+                    nbf = 0.0
+                state = 1.0; nbf += 1.0
+            while c[t] <= last_brick - box:
+                last_brick -= box
+                if state > 0:
+                    nbf = 0.0
+                state = -1.0; nbf += 1.0
+        rk_dir[t] = state; rk_n[t] = nbf
+    out['tv_renko_dir'] = rk_dir.astype(np.float32)
+    out['tv_renko_n'] = rk_n.astype(np.float32)
+    # M220 Point & Figure: 1% boxes, 3-box reversal, close-only (approximation).
+    pf_dir = np.zeros(len(c), dtype=np.float64)
+    state = 0.0; ext = c[0]
+    for t in range(1, len(c)):
+        box = 0.01 * c[t]
+        if state >= 0 and c[t] >= ext + box:
+            ext = c[t]; state = 1.0
+        elif state <= 0 and c[t] <= ext - box:
+            ext = c[t]; state = -1.0
+        if state > 0 and c[t] <= ext - 3.0 * box:
+            state = -1.0; ext = c[t]
+        elif state < 0 and c[t] >= ext + 3.0 * box:
+            state = 1.0; ext = c[t]
+        pf_dir[t] = state
+    out['tv_pnf_dir'] = pf_dir.astype(np.float32)
     return out
 
 def moon_age(dates):
