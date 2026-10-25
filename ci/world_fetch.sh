@@ -65,5 +65,7 @@ for a in rel['assets']:
     print('downloaded', a['name'], a['size'])
 PY
 cd "$DEST/data-ext"
-sha256sum -c box_uploads_SHA256SUMS.txt
+# verify only what we actually download (nb tar intentionally skipped)
+grep -v '^.*  nb_nbx_' box_uploads_SHA256SUMS.txt > SUBSET_SUMS
+sha256sum -c SUBSET_SUMS
 echo "data-ext files:"; ls
