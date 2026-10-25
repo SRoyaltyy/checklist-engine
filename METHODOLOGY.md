@@ -223,6 +223,14 @@ This file is the single source of truth. Dated entries below are newest first. T
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+- **2026-10-25 ~14:55 HKT — ACK of James 14:12 "Unblocks + queue priority". Phase 3 (exit grid).**
+  - **max-parallel DONE:** `grid_chunk.yml` now caps each grid-chunk run at 2 legs in flight (`kimi/exit-grid` `922a7ac`). Future waves dispatched in batches of <=7 runs so >=6 of the 20 account slots stay free. NOTE: the 14 in-flight grid runs keep the config they started with; they wind down at the 350-min cap (~07:32-07:42 UTC) and their slots then drain the queue in order: shortlist (40156872713) -> world_build (40163291647) -> data_fetch (40164813316) -> impact-diff (40165876598) -> world-leak-verify (40166189700).
+  - **Runners corrected:** all workflow jobs are `ubuntu-latest` (exit_grid.yml, grid_chunk.yml, world_build.yml, data_fetch.yml, impact_diff.yml, world_leak_verify.yml verified). No macOS runner anywhere in the repo; any earlier note implying otherwise was wrong.
+  - **Audit fix 6 DONE (this commit):** §2 "No peeking" line no longer says the leak test is unbuilt — it now names `tests/test_leak.py` (full run 40151183202) and `ci/world_leak_verify.py` (run 40166189700, queued).
+  - **Audit fix 7 verified:** canceller identified and stopped. Zero active cron triggers on main (grep `cron:` -> one commented line only); every concurrency group is `cancel-in-progress: false`. Last schedule-created run was 06:02 UTC; the cancels at 04:56-06:08 UTC were manual/API cancellations by a War-room actor, not any repo mechanism. Nothing cancelled since 06:08 UTC.
+  - **Box-only data RECEIVED** on [data-ext-2020-26-v1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/data-ext-2020-26-v1) (finra_si, finra_shvol, nasdaq_halts, nasdaq_regsho_threshold, nb tar + checksums). Wiring into the world build = audit fixes 1-2, code-side, starting next.
+  - **KIMI_ANSWERS read + logged:** LT test grid = {30, 45, 60, 90, 120} bars, added as NEW rows in groups 034+ (frozen dial tables untouched, per answer 1). W0-EVT: the glossary line in WAR_ROOM_CONTEXT is already correct (window of 0 extra bars, YES iff event fired on latest known bar); the wrong "fires on every bar in the window" phrasing was my §0c UNSURE quote — superseded by answer 2, applies to blocks A/D/E/G/J/L boolean event columns. Pre-open data: D open = buy price ONLY; no gap-at-open questions until Cyrus answers (default per answer 4).
+  - **Grid status:** yearly shards 49 on `grid-2020-22-v1` covering 16/34 chunks fully (0-15) + chunk 17 partial; 4 full-window tables. 14 legs in flight.
 
 - **2026-10-25 ~16:50 HKT — all remaining cron spam cleared: combiner-predict + grid-backfill crons disabled (main `2da374c`/`1287fea`).**
   - combiner-predict fired an hourly copy at 06:02 UTC (40167652910, queued) - cancelled; cron disabled (predict is gated on shortlist+models anyway). grid-backfill hourly cron also disabled (its dispatch job is already covered by the queued grid legs; workflow_dispatch kept for manual sweeps). With combiner.yml disabled earlier (fix 7), step-a + exit-grid today, the queue is now cron-free: only my six workflow_dispatch jobs wait behind the 13-14 grid legs.
@@ -403,7 +411,7 @@ This file is the single source of truth. Dated entries below are newest first. T
 - **Tradeable stocks only.** On each day D, a stock is dropped if it fails the fullscan liquidity filter or is worth under $100M, using split-fixed share counts. Peer groups get the same filter.
 - For 553 tickers whose market cap looks wrong, only the dollar-volume filter is used. `integrity/quarantine.csv` is always honored.
 - Every question is yes/no or picks from a fixed list of labels. No reading of free text.
-- **No peeking.** Answers for day D use data up to the close of D−1, plus pre-open data. A leak test for this is planned but **not built yet**.
+- **No peeking.** Answers for day D use data up to the close of D−1, plus pre-open data. Leak tests are built and running: `tests/test_leak.py` covers the Step A engine (full run 40151183202), `ci/world_leak_verify.py` covers the world-snapshot columns (run 40166189700, queued). No result counts until the relevant leak test passes.
 
 ## 3. Question tree
 - The tree is built from **dials 1–4 plus the history lever**: (1) data type, (2) timeframe, (3) derivative, (4) facets, plus "how it got here" history questions. The locked breakdown is in `dials/v2.7.1/README.md`. Step A covers about 2,023 daily columns, not the whole tree.
