@@ -1,0 +1,26 @@
+name: fred-source-probe
+on:
+  push:
+    branches: [codex/world-state-v2, codex/world-state-v2-integration]
+    paths: ['ci/fred_source_probe.py', '.github/workflows/fred_source_probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Diagnose minimal and all-vintage requests without exposing credentials
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m ci.fred_source_probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fred-source-probe
+          path: FRED_SOURCE_PROBE.json
