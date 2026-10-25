@@ -18,6 +18,8 @@ Halts: only events with halt_date < D; the resume gap is used only when the
 resume date is also < D (ongoing halts give halt_days/counts, gap stays blank).
 Reg SHO: file for date d is published after the close of d -> usable next session
 (strict date < D); membership is sticky, so regsho_on looks back 7 calendar days.
+Block J: dividend/split EVENT dates (I196) from fetch_divsplits.py; bars are
+already split-adjusted, events power 'in last N days' questions (strict < D).
 
 Output: shard parquets world_shard_NNN.parquet keyed by (ticker, date), float32
 for indicators, int8 for candle patterns (-100/0/100). A JSON sidecar per shard
@@ -394,6 +396,10 @@ def load_box_ext(tickers):
     out['halts'] = dict(tuple(ha.groupby('symbol'))) if ha is not None else None
     rg = load_regsho(tickers)
     out['regsho'] = dict(tuple(rg.groupby('symbol'))) if rg is not None else None
+    dv = load_divsplits(tickers)
+    if dv is not None:
+        out['divs'] = {tk: g[g.kind == 'div'][['date', 'value']] for tk, g in dv.groupby('ticker') if (g.kind == 'div').any()}
+        out['splits'] = {tk: g[g.kind == 'split'][['date', 'value']] for tk, g in dv.groupby('ticker') if (g.kind == 'split').any()}
     return {k: v for k, v in out.items() if v}
 
 def _asof_strict(dates, right, cols, date_col, prefix_days=None):
@@ -441,6 +447,55 @@ def halt_columns(dates, hf):
             out['halt_gap'][i] = (res[k] - he[k]) / one_day
         out['halt_n20'][i] = j - np.searchsorted(he, D - np.timedelta64(20, 'D'), side='left')
         out['halt_n60'][i] = j - np.searchsorted(he, D - np.timedelta64(60, 'D'), side='left')
+    return out
+
+# ---------------- Block J: dividends + splits events ----------------
+def load_divsplits(tickers):
+    """Dividend and split EVENTS (dictionary I196), Yahoo chart events API output
+    (fetch_divsplits.py -> data-ext/divsplits_shard_*.parquet). Bars are already
+    split-adjusted; these dates power 'split in last N days' / 'dividend in last
+    N days' questions. Ex-date usable from the next session (strict date < D);
+    the future-ex-date/declaration nuance is a groups-034+ definitional detail."""
+    base = _data_ext_dir()
+    if not os.path.isdir(base):
+        return None
+    fs = [os.path.join(base, f) for f in sorted(os.listdir(base))
+          if f.startswith('divsplits_shard_') and f.endswith('.parquet')]
+    if not fs:
+        return None
+    df = pd.concat([pd.read_parquet(f) for f in fs], ignore_index=True)
+    df = df[df.ticker.isin(tickers)]
+    if not len(df):
+        return None
+    df['date'] = pd.to_datetime(df['date'])
+    return df[['ticker', 'kind', 'date', 'value']].sort_values('date')
+
+def event_columns(dates, evt, value_name, days_name, count_name, count_window=None):
+    """Last-event days/value plus trailing-window count for one ticker's sorted
+    date array. `evt` is a sorted DataFrame with columns date + value; only
+    events strictly before each date are used (searchsorted side='left')."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    nan = np.full(n, np.nan, dtype=np.float32)
+    out = {days_name: nan.copy(), value_name: nan.copy()}
+    if count_name:
+        out[count_name] = nan.copy()
+    if evt is None or not len(evt):
+        return out
+    ed = evt.date.to_numpy(dtype='datetime64[ns]')
+    dd = d.to_numpy(dtype='datetime64[ns]')
+    one = np.timedelta64(1, 'D')
+    pos = np.searchsorted(ed, dd, side='left')        # events with date < D
+    has = pos > 0
+    idx = np.clip(pos - 1, 0, len(ed) - 1)
+    days = np.where(has, (dd - ed[idx]) / one, np.nan)
+    out[days_name] = days.astype(np.float32)
+    vals = evt.value.to_numpy(dtype=np.float32)
+    out[value_name] = np.where(has, vals[idx], np.nan).astype(np.float32)
+    if count_name:
+        lo = np.searchsorted(ed, dd - np.timedelta64(count_window, 'D'), side='left') if count_window \
+            else np.zeros(n, dtype=int)
+        out[count_name] = np.where(has, (pos - lo).astype(np.float32), np.nan).astype(np.float32)
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
@@ -492,6 +547,12 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None):
                 df.loc[df['regsho_days'].isna(), 'regsho_on'] = np.nan
         if ext.get('halts') is not None:
             for c, v in halt_columns(dates, ext['halts']).items():
+                df[c] = v
+        if ext.get('divs') is not None:
+            for c, v in event_columns(dates, ext['divs'], 'div_amt', 'div_days', 'div_n12', count_window=365).items():
+                df[c] = v
+        if ext.get('splits') is not None:
+            for c, v in event_columns(dates, ext['splits'], 'split_ratio', 'split_days', 'split_n', count_window=None).items():
                 df[c] = v
     if peers is not None:
         cid = peers.tk_cluster.get(tk, -1)
@@ -559,7 +620,9 @@ def main():
     box_cols = {'si': ['si_qty', 'si_dtc', 'si_chg', 'si_days'],
                 'shvol': ['shv_ratio', 'shv_r5', 'shv_r20'],
                 'regsho': ['regsho_days', 'regsho_on'],
-                'halts': ['halt_days', 'halt_gap', 'halt_rsn', 'halt_n20', 'halt_n60']}
+                'halts': ['halt_days', 'halt_gap', 'halt_rsn', 'halt_n20', 'halt_n60'],
+                'divs': ['div_amt', 'div_days', 'div_n12'],
+                'splits': ['split_ratio', 'split_days', 'split_n']}
     if box:
         print('box-only blocks loaded:', {k: len(v) for k, v in box.items()}, flush=True)
     peers = build_peers(load_bars(None))

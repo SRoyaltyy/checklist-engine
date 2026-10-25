@@ -35,7 +35,8 @@ def check(tk, funcs, etf, breadth, peers, cut_dates=CUT_DATES):
     edf_tk = edf[edf.symbol == tk] if edf is not None and len(edf) else None
     box = fw.load_box_ext({tk})
     ext = {blk: per[tk] for blk, per in box.items() if tk in per} or None
-    KEYDATE = {'si': 'publication_date', 'shvol': 'date', 'regsho': 'date', 'halts': 'halt_d'}
+    KEYDATE = {'si': 'publication_date', 'shvol': 'date', 'regsho': 'date', 'halts': 'halt_d',
+               'divs': 'date', 'splits': 'date'}
     full = fw.ticker_frame(tk, bars, funcs, etf, breadth, edf_tk, ext=ext, peers=peers).set_index('date')
     res = []
     for cd in cut_dates:
