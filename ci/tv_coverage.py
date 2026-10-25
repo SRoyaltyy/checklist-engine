@@ -47,6 +47,17 @@ BATCH2 = {
     'M150': 'tv_rb_rev',
     'M208': 'tv_cci6;tv_cci_zx',
 }
+BATCH3 = {
+    'M032': 'tv_bb_pos',
+    'M136': 'tv_spec_k',
+    'M168': 'tv_tr_ma;tv_tr_osc;tv_tr_total',
+    'M154': 'tv_seas_mo_up;tv_seas_dow_up',
+    'M082': 'tv_seas_mo_up;tv_seas_dow_up',
+    'M218': 'tv_lb_dir',
+    'M219': 'tv_kagi_dir',
+    'M217': 'tv_renko_dir;tv_renko_n',
+    'M220': 'tv_pnf_dir',
+}
 # already wired by another block, no new code needed
 ALREADY = {
     'M277': ('split_days;split_n',
@@ -77,7 +88,7 @@ def seed():
                              '(tested: none; see DATA_SOURCES.csv notes)'))
             elif status == 'missing-fetchable':
                 if iid in WIRED_MAP:
-                    sha = 'c29b214' if iid in BATCH1 else 'bf0ec81'
+                    sha = 'c29b214' if iid in BATCH1 else ('bf0ec81' if iid in BATCH2 else '7fb1a8b')
                     rows.append((iid, item, cat, block, WIRED_MAP[iid], 'WIRED',
                                  f'computed from OHLCV in compute_tv_extra ({sha})'))
                 elif iid in ALREADY:
