@@ -227,6 +227,10 @@ This file is the single source of truth. Dated entries below are newest first. T
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+- **2026-10-25 ~17:25 HKT — WORLD LEAK TEST PASS (run 40171325240). Phase 3 + world. Leak gate cleared for world columns.**
+  - `WORLD LEAK TEST PASS (25 cut points, 2550 column comparisons, 0 mismatches)` on AAPL/MSFT/NVDA/GME (+ASLN: no bars) x 6 cut dates 2020-2024. Coverage: TA-Lib indicators + 61 candle patterns + ETF overlays + breadth + earnings + box blocks F/G (SI, short volume, Reg SHO, halts), with external inputs truncated at D in the cut build (not just bars).
+  - Scope note: this run covered the code as of `4d12dba`+`90d829b`. Blocks C (peers, `bc6b972`) and J (div/split events, `40893b8`) passed the same truncation test locally but were not in this run - a re-run on the next build covers them end-to-end.
+  - Engine Step A leak run 40151183202 already passed earlier. Both leak gates green for everything the current grid is built on.
 - **2026-10-25 ~17:10 HKT — block J wired; grid batch 1 in progress. Phase 3 + world.**
   - `kimi/world-snapshot` `40893b8`: dividend/split EVENT columns (I196: `div_amt/div_days/div_n12`, `split_ratio/split_days/split_n`), strict date < D, generic `event_columns` helper, leak test extended. Reads `divsplits_shard_*.parquet` when the fetch lands on data-ext; until then the block stays empty by design. Synthetic test: strict-day semantics verified (event on D visible only from D+1).
   - Old 9 grid legs died at the 350-min cap as predicted. world-leak-verify (40171325240) is RUNNING now; world_build, shortlist, 2x data_fetch queued behind my grid batch 1 (chunks 16,18-23).
