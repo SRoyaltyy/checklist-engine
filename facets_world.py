@@ -351,6 +351,160 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             state = 1.0; ext = c[t]
         pf_dir[t] = state
     out['tv_pnf_dir'] = pf_dir.astype(np.float32)
+    # ---- M014/M017/M018/M149/M151/M269: strict swing pivots (left=right=2,
+    # dictionary swing rule; a pivot at bar j is knowable once bar j+2 has closed,
+    # which the caller's shift-by-one makes strictly leak-safe). ----
+    P = 2
+    nn = len(c)
+    piv_h_idx = []   # confirmed pivot-high bar indices (ascending)
+    piv_l_idx = []
+    for t in range(P, nn - P):
+        if h[t] > max(h[t - P:t]) and h[t] > max(h[t + 1:t + P + 1]):
+            piv_h_idx.append(t)
+        if l[t] < min(l[t - P:t]) and l[t] < min(l[t + 1:t + P + 1]):
+            piv_l_idx.append(t)
+    # M018 Auto trendlines: slope (pct/bar) and close distance to the line through
+    # the last two confirmed same-kind pivots, extended to t.
+    tl_hs = np.full(nn, np.nan); tl_hdist = np.full(nn, np.nan)
+    tl_ls = np.full(nn, np.nan); tl_ldist = np.full(nn, np.nan)
+    for arr_idx, pivs, price, slope_col, dist_col in (
+            (0, piv_h_idx, h, tl_hs, tl_hdist), (1, piv_l_idx, l, tl_ls, tl_ldist)):
+        for k in range(1, len(pivs)):
+            j1, j2 = pivs[k - 1], pivs[k]
+            for t in range(j2 + P, nn if k == len(pivs) - 1 else pivs[k + 1] + P):
+                slope = (price[j2] - price[j1]) / (j2 - j1) / price[j1]
+                line = price[j2] + slope * price[j1] * (t - j2)
+                slope_col[t] = slope * 100.0
+                dist_col[t] = (c[t] - line) / c[t]
+    out['tv_tl_hslope'] = tl_hs.astype(np.float32)
+    out['tv_tl_hdist'] = tl_hdist.astype(np.float32)
+    out['tv_tl_lslope'] = tl_ls.astype(np.float32)
+    out['tv_tl_ldist'] = tl_ldist.astype(np.float32)
+    # M014 Auto fib extension: position in units of the last confirmed swing range,
+    # 0 = at the swing high, −1 = at the swing low, >0 = extension beyond the high.
+    fibx = np.full(nn, np.nan)
+    hi_i = lo_i = None
+    hi_v = lo_v = np.nan
+    # walk pivots in time order
+    events = sorted([(i, 1, h[i]) for i in piv_h_idx] + [(i, -1, l[i]) for i in piv_l_idx])
+    ei = 0
+    for t in range(nn):
+        while ei < len(events) and events[ei][0] + P <= t:
+            _, kind, val = events[ei]
+            if kind == 1:
+                hi_i, hi_v = events[ei][0], val
+            else:
+                lo_i, lo_v = events[ei][0], val
+            ei += 1
+        if hi_i is not None and lo_i is not None and hi_v > lo_v:
+            fibx[t] = (c[t] - hi_v) / (hi_v - lo_v)
+    out['tv_fibx'] = fibx.astype(np.float32)
+    # M017 Auto Pitchfork (approximation): midline through the midpoints of the last
+    # two confirmed pivot pairs; tv_pf_pos = close distance to the midline.
+    pf_slope = np.full(nn, np.nan); pf_pos = np.full(nn, np.nan)
+    mids = []   # (bar, midpoint price) alternating from confirmed pivots, time order
+    ei = 0
+    for t in range(nn):
+        while ei < len(events) and events[ei][0] + P <= t:
+            _, kind, val = events[ei]
+            mids.append((events[ei][0], val))
+            ei += 1
+        if len(mids) >= 4:
+            (a1, v1), (a2, v2), (a3, v3), (a4, v4) = mids[-4:]
+            m1 = (v1 + v2) / 2.0; m2 = (v3 + v4) / 2.0
+            if a4 > a2:
+                slope = (m2 - m1) / (a4 - a2) / m1
+                line = m2 + slope * m1 * (t - a4)
+                pf_slope[t] = slope * 100.0
+                pf_pos[t] = (c[t] - line) / c[t]
+    out['tv_pf_slope'] = pf_slope.astype(np.float32)
+    out['tv_pf_pos'] = pf_pos.astype(np.float32)
+    # M149 Missed Pivot Points: distance to the classic prior-bar floor pivot
+    # pp = (H+L+C)/3 of the previous bar.
+    pp_prev = (h[:-1] + l[:-1] + c[:-1]) / 3.0
+    out['tv_mpp_dist'] = np.r_[np.nan, ((c[1:] - pp_prev) / c[1:])].astype(np.float32)
+    # M151 Ziv Ghost Pivots: the most recent confirmed pivot whose level was later
+    # exceeded (a 'failed' pivot). Distance to that ghost level.
+    ghost = np.full(nn, np.nan)
+    ghost_list = []  # (bar, level, kind)
+    gi = 0
+    cur_ghost = np.nan
+    for t in range(nn):
+        while gi < len(events) and events[gi][0] + P <= t:
+            ghost_list.append(events[gi])
+            gi += 1
+        # a pivot is a ghost once any later bar's range exceeds its level
+        for (j, kind, val) in ghost_list[-6:]:
+            if kind == 1 and h[t] > val:
+                cur_ghost = val
+            elif kind == -1 and l[t] < val:
+                cur_ghost = val
+        if not np.isnan(cur_ghost):
+            ghost[t] = (c[t] - cur_ghost) / c[t]
+    out['tv_ghost_dist'] = ghost.astype(np.float32)
+    # M269 Elliott Waves (approximation): direction of the last-5-pivot net move and
+    # total confirmed pivot count.
+    ew_dir = np.zeros(nn); ew_npiv = np.zeros(nn)
+    ei = 0
+    seq = []
+    for t in range(nn):
+        while ei < len(events) and events[ei][0] + P <= t:
+            seq.append(events[ei])
+            ei += 1
+        ew_npiv[t] = float(len(seq))
+        if len(seq) >= 5:
+            ew_dir[t] = float(np.sign(seq[-1][2] - seq[-5][2]))
+    out['tv_ew_dir'] = ew_dir.astype(np.float32)
+    out['tv_ew_npiv'] = ew_npiv.astype(np.float32)
+    # M271 Periodic Volume Profile POC (rolling 20 bars, typical price, 20 bins):
+    # distance of close to the point of control.
+    tp = (h + l + c) / 3.0
+    poc_dist = np.full(nn, np.nan)
+    for t in range(19, nn):
+        seg = tp[t - 19:t + 1]; vol = v[t - 19:t + 1]
+        lo_, hi_ = seg.min(), seg.max()
+        if hi_ <= lo_:
+            poc = seg[vol.argmax()]
+        else:
+            bins = np.clip(((seg - lo_) / (hi_ - lo_) * 19.0).astype(int), 0, 19)
+            volsum = np.bincount(bins, weights=vol, minlength=20)
+            poc = lo_ + (volsum.argmax() + 0.5) * (hi_ - lo_) / 20.0
+        poc_dist[t] = (c[t] - poc) / c[t]
+    out['tv_poc_dist'] = poc_dist.astype(np.float32)
+    # M274 Anchored Volume Profile POC: anchored at the highest-high bar of the
+    # 60-bar window ending 5 bars back, so the anchored profile always has >=6 bars
+    # and the anchor itself is unambiguously in the past.
+    avp_dist = np.full(nn, np.nan)
+    for t in range(65, nn):
+        anchor = t - 64 + int(np.argmax(h[t - 64:t - 4]))
+        seg = tp[anchor:t + 1]; vol = v[anchor:t + 1]
+        lo_, hi_ = seg.min(), seg.max()
+        if hi_ <= lo_:
+            poc = seg[vol.argmax()]
+        else:
+            bins = np.clip(((seg - lo_) / (hi_ - lo_) * 19.0).astype(int), 0, 19)
+            volsum = np.bincount(bins, weights=vol, minlength=20)
+            poc = lo_ + (volsum.argmax() + 0.5) * (hi_ - lo_) / 20.0
+        avp_dist[t] = (c[t] - poc) / c[t]
+    out['tv_avp_dist'] = avp_dist.astype(np.float32)
+    # M147 Knoxville Divergence: new 20-day high with RSI lower than at the previous
+    # 20-day high (bearish, −1); mirror for lows (bullish, +1). Event column.
+    knox = np.zeros(nn)
+    prev_hi_i = prev_lo_i = None
+    hh = pd.Series(h).rolling(20, min_periods=20).max().to_numpy()
+    ll = pd.Series(l).rolling(20, min_periods=20).min().to_numpy()
+    for t in range(20, nn):
+        if h[t] >= hh[t]:                       # new 20d high
+            if prev_hi_i is not None and not np.isnan(rsi14[t]) and not np.isnan(rsi14[prev_hi_i]):
+                if rsi14[t] < rsi14[prev_hi_i] - 5.0:
+                    knox[t] = -1.0
+            prev_hi_i = t
+        if l[t] <= ll[t]:                       # new 20d low
+            if prev_lo_i is not None and not np.isnan(rsi14[t]) and not np.isnan(rsi14[prev_lo_i]):
+                if rsi14[t] > rsi14[prev_lo_i] + 5.0:
+                    knox[t] = 1.0
+            prev_lo_i = t
+    out['tv_knox'] = knox.astype(np.float32)
     return out
 
 def moon_age(dates):
