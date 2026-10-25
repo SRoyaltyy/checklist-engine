@@ -131,3 +131,10 @@ def test_external_fields_with_microsecond_dates_align_on_all_timeframes():
     result=world_timeframes(b,fw.discover(),external)
     assert 'mkt_vix__monthly' in result
     assert result['mkt_vix__5d'].iloc[5]==5
+
+
+def test_earnings_same_day_preserves_previous_known_report_and_precision():
+    source=pd.DataFrame(dict(report_date=pd.to_datetime(['2020-01-01','2020-02-01']).astype('datetime64[us]'),
+        amc=[1.,0.],surprise_pct_fill=[10.,20.],eps_delta=[.1,.2]))
+    out=fw.earn_for(pd.to_datetime(['2020-02-01','2020-02-02']),source)
+    np.testing.assert_equal(out.earn_surp.to_numpy(),[10.,20.])

@@ -151,6 +151,7 @@ def main():
                 done[ticker]='OK' if batch else 'NO_FACTS'
             except Exception as exc:
                 errors[ticker]=f'{type(exc).__name__}: {exc}'
+                print('SOURCE_ERROR',ticker,errors[ticker],flush=True)
         if (i+1)%25==0: checkpoint()
         time.sleep(1.0)  # eight shards share SEC's account/IP fair-use budget
     checkpoint()

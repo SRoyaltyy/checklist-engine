@@ -7,7 +7,7 @@ first supplied historical session. monthly uses actual calendar months, not
 import numpy as np
 import pandas as pd
 
-TIMEFRAMES = ('1d', '5d', '10d', '20d', 'monthly')
+TIMEFRAMES = tuple(f'{k}d' for k in range(1,22)) + ('monthly',)
 PRICE_COLS = ('open', 'high', 'low', 'close', 'volume')
 
 

@@ -901,9 +901,11 @@ def earn_for(dates, edf):
     reports strictly before each date."""
     if edf is None or len(edf) == 0:
         return None
-    q = pd.DataFrame({'date': pd.to_datetime(dates)})
-    m = pd.merge_asof(q, edf[['report_date', 'amc', 'surprise_pct_fill', 'eps_delta']],
-                      left_on='date', right_on='report_date', direction='backward')
+    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
+    edf=edf.copy()
+    edf['report_date']=pd.to_datetime(edf.report_date).astype('datetime64[ns]')
+    m = pd.merge_asof(q, edf[['report_date', 'amc', 'surprise_pct_fill', 'eps_delta']].sort_values('report_date'),
+                      left_on='date', right_on='report_date', direction='backward', allow_exact_matches=False)
     m = m.where(m.report_date < m.date)               # strict: nothing from D onward
     days = (m.date - m.report_date).dt.days.to_numpy(dtype=np.float32)
     return pd.DataFrame({'earn_days': days,
