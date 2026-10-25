@@ -125,6 +125,7 @@ This file is the single source of truth. The newest entry overrides any pasted p
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- ACK 2026-10-25 09:36 HKT: read James §0b leak-priority + ack-test; freeing runner for leak-verify 40148289202 (cancelled 14 queued grid-chunk duplicates ahead of it + 4 in-progress grid legs). §0b entry @ `3a9d097`.
 - **2026-10-24 ~23:15 HKT — Parallel Step A live; combiner code written; two infra bugs found and fixed.**
   - **What changed**
     - `step_a.py` gained `--only` (run a subset of chunks; launch plumbing only, no math change). Commit `e8f9402` on `kimi/step-a-wincompat`.
