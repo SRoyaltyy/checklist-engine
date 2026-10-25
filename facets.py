@@ -81,14 +81,14 @@ def indicators(d):
     for n in (6, 12, 24, 14): I[f'rsi{n}'] = talib.RSI(c, n)
     I['stoch'] = talib.STOCH(h, l, c, 14, 3, 0, 3, 0)[0]
     I['willr'] = talib.WILLR(h, l, c, 14)
-    I['macd'] = talib.MACD(c, 12, 26, 9)[0]
+    I['macd'], I['macd_sig'], I['macd_hist'] = talib.MACD(c, 12, 26, 9)
     I['roc20'] = talib.ROC(c, 20); I['roc5'] = talib.ROC(c, 5); I['roc60'] = talib.ROC(c, 60)
     I['mfi'] = talib.MFI(h, l, c, v, 14)
     I['obv'] = talib.OBV(c, v); I['ad'] = talib.AD(h, l, c, v)
     I['obv_p'] = own_pct(I['obv']); I['ad_p'] = own_pct(I['ad'])
     I['atr'] = talib.ATR(h, l, c, 14); I['rng'] = h - l
     I['adx'] = talib.ADX(h, l, c, 14); I['pdi'] = talib.PLUS_DI(h, l, c, 14); I['mdi'] = talib.MINUS_DI(h, l, c, 14)
-    for n in (5, 10, 20, 30, 50, 200): I[f'sma{n}'] = talib.SMA(c, n)
+    for n in (5, 10, 20, 30, 50, 100, 200): I[f'sma{n}'] = talib.SMA(c, n)
     I['ema21'] = talib.EMA(c, 21)
     up, mid, lo = talib.BBANDS(c, 20, 2, 2, 0); I['bbu'], I['bbm'], I['bbl'] = up, mid, lo
     kc_mid = talib.EMA(c, 20); I['kcu'] = kc_mid + 1.5*I['atr']; I['kcl'] = kc_mid - 1.5*I['atr']
@@ -113,41 +113,44 @@ def pd_median(x, n):
 OSC = [  # variant, key, lo, hi, cross level, zone names
     ('RSI6', 'rsi6', 30, 70, 50), ('RSI12', 'rsi12', 30, 70, 50), ('RSI24', 'rsi24', 30, 70, 50), ('RSI14', 'rsi14', 30, 70, 50),
     ('Stoch14_3', 'stoch', 20, 80, 50), ('WilliamsR14', 'willr', -80, -20, -50), ('MACD12_26_9', 'macd', None, None, 0),
-    ('ROC20', 'roc20', -5, 5, 0), ('MFI14', 'mfi', 20, 80, 50), ('OBV', 'obv_p', 20, 80, 50), ('AD_line', 'ad_p', 20, 80, 50)]
+    ('ROC20', 'roc20', -5, 5, 0), ('MFI14', 'mfi', 20, 80, 50), ('OBV', 'obv_p', 20, 80, 50), ('AD_line', 'ad_p', 20, 80, 50),
+    ('MACDsig12_26_9', 'macd_sig', None, None, 0), ('MACDhist12_26_9', 'macd_hist', None, None, 0)]
 
 def _osc_series(I, key):
     x = I[key]
-    if key == 'macd':  # zone in ATR units so it is scale-free
+    if key in ('macd', 'macd_sig', 'macd_hist'):  # zone in ATR units so it is scale-free
         x = x / I['atr']
     return x
 
-def make_osc(variant, key, lo, hi, cl):
-    if key == 'macd': lo, hi = -0.25, 0.25
+def make_osc(variant, key, lo, hi, cl, raw=False):
+    if key in ('macd', 'macd_sig', 'macd_hist'): lo, hi = -0.25, 0.25
     zn = ['high', 'mid', 'low']
     def series(I): return _osc_series(I, key)
     facet(variant, 'path_dir', ['rising', 'falling', 'flat'])(
         lambda I, N: (lambda Wm: pick([tstat_slope(Wm) > 2, tstat_slope(Wm) < -2, np.ones(len(Wm), bool)], ok(Wm)))(W(series(I), N)))
-    facet(variant, 'zone_route', pairs(zn))(lambda I, N: route9(W(series(I), N), lo, hi))
+    if not raw:
+        facet(variant, 'zone_route', pairs(zn))(lambda I, N: route9(W(series(I), N), lo, hi))
     def cross(I, N):
         Wm = W(series(I), N) - cl; s = np.sign(Wm); ch = s[:, 1:] * s[:, :-1] < 0
         upx = (ch & (s[:, 1:] > 0)).any(1); dnx = (ch & (s[:, 1:] < 0)).any(1)
         return pick([upx & dnx, upx, dnx, np.ones(len(Wm), bool)], ok(Wm))
     REG.append((variant, 'cross_event', ['both', 'up', 'down', 'none'], cross, LB_STD))
     def div(I, N):
-        P = W(I['c'], N); X = W(series(I), N); h = N//2
-        p1, p2 = np.nanmin(P[:, :h], 1), np.nanmin(P[:, h:], 1)
-        i1, i2 = np.nanargmin(np.nan_to_num(P[:, :h], nan=np.inf), 1), h + np.nanargmin(np.nan_to_num(P[:, h:], nan=np.inf), 1)
-        r = np.arange(len(P)); x1, x2 = X[r, i1], X[r, i2]
+        PH = W(I['h'], N); PL = W(I['l'], N); X = W(series(I), N); h = N//2   # C07: wicks, not closes
+        p1, p2 = np.nanmin(PL[:, :h], 1), np.nanmin(PL[:, h:], 1)
+        i1, i2 = np.nanargmin(np.nan_to_num(PL[:, :h], nan=np.inf), 1), h + np.nanargmin(np.nan_to_num(PL[:, h:], nan=np.inf), 1)
+        r = np.arange(len(PL)); x1, x2 = X[r, i1], X[r, i2]
         bull = (p2 < p1) & (x2 > x1)
-        q1, q2 = np.nanmax(P[:, :h], 1), np.nanmax(P[:, h:], 1)
-        j1, j2 = np.nanargmax(np.nan_to_num(P[:, :h], nan=-np.inf), 1), h + np.nanargmax(np.nan_to_num(P[:, h:], nan=-np.inf), 1)
+        q1, q2 = np.nanmax(PH[:, :h], 1), np.nanmax(PH[:, h:], 1)
+        j1, j2 = np.nanargmax(np.nan_to_num(PH[:, :h], nan=-np.inf), 1), h + np.nanargmax(np.nan_to_num(PH[:, h:], nan=-np.inf), 1)
         bear = (q2 > q1) & (X[r, j2] < X[r, j1])
-        return pick([bull & ~bear, bear & ~bull, np.ones(len(P), bool)], ok(P, X))
+        return pick([bull & ~bear, bear & ~bull, np.ones(len(PL), bool)], ok(PH, PL, X))
     REG.append((variant, 'price_divergence', ['bull', 'bear', 'none'], div, LB_STD))
     def tiz(I, N):
         Wm = W(series(I), N); hi_s = (Wm > hi).mean(1); lo_s = (Wm < lo).mean(1); mid_s = 1 - hi_s - lo_s
         return pick([hi_s > .6, lo_s > .6, mid_s > .6, np.ones(len(Wm), bool)], ok(Wm))
-    REG.append((variant, 'time_in_zone', ['mostly_high', 'mostly_low', 'mostly_mid', 'mixed'], tiz, LB_STD))
+    if not raw:
+        REG.append((variant, 'time_in_zone', ['mostly_high', 'mostly_low', 'mostly_mid', 'mixed'], tiz, LB_STD))
     def speed(I, N):
         Wm = W(series(I), N); d = np.abs(np.diff(Wm, axis=1)); k = max(1, d.shape[1]//3)
         with np.errstate(all='ignore'): r = d[:, -k:].mean(1) / d[:, :k].mean(1)
@@ -156,7 +159,8 @@ def make_osc(variant, key, lo, hi, cl):
     def vop(I, N):
         x = series(I); Wm = W(x, N); rg = np.nanmax(Wm, 1) - np.nanmin(Wm, 1); rg[~ok(Wm)] = np.nan
         p = own_pct(rg); return pick([p > 80, p < 20, np.ones(len(p), bool)], ~np.isnan(p))
-    REG.append((variant, 'vs_own_past', ['wider', 'usual', 'narrower'], vop, LB_STD))
+    if not raw:
+        REG.append((variant, 'vs_own_past', ['wider', 'usual', 'narrower'], vop, LB_STD))
     if variant.startswith('RSI'):
         def exit_os(I, N):
             Wm = W(series(I), N); a, b = Wm[:, :-1], Wm[:, 1:]
@@ -178,6 +182,9 @@ def make_osc(variant, key, lo, hi, cl):
         REG.append((variant, 'extreme_position', ['max_early_min_late', 'min_early_max_late', 'both_early', 'both_late'], xpos, LB_STD))
 
 for args in OSC: make_osc(*args)
+# dictionary I082/I083: raw OBV / A-D asked alongside their percentiles (no zones on a raw $ scale)
+make_osc('OBV_raw', 'obv', None, None, 0, raw=True)
+make_osc('AD_raw', 'ad', None, None, 0, raw=True)
 
 @facet('RSI12', 'length_fan', [f"{a}x{b}" for a in ['fast>mid>slow', 'slow>mid>fast', 'mixed'] for b in ['bunched', 'fanned']])
 def rsi_fan(I, N):
@@ -234,11 +241,11 @@ def make_ma(variant, key):
         with np.errstate(all='ignore'): r = b/(a + 1e-9)
         return pick([r > 1.5, r < 0.67, np.ones(len(r), bool)], ok(M))
     REG.append((variant, 'speed', ['speeding_up', 'slowing_down', 'steady'], speed, LB_STD))
-for v, k in [('SMA20', 'sma20'), ('SMA50', 'sma50'), ('SMA200', 'sma200'), ('EMA21', 'ema21')]: make_ma(v, k)
+for v, k in [('SMA20', 'sma20'), ('SMA50', 'sma50'), ('SMA100', 'sma100'), ('SMA200', 'sma200'), ('EMA21', 'ema21')]: make_ma(v, k)
 
 MAG = 'MA_group(10/20/50/200)'
-def _stack(I):  # formula column of the table uses SMA5/10/20/30 for the group
-    a, b, c_, d = I['sma5'], I['sma10'], I['sma20'], I['sma30']
+def _stack(I):  # dictionary/0b: the group is the labelled 10/20/50/200 stack
+    a, b, c_, d = I['sma10'], I['sma20'], I['sma50'], I['sma200']
     pairs_bull = (a > b).astype(int) + (b > c_) + (c_ > d); pairs_bear = (a < b).astype(int) + (b < c_) + (c_ < d)
     st = np.where(pairs_bull == 3, 0, np.where(pairs_bear == 3, 3, np.where(pairs_bull >= 2, 1, np.where(pairs_bear >= 2, 2, 1))))
     st = st.astype(float); st[np.isnan(d)] = np.nan; return st
@@ -273,24 +280,25 @@ def dspf(I, N):
     return pick([(last >= 0) & (age < 5), (last >= 0) & (age <= 20), last >= 0, np.ones(len(S), bool)], ok(S))
 @facet(MAG, 'fan_out', ['fanning', 'converging', 'steady'])
 def fan(I, N):
-    spread = (np.nanmax(np.c_[I['sma5'], I['sma10'], I['sma20'], I['sma30']], 1) - np.nanmin(np.c_[I['sma5'], I['sma10'], I['sma20'], I['sma30']], 1)) / I['atr']
-    spread[np.isnan(I['sma30'])] = np.nan; S = W(spread, N); r = S[:, -1]/(S[:, 0] + 1e-9)
+    M4 = np.c_[I['sma10'], I['sma20'], I['sma50'], I['sma200']]
+    spread = (np.nanmax(M4, 1) - np.nanmin(M4, 1)) / I['atr']
+    spread[np.isnan(I['sma200'])] = np.nan; S = W(spread, N); r = S[:, -1]/(S[:, 0] + 1e-9)
     return pick([r > 1.3, r < 0.77, np.ones(len(S), bool)], ok(S))
 @facet(MAG, 'bunching_route', pairs(['tight', 'mid', 'wide']))
 def bunch(I, N):
-    M = np.c_[I['sma5'], I['sma10'], I['sma20'], I['sma30']]
+    M = np.c_[I['sma10'], I['sma20'], I['sma50'], I['sma200']]
     sp = (M.max(1) - M.min(1)) / I['atr']; S = W(sp, N)
     z = lambda x: np.where(x < 1, 0, np.where(x > 3, 2, 1))
     out = (z(S[:, 0])*3 + z(S[:, -1])).astype(np.int8); out[~ok(S)] = -1; return out
 @facet(MAG, 'price_inside', ['mostly_inside', 'mostly_outside'])
 def pinside(I, N):
-    M = np.c_[I['sma5'], I['sma10'], I['sma20'], I['sma30']]
-    ins = ((I['c'] <= M.max(1)) & (I['c'] >= M.min(1))).astype(float); ins[np.isnan(I['sma30'])] = np.nan
+    M = np.c_[I['sma10'], I['sma20'], I['sma50'], I['sma200']]
+    ins = ((I['c'] <= M.max(1)) & (I['c'] >= M.min(1))).astype(float); ins[np.isnan(I['sma200'])] = np.nan
     S = W(ins, N); return pick([S.mean(1) > .5, np.ones(len(S), bool)], ok(S))
-@facet(MAG, 'deepest_pullback_ma', ['MA10', 'MA20', 'MA30', 'broke_MA30', 'none'])
+@facet(MAG, 'deepest_pullback_ma', ['MA10', 'MA20', 'MA50', 'broke_MA50', 'none'])
 def deep_pb(I, N):
-    L, C = W(I['l'], N), W(I['c'], N); m10, m20, m30 = W(I['sma10'], N), W(I['sma20'], N), W(I['sma30'], N)
-    return pick([(C < m30).any(1), (L <= m30).any(1), (L <= m20).any(1), (L <= m10).any(1), np.ones(len(L), bool)], ok(L, m30))
+    L, C = W(I['l'], N), W(I['c'], N); m10, m20, m50 = W(I['sma10'], N), W(I['sma20'], N), W(I['sma50'], N)
+    return pick([(C < m50).any(1), (L <= m50).any(1), (L <= m20).any(1), (L <= m10).any(1), np.ones(len(L), bool)], ok(L, m50))
 
 # reorder deep_pb codes to match label order
 _orig = REG[-1]
@@ -811,35 +819,37 @@ def nh_ft(I, N):
     yes = (li >= 0) & (C[:, -1] > H[r, np.minimum(fi, N-1)]); return pick([yes, li >= 0, np.ones(len(S), bool)], ok(S, C))
 @facet('new_highs_lows', 'giveback', [f"{a}xwhole_run" for a in ['none<10%', 'partial', 'most>60%']])
 def nh_gb(I, N):
-    C = W(I['c'], N); T = len(C); out = np.full(T, -1, np.int8)
-    ip = np.argmax(np.nan_to_num(C), 1)
-    for t in np.where(ok(C))[0]:
-        p = ip[t]; lo = C[t, :p+1].min(); pk = C[t, p]; x = (pk - C[t, -1])/(pk - lo + 1e-12) if pk > lo else 0
+    H = W(I['h'], N); L = W(I['l'], N); T = len(H); out = np.full(T, -1, np.int8)   # C07: wicks
+    ip = np.argmax(np.nan_to_num(H, nan=-np.inf), 1)
+    for t in np.where(ok(H, L))[0]:
+        p = ip[t]; lo = L[t, :p+1].min(); pk = H[t, p]; x = (pk - L[t, -1])/(pk - lo + 1e-12) if pk > lo else 0
         out[t] = 0 if x < .1 else 2 if x > .6 else 1
     return out
 @facet('drawdown', 'depth', ['shallow<2', 'mid', 'deep>5'])
 def dd_d(I, N):
-    C, A = W(I['c'], N), W(I['atr'], N); pk = np.maximum.accumulate(np.nan_to_num(C), 1); dd = ((pk - C)/A[:, -1:]).max(1)
-    return pick([dd < 2, dd <= 5, np.ones(len(dd), bool)], ok(C, A))
+    H, L, A = W(I['h'], N), W(I['l'], N), W(I['atr'], N)   # C07: peak=wick high, trough=wick low
+    pk = np.maximum.accumulate(np.nan_to_num(H, nan=-np.inf), 1); dd = ((pk - L)/A[:, -1:]).max(1)
+    return pick([dd < 2, dd <= 5, np.ones(len(dd), bool)], ok(H, L, A))
 @facet('drawdown', 'recovery', ['full', 'partial', 'none'])
 def dd_r(I, N):
-    C = W(I['c'], N); T = len(C); out = np.full(T, -1, np.int8)
-    pk = np.maximum.accumulate(np.nan_to_num(C), 1); dd = (pk - C)/pk
-    i = np.argmax(dd, 1); r = np.arange(T); trough = C[r, i]; peak = pk[r, i]; x = (C[:, -1] - trough)/(peak - trough + 1e-12)
-    return pick([(x >= .999) | (dd.max(1) == 0), x > .2, np.ones(T, bool)], ok(C))
+    C = W(I['c'], N); H = W(I['h'], N); L = W(I['l'], N); T = len(C); out = np.full(T, -1, np.int8)   # C07 wicks
+    pk = np.maximum.accumulate(np.nan_to_num(H, nan=-np.inf), 1); dd = (pk - L)/pk
+    i = np.argmax(dd, 1); r = np.arange(T); trough = L[r, i]; peak = pk[r, i]; x = (C[:, -1] - trough)/(peak - trough + 1e-12)
+    return pick([(x >= .999) | (dd.max(1) == 0), x > .2, np.ones(T, bool)], ok(C, H, L))
 @facet('drawdown', 'count', ['0', '1', '2+'])
 def dd_c(I, N):
-    C, A = W(I['c'], N), W(I['atr'], N); T = len(C); out = np.full(T, -1, np.int8); v = ok(C, A)
+    H, L, A = W(I['h'], N), W(I['l'], N), W(I['atr'], N); T = len(H); out = np.full(T, -1, np.int8); v = ok(H, L, A)   # C07 wicks
     for t in np.where(v)[0]:
-        pk = C[t, 0]; ind = False; n = 0; a = A[t, -1]*2
-        for x in C[t]:
-            if x > pk: pk = x; ind = False
-            elif pk - x >= a and not ind: n += 1; ind = True
+        pk = H[t, 0]; ind = False; n = 0; a = A[t, -1]*2
+        for hi, lo in zip(H[t], L[t]):
+            if hi > pk: pk = hi; ind = False
+            elif pk - lo >= a and not ind: n += 1; ind = True
         out[t] = min(n, 2)
     return out
 @facet('drawdown', 'vs_own_past', ['unusual', 'typical', 'small'])
 def dd_v(I, N):
-    C = W(I['c'], N); pk = np.maximum.accumulate(np.nan_to_num(C), 1); dd = ((pk - C)/pk).max(1); dd[~ok(C)] = np.nan; p = own_pct(dd)
+    H, L = W(I['h'], N), W(I['l'], N)   # C07 wicks
+    pk = np.maximum.accumulate(np.nan_to_num(H, nan=-np.inf), 1); dd = ((pk - L)/pk).max(1); dd[~ok(H, L)] = np.nan; p = own_pct(dd)
     return pick([p > 90, p > 30, np.ones(len(p), bool)], ~np.isnan(p))
 @facet('drawdown', 'move_duration', [f"{a}x{b}" for a in ['down', 'up'] for b in ['<10', '10-40', '>40 days']], lbs=(60,))
 def dd_md(I, N):

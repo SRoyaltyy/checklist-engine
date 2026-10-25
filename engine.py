@@ -169,14 +169,17 @@ def run_ticker(tk, d, C, plan):
     return A, err
 
 def filter_cols(tk, d, C):
-    """Tradeable filter for day D, known at D-1: mcap (split-fixed) >= $100M (unknown passes) and median 20d $vol >= $1M."""
+    """Tradeable filter for day D, known at D-1: mcap (split-fixed) >= $100M (UNKNOWN EXCLUDED per
+    dictionary C27 as directed in 0b 2026-10-25: 'unknown market cap means excluded') and median
+    20d $vol >= $1M."""
     d = d.reset_index(drop=True); I = make_I(d, tk, C)
     dv = pd.Series(I['dv']).rolling(20).median().shift(1).values
     mcap = np.array(pd.Series(I['craw'] * I['shares']).shift(1).values, float)   # writable copy (mcap_bad tickers set it to nan)
     if tk in C.get('mcap_bad', ()): mcap[:] = np.nan          # ADR/units problem: mcap unknown
     suspect = tk in C.get('mcap_jump', ())
-    # 553 suspect-mcap names: dollar-volume-only filter (mcap not trusted)
-    pf = (dv >= 1e6) if suspect else ((np.isnan(mcap) | (mcap >= 1e8)) & (dv >= 1e6))
+    # 553 suspect-mcap names keep the dollar-volume-only path (their mcap exists but is distrusted);
+    # genuinely-unknown mcap (mcap_bad) now FAILS the filter instead of passing.
+    pf = (dv >= 1e6) if suspect else ((mcap >= 1e8) & (dv >= 1e6))
     return pd.DataFrame(dict(date=d.date.values, mcap_D1=mcap.astype(np.float32), dollar_vol_med20_D1=dv.astype(np.float32), passes_filter=pf))
 
 def codebook(plan):

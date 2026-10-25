@@ -91,17 +91,24 @@ def _last_true_idx(m):
     N = m.shape[1]; r = np.where(m.any(1), N - 1 - np.argmax(m[:, ::-1], 1), -1); return r
 
 def _pivots(x, k):
-    """pivot highs/lows with k bars each side; confirmed at i+k. returns bool arrays hi, lo (indexed at pivot bar)"""
-    s = pd.Series(x); w = 2*k + 1
-    mx = s.rolling(w, center=True).max().to_numpy(); mn = s.rolling(w, center=True).min().to_numpy()
-    return (x == mx) & ~np.isnan(x), (x == mn) & ~np.isnan(x)
+    """C08 strict pivots of a series: bar i qualifies only if x_i is STRICTLY beyond all k bars
+    each side (ties disqualify). Confirmed at i+k; callers only use confirmed pivots (i <= t-k).
+    Returns bool arrays hi, lo indexed at the pivot bar."""
+    sx = pd.Series(x)
+    mx_l = sx.shift(1).rolling(k).max().to_numpy(); mx_r = sx.shift(-k).rolling(k).max().to_numpy()
+    mn_l = sx.shift(1).rolling(k).min().to_numpy(); mn_r = sx.shift(-k).rolling(k).min().to_numpy()
+    return (x > mx_l) & (x > mx_r) & ~np.isnan(x), (x < mn_l) & (x < mn_r) & ~np.isnan(x)
+
+def _pivots_px(I, k):
+    """C08 price pivots on WICKS: strict pivot highs from High, strict pivot lows from Low."""
+    ph, _ = _pivots(I['h'], k); _, pl = _pivots(I['l'], k); return ph, pl
 
 def hist(hv, X, I, N, v):
     X = np.asarray(X, float); T = len(X); Xw = W(X, N); vX = ok(Xw); u = unit_of(I, v, X, N); vu = np.isfinite(u)
     one = np.ones(T, bool); k = max(1, int(N//P['hist_kdiv'])); t3 = max(1, int(N//P['hist_thirds']))
     with np.errstate(all='ignore'):
         if hv == 'divergence_sync':
-            C = I['c'].astype(float); _, lo = _pivots(C, k); hi, _ = _pivots(C, k); hx, lx = _pivots(X, k)
+            C = I['c'].astype(float); hi, lo = _pivots_px(I, k); hx, lx = _pivots(X, k)   # C08: strict wick pivots
             idx = np.arange(T); res = {}
             for nm, pm, sgn in (('bull', lo, 1), ('bear', hi, -1)):
                 pi = np.where(pm, idx, -1); last = np.maximum.accumulate(pi)       # last pivot <= j
