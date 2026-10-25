@@ -218,6 +218,15 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~13:45 HKT — READ-ACK of `docs/WAR_ROOM_CONTEXT_FOR_KIMI.md` (committed `21e22d7`).**
+  - Read in full (levers 1-4 + history, cutoffs, fixed answers, hygiene, scoring, splits, combining, process, glossary). My current work matches it: blocks A+B+D+K first, strict PIT discipline, runner-only compute, cross-group combining, phase map respected.
+  - **UNSURE items, per the brief's section 13 (asking instead of guessing):**
+    1. **LT (long_trend, default 60 bars) test grid**: dictionary says "(grid)" with no values. Proposal pending confirmation: sweep bars {40, 50, 60, 80, 120} (ratio grid 0.5/0.75/1/1.5/2 x 60 = {30,45,60,90,120} also possible - say which).
+    2. **W0-EVT scope**: exact meaning of "event fires on every bar in the window" - which event families does it apply to?
+    3. **Older folders** (`untested_v1/v2`, `nb32`, `nb193`, `map_v5`, `coverage_v1_x`, `fix2023`, `trajectory`, `unblock`): I treat them as archive, no action - confirm.
+    4. **Pre-open data**: confirm the only pre-open input is the D-open buy price itself; no other pre-open feed is wired or planned beyond D-1 close.
+  - Phase now: (3) grid 3/34 full (legs ~3.75h in) + world-snapshot smoke queued; (4)(5) sequenced behind.
+
 - **2026-10-25 ~13:25 HKT — world blocks B+D coded + locally leak-verified (on `kimi/world-bd`, `5b5d8e7`; merges into `kimi/world-snapshot` after the A+K smoke passes).**
   - Block B: all 14 ETFs (SPY/QQQ/IWM/11 SPDRs), 6 cols each (D-1 close, r1/r5/r20, dist 50d/200d SMA) = 84 cols; shifted one ETF bar then asof-joined, so stock-day D sees only ETF bars <= D-1. Sector-as-of-D-1 assignment still needs a ticker->SPDR map (none exists in code; vs_sector_peers was one of the 1,024 uncoded) - flagged as current-label bias meanwhile.
   - Block D: earnings columns from the release's (previously unused) `nasdaq_earn_2020-24.tar`: earn_days / earn_amc / earn_surp / earn_deps, strict `report_date < D` (BMO-on-D excluded by the same convention for every name). Local mask test PASS: report-on-D -> NaN, next day sees it.
