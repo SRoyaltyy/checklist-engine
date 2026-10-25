@@ -128,10 +128,11 @@ def _spearman_rank_last(y):
     d2 = ((price_rank - time_rank) ** 2).sum()
     return (1.0 - 6.0 * d2 / (n ** 3 - n)) * 100.0
 
-def compute_tv_extra(o, h, l, c, v):
+def compute_tv_extra(o, h, l, c, v, dates=None):
     """TradingView master items marked missing-fetchable that are pure OHLCV math.
     Returns dict column -> array, all aligned to the bars (caller shifts by one).
-    Deterministic, no external data. M-item ids in comments."""
+    Deterministic, no external data. M-item ids in comments.
+    `dates` (datetime64, same length) enables calendar aggregations (M119)."""
     out = {}
     # M133 PMO: double-smoothed ROC(1). roc1% -> EMA35 -> EMA20 -> EMA10 = PMO line;
     # signal = EMA10(PMO). (Scaling conventions differ across vendors; what matters
@@ -169,6 +170,78 @@ def compute_tv_extra(o, h, l, c, v):
                                         (c[1:] < c[:-1])).astype(np.float32)]
     # M237 Falling Window (bearish gap between bars): today's high below yesterday's low.
     out['tv_falling_window'] = np.r_[0.0, (h[1:] < l[:-1]).astype(np.float32)]
+    # M039 Chop Zone (approximation): EMA34 slope in bp/day; 'chop' when |slope| < 5bp.
+    ema34 = _ema_np(c, 34)
+    slope_bp = np.full(len(c), np.nan, dtype=np.float64)
+    slope_bp[1:] = (ema34[1:] / np.where(ema34[:-1] == 0, np.nan, ema34[:-1]) - 1.0) * 1e4
+    out['tv_chop_slope_bp'] = slope_bp.astype(np.float32)
+    out['tv_chop_on'] = (np.abs(slope_bp) < 5.0).astype(np.float32)
+    # M026 BBTrend: (Bollinger width on SMA20 − width on EMA20) / close.
+    cs = pd.Series(c)
+    sma20 = cs.rolling(20, min_periods=20).mean()
+    std20 = cs.rolling(20, min_periods=20).std(ddof=0)
+    estd20 = (cs - pd.Series(_ema_np(c, 20))).rolling(20, min_periods=20).std(ddof=0)
+    out['tv_bbtrend'] = ((4 * (std20 - estd20)) / cs).to_numpy(np.float32)
+    # M057 Envelope (2.5%): close position inside the band, 0..1.
+    env_lo = sma20 * 0.975; env_hi = sma20 * 1.025
+    out['tv_env_pos'] = ((cs - env_lo) / (env_hi - env_lo)).to_numpy(np.float32)
+    # M196 Visible Average Price: mean close over 20 bars.
+    out['tv_vavg20'] = sma20.to_numpy(np.float32)
+    # M186 Trend Strength Index: rolling-20 squared Pearson corr(close, bar index).
+    w = 20
+    ts = np.full(len(c), np.nan, dtype=np.float64)
+    tidx = np.arange(w, dtype=np.float64); tidx_c = tidx - tidx.mean()
+    for t in range(w - 1, len(c)):
+        y = c[t - w + 1:t + 1]
+        if np.isnan(y).any():
+            continue
+        yc = y - y.mean()
+        denom = np.sqrt((yc ** 2).sum() * (tidx_c ** 2).sum())
+        ts[t] = (yc * tidx_c).sum() / denom if denom > 0 else np.nan
+    out['tv_ts_r2_20'] = (ts ** 2).astype(np.float32)
+    if dates is not None:
+        # M119 Multi-Time Period Charts: prior completed ISO week (Mon-Fri) H/L/C.
+        wkey = (pd.to_datetime(dates).isocalendar()['year'].astype(np.int64) * 100
+                + pd.to_datetime(dates).isocalendar()['week'].astype(np.int64)).to_numpy()
+        gdf = pd.DataFrame({'k': wkey, 'h': h, 'l': l, 'c': c, 'i': np.arange(len(c))})
+        wh = gdf.groupby('k')['h'].max(); wl = gdf.groupby('k')['l'].min()
+        wlast = gdf.groupby('k')['i'].max()
+        ukeys = wh.index.to_numpy()
+        wclose = c[wlast.to_numpy()]
+        kidx = np.searchsorted(ukeys, wkey)     # wkey values are all group keys
+        has_prior = kidx > 0
+        p = np.clip(kidx - 1, 0, len(ukeys) - 1)
+        pw_high = np.where(has_prior, wh.to_numpy()[p], np.nan)
+        pw_low = np.where(has_prior, wl.to_numpy()[p], np.nan)
+        rng = np.where(pw_high > pw_low, pw_high - pw_low, np.nan)
+        out['tv_pw_high'] = pw_high.astype(np.float32)
+        out['tv_pw_low'] = pw_low.astype(np.float32)
+        out['tv_pw_close'] = np.where(has_prior, wclose.astype(np.float32)[p], np.nan)
+        out['tv_pw_pos'] = ((c - pw_low) / rng).astype(np.float32)
+    # M146 Rob Booker ADX Breakout: ADX>25 and high exceeds the prior 20-bar high.
+    adx14 = talib.ADX(h, l, c, timeperiod=14)
+    hh20 = pd.Series(h).rolling(20, min_periods=20).max().shift(1).to_numpy()  # excl today
+    adxbo = (h > hh20) & (adx14 > 25.0)
+    out['tv_adxbo'] = np.where(np.isnan(adx14) | np.isnan(hh20), np.nan,
+                               adxbo.astype(np.float64)).astype(np.float32)
+    # M150 Rob Booker Reversal: MACD histogram side + stochastic cross at extremes.
+    _, _, mhist = talib.MACD(c, fastperiod=12, slowperiod=26, signalperiod=9)
+    sk, sd = talib.STOCH(h, l, c, fastk_period=14, slowk_period=3, slowd_period=3)
+    kx_up = (sk[1:] > sd[1:]) & (sk[:-1] <= sd[:-1])
+    kx_dn = (sk[1:] < sd[1:]) & (sk[:-1] >= sd[:-1])
+    rev = np.zeros(len(c), dtype=np.float64)
+    rev[1:] = np.where(kx_up & (mhist[1:] > 0) & (sk[1:] < 20), 1.0,
+                       np.where(kx_dn & (mhist[1:] < 0) & (sk[1:] > 80), -1.0, 0.0))
+    rev[np.isnan(mhist) | np.isnan(sk) | np.isnan(sd)] = 0.0
+    out['tv_rb_rev'] = rev.astype(np.float32)
+    # M208 Woodies CCI: turbo CCI(6) + CCI(14) zero-line cross direction.
+    cci14 = talib.CCI(h, l, c, timeperiod=14)
+    out['tv_cci6'] = talib.CCI(h, l, c, timeperiod=6).astype(np.float32)
+    zx = np.zeros(len(c), dtype=np.float64)
+    zx[1:] = np.where(np.isnan(cci14[1:]) | np.isnan(cci14[:-1]), 0.0,
+                      np.where((cci14[1:] > 0) & (cci14[:-1] <= 0), 1.0,
+                               np.where((cci14[1:] < 0) & (cci14[:-1] >= 0), -1.0, 0.0)))
+    out['tv_cci_zx'] = zx.astype(np.float32)
     return out
 
 def moon_age(dates):
@@ -871,7 +944,7 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
         cols = compute_talib(o, h, l, c, v, funcs)
         for k, arr in cols.items():
             df[k] = np.r_[np.nan, arr[:-1]]          # shift-by-one: D sees bars <= D-1
-        for k, arr in compute_tv_extra(o, h, l, c, v).items():
+        for k, arr in compute_tv_extra(o, h, l, c, v, dates=d.date.to_numpy()).items():
             df[k] = np.r_[np.nan, arr[:-1]]          # same shift; bar-derived only
     # M113 Moon Phases: calendar-derived, computed from the row's own date (no shift).
     df['tv_moon_age'] = moon_age(df['date'].to_numpy())
