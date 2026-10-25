@@ -52,6 +52,8 @@ OVERRIDES = {  # item_id -> (status, columns, note)
     'C30': ('EXCLUDED_LIVE_ONLY', '', 'Finviz block P: live-only from 2026-08, never scored (0b ruling)'),
     'I178': ('WIRED', 'mkt_vix|mkt_vix_r5|mkt_vix_d20',
              'VIX level: keyless FRED CSV via fetch/fetch_mkt.py (never revised, strict < D); 2025-26 refreshed on runner'),
+    'I187': ('WIRED', 'f4_n|f4_days|f4_n20|f4_n60',
+             'Form 4 date-count lens via SEC submissions API (fetch/fetch_form4.py); filingDate < D strict; value lens later'),
     'I195': ('BLOCKED_SECRET', '', 'FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing'),
     'I202': ('PENDING', '', 'single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested'),
 }

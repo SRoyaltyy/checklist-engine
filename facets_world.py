@@ -145,6 +145,21 @@ def etf_wide():
     wide[val_cols] = wide[val_cols].shift(1)          # D sees the prior ETF bar
     return wide.dropna(subset=val_cols[:1]).sort_values('date')
 
+# ---------------- Block E: Form 4 insider filing-date counts (I187 date-count lens) ----------------
+def load_form4(tickers):
+    """Per-ticker Form 4 filing events from fetch/fetch_form4.py (release
+    data-ext-2020-26-v1 asset form4_counts_2020_26.parquet): ticker, date
+    (filingDate), n (filings that day). A filing is public on its filingDate and
+    usable next session; joins in ticker_frame are strict < D. Value lens
+    (shares, role) is a later refinement; date counts only."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'form4_counts_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df = df[df.ticker.isin(tickers)]
+    df['date'] = pd.to_datetime(df['date'])
+    return df.sort_values('date').reset_index(drop=True)
+
 # ---------------- Market-wide daily series (I178 VIX, block I market columns) ----------------
 def load_mkt():
     """Market-wide daily frame from fetch/fetch_mkt.py (release data-ext-2020-26-v1
@@ -424,6 +439,10 @@ def load_box_ext(tickers):
     if dv is not None:
         out['divs'] = {tk: g[g.kind == 'div'][['date', 'value']] for tk, g in dv.groupby('ticker') if (g.kind == 'div').any()}
         out['splits'] = {tk: g[g.kind == 'split'][['date', 'value']] for tk, g in dv.groupby('ticker') if (g.kind == 'split').any()}
+    f4 = load_form4(tickers)
+    if f4 is not None:
+        out['f4'] = {tk: g[['date', 'n']].rename(columns={'n': 'value'})
+                     for tk, g in f4.groupby('ticker')}
     return {k: v for k, v in out.items() if v}
 
 def _asof_strict(dates, right, cols, date_col, prefix_days=None):
@@ -580,6 +599,12 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
         if ext.get('halts') is not None:
             for c, v in halt_columns(dates, ext['halts']).items():
                 df[c] = v
+        if ext.get('f4') is not None:
+            for c, v in event_columns(dates, ext['f4'], 'f4_n', 'f4_days', 'f4_n20', count_window=20).items():
+                df[c] = v
+            # 60-day count, same strict-<D window semantics
+            d60 = event_columns(dates, ext['f4'], '_v', '_d', 'f4_n60', count_window=60)
+            df['f4_n60'] = d60['f4_n60']
         if ext.get('divs') is not None:
             for c, v in event_columns(dates, ext['divs'], 'div_amt', 'div_days', 'div_n12', count_window=365).items():
                 df[c] = v
@@ -654,7 +679,8 @@ def main():
                 'regsho': ['regsho_days', 'regsho_on'],
                 'halts': ['halt_days', 'halt_gap', 'halt_rsn', 'halt_n20', 'halt_n60'],
                 'divs': ['div_amt', 'div_days', 'div_n12'],
-                'splits': ['split_ratio', 'split_days', 'split_n']}
+                'splits': ['split_ratio', 'split_days', 'split_n'],
+                'f4': ['f4_n', 'f4_days', 'f4_n20', 'f4_n60']}
     if box:
         print('box-only blocks loaded:', {k: len(v) for k, v in box.items()}, flush=True)
     peers = build_peers(load_bars(None))
@@ -678,7 +704,8 @@ def main():
                        'box_notes': {'si': 'I188: keyed publication_date < D, never settlement',
                                      'shvol': 'I189: dated X published after 18:00 ET, usable next session (strict < D)',
                                      'regsho': 'I190: file for d published after close of d, usable next session (strict < D); regsho_on = listed within 7 cal days',
-                                     'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int'},
+                                     'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int',
+                                     'f4': 'I187 date-count lens: Form 4 filingDate < D strict (public on filingDate, usable next session); value lens (shares/role) later'},
                        'mkt_cols': mkt_cols,
                        'mkt_notes': 'I178 VIX via keyless FRED CSV (never revised); strict date < D; mkt_ prefix'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):

@@ -1,0 +1,52 @@
+name: world_fetch_form4
+# Block E / I187 date-count lens: SEC EDGAR Form 4 filing-date counts for the
+# full universe -> data-ext/form4_counts_2020_26.parquet. SEC fair-use (<=10 rps,
+# descriptive UA). Resumable: downloads the previous parquet from the release
+# and passes --resume, so a cut-off run continues seamlessly next dispatch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: smoke limit (tickers); 0 = full universe
+        default: '0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Download universe + previous counts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/f4"
+          cd "$RUNNER_TEMP/f4"
+          gh release download data-2020-24-v1 -p 'universe_2020_survivors_le2024.parquet'
+          gh release download data-ext-2020-26-v1 -p 'form4_counts_2020_26.parquet' \
+            && echo "resume base found" || echo "no previous counts (fresh run)"
+      - name: Fetch Form 4 filing-date counts
+        run: |
+          cd "$RUNNER_TEMP/f4"
+          ARGS="--universe universe_2020_survivors_le2024.parquet --out form4_counts_2020_26.parquet --limit ${{ inputs.limit }}"
+          [ -f form4_counts_2020_26.parquet ] && ARGS="$ARGS --resume" || true
+          python3 "$GITHUB_WORKSPACE/fetch/fetch_form4.py" $ARGS
+      - name: Upload to data-ext-2020-26-v1
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          f="$RUNNER_TEMP/f4/form4_counts_2020_26.parquet"
+          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
+            || echo "no output to upload"

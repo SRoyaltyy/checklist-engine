@@ -70,15 +70,16 @@ grep -v '^.*  nb_nbx_' box_uploads_SHA256SUMS.txt > SUBSET_SUMS
 sha256sum -c SUBSET_SUMS
 echo "data-ext files:"; ls
 
-# ---- market-wide daily series (I178 VIX): mkt_wide_2020_26.parquet ----
+# ---- market-wide daily series (I178 VIX) + Form4 counts (I187): small parquets ----
 python3 - "$API2" "$TAG2" "$DEST" <<'PY'
 import sys, json, os, urllib.request
 api, tag, dest = sys.argv[1], sys.argv[2], sys.argv[3]
 tok = os.environ['GITHUB_TOKEN']
+want = {'mkt_wide_2020_26.parquet', 'form4_counts_2020_26.parquet'}
 req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
 rel = json.load(urllib.request.urlopen(req))
 for a in rel['assets']:
-    if a['name'] != 'mkt_wide_2020_26.parquet':
+    if a['name'] not in want:
         continue
     out = os.path.join(dest, 'data-ext', a['name'])
     if os.path.exists(out) and os.path.getsize(out) == a['size']:
