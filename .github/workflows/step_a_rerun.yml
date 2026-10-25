@@ -1,0 +1,47 @@
+# Step A targeted rerun with the fixed dictionary engine (kimi/dictionary-fixes).
+# Usage AFTER impact_diff + rerun_plan identify the affected chunks:
+#   chunks = "3,17" -> engine recomputes exactly those pieces, checkpoints scores+errors
+#   to results/step-a-2020-22, replaces answers_*.npz on the release (FORCE_UPLOAD=1).
+# Then: release_assets.py rm grid-2020-22-v1 gridy_<chunk>_*.parquet && re-dispatch grid-chunk.
+name: step-a-rerun
+on:
+  workflow_dispatch:
+    inputs:
+      chunks:
+        description: 'comma-separated chunk indices to recompute (step_a --force)'
+        required: true
+permissions:
+  contents: write
+env:
+  RELEASE: data-2020-24-v1
+  RESULTS_BRANCH: results/step-a-2020-22
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/dictionary-fixes
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Download data release + verify
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/fetch_release.sh "$RELEASE" "$RUNNER_TEMP/data"
+      - name: Rerun chunks ${{ github.event.inputs.chunks }} with fixed engine
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          FORCE_CHUNKS: ${{ github.event.inputs.chunks }}
+          FORCE_UPLOAD: '1'
+        run: bash ci/run_step_a.sh
