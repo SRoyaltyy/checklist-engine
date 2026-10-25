@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: which fetch to run (xbrl | divsplits | cboe | fred)
+        description: which fetch to run (xbrl | divsplits | cboe | fred | analyst)
         default: 'cboe'
         required: true
       shards:
