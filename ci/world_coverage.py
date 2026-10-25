@@ -56,6 +56,8 @@ OVERRIDES = {  # item_id -> (status, columns, note)
              'Form 4 date-count lens via SEC submissions API (fetch/fetch_form4.py); filingDate < D strict; value lens later'),
     'I197': ('WIRED', 'an_days|an_n20|an_up20|an_dn20|an_up60|an_dn60|an_dir',
              'analyst actions via yfinance upgrades_downgrades (fetch/fetch_analyst.py); strict date < D; counts by direction'),
+    'I192': ('WIRED', 'xb_days|xb_rev|xb_rev_days|xb_rev_g|xb_ni|xb_ni_days|xb_ni_g|xb_assets|xb_assets_days|xb_debt|xb_debt_days|xb_shares|xb_shares_days',
+             'SEC XBRL frames API keyed filed < D (restatement-safe); fiscal-offset filers sparser; value lens via fetch/fetch_xbrl.py'),
     'I195': ('BLOCKED_SECRET', '', 'FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing'),
     'I202': ('PENDING', '', 'single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested'),
 }

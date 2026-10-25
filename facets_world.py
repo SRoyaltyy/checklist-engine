@@ -195,6 +195,47 @@ def analyst_columns(dates, af):
     out['an_dir'] = np.where(has, dir_ff[idx], np.nan).astype(np.float32)
     return out
 
+# ---------------- Block H: XBRL fundamentals columns (I192) ----------------
+def xbrl_columns(dates, xb):
+    """Latest-filed fundamentals per metric, strict filed < D, from the ticker's
+    long frame (metric, period_end, filed, val, yoy). Restatement-safe: a revised
+    value arrives with a new filed date; before that date the old value stands."""
+    out = {}
+    if xb is None or not len(xb):
+        return out
+    allf = pd.DataFrame({'filed': pd.Series(sorted(set(xb.filed))), 'val': 0.0})
+    out.update(_asof_strict(dates, allf, [], 'filed', prefix_days='xb_days'))
+    for m, tag in (('Revenues', 'rev'), ('NetIncomeLoss', 'ni'), ('Assets', 'assets'),
+                   ('Liabilities', 'debt'), ('CommonStockSharesOutstanding', 'shares')):
+        sub = xb[xb.metric == m][['filed', 'val']].sort_values('filed')
+        if not len(sub):
+            continue
+        r = _asof_strict(dates, sub, ['val'], 'filed', prefix_days=f'xb_{tag}_days')
+        out[f'xb_{tag}'] = r['val']
+        out[f'xb_{tag}_days'] = r[f'xb_{tag}_days']
+        if m in ('Revenues', 'NetIncomeLoss'):
+            g = xb[xb.metric == m][['filed', 'yoy']].dropna(subset=['yoy']).sort_values('filed')
+            g = g.rename(columns={'yoy': 'val'})
+            if len(g):
+                rg = _asof_strict(dates, g, ['val'], 'filed')
+                out[f'xb_{tag}_g'] = rg['val']
+    return out
+
+
+# ---------------- Block H loader: XBRL fundamentals (I192) ----------------
+def load_xbrl(tickers):
+    """Per-ticker long fundamentals frame from fetch/fetch_xbrl.py (release
+    data-ext-2020-26-v1 asset xbrl_fundamentals_2020_26.parquet): ticker, metric,
+    period_end, filed, val, yoy. Point-in-time keyed on filed."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'xbrl_fundamentals_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df = df[df.ticker.isin(tickers)]
+    df['filed'] = pd.to_datetime(df['filed'])
+    return df.sort_values('filed').reset_index(drop=True)
+
+
 # ---------------- Block L loader: analyst actions (I197) ----------------
 def load_analyst(tickers):
     """Per-ticker analyst action day counts from fetch/fetch_analyst.py (release
@@ -591,7 +632,7 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -617,6 +658,9 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[f'mkt_{mc}'] = m[mc].to_numpy(dtype=np.float32)
     if an is not None:
         for c, v in analyst_columns(df['date'].to_numpy(), an).items():
+            df[c] = v
+    if xb is not None:
+        for c, v in xbrl_columns(df['date'].to_numpy(), xb).items():
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
@@ -749,6 +793,13 @@ def main():
     an_cols = ['an_days', 'an_n20', 'an_up20', 'an_dn20', 'an_n60', 'an_up60', 'an_dn60', 'an_dir'] if an is not None else []
     if an is not None:
         print('analyst action rows for shard:', len(an), 'tickers with actions:', len(an_by_tk), flush=True)
+    xb = load_xbrl(set(mine))
+    xb_by_tk = {tk: g.reset_index(drop=True) for tk, g in xb.groupby('ticker')} if xb is not None else {}
+    XB_COLS = ['xb_days', 'xb_rev', 'xb_rev_days', 'xb_rev_g', 'xb_ni', 'xb_ni_days', 'xb_ni_g',
+               'xb_assets', 'xb_assets_days', 'xb_debt', 'xb_debt_days', 'xb_shares', 'xb_shares_days']
+    xb_cols = XB_COLS if xb is not None else []
+    if xb is not None:
+        print('xbrl rows for shard:', len(xb), 'tickers covered:', len(xb_by_tk), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -767,14 +818,17 @@ def main():
                        'mkt_cols': mkt_cols,
                        'mkt_notes': 'I178 VIX via keyless FRED CSV (never revised); strict date < D; mkt_ prefix',
                        'an_cols': an_cols,
-                       'an_notes': 'I197 analyst actions (yfinance upgrades_downgrades); strict date < D; counts by direction'}
+                       'an_notes': 'I197 analyst actions (yfinance upgrades_downgrades); strict date < D; counts by direction',
+                       'xb_cols': xb_cols,
+                       'xb_notes': 'I192 XBRL via SEC frames API; keyed filed < D (restatement-safe); CY-frame coverage sparser for fiscal-offset filers'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
         df = ticker_frame(tk, d, funcs, etf if ecols else None,
                           breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
                           ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None,
-                          an=an_by_tk.get(tk) if an_cols else None)
+                          an=an_by_tk.get(tk) if an_cols else None,
+                          xb=xb_by_tk.get(tk) if xb_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
