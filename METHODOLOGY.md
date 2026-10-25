@@ -218,6 +218,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~15:55 HKT — interactions triple stage DONE (`kimi/combiner-interactions` `6e63926`): fix 4 now pairs + triples.**
+  - `run_group` generalized to k questions (vectorized level codes, joint-cell contingency, same mains-vs-interactions logistic + untouched 2022 check lift). Triples run from the pair-survivor pool (top 40 questions by survivor frequency, bounded tries), output `interactions_triples.csv`. Synthetic test: planted 3-way interaction recovered. Dispatch still gated on shortlist.csv.
+  - Grid state: yearly legs 47 across 16 chunks; 13 legs in flight.
+
 - **2026-10-25 ~15:20 HKT — queue unblocked per standing 0b: cancelled 2 cron copies + disabled 2 crons.**
   - Cancelled queued `step-a` 40163709902 (cron; Step A already 34/34) and `exit-grid` 40165360907 (cron duplicate of the grid-chunk dispatches). Disabled both cron schedules on main (`4c8d0de` step-a, `1c32a81` exit-grid); workflow_dispatch retained on both, re-enable note in-file for after grid 34/34. Matches the 0b line 'cancel duplicate schedule spam that blocks the critical path'.
   - Kept queued (all workflow_dispatch): world smoke 40163291647, cboe smoke 40164813316, impact-diff 40165876598, world leak-verify 40166189700, shortlist 40156872713 (partial-tolerant).
