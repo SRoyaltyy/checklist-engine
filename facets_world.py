@@ -167,6 +167,133 @@ def earn_for(dates, edf):
                          'earn_surp': m.surprise_pct_fill.to_numpy(dtype=np.float32),
                          'earn_deps': m.eps_delta.to_numpy(dtype=np.float32)})
 
+# ---------------- Block C: theme peers (correlation clusters) ----------------
+class Peers:
+    """Frozen theme-peer clusters. Membership comes from ONE formation year (the
+    first full calendar year in the bars file), so cluster assignment at any day D
+    uses no data after the formation year (fixed-taxonomy label bias, flagged in
+    meta - same spirit as the SPDR sector note). Holds the per-cluster equal-weight
+    mean daily-return series (unshifted; consumers shift by one bar)."""
+    def __init__(self, tk_cluster, cluster_ret, meta):
+        self.tk_cluster = tk_cluster      # ticker -> cluster id (int) or -1
+        self.cluster_ret = cluster_ret    # DataFrame date x cret_{id}
+        self.cluster_n = meta['cluster_n']
+        self.formation_year = meta['formation_year']
+        self.corr_thresh = meta['corr_thresh']
+        self.usable_from = meta['usable_from']   # peer columns NaN before this date
+
+def _union_find_clusters(corr, thresh):
+    """Connected components of the graph with an edge where corr >= thresh
+    (upper triangle via numpy; union-find over edge list only)."""
+    n = corr.shape[0]
+    parent = np.arange(n)
+    def find(x):
+        root = x
+        while parent[root] != root:
+            root = parent[root]
+        while parent[x] != root:
+            parent[x], x = root, parent[x]
+        return root
+    edges = np.argwhere(np.triu(corr >= thresh, k=1))
+    for i, j in edges:
+        pi, pj = find(i), find(j)
+        if pi != pj:
+            parent[pi] = pj
+    comps = {}
+    for i in range(n):
+        comps.setdefault(find(i), []).append(i)
+    return list(comps.values())
+
+def build_peers(bars_all, corr_thresh=0.5, min_days=120, min_members=20):
+    """Form theme-peer clusters from the first full calendar year of daily returns
+    and build the equal-weight cluster return series for ALL days in bars_all.
+    `bars_all` is the full-universe bar frame (ticker, date, close)."""
+    p = bars_all[['ticker', 'date', 'close']].dropna()
+    p['date'] = pd.to_datetime(p['date'])
+    wide = p.pivot_table(index='date', columns='ticker', values='close').sort_index()
+    ret = wide.pct_change(fill_method=None)
+    years = ret.index.year
+    uy = sorted(set(years))
+    form_year = None
+    for y in uy:
+        if (years == y).sum() >= min_days:
+            form_year = y
+            break
+    if form_year is None:
+        return None
+    X = ret[years == form_year]
+    good = X.columns[X.notna().sum() >= min_days]
+    X = X[good].dropna()
+    if len(X) < min_days or X.shape[1] < min_members:
+        return None
+    C = np.corrcoef(X.to_numpy(dtype=np.float32).T)
+    comps = _union_find_clusters(np.nan_to_num(C, nan=0.0), corr_thresh)
+    clusters = [sorted(c) for c in comps if len(c) >= 2]
+    if not clusters:
+        return None
+    tk_cluster = {tk: -1 for tk in wide.columns}
+    for cid, comp in enumerate(clusters):
+        for idx in comp:
+            tk_cluster[X.columns[idx]] = cid
+    # equal-weight cluster mean daily return over ALL days (members' returns only;
+    # consumed shifted-by-one, so a stock-day D only sees cluster returns <= D-1)
+    cret = {}
+    for cid, comp in enumerate(clusters):
+        members = [X.columns[idx] for idx in comp]
+        cret[f'peer_cret_{cid}'] = ret[members].mean(axis=1)
+    cret = pd.DataFrame(cret)
+    cret.index.name = 'date'
+    usable_from = pd.Timestamp(f'{form_year}-12-31') + pd.Timedelta(days=1)
+    return Peers(tk_cluster, cret.reset_index(),
+                 {'cluster_n': {str(cid): len(comp) for cid, comp in enumerate(clusters)},
+                  'formation_year': form_year, 'corr_thresh': corr_thresh,
+                  'usable_from': str(usable_from.date())})
+
+def peer_columns(dates, bars_tk, peers, cid):
+    """Theme-peer columns for one ticker. Cluster returns are shifted one bar
+    (D sees cluster returns <= D-1); vs_peer subtracts the shifted cluster
+    return from the stock's own shifted return; peer_corr60 is the trailing 60d
+    correlation of stock vs cluster daily returns, min 30 paired days, shifted.
+    All NaN before peers.usable_from (formation-year warmup)."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    nan = np.full(n, np.nan, dtype=np.float32)
+    out = {'peer_id': nan.copy(), 'peer_n': nan.copy(),
+           'peer_r1': nan.copy(), 'peer_r5': nan.copy(), 'peer_r20': nan.copy(),
+           'vs_peer_r1': nan.copy(), 'vs_peer_r5': nan.copy(), 'vs_peer_r20': nan.copy(),
+           'peer_corr60': nan.copy()}
+    if peers is None or cid < 0:
+        return out
+    cr = peers.cluster_ret[['date', f'peer_cret_{cid}']].rename(columns={f'peer_cret_{cid}': 'cret'})
+    cr['date'] = pd.to_datetime(cr['date']).astype('datetime64[ns]')
+    q = pd.DataFrame({'date': d.astype('datetime64[ns]')})
+    m = pd.merge_asof(q, cr, on='date', direction='backward', allow_exact_matches=False)
+    cret = m.cret.astype(np.float32).to_numpy()               # cluster ret, strict < D
+    def roll_prod(a, w, mp):
+        return pd.Series(a).rolling(w, min_periods=mp).apply(lambda s: (1 + s).prod() - 1, raw=True).to_numpy(dtype=np.float32)
+    c5 = roll_prod(cret, 5, 3)
+    c20 = roll_prod(cret, 20, 10)
+    cl = bars_tk.close.to_numpy(float)
+    sret = np.r_[np.nan, pd.Series(cl).pct_change(fill_method=None).to_numpy()[1:]]
+    s5 = roll_prod(sret, 5, 3)
+    s20 = roll_prod(sret, 20, 10)
+    sh = lambda a: np.r_[np.nan, a[:-1]]                      # shift one bar: D sees <= D-1
+    c1, c5, c20 = sh(cret), sh(c5), sh(c20)
+    s1, s5, s20 = sh(sret), sh(s5), sh(s20)
+    out['peer_id'] = np.full(n, cid, dtype=np.float32)
+    out['peer_n'] = np.full(n, peers.cluster_n.get(str(cid), np.nan), dtype=np.float32)
+    out['peer_r1'], out['peer_r5'], out['peer_r20'] = c1, c5, c20
+    out['vs_peer_r1'] = (s1 - c1).astype(np.float32)
+    out['vs_peer_r5'] = (s5 - c5).astype(np.float32)
+    out['vs_peer_r20'] = (s20 - c20).astype(np.float32)
+    pr = pd.DataFrame({'s': sret, 'c': cret})
+    corr = pr['s'].rolling(60, min_periods=30).corr(pr['c']).to_numpy(dtype=np.float32)
+    out['peer_corr60'] = sh(corr)
+    mask = (d < pd.Timestamp(peers.usable_from)).to_numpy()
+    for k in out:
+        out[k] = np.where(mask, np.nan, out[k]).astype(np.float32)
+    return out
+
 # ---------------- Block F: FINRA short interest + daily short volume ----------------
 def _data_ext_dir():
     return os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext')
@@ -317,13 +444,14 @@ def halt_columns(dates, hf):
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
     report_date < D. `edf_tk` is the ticker's earnings sub-frame (or None).
     `ext` is the ticker's box-only block dict: si/shvol/regsho frames and the
-    halt event frame; every one of those joins is strict < D as well."""
+    halt event frame; every one of those joins is strict < D as well. `peers`
+    is a frozen Peers object; cluster returns are consumed shifted one bar."""
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
         o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
@@ -365,6 +493,10 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None):
         if ext.get('halts') is not None:
             for c, v in halt_columns(dates, ext['halts']).items():
                 df[c] = v
+    if peers is not None:
+        cid = peers.tk_cluster.get(tk, -1)
+        for c, v in peer_columns(df['date'].to_numpy(), d, peers, cid).items():
+            df[c] = v
     return df
 
 # ---------------- build ----------------
@@ -430,10 +562,19 @@ def main():
                 'halts': ['halt_days', 'halt_gap', 'halt_rsn', 'halt_n20', 'halt_n60']}
     if box:
         print('box-only blocks loaded:', {k: len(v) for k, v in box.items()}, flush=True)
+    peers = build_peers(load_bars(None))
+    if peers is not None:
+        print('theme-peer clusters:', len(peers.cluster_n), 'formation year:', peers.formation_year,
+              'usable from:', peers.usable_from, flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
                        'earn_cols': ecols2, 'earn_note': 'strict report_date < D (BMO-on-D excluded)',
+                       'peer_cols': ['peer_id', 'peer_n', 'peer_r1', 'peer_r5', 'peer_r20',
+                                     'vs_peer_r1', 'vs_peer_r5', 'vs_peer_r20', 'peer_corr60'] if peers is not None else [],
+                       'peer_note': None if peers is None else
+                           f'clusters frozen from {peers.formation_year} daily-return correlation >= {peers.corr_thresh} '
+                           f'(connected components); fixed-taxonomy label bias flagged; NaN before {peers.usable_from}',
                        'box_cols': {k: box_cols[k] for k in box if box[k]},
                        'box_notes': {'si': 'I188: keyed publication_date < D, never settlement',
                                      'shvol': 'I189: dated X published after 18:00 ET, usable next session (strict < D)',
@@ -444,7 +585,7 @@ def main():
         if len(d) < 30: continue
         df = ticker_frame(tk, d, funcs, etf if ecols else None,
                           breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
-                          ext=ext_by_tk.get(tk))
+                          ext=ext_by_tk.get(tk), peers=peers)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:

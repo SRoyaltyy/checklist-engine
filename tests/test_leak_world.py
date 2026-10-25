@@ -24,9 +24,10 @@ def load_inputs():
             breadth = breadth.reset_index()          # file stores date as the index
         breadth['date'] = pd.to_datetime(breadth['date'])
         breadth = breadth.sort_values('date')
-    return funcs, etf, breadth
+    peers = fw.build_peers(fw.load_bars(None))
+    return funcs, etf, breadth, peers
 
-def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
+def check(tk, funcs, etf, breadth, peers, cut_dates=CUT_DATES):
     bars = fw.load_bars({tk}).sort_values('date')
     if not len(bars):
         return [dict(ticker=tk, D='-', cols=0, mismatched=0, examples=[], note='no bars')]
@@ -35,7 +36,7 @@ def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
     box = fw.load_box_ext({tk})
     ext = {blk: per[tk] for blk, per in box.items() if tk in per} or None
     KEYDATE = {'si': 'publication_date', 'shvol': 'date', 'regsho': 'date', 'halts': 'halt_d'}
-    full = fw.ticker_frame(tk, bars, funcs, etf, breadth, edf_tk, ext=ext).set_index('date')
+    full = fw.ticker_frame(tk, bars, funcs, etf, breadth, edf_tk, ext=ext, peers=peers).set_index('date')
     res = []
     for cd in cut_dates:
         ds = full.index[full.index <= pd.Timestamp(cd)]
@@ -49,7 +50,7 @@ def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
         ext_cut = None
         if ext:
             ext_cut = {blk: fr[fr[KEYDATE[blk]] < D] for blk, fr in ext.items()}
-        cut = fw.ticker_frame(tk, b, funcs, etf, breadth, edf_tk, ext=ext_cut).set_index('date')
+        cut = fw.ticker_frame(tk, b, funcs, etf, breadth, edf_tk, ext=ext_cut, peers=peers).set_index('date')
         if D not in cut.index:
             res.append(dict(ticker=tk, D=str(D.date()), cols=0, mismatched=1, examples=['row D missing in cut build']))
             continue
@@ -72,10 +73,10 @@ def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
 
 if __name__ == '__main__':
     tks = (sys.argv[1] if len(sys.argv) > 1 else 'AAPL,MSFT,NVDA').split(',')
-    funcs, etf, breadth = load_inputs()
+    funcs, etf, breadth, peers = load_inputs()
     out = []
     for tk in tks:
-        out += check(tk, funcs, etf, breadth)
+        out += check(tk, funcs, etf, breadth, peers)
         print(tk, 'done', flush=True)
     for r in out:
         print(json.dumps(r))
