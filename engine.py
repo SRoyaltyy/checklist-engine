@@ -195,7 +195,9 @@ def _events_I(I, tk, C, dates):
             mbar = (rb >= 0) & (rsub.resume_dt.values <= dates[-1])              # future resumes: dropped, not piled
             rli = np.searchsorted(rsub.resume_dt.values[mbar], dates, side='right') - 1
             rbb = rb[mbar]
-            hres = np.where(rli >= 0, rbb[np.clip(rli, 0, None)], -1)
+            hres = np.full(len(dates), -1)                       # all resumes after the last bar -> nothing knowable
+            if len(rbb):
+                hres = np.where(rli >= 0, rbb[np.clip(rli, 0, None)], -1)
             know = (rli >= 0) & (hres >= 0) & (hres < T)
             respx = c[np.clip(hres, 0, None)]
             I['halt_res'] = np.where(know, hres, np.nan)
@@ -213,25 +215,29 @@ def _events_I(I, tk, C, dates):
         mpb = (pb >= 0) & (sf.pub.values <= dates[-1])                    # future reports: dropped, not piled
         pb = pb[mpb]; qty = sf.current_short_qty.values[mpb]; prv = sf.previous_short_qty.values[mpb]
         dtc = sf.days_to_cover.values[mpb]; pubv = sf.pub.values[mpb]
-        rcnt, _ = _ev_cnt_last(dates, pubv)
-        I['si_rep'] = rcnt
-        li = np.searchsorted(pubv, dates, side='right') - 1
-        k = np.clip(li, 0, None); has = li >= 0
-        I['si_qty'] = np.where(has, qty[k], np.nan); I['si_prev'] = np.where(has, prv[k], np.nan)
-        I['si_dtc'] = np.where(has, dtc[k], np.nan)
-        sh = I['shares']; shb = np.where(np.isfinite(sh), sh, np.nan)
-        shp = shb[np.clip(pb, 0, T - 1)]
-        pct_at_pub = np.where((pb < T) & (shp > 0), qty / shp * 100, np.nan)
-        p26 = np.full(len(qty), np.nan)
-        for k2 in range(len(qty)):                                        # percentile of report k2's SI% within trailing 26
-            w = pct_at_pub[max(0, k2 - 25):k2 + 1]; w = w[np.isfinite(w)]
-            if len(w): p26[k2] = (w <= pct_at_pub[k2]).mean() * 100
-        I['si_pct26'] = np.where(has, p26[k], np.nan)
-        pchg = np.full(len(qty), np.nan)                                  # price change between consecutive report dates
-        for k2 in range(1, len(qty)):
-            b0, b1 = pb[k2 - 1], pb[k2]
-            if 0 <= b0 < T and 0 <= b1 < T and c[b0] > 0: pchg[k2] = c[b1] / c[b0] - 1
-        I['si_prchg'] = np.where(has & (li >= 1), pchg[k], np.nan)
+        if not len(pb):                                                   # every report outside the bar window (e.g. delisted early)
+            I['si_rep'] = np.zeros(T); I['si_qty'] = nan; I['si_prev'] = nan; I['si_dtc'] = nan
+            I['si_pct26'] = nan; I['si_prchg'] = nan
+        else:
+            rcnt, _ = _ev_cnt_last(dates, pubv)
+            I['si_rep'] = rcnt
+            li = np.searchsorted(pubv, dates, side='right') - 1
+            k = np.clip(li, 0, None); has = li >= 0
+            I['si_qty'] = np.where(has, qty[k], np.nan); I['si_prev'] = np.where(has, prv[k], np.nan)
+            I['si_dtc'] = np.where(has, dtc[k], np.nan)
+            sh = I['shares']; shb = np.where(np.isfinite(sh), sh, np.nan)
+            shp = shb[np.clip(pb, 0, T - 1)]
+            pct_at_pub = np.where((pb < T) & (shp > 0), qty / shp * 100, np.nan)
+            p26 = np.full(len(qty), np.nan)
+            for k2 in range(len(qty)):                                    # percentile of report k2's SI% within trailing 26
+                w = pct_at_pub[max(0, k2 - 25):k2 + 1]; w = w[np.isfinite(w)]
+                if len(w): p26[k2] = (w <= pct_at_pub[k2]).mean() * 100
+            I['si_pct26'] = np.where(has, p26[k], np.nan)
+            pchg = np.full(len(qty), np.nan)                              # price change between consecutive report dates
+            for k2 in range(1, len(qty)):
+                b0, b1 = pb[k2 - 1], pb[k2]
+                if 0 <= b0 < T and 0 <= b1 < T and c[b0] > 0: pchg[k2] = c[b1] / c[b0] - 1
+            I['si_prchg'] = np.where(has & (li >= 1), pchg[k], np.nan)
     else:
         I['si_rep'] = np.zeros(T); I['si_qty'] = nan; I['si_prev'] = nan; I['si_dtc'] = nan
         I['si_pct26'] = nan; I['si_prchg'] = nan
@@ -246,8 +252,11 @@ def _events_I(I, tk, C, dates):
         ecnt, li = _ev_cnt_last(dates, repv)
         I['earn_cnt'] = ecnt
         rlast = np.clip(li, 0, None)
-        I['earn_last'] = np.where(li >= 0, rb[rlast], np.nan)             # BAR of the last report (for staleness windows)
-        I['earn_since'] = np.where(li >= 0, idx - rb[rlast], np.nan)
+        if len(rb):                                                       # reports outside the bar window -> nothing knowable
+            I['earn_last'] = np.where(li >= 0, rb[rlast], np.nan)         # BAR of the last report (for staleness windows)
+            I['earn_since'] = np.where(li >= 0, idx - rb[rlast], np.nan)
+        else:
+            I['earn_last'] = nan; I['earn_since'] = nan
         lag = 1 - bmo                                                     # BMO prints knowable same session; AMC/unknown next
         I['earn_surp'] = _asof_active(T, rb, surp, lag)
         strk = np.zeros(len(surp), int)                                   # consecutive beats ending at each report

@@ -44,6 +44,6 @@ wait "$ENGINE" 2>/dev/null; ENGINE_RC=$?
 wait "$PUSHER" 2>/dev/null || true
 echo "== engine rc=$ENGINE_RC; final checkpoint"
 python3 ci/push_loop.py --chunks "$CH" --deadline-min 0 --once || true
-tail -5 "$OUT/step_a.log" || true
+tail -60 "$OUT/step_a.log" || true
 # rc 0 = all chunks done; 143/137/255 = killed at deadline or by pusher (normal, resume next run)
 case "$ENGINE_RC" in 0|143|137|255) exit 0 ;; *) exit "$ENGINE_RC" ;; esac
