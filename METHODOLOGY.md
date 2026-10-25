@@ -218,6 +218,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~16:35 HKT — impact-diff workflow built + dispatched (40165876598, queued); queue note.**
+  - `ci/impact_diff.py` + `.github/workflows/impact_diff.yml` on `kimi/dictionary-fixes` (`b1f2502`); registered on main `9673e75`. Runs 12 sample tickers through base `kimi/exit-grid` (git worktree) and the branch engine, same setup recipe as the leak test, default cutoffs (same path as production grid legs); diffs answers per question column and uploads impact_diff.json.
+  - Queue: 13 grid legs still in progress since ~09:42 HKT (>6.5h, past the 211-325min calibration - watching for first piece completions); world smoke 40163291647, cboe smoke 40164813316, step-a 40163709902, exit-grid 40165360907, shortlist 40156872713 all queued behind them. Nothing else new from me this block.
+
 - **2026-10-25 ~16:10 HKT — dictionary differs batch 2: C11 FIXED (`kimi/dictionary-fixes` `4e75734`); I022 needs NO engine code; runner queue unchanged.**
   - C11: `divergence_sync` now takes `div_K` (default 2, byte-identical to today's grid). With `div_K=3` it compares the newest vs the **3rd** confirmed pivot, requiring the 2nd to exist in-window - matching the dictionary's LastK(3) rule. Param is tracked, so a `div_K` dial/cutoff row will sweep it once added.
   - I022 (true weekly bars): **no engine change needed.** `DIAL_TABLE_v2.7.csv` already wires `k=5` composites wherever the tree asks for weekly (weekly-MA variants are labelled SMA50/100/200 daily-proxy in the frozen tree). What I022 needs is dial-table ROWS for the weekly-MA variants - the dial table is a frozen/pinned file, so this is a War-room addition, not a code change. Flagging for confirmation before adding rows.
