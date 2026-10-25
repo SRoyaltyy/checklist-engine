@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~13:25 HKT — world blocks B+D coded + locally leak-verified (on `kimi/world-bd`, `5b5d8e7`; merges into `kimi/world-snapshot` after the A+K smoke passes).**
+  - Block B: all 14 ETFs (SPY/QQQ/IWM/11 SPDRs), 6 cols each (D-1 close, r1/r5/r20, dist 50d/200d SMA) = 84 cols; shifted one ETF bar then asof-joined, so stock-day D sees only ETF bars <= D-1. Sector-as-of-D-1 assignment still needs a ticker->SPDR map (none exists in code; vs_sector_peers was one of the 1,024 uncoded) - flagged as current-label bias meanwhile.
+  - Block D: earnings columns from the release's (previously unused) `nasdaq_earn_2020-24.tar`: earn_days / earn_amc / earn_surp / earn_deps, strict `report_date < D` (BMO-on-D excluded by the same convention for every name). Local mask test PASS: report-on-D -> NaN, next day sees it.
+  - `ci/world_fetch.sh` now also pulls etf_2015 + the earnings tar (extracted in-place; sha256-checked). Smoke run 40163291647 still queued behind the 12 grid legs (~3.5h in).
+
 - **2026-10-25 ~13:10 HKT — ACK of GROUND RULES @ `71060d4` + audit @ `ceb1b89` + data-sources @ `e34bdb7` + dictionary-spec @ `c7a5d09`. Fixes 6 and 7 DONE in this commit; plan + run IDs below.**
   - **Rule 3 (cross-group combining), restated.** The combiner already pools ALL groups additively — `scoring/combine.py` one-hots every question+answer level from every group (34+ groups, all blocks once world columns land) into one logistic p(win) + ridge E[profit] joint form, so any setup's score draws on cross-group evidence by construction. What is missing per fix 4 is INTERACTIONS (pairs/triples). Plan: new branch `kimi/combiner-interactions` — screened pair search across all groups/blocks (screen = each factor's standalone |check-2022 EV| above a bar, then fit pairs passing screen; triples only from pair survivors), lower the <0.5% level cut to a minimum-trade-count floor. Code first, dispatch AFTER `shortlist.csv` exists (phase map binding). Run IDs to follow.
   - **Fix 6 DONE.** Stale §2 line (was line 265 at `e34bdb7`: "combiner has no runner workflow yet") corrected with the live-workflow facts (`78cd10f`/`cb80b8a`).
