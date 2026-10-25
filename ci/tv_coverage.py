@@ -58,6 +58,22 @@ BATCH3 = {
     'M217': 'tv_renko_dir;tv_renko_n',
     'M220': 'tv_pnf_dir',
 }
+BATCH4 = {
+    'M014': 'tv_fibx',
+    'M017': 'tv_pf_slope;tv_pf_pos',
+    'M018': 'tv_tl_hslope;tv_tl_hdist;tv_tl_lslope;tv_tl_ldist',
+    'M147': 'tv_knox',
+    'M149': 'tv_mpp_dist',
+    'M151': 'tv_ghost_dist',
+    'M269': 'tv_ew_dir;tv_ew_npiv',
+    'M271': 'tv_poc_dist',
+    'M274': 'tv_avp_dist',
+}
+BATCH5 = {
+    'M008': 'advdecl',
+    'M047': 'cvi_m;cvi_chg20_m',
+    'M222': 'tv_volr',
+}
 # already wired by another block, no new code needed
 ALREADY = {
     'M277': ('split_days;split_n',
@@ -66,6 +82,8 @@ ALREADY = {
 WIRED_MAP = dict(BATCH1)
 WIRED_MAP.update(BATCH2)
 WIRED_MAP.update(BATCH3)
+WIRED_MAP.update(BATCH4)
+WIRED_MAP.update(BATCH5)
 
 BLOCK_BY_CATEGORY = {
     'breadth': 'K', 'price math': 'A2', 'chart type': 'A2', 'patterns': 'A2',
@@ -89,9 +107,12 @@ def seed():
                              '(tested: none; see DATA_SOURCES.csv notes)'))
             elif status == 'missing-fetchable':
                 if iid in WIRED_MAP:
-                    sha = 'c29b214' if iid in BATCH1 else ('bf0ec81' if iid in BATCH2 else '7fb1a8b')
+                    sha = 'c29b214' if iid in BATCH1 else ('bf0ec81' if iid in BATCH2 else ('7fb1a8b' if iid in BATCH3 else ('59f5a00' if iid in BATCH4 else '52f8b30')))
+                    extra = ''
+                    if iid in ('M008', 'M047'):
+                        extra = '; survivors-only universe provenance (same as breadth col)'
                     rows.append((iid, item, cat, block, WIRED_MAP[iid], 'WIRED',
-                                 f'computed from OHLCV in compute_tv_extra ({sha})'))
+                                 f'computed in world build ({sha}){extra}'))
                 elif iid in ALREADY:
                     cols, why = ALREADY[iid]
                     rows.append((iid, item, cat, block, cols, 'WIRED', why))
