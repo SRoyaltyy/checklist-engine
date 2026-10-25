@@ -12,7 +12,10 @@ import pandas as pd
 def chart_rows(ticker,payload):
     result=payload.get('chart',{}).get('result')
     if not result:raise ValueError('no chart result: '+str(payload.get('chart',{}).get('error')))
-    result=result[0];timestamps=result.get('timestamp',[])
+    result=result[0]
+    granularity=result.get('meta',{}).get('dataGranularity')
+    if granularity is not None and granularity!='1d':raise ValueError('provider returned non-daily granularity '+str(granularity))
+    timestamps=result.get('timestamp',[])
     quote=result['indicators']['quote'][0]
     adjusted=result['indicators'].get('adjclose',[{}])[0].get('adjclose',[])
     if len(adjusted)!=len(timestamps):raise ValueError('adjusted-close series missing')
@@ -33,11 +36,14 @@ def chart_rows(ticker,payload):
             value=event.get('amount') if kind=='dividend' else event.get('numerator',0)/event.get('denominator',1)
             events.append(dict(ticker=ticker,date=str(stamp),kind=kind,value=value))
     frame=frame.dropna(subset=['close']).drop_duplicates(['ticker','date']).sort_values('date')
+    if len(frame)>20:
+        gaps=frame.date.diff().dropna().dt.total_seconds()/86400
+        if gaps.median()>3:raise ValueError('price series is too sparse to be daily')
     return frame,pd.DataFrame(events,columns=['ticker','date','kind','value'])
 
 
 def fetch(ticker):
-    url='https://query1.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(ticker,safe='')+'?range=max&interval=1d&events=div%2Csplits'
+    url='https://query1.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(ticker,safe='')+'?'+urllib.parse.urlencode({'period1':631152000,'period2':int(time.time()),'interval':'1d','events':'div,splits'})
     for attempt in range(4):
         try:
             with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=90) as response:

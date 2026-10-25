@@ -114,7 +114,7 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           tag="world-smoke-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes "PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
+          gh release create "$tag" --target main --title "$tag" --notes "Build source commit: $GITHUB_SHA. PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
           shopt -s nullglob
           files=(world-smoke/*.parquet world-smoke/*.json world-smoke/*.csv)
           gh release upload "$tag" "${files[@]}"

@@ -170,3 +170,18 @@ def test_missing_adjusted_series_is_a_source_failure():
     from fetch.fetch_world_prices import chart_rows
     payload={'chart':{'result':[{'timestamp':[1735830000],'indicators':{'quote':[{'close':[100]}]}}]}}
     with pytest.raises(ValueError,match='adjusted-close'):chart_rows('TEST',payload)
+
+
+def test_kagi_initial_state_never_reads_the_second_close():
+    full=fw.kagi_direction([10.,12.,11.,9.,10.])
+    assert np.isnan(full[0])
+    for length in range(1,6):
+        np.testing.assert_equal(fw.kagi_direction([10.,12.,11.,9.,10.][:length]),full[:length])
+    assert full[1]==1
+
+
+def test_vendor_coarse_bars_cannot_pass_as_daily_prices():
+    from fetch.fetch_world_prices import chart_rows
+    payload={'chart':{'result':[{'meta':{'dataGranularity':'3mo'},'timestamp':[],
+        'indicators':{'quote':[{}],'adjclose':[{}]}}]}}
+    with pytest.raises(ValueError,match='non-daily'):chart_rows('TEST',payload)

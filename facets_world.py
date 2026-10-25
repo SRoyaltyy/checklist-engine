@@ -125,6 +125,29 @@ def _spearman_rank_last(y):
     d2 = ((price_rank - time_rank) ** 2).sum()
     return (1.0 - 6.0 * d2 / (n ** 3 - n)) * 100.0
 
+def kagi_direction(close,reversal=0.04):
+    """Causal Kagi seed: candle zero has no direction until a later close
+    establishes it. Never use close[1] to backfill direction at close[0]."""
+    close=np.asarray(close,dtype=float)
+    result=np.full(len(close),np.nan,dtype=float)
+    if not len(close):return result
+    state=0;extreme=close[0]
+    for i in range(1,len(close)):
+        value=close[i]
+        if state==0:
+            if value==extreme:continue
+            state=1 if value>extreme else -1
+            extreme=value
+        elif state>0:
+            extreme=max(extreme,value)
+            if value<extreme*(1-reversal):state=-1;extreme=value
+        else:
+            extreme=min(extreme,value)
+            if value>extreme*(1+reversal):state=1;extreme=value
+        result[i]=state
+    return result
+
+
 def compute_tv_extra(o, h, l, c, v, dates=None):
     """TradingView master items marked missing-fetchable that are pure OHLCV math.
     Returns dict column -> array, all aligned to the bars (caller shifts by one).
@@ -300,21 +323,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         lb_dir[t] = cur
     out['tv_lb_dir'] = lb_dir.astype(np.float32)
     # M219 Kagi direction: 4% reversal from the running extreme (close-only).
-    kg_dir = np.zeros(len(c), dtype=np.float64)
-    cur = 1.0 if len(c) > 1 and c[1] >= c[0] else -1.0
-    ext = c[0]
-    kg_dir[0] = cur
-    for t in range(1, len(c)):
-        if cur > 0:
-            ext = max(ext, c[t])
-            if c[t] < ext * 0.96:
-                cur = -1.0; ext = c[t]
-        else:
-            ext = min(ext, c[t])
-            if c[t] > ext * 1.04:
-                cur = 1.0; ext = c[t]
-        kg_dir[t] = cur
-    out['tv_kagi_dir'] = kg_dir.astype(np.float32)
+    out['tv_kagi_dir'] = kagi_direction(c).astype(np.float32)
     # M217 Renko: ATR(14) bricks; direction state + bricks since last direction flip.
     atr14 = talib.ATR(h, l, c, timeperiod=14)
     rk_dir = np.zeros(len(c), dtype=np.float64)
