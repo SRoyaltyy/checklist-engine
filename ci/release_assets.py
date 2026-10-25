@@ -3,6 +3,8 @@
   have <tag> <name>...     exit 0 if every named asset exists on the release, else 1
   get <tag> <dest>          download every asset of the release into dest
   upload <tag> <file>...    upload each file as an asset if its name is not already taken (release created if missing)
+  rm <tag> <name>...         delete named assets (for forced reruns)
+Env note: FORCE_UPLOAD=1 makes upload replace same-named assets (delete+upload), for dictionary-fix reruns.
 Env: GITHUB_TOKEN, GH_REPO."""
 import json, os, sys, urllib.request
 
@@ -58,11 +60,16 @@ def main():
             print('downloaded', a['name'], a['size'])
     elif cmd == 'upload':
         up_base = rel['upload_url'].split('{')[0]
+        force = os.environ.get('FORCE_UPLOAD') == '1'
+        ids = {a['name']: a['id'] for a in rel['assets']}
         for path in sys.argv[3:]:
             name = os.path.basename(path)
-            if name in names:
+            if name in names and not force:
                 print('exists', name)
                 continue
+            if name in names and force:
+                req(f'/releases/assets/{ids[name]}', method='DELETE')
+                print('replaced (deleted old)', name)
             data = open(path, 'rb').read()
             r = urllib.request.Request(up_base + f'?name={name}', data=data,
                                        headers={'Authorization': f'token {TOK}',
@@ -70,6 +77,14 @@ def main():
                                                 'Content-Length': str(len(data))})
             urllib.request.urlopen(r)
             print('uploaded', name, len(data))
+    elif cmd == 'rm':
+        ids = {a['name']: a['id'] for a in rel['assets']}
+        for name in sys.argv[3:]:
+            if name in ids:
+                req(f'/releases/assets/{ids[name]}', method='DELETE')
+                print('deleted', name)
+            else:
+                print('not found', name)
     else:
         sys.exit(f'unknown cmd {cmd}')
 

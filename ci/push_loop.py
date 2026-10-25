@@ -62,7 +62,13 @@ def push_piece(nnn, ch):
     if os.path.exists(ans):
         rel = api(f"/releases/tags/{os.environ.get('RELEASE', 'data-2020-24-v1')}")
         names = {a['name'] for a in rel['assets']}
-        if os.path.basename(ans) not in names:
+        force = os.environ.get('FORCE_UPLOAD') == '1'
+        if force and os.path.basename(ans) in names:
+            aid = next(a['id'] for a in rel['assets'] if a['name'] == os.path.basename(ans))
+            rq = urllib.request.Request(f"https://api.github.com/repos/{os.environ['GH_REPO']}/releases/assets/{aid}", method='DELETE',
+                                        headers={'Authorization': f'token {tok}'})
+            urllib.request.urlopen(rq)
+        if force or os.path.basename(ans) not in names:
             up = rel['upload_url'].split('{')[0] + f'?name={os.path.basename(ans)}'
             req = urllib.request.Request(up, data=open(ans, 'rb').read(),
                                          headers={'Authorization': f'token {tok}',
