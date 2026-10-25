@@ -15,6 +15,7 @@ Runner:  FRED_API_KEY=... python3 fetch/fetch_fred.py --out fred_wide_2020_26.pa
 """
 import argparse, json, os, re, sys, time, urllib.parse, urllib.request, urllib.error
 import pandas as pd
+from datetime import date
 
 SERIES = ['DGS10', 'T10Y2Y', 'DTB3', 'ICSA', 'UMCSENT']
 
@@ -34,7 +35,7 @@ def alfred_page(key, sid, offset, limit, vintage_start, vintage_end):
                 detail=json.loads(exc.read()).get('error_message','')
             except Exception:detail=''
             detail=str(detail).replace(key,'[REDACTED]')
-            detail=re.sub(r'https?://[^\\s]+','[URL REDACTED]',detail)[:400]
+            detail=re.sub(r'https?://[^\s]+','[URL REDACTED]',detail)[:400]
             if code not in (429,500,502,503,504) or attempt==3:
                 raise RuntimeError(f'FRED {sid}: HTTP {code}; request URL and key redacted; {detail}') from None
         except (OSError,ValueError):
@@ -43,13 +44,15 @@ def alfred_page(key, sid, offset, limit, vintage_start, vintage_end):
     raise RuntimeError(f'FRED {sid}: retries exhausted')
 
 
-def alfred_observations(key, sid, limit=100000, start_year=2018, end_year=2026):
+def alfred_observations(key, sid, limit=100000, start_year=2018, end_year=2026, as_of=None):
     # JSON allows at most 2,000 vintage dates per request. Calendar-year
     # intervals have at most 366 dates, including carry-in information known
     # at the interval start. Paginate observations separately in each interval.
     out=[]
+    as_of=as_of or date.today().isoformat()
     for year in range(start_year,end_year+1):
-        start=f'{year}-01-01';end=f'{year}-12-31';offset=0
+        start=f'{year}-01-01';end=min(f'{year}-12-31',as_of);offset=0
+        if start>end:break
         while True:
             page=alfred_page(key,sid,offset,limit,start,end)
             observations=page.get('observations',[])

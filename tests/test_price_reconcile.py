@@ -99,7 +99,15 @@ def test_peer_return_does_not_carry_a_stale_daily_return():
 def test_fred_splits_vintage_ranges_below_json_limit():
     from fetch.fetch_fred import alfred_observations
     with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
-        assert alfred_observations('test-key','TEST')==[]
+        assert alfred_observations('test-key','TEST',as_of='2026-12-31')==[]
     assert request.call_count==9
     assert request.call_args_list[0].args[4:] == ('2018-01-01','2018-12-31')
     assert request.call_args_list[-1].args[4:] == ('2026-01-01','2026-12-31')
+
+
+def test_fred_current_vintage_interval_ends_today():
+    from fetch.fetch_fred import alfred_observations
+    with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
+        alfred_observations('test-key','TEST',start_year=2026,end_year=2027,as_of='2026-10-25')
+    assert request.call_count==1
+    assert request.call_args.args[4:]==('2026-01-01','2026-10-25')
