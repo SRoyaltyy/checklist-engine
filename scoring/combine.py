@@ -457,14 +457,32 @@ def cmd_predict(a):
                                        alpha_l, alpha_r,
                                        pd_y, cells, rf, bench_pre, f'year-{y}',
                                        z=dict(l=zl_y, r=zr_y), W_l=W_l, W_r=W_r)
-        df = pd.DataFrame(dict(ticker=base.ticker.to_numpy()[idx], date=base.date.to_numpy()[idx],
+        df = pd.DataFrame(dict(role='map', ticker=base.ticker.to_numpy()[idx], date=base.date.to_numpy()[idx],
                                tp=cells[det['cell']][:, 0], hold=cells[det['cell']][:, 1],
                                stop=cells[det['cell']][:, 2], p_win=np.round(det['p'], 4),
                                ev_net=np.round(det['ev'], 6), realised_net=np.round(det['realised'], 6),
                                bench_net=np.round(det['bench'], 6)))
-        df.to_parquet(os.path.join(a.out, f'strategy_map_{y}.parquet'), index=False)
+        # fixed study cell (STATE_CHANGE_PREREG §1 continuity cell) so the state-change runner
+        # gets one row per stock-day on a FIXED exit rule, next to the strategy-map rows
+        sm, sh, ss = (int(v) for v in a.study_cell.split(','))
+        ci = int(np.flatnonzero((cells == np.array([sm, sh, ss], np.int16)).all(1))[0])
+        m, h, s = (int(v) for v in cells[ci]); mi = m - 2; si = -1 if s == 0 else s - 2
+        rfix = X.rule_ret_mat(pd_y['tp_day'][mi], pd_y['tp_ret'][mi],
+                              None if si < 0 else pd_y['sl_day'][si],
+                              None if si < 0 else pd_y['sl_ret'][si],
+                              pd_y['clos'], sl_none=si < 0)[h - 1]
+        logit = ts_l[idx] + alpha_l + rf[ci] @ gamma_l
+        evf = ts_r[idx] + alpha_r + rf[ci] @ gamma_r
+        if interactions and zl_y is not None:
+            logit = logit + (zl_y @ W_l) @ rf[ci]
+            evf = evf + (zr_y @ W_r) @ rf[ci]
+        dff = pd.DataFrame(dict(role='fixed', ticker=base.ticker.to_numpy()[idx], date=base.date.to_numpy()[idx],
+                                tp=m, hold=h, stop=s, p_win=np.round(1 / (1 + np.exp(-logit)), 4),
+                                ev_net=np.round(evf * 0.05, 6), realised_net=np.round(rfix, 6),
+                                bench_net=np.round(bench_pre['bench'][mi, si + 1, h - 1, pd_y['didx']], 6)))
+        pd.concat([df, dff], ignore_index=True).to_parquet(os.path.join(a.out, f'strategy_map_{y}.parquet'), index=False)
         summaries.append(summary)
-        log('strategy map year', y, len(df), 'rows')
+        log('strategy map year', y, len(df), 'map rows +', len(dff), 'fixed rows')
     json.dump(summaries, open(os.path.join(a.out, 'predict_summary.json'), 'w'), indent=1)
 
 
@@ -487,6 +505,8 @@ if __name__ == '__main__':
     p.add_argument('--base', default='chunks/trade_base_rows.parquet')
     p.add_argument('--pre', default='grid_pre'); p.add_argument('--bench', default='grid_pre/bench_pre.npz')
     p.add_argument('--out', default='preds')
+    p.add_argument('--study-cell', default='20,15,0',
+                   help='m,h,stop of the fixed study cell emitted with role=fixed (state-change study)')
     a = ap.parse_args()
     os.environ.setdefault('CHECKLIST_DATA_DIR', os.environ.get('CHECKLIST_DATA_DIR', 'data-2020-24-v1'))
     if a.cmd == 'fit':

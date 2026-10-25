@@ -7,10 +7,10 @@ and the pass rule were fixed in the prereg BEFORE results.
 
 Inputs (all point-in-time confirm-window outputs, no 2020-22 retuning):
   --cells  long parquet, one row per (ticker, date, cell):
-             ticker, date, role, m, h, stop, p_win, ev_net, realised_net, bench_net
-           role = 'map' for the strategy-map (chosen) cell, 'fixed' for the continuity
-           cell (exactly one fixed row per stock-day, matching --study-cell). Rows with
-           any other role are ignored.
+             ticker, date, role, tp, hold, stop, p_win, ev_net, realised_net, bench_net
+           (combine.py predict schema; tp/hold/stop are the exit cell). role = 'map' for
+           the strategy-map (chosen) cell, 'fixed' for the continuity cell (exactly one
+           fixed row per stock-day, matching --study-cell). Other roles are ignored.
   --ret    optional daily-return parquet (ticker, date, ret) for residualisation
            (last-5/10/20-session returns, §1). If absent the run is flagged
            'unresidualised'; the registered form is residualised.
@@ -88,6 +88,7 @@ def run(cells, ret, study_cell=(20, 15, 0)):
     df['date'] = pd.to_datetime(df['date'])
     if 'role' not in df.columns:
         raise SystemExit('cells parquet needs a role column (map|fixed)')
+    df = df.rename(columns={'tp': 'm', 'hold': 'h'})   # predict schema -> study schema
     cont = df[df.role == 'fixed']
     if not len(cont) or not ((cont.m == study_cell[0]) & (cont.h == study_cell[1]) & (cont.stop == study_cell[2])).all():
         raise SystemExit(f'fixed rows must all match the study cell {study_cell}')

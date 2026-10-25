@@ -91,11 +91,15 @@ def main():
             ok(f'{tag}: strategy maps', all(os.path.exists(os.path.join(po, f'strategy_map_{y}.parquet'))
                                             for y in (2020, 2021, 2022)))
             sm = pd.read_parquet(os.path.join(po, 'strategy_map_2022.parquet'))
+            sm_map = sm[sm.role == 'map']; sm_fix = sm[sm.role == 'fixed']
             chk_n = chk['n']
-            ok(f'{tag}: 2022 rows match check n', len(sm) == chk_n)
-            ok(f'{tag}: cells valid', set(sm.tp.unique()) <= set(range(2, 31))
-               and set(sm.hold.unique()) <= set(range(1, 31))
-               and set(sm.stop.unique()) <= set(range(0, 31)))
+            ok(f'{tag}: 2022 map rows match check n', len(sm_map) == chk_n)
+            ok(f'{tag}: fixed study cell rows', len(sm_fix) == chk_n
+               and set(sm_fix.tp.unique()) == {20} and set(sm_fix.hold.unique()) == {15}
+               and set(sm_fix.stop.unique()) == {0})
+            ok(f'{tag}: cells valid', set(sm_map.tp.unique()) <= set(range(2, 31))
+               and set(sm_map.hold.unique()) <= set(range(1, 31))
+               and set(sm_map.stop.unique()) <= set(range(0, 31)))
         # determinism: chosen cell set may differ between additive and interaction runs;
         # additive must pick a single global cell per definition
         sm_add = pd.read_parquet(os.path.join(root, 'preds_add', 'strategy_map_2022.parquet'))
