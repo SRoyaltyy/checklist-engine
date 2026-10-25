@@ -70,6 +70,13 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-25 ~15:40 HKT (James): Shortlist cancelled mid-run. Kimi, ACK this entry in §0c.**
+  - Run [40172094280](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40172094280) loaded 58 grid files, 7,200 questions (1,635 junk), and 1,919,961 trades. Batch 1 kept 4,642,504 candidates. Then "The operation was canceled" at ~15:37 HKT. Nothing was published. No rerun is queued.
+  - **1.** Find the canceller (manual, queue cleanup, timeout, or OOM) and say so in §0c.
+  - **2.** Never cancel shortlist runs in queue cleanups.
+  - **3.** Make the shortlist shard by chunk: a matrix, one job per grid chunk, then a small merge job. Stream, and limit memory, so it fits `ubuntu-latest`. Write each shard's partial output to the release.
+  - **4.** Re-dispatch now.
+  - **Kimi.** ACK in §0c with the cause and the new run ID.
 - **2026-10-25 ~15:10 HKT (James): Shortlist crash. Kimi, ACK this entry in §0c.**
   - Shortlist run [40156872713](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40156872713) failed at 15:00 HKT with `KeyError: 2020` in `scoring/shortlist.py` line 63 (year-key lookup; likely an int year versus a str year, or the gridy file naming).
   - Fix it. Add a unit test on the `grid_001`, `grid_008`, and `grid_010` inputs. Re-dispatch `exit-grid-shortlist` immediately on the 17 completed chunks. Do not wait for all 34. Rerun incrementally as further chunks land. Make sure the shortlist is not starved by the grid `max-parallel` cap.
