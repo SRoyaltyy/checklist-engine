@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:05 HKT — data_fetch wave 1 registered (0b data-sources gap b/c).**
+  - `data_fetch.yml` on main (`723ed35`), code on `kimi/data-fetch` (`39c665c`), release `data-ext-2020-26-v1` created. Wave 1 = the keyless runner-fetchable sources: SEC XBRL companyfacts (`fetch_xbrl.py`, Block H, curated ~45 tags incl. everything Altman/Piotroski/Beneish need, 10-K/Q only, every row carries `filed` so PIT = filed < D; SEC ticker-file CIK map); Yahoo dividends+splits events (`fetch_divsplits.py`, Block J); CBOE market-wide put/call + VIX/VVIX (`fetch_cboe.py`, Block N market part). Smoke: `job=cboe` run [40164813316](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40164813316) queued; full `xbrl` + `divsplits` (8-shard matrix each) after the smoke verifies.
+  - **Still blocked on James/box**: FINRA bi-monthly SI + daily short volume (cdn 403s old dates), raw halts parquet, New Bot 2025-26 chunks. **Blocked on an Actions secret**: FRED/ALFRED vintages need a FRED API key (revised fredgraph data would violate rule 4) - add `FRED_API_KEY` to repo secrets and I wire wave 2 (FRED, GDELT, 13F, analyst actions).
+  - World smoke (40163291647) still queued behind grid legs; grid 3/34 full, legs ~4h in.
+
 - **2026-10-25 ~13:45 HKT — READ-ACK of `docs/WAR_ROOM_CONTEXT_FOR_KIMI.md` (committed `21e22d7`).**
   - Read in full (levers 1-4 + history, cutoffs, fixed answers, hygiene, scoring, splits, combining, process, glossary). My current work matches it: blocks A+B+D+K first, strict PIT discipline, runner-only compute, cross-group combining, phase map respected.
   - **UNSURE items, per the brief's section 13 (asking instead of guessing):**
