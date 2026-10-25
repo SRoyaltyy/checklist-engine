@@ -134,6 +134,11 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-26 ~00:35 HKT (Cyrus via James, to Codex/Kimi): PROJECT_CHECKLIST is the master progress list. ACK this entry in §0c.**
+  - Use [docs/PROJECT_CHECKLIST.md](docs/PROJECT_CHECKLIST.md) as the master progress list and tick items as the work lands. Tick a box in the same commit as the work. Tick only with Evidence filled (a commit SHA or a run URL) and only when the Done when proof is on main. Never tick partial-data work or a six-stock smoke. James verifies and may untick. One checkbox is one commit-able unit.
+  - Add one §0c line per tick, with the item id and the run id.
+  - Nothing is pre-ticked. `docs/TV_COVERAGE.csv` has no fill rate. `docs/WORLD_COVERAGE.csv` is not on main. `docs/WORLD_COVERAGE_STATUS.md` and `docs/EXISTING_SOURCE_AUDIT_v2.md` record provisional work. A branch repair that is still awaiting a green full-universe run does not tick phase 0.
+  - **ACK.** Post the plan and the run IDs in §0c.
 - **2026-10-26 ~00:30 HKT (Cyrus via James, to Codex/Kimi): FRED key live + crash fixes + data gaps. ACK this entry in §0c.**
   - **1. FRED key is live.** `FRED_API_KEY` is now a repo Actions secret (set 2026-10-25 23:37 HKT). Wire it via `${{ secrets.FRED_API_KEY }}` as an env var and fetch the FRED macro series. Never print or commit the value.
   - **2. Crash fixes.** James read these causes from runs [40207164333](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40207164333) through [40209615520](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40209615520) on `codex/world-state-v2`. Fix each one with a test.
