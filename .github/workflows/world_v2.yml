@@ -7,6 +7,9 @@ on:
       - 'world_*.py'
       - 'fetch/fetch_xbrl.py'
       - 'ci/world_v2_*.py'
+      - 'ci/question_quality.py'
+      - 'tests/test_question_quality.py'
+      - 'docs/QUESTION_TREE_v3.md'
       - 'ci/world_fetch.sh'
       - 'tests/test_world_v2.py'
       - 'requirements-world-v2.txt'
@@ -24,7 +27,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m pytest tests/test_world_v2.py -q
+      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py -q
   companyfacts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -76,11 +79,11 @@ jobs:
         run: python world_snapshot_v2.py --out world-smoke --shards 1 --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE
       - name: Rebuild every column with future inputs removed
         id: leak
-        run: python ci/world_v2_leak.py --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --out world-smoke/WORLD_LEAK.json
+        run: python -m ci.world_v2_leak --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --out world-smoke/WORLD_LEAK.json
       - name: Measured coverage gate (fail closed)
         id: coverage
         if: always() && steps.build.outcome == 'success'
-        run: python ci/world_v2_coverage.py --shards world-smoke/world_shard_*_part_*.parquet --out world-smoke --gate
+        run: python -m ci.world_v2_coverage --shards world-smoke/world_shard_*_part_*.parquet --out world-smoke --gate
       - name: Preserve evidence even when a gate fails
         uses: actions/upload-artifact@v4
         if: always()
@@ -95,4 +98,6 @@ jobs:
         run: |
           tag="world-smoke-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes "PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
-          gh release upload "$tag" world-smoke/*.parquet world-smoke/*.json world-smoke/*.csv
+          shopt -s nullglob
+          files=(world-smoke/*.parquet world-smoke/*.json world-smoke/*.csv)
+          gh release upload "$tag" "${files[@]}"
