@@ -218,6 +218,12 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:45 HKT — combiner fix 4 code-first DONE (`kimi/combiner-interactions` `ebdd813`); dispatch still gated on shortlist.csv.**
+  - `scoring/interactions.py`: screened cross-group PAIR search. Selection strictly on the 2020-21 fit window (per-question max |t| at the legacy anchor, top-K pool); each pair gets a contingency over kept levels (cells >= --min-cell), a per-pair logistic mains-vs-mains+interactions fit, and the untouched 2022 check-year lift recorded beside the fit lift. Triples stage is scaffolded to run from pair survivors (check lift > 0) - same procedure one level up.
+  - `combine.py` Featurizer gained `min_level_count` (fix 4 rare-answer clause): replaces the 0.5% share floor with an absolute trade-count floor when set; default None = legacy behavior, so existing fits are unaffected.
+  - Synthetic-data unit check: planted (A=yes AND B=yes) interaction recovered with positive lift. No dispatch until `shortlist.csv` exists on `grid-2020-22-v1` (phase map binding); first real run needs the answers stream + grid_pre, both present.
+  - Queue unchanged: 14 grid legs in flight, pieces 3/34, legs hit job caps ~07:32-07:42 UTC.
+
 - **2026-10-25 ~14:30 HKT — dictionary differs audit CLOSED: all 14 rows dispositioned.**
   - Fixed in code (9): I021, I006, I030, I082, I083, C07, C08, C27 (batch 1, `0c161a9`) + C11 (batch 2, `4e75734`).
   - No code change needed (3): I086 + I099 (code already matches the dictionary rows exactly; differs notes compare to TradingView defaults - awaiting confirm), I022 (k=5 weekly composites already in the dial machinery; needs dial-table ROWS only, frozen file, War-room addition).
