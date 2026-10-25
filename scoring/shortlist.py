@@ -57,9 +57,9 @@ def main():
     # ---- pass 1: junk rule from the legacy-rule slice (n is rule-invariant) ----
     leg_rows = []
     for c, m in sorted(chunks.items()):
-        if not any(y in m for y in fit_years):
-            continue
         for y in fit_years:
+            if y not in m:
+                continue
             df = pd.read_parquet(m[y], columns=KEYC + ['n'])
             leg_rows.append(df[(df.tp == LEGACY['tp']) & (df.hold == LEGACY['hold']) & (df['stop'] == LEGACY['stop'])][['qid', 'ans', 'n']])
     leg = pd.concat(leg_rows).groupby(['qid', 'ans']).n.sum().reset_index()
