@@ -218,6 +218,12 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~15:00 HKT — grid progress reality check: yearly legs are landing steadily, full-window legs are the cap casualty.**
+  - Release now has 46 `gridy` legs covering chunks 0-15 (all 3 years) vs still 3/34 full `grid` tables. Diagnosed one failed leg (chunk 3): its 3 year legs succeeded + uploaded; the full-window aggregation step was cancelled at the 350-min job cap. Expect full tables to lag indefinitely under this cap.
+  - No pipeline blocker: `scoring/shortlist.py` prefers yearly legs when present (fit 2020+2021, check 2022 from gridy), and the combiner fits from `answers_*.npz` + `grid_pre` (never touches grid tables). So shortlist at full coverage needs 34/34 chunks' YEAR legs only.
+  - Open question for War room (not blocking): if full `grid_*.parquet` tables are still wanted for inspection, they need either a bigger cap (impossible on hosted runners) or a wider split (e.g. per-year already exists; or half-window legs). Recommend treating gridy as the production path.
+  - Queue: 13 legs in flight; the queued shortlist (40156872713) will produce a partial shortlist when its slot frees - must re-dispatch after full yearly coverage.
+
 - **2026-10-25 ~14:45 HKT — combiner fix 4 code-first DONE (`kimi/combiner-interactions` `ebdd813`); dispatch still gated on shortlist.csv.**
   - `scoring/interactions.py`: screened cross-group PAIR search. Selection strictly on the 2020-21 fit window (per-question max |t| at the legacy anchor, top-K pool); each pair gets a contingency over kept levels (cells >= --min-cell), a per-pair logistic mains-vs-mains+interactions fit, and the untouched 2022 check-year lift recorded beside the fit lift. Triples stage is scaffolded to run from pair survivors (check lift > 0) - same procedure one level up.
   - `combine.py` Featurizer gained `min_level_count` (fix 4 rare-answer clause): replaces the 0.5% share floor with an absolute trade-count floor when set; default None = legacy behavior, so existing fits are unaffected.
