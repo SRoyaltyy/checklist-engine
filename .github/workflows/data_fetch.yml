@@ -1,0 +1,70 @@
+name: data_fetch
+# External data fetch, wave 1 (METHODOLOGY 0b data-sources gaps b/c): SEC XBRL
+# companyfacts (Block H), Yahoo dividends+splits events (Block J), CBOE
+# market-wide options (Block N market part). Keyless endpoints; heavy fetch on
+# runners only; published to release data-ext-2020-26-v1. Box-only sources
+# (FINRA SI + daily short volume, raw halts, 2025-26 chunks) are with James.
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: which fetch to run (xbrl | divsplits | cboe)
+        default: 'cboe'
+        required: true
+      shards:
+        description: matrix legs for xbrl/divsplits (1-8)
+        default: '8'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ matrix.i < fromJSON(inputs.shards) || inputs.job == 'cboe' }}
+        with:
+          ref: kimi/data-fetch
+      - name: Install python deps
+        if: ${{ matrix.i < fromJSON(inputs.shards) || inputs.job == 'cboe' }}
+        run: python3 -m pip install -q pandas numpy pyarrow
+      - name: Fetch universe list from data-2020-24-v1
+        if: ${{ (matrix.i < fromJSON(inputs.shards) && inputs.job != 'cboe') }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/world_fetch.sh "$RUNNER_TEMP/fetch_in"
+      - name: Run fetch ${{ inputs.job }} shard ${{ matrix.i }}
+        if: ${{ matrix.i < fromJSON(inputs.shards) || inputs.job == 'cboe' }}
+        env:
+          JOB: ${{ inputs.job }}
+        run: |
+          set -e
+          if [ "$JOB" = "cboe" ]; then
+            [ "${{ matrix.i }}" = "0" ] || { echo "cboe runs on leg 0 only"; exit 0; }
+            python3 ci/fetch_cboe.py --out "$RUNNER_TEMP/fetch_out"
+          else
+            python3 "ci/fetch_${JOB}.py" --shard ${{ matrix.i }} --shards 8 \
+              --universe "$RUNNER_TEMP/fetch_in/universe_2020_survivors_le2024.parquet" \
+              --out "$RUNNER_TEMP/fetch_out"
+          fi
+      - name: Upload to data-ext-2020-26-v1
+        if: ${{ matrix.i < fromJSON(inputs.shards) || inputs.job == 'cboe' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ -d "$RUNNER_TEMP/fetch_out" ] && [ -n "$(ls -A "$RUNNER_TEMP/fetch_out" 2>/dev/null)" ]; then
+            python3 ci/release_assets.py upload data-ext-2020-26-v1 "$RUNNER_TEMP/fetch_out"/*
+            echo "uploaded $(ls "$RUNNER_TEMP/fetch_out" | wc -l) files"
+          else
+            echo "nothing to upload"
+          fi
