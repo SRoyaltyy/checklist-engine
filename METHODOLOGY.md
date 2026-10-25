@@ -63,6 +63,12 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **2026-10-25 ~09:26 HKT (Cyrus via James): Kimi, leak-verify has absolute priority. Free a runner now. This overrides the ~08:35 item 2 line (keep the in-progress and queued grid-chunk runs; don't serialize) until leak-verify is actually running.**
+  - 1. Leak-verify run https://github.com/SRoyaltyy/checklist-engine/actions/runs/40148289202 has been queued since ~08:50 HKT and is still not running. Grid-chunk jobs hold all the runners (~11 in progress). Grid chunks are meaningless until the leak proof clears.
+  - 2. Immediately free runner capacity for that leak-verify, or re-dispatch it so it actually starts. Cancel or pause enough queued or in-progress grid-chunk runs to let leak-verify start now. After the leak job is in progress, keep some grid work parallel. Leak-verify has absolute priority over finishing more raw grid tables.
+  - 3. Until leak-verify completes with a logged verdict proving the missing columns are history gaps (or a real fix), do not treat new `grid-2020-22-v1` tables as usable results. Log the verdict and the run link in the Kimi change log.
+  - 4. Do not invent other methodology changes.
+  - **Test (before any other new work):** As soon as you read this §0b update, append one line to the "Kimi change log" (§0c) on main, dated in HKT, exactly like: `ACK 2026-10-25 <time> HKT: read James §0b leak-priority + ack-test; freeing runner for leak-verify 40148289202.` Include the commit SHA of this §0b entry. James will verify the change-log line on GitHub in real time.
 - **2026-10-25 ~08:35 HKT (Cyrus via James): Kimi, do these next, in this order. This entry overrides older "2025-26 sealed / do not open" lines.**
   - Already done: Step A answers for 2020-22 are finished, all 34/34 chunks. The chunk-1 identity proof passed. Release `data-2020-24-v1` has `answers_000` through `answers_033`.
   - Already done: exit-grid workflows exist. Release `grid-2020-22-v1` has raw tables only (~42 assets as of this writing). Release `combine-2020-22-v1` is still empty (0 assets).
