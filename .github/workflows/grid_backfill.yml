@@ -1,0 +1,45 @@
+# Grid backfill sweeper: legs that finished before the actions:write fix (26c700c) could not
+# dispatch their own grid jobs; this hourly sweep dispatches grid_chunk for every chunk whose
+# answers asset exists. grid_chunk legs are idempotent (skip when output exists), so extra
+# dispatches are harmless no-ops. Once all 34 chunks have grid outputs this does nothing.
+name: grid-backfill
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '47 * * * *'
+permissions:
+  actions: write
+  contents: read
+env:
+  RELEASE: data-2020-24-v1
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Dispatch grid_chunk for every chunk with answers uploaded
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          tok = os.environ['GITHUB_TOKEN']
+          api = f"https://api.github.com/repos/{os.environ['GH_REPO']}"
+          rel = json.load(urllib.request.urlopen(urllib.request.Request(
+              f"{api}/releases/tags/{os.environ['RELEASE']}",
+              headers={'Authorization': f'token {tok}'})))
+          have = {a['name'] for a in rel['assets']}
+          for i in range(34):
+              if f'answers_{i:03d}.npz' not in have:
+                  continue
+              req = urllib.request.Request(
+                  f"{api}/actions/workflows/grid_chunk.yml/dispatches",
+                  data=json.dumps({'ref': 'kimi/exit-grid', 'inputs': {'i': str(i)}}).encode(),
+                  headers={'Authorization': f'token {tok}', 'Accept': 'application/vnd.github+json'})
+              try:
+                  urllib.request.urlopen(req)
+                  print(f'dispatched grid_chunk i={i}')
+              except urllib.error.HTTPError as e:
+                  print(f'i={i}: {e.code} (already running is fine)')
+          PY

@@ -1,0 +1,28 @@
+# Standalone shortlist job (exit-grid task 3 in METHODOLOGY 0b 2026-10-25).
+# Runs the prereg §3-5 shortlist over whatever gridy/grid tables exist on GRID_RELEASE:
+# 2020-21 fit screen (junk rule, n>=30, EV after fees > 0 and > same-day benchmark), with the
+# untouched 2022 check stats attached. Partial-tolerant and idempotent: re-dispatch after all
+# 34 chunks land to refresh shortlist.csv with the full grid.
+# Dispatch-only; heavy compute stays on the runner.
+name: exit-grid-shortlist
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GRID_RELEASE: grid-2020-22-v1
+jobs:
+  shortlist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/exit-grid
+      - name: Python + deps
+        run: python3 -m pip install -q --upgrade pip pandas numpy pyarrow
+      - name: Shortlist on 2020-21 fit (prereg section 3-5), partial-tolerant
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/exit_grid_shortlist.sh
