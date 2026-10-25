@@ -145,6 +145,19 @@ def etf_wide():
     wide[val_cols] = wide[val_cols].shift(1)          # D sees the prior ETF bar
     return wide.dropna(subset=val_cols[:1]).sort_values('date')
 
+# ---------------- Market-wide daily series (I178 VIX, block I market columns) ----------------
+def load_mkt():
+    """Market-wide daily frame from fetch/fetch_mkt.py (release data-ext-2020-26-v1
+    asset mkt_wide_2020_26.parquet): date, vix, vix_r5, vix_d20. VIX is a market
+    index and is never revised, so current-values data + the strict < D join in
+    ticker_frame is point-in-time safe. Returns None when the asset is absent."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'mkt_wide_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df['date'] = pd.to_datetime(df['date'])
+    return df.sort_values('date').reset_index(drop=True)
+
 # ---------------- Block D: earnings calendar ----------------
 def load_earnings(tickers):
     """Nasdaq earnings calendars 2020-24 (release nasdaq_earn_2020-24.tar ->
@@ -510,14 +523,15 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
     report_date < D. `edf_tk` is the ticker's earnings sub-frame (or None).
     `ext` is the ticker's box-only block dict: si/shvol/regsho frames and the
     halt event frame; every one of those joins is strict < D as well. `peers`
-    is a frozen Peers object; cluster returns are consumed shifted one bar."""
+    is a frozen Peers object; cluster returns are consumed shifted one bar.
+    `mkt` is the market-wide daily frame (VIX etc.); joined strict < D."""
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
         o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
@@ -525,6 +539,13 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None):
         cols = compute_talib(o, h, l, c, v, funcs)
         for k, arr in cols.items():
             df[k] = np.r_[np.nan, arr[:-1]]          # shift-by-one: D sees bars <= D-1
+    if mkt is not None:
+        mcols = [c for c in mkt.columns if c != 'date']
+        key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: mkt date < D
+        m = pd.merge_asof(pd.DataFrame({'date': key}).sort_values('date'),
+                          mkt, on='date', direction='backward')
+        for mc in mcols:
+            df[f'mkt_{mc}'] = m[mc].to_numpy(dtype=np.float32)
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
         key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: breadth date < D
@@ -640,6 +661,10 @@ def main():
     if peers is not None:
         print('theme-peer clusters:', len(peers.cluster_n), 'formation year:', peers.formation_year,
               'usable from:', peers.usable_from, flush=True)
+    mkt = load_mkt()
+    mkt_cols = [f'mkt_{c}' for c in mkt.columns if c != 'date'] if mkt is not None else []
+    if mkt is not None:
+        print('market-wide cols:', mkt_cols, mkt.date.min().date(), '->', mkt.date.max().date(), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -653,13 +678,15 @@ def main():
                        'box_notes': {'si': 'I188: keyed publication_date < D, never settlement',
                                      'shvol': 'I189: dated X published after 18:00 ET, usable next session (strict < D)',
                                      'regsho': 'I190: file for d published after close of d, usable next session (strict < D); regsho_on = listed within 7 cal days',
-                                     'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int'}}
+                                     'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int'},
+                       'mkt_cols': mkt_cols,
+                       'mkt_notes': 'I178 VIX via keyless FRED CSV (never revised); strict date < D; mkt_ prefix'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
         df = ticker_frame(tk, d, funcs, etf if ecols else None,
                           breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
-                          ext=ext_by_tk.get(tk), peers=peers)
+                          ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:

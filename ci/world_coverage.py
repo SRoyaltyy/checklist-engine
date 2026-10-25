@@ -50,7 +50,8 @@ CUSTOM = {  # item-name fragment -> column list (v1 auto-seed; review by hand)
 # for the room, see 0c).
 OVERRIDES = {  # item_id -> (status, columns, note)
     'C30': ('EXCLUDED_LIVE_ONLY', '', 'Finviz block P: live-only from 2026-08, never scored (0b ruling)'),
-    'I178': ('PENDING', '', 'VIX level: wire with FRED/market-wide block (VIXCLS asset dated, vintages need key)'),
+    'I178': ('WIRED', 'mkt_vix|mkt_vix_r5|mkt_vix_d20',
+             'VIX level: keyless FRED CSV via fetch/fetch_mkt.py (never revised, strict < D); 2025-26 refreshed on runner'),
     'I195': ('BLOCKED_SECRET', '', 'FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing'),
     'I202': ('PENDING', '', 'single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested'),
 }
