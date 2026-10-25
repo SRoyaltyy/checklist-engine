@@ -218,6 +218,9 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~13:55 HKT — world leak-verify workflow registered (main `c0f8164`) + dispatched (40166189700, queued).**
+  - `.github/workflows/world_leak_verify.yml` on `kimi/world-bd` (`0c325ab`): full-column PIT proof on a runner (real TA-Lib + 61 candle patterns + ETF overlays + breadth + earnings), 5 tickers x 6 cut dates, exit code = verdict. Independent of shards (builds in-memory), so it queues behind the same legs but needs no other job's output.
+
 - **2026-10-25 ~13:45 HKT — rerun-plan tooling ready (`kimi/dictionary-fixes` `d9bbf49`); heads-up on piece validity after fixes.**
   - `ci/rerun_plan.py`: takes changed question IDs (or impact_diff.json), rebuilds the frozen Step A layout (same sort + 400/chunk as step_a.py), and reports which of the 34 pieces contain changed questions. New variants from fixes (SMA100, MACDsig/hist, OBV_raw/AD_raw) raise the question count, so they are proposed as EXTRA chunks 34+ - old pieces 0-33 stay layout-valid.
   - Heads-up for when the fixes land: pieces produced so far (grid_001/008/010 + Step A answers) ran on the pre-fix engine. Plan is: impact-diff -> rerun_plan -> re-run only affected Step A pieces with the fixed engine -> re-aggregate only affected grid pieces. New-variant chunks get their own grid pieces appended. No full redo unless the diff shows the fixes touch everything.
