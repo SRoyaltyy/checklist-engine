@@ -63,7 +63,7 @@ def test_fred_paginates_all_vintage_versions():
     from fetch.fetch_fred import alfred_observations
     observations=[dict(date='2020-01-01',realtime_start=d,value=str(i)) for i,d in enumerate(['2020-02-01','2020-03-01','2020-04-01'])]
     with patch('fetch.fetch_fred.alfred_page',side_effect=[dict(count=3,observations=observations[:2]),dict(count=3,observations=observations[2:])]) as request,patch('time.sleep'):
-        out=alfred_observations('test-key','TEST',limit=2)
+        out=alfred_observations('test-key','TEST',limit=2,start_year=2020,end_year=2020)
     assert len(out)==3 and out[-1]['vintage_date']=='2020-04-01'
     assert request.call_args_list[1].args[2]==2
 
@@ -73,7 +73,7 @@ def test_fred_errors_never_expose_key():
     from fetch.fetch_fred import alfred_page
     err=urllib.error.HTTPError('https://example/?api_key=private-test',400,'private-test',None,None)
     with patch('urllib.request.urlopen',side_effect=err):
-        with pytest.raises(RuntimeError) as caught:alfred_page('private-test','TEST',0,10)
+        with pytest.raises(RuntimeError) as caught:alfred_page('private-test','TEST',0,10,'2020-01-01','2020-12-31')
     assert 'private-test' not in str(caught.value)
 
 
@@ -94,3 +94,12 @@ def test_peer_return_does_not_carry_a_stale_daily_return():
         dict(cluster_n={'0':20},formation_year=2020,corr_thresh=.5,usable_from='2021-01-01'))
     out=fw.peer_columns(dates,b,peers,0)
     np.testing.assert_allclose(out['peer_r1'],[np.nan,.01,.02,np.nan,np.nan,np.nan],equal_nan=True)
+
+
+def test_fred_splits_vintage_ranges_below_json_limit():
+    from fetch.fetch_fred import alfred_observations
+    with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
+        assert alfred_observations('test-key','TEST')==[]
+    assert request.call_count==9
+    assert request.call_args_list[0].args[4:] == ('2018-01-01','2018-12-31')
+    assert request.call_args_list[-1].args[4:] == ('2026-01-01','2026-12-31')

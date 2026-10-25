@@ -13,15 +13,15 @@ Default series (v1): DGS10, T10Y2Y, DTB3, ICSA (weekly claims), UMCSENT (monthly
 
 Runner:  FRED_API_KEY=... python3 fetch/fetch_fred.py --out fred_wide_2020_26.parquet
 """
-import argparse, json, os, sys, time, urllib.parse, urllib.request, urllib.error
+import argparse, json, os, re, sys, time, urllib.parse, urllib.request, urllib.error
 import pandas as pd
 
 SERIES = ['DGS10', 'T10Y2Y', 'DTB3', 'ICSA', 'UMCSENT']
 
 
-def alfred_page(key, sid, offset, limit):
+def alfred_page(key, sid, offset, limit, vintage_start, vintage_end):
     qs=urllib.parse.urlencode(dict(series_id=sid,api_key=key,file_type='json',
-        realtime_start='1900-01-01',realtime_end='9999-12-31',output_type=1,
+        realtime_start=vintage_start,realtime_end=vintage_end,output_type=1,
         observation_start='2018-01-01',observation_end='2026-12-31',offset=offset,limit=limit))
     req=urllib.request.Request('https://api.stlouisfed.org/fred/series/observations?'+qs,
         headers={'User-Agent':'checklist-engine research'})
@@ -30,28 +30,39 @@ def alfred_page(key, sid, offset, limit):
             with urllib.request.urlopen(req,timeout=180) as response:return json.loads(response.read())
         except urllib.error.HTTPError as exc:
             code=exc.code
+            try:
+                detail=json.loads(exc.read()).get('error_message','')
+            except Exception:detail=''
+            detail=str(detail).replace(key,'[REDACTED]')
+            detail=re.sub(r'https?://[^\\s]+','[URL REDACTED]',detail)[:400]
             if code not in (429,500,502,503,504) or attempt==3:
-                raise RuntimeError(f'FRED {sid}: HTTP {code}; request URL and key redacted') from None
+                raise RuntimeError(f'FRED {sid}: HTTP {code}; request URL and key redacted; {detail}') from None
         except (OSError,ValueError):
             if attempt==3:raise RuntimeError(f'FRED {sid}: transport/JSON failure; request URL and key redacted') from None
         time.sleep(2**attempt)
     raise RuntimeError(f'FRED {sid}: retries exhausted')
 
 
-def alfred_observations(key, sid, limit=100000):
-    out=[];offset=0
-    while True:
-        page=alfred_page(key,sid,offset,limit)
-        observations=page.get('observations',[])
-        total=int(page.get('count',len(observations)))
-        if not observations and offset<total:raise RuntimeError(f'FRED {sid}: incomplete pagination at {offset}/{total}')
-        for item in observations:
-            if item.get('value') in (None,'.'):continue
-            out.append(dict(series=sid,obs_date=item['date'],
-                vintage_date=item['realtime_start'],value=float(item['value'])))
-        offset+=len(observations)
-        if offset>=total:break
-        time.sleep(.25)
+def alfred_observations(key, sid, limit=100000, start_year=2018, end_year=2026):
+    # JSON allows at most 2,000 vintage dates per request. Calendar-year
+    # intervals have at most 366 dates, including carry-in information known
+    # at the interval start. Paginate observations separately in each interval.
+    out=[]
+    for year in range(start_year,end_year+1):
+        start=f'{year}-01-01';end=f'{year}-12-31';offset=0
+        while True:
+            page=alfred_page(key,sid,offset,limit,start,end)
+            observations=page.get('observations',[])
+            total=int(page.get('count',len(observations)))
+            if not observations and offset<total:raise RuntimeError(f'FRED {sid}: incomplete pagination at {offset}/{total}')
+            for item in observations:
+                if item.get('value') in (None,'.'):continue
+                out.append(dict(series=sid,obs_date=item['date'],
+                    vintage_date=item['realtime_start'],value=float(item['value'])))
+            offset+=len(observations)
+            if offset>=total:break
+            time.sleep(.25)
+        time.sleep(.2)
     return out
 
 
@@ -63,9 +74,18 @@ def main():
     key = os.environ.get('FRED_API_KEY', '')
     if not key:
         sys.exit('BLOCKED_SECRET: FRED_API_KEY not set -- wire-only mode, fetch skipped')
+    from pathlib import Path
+    report_path=Path(a.out).with_suffix('.source.json')
+    report=dict(source='FRED/ALFRED',status='RUNNING',series={})
     rows = []
     for sid in [s.strip() for s in a.series.split(',') if s.strip()]:
-        got = alfred_observations(key, sid)
+        try:
+            got = alfred_observations(key, sid)
+            report['series'][sid]=dict(status='PASS',rows=len(got))
+        except Exception as exc:
+            report.update(status='FAIL',error=str(exc))
+            report_path.write_text(json.dumps(report,indent=2))
+            raise
         rows.extend(got)
         print(sid, len(got), 'vintage observations', flush=True)
         time.sleep(1.5)
@@ -74,6 +94,8 @@ def main():
     df = pd.DataFrame(rows)
     df = df[(df.obs_date >= '2018-01-01') & (df.obs_date <= '2026-12-31')]
     df.to_parquet(a.out, index=False)
+    report.update(status='PASS',rows=len(df))
+    report_path.write_text(json.dumps(report,indent=2))
     print(f'wrote {a.out}: {len(df)} rows, {df.series.nunique()} series')
 
 
