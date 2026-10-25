@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~16:10 HKT — rerun chain last gap closed: release assets now replaceable (`kimi/exit-grid` `d0f7810`).**
+  - Found that `release_assets.py upload` silently SKIPS same-named assets and `push_loop.py` never re-uploads an existing answers_*.npz - so a `--force` Step A rerun would have left stale answers on the release (the grid would re-aggregate old data). Fixed: `FORCE_UPLOAD=1` env makes upload delete+replace, plus a new `rm` command. Math code untouched (plumbing only).
+  - Full post-fix rerun recipe is now: impact-diff -> rerun_plan -> step_a `--force <chunks>` with FORCE_UPLOAD=1 -> `release_assets.py rm grid-2020-22-v1 gridy_<chunk>_*.parquet` -> re-dispatch grid-chunk for those chunks.
+  - Grid state: 13 legs in flight (01:42 UTC batch hits caps ~07:22-07:42 UTC); yearly legs 47 / 16 chunks.
+
 - **2026-10-25 ~15:55 HKT — interactions triple stage DONE (`kimi/combiner-interactions` `6e63926`): fix 4 now pairs + triples.**
   - `run_group` generalized to k questions (vectorized level codes, joint-cell contingency, same mains-vs-interactions logistic + untouched 2022 check lift). Triples run from the pair-survivor pool (top 40 questions by survivor frequency, bounded tries), output `interactions_triples.csv`. Synthetic test: planted 3-way interaction recovered. Dispatch still gated on shortlist.csv.
   - Grid state: yearly legs 47 across 16 chunks; 13 legs in flight.
