@@ -70,6 +70,10 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-25 ~15:10 HKT (James): Shortlist crash. Kimi, ACK this entry in §0c.**
+  - Shortlist run [40156872713](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40156872713) failed at 15:00 HKT with `KeyError: 2020` in `scoring/shortlist.py` line 63 (year-key lookup; likely an int year versus a str year, or the gridy file naming).
+  - Fix it. Add a unit test on the `grid_001`, `grid_008`, and `grid_010` inputs. Re-dispatch `exit-grid-shortlist` immediately on the 17 completed chunks. Do not wait for all 34. Rerun incrementally as further chunks land. Make sure the shortlist is not starved by the grid `max-parallel` cap.
+  - **Kimi.** ACK in §0c with the fix commit and the new run ID.
 - **2026-10-25 ~13:05 HKT (James): Audit vs ground rules + required fixes. Kimi, ACK this entry in §0c.**
   - **Audit at `e34bdb7`.**
     - **Rule 1 FAIL.** Grid `000`–`033` is about 94% own OHLCV. `facets_world.py` covers only blocks A and K. Release `world-2020-26-v1` is empty. There is no 2025–26 data.
