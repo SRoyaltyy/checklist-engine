@@ -11,8 +11,7 @@ on:
         type: boolean
         default: false
         description: 'Run only the chunk-1 rebuild identity proof (skips the matrix)'
-  schedule:
-    - cron: '23 */6 * * *'
+# schedule disabled 2026-10-25 ~15:10 HKT per 0b (cancel schedule spam holding runner slots during grid phase); re-enable after grid 34/34
 permissions:
   contents: write
   actions: write   # piece legs dispatch grid_chunk.yml for their chunk (403 without this)
