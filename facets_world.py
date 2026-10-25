@@ -37,6 +37,7 @@ import numpy as np, pandas as pd
 import talib
 from talib import abstract
 from datapaths import D
+from world_dates import date_ns, normalize_dates
 
 END = os.environ.get('WORLD_END', '2026-12-31')   # bars file decides the real end
 
@@ -224,8 +225,8 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
     out['tv_ts_r2_20'] = (ts ** 2).astype(np.float32)
     if dates is not None:
         # M119 Multi-Time Period Charts: prior completed ISO week (Mon-Fri) H/L/C.
-        wkey = (pd.to_datetime(dates).isocalendar()['year'].astype(np.int64) * 100
-                + pd.to_datetime(dates).isocalendar()['week'].astype(np.int64)).to_numpy()
+        wkey = (date_ns(dates).isocalendar()['year'].astype(np.int64) * 100
+                + date_ns(dates).isocalendar()['week'].astype(np.int64)).to_numpy()
         gdf = pd.DataFrame({'k': wkey, 'h': h, 'l': l, 'c': c, 'i': np.arange(len(c))})
         wh = gdf.groupby('k')['h'].max(); wl = gdf.groupby('k')['l'].min()
         wlast = gdf.groupby('k')['i'].max()
@@ -299,7 +300,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
     if dates is not None:
         # M154/M082 Seasonality: expanding PIT historical up-day frequency for the
         # same calendar month / day-of-week (only bars strictly before t count).
-        dt = pd.to_datetime(dates)
+        dt = date_ns(dates)
         upf = np.r_[np.nan, (np.diff(c) > 0).astype(np.float64)]
         nn_f = ~np.isnan(upf)
         u0 = np.nan_to_num(upf)
@@ -568,21 +569,22 @@ def moon_age(dates):
     """M113 Moon Phases: pure calendar. Days since the 2000-01-06 18:14 UTC new moon,
     mod the synodic month (29.530588853 d). Computed from the row date itself, so no
     shift-by-one is applied by the caller (calendar facts are knowable at open)."""
-    days = (pd.to_datetime(dates) - pd.Timestamp('2000-01-06 18:14:00')).total_seconds() / 86400.0
+    days = (date_ns(dates) - pd.Timestamp('2000-01-06 18:14:00')).total_seconds() / 86400.0
     return (days % 29.530588853).astype(np.float32)
 
 # ---------------- Block B: sector/style ETF overlays ----------------
-def etf_wide():
+def etf_wide(frame=None):
     """All 14 ETFs (SPY, QQQ, IWM, 11 SPDRs) as wide daily columns.
     Every column is shifted by one ETF bar: value labelled D uses the ETF close
     of its last trading day <= D-1, then joins by merge_asof backward, so a
     stock-day D never sees ETF data from D itself. Survivor/label bias: the
     11 SPDR set uses today's sector definitions (flagged in METHODOLOGY)."""
     p = D('/workspace/etf/etf_2015.parquet')
-    if not os.path.exists(p):
-        return None
-    e = pd.read_parquet(p)
-    e['date'] = pd.to_datetime(e['date'])
+    if frame is None:
+        if not os.path.exists(p):return None
+        e = pd.read_parquet(p)
+    else:e = frame.copy()
+    e['date'] = date_ns(e['date'])
     parts = {}
     for tk, d in e.groupby('ticker'):
         d = d.sort_values('date')
@@ -620,7 +622,7 @@ def load_form4(tickers):
     df = pd.read_parquet(p)
     if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df.sort_values('date').reset_index(drop=True)
 
 # ---------------- Block L: analyst action columns (I197) ----------------
@@ -628,7 +630,7 @@ def analyst_columns(dates, af):
     """Days-since-last-action + trailing-window counts from a ticker's analyst
     action frame (ticker, date, n_up, n_down, n_init, n_oth). All windows are
     strict < D, same convention as event_columns."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    d = date_ns(pd.Series(dates)).reset_index(drop=True)
     n = len(d)
     nan = np.full(n, np.nan, dtype=np.float32)
     out = {k: nan.copy() for k in ('an_days', 'an_n20', 'an_up20', 'an_dn20',
@@ -667,15 +669,15 @@ def load_fred(tickers=None):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
-    df['vintage_date'] = pd.to_datetime(df['vintage_date'])
-    df['obs_date'] = pd.to_datetime(df['obs_date'])
+    df['vintage_date'] = date_ns(df['vintage_date'])
+    df['obs_date'] = date_ns(df['obs_date'])
     return df.sort_values('vintage_date').reset_index(drop=True)
 
 
 def fred_columns(dates, fr):
     """Latest observed period as known at D; revisions of older periods do not
     replace a newer observation. Same-day vintages remain invisible."""
-    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
+    q = pd.DataFrame({'date': date_ns(dates).astype('datetime64[ns]')})
     out = {}
     if fr is None or not len(fr): return out
     for sid,group in fr.groupby('series'):
@@ -694,7 +696,7 @@ def fred_columns(dates, fr):
             out[prefix+'_odays'] = np.full(len(q),np.nan,np.float32)
             continue
         right = pd.DataFrame(timeline,columns=['vintage_date','obs_date','value'])
-        right['vintage_date'] = pd.to_datetime(right.vintage_date).astype('datetime64[ns]')
+        right['vintage_date'] = date_ns(right.vintage_date).astype('datetime64[ns]')
         joined = pd.merge_asof(q,right,left_on='date',right_on='vintage_date',direction='backward',allow_exact_matches=False)
         out[prefix] = joined.value.to_numpy(np.float32)
         out[prefix+'_odays'] = (joined.date-joined.obs_date).dt.days.to_numpy(np.float32)
@@ -709,14 +711,14 @@ def f13_columns(dates, hits):
     the most recent reported quarter-end; f13_n = distinct filers in that
     quarter (page-cap saturation makes this a lower bound for mega caps);
     f13_q4 = how many of the last ~4 reported quarters have >=1 filer."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    d = date_ns(pd.Series(dates)).reset_index(drop=True)
     n = len(d)
     keys = ('f13_days', 'f13_qdays', 'f13_n', 'f13_q4')
     out = {k: np.full(n, np.nan, dtype=np.float32) for k in keys}
     if hits is None or not len(hits):
         return out
-    fd = pd.to_datetime(hits.file_date).to_numpy(dtype='datetime64[ns]')
-    pe = pd.to_datetime(hits.period_ending).to_numpy(dtype='datetime64[ns]')
+    fd = date_ns(hits.file_date).to_numpy(dtype='datetime64[ns]')
+    pe = date_ns(hits.period_ending).to_numpy(dtype='datetime64[ns]')
     dd = d.to_numpy(dtype='datetime64[ns]')
     one = np.timedelta64(1, 'D')
     pos_all = np.searchsorted(np.sort(fd), dd, side='left')   # hits with file_date < D
@@ -752,7 +754,7 @@ def gd_columns(dates, gdf):
     gd_n7/gd_n30 sum counts over [D-w, D); gd_spike = n7 / (90d baseline daily
     mean, excluding the last 7d); gd_days = days since last mentioned day.
     A true 0 means 'covered by GDELT but silent'; NaN means 'no GDELT data yet'."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    d = date_ns(pd.Series(dates)).reset_index(drop=True)
     n = len(d)
     out = {k: np.full(n, np.nan, dtype=np.float32)
            for k in ('gd_days', 'gd_n7', 'gd_n30', 'gd_spike')}
@@ -824,7 +826,7 @@ def load_xbrl(tickers):
     frame = pd.concat([pd.read_parquet(p) for p in files],ignore_index=True)
     if frame.empty: return None
     frame = frame[frame.ticker.isin(tickers)].copy()
-    frame['filed'] = pd.to_datetime(frame.filed)
+    frame['filed'] = date_ns(frame.filed)
     return frame.sort_values(['filed','period_end','accn']).reset_index(drop=True)
 
 
@@ -854,7 +856,7 @@ def load_gdelt(tickers):
     df = pd.read_parquet(p)
     if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df.sort_values('date').reset_index(drop=True)
 
 
@@ -870,7 +872,7 @@ def load_analyst(tickers):
     df = pd.read_parquet(p)
     if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df.sort_values('date').reset_index(drop=True)
 
 # ---------------- Market-wide daily series (I178 VIX, block I market columns) ----------------
@@ -883,7 +885,7 @@ def load_mkt():
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df.sort_values('date').reset_index(drop=True)
 
 # ---------------- Block D: earnings calendar ----------------
@@ -901,8 +903,11 @@ def load_earnings(tickers):
     df = pd.concat([pd.read_parquet(f, columns=['symbol', 'report_date', 'time_label',
                                                 'surprise_pct_fill', 'eps_delta']) for f in fs], ignore_index=True)
     df = df[df.symbol.isin(tickers)]
-    df['report_date'] = pd.to_datetime(df['report_date'])
+    df['report_date'] = date_ns(df['report_date'])
     df = df.sort_values('report_date').reset_index(drop=True)
+    years=[int(os.path.basename(path).removeprefix('nasdaq_calendar_').split('.')[0]) for path in fs
+           if os.path.basename(path).removeprefix('nasdaq_calendar_').split('.')[0].isdigit()]
+    df['coverage_end']=pd.Timestamp(max(years),12,31) if years else df.report_date.max()
     df['amc'] = df.time_label.astype(str).str.upper().str.contains('AMC').astype(np.float32)
     return df
 
@@ -911,11 +916,13 @@ def earn_for(dates, edf):
     reports strictly before each date."""
     if edf is None or len(edf) == 0:
         return None
-    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
+    q = pd.DataFrame({'date': date_ns(dates).astype('datetime64[ns]')})
     edf=edf.copy()
-    edf['report_date']=pd.to_datetime(edf.report_date).astype('datetime64[ns]')
+    edf['report_date']=date_ns(edf.report_date).astype('datetime64[ns]')
     m = pd.merge_asof(q, edf[['report_date', 'amc', 'surprise_pct_fill', 'eps_delta']].sort_values('report_date'),
                       left_on='date', right_on='report_date', direction='backward', allow_exact_matches=False)
+    if 'coverage_end' in edf:
+        m = m.where(m.date <= edf.coverage_end.max())
     m = m.where(m.report_date < m.date)               # strict: nothing from D onward
     days = (m.date - m.report_date).dt.days.to_numpy(dtype=np.float32)
     return pd.DataFrame({'earn_days': days,
@@ -965,7 +972,7 @@ def build_peers(bars_all, corr_thresh=0.5, min_days=120, min_members=20):
     and build the equal-weight cluster return series for ALL days in bars_all.
     `bars_all` is the full-universe bar frame (ticker, date, close)."""
     p = bars_all[['ticker', 'date', 'close']].dropna()
-    p['date'] = pd.to_datetime(p['date'])
+    p['date'] = date_ns(p['date'])
     wide = p.pivot_table(index='date', columns='ticker', values='close').sort_index()
     ret = wide.pct_change(fill_method=None)
     years = ret.index.year
@@ -1011,7 +1018,7 @@ def peer_columns(dates, bars_tk, peers, cid):
     return from the stock's own shifted return; peer_corr60 is the trailing 60d
     correlation of stock vs cluster daily returns, min 30 paired days, shifted.
     All NaN before peers.usable_from (formation-year warmup)."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    d = date_ns(pd.Series(dates)).reset_index(drop=True)
     n = len(d)
     nan = np.full(n, np.nan, dtype=np.float32)
     out = {'peer_id': nan.copy(), 'peer_n': nan.copy(),
@@ -1021,9 +1028,9 @@ def peer_columns(dates, bars_tk, peers, cid):
     if peers is None or cid < 0:
         return out
     cr = peers.cluster_ret[['date', f'peer_cret_{cid}']].rename(columns={f'peer_cret_{cid}': 'cret'})
-    cr['date'] = pd.to_datetime(cr['date']).astype('datetime64[ns]')
+    cr['date'] = date_ns(cr['date']).astype('datetime64[ns]')
     q = pd.DataFrame({'date': d.astype('datetime64[ns]')})
-    m = pd.merge_asof(q, cr, on='date', direction='backward', allow_exact_matches=True)
+    m = q.merge(cr, on='date', how='left', validate='one_to_one')
     cret = m.cret.astype(np.float32).to_numpy()               # cluster ret, strict < D
     def roll_prod(a, w, mp):
         return pd.Series(a).rolling(w, min_periods=mp).apply(lambda s: (1 + s).prod() - 1, raw=True).to_numpy(dtype=np.float32)
@@ -1071,7 +1078,7 @@ def load_si(tickers):
     df = df[df.symbol.isin(tickers)]
     if not len(df):
         return None
-    df['publication_date'] = pd.to_datetime(df['publication_date'])
+    df['publication_date'] = date_ns(df['publication_date'])
     prev = df.previous_short_qty.to_numpy(float)
     cur = df.current_short_qty.to_numpy(float)
     df['si_chg'] = np.where(prev > 0, cur / prev - 1, np.nan)
@@ -1094,7 +1101,7 @@ def load_shvol(tickers):
     df = df[df.symbol.isin(tickers)]
     if not len(df):
         return None
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     df = df.sort_values(['symbol', 'date'])
     g = df.groupby('symbol')['short_ratio']
     df['shv_r5'] = g.transform(lambda s: s.rolling(5, min_periods=3).mean())
@@ -1116,8 +1123,8 @@ def load_halts(tickers):
     df = df[df.symbol.isin(tickers)]
     if not len(df):
         return None
-    hd = pd.to_datetime(df.halt_date, format='%m/%d/%Y', errors='coerce')
-    rd = pd.to_datetime(df.resume_date, format='%m/%d/%Y', errors='coerce')
+    hd = date_ns(df.halt_date, format='%m/%d/%Y', errors='coerce')
+    rd = date_ns(df.resume_date, format='%m/%d/%Y', errors='coerce')
     df = df.assign(halt_d=hd, resume_d=rd).dropna(subset=['halt_d'])
     # Fixed categorical codes; labels cannot change with other tickers/future rows.
     reasons = {'T1':1,'T2':2,'T3':3,'T12':12,'H4':14,'H9':19,'H10':20,'H11':21,'LUDP':30,'LUDS':31,'MWC1':40,'MWC2':41,'MWC3':42}
@@ -1135,7 +1142,7 @@ def load_regsho(tickers):
     df = df[df.symbol.isin(tickers)]
     if not len(df):
         return None
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df[['symbol', 'date']].sort_values('date')
 
 def load_box_ext(tickers):
@@ -1167,9 +1174,9 @@ def _asof_strict(dates, right, cols, date_col, prefix_days=None):
     {prefix_days: days-since-last-record} when prefix_days is given."""
     if right is None or not len(right):
         return {}
-    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
+    q = pd.DataFrame({'date': date_ns(dates).astype('datetime64[ns]')})
     r = right.rename(columns={date_col: '_evt'}).sort_values('_evt')
-    r['_evt'] = pd.to_datetime(r['_evt']).astype('datetime64[ns]')
+    r['_evt'] = date_ns(r['_evt']).astype('datetime64[ns]')
     m = pd.merge_asof(q, r[['_evt'] + cols], left_on='date', right_on='_evt',
                       direction='backward', allow_exact_matches=False)   # last record STRICTLY before D
     ok = m['_evt'] < m.date                      # strict: nothing from D onward
@@ -1184,7 +1191,7 @@ def halt_columns(dates, hf):
     halt_days/gap/rsn use the last event with halt_d < D; the gap only when that
     event's resume_d is also < D. halt_n20/halt_n60 count events in the trailing
     20/60 calendar days (T20-CNT style), strict < D."""
-    d = pd.to_datetime(pd.Series(dates)).to_numpy(dtype='datetime64[ns]')
+    d = date_ns(pd.Series(dates)).to_numpy(dtype='datetime64[ns]')
     n = len(d)
     nan = np.full(n, np.nan, dtype=np.float32)
     out = {'halt_days': nan.copy(), 'halt_gap': nan.copy(), 'halt_rsn': nan.copy(),
@@ -1226,14 +1233,14 @@ def load_divsplits(tickers):
     df = df[df.ticker.isin(tickers)]
     if not len(df):
         return None
-    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = date_ns(df['date'])
     return df[['ticker', 'kind', 'date', 'value']].sort_values('date')
 
 def event_columns(dates, evt, value_name, days_name, count_name, count_window=None):
     """Last-event days/value plus trailing-window count for one ticker's sorted
     date array. `evt` is a sorted DataFrame with columns date + value; only
     events strictly before each date are used (searchsorted side='left')."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    d = date_ns(pd.Series(dates)).reset_index(drop=True)
     n = len(d)
     nan = np.full(n, np.nan, dtype=np.float32)
     out = {days_name: nan.copy(), value_name: nan.copy()}
@@ -1281,7 +1288,7 @@ def extend_breadth(breadth):
     if has_vol:
         cols.append('volume')
     px = pd.read_parquet(u, columns=cols)
-    px['date'] = pd.to_datetime(px['date'])
+    px['date'] = date_ns(px['date'])
     px = px.sort_values(['ticker', 'date'])
     px['prev'] = px.groupby('ticker')['close'].shift(1)
     up = px.close > px.prev
@@ -1311,6 +1318,7 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
     is a frozen Peers object; cluster returns are consumed shifted one bar.
     `mkt` is the market-wide daily frame (VIX etc.); joined strict < D.
     `an` is the ticker's analyst-action day-count frame (strict < D)."""
+    d=normalize_dates(d);etf=normalize_dates(etf);breadth=normalize_dates(breadth);mkt=normalize_dates(mkt)
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
         o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
@@ -1324,7 +1332,7 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
     df['tv_moon_age'] = moon_age(df['date'].to_numpy())
     if mkt is not None:
         mcols = [c for c in mkt.columns if c != 'date']
-        key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: mkt date < D
+        key = date_ns(df['date']) - pd.Timedelta(days=1)   # strict: mkt date < D
         m = pd.merge_asof(pd.DataFrame({'date': key}).sort_values('date'),
                           mkt, on='date', direction='backward')
         for mc in mcols:
@@ -1346,14 +1354,14 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
-        key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: breadth date < D
-        m = pd.merge_asof(pd.DataFrame({'date': key}).sort_values('date'),
-                          breadth, on='date', direction='backward')
+        # Daily breadth cannot carry forward beyond its actual source coverage.
+        key = date_ns(df['date']).shift(1)
+        m = pd.DataFrame({'date': key}).merge(breadth, on='date', how='left', validate='many_to_one')
         for bc in bcols:
             df[bc] = m[bc].to_numpy(dtype=np.float32)
     if etf is not None:
         ecols = [c for c in etf.columns if c != 'date']
-        key = pd.to_datetime(df['date'])
+        key = date_ns(df['date'])
         m = pd.merge_asof(pd.DataFrame({'date': key}), etf, on='date', direction='backward')
         for ec in ecols:
             df[ec] = m[ec].to_numpy(dtype=np.float32)
@@ -1400,7 +1408,7 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
 def load_bars(tickers=None):
     p = D('/workspace/updown/bars_all.parquet')
     df = pd.read_parquet(p)
-    df['date'] = pd.to_datetime(df['date'])       # file stores timestamp; filter after parse
+    df['date'] = date_ns(df['date'])       # file stores timestamp; filter after parse
     df = df[df.date <= END]
     if tickers: df = df[df.ticker.isin(tickers)]
     return df
@@ -1432,7 +1440,7 @@ def main():
         breadth = pd.read_parquet(br)
         if 'date' not in breadth.columns:
             breadth = breadth.reset_index()          # file stores date as the index
-        breadth['date'] = pd.to_datetime(breadth['date'])
+        breadth['date'] = date_ns(breadth['date'])
         breadth = breadth.sort_values('date')
     breadth = extend_breadth(breadth)
     if breadth is not None: print('breadth cols:', list(breadth.columns), flush=True)

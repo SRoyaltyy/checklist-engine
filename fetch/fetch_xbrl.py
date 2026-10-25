@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-SEC_HEADERS = {'User-Agent': os.environ.get('SEC_USER_AGENT','ChecklistEngine research 104515113+SRoyaltyy@users.noreply.github.com'), 'Accept-Encoding':'gzip, deflate'}
+SEC_HEADERS = {'User-Agent': os.environ.get('SEC_USER_AGENT','ChecklistEngine research 104515113+SRoyaltyy@users.noreply.github.com'), 'Accept-Encoding':'gzip'}
 CONCEPTS = ['Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','SalesRevenueNet',
  'NetIncomeLoss','OperatingIncomeLoss','GrossProfit','Assets','AssetsCurrent',
  'Liabilities','LiabilitiesCurrent','StockholdersEquity','LongTermDebt','LongTermDebtNoncurrent',
@@ -30,6 +30,7 @@ ALIASES = {'RevenueFromContractWithCustomerExcludingAssessedTax':'Revenues','Sal
 def get_json(url, retries=4, allow_404=False):
     for attempt in range(retries):
         try:
+            time.sleep(.15)  # global per-process request throttle; workflow uses one pilot shard
             with urllib.request.urlopen(urllib.request.Request(url,headers=SEC_HEADERS),timeout=120) as response:
                 raw=response.read()
                 if raw[:2]==b'\x1f\x8b':
@@ -40,7 +41,7 @@ def get_json(url, retries=4, allow_404=False):
             if exc.code == 404 and allow_404:
                 print('SKIP_404',url,flush=True)
                 return None
-            if exc.code not in (429,500,502,503,504) or attempt == retries-1:
+            if exc.code not in (403,429,500,502,503,504) or attempt == retries-1:
                 raise
         except (OSError,TimeoutError):
             if attempt == retries-1:

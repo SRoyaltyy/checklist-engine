@@ -22,8 +22,32 @@ def by_ticker(frame,key='ticker'):
     return {str(t):g.reset_index(drop=True) for t,g in frame.groupby(key)}
 
 
-def context(tickers):
+def load_reconciled_bars(tickers, directory='', report_path=None):
+    from price_reconcile import reconcile_one
+    frozen=fw.load_bars(tickers)
+    if not directory:return frozen,{}
+    reports={};frames=[]
+    try:
+        for ticker,old in frozen.groupby('ticker',sort=True):
+            file=Path(directory)/(str(ticker).encode().hex()+'.parquet')
+            new=pd.read_parquet(file)
+            new=new[pd.to_datetime(new.date)<=pd.Timestamp(fw.END)]
+            frame,evidence=reconcile_one(ticker,old,new)
+            frames.append(frame);reports[ticker]=evidence
+    except Exception as exc:
+        reports['_error']=str(exc)
+        if report_path:Path(report_path).write_text(json.dumps(reports,indent=2))
+        raise
+    if report_path:Path(report_path).write_text(json.dumps(reports,indent=2))
+    return pd.concat(frames,ignore_index=True),reports
+
+
+def context(tickers,supplemental_prices=''):
     funcs=fw.discover()
+    etf_frame=None
+    if supplemental_prices:
+        symbols='SPY QQQ IWM XLB XLC XLE XLF XLI XLK XLP XLRE XLU XLV XLY'.split()
+        etf_frame=pd.concat([pd.read_parquet(Path(supplemental_prices)/(t.encode().hex()+'.parquet')) for t in symbols],ignore_index=True)
     breadth_path=fw.D('/workspace/updown/breadth_2020_24.parquet')
     breadth=pd.read_parquet(breadth_path)
     if 'date' not in breadth:breadth=breadth.reset_index()
@@ -33,7 +57,7 @@ def context(tickers):
     ext={}
     for block,groups in box.items():
         for ticker,frame in groups.items():ext.setdefault(ticker,{})[block]=frame
-    return dict(funcs=funcs,etf=fw.etf_wide(),breadth=breadth,
+    return dict(funcs=funcs,etf=fw.etf_wide(etf_frame),breadth=breadth,
         earnings=by_ticker(fw.load_earnings(tickers),'symbol'),ext=ext,
         peers=fw.build_peers(fw.load_bars(None)),mkt=fw.load_mkt(),
         an=by_ticker(fw.load_analyst(tickers)),xb=by_ticker(fw.load_xbrl(tickers)),
@@ -78,6 +102,7 @@ def main():
     ap.add_argument('--shard',type=int,default=0)
     ap.add_argument('--shards',type=int,default=8)
     ap.add_argument('--tickers',default='')
+    ap.add_argument('--supplemental-prices',default='')
     ap.add_argument('--part-tickers',type=int,default=25)
     args=ap.parse_args()
     output=Path(args.out);output.mkdir(parents=True,exist_ok=True)
@@ -88,9 +113,9 @@ def main():
         wanted=set(args.tickers.split(','));tickers=[t for t in tickers if t in wanted]
     mine=tickers[args.shard::args.shards]
     if not mine:raise SystemExit('No assigned tickers: refusing a successful empty shard')
-    bars=fw.load_bars(set(mine))
-    ctx=context(set(mine))
-    metadata=dict(shard=args.shard,timeframes=list(TIMEFRAMES),status='PROVISIONAL',
+    bars,reconciliation=load_reconciled_bars(set(mine),args.supplemental_prices,output/'PRICE_RECONCILIATION.json')
+    ctx=context(set(mine),args.supplemental_prices)
+    metadata=dict(price_reconciliation=reconciliation,nominal_historical_price_verified=False,shard=args.shard,timeframes=list(TIMEFRAMES),status='PROVISIONAL',
         source_commit=os.environ.get('GITHUB_SHA','local-regression-only'),
         talib_version=fw.talib.__version__,talib_functions=list(ctx['funcs']),
         talib_exclusions=fw.DISCOVERY_EXCLUSIONS,patterns=sum(x[0]=='pattern' for x in ctx['funcs'].values()),

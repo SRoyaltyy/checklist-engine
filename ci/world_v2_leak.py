@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import facets_world as fw
-from world_snapshot_v2 import context,ticker_snapshot
+from world_snapshot_v2 import context,ticker_snapshot,load_reconciled_bars
 
 
 def before(frame,column,day,inclusive=False):
@@ -35,8 +35,9 @@ def truncate_context(ctx,day):
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--tickers',required=True);ap.add_argument('--out',required=True)
-    args=ap.parse_args();tickers=set(args.tickers.split(','));ctx=context(tickers)
-    bars=fw.load_bars(tickers);checks=[];columns=set();bad=[]
+    ap.add_argument('--supplemental-prices',default='')
+    args=ap.parse_args();tickers=set(args.tickers.split(','));ctx=context(tickers,args.supplemental_prices)
+    bars,_=load_reconciled_bars(tickers,args.supplemental_prices);checks=[];columns=set();bad=[]
     for ticker,frame in bars.groupby('ticker'):
         frame=frame.sort_values('date').reset_index(drop=True)
         full=ticker_snapshot(ticker,frame,ctx).set_index('date')

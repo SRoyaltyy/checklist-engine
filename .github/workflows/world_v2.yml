@@ -6,6 +6,9 @@ on:
       - 'facets_world.py'
       - 'world_*.py'
       - 'fetch/fetch_xbrl.py'
+      - 'fetch/fetch_fred.py'
+      - 'price_reconcile.py'
+      - 'tests/test_price_reconcile.py'
       - 'fetch/fetch_world_prices.py'
       - 'ci/world_v2_*.py'
       - 'ci/question_quality.py'
@@ -28,7 +31,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py -q
+      - name: Import every gate before heavy jobs
+        run: python -c "import world_snapshot_v2, world_timeframes, ci.world_v2_leak, ci.world_v2_coverage, ci.question_quality, price_reconcile, fetch.fetch_fred"
+      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py -q
   supplemental-prices:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -39,12 +44,32 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
       - name: Fetch 2025-2026 and indicator warmup history independently
-        run: python -m fetch.fetch_world_prices --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --shards 1 --out supplemental-prices
+        run: python -m fetch.fetch_world_prices --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE,SPY,QQQ,IWM,XLB,XLC,XLE,XLF,XLI,XLK,XLP,XLRE,XLU,XLV,XLY --shards 1 --out supplemental-prices
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: supplemental-prices-v2
           path: supplemental-prices/
+  fred:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Fetch every ALFRED vintage with pagination
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          mkdir -p fred-source
+          python -m fetch.fetch_fred --out fred-source/fred_wide_2020_26.parquet
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fred-v2-source
+          path: fred-source/
   companyfacts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -69,10 +94,10 @@ jobs:
           name: xbrl-v2-source
           path: xbrl-smoke/
   smoke:
-    needs: [verify, companyfacts]
+    needs: [verify, companyfacts, supplemental-prices, fred]
     if: ${{ always() && needs.verify.result == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     env:
       GH_TOKEN: ${{ github.token }}
       GITHUB_TOKEN: ${{ github.token }}
@@ -91,16 +116,38 @@ jobs:
         with:
           name: xbrl-v2-source
           path: ${{ github.workspace }}/world_in/data-ext
+      - uses: actions/download-artifact@v4
+        with:
+          name: supplemental-prices-v2
+          path: ${{ github.workspace }}/world_in/supplemental-prices
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: fred-v2-source
+          path: ${{ github.workspace }}/world_in/data-ext
       - name: Build real multi-timeframe smoke snapshot
         id: build
-        run: python world_snapshot_v2.py --out world-smoke --shards 1 --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE
+        run: python world_snapshot_v2.py --out world-smoke --shards 1 --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --supplemental-prices "$CHECKLIST_DATA_DIR/supplemental-prices"
       - name: Rebuild every column with future inputs removed
         id: leak
-        run: python -m ci.world_v2_leak --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --out world-smoke/WORLD_LEAK.json
+        if: always() && steps.build.outcome == 'success'
+        run: python -m ci.world_v2_leak --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --out world-smoke/WORLD_LEAK.json --supplemental-prices "$CHECKLIST_DATA_DIR/supplemental-prices"
       - name: Measured coverage gate (fail closed)
         id: coverage
         if: always() && steps.build.outcome == 'success'
         run: python -m ci.world_v2_coverage --shards world-smoke/world_shard_*_part_*.parquet --out world-smoke --gate
+      - name: Explain upstream and downstream outcomes
+        if: always()
+        env:
+          SOURCE_PRICES: ${{ needs.supplemental-prices.result }}
+          SOURCE_XBRL: ${{ needs.companyfacts.result }}
+          SOURCE_FRED: ${{ needs.fred.result }}
+          BUILD: ${{ steps.build.outcome }}
+          LEAK: ${{ steps.leak.outcome }}
+          COVERAGE: ${{ steps.coverage.outcome }}
+        run: |
+          mkdir -p world-smoke
+          python -c "import os,json; from pathlib import Path; p={k:os.getenv(k) for k in ('SOURCE_PRICES','SOURCE_XBRL','SOURCE_FRED','BUILD','LEAK','COVERAGE')}; print(json.dumps(p)); Path('world-smoke/PIPELINE_STATUS.json').write_text(json.dumps(p,indent=2))"
       - name: Preserve evidence even when a gate fails
         uses: actions/upload-artifact@v4
         if: always()
@@ -114,7 +161,8 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           tag="world-smoke-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$tag" --target main --title "$tag" --notes "Build source commit: $GITHUB_SHA. PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
           shopt -s nullglob
           files=(world-smoke/*.parquet world-smoke/*.json world-smoke/*.csv)
+          if [ "${#files[@]}" -eq 0 ]; then echo "Refusing an empty provisional release"; exit 1; fi
+          gh release create "$tag" --target main --title "$tag" --notes "Build source commit: $GITHUB_SHA. PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
           gh release upload "$tag" "${files[@]}"

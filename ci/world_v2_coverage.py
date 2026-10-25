@@ -54,6 +54,7 @@ def mappings():
       'I084':['MFI14'],'I097':['ATR14'],
       'I098':['BBANDS20_upper','BBANDS20_mid','BBANDS20_lower'],
       'I108':None,
+      'I195':['fred_dgs10','fred_t10y2y','fred_dtb3','fred_icsa','fred_umcsent'],
     }
     for i,n in enumerate((5,10,20,30,50,100,200),1):explicit[f'I{i:03d}']=[f'SMA{n}']
     explicit['I008']=['EMA21'];explicit['I009']=['EMA20']
@@ -78,6 +79,7 @@ def build(measured,root=ROOT):
             if namespace=='dictionary' and iid in explicit:
                 base=patterns if iid=='I108' else explicit[iid]
                 status='WIRED'
+                if iid=='I195':reason='ALFRED all-version observations; vintage_date < D; five explicit macro series'
             # A name matching an actual column is evidence of that exact name,
             # never a substring match or a silently substituted default period.
             normalized=re.sub('[^A-Z0-9]','',name.upper())

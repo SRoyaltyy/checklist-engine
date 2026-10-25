@@ -1,8 +1,7 @@
 """Fetch FRED/ALFRED macro series with VINTAGES -> data-ext/fred_wide_2020_26.parquet.
 
-Block I / I195 (0b FULL-DATA FIRST). Status: BLOCKED_SECRET until Cyrus adds the
-FRED_API_KEY Actions secret -- this code is wired and ready; without the key it
-exits 2 with a clear message (the calling workflow treats that as skip).
+Block I / I195. The FRED_API_KEY Actions secret is required. Missing keys or
+incomplete source responses fail the source job; no successful empty fetch.
 
 Point-in-time: ALFRED returns every (vintage_date, observation) pair. A value
 is knowable on day D only if its vintage_date < D; among those, the latest
@@ -14,35 +13,46 @@ Default series (v1): DGS10, T10Y2Y, DTB3, ICSA (weekly claims), UMCSENT (monthly
 
 Runner:  FRED_API_KEY=... python3 fetch/fetch_fred.py --out fred_wide_2020_26.parquet
 """
-import argparse, json, os, sys, time, urllib.parse, urllib.request
+import argparse, json, os, sys, time, urllib.parse, urllib.request, urllib.error
 import pandas as pd
 
 SERIES = ['DGS10', 'T10Y2Y', 'DTB3', 'ICSA', 'UMCSENT']
 
 
-def alfred_observations(key, sid):
-    qs = urllib.parse.urlencode({
-        'series_id': sid, 'api_key': key, 'file_type': 'json',
-        'realtime_start': '1900-01-01', 'realtime_end': '9999-12-31'})
-    url = f'https://api.stlouisfed.org/fred/series/observations?{qs}'
-    req = urllib.request.Request(url, headers={'User-Agent': 'checklist-engine/1.0'})
-    for i in range(4):
+def alfred_page(key, sid, offset, limit):
+    qs=urllib.parse.urlencode(dict(series_id=sid,api_key=key,file_type='json',
+        realtime_start='1900-01-01',realtime_end='9999-12-31',output_type=1,
+        observation_start='2018-01-01',observation_end='2026-12-31',offset=offset,limit=limit))
+    req=urllib.request.Request('https://api.stlouisfed.org/fred/series/observations?'+qs,
+        headers={'User-Agent':'checklist-engine research'})
+    for attempt in range(4):
         try:
-            with urllib.request.urlopen(req, timeout=300) as r:
-                d = json.loads(r.read())
-            out = []
-            for o in d.get('observations', []):
-                v = o.get('value')
-                if v in (None, '.'):
-                    continue
-                out.append(dict(series=sid, obs_date=o['date'],
-                                vintage_date=o['realtime_start'], value=float(v)))
-            return out
-        except urllib.error.HTTPError as e:
-            if e.code == 429:
-                time.sleep(15 * (i + 1)); continue
-            raise
-    return []
+            with urllib.request.urlopen(req,timeout=180) as response:return json.loads(response.read())
+        except urllib.error.HTTPError as exc:
+            code=exc.code
+            if code not in (429,500,502,503,504) or attempt==3:
+                raise RuntimeError(f'FRED {sid}: HTTP {code}; request URL and key redacted') from None
+        except (OSError,ValueError):
+            if attempt==3:raise RuntimeError(f'FRED {sid}: transport/JSON failure; request URL and key redacted') from None
+        time.sleep(2**attempt)
+    raise RuntimeError(f'FRED {sid}: retries exhausted')
+
+
+def alfred_observations(key, sid, limit=100000):
+    out=[];offset=0
+    while True:
+        page=alfred_page(key,sid,offset,limit)
+        observations=page.get('observations',[])
+        total=int(page.get('count',len(observations)))
+        if not observations and offset<total:raise RuntimeError(f'FRED {sid}: incomplete pagination at {offset}/{total}')
+        for item in observations:
+            if item.get('value') in (None,'.'):continue
+            out.append(dict(series=sid,obs_date=item['date'],
+                vintage_date=item['realtime_start'],value=float(item['value'])))
+        offset+=len(observations)
+        if offset>=total:break
+        time.sleep(.25)
+    return out
 
 
 def main():
