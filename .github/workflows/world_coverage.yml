@@ -1,0 +1,62 @@
+name: world_coverage
+# WORLD_COVERAGE.csv gate tooling (0b 2026-10-25 FULL-DATA FIRST, Gate bullet).
+# Downloads the world snapshot shards from release world-2020-26-v1, measures
+# real per-column non-null %, rebuilds docs/WORLD_COVERAGE.csv (one row per
+# dictionary/DATA_SOURCES item), commits it back to kimi/world-snapshot, and
+# reports the gate verdict (--gate: fail on any PENDING/missing row or a WIRED
+# row with 0% non-null). Gate step is report-only (continue-on-error) until the
+# wiring is complete; the CSV is the room's live coverage tracker.
+# Smoke shards (world_smoke_shard_*) are never matched by the download pattern.
+
+on:
+  workflow_dispatch:
+    inputs:
+      shards:
+        description: number of shard legs present on the release (1-8)
+        default: '8'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Download world shards
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_shards"
+          cd "$RUNNER_TEMP/world_shards"
+          gh release download world-2020-26-v1 -p 'world_shard_*.parquet' --skip-existing
+          ls -la world_shard_*.parquet | head
+      - name: Measure + build WORLD_COVERAGE.csv
+        run: |
+          SHARDS=$(ls "$RUNNER_TEMP/world_shards"/world_shard_*.parquet)
+          python3 ci/world_coverage.py measure --shards $SHARDS
+          python3 ci/world_coverage.py build
+      - name: Gate verdict (report-only until wiring complete)
+        run: python3 ci/world_coverage.py build --gate
+        continue-on-error: true
+      - name: Commit coverage CSV back to kimi/world-snapshot
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "kimi-coverage-bot"
+          git config user.email "kimi-coverage-bot@users.noreply.github.com"
+          git add docs/WORLD_COVERAGE.csv
+          if git diff --cached --quiet; then
+            echo "no coverage changes"
+          else
+            git commit -m "world coverage: measured non-null % from world-2020-26-v1 shards [skip ci]"
+            git pull --rebase origin kimi/world-snapshot
+            git push origin kimi/world-snapshot
+          fi

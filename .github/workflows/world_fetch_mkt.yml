@@ -1,0 +1,29 @@
+name: world_fetch_mkt
+# One-shot market-wide daily series fetch (0b FULL-DATA FIRST, block I178 VIX).
+# Keyless FRED CSV -> mkt_wide_2020_26.parquet -> release data-ext-2020-26-v1.
+# VIX is never revised, so current-values CSV + strict < D shift is PIT-safe.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Fetch market-wide series
+        run: python3 fetch/fetch_mkt.py --out "$RUNNER_TEMP/mkt_wide_2020_26.parquet"
+      - name: Upload to data-ext-2020-26-v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 ci/release_assets.py upload data-ext-2020-26-v1 \
+               "$RUNNER_TEMP/mkt_wide_2020_26.parquet"
