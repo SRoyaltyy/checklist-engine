@@ -6,8 +6,12 @@
 name: combiner
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '53 * * * *'
+  # schedule disabled 2026-10-25 (~13:2x HKT, per §0b audit ceb1b89 fix 7): the hourly cron
+  # re-dispatched the fit with Step A complete but no shortlist.csv yet, and runs were being
+  # killed/cancelled. Re-enable (cron '53 * * * *') only after shortlist.csv lands on
+  # grid-2020-22-v1 and the phase map allows the combiner.
+  # schedule:
+  #   - cron: '53 * * * *'
 concurrency:
   group: combiner-fit
   cancel-in-progress: false
