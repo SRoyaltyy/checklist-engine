@@ -195,6 +195,46 @@ def analyst_columns(dates, af):
     out['an_dir'] = np.where(has, dir_ff[idx], np.nan).astype(np.float32)
     return out
 
+# ---------------- Block I loader: FRED/ALFRED vintages (I195; BLOCKED_SECRET) ----------------
+def load_fred(tickers=None):
+    """ALFRED vintage long frame from fetch/fetch_fred.py (release data-ext-2020-26-v1
+    asset fred_wide_2020_26.parquet): series, obs_date, vintage_date, value. Only
+    loaded when the asset exists (i.e. after FRED_API_KEY arrives)."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'fred_wide_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df['vintage_date'] = pd.to_datetime(df['vintage_date'])
+    df['obs_date'] = pd.to_datetime(df['obs_date'])
+    return df.sort_values('vintage_date').reset_index(drop=True)
+
+
+def fred_columns(dates, fr):
+    """Point-in-time macro levels: per series, the latest observation whose
+    VINTAGE_DATE < D (a revision is only knowable from its own vintage date).
+    fred_{sid} = level; fred_{sid}_odays = age of that observation in days."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    dd = d.to_numpy(dtype='datetime64[ns]')
+    one = np.timedelta64(1, 'D')
+    out = {}
+    if fr is None or not len(fr):
+        return out
+    for sid, g in fr.groupby('series'):
+        g = g.sort_values(['vintage_date', 'obs_date'])
+        vd = g.vintage_date.to_numpy(dtype='datetime64[ns]')
+        od = g.obs_date.to_numpy(dtype='datetime64[ns]')
+        vv = g.value.to_numpy(dtype=np.float32)
+        pos = np.searchsorted(vd, dd, side='left')       # vintages < D
+        has = pos > 0
+        k = np.clip(pos - 1, 0, len(g) - 1)
+        # latest obs_date among vintages < D: take the last row of each prefix --
+        # rows are sorted by (vintage, obs) so row k-1 has the max obs of that prefix
+        out[f'fred_{sid.lower()}'] = np.where(has, vv[k], np.nan).astype(np.float32)
+        out[f'fred_{sid.lower()}_odays'] = np.where(has, (dd - od[k]) / one, np.nan).astype(np.float32)
+    return out
+
+
 # ---------------- Block M: 13F holdings columns (I199) ----------------
 def f13_columns(dates, hits):
     """Point-in-time institutional-holding recency from raw EDGAR FTS hits
@@ -745,7 +785,7 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None, fred=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -780,6 +820,9 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[c] = v
     if f13 is not None:
         for c, v in f13_columns(df['date'].to_numpy(), f13).items():
+            df[c] = v
+    if fred is not None:
+        for c, v in fred_columns(df['date'].to_numpy(), fred).items():
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
@@ -931,6 +974,11 @@ def main():
     f13_cols = F13_COLS if f13 is not None else []
     if f13 is not None:
         print('13f hits for shard:', len(f13), 'tickers covered:', len(f13_by_tk), flush=True)
+    fred = load_fred()
+    fred_cols = sorted({f'fred_{s.lower()}' for s in fred.series} |
+                       {f'fred_{s.lower()}_odays' for s in fred.series}) if fred is not None else []
+    if fred is not None:
+        print('fred series:', sorted(fred.series.unique()), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -955,7 +1003,9 @@ def main():
                        'gd_cols': gd_cols,
                        'gd_notes': 'I200 GDELT 2.0 timelinevol mention counts; exact-symbol query (short-symbol noise uniform); strict < D; 0 = covered-but-silent, NaN = no data yet',
                        'f13_cols': f13_cols,
-                       'f13_notes': 'I199 13F-HR(/A) via EDGAR FTS by CUSIP (OpenFIGI map); f13_n lower-bounds mega-cap filers (page cap); keyed file_date < D'}
+                       'f13_notes': 'I199 13F-HR(/A) via EDGAR FTS by CUSIP (OpenFIGI map); f13_n lower-bounds mega-cap filers (page cap); keyed file_date < D',
+                       'fred_cols': fred_cols,
+                       'fred_notes': 'I195 FRED/ALFRED vintages (BLOCKED_SECRET until FRED_API_KEY); keyed vintage_date < D'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
@@ -965,7 +1015,8 @@ def main():
                           an=an_by_tk.get(tk) if an_cols else None,
                           xb=xb_by_tk.get(tk) if xb_cols else None,
                           gd=gd_by_tk.get(tk) if gd_cols else None,
-                          f13=f13_by_tk.get(tk) if f13_cols else None)
+                          f13=f13_by_tk.get(tk) if f13_cols else None,
+                          fred=fred if fred_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
