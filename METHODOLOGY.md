@@ -227,6 +227,10 @@ This file is the single source of truth. Dated entries below are newest first. T
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+- **2026-10-25 ~16:30 HKT — grid batch 1 dispatched + block L fetcher live. Phase 3 + world.**
+  - Missing chunks 16,18-33 have NO active work (the 9 surviving in-flight runs all sit on covered chunks grinding doomed full-window legs). Dispatched batch 1 of capped waves: chunks 16,18-23 via grid-chunk @ `kimi/exit-grid` (has `max-parallel: 2`, `922a7ac`). Batch 2 (24-33) dispatches next round once batch-1 yearly legs land.
+  - **Block L analyst actions fetcher** `ci/fetch_analyst.py` (`kimi/data-fetch` `259ddc1`): Yahoo upgradeDowngradeHistory (source map I197 = proven, dated from/to grades per firm, 2012-09+), sharded over the universe, 0.35s pacing + 429 backoff. Dispatched job=analyst shards=8. Raw grade strings kept; fixed-answer mapping freezes with groups 034+.
+  - 13F (I199) and GDELT (I200) remain UNTESTED per DATA_SOURCES.csv - not built; they need a fetch test before any runner time, flagging for the War room to assign.
 - **2026-10-25 ~15:55 HKT — queue dedup + two failure fixes + re-dispatches. Phase 3 + world.**
   - **Queue dedup:** found 65 grid-chunk runs live (16 in flight + 49 queued) against 34 chunks - duplicate dispatch waves. Cancelled all 49 never-started queued runs (zero compute lost). Per James 14:12 slot rule: future grid dispatches go in batches of <=7 with the capped workflow (`max-parallel: 2`, `922a7ac`). impact-diff started; world_build + data_fetch + world-leak-verify moved up the queue.
   - **world_build smoke failure root-caused:** my `world_fetch.sh` checksum step verified `box_uploads_SHA256SUMS.txt` in full, incl. `nb_nbx_2025_2026_v2.tar` which we deliberately do not download -> sha256sum exit 1 killed shard 0. Fixed `90d829b` (verify only downloaded files). Full world_build re-dispatched with shards=8 (run picks up blocks F/G + block C code at checkout).
