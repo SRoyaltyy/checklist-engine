@@ -61,9 +61,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          TICKERS: ${{ inputs.tickers }}
         run: |
+          # smoke runs (TICKERS set) must NOT overwrite the full shard of the same index
+          tag=shard; [ -n "$TICKERS" ] && tag=smoke_shard
           f="$RUNNER_TEMP/world_out/world_shard_$(printf '%03d' ${{ matrix.i }}).parquet"
           if [ ! -f "$f" ]; then echo "no shard output"; exit 0; fi
-          python3 ci/release_assets.py upload world-2020-26-v1 \
-            "$f" "${f%.parquet}.json"
-          echo "shard ${{ matrix.i }} uploaded"
+          s="$RUNNER_TEMP/world_out/world_${tag}_$(printf '%03d' ${{ matrix.i }}).parquet"
+          j="${f%.parquet}.json"; sj="$RUNNER_TEMP/world_out/world_${tag}_$(printf '%03d' ${{ matrix.i }}).json"
+          cp "$f" "$s"; cp "$j" "$sj"
+          python3 ci/release_assets.py upload world-2020-26-v1 "$s" "$sj"
+          echo "world_${tag} ${{ matrix.i }} uploaded"
