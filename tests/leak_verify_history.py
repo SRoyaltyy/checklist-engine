@@ -31,12 +31,30 @@ def api(path, tok):
     return json.load(urllib.request.urlopen(req))
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k):
+        return None
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect)
+
+
+def _download(url, tok):
+    """GitHub 302-redirects asset downloads to a signed host that rejects a resent
+    Authorization header: capture the Location, then fetch it WITHOUT auth."""
+    try:
+        return _OPENER.open(urllib.request.Request(url, headers={
+            'Authorization': f'token {tok}', 'Accept': 'application/vnd.github+json'})).read()
+    except urllib.error.HTTPError as e:
+        if e.code in (301, 302, 303, 307, 308):
+            return urllib.request.urlopen(e.headers['Location']).read()
+        raise
+
+
 def load_sweep_json(tok):
     arts = api(f'/actions/runs/{SWEEP_RUN}/artifacts', tok)
     art = next(a for a in arts['artifacts'] if a['name'] == 'leak-sweep-results')
-    req = urllib.request.Request(art['archive_download_url'],
-                                 headers={'Authorization': f'token {tok}', 'Accept': 'application/vnd.github+json'})
-    z = zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(req).read()))
+    z = zipfile.ZipFile(io.BytesIO(_download(art['archive_download_url'], tok)))
     return json.loads(z.read('leak_sweep.json'))
 
 
