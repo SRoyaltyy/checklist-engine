@@ -1,0 +1,37 @@
+# World-snapshot leak verify (fix 5): every world column must be point-in-time -
+# row D identical when all inputs truncate at D. Full version (TA-Lib + 61 candle
+# patterns + ETF overlays + breadth + earnings). Needs TA-Lib, so runners only.
+name: world-leak-verify
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: 'comma-separated tickers'
+        default: 'AAPL,MSFT,NVDA'
+        required: false
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-bd
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Fetch world inputs from data-2020-24-v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/world_fetch.sh "$RUNNER_TEMP/world_in"
+      - name: Run world leak test
+        env:
+          CHECKLIST_DATA_DIR: ${{ runner.temp }}/world_in
+        run: python3 tests/test_leak_world.py "${{ github.event.inputs.tickers }}"
