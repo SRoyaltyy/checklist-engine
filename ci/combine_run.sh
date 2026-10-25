@@ -77,9 +77,13 @@ if python3 ci/release_assets.py have "$TAG" "model_${TARGET}.npz" model.json; th
     exit 0
 fi
 
+# A1 interactions: off unless INTERACTIONS=1 (War-room approval gate). Model artifacts are
+# published under the same names; the approving 0c entry is the provenance.
+INTER_FLAG=""
+[ "${INTERACTIONS:-0}" = "1" ] && INTER_FLAG="--interactions"
 python3 scoring/combine.py fit --answers "$W/answers" --base "$W/trade_base_rows.parquet" \
     --pre "$W/grid_pre" --bench "$W/grid_pre/bench_pre.npz" --out "$W/model" \
-    --max-trades 400000 --cells-per-trade 12 --iters 60 --target "$TARGET"
+    --max-trades 400000 --cells-per-trade 12 --iters 60 --target "$TARGET" $INTER_FLAG
 python3 ci/release_assets.py upload "$TAG" "$W/model/model_${TARGET}.npz" "$W/model/model.json"
 echo "combiner fit ($TARGET) done and published to $TAG"
 
@@ -87,5 +91,5 @@ echo "combiner fit ($TARGET) done and published to $TAG"
 if python3 ci/release_assets.py have "$TAG" "model_$([ "$TARGET" = logistic ] && echo ridge || echo logistic).npz"; then
     curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
         "https://api.github.com/repos/${GH_REPO}/actions/workflows/combiner_predict.yml/dispatches" \
-        -d '{"ref":"kimi/exit-grid"}' -o /dev/null -w "predict dispatch:%{http_code}\n"
+        -d '{"ref":"kimi/interactions-code"}' -o /dev/null -w "predict dispatch:%{http_code}\n"
 fi

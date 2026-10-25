@@ -5,8 +5,10 @@
 name: combiner-predict
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '9 * * * *'
+  # hourly backstop disabled on this branch (same reason as combiner fit): predict needs both
+  # models + shortlist phase anyway; A1 predicts are dispatched manually after the A1 fits.
+  # schedule:
+  #   - cron: '9 * * * *'
 concurrency:
   group: combiner-predict
   cancel-in-progress: false
@@ -23,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: kimi/exit-grid
+          ref: kimi/interactions-code
       - name: Python + deps (no TA-Lib; the combiner only reads npz/parquet)
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential

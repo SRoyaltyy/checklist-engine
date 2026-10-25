@@ -6,8 +6,11 @@
 name: combiner
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '53 * * * *'
+  # schedule disabled on this branch too (same reasoning as main ceb1b89 fix 7): hourly cron
+  # re-dispatched the fit without shortlist.csv and runs were killed. Re-enable only after
+  # shortlist.csv lands and the phase map allows the combiner. A1 fits are dispatched manually.
+  # schedule:
+  #   - cron: '53 * * * *'
 concurrency:
   group: combiner-fit
   cancel-in-progress: false
@@ -29,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: kimi/exit-grid
+          ref: kimi/interactions-code
       - name: Python + deps (no TA-Lib; the combiner only reads npz/parquet)
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential
