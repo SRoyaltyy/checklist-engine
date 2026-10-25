@@ -95,6 +95,13 @@ def cell_index():
 
 # ------------------------------------------------------- features (question LUTs)
 
+def variant_of(col):
+    """Amendment A1 group key: variant (lever 3) of a question id.
+    ids look like 'RSI14|zone_route|1d|20' or 'H|RSI14|route|1d|20' (+ optional '|p:...' suffix)."""
+    p = str(col).split('|p:')[0].split('|')
+    return p[1] if p[0] == 'H' and len(p) > 1 else p[0]
+
+
 class Featurizer:
     """Per-question (q x 256) beta LUTs; one-hot levels with the §7b junk rule.
     Works on a list of answer parts (streamed chunks), never a concatenated matrix."""
@@ -103,6 +110,12 @@ class Featurizer:
         self.cols = list(cols)
         self.levels = [None] * len(cols)                     # kept level codes per question
         self.junk = np.ones(len(cols), bool)
+        v = [variant_of(c) for c in self.cols]
+        names = sorted(set(v))
+        lut = {n: i for i, n in enumerate(names)}
+        self.group_names = names                             # r variant groups (Amendment A1)
+        self.gidx = np.array([lut[x] for x in v], np.int32)  # per-column group id
+        self.r = len(names)
         self._counts = [None] * len(cols)                    # value -> count, filled by fit()
 
     def fit(self, parts):
@@ -169,8 +182,9 @@ class Featurizer:
         assert off_col == len(self.cols) and off_feat == self.n_feat
         return g
 
-    def predict_parts(self, parts, lut, out=None, row_block=200000):
-        """trade score sum_j LUT[j, M[:,j]], accumulated over parts and row blocks."""
+    def predict_parts(self, parts, lut, out=None, z_out=None, row_block=200000):
+        """trade score sum_j LUT[j, M[:,j]], accumulated over parts and row blocks.
+        z_out (n, r): per-variant-group score sums for the Amendment A1 interaction term."""
         n = parts[0][0].shape[0]
         if out is None:
             out = np.zeros(n, np.float64)
@@ -180,11 +194,16 @@ class Featurizer:
             for j0 in range(0, M.shape[1], B):
                 j1 = min(j0 + B, M.shape[1])
                 luts_b = lut[off_col + j0: off_col + j1]             # (b, 256)
+                gblk = self.gidx[off_col + j0: off_col + j1]         # (b,) group ids
                 for r0 in range(0, n, row_block):
                     r1 = min(r0 + row_block, n)
                     blk = M[r0:r1, j0:j1].astype(np.int64) & 255         # int8 codes wrap into [0,255]
-                    out[r0:r1] += np.take_along_axis(
-                        luts_b[None, :, :], blk[:, :, None], 2)[:, :, 0].sum(1)
+                    take = np.take_along_axis(
+                        luts_b[None, :, :], blk[:, :, None], 2)[:, :, 0]   # (rb, b)
+                    out[r0:r1] += take.sum(1)
+                    if z_out is not None:
+                        for g in np.unique(gblk):
+                            z_out[r0:r1, g] += take[:, gblk == g].sum(1)
             off_col += M.shape[1]
         return out
 
@@ -215,8 +234,8 @@ def build_rows(pre_d, n_trades, cells_per_trade, seed=7):
 
 # ------------------------------------------------------------------ model fitting
 
-def fit_model(F, parts, tidx, cid, ret, cells, rf, iters=60, l2=1e-4, target='logistic'):
-    """One joint model: pred = alpha + trade_score + rule_feat.gamma.
+def fit_model(F, parts, tidx, cid, ret, cells, rf, iters=60, l2=1e-4, target='logistic', interactions=False):
+    """One joint model: pred = alpha + trade_score + rule_feat.gamma [+ z(t)ᵀ W rf[c] (A1)].
     Full-batch Adam via sufficient sums (bincount scatters + block gradients).
     target: 'logistic' (y = ret>0) or 'ridge' (y = ret standardised)."""
     n_trades = parts[0][0].shape[0]
@@ -227,17 +246,24 @@ def fit_model(F, parts, tidx, cid, ret, cells, rf, iters=60, l2=1e-4, target='lo
     y = np.ascontiguousarray(y)
     beta = np.zeros(F.n_feat, np.float64)
     gamma = np.zeros(N_RULE, np.float64)
+    W = np.zeros((F.r, N_RULE), np.float64) if interactions else None   # Amendment A1
     alpha = np.array([np.log(max(float(y.mean()), 1e-6) / max(1 - float(y.mean()), 1e-6))]
                      ) if target == 'logistic' else np.array([float(y.mean())])
     m_b = np.zeros_like(beta); v_b = np.zeros_like(beta)
     m_g = np.zeros_like(gamma); v_g = np.zeros_like(gamma)
+    m_W = np.zeros_like(W) if interactions else None; v_W = np.zeros_like(W) if interactions else None
     m_a = np.zeros(1); v_a = np.zeros(1)
     b1, b2, eps = 0.9, 0.999, 1e-8
     hist = []
     lut = F.luts(beta.astype(np.float32))
+    rf_rows = rf[cid]                                        # (n_rows, 4) rule feats of sampled cells
     for it in range(1, iters + 1):
         ts = F.predict_parts(parts, lut)                     # (n_trades,)
-        pred = alpha[0] + ts[tidx] + rf[cid] @ gamma
+        pred = alpha[0] + ts[tidx] + rf_rows @ gamma
+        if interactions:
+            z = np.zeros((n_trades, F.r))
+            F.predict_parts(parts, lut, z_out=z)             # per-group score sums
+            pred = pred + (z[tidx] @ W * rf_rows).sum(1)
         if target == 'logistic':
             p = 1.0 / (1.0 + np.exp(-pred))
             delta = (p - y).astype(np.float64)
@@ -250,7 +276,13 @@ def fit_model(F, parts, tidx, cid, ret, cells, rf, iters=60, l2=1e-4, target='lo
         g_beta = F.grad(parts, s_trade)
         g_gamma = rf.T @ s_cell
         g_alpha = np.array([delta.sum()])
-        for prm, g, m, v in ((beta, g_beta, m_b, v_b), (gamma, g_gamma, m_g, v_g), (alpha, g_alpha, m_a, v_a)):
+        groups = ((beta, g_beta, m_b, v_b), (gamma, g_gamma, m_g, v_g), (alpha, g_alpha, m_a, v_a))
+        if interactions:
+            u = np.stack([np.bincount(tidx, weights=delta * rf_rows[:, k], minlength=n_trades)
+                          for k in range(N_RULE)], 1)        # (n_trades, 4)
+            g_W = z.T @ u                                    # (r, 4)
+            groups = groups + ((W, g_W, m_W, v_W),)
+        for prm, g, m, v in groups:
             np.multiply(m, b1, out=m); np.add(m, (1 - b1) * g, out=m)
             np.multiply(v, b2, out=v); np.add(v, (1 - b2) * g * g, out=v)
             mh = m / (1 - b1 ** it); vh = v / (1 - b2 ** it)
@@ -258,16 +290,23 @@ def fit_model(F, parts, tidx, cid, ret, cells, rf, iters=60, l2=1e-4, target='lo
         lut = F.luts(beta.astype(np.float32))
         hist.append(loss)
         if it % 10 == 0 or it == 1:
-            log(f'  {target} iter {it}/{iters} loss {loss:.5f}')
-    return lut, gamma, float(alpha[0]), hist
+            log(f'  {target}{"+A1" if interactions else ""} iter {it}/{iters} loss {loss:.5f}')
+    return lut, gamma, float(alpha[0]), hist, W
 
 
 # ------------------------------------------------------------------- evaluation
 
-def surface_summary(ts_l, ts_r, gamma_l, gamma_r, alpha_l, alpha_r, pre_d, cells, rf, bench_pre, name):
+def surface_summary(ts_l, ts_r, gamma_l, gamma_r, alpha_l, alpha_r, pre_d, cells, rf, bench_pre, name,
+                    z=None, W_l=None, W_r=None):
     """Strategy map on trades with precomputed trade scores: argmax EV over cells,
-    realised outcome + benchmark at the chosen cell, Brier, calibration deciles."""
+    realised outcome + benchmark at the chosen cell, Brier, calibration deciles.
+    z/W (Amendment A1): with per-trade group scores z and interaction W, the EV surface
+    varies by trade, so the chosen cell is state-dependent."""
     n = len(ts_l)
+    zl = z.get('l') if isinstance(z, dict) else z             # logistic group scores
+    zr = z.get('r') if isinstance(z, dict) else z             # ridge group scores
+    zw_l = (zl @ W_l) if (zl is not None and W_l is not None) else None
+    zw_r = (zr @ W_r) if (zr is not None and W_r is not None) else None
     best_ev = np.full(n, -np.inf); best_c = np.zeros(n, np.int32)
     best_logit = np.zeros(n)
     B = 4000
@@ -275,6 +314,9 @@ def surface_summary(ts_l, ts_r, gamma_l, gamma_r, alpha_l, alpha_r, pre_d, cells
         sl = slice(c0, min(c0 + B, len(cells)))
         ev = ts_r[:, None] + alpha_r + rf[sl] @ gamma_r       # (n, b) EV in std units
         lg = ts_l[:, None] + alpha_l + rf[sl] @ gamma_l
+        if zw_r is not None:
+            ev = ev + zw_r @ rf[sl].T
+            lg = lg + zw_l @ rf[sl].T
         loc = np.argmax(ev, 1)
         evb = np.take_along_axis(ev, loc[:, None], 1)[:, 0]
         upd = evb > best_ev
@@ -343,13 +385,16 @@ def cmd_fit(a):
     targets = ['logistic', 'ridge'] if a.target == 'both' else [a.target]
     models = {}
     for t in targets:
-        lut, gamma, alpha, hist = fit_model(F, parts_fit, tidx, cid, ret, cells, rf, iters=a.iters, target=t)
+        lut, gamma, alpha, hist, W = fit_model(F, parts_fit, tidx, cid, ret, cells, rf,
+                                               iters=a.iters, target=t, interactions=a.interactions)
         np.savez_compressed(os.path.join(a.out, f'model_{t}.npz'),
-                            lut=lut, gamma=gamma, alpha=alpha, hist=hist)
-        models[t] = (lut, gamma, alpha)
+                            lut=lut, gamma=gamma, alpha=alpha, hist=hist,
+                            W=np.zeros((0, 0)) if W is None else W)
+        models[t] = (lut, gamma, alpha, W)
     del parts_fit
     json.dump(dict(cols=cols, levels=[None if l is None else l.tolist() for l in F.levels],
                    junk=F.junk.tolist(), targets=targets,
+                   group_names=F.group_names, interactions=a.interactions,
                    cells=cells.tolist(), fit_years=a.fit_years, check_year=a.check_year,
                    max_trades=a.max_trades, cells_per_trade=a.cells_per_trade),
               open(os.path.join(a.out, 'model.json'), 'w'))
@@ -357,11 +402,18 @@ def cmd_fit(a):
     if a.check_year and len(check_idx) and len(targets) == 2:
         parts_chk = [(M, c) for M, c in iter_answers(a.answers, keep=check_idx)]
         pre_chk = load_pre(a.pre, check_idx)
-        lut_l, gamma_l, alpha_l = models['logistic']
-        lut_r, gamma_r, alpha_r = models['ridge']
+        lut_l, gamma_l, alpha_l, W_l = models['logistic']
+        lut_r, gamma_r, alpha_r, W_r = models['ridge']
         ts_l = F.predict_parts(parts_chk, lut_l); ts_r = F.predict_parts(parts_chk, lut_r)
+        zl_chk = zr_chk = None
+        if a.interactions:
+            zl_chk = np.zeros((len(check_idx), F.r))
+            zr_chk = np.zeros((len(check_idx), F.r))
+            F.predict_parts(parts_chk, lut_l, z_out=zl_chk)
+            F.predict_parts(parts_chk, lut_r, z_out=zr_chk)
         summary, _ = surface_summary(ts_l, ts_r, gamma_l, gamma_r, alpha_l, alpha_r,
-                                     pre_chk, cells, rf, bench_pre, f'check-{a.check_year}')
+                                     pre_chk, cells, rf, bench_pre, f'check-{a.check_year}',
+                                     z=dict(l=zl_chk, r=zr_chk), W_l=W_l, W_r=W_r)
         json.dump(summary, open(os.path.join(a.out, f'check_{a.check_year}.json'), 'w'), indent=1)
 
 
@@ -377,26 +429,34 @@ def cmd_predict(a):
     WR = np.load(os.path.join(a.model, 'model_ridge.npz'))
     gamma_l, alpha_l = WL['gamma'], float(WL['alpha'])
     gamma_r, alpha_r = WR['gamma'], float(WR['alpha'])
+    interactions = bool(meta.get('interactions')) and 'W' in WR and WR['W'].size
+    W_l = WL['W'].astype(np.float64) if interactions else None
+    W_r = WR['W'].astype(np.float64) if interactions else None
     cells = np.array(meta['cells'], np.int16)
     rf = np.stack([cells[:, 0] / 30.0, cells[:, 1] / 30.0, cells[:, 2] / 30.0,
                    (cells[:, 2] == 0).astype(np.float32)], 1).astype(np.float32)
     year = pd.DatetimeIndex(base.date).year.to_numpy()
     pre_d = load_pre(a.pre, np.arange(len(base)))
     bench_pre = np.load(a.bench)
-    # one streaming pass over the answers: accumulate trade scores for every trade
+    # one streaming pass over the answers: accumulate trade scores + group score sums per target
     ts_l = np.zeros(len(base)); ts_r = np.zeros(len(base))
+    z_l = np.zeros((len(base), F.r)) if interactions else None
+    z_r = np.zeros((len(base), F.r)) if interactions else None
     for M, _c in iter_answers(a.answers):
-        F.predict_parts([(M, _c)], WL['lut'], out=ts_l)
-        F.predict_parts([(M, _c)], WR['lut'], out=ts_r)
+        F.predict_parts([(M, _c)], WL['lut'], out=ts_l, z_out=z_l)
+        F.predict_parts([(M, _c)], WR['lut'], out=ts_r, z_out=z_r)
     os.makedirs(a.out, exist_ok=True)
     summaries = []
     for y in sorted(np.unique(year)):
         idx = np.where(year == y)[0]
         pd_y = dict(**{k: (pre_d[k][:, idx] if pre_d[k].ndim == 2 else pre_d[k][idx])
                        for k in ('tp_day', 'tp_ret', 'sl_day', 'sl_ret', 'clos', 'didx')})
+        zl_y = z_l[idx] if z_l is not None else None
+        zr_y = z_r[idx] if z_r is not None else None
         summary, det = surface_summary(ts_l[idx], ts_r[idx], gamma_l, gamma_r,
                                        alpha_l, alpha_r,
-                                       pd_y, cells, rf, bench_pre, f'year-{y}')
+                                       pd_y, cells, rf, bench_pre, f'year-{y}',
+                                       z=dict(l=zl_y, r=zr_y), W_l=W_l, W_r=W_r)
         df = pd.DataFrame(dict(ticker=base.ticker.to_numpy()[idx], date=base.date.to_numpy()[idx],
                                tp=cells[det['cell']][:, 0], hold=cells[det['cell']][:, 1],
                                stop=cells[det['cell']][:, 2], p_win=np.round(det['p'], 4),
@@ -419,6 +479,9 @@ if __name__ == '__main__':
     f.add_argument('--target', choices=['both', 'logistic', 'ridge'], default='both',
                    help='which model to fit; the runner matrix fits one target per job in parallel')
     f.add_argument('--fit-years', type=int, nargs='+', default=[2020, 2021]); f.add_argument('--check-year', type=int, default=2022)
+    f.add_argument('--interactions', action='store_true',
+                   help='Amendment A1 (docs/INTERACTIONS_AMENDMENT.md, War-room approval required): '
+                        'fit the low-rank state x rule term z(t)^T W rf[c]')
     p = sub.add_parser('predict')
     p.add_argument('--model', required=True); p.add_argument('--answers', required=True)
     p.add_argument('--base', default='chunks/trade_base_rows.parquet')
