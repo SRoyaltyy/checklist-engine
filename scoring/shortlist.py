@@ -6,8 +6,16 @@ Signal screen: n >= 30, EV after fees > 0, and EV beats the same-day benchmark (
 Ranked by a screening t = (EV - bench_EV) / SE(EV) from the grid's moment sums; the formal 5.4 bar is
 applied later at trade level with stats/luck_check.py (clustered SEs) - this screen only narrows the field.
 
-Streams file by file (keys are unique within a file; chunks partition questions), so memory stays bounded.
-Usage: python3 scoring/shortlist.py --indir grid_chunks --bench grid_pre/bench_pre.npz --out shortlist.csv
+SHARDED MODE (0b 2026-10-25 ~15:40): one job per grid chunk, streaming parquet batches so peak RAM stays
+bounded on ubuntu-latest; each shard uploads its survivors + its legacy-rule counts; a small merge job
+applies the global junk rule and writes shortlist.csv. Junk-at-merge is equivalent to junk-first because
+the junk rule only removes cells.
+
+Modes:
+  python3 scoring/shortlist.py --prep ... (kept for reference)
+  python3 scoring/shortlist.py --shard N --indir DIR --out FILE   -> screened survivors for chunk N
+  python3 scoring/shortlist.py --merge --indir DIR --bench bench_pre.npz --out shortlist.csv
+Default (no mode flag) = the original single-job path.
 """
 import os, glob, argparse
 import numpy as np, pandas as pd
@@ -15,6 +23,7 @@ import numpy as np, pandas as pd
 LEGACY = dict(tp=20, hold=15, stop=0)                     # exit rule v1 anchor; n is rule-invariant
 STATC = ['n', 'win_cnt', 'win_sum', 'sum_ret', 'sum_bench', 'sum_spy', 'sum_sq']
 KEYC = ['qid', 'ans', 'tp', 'hold', 'stop']
+BATCH = 200_000
 
 
 def derive(df):
@@ -42,19 +51,121 @@ def files_by_chunk(indir):
     return out
 
 
+def _batches(path, cols):
+    """stream a parquet file in row-batch DataFrames with only `cols` materialized."""
+    import pyarrow.parquet as pq
+    pf = pq.ParquetFile(path)
+    for b in pf.iter_batches(batch_size=BATCH, columns=cols):
+        yield b.to_pandas()
+
+
+def _legacy_part(df):
+    """(qid, ans, n) summed over the legacy-rule slice of one batch."""
+    m = (df.tp == LEGACY['tp']) & (df.hold == LEGACY['hold']) & (df['stop'] == LEGACY['stop'])
+    if not m.any():
+        return None
+    return df.loc[m, ['qid', 'ans', 'n']].groupby(['qid', 'ans'], sort=False).n.sum().reset_index()
+
+
+def shard(chunk, indir, out):
+    """process exactly one chunk: screen its cells, attach its own 2022 check stats, write survivors.
+    Also streams legacy-rule counts to <out>.leg.parquet for the merge-time junk rule."""
+    chunks = files_by_chunk(indir)
+    m = chunks.get(chunk)
+    if not m:
+        print(f'shard {chunk}: no grid files; nothing to do')
+        return
+    fit_years = [y for y in (2020, 2021) if y in m] or ([0] if 0 in m else [])
+    check_year = 2022 if 2022 in m else (0 if 0 in m else None)
+    if not fit_years:
+        print(f'shard {chunk}: no fit-year files; nothing to do')
+        return
+    leg_parts, surv_parts, tries = [], [], 0
+    # ---- pass A: first fit year fully grouped by cell (unique keys), bounded by one year's cells
+    base = None
+    for y in fit_years:
+        parts = []
+        for df in _batches(m[y], KEYC + STATC):
+            tries += len(df)
+            leg_parts.append(_legacy_part(df))
+            parts.append(df.groupby(KEYC, sort=False)[STATC].sum().reset_index())
+        g = pd.concat(parts, ignore_index=True).groupby(KEYC, sort=False)[STATC].sum()
+        base = g if base is None else base.add(g, fill_value=0)
+        del g, parts
+    base = base.reset_index()
+    # ---- screen on the summed fit moments
+    f = derive(base)
+    del base
+    f = f[(f.n >= 30) & (f.ev > 0) & (f.ev > f.bench_ev)]
+    print(f'shard {chunk}: tries {tries}, pre-junk survivors {len(f)}', flush=True)
+    if check_year is not None and len(f):
+        keys = f[KEYC].drop_duplicates()
+        chk_parts = []
+        for df in _batches(m[check_year], KEYC + STATC):
+            hit = df.merge(keys, on=KEYC, how='inner', sort=False)
+            if len(hit):
+                chk_parts.append(derive(hit)[KEYC + ['n', 'ev', 'bench_ev', 'spy_ev', 'win', 't']])
+        if chk_parts:
+            chk = pd.concat(chk_parts, ignore_index=True).drop_duplicates(KEYC)
+            f = f.merge(chk.rename(columns={k: f'chk_{k}' for k in ('n', 'ev', 'bench_ev', 'spy_ev', 'win', 't')}),
+                        on=KEYC, how='left')
+    if len(f):
+        f.to_parquet(out, index=False)
+    leg = pd.concat([p for p in leg_parts if p is not None], ignore_index=True)
+    if len(leg):
+        leg.groupby(['qid', 'ans'], sort=False).n.sum().reset_index().to_parquet(out + '.leg.parquet', index=False)
+    print(f'shard {chunk}: wrote {out} ({len(f)} rows)', flush=True)
+
+
+def merge(indir, bench, out):
+    """global junk rule from the per-shard legacy counts + bench trade counts; apply; rank; write csv."""
+    legs = [pd.read_parquet(f) for f in sorted(glob.glob(os.path.join(indir, 'shortlist_shard_*.leg.parquet')))]
+    shards = [pd.read_parquet(f) for f in sorted(glob.glob(os.path.join(indir, 'shortlist_shard_*.parquet')))
+              if not f.endswith('.leg.parquet')]
+    if not shards:
+        print('no shard outputs; nothing to merge')
+        return
+    s = pd.concat(shards, ignore_index=True)
+    print(f'merge: {len(s)} pre-junk survivors from {len(shards)} shards', flush=True)
+    if legs:
+        leg = pd.concat(legs).groupby(['qid', 'ans']).n.sum().reset_index()
+        answered = leg.groupby('qid').n.sum()
+        n_fit = None
+        if bench and os.path.exists(bench):
+            B = np.load(bench)
+            yrs = pd.DatetimeIndex(pd.to_datetime(B['dates'])).year.to_numpy()
+            n_fit = float(B['cnt'][np.isin(yrs, (2020, 2021))].sum())
+        yes = (leg[leg.ans == 1].set_index('qid').n / answered).fillna(0)
+        junk = (set(blank[blank > 0.95].index) if n_fit and (blank := (1 - answered / n_fit)) is not None else set()) \
+            | set(yes[yes > 0.95].index) | set(yes[yes < 0.005].index)
+        print(f'merge: questions {len(answered)}, junk {len(junk)}; fit trades {n_fit}', flush=True)
+        s = s[~s.qid.isin(junk)]
+    s = s.sort_values('t', ascending=False)
+    print(f'merge: post-junk survivors {len(s)}')
+    s.to_csv(out, index=False)
+    print('wrote', out, len(s), 'rows')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--indir', default='grid_chunks')
     ap.add_argument('--bench', default=None, help='bench_pre.npz (per-year trade counts for the junk rule)')
     ap.add_argument('--out', default='shortlist.csv')
+    ap.add_argument('--shard', type=int, default=None, help='process only this chunk index (sharded mode)')
+    ap.add_argument('--merge', action='store_true', help='merge shard outputs + apply junk rule')
     a = ap.parse_args()
+    if a.shard is not None:
+        return shard(a.shard, a.indir, a.out)
+    if a.merge:
+        return merge(a.indir, a.bench, a.out)
+
+    # ---------------- original single-job path (kept for small runs / compatibility) ----------------
     chunks = files_by_chunk(a.indir)
     fit_years = [y for y in (2020, 2021) if any(y in v for v in chunks.values())]
     use_yearly = bool(fit_years)
     fit_years = fit_years or [0]
     check_year = 2022 if any(2022 in v for v in chunks.values()) else 0
 
-    # ---- pass 1: junk rule from the legacy-rule slice (n is rule-invariant) ----
     leg_rows = []
     for c, m in sorted(chunks.items()):
         for y in fit_years:
@@ -74,7 +185,6 @@ def main():
         | set(yes[yes > 0.95].index) | set(yes[yes < 0.005].index)
     print(f'questions: {len(answered)}, junk: {len(junk)}; fit trades: {n_fit}', flush=True)
 
-    # ---- pass 2: stream, screen, attach untouched 2022 stats ----
     survivors, tries = [], 0
     for c, m in sorted(chunks.items()):
         if not any(y in m for y in fit_years):
