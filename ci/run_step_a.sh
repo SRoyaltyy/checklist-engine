@@ -23,8 +23,10 @@ for f in "$DATA"/answers_*.npz; do
 done
 
 echo "== launch engine + checkpoint push loop"
-CHECKLIST_DATA_DIR="$DATA" OUT_DIR="$OUT" TMPDIR="$TMP" SAVE_ANSWERS=1 \
-  python3 -u step_a.py --workers 4 --chunk 400 > "$OUT/step_a.log" 2>&1 &
+FORCE_ARGS=""
+if [ -n "${FORCE_CHUNKS:-}" ]; then FORCE_ARGS="--force $FORCE_CHUNKS"; echo "FORCE rerun of chunks: $FORCE_CHUNKS"; fi
+CHECKLIST_DATA_DIR="$DATA" OUT_DIR="$OUT" TMPDIR="$TMP" SAVE_ANSWERS=1 FORCE_UPLOAD="${FORCE_UPLOAD:-0}" \
+  python3 -u step_a.py --workers 4 --chunk 400 $FORCE_ARGS > "$OUT/step_a.log" 2>&1 &
 ENGINE=$!
 
 # push loop: checkpoints pieces as they land, stops the engine before the job cap
