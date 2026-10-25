@@ -218,6 +218,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:00 HKT — world-snapshot now carries the FULL build (A+B+D+K + leak test) after clean pre-staged merge (`100b440`).**
+  - Merged `kimi/world-bd` into `kimi/world-snapshot`. The one conflict was the two smoke-crash fixes applied independently on both branches; resolved to the world-bd version (superset, both fixes verified present, py_compile clean). So when smoke 40163291647 passes, the shards=8 dispatch needs NO merge step - just the dispatch.
+  - Queue: 13 grid legs ~4h in (upper calibration bound ~06:00-07:06 UTC, first completions expected within ~1-2h); world smoke / impact-diff / world leak-verify / cboe smoke / step-a all queued behind them.
+
 - **2026-10-25 ~13:55 HKT — world leak-verify workflow registered (main `c0f8164`) + dispatched (40166189700, queued).**
   - `.github/workflows/world_leak_verify.yml` on `kimi/world-bd` (`0c325ab`): full-column PIT proof on a runner (real TA-Lib + 61 candle patterns + ETF overlays + breadth + earnings), 5 tickers x 6 cut dates, exit code = verdict. Independent of shards (builds in-memory), so it queues behind the same legs but needs no other job's output.
 
