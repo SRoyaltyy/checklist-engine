@@ -1,0 +1,32 @@
+{
+  "status": "PROVISIONAL_SOURCE_AUDIT",
+  "url": "https://raw.githubusercontent.com/SRoyaltyy/fullscan/cc932d413b78dbd375f78aa99229da46752e9ac8/data/prices/ohlc.parquet",
+  "git_blob": "9c45527570e5ada2b2a0f0f61eaa41e44f67e344",
+  "sha256": "31e6bf7f5a9054080123dff90a2f36d38e080d6ead72c6cfbb7752d959470cca",
+  "original_columns": [
+    "index",
+    "date",
+    "ticker",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "rows": 3107838,
+  "tickers": 11720,
+  "date_min": "2024-03-04 00:00:00",
+  "date_max": "2026-10-23 00:00:00",
+  "rows_2025_2026": 3106998,
+  "duplicate_keys": 0,
+  "frozen_tickers": 5234,
+  "overlap_status_counts": {
+    "FAIL": 5187,
+    "PASS": 4
+  },
+  "nominal_historical_price_verified": false,
+  "full_world_coverage_approved": false,
+  "run_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40212880080",
+  "artifact_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40212880080/artifacts/12606715416",
+  "interpretation": "Only four overlapping tickers passed the fixed 60-session reconciliation requirement. FAIL includes insufficient overlap, so these counts are not a claim that every rejected source price is wrong. The source is not approved as a wholesale replacement."
+}
