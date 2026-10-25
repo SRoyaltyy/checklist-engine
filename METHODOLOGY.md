@@ -13,7 +13,7 @@
 - *Case*: one stock on one day D where an answer was true. *Trade*: buy at D's open, then apply exit rule v1.
 - *Cutoff*: a number inside a question's definition (e.g. a "leg" is at least 3 ATR). We test many versions of each.
 - *ATR*: average true range, meaning a stock's typical daily move. *SMA, RSI, MACD, RVOL, Bollinger*: standard chart indicators.
-- *Practice data* is 2020–24. The *sealed exam* is 2025–26, which no one reads until after Fri 2026-10-23 23:00 HKT and which is used only once.
+- *Practice data* is 2020–24. *2025–26* was sealed until after Fri 2026-10-23 23:00 HKT. Cyrus unlocked it on 2026-10-25 for a live / out-of-sample check once the list exists. Not for discovery or fitting.
 - *Luck bar*: with this many tries, some answers will look good by chance. The bar is how strong a result has to be to count.
 - *bp*: basis point, 0.01%.
 
@@ -39,11 +39,11 @@
 | Older experiments | `lookalike/`, `combo/`, `path_bank*/`, `chart_picture_pack/`, `checklist_brainstorm/` |
 | Theme Radar research shorts (daily plans and scorecard) | repo [`SRoyaltyy/theme-radar`](https://github.com/SRoyaltyy/theme-radar), `research/shadow_log/` |
 | F4TR insider tags 2020–24 | Drive file id `19PtFPKG4O6wBnR5IaEUP0d9PxL0w83cq` |
-| F4TR insider tar 2025–26 | Drive file id `1WAKjsY9SWnKFw61fFAuprs-7Mpy0gEWh`. **SEALED, do not open** |
+| F4TR insider tar 2025–26 | Drive file id `1WAKjsY9SWnKFw61fFAuprs-7Mpy0gEWh`. **Unlocked 2026-10-25 (Cyrus):** live / out-of-sample check once the list exists. Not for discovery or fitting. |
 | F4TR casebook | theme-radar PR #17; Drive file id `12uJhWTLllB2djHY2BqEsbzxlHeVTc6fm` |
 | Nasdaq earnings answers 2020–24 (tags sha `08f15079…ebe42cc`) | Drive file id `1iE6J8sJlGWJLIYKY7iDTyJQ8hrrA5bjr` |
-| Earnings calendar 2025-01→2026-06 (manifest sha `ee6e836a…915d`) | Drive `15whNbyvIE8Q_3QV_B92EuyadbRnEcP-N`. **SEALED, do not open** |
-| New Bot chunks 2025-01→2026-06 (manifest sha `784e00ac…6e45`) | Drive `14XOz6w9QgNKHoSKC_mTD4xhKWie8FuiA`. **SEALED, do not open** |
+| Earnings calendar 2025-01→2026-06 (manifest sha `ee6e836a…915d`) | Drive `15whNbyvIE8Q_3QV_B92EuyadbRnEcP-N`. **Unlocked 2026-10-25 (Cyrus):** live / out-of-sample check once the list exists. Not for discovery or fitting. |
+| New Bot chunks 2025-01→2026-06 (manifest sha `784e00ac…6e45`) | Drive `14XOz6w9QgNKHoSKC_mTD4xhKWie8FuiA`. **Unlocked 2026-10-25 (Cyrus):** live / out-of-sample check once the list exists. Not for discovery or fitting. |
 | Chart-picture v2 formulas (sha `0badaa4a…0c05`) | Drive `1pSFAIKcP2EWjieXbG01yVJj6pt-3EeOo` |
 | Lock index v3 | Drive `14vtWrL3tfPvXUuFP781BQ9sqEwbI-1uH` |
 | Daily stock-picking pipeline | repo `SRoyaltyy/fullscan` (separate) |
@@ -51,9 +51,9 @@
 **Data access.** The 2020–24 inputs the engine reads (11 files plus a checksum list, survivors only, nothing after 2024-12-31) are on the release page [data-2020-24-v1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/data-2020-24-v1). The engine expects fixed folder paths, so point them at wherever you save the files; the release page says which file goes where. The Drive folders above are the master copies.
 
 **House rules.**
-- 2025–26 stock-split dates are used only as metadata in `mcap_fix.py` to fix share counts. No 2025–26 prices or outcomes are read before the lock.
+- 2025–26 stock-split dates are used as metadata in `mcap_fix.py` to fix share counts. 2025–26 prices and outcomes may be used for a live / out-of-sample check once the list exists (unlocked, Cyrus 2026-10-25). Not for discovery or fitting.
 - No secrets in the repo.
-- Don't open 2025–26 data before the lock, and then only once.
+- 2025–26 is unlocked (Cyrus 2026-10-25). Use it for the live / out-of-sample check once the list exists. See the top §0b entry.
 - The only valid price file is sha `fb9bbe69…` (see [DATA_INDEX.md](DATA_INDEX.md)).
 - Frozen question files are add-only.
 - Rules get committed before any results are computed.
@@ -62,7 +62,29 @@
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
-This file is the single source of truth; the newest entry overrides any pasted prompt.
+This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **2026-10-25 ~08:35 HKT (Cyrus via James): Kimi, do these next, in this order. This entry overrides older "2025-26 sealed / do not open" lines.**
+  - Already done: Step A answers for 2020-22 are finished, all 34/34 chunks. The chunk-1 identity proof passed. Release `data-2020-24-v1` has `answers_000` through `answers_033`.
+  - Already done: exit-grid workflows exist. Release `grid-2020-22-v1` has raw tables only (~42 assets as of this writing). Release `combine-2020-22-v1` is still empty (0 assets).
+  - 1. Clear the leak-sweep FAIL: https://github.com/SRoyaltyy/checklist-engine/actions/runs/40099037308. Cutting price at day D changed 0 answer values (good). The FAIL is missing question columns at early cut dates: `breakout`, `range_max_position`, `segment_compare`, `fail_shape`, `vol_direction_link`. Prove those are "not enough history yet" gaps, or fix real lookahead. No number counts until this is resolved and logged in the Kimi change log with the verifying run link.
+  - 2. Unblock the Actions queue. Cancel duplicate schedule/cron runs waiting on `main` that are not needed while grid-chunk is finishing — especially queued combiner, combiner-predict, grid-backfill, step-a, and exit-grid cron copies holding slots. Keep the in-progress and queued grid-chunk runs on `kimi/exit-grid`. Prefer parallel grid work. Don't serialize.
+  - 3. Finish the exit grid for all chunks into release `grid-2020-22-v1`. Raw tables first, then the workflow's shortlist job after grid and gridyearly. Need counts of setups that pass the 2020-21 screen and their 2022 check numbers, not only raw trade/win/sum tables.
+  - 4. Publish the finished list to `combine-2020-22-v1` (0 assets now). The combiner does not auto-start when the grid finishes — only `workflow_dispatch` and the hourly schedule. Make fit and predict actually publish. Scoring rules (binding):
+    - Probability / ranking metric = expected profit after fees: win% × avg win − loss% × avg loss. Not raw win rate.
+    - Minimum win-rate floor defaults to about 40%. Keep the ability to report 35/40/45/50.
+    - Drop untradeable names, and names under $100M on day D, from cases and from controls.
+    - Score against the same-day market baseline.
+    - Grade each independent checklist setup separately under every buy/sell rule (hold 1-30 days, take-profit 2-30%, stop 2-30% or none, early sell when the target is hit). One setup can have many scores.
+  - 5. Data windows. This overrides older "2025-26 sealed" lines:
+    - 2020-22: discovery and fitting only.
+    - 2023-24: one confirmation test after the shortlist.
+    - 2025-26: unlocked as of Cyrus 2026-10-25. It may be used for a live / out-of-sample check once the list exists.
+    - Still in force: no passwords or keys in the public repo; survivors-only build; questions are yes/no or a fixed set only (no free-text reading).
+  - 6. Operating rules stay:
+    - Heavy crunching only on GitHub Actions runners. Bots and models write code and workflows and check outputs. They never crunch the grid themselves.
+    - Keep the current working code. Only speed it up or fix blockers, without breaking Step A or the identity proof.
+    - Every real change: append a dated line to the "Kimi change log" section with what changed and the commit, run, or release link, so James can verify it on GitHub.
+    - Commits on `main` are fine. The public repo is fine.
 - **2026-10-24 ~22:50 HKT (Cyrus via James): Kimi, make the runs parallel. Keep all the math code as it is.**
   - Rule 1: all heavy compute runs on GitHub runners only. Never on the box, and never by a frontier model. Models only write workflow changes and check outputs.
   - Rule 2: the current engine, questions, scoring and exit-grid code stay as they are. Change only how jobs are launched, unless a fix is truly needed. Then explain why.
@@ -85,7 +107,7 @@ This file is the single source of truth; the newest entry overrides any pasted p
 - **2026-10-24 ~08:50 HKT (Cyrus via Grok Bot): combining rules and reminders.**
   - Combining rules: see "Single questions vs combinations" and §7b. Shortlist on 2020-21, test pairs and the combining model on 2022, and use 2023-24 once for the final test. Failing alone doesn't drop a question.
   - Don't store `answers_*.npz` on the shared bot computer (only about 8.8GB free). All the answers files together are 3-8GB.
-  - Hard rules unchanged: 2020-22 only for scoring, nothing from 2025 on, yes/no or fixed-set answers only, no free text.
+  - Hard rules then: 2020-22 only for scoring, nothing from 2025 on, yes/no or fixed-set answers only, no free text. The "nothing from 2025 on" ban is overridden by the 2026-10-25 entry above: 2025-26 may be used for a live / out-of-sample check once the list exists. Yes/no or fixed-set only, and no free text, still stand.
 - **2026-10-24 08:45 HKT (Taskforce): Step A handoff.**
   - Engine: branch `engine/v2.7.2.2` @ `487387f`. Run `python3 step_a.py --workers N --chunk 400` with `CHECKLIST_DATA_DIR` and `OUT_DIR` set. Bars are cut at 2022-12-31 inside the script.
   - `487387f` saves every stock-day's answer to every question: `chunks/answers_NNN.npz` (int8, -1 = blank, 0/1 = answer) plus `chunks/trade_base_rows.parquet` (the ticker and date of each row). Saving is on by default (`SAVE_ANSWERS=1`). Pieces that have scores but no answers file get re-run automatically, so pieces 0–8 from `results/step-a-2020-22` will be redone.
@@ -157,7 +179,7 @@ This file is the single source of truth; the newest entry overrides any pasted p
 ## 5. Time splits
 - **Discover** on 2020–22.
 - **Confirm** on 2023–24, with nothing changed.
-- **2025–26 stays sealed.** It gets one shot at the very end.
+- **2025–26 is unlocked** (Cyrus 2026-10-25). Use it for a live / out-of-sample check once the list exists. Not for discovery or fitting.
 
 ## 6. Plan
 - **Status (2026-10-23):** Step A has **not started**. It waits for Cyrus to say "start Step A" to Taskforce. The scanner engine code is on branch [`engine/v2.7.2.2`](https://github.com/SRoyaltyy/checklist-engine/tree/engine/v2.7.2.2) (use commit `487387f` or later). It isn't merged.
@@ -175,7 +197,7 @@ This file is the single source of truth; the newest entry overrides any pasted p
 - Near-duplicate cutoffs make the bar conservative. This is stated, and no action is needed.
 
 ## 7b. Combining model (pre-registered)
-- Fit a logistic or tally model on 2020–22 using every question that isn't junk (see "Single questions vs combinations" below): shortlist and tune on 2020–21, check on 2022. Test the final combined model once on 2023–24 and show its calibration table there. Freeze it before the 2025–26 shot.
+- Fit a logistic or tally model on 2020–22 using every question that isn't junk (see "Single questions vs combinations" below): shortlist and tune on 2020–21, check on 2022. Test the final combined model once on 2023–24 and show its calibration table there. Freeze it before the 2025–26 live / out-of-sample check (unlocked, Cyrus 2026-10-25, once the list exists).
 - **Later study, Cyrus's idea:** the day-to-day change in model probability (e.g. 45% → 60%) as an input. Take out the stock's own recent return first so it isn't just momentum. The probability only exists after the combining model is fitted, so this is tested on 2023–24 only. The flip counts (questions turning bullish vs bearish since yesterday) and yesterday's price move come straight from the saved answers, so they go into Step A as ordinary questions. Both add tries to the luck bar.
 
 ### Single questions vs combinations (Cyrus 2026-10-24)
