@@ -227,6 +227,10 @@ This file is the single source of truth. Dated entries below are newest first. T
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+- **2026-10-25 ~17:10 HKT — block J wired; grid batch 1 in progress. Phase 3 + world.**
+  - `kimi/world-snapshot` `40893b8`: dividend/split EVENT columns (I196: `div_amt/div_days/div_n12`, `split_ratio/split_days/split_n`), strict date < D, generic `event_columns` helper, leak test extended. Reads `divsplits_shard_*.parquet` when the fetch lands on data-ext; until then the block stays empty by design. Synthetic test: strict-day semantics verified (event on D visible only from D+1).
+  - Old 9 grid legs died at the 350-min cap as predicted. world-leak-verify (40171325240) is RUNNING now; world_build, shortlist, 2x data_fetch queued behind my grid batch 1 (chunks 16,18-23).
+  - Remaining wiring: H (XBRL ratios - needs period-alignment design, turning into a focused task), I (FRED - key), E (Form 4 - box-only upload from James).
 - **2026-10-25 ~16:30 HKT — grid batch 1 dispatched + block L fetcher live. Phase 3 + world.**
   - Missing chunks 16,18-33 have NO active work (the 9 surviving in-flight runs all sit on covered chunks grinding doomed full-window legs). Dispatched batch 1 of capped waves: chunks 16,18-23 via grid-chunk @ `kimi/exit-grid` (has `max-parallel: 2`, `922a7ac`). Batch 2 (24-33) dispatches next round once batch-1 yearly legs land.
   - **Block L analyst actions fetcher** `ci/fetch_analyst.py` (`kimi/data-fetch` `259ddc1`): Yahoo upgradeDowngradeHistory (source map I197 = proven, dated from/to grades per firm, 2012-09+), sharded over the universe, 0.35s pacing + 429 backoff. Dispatched job=analyst shards=8. Raw grade strings kept; fixed-answer mapping freezes with groups 034+.
