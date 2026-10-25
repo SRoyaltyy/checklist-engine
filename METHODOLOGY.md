@@ -62,7 +62,13 @@
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
-This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **GROUND RULES (Cyrus, 2026-10-25 ~13:01 HKT) — override anything below. Kimi, ACK this block in §0c.**
+  - **1. Use all the data.** Use every conceivable source that can be used: every dictionary item, every source in [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv), plus anything else that can be fetched.
+  - **2. Ask all the questions.** Ask every conceivable question under the War room framework: levers 1–4 plus the history lever, applied to every world-state item.
+  - **3. Combine across everything.** Combination search combines in every way possible across all questions, not within isolated sets. The 34+ groups are only a work split for compute. The shortlist and the combiner must mix questions across all groups and all data blocks.
+  - **4. No leaks.** Every value must be knowable as of buy time (point-in-time). The leak-proof test must pass before any results count.
+  - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
+This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
 - **2026-10-25 ~12:55 HKT (Cyrus): Data sources + world-state rule. Kimi, ACK this entry in §0c.**
   - **One-line goal.** Build a world state for every item in [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv), for every stock, every trading day 2020–2026, using only data known before that day.
   - **Source map.** [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv) is the source map. Per item: the exact source, the point-in-time start date, the fetch-test result plus evidence, and the in-repo status. Block summary: [dictionary/DATA_SOURCES.md](dictionary/DATA_SOURCES.md). Checked before commit: no secrets. The only "token" text says the Finviz Elite token is not in the file (it lives in Actions secrets).
