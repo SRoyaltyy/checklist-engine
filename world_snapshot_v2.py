@@ -41,6 +41,15 @@ def context(tickers):
 
 
 def ticker_snapshot(ticker,bars,ctx):
+    bars=bars.copy()
+    bars['date']=pd.to_datetime(bars.date).astype('datetime64[ns]')
+    ctx=ctx.copy()
+    for key in ('etf','breadth','mkt','fred'):
+        if ctx[key] is not None:
+            frame=ctx[key].copy()
+            for column in ('date','vintage_date','obs_date'):
+                if column in frame:frame[column]=pd.to_datetime(frame[column]).astype('datetime64[ns]')
+            ctx[key]=frame
     daily=fw.ticker_frame(ticker,bars,ctx['funcs'],ctx['etf'],ctx['breadth'],ctx['earnings'].get(ticker),
         ext=ctx['ext'].get(ticker),peers=ctx['peers'],mkt=ctx['mkt'],
         an=ctx['an'].get(ticker),xb=ctx['xb'].get(ticker),gd=ctx['gd'].get(ticker),
@@ -101,6 +110,8 @@ def main():
             print('CHECKPOINT',ticker,len(files),'/',len(mine),flush=True)
         except Exception as exc:
             metadata['errors'][ticker]=repr(exc)
+            import traceback
+            traceback.print_exc()
             print('TICKER_ERROR',ticker,repr(exc),flush=True)
     # Align schema without holding all ticker frames in memory. Missing sources
     # stay null; coverage counts them in the full denominator.

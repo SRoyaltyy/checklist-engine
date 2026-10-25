@@ -28,16 +28,21 @@ jobs:
   companyfacts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install pandas pyarrow numpy
+      - run: python -m pip install -r requirements-world-v2.txt
       - name: Filing-version fetch on real companies
         run: |
           python -c "import pandas as pd; pd.DataFrame({'ticker':['AAPL','MSFT','GE']}).to_parquet('smoke_universe.parquet',index=False)"
-          python fetch/fetch_xbrl.py --universe smoke_universe.parquet --shards 1 --out xbrl-smoke --resume
+          gh release download data-2020-24-v1 -p sec_shares_out_filed_le_2024.parquet -p SHA256SUMS
+          grep sec_shares_out_filed_le_2024.parquet SHA256SUMS | sha256sum -c -
+          python fetch/fetch_xbrl.py --universe smoke_universe.parquet --shards 1 --out xbrl-smoke --resume --cik-map-file sec_shares_out_filed_le_2024.parquet
       - uses: actions/upload-artifact@v4
         if: always()
         with:

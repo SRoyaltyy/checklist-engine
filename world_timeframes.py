@@ -37,7 +37,10 @@ def completed_candles(bars, timeframe):
         rows.append(dict(date=g.date.iloc[-1], available_from=avail[group],
                          open=g.open.iloc[0], high=g.high.max(), low=g.low.min(),
                          close=g.close.iloc[-1], volume=g.volume.sum()))
-    return pd.DataFrame(rows, columns=['date', 'available_from', *PRICE_COLS])
+    result=pd.DataFrame(rows, columns=['date','available_from',*PRICE_COLS])
+    for column in ('date','available_from'):
+        result[column]=pd.to_datetime(result[column]).astype('datetime64[ns]')
+    return result
 
 
 def parameter_variants(o, h, l, c, v):
@@ -99,7 +102,8 @@ def world_timeframes(bars, funcs, daily_external=None):
         candles = completed_candles(bars, tf)
         features = candle_features(candles, funcs)
         if daily_external is not None and len(candles):
-            ext = daily_external.sort_values('date')
+            ext = daily_external.sort_values('date').copy()
+            ext['date']=pd.to_datetime(ext.date).astype('datetime64[ns]')
             extcols = [c for c in ext if c not in ('ticker','date')]
             ext = pd.merge_asof(candles[['available_from']].sort_values('available_from'),
                                 ext[['date', *extcols]].sort_values('date'),

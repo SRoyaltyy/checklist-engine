@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-SEC_HEADERS = {'User-Agent': 'checklist-engine research https://github.com/SRoyaltyy/checklist-engine'}
+SEC_HEADERS = {'User-Agent': os.environ.get('SEC_USER_AGENT','ChecklistEngine research 104515113+SRoyaltyy@users.noreply.github.com'), 'Accept-Encoding':'gzip, deflate'}
 CONCEPTS = ['Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','SalesRevenueNet',
  'NetIncomeLoss','OperatingIncomeLoss','GrossProfit','Assets','AssetsCurrent',
  'Liabilities','LiabilitiesCurrent','StockholdersEquity','LongTermDebt','LongTermDebtNoncurrent',
@@ -31,7 +31,11 @@ def get_json(url, retries=4, allow_404=False):
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(urllib.request.Request(url,headers=SEC_HEADERS),timeout=120) as response:
-                return json.load(response)
+                raw=response.read()
+                if raw[:2]==b'\x1f\x8b':
+                    import gzip
+                    raw=gzip.decompress(raw)
+                return json.loads(raw)
         except urllib.error.HTTPError as exc:
             if exc.code == 404 and allow_404:
                 print('SKIP_404',url,flush=True)
@@ -104,14 +108,26 @@ def main():
     ap.add_argument('--shards',type=int,default=8)
     ap.add_argument('--count',type=int,default=0)
     ap.add_argument('--resume',action='store_true')
+    ap.add_argument('--cik-map-file',default='')
     args=ap.parse_args()
     output=Path(args.out);output.mkdir(parents=True,exist_ok=True)
     target=output/f'xbrl_shard_{args.shard:03d}.parquet'
     progress=target.with_suffix('.progress.json')
     tickers=sorted(pd.read_parquet(args.universe,columns=['ticker']).ticker.unique())[args.shard::args.shards]
     if args.count: tickers=tickers[:args.count]
-    mapping=get_json('https://www.sec.gov/files/company_tickers.json')
-    cik_of={v['ticker'].upper().replace('-','.'):int(v['cik_str']) for v in mapping.values()}
+    cik_of={}
+    if args.cik_map_file:
+        mapping=pd.read_parquet(args.cik_map_file)
+        print('CIK_MAP_COLUMNS',list(mapping.columns),flush=True)
+        cik_column=next((c for c in ('cik','CIK','cik_str') if c in mapping),None)
+        if cik_column and 'ticker' in mapping:
+            for ticker,group in mapping.dropna(subset=[cik_column]).groupby('ticker'):
+                values=group[cik_column].unique()
+                if len(values)==1:cik_of[str(ticker).upper().replace('-','.')]=int(values[0])
+    if not cik_of:
+        mapping=get_json('https://www.sec.gov/files/company_tickers.json')
+        cik_of={v['ticker'].upper().replace('-','.'):int(v['cik_str']) for v in mapping.values()}
+    print('CIK_MAP_ENTRIES',len(cik_of),flush=True)
     rows=[];done={};errors={}
     if args.resume and target.exists() and progress.exists():
         rows=pd.read_parquet(target).drop(columns='yoy',errors='ignore').to_dict('records')

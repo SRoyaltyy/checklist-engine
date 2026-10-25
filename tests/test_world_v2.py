@@ -123,3 +123,11 @@ def test_gate_rejects_partially_missing_multi_output_item(tmp_path,monkeypatch):
     rows,failures=gate.build(measured,root=tmp_path)
     assert len(failures)==len(TIMEFRAMES)
     assert all(r['status']=='PENDING' for r in rows)
+
+
+def test_external_fields_with_microsecond_dates_align_on_all_timeframes():
+    b=bars(100)
+    external=pd.DataFrame(dict(date=b.date.astype('datetime64[us]'),mkt_vix=np.arange(len(b),dtype=float)))
+    result=world_timeframes(b,fw.discover(),external)
+    assert 'mkt_vix__monthly' in result
+    assert result['mkt_vix__5d'].iloc[5]==5
