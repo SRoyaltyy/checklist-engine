@@ -218,6 +218,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~16:25 HKT — step-a-rerun workflow live (`kimi/dictionary-fixes` `ae0afde`, registered main).**
+  - Dispatch-only workflow taking a chunk list: checks out the FIXED engine, seeds finished pieces, recomputes exactly the forced chunks, checkpoints scores+errors to the results branch and REPLACES answers_*.npz on the release (FORCE_UPLOAD=1 via d0f7810 plumbing). This completes the executable rerun chain end-to-end: impact-diff -> rerun_plan -> step-a-rerun[chunks] -> rm gridy assets -> re-dispatch grid-chunk.
+  - Grid state unchanged: 13 legs in flight; yearly 47/16 chunks.
+
 - **2026-10-25 ~16:10 HKT — rerun chain last gap closed: release assets now replaceable (`kimi/exit-grid` `d0f7810`).**
   - Found that `release_assets.py upload` silently SKIPS same-named assets and `push_loop.py` never re-uploads an existing answers_*.npz - so a `--force` Step A rerun would have left stale answers on the release (the grid would re-aggregate old data). Fixed: `FORCE_UPLOAD=1` env makes upload delete+replace, plus a new `rm` command. Math code untouched (plumbing only).
   - Full post-fix rerun recipe is now: impact-diff -> rerun_plan -> step_a `--force <chunks>` with FORCE_UPLOAD=1 -> `release_assets.py rm grid-2020-22-v1 gridy_<chunk>_*.parquet` -> re-dispatch grid-chunk for those chunks.
