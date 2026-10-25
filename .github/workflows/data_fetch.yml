@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: which fetch to run (xbrl | divsplits | cboe)
+        description: which fetch to run (xbrl | divsplits | cboe | fred)
         default: 'cboe'
         required: true
       shards:
@@ -46,11 +46,15 @@ jobs:
         if: ${{ matrix.i < fromJSON(inputs.shards) || inputs.job == 'cboe' }}
         env:
           JOB: ${{ inputs.job }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           set -e
           if [ "$JOB" = "cboe" ]; then
             [ "${{ matrix.i }}" = "0" ] || { echo "cboe runs on leg 0 only"; exit 0; }
             python3 ci/fetch_cboe.py --out "$RUNNER_TEMP/fetch_out"
+          elif [ "$JOB" = "fred" ]; then
+            [ "${{ matrix.i }}" = "0" ] || { echo "fred runs on leg 0 only"; exit 0; }
+            python3 ci/fetch_fred.py "$RUNNER_TEMP/fetch_out"
           else
             python3 "ci/fetch_${JOB}.py" --shard ${{ matrix.i }} --shards 8 \
               --universe "$RUNNER_TEMP/fetch_in/universe_2020_survivors_le2024.parquet" \
