@@ -6,8 +6,7 @@
 name: exit-grid
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '53 */6 * * *'   # off-peak minute, interleaved with step-a's :23
+# schedule disabled 2026-10-25 ~15:15 HKT per 0b (cancel schedule spam holding runner slots during grid phase); re-enable after grid 34/34
 concurrency:
   group: exit-grid
   cancel-in-progress: false
