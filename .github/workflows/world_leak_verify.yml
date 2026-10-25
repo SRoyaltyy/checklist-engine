@@ -1,6 +1,7 @@
 # World-snapshot leak verify (fix 5): every world column must be point-in-time -
 # row D identical when all inputs truncate at D. Full version (TA-Lib + 61 candle
-# patterns + ETF overlays + breadth + earnings). Needs TA-Lib, so runners only.
+# patterns + ETF overlays + breadth + earnings + box-only blocks F/G: FINRA SI,
+# short volume, Reg SHO, halts - ext inputs truncated at D too). Runners only.
 name: world-leak-verify
 on:
   workflow_dispatch:
@@ -18,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: kimi/world-bd
+          ref: kimi/world-snapshot
       - name: TA-Lib C library + Python wrapper
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
