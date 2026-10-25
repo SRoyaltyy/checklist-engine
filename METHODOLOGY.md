@@ -218,6 +218,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:10 HKT — wave-2 FRED fetcher ready (`kimi/data-fetch` `fb87b40`); blocked only on the FRED_API_KEY secret.**
+  - `ci/fetch_fred.py` wired as `data_fetch` job=fred: ALFRED vintage pull (output_type=2, vintages from 1776 start) so every macro row carries the date it first became known - PIT join on day D uses vintages with realtime_start <= D. Starter set of 10 series (VIX, 10y/2y/3m, 10y-2y, IG+HY spreads, WALCL, RRP, SOFR); final series list needs War-room confirm (dictionary I195 scope was vague). Runner exits cleanly with a clear message if the secret is missing.
+  - Still waiting on James: FRED_API_KEY secret + box-only uploads (FINRA SI, daily short volume, raw halts, New Bot 2025-26 chunks). Queue otherwise unchanged (13 grid legs in flight, everything else queued).
+
 - **2026-10-25 ~14:00 HKT — world-snapshot now carries the FULL build (A+B+D+K + leak test) after clean pre-staged merge (`100b440`).**
   - Merged `kimi/world-bd` into `kimi/world-snapshot`. The one conflict was the two smoke-crash fixes applied independently on both branches; resolved to the world-bd version (superset, both fixes verified present, py_compile clean). So when smoke 40163291647 passes, the shards=8 dispatch needs NO merge step - just the dispatch.
   - Queue: 13 grid legs ~4h in (upper calibration bound ~06:00-07:06 UTC, first completions expected within ~1-2h); world smoke / impact-diff / world leak-verify / cboe smoke / step-a all queued behind them.
