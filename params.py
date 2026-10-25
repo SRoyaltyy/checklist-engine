@@ -2,7 +2,7 @@
 Usage is detected automatically (TrackedParams records which names each question reads)."""
 DEFAULTS = dict(leg_atr=3.0, long_trend=60,
                 # v2.7.1 history-bucket numbers (HISTORY_BUCKETS_v2.7.1_FINAL.csv)
-                div_unit=0.25, ooe_unit=1.0, speed_net=0.5, speed_fast=1.5, speed_slow=0.67, route_flat=1.0, route_mid=80,
+                div_unit=0.25, div_K=2, ooe_unit=1.0, speed_net=0.5, speed_fast=1.5, speed_slow=0.67, route_flat=1.0, route_mid=80,
                 char_wild=1.5, char_calm=0.67, retest_tol=0.5, squeeze_pct=20, squeeze_break=0.5, stage_slope=0.05,
                 vop_hi=80, vop_lo=20, ll_corr=0.2, tfa_t=2.0, shock_unit=3.0, shock_held=0.25, shock_gone=0.75, hist_250=250, hist_kdiv=10, hist_thirds=3, stage_min=10, stage_div=2, tfa_mult=3, stage_slope2=0.05)
 CROSS = ('leg_atr', 'long_trend')        # Cyrus: full cross (16 versions) where a question uses both

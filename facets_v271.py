@@ -116,8 +116,14 @@ def hist(hv, X, I, N, v):
                 p2 = np.where(p1 > 0, last[np.maximum(p1 - 1, 0)], -1)
                 inw = (p2 >= idx - N + 1) & (p1 > p2) & (p2 >= 0)
                 a1, a2 = np.where(p1 >= 0, p1, 0), np.where(p2 >= 0, p2, 0)
-                if sgn == 1: res[nm] = inw & (C[a1] < C[a2]) & (X[a1] - X[a2] >= P['div_unit']*u)
-                else: res[nm] = inw & (C[a1] > C[a2]) & (X[a2] - X[a1] >= P['div_unit']*u)
+                aC, aX = a1, a2   # pivot pair compared (default: newest vs previous, K=2)
+                if int(P['div_K']) >= 3:   # C11: use the 1st and 3rd pivots (2nd must exist in-window)
+                    p3 = np.where(p2 > 0, last[np.maximum(p2 - 1, 0)], -1)
+                    inw = inw & (p3 >= idx - N + 1)
+                    aX = np.where(p3 >= 0, p3, 0)   # 3rd pivot replaces 2nd as the far anchor
+                if sgn == 1: sgn_b, sgn_x = C[a1] < C[aX], X[a1] - X[aX]
+                else: sgn_b, sgn_x = C[a1] > C[aX], X[aX] - X[a1]
+                res[nm] = inw & sgn_b & (sgn_x >= P['div_unit']*u)
             return code(hv, [('bull_div', res['bull']), ('bear_div', res['bear']), ('none', one)], vX & vu & ok(W(C, N)))
         if hv == 'order_of_events':
             imx = np.nanargmax(np.nan_to_num(Xw, nan=-np.inf), 1); imn = np.nanargmin(np.nan_to_num(Xw, nan=np.inf), 1)
