@@ -35,3 +35,35 @@ if [ -f nasdaq_earn_2020-24.tar ]; then
   tar xf nasdaq_earn_2020-24.tar
   echo "earnings calendars:"; ls data/earnings/ | head -8
 fi
+
+# ---- data-ext-2020-26-v1: box-only blocks (FINRA SI/short volume, halts, Reg SHO) ----
+mkdir -p "$DEST/data-ext"
+API2="https://api.github.com/repos/${GH_REPO:-${GITHUB_REPOSITORY}}"
+TAG2="data-ext-2020-26-v1"
+python3 - "$API2" "$TAG2" "$DEST" <<'PY'
+import sys, json, os, urllib.request
+api, tag, dest = sys.argv[1], sys.argv[2], sys.argv[3]
+tok = os.environ['GITHUB_TOKEN']
+want = {f'finra_si_{y}.parquet' for y in range(2020, 2027)} | \
+       {f'finra_shvol_{y}.parquet' for y in range(2020, 2027)} | \
+       {'nasdaq_halts_2020_2026.parquet', 'nasdaq_regsho_threshold_2020_2026.parquet',
+        'box_uploads_SHA256SUMS.txt'}
+req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
+rel = json.load(urllib.request.urlopen(req))
+for a in rel['assets']:
+    if a['name'] not in want:
+        continue
+    out = os.path.join(dest, 'data-ext', a['name'])
+    if os.path.exists(out) and os.path.getsize(out) == a['size']:
+        print('cached', a['name']); continue
+    req = urllib.request.Request(a['url'], headers={'Authorization': f'token {tok}', 'Accept': 'application/octet-stream'})
+    with urllib.request.urlopen(req) as r, open(out, 'wb') as f:
+        while True:
+            b = r.read(1 << 20)
+            if not b: break
+            f.write(b)
+    print('downloaded', a['name'], a['size'])
+PY
+cd "$DEST/data-ext"
+sha256sum -c box_uploads_SHA256SUMS.txt
+echo "data-ext files:"; ls

@@ -9,6 +9,15 @@ Block A: full TA-Lib function set + all 61 candle patterns (auto-discovered from
 the installed TA-Lib, OHLCV-fed only; anything needing other inputs is skipped and
 listed in the coverage table).
 Block K: market breadth (NH-NL / advance-decline / %%>200d) from breadth_2020_24.
+Block F: FINRA twice-monthly short interest (I188) + daily short volume (I189),
+release data-ext-2020-26-v1. SI keyed on publication_date < D (never settlement);
+daily short volume published after 18:00 ET on date X -> usable next session
+(strict date < D).
+Block G: Nasdaq trading halts (I191) + Reg SHO threshold list (I190), same release.
+Halts: only events with halt_date < D; the resume gap is used only when the
+resume date is also < D (ongoing halts give halt_days/counts, gap stays blank).
+Reg SHO: file for date d is published after the close of d -> usable next session
+(strict date < D); membership is sticky, so regsho_on looks back 7 calendar days.
 
 Output: shard parquets world_shard_NNN.parquet keyed by (ticker, date), float32
 for indicators, int8 for candle patterns (-100/0/100). A JSON sidecar per shard
@@ -158,12 +167,163 @@ def earn_for(dates, edf):
                          'earn_surp': m.surprise_pct_fill.to_numpy(dtype=np.float32),
                          'earn_deps': m.eps_delta.to_numpy(dtype=np.float32)})
 
+# ---------------- Block F: FINRA short interest + daily short volume ----------------
+def _data_ext_dir():
+    return os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext')
+
+def load_si(tickers):
+    """FINRA twice-monthly short interest (dictionary I188). Point-in-time: keyed
+    on publication_date, never settlement_date. Columns: si_qty (current short
+    position), si_dtc (days to cover), si_chg (qty vs previous settlement as
+    published)."""
+    base = _data_ext_dir()
+    if not os.path.isdir(base):
+        return None
+    fs = [os.path.join(base, f) for f in sorted(os.listdir(base))
+          if f.startswith('finra_si_') and f.endswith('.parquet')]
+    if not fs:
+        return None
+    cols = ['symbol', 'publication_date', 'current_short_qty', 'previous_short_qty', 'days_to_cover']
+    df = pd.concat([pd.read_parquet(f, columns=cols) for f in fs], ignore_index=True)
+    df = df[df.symbol.isin(tickers)]
+    if not len(df):
+        return None
+    df['publication_date'] = pd.to_datetime(df['publication_date'])
+    prev = df.previous_short_qty.to_numpy(float)
+    cur = df.current_short_qty.to_numpy(float)
+    df['si_chg'] = np.where(prev > 0, cur / prev - 1, np.nan)
+    df = df.rename(columns={'current_short_qty': 'si_qty', 'days_to_cover': 'si_dtc'})
+    return df[['symbol', 'publication_date', 'si_qty', 'si_dtc', 'si_chg']].sort_values('publication_date')
+
+def load_shvol(tickers):
+    """FINRA daily short volume ratio (dictionary I189): published after 18:00 ET
+    on date X -> usable from the next session. Adds 5- and 20-day rolling means
+    of the ratio per ticker."""
+    base = _data_ext_dir()
+    if not os.path.isdir(base):
+        return None
+    fs = [os.path.join(base, f) for f in sorted(os.listdir(base))
+          if f.startswith('finra_shvol_') and f.endswith('.parquet')]
+    if not fs:
+        return None
+    df = pd.concat([pd.read_parquet(f, columns=['date', 'symbol', 'short_ratio']) for f in fs],
+                   ignore_index=True)
+    df = df[df.symbol.isin(tickers)]
+    if not len(df):
+        return None
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values(['symbol', 'date'])
+    g = df.groupby('symbol')['short_ratio']
+    df['shv_r5'] = g.transform(lambda s: s.rolling(5, min_periods=3).mean())
+    df['shv_r20'] = g.transform(lambda s: s.rolling(20, min_periods=10).mean())
+    return df.rename(columns={'short_ratio': 'shv_ratio'})
+
+# ---------------- Block G: halts + Reg SHO threshold ----------------
+def load_halts(tickers):
+    """Nasdaq trading halts 2020-2026 (dictionary I191). An event is knowable on
+    day D only if halt_date < D (strict; the dictionary's pre-open timestamp rule
+    is approximated conservatively by date). The resume gap is reported only when
+    resume_date is also < D, so no future resume info leaks through ongoing halts.
+    reason is factorized to a small int code (fixed set)."""
+    base = _data_ext_dir()
+    p = os.path.join(base, 'nasdaq_halts_2020_2026.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p, columns=['halt_date', 'symbol', 'reason', 'resume_date'])
+    df = df[df.symbol.isin(tickers)]
+    if not len(df):
+        return None
+    hd = pd.to_datetime(df.halt_date, format='%m/%d/%Y', errors='coerce')
+    rd = pd.to_datetime(df.resume_date, format='%m/%d/%Y', errors='coerce')
+    df = df.assign(halt_d=hd, resume_d=rd).dropna(subset=['halt_d'])
+    codes, uniques = pd.factorize(df.reason.astype(str).fillna(''))
+    df['halt_rsn'] = codes.astype(np.float32)
+    return df[['symbol', 'halt_d', 'resume_d', 'halt_rsn']].sort_values('halt_d')
+
+def load_regsho(tickers):
+    """NYSE/Nasdaq Reg SHO threshold list (dictionary I190): the file for date d
+    is published after the close of d -> usable next session (strict date < D)."""
+    base = _data_ext_dir()
+    p = os.path.join(base, 'nasdaq_regsho_threshold_2020_2026.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p, columns=['date', 'symbol'])
+    df = df[df.symbol.isin(tickers)]
+    if not len(df):
+        return None
+    df['date'] = pd.to_datetime(df['date'])
+    return df[['symbol', 'date']].sort_values('date')
+
+def load_box_ext(tickers):
+    """Load every available box-only block at once. Returns a dict of per-ticker
+    dicts: {'si': {tk: frame}, 'shvol': {tk: frame}, 'halts': {tk: frame},
+    'regsho': {tk: frame}}; missing blocks are absent (or None if no files)."""
+    out = {}
+    si = load_si(tickers)
+    out['si'] = dict(tuple(si.groupby('symbol'))) if si is not None else None
+    shv = load_shvol(tickers)
+    out['shvol'] = dict(tuple(shv.groupby('symbol'))) if shv is not None else None
+    ha = load_halts(tickers)
+    out['halts'] = dict(tuple(ha.groupby('symbol'))) if ha is not None else None
+    rg = load_regsho(tickers)
+    out['regsho'] = dict(tuple(rg.groupby('symbol'))) if rg is not None else None
+    return {k: v for k, v in out.items() if v}
+
+def _asof_strict(dates, right, cols, date_col, prefix_days=None):
+    """Backward asof join of per-ticker `right` frame onto sorted `dates`, keeping
+    only rows strictly before each date. Returns {col: np.array} plus
+    {prefix_days: days-since-last-record} when prefix_days is given."""
+    if right is None or not len(right):
+        return {}
+    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
+    r = right.rename(columns={date_col: '_evt'}).sort_values('_evt')
+    r['_evt'] = pd.to_datetime(r['_evt']).astype('datetime64[ns]')
+    m = pd.merge_asof(q, r[['_evt'] + cols], left_on='date', right_on='_evt',
+                      direction='backward', allow_exact_matches=False)   # last record STRICTLY before D
+    ok = m['_evt'] < m.date                      # strict: nothing from D onward
+    m = m.where(ok)
+    out = {c: m[c].to_numpy(dtype=np.float32) for c in cols}
+    if prefix_days:
+        out[prefix_days] = (m.date - m['_evt']).dt.days.to_numpy(dtype=np.float32)
+    return out
+
+def halt_columns(dates, hf):
+    """Halt columns for one ticker's sorted date array from its halt event frame.
+    halt_days/gap/rsn use the last event with halt_d < D; the gap only when that
+    event's resume_d is also < D. halt_n20/halt_n60 count events in the trailing
+    20/60 calendar days (T20-CNT style), strict < D."""
+    d = pd.to_datetime(pd.Series(dates)).to_numpy(dtype='datetime64[ns]')
+    n = len(d)
+    nan = np.full(n, np.nan, dtype=np.float32)
+    out = {'halt_days': nan.copy(), 'halt_gap': nan.copy(), 'halt_rsn': nan.copy(),
+           'halt_n20': nan.copy(), 'halt_n60': nan.copy()}
+    if hf is None or not len(hf):
+        return out
+    he = np.sort(hf.halt_d.to_numpy(dtype='datetime64[ns]'))
+    res = hf.sort_values('halt_d').resume_d.to_numpy(dtype='datetime64[ns]')
+    rsn = hf.sort_values('halt_d').halt_rsn.to_numpy(dtype=np.float32)
+    one_day = np.timedelta64(1, 'D')
+    for i, D in enumerate(d):
+        j = np.searchsorted(he, D, side='left')     # events with halt_d < D
+        if j == 0:
+            continue
+        k = j - 1
+        out['halt_days'][i] = (D - he[k]) / one_day
+        out['halt_rsn'][i] = rsn[k]
+        if not np.isnat(res[k]) and res[k] < D:
+            out['halt_gap'][i] = (res[k] - he[k]) / one_day
+        out['halt_n20'][i] = j - np.searchsorted(he, D - np.timedelta64(20, 'D'), side='left')
+        out['halt_n60'][i] = j - np.searchsorted(he, D - np.timedelta64(60, 'D'), side='left')
+    return out
+
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
-    report_date < D. `edf_tk` is the ticker's earnings sub-frame (or None)."""
+    report_date < D. `edf_tk` is the ticker's earnings sub-frame (or None).
+    `ext` is the ticker's box-only block dict: si/shvol/regsho frames and the
+    halt event frame; every one of those joins is strict < D as well."""
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
         o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
@@ -187,6 +347,24 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk):
     e2 = earn_for(d.date.to_numpy(), edf_tk) if edf_tk is not None else None
     if e2 is not None:
         df = pd.concat([df.reset_index(drop=True), e2.reset_index(drop=True)], axis=1)
+    if ext:
+        dates = df['date'].to_numpy()
+        if ext.get('si') is not None:
+            for c, v in _asof_strict(dates, ext['si'], ['si_qty', 'si_dtc', 'si_chg'],
+                                     'publication_date', prefix_days='si_days').items():
+                df[c] = v
+        if ext.get('shvol') is not None:
+            for c, v in _asof_strict(dates, ext['shvol'], ['shv_ratio', 'shv_r5', 'shv_r20'], 'date').items():
+                df[c] = v
+        if ext.get('regsho') is not None:
+            r = _asof_strict(dates, ext['regsho'], [], 'date', prefix_days='regsho_days')
+            if 'regsho_days' in r:
+                df['regsho_days'] = r['regsho_days']
+                df['regsho_on'] = (df['regsho_days'] <= 7).astype(np.float32)
+                df.loc[df['regsho_days'].isna(), 'regsho_on'] = np.nan
+        if ext.get('halts') is not None:
+            for c, v in halt_columns(dates, ext['halts']).items():
+                df[c] = v
     return df
 
 # ---------------- build ----------------
@@ -241,15 +419,32 @@ def main():
     if edf is not None:
         edf_by_tk = dict(tuple(edf.groupby('symbol')))
         print('earnings rows for shard:', len(edf), flush=True)
+    ext_by_tk = {}
+    box = load_box_ext(set(mine))
+    for blk, per in box.items():
+        for tk, fr in per.items():
+            ext_by_tk.setdefault(tk, {})[blk] = fr
+    box_cols = {'si': ['si_qty', 'si_dtc', 'si_chg', 'si_days'],
+                'shvol': ['shv_ratio', 'shv_r5', 'shv_r20'],
+                'regsho': ['regsho_days', 'regsho_on'],
+                'halts': ['halt_days', 'halt_gap', 'halt_rsn', 'halt_n20', 'halt_n60']}
+    if box:
+        print('box-only blocks loaded:', {k: len(v) for k, v in box.items()}, flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
-                       'earn_cols': ecols2, 'earn_note': 'strict report_date < D (BMO-on-D excluded)'}
+                       'earn_cols': ecols2, 'earn_note': 'strict report_date < D (BMO-on-D excluded)',
+                       'box_cols': {k: box_cols[k] for k in box if box[k]},
+                       'box_notes': {'si': 'I188: keyed publication_date < D, never settlement',
+                                     'shvol': 'I189: dated X published after 18:00 ET, usable next session (strict < D)',
+                                     'regsho': 'I190: file for d published after close of d, usable next session (strict < D); regsho_on = listed within 7 cal days',
+                                     'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int'}}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
         df = ticker_frame(tk, d, funcs, etf if ecols else None,
-                          breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None)
+                          breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
+                          ext=ext_by_tk.get(tk))
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:

@@ -32,7 +32,10 @@ def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
         return [dict(ticker=tk, D='-', cols=0, mismatched=0, examples=[], note='no bars')]
     edf = fw.load_earnings({tk})
     edf_tk = edf[edf.symbol == tk] if edf is not None and len(edf) else None
-    full = fw.ticker_frame(tk, bars, funcs, etf, breadth, edf_tk).set_index('date')
+    box = fw.load_box_ext({tk})
+    ext = {blk: per[tk] for blk, per in box.items() if tk in per} or None
+    KEYDATE = {'si': 'publication_date', 'shvol': 'date', 'regsho': 'date', 'halts': 'halt_d'}
+    full = fw.ticker_frame(tk, bars, funcs, etf, breadth, edf_tk, ext=ext).set_index('date')
     res = []
     for cd in cut_dates:
         ds = full.index[full.index <= pd.Timestamp(cd)]
@@ -42,7 +45,11 @@ def check(tk, funcs, etf, breadth, cut_dates=CUT_DATES):
         b = bars[bars.date <= D]
         if not len(b):
             continue
-        cut = fw.ticker_frame(tk, b, funcs, etf, breadth, edf_tk).set_index('date')
+        # simulate knowledge at D: external blocks keep only rows strictly before D
+        ext_cut = None
+        if ext:
+            ext_cut = {blk: fr[fr[KEYDATE[blk]] < D] for blk, fr in ext.items()}
+        cut = fw.ticker_frame(tk, b, funcs, etf, breadth, edf_tk, ext=ext_cut).set_index('date')
         if D not in cut.index:
             res.append(dict(ticker=tk, D=str(D.date()), cols=0, mismatched=1, examples=['row D missing in cut build']))
             continue
