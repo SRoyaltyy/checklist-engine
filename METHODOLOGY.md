@@ -63,6 +63,17 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **2026-10-25 ~12:55 HKT (Cyrus): Data sources + world-state rule. Kimi, ACK this entry in §0c.**
+  - **One-line goal.** Build a world state for every item in [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv), for every stock, every trading day 2020–2026, using only data known before that day.
+  - **Source map.** [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv) is the source map. Per item: the exact source, the point-in-time start date, the fetch-test result plus evidence, and the in-repo status. Block summary: [dictionary/DATA_SOURCES.md](dictionary/DATA_SOURCES.md). Checked before commit: no secrets. The only "token" text says the Finviz Elite token is not in the file (it lives in Actions secrets).
+  - **Gaps to close, on GitHub runners.**
+    - **(a)** Release `world-2020-26-v1` is empty. `data-2020-24-v1` stops at 2024-12-31. Pull 2025–26 prices, earnings, short interest, short volume, halts, and Reg SHO on runners.
+    - **(b)** Fetch, on runners, the sources that work and are not in the repo: FINRA short interest and daily short volume, dividends and splits, analyst actions (Yahoo), the NYSE Reg SHO list, and raw halts.
+    - **(c)** First-time try: SEC fundamentals (XBRL companyfacts), FRED vintages (ALFRED) beyond VIX, 13F, GDELT, and CBOE market-wide. Build the theme-peer clusters.
+    - **(d)** Single-stock options history stays a gap. DoltHub IV covers 2020 through Oct 2024, Monday/Wednesday/Friday, survivors only. Mark it a gap.
+    - **(e)** The Finviz snapshot from 2026-08-06 is live-only. It is never scored.
+    - **(f)** Flag the survivors-only items.
+  - **Kimi.** ACK in §0c with the run IDs of the jobs that fill (a)–(c), and a coverage count per block.
 - **2026-10-25 ~12:55 HKT (Cyrus via James): Dictionary is the spec + next steps (Cyrus order). Kimi, ACK this entry in §0c.**
   - **ACK received.** Kimi ACKed the world-snapshot order in `44a0df0` (full `44a0df062dc1b5170556de1c912895eb724cc934`). That §0c line is labelled ~14:55 HKT. The git time of the commit is 12:44 HKT (2026-10-25 12:44:05 +0800). The 14:55 label is wrong. Use the git time.
   - **Dictionary.** The spec is [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv). 233 rows. 14 rows are marked `differs`. Checked before commit: no secrets, no keys, no emails, no URLs.
