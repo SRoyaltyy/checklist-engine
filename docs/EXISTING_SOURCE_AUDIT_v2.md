@@ -17,3 +17,7 @@ Checked before requesting further data from the owner, per METHODOLOGY §0b ~00:
 Both fullscan and theme-radar release inventories were empty when checked. Their repository data exists and was inspected separately. No separate trading pipeline was merged or changed.
 
 Validation remains provisional: run 40212365543 has 34 passing tests and 20 successful daily stock/ETF fetches, each with 454 sessions in 2025–26. Snapshot/coverage/leak results must be read from its own evidence. No Step A, shortlist or combination result is approved by this source inventory.
+
+## Measured price follow-up
+
+Run [40212880080](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40212880080) verified the existing Git blob and SHA-256 and read the actual file: 3,107,838 rows / 11,720 tickers, zero duplicate ticker/date keys; 3,106,998 rows are in 2025–26. Thus the reported 2024 start does not mean deep 2024 overlap for every ticker. Of 5,234 frozen tickers, 5,191 were found in this source: 4 passed the fixed overlap reconciliation check; 5,187 failed, including insufficient-overlap cases. This does not establish bad prices in every failed case. It does establish that the file cannot yet replace the frozen history without per-ticker backfill/reconciliation. See [EXISTING_PRICE_AUDIT_v2.json](EXISTING_PRICE_AUDIT_v2.json) and the run artifact for per-ticker evidence.
