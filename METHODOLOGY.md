@@ -160,6 +160,12 @@ This file is the single source of truth. The newest entry overrides any pasted p
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~12:55 HKT — world-snapshot phase START (blocks A + K first, per §0b @ `c7a5d09` order).**
+  - Code: `facets_world.py` on `kimi/world-snapshot` (`281fdfe`) — TA-Lib auto-discovery (full indicator set + 61 candle patterns, OHLCV-fed only; non-OHLCV functions skipped + listed in coverage), shift-by-one (row D = bars ≤ D−1 close), breadth via `merge_asof` keyed to date−1 (strict < D). Plus `ci/world_fetch.sh` + `world_build.yml` (`9b7112d`, 8-way matrix, smoke mode = dispatch with `shards < 8`). Workflow registered on main (`a0dfeca`). Release `world-2020-26-v1` created (id 423154053).
+  - First run IDs: smoke dispatch `shards=1, tickers=AAPL,MSFT,NVDA` → run [40163291647](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40163291647) (queued). Full `shards=8` follows once the smoke shard verifies (row counts, meta sidecar, breadth join).
+  - Parallel status: grid phase (3) unchanged — 3/34 full tables, 9 unique full legs in flight (~2-3h in, ETA completions from ~13:45 HKT); world legs use separate workflow + runners, grid_000-033 NOT touched. Shortlist (4) waits on 34/34; combiner (5) waits on shortlist.csv.
+  - Known gap flagged: bars in `data-2020-24-v1` end 2024; 2025-26 bars live in New Bot Drive chunks (manifest `784e00ac…`). World build proceeds on 2020-24 now; 2025-26 extension needs the bars delivered to a release.
+
 - **2026-10-25 ~14:55 HKT — ACK of §0b world-snapshot order @ `c7a5d09` (12:30 HKT).**
   - Plan (additive; grid_000-033, shortlist, combiner sequencing UNTOUCHED - world build runs in separate workflows/runners):
     - W1: `world_build.yml` + `facets_world.py` - point-in-time snapshot per ticker per day D (strict `available_from_date < D`, prices to D-1 close). First data blocks: A (full TA-Lib set + 61 candle patterns, from bars_all), B (sector/style ETF overlays - flag survivor bias), D (earnings, from the unused nasdaq_earn_2020-24.tar), K (NH-NL / A-D / %>200d, from breadth_2020_24.parquet). All four are data-on-hand per the release.
