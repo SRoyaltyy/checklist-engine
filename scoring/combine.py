@@ -105,7 +105,9 @@ class Featurizer:
         self.junk = np.ones(len(cols), bool)
         self._counts = [None] * len(cols)                    # value -> count, filled by fit()
 
-    def fit(self, parts):
+    def fit(self, parts, min_level_count=None):
+        """min_level_count (fix 4): when set, replaces the 0.5% share floor with an absolute
+        trade-count floor (rare answers survive if enough trades carry them); None = legacy cut."""
         n = parts[0][0].shape[0]
         off = 0
         for M, _cols in parts:
@@ -123,8 +125,12 @@ class Featurizer:
         for j, cnt in enumerate(self._counts):
             if cnt is None:
                 continue
-            keep = [v for v, c in cnt.items()
-                    if v != BLANK and 0.005 * n <= c <= 0.95 * n]
+            if min_level_count is None:
+                keep = [v for v, c in cnt.items()
+                        if v != BLANK and 0.005 * n <= c <= 0.95 * n]
+            else:
+                keep = [v for v, c in cnt.items()
+                        if v != BLANK and min_level_count <= c <= 0.95 * n]
             blank_c = cnt.get(BLANK, 0)
             if blank_c > 0.95 * n or not keep:
                 continue                                     # junk
