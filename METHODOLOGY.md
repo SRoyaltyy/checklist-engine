@@ -63,6 +63,31 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **2026-10-25 ~12:55 HKT (Cyrus via James): Dictionary is the spec + next steps (Cyrus order). Kimi, ACK this entry in §0c.**
+  - **ACK received.** Kimi ACKed the world-snapshot order in `44a0df0` (full `44a0df062dc1b5170556de1c912895eb724cc934`). That §0c line is labelled ~14:55 HKT. The git time of the commit is 12:44 HKT (2026-10-25 12:44:05 +0800). The 14:55 label is wrong. Use the git time.
+  - **Dictionary.** The spec is [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv). 233 rows. 14 rows are marked `differs`. Checked before commit: no secrets, no keys, no emails, no URLs.
+  - **Steps.** Do these in order. Run jobs concurrently where they can. All heavy work stays on GitHub runners.
+    - **0.** Do not stop `grid_000`–`grid_033` or the shortlist. Let them finish.
+    - **1.** The dictionary is the single source of truth. Every definition is fixed and only its named parameters vary. Sweep each parameter's test range in code. Core concepts are defined once and referenced.
+    - **2.** Fix the 14 `differs` rows in code:
+      - Highs and lows use wicks, not closes.
+      - One swing rule, per the dictionary: strict pivot left/right, confirmed by D−1.
+      - Divergence = the last K confirmed pivots (K in {2, 3}) versus the oscillator at the same bars.
+      - Last-K highs and lows, least-squares line.
+      - MA lengths as labelled (10/20/50/200), plus true weekly bars.
+      - MACD signal line and histogram.
+      - OBV and A/D raw, plus the percentile.
+      - Keltner per the dictionary.
+      - Anchored VWAP anchors.
+      - Float versus shares outstanding.
+      - Tradeable filter: unknown market cap means excluded.
+      - All 61 candle patterns.
+    - **3.** Publish an impact list: which existing question IDs change under the fixed definitions. Rerun Step A and the grid only for those IDs. Every other existing result stays valid. Do not redo the whole run.
+    - **4.** Build `world_build.yml` to produce release `world-2020-26-v1`. Order: A, B, C, D, K first (that data is already held), then E–J, then L, M, O. Finviz raw fields are live-only and untested, and stay out of scoring.
+    - **5.** Generate the new question groups 034 and up from the dictionary. Run the leak verify on them, then Step A and the grid, at lower priority than the remaining `grid_000`–`grid_033`.
+    - **6.** Shortlist and combiner run once over ALL groups: the old results that stay valid, the rerun IDs, and the new groups.
+    - **7.** Post a coverage table: dictionary item → wired / not wired / reason.
+  - **Kimi.** ACK in §0c with the run IDs for steps 2–4.
 - **2026-10-25 ~12:30 HKT (Cyrus via James): TOP PRIORITY: world snapshot, EVERYTHING ticked (Cyrus order). Kimi, ACK this entry in §0c.**
   - **Cyrus order.** The tests must use ALL the data, like a TradingView chart with every indicator and every data overlay ticked. Today's bank is about 94% own-price and volume only. 206 questions (1.5%) are non-price. 1,024 written questions are in `QUESTION_TREE_v2.7.1.csv` and are not built in step_a or the facets: vs_sector_peers 374, vs_theme_peers 374, earnings 56, form4 60, analyst 56, halts 56, short_interest 48. The ETF file already has QQQ, IWM, and the 11 SPDRs, and only SPY is read. `nasdaq_earn_2020-24.tar` is unused. Only about 25 of about 150 TA-Lib indicators are used.
   - **World snapshot.** Build a point-in-time world snapshot per ticker per day D. Every column has `available_from_date` < D. Prices go up to the D−1 close. Filings are dated by filing date or publish date. FINRA short interest is dated by publication date. FRED uses ALFRED vintages. Questions read one column into yes/no or a fixed bucket set. No free text.

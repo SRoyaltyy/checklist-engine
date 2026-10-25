@@ -1,0 +1,2128 @@
+# World snapshot dictionary (zero-ambiguity, v1, 2026-10-25)
+
+Source: engine/v2.7.2.2 (487387f) code + QUESTION_TREE_v2.7.1 + tradingview_master.csv. in_code: yes / no / differs. Every definition is fixed; only the named parameters vary (swept in code). Default bar = daily; tree 'k x N' = N composite k-day bars (see C01).
+
+
+## 0 Core concepts
+
+- **C01 Bar** [daily; k-day composite (k in {1,2,3,5,10,20})] (in_code: yes)
+  - definition: Daily bar t = one regular US session: O = first trade, H = max trade price, L = min trade price, C = official close, V = shares traded. Split-adjusted backwards, not dividend-adjusted. A k-day composite bar ending at day t covers days t-k+1..t: O = open of day t-k+1, H = max of the k highs, L = min of the k lows, C = close of day t, V = sum of the k volumes (engine.kbars). Tree timeframe 'k x N' = N composite bars of k days each; composites are built at every offset o in 0..k-1, so every day gets a value.
+  - inputs: open,high,low,close,volume
+  - window: k days per bar
+  - rolling_or_fixed: rolling (one composite ends every day)
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: At least 15 composite bars, otherwise the ticker gets no answers at that k
+  - edge_cases: Raw $ prices = adjusted price × split factor (MF.factor_after); used for round numbers, $vol and mcap
+  - parameters: k=1|2|3|5|10|20 (code); N=3..756 per tree
+- **C02 Window W(x,N)** [N bars ending at t] (in_code: yes)
+  - definition: W(x,N) at t = the N values x[t-N+1..t], with t = the D-1 bar. 'Window start' = column 0 (oldest bar); 'window end' = column N-1 (the D-1 bar).
+  - inputs: any series
+  - window: N bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no. A row counts as valid only when all N values are non-NaN (ok()).
+  - edge_cases: No partial windows
+  - parameters: N=10|20|60 (LB_STD default); 1,3,5,100,120,252,504,756 where the tree asks
+- **C03 High (window high)** [HH(N), rolling] (in_code: yes)
+  - definition: HH(N)_t = max(High[t-N+1..t]): the highest wick in the last N bars, through D-1. Rolling: the window slides 1 bar each day.
+  - inputs: high
+  - window: N bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: Needs N bars, otherwise NaN
+  - edge_cases: Ties: the value is the same, and the position is the first (oldest) bar holding the max (numpy argmax). Equal highs count as one high.
+  - parameters: N=10|20|30|60|252 (code: 20 Donchian, 252 for the 52-week high, window N for HiLo_window); test 5..252
+- **C04 High (fixed-block high)** [HHfix(B), calendar block] (in_code: no)
+  - definition: HHfix(B) = max(High) over the trading days of fixed consecutive B-session blocks counted from 2015-01-02 (or calendar months when B = month). Today's value = the high of the last COMPLETED block before D. Not in code; listed separately as Cyrus's alternative.
+  - inputs: high
+  - window: B sessions or 1 calendar month
+  - rolling_or_fixed: fixed
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: Needs 1 complete block
+  - edge_cases: Same tie rule as the rolling high. A partial current block is never used.
+  - parameters: B=21|30|63 sessions or month; test 10..63
+- **C05 Low (window low)** [LL(N), rolling] (in_code: yes)
+  - definition: LL(N)_t = min(Low[t-N+1..t]): the lowest wick in the last N bars through D-1.
+  - inputs: low
+  - window: N bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: Needs N bars
+  - edge_cases: Ties: first (oldest) occurrence
+  - parameters: as High
+- **C06 Low (fixed-block low)** [LLfix(B)] (in_code: no)
+  - definition: Fixed-block mirror of HHfix(B).
+  - inputs: low
+  - window: B
+  - rolling_or_fixed: fixed
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 1 complete block
+  - edge_cases: as HHfix
+  - parameters: as HHfix
+- **C07 Close-based high/low** [CH(N)/CL(N)] (in_code: yes (differs from the wick definition))
+  - definition: max/min of Close over the last N bars. The code uses CLOSE (not wick) for: oscillator price_divergence, drawdown peak and trough, new_highs_lows giveback, pivots in divergence_sync, and big_picture high age (wick there).
+  - inputs: close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N bars
+  - edge_cases: first occurrence
+  - parameters: N as the item
+- **C08 Swing high/low: strict fractal pivot** [PivotStrict(k)] (in_code: yes (facets_v27._strict_piv, k=2, HiLo_window range_box))
+  - definition: Bar i is a swing high if High_i > High_j for every j in i-k..i-1 and i+1..i+k (strictly greater; any equal high disqualifies it). Swing low mirrors this with Low and <. CONFIRMATION: known only at the close of bar i+k, and usable from day i+k+1. It never repaints: once confirmed it stays; unconfirmed candidates are not used.
+  - inputs: high/low
+  - window: 2k+1 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: Needs k bars on each side
+  - edge_cases: Equal highs: no pivot (strict). The first and last k bars of the series can't be pivots.
+  - parameters: k=2 (code); test 1|2|3|5|10
+- **C09 Swing high/low: inclusive pivot** [PivotIncl(x,k)] (in_code: yes (differs: close, not wick; ties allowed))
+  - definition: Bar i is a pivot high of series x if x_i == max(x[i-k..i+k]) (ties allowed: plateaus give several pivots); pivot low mirrors this with min. Confirmed at bar i+k (facets_v271._pivots, used only when i <= t-k). Series x = CLOSE for price and the indicator itself for the indicator side. k = max(1, floor(N/hist_kdiv)).
+  - inputs: close or indicator
+  - window: 2k+1
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: k each side
+  - edge_cases: Plateau: every tied bar is a pivot; the most recent one is used
+  - parameters: hist_kdiv=10 (code) -> k=N/10; test 5|10|20
+- **C10 Swing (zigzag): ATR-reversal pivot** [ZZ(m)] (in_code: yes (facets_v26._zigzag))
+  - definition: Online zigzag on wicks. Start direction up at the first bar with ATR14. While up: track extreme bar e (highest High). When High_e - Low_t >= m × ATR14_e (ATR at the time the extreme was set), e becomes a swing HIGH, confirmed at bar t; switch to down and repeat the mirror. Confirmation bar = t, so it never repaints after confirmation; the live (unconfirmed) extreme is not a pivot.
+  - inputs: high,low,ATR14
+  - window: path-dependent (whole history)
+  - rolling_or_fixed: rolling/online
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ATR14 needs 15 bars
+  - edge_cases: An equal High (>=) moves the extreme to the later bar
+  - parameters: m=leg_atr=3.0 (code; grid 2|3|4|5); test 1.5..6
+- **C11 Last K swing highs / lows** [LastK(K)] (in_code: differs (code uses the last 2 pivots for divergence; K=3 is not in code))
+  - definition: The K most recent CONFIRMED pivots of one type (chosen pivot rule), with confirmation bar <= D-1 and pivot bar within the lookback L. Ordered newest = 1. If fewer than K exist, the item is blank (-1); it is not padded.
+  - inputs: pivots
+  - window: L bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: K confirmed pivots in L
+  - edge_cases: Plateau pivots (inclusive rule): the latest bar of the plateau counts once
+  - parameters: K=3 (Cyrus), 2 (code); test 2|3|4|5; L=N; pivot rule = strict k=2 | inclusive N/10 | zigzag 3ATR
+- **C12 Average swing line (support/resistance level)** [AvgLine(K)] (in_code: no)
+  - definition: Level = arithmetic mean of the prices of the last K swing highs (resistance) or the last K swing lows (support). 'At the level' = |Close - Level| <= tol × ATR14.
+  - inputs: pivots, ATR14
+  - window: L
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: K pivots
+  - edge_cases: fewer than K -> blank
+  - parameters: K=3; tol=retest_tol=0.5 ATR (code retest uses 0.5); test 0.25|0.5|1
+- **C13 Trend line through last K swings** [TL(K)] (in_code: no)
+  - definition: Ordinary least squares line price = a + b×bar_index fitted through the last K confirmed swing highs (upper) or lows (lower). Slope expressed as b / ATR14_t (ATR per bar). Rising if slope > s, falling if < -s, else flat. Projected line value at t = a + b×t. Break = Close_t beyond the projected value by >= brk × ATR14.
+  - inputs: pivots, close, ATR14
+  - window: L
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: K>=2 pivots (K=2 gives an exact 2-point line)
+  - edge_cases: Fewer than K -> blank
+  - parameters: K=2|3|4; s=0.05 ATR/bar (stage_slope analog); brk=0.5 ATR
+- **C14 Divergence (price vs indicator), pivot-based** [Div(k,u)] (in_code: yes (history divergence_sync))
+  - definition: Bullish: the two most recent confirmed price pivot LOWS p2 (older) < p1 (newer), both inside the window N, with Close[p1] < Close[p2] (lower low) and X[p1] - X[p2] >= u × unit (indicator makes a higher low at the SAME bars). Bearish mirrors this: pivot highs, Close[p1] > Close[p2] and X[p2] - X[p1] >= u×unit. unit = ATR14 for price-unit series; otherwise the std of 1-bar changes of X over the 250 bars before the window. Same pivot rule as PivotIncl. If both fire, bull is reported first.
+  - inputs: close, indicator
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 2 confirmed pivots in the window plus 250-bar unit history
+  - edge_cases: Indicator measured at the price-pivot bars (not at its own pivots)
+  - parameters: k=N/hist_kdiv (10); u=div_unit=0.25 (code); test 0.1|0.25|0.5|1; K=2
+- **C15 Divergence (price vs indicator), half-window** [DivHalf] (in_code: yes (base oscillator price_divergence))
+  - definition: The window N is split into the first floor(N/2) bars and the rest. Bull: the lowest close of the 2nd half < the lowest close of the 1st half AND the indicator at the 2nd-half low bar > the indicator at the 1st-half low bar. Bear mirrors this with highest closes. No pivot confirmation and no threshold. If both fire -> none.
+  - inputs: close, indicator
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N bars
+  - edge_cases: Tie lowest close -> earliest bar
+  - parameters: N=10|20|60; threshold=0 (code)
+- **C16 Crosses vs is above** [Cross(A,B)] (in_code: yes)
+  - definition: 'A above B' at t: A_t > B_t (equal = not above). 'A crosses up B' on bar t: sign(A-B) at t-1 < 0 and at t > 0, i.e. a strict sign change of the product (a bar exactly equal is skipped: neither sign counts). A cross 'within the window' = any such t in bars 2..N of the window. 'Fresh' cross = in the last max(2,floor(N/5)) bars.
+  - inputs: two series
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: Both series valid on all N bars
+  - edge_cases: Touching (A==B) is not a cross; both up and down in one window -> 'both'
+  - parameters: fresh=N/5 (code); test N/10..N/3
+- **C17 Breakout (channel)** [Brk(n)] (in_code: yes (Donchian20, HiLo_window))
+  - definition: Up-breakout on bar t: Close_t > max(High of the n bars t-n..t-1) (prior Donchian upper; today excluded). Down mirrors this with the Low. Breakout is close-based; a wick through only = 'test', not a breakout. Failed breakout (bull trap): latest up-breakout in the window and the last Close < that bar's channel high.
+  - inputs: close, high, low
+  - window: n prior bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n+1 bars
+  - edge_cases: Close equal to the channel high = no breakout
+  - parameters: n=20 (Donchian), N-1 (HiLo); test 10|20|55|252
+- **C18 Gap** [Gap] (in_code: yes (OHLC gap_up/gap_down))
+  - definition: Gap up on bar t: Open_t > High_{t-1}. Gap down: Open_t < Low_{t-1} (full gap, not close-to-open). Gap size = (Open_t - High_{t-1})/ATR14. Filled: a later bar's Low <= High_{t-1} (up gap) or High >= Low_{t-1} (down). Partially filled = moved into the gap but not through it. Only the most recent gap is tracked.
+  - inputs: open, high, low
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N bars
+  - edge_cases: A gap and a fill on the same bar are not checked (fill starts next bar)
+  - parameters: none (code); optional min size g=0|0.25|0.5 ATR
+- **C19 Leg** [Leg(m)] (in_code: yes)
+  - definition: A leg = the move between two consecutive zigzag pivots ZZ(m). Size in ATR = (pivot2 - pivot1)/ATR14 at the start. Up leg if positive. 'Long trend' = leg duration >= LT bars. Alt (drawdown climax_context): leg start = the nearest bar back where |C_t - C_s| >= m × median(H-L, 60).
+  - inputs: high, low, ATR
+  - window: path
+  - rolling_or_fixed: online
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ATR
+  - edge_cases: Leg in progress (unconfirmed) is labeled 'current' and uses the live extreme
+  - parameters: m=leg_atr=3 (2..5 grid); LT=long_trend=60 (grid)
+- **C20 Range / base** [Range] (in_code: yes)
+  - definition: Range (base) = a stretch of >= nmin bars where max(High) - min(Low) <= m × ATR14 (legs label 4 'base'). Range position = (C - LL)/(HH - LL): top > 2/3, bottom < 1/3 (HiLo/Donchian), BB %b top > 0.8, bottom < 0.2.
+  - inputs: high, low, close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N
+  - edge_cases: HH==LL -> denominator + 1e-12 -> position 0
+  - parameters: nmin=10; m=3; zone cuts 1/3,2/3
+- **C21 New 52-week high / low** [NH252] (in_code: yes)
+  - definition: New 52w high on bar t: High_t >= max(High[t-251..t]) (the rolling 252-bar max includes t, so touching counts). Near = Close within 5% under the 52w high (1 - C/H52 < 0.05); far > 30%.
+  - inputs: high, low, close
+  - window: 252 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 252 bars, otherwise blank
+  - edge_cases: Equal counts as new
+  - parameters: L=252; near=5%; far=30%; test L 126|252|504
+- **C22 Volume spike** [Spike] (in_code: yes)
+  - definition: RVOL_t = V_t / SMA20(V over t-20..t-1) (today excluded from the base). Spike = RVOL > s. Dry-up = RVOL < 0.67.
+  - inputs: volume
+  - window: 20 prior bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars
+  - edge_cases: Base 0 -> inf -> treated as spike
+  - parameters: s=3 (code); dry=0.67; test s 1.5|2|3|5
+- **C23 ATR-normalised distance** [DistATR] (in_code: yes)
+  - definition: dist = (X - Ref)/ATR14_t, signed. Used for all 'near' tests: near = |dist| <= tol.
+  - inputs: price, ATR14
+  - window: -
+  - rolling_or_fixed: -
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ATR14
+  - edge_cases: ATR 0 -> NaN
+  - parameters: tol=0.5 (retest_tol); test 0.25|0.5|1
+- **C24 Trend test (t-stat slope)** [TSlope] (in_code: yes)
+  - definition: OLS slope of the N window values against bar index, divided by its standard error. Rising if t > 2, falling if t < -2, else flat.
+  - inputs: series
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N>=3
+  - edge_cases: Constant series -> se=0 -> inf/NaN -> 'flat' (last label)
+  - parameters: t=2 (tfa_t); test 1.5|2|3
+- **C25 Own-history percentile** [OwnPct] (in_code: yes)
+  - definition: pct_t = share of the prior 250 values (bars t-250..t-1) that are strictly less than x_t, × 100.
+  - inputs: series
+  - window: 250
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 251 bars
+  - edge_cases: NaN in the window -> blank
+  - parameters: L=250 (hist_250); hi=80, lo=20 (vop)
+- **C26 Sector membership as of D-1** [Sector] (in_code: no (vs_sector_peers/theme_peers have no series yet))
+  - definition: Sector = the SPDR sector mapped from the latest SIC/GICS classification known on or before D-1 (filed date). The 11 SPDRs are XLK XLF XLV XLY XLP XLE XLI XLB XLU XLRE XLC; XLC/XLRE are used only from their ETF inception (2018-06-19 / 2015-10-08), before that the parent (XLK/XLY or XLF). Theme peers = the theme_radar universe(date) membership on D-1.
+  - inputs: SIC/sector map
+  - window: -
+  - rolling_or_fixed: as-of
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: -
+  - edge_cases: Unknown sector -> blank
+  - parameters: -
+- **C27 Tradeable filter** [Filter] (in_code: yes)
+  - definition: Day D tradeable if (a) mcap_D1 = Close_raw(D-1) × shares outstanding (latest SEC dei filing with filed <= D-1) >= $100M (unknown mcap PASSES), AND (b) median(Close×Volume, the 20 bars ending D-1) >= $1M, AND (c) the ticker is not on the quarantine 'exclude' list. Rows that fail are dropped before scoring.
+  - inputs: close, volume, shares
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20 bars
+  - edge_cases: Unknown mcap passes (differs from 'drop unknown')
+  - parameters: mcap=$100M; dv=$1M; test mcap 50M|100M|300M
+- **C28 Bucket/threshold boundary rule** [Ties] (in_code: yes)
+  - definition: Every cut is applied in label order with strict > or < as written (pick(): first true wins; the last label is the default). A value exactly on a cut goes to the later label.
+  - inputs: -
+  - window: -
+  - rolling_or_fixed: -
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: -
+  - edge_cases: Exact boundary -> later label
+  - parameters: -
+- **C29 Leak / point-in-time rule** [PIT] (in_code: partial (FRED VIX not vintaged; VIX is never revised))
+  - definition: Price: bars <= D-1. Non-price: a record is usable on D only if its public timestamp (filing accepted, publish time) is < D 09:30 ET; a record timestamped after the D-1 close and before D 09:30 counts for D, but only if the source supplies a timestamp; otherwise usable from D+1 (date only = next session).
+  - inputs: -
+  - window: -
+  - rolling_or_fixed: -
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: -
+  - edge_cases: Revised data (FRED, XBRL amendments): use the vintage first published (ALFRED / original filing), never the revised value
+  - parameters: -
+- **C30 Finviz snapshot fields** [live-only] (in_code: no)
+  - definition: All raw Finviz snapshot fields (snapshots start ~2026-08) are tagged LIVE-ONLY, UNTESTED. Excluded from scoring, from the 2020–24 grid and from the 2025–26 check until enough live days exist.
+  - inputs: finviz
+  - window: -
+  - rolling_or_fixed: -
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: -
+  - edge_cases: -
+  - parameters: min live days before use: 250 (suggested)
+
+## 1 Moving averages
+
+- **I001 SMA5** [close] (in_code: yes)
+  - definition: SMA5_t = mean(Close[t-4..t]).
+  - inputs: close
+  - window: 5
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 5 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=5; test 5..250
+- **I002 SMA10** [close] (in_code: yes)
+  - definition: SMA10_t = mean(Close[t-9..t]).
+  - inputs: close
+  - window: 10
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 10 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=10; test 5..250
+- **I003 SMA20** [close] (in_code: yes)
+  - definition: SMA20_t = mean(Close[t-19..t]).
+  - inputs: close
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20; test 5..250
+- **I004 SMA30** [close] (in_code: yes)
+  - definition: SMA30_t = mean(Close[t-29..t]).
+  - inputs: close
+  - window: 30
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 30 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=30; test 5..250
+- **I005 SMA50** [close] (in_code: yes)
+  - definition: SMA50_t = mean(Close[t-49..t]).
+  - inputs: close
+  - window: 50
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 50 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=50; test 5..250
+- **I006 SMA100** [close] (in_code: differs (SMA100 used only inside big_picture weekly proxy))
+  - definition: SMA100_t = mean(Close[t-99..t]).
+  - inputs: close
+  - window: 100
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 100 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=100; test 5..250
+- **I007 SMA200** [close] (in_code: yes)
+  - definition: SMA200_t = mean(Close[t-199..t]).
+  - inputs: close
+  - window: 200
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 200 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=200; test 5..250
+- **I008 EMA21** [close] (in_code: yes)
+  - definition: EMA_t = a×C_t + (1-a)×EMA_{t-1}, a = 2/(n+1), seeded with SMA(n) of the first n closes (TA-Lib).
+  - inputs: close
+  - window: 21 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars to seed; ~3n for stability. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=21; test 8|13|21|34|55
+- **I009 EMA20 (Keltner mid)** [close] (in_code: yes)
+  - definition: As EMA21 with n=20.
+  - inputs: close
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20
+- **I010 WMA(n)** [close] (in_code: no)
+  - definition: Linear-weighted mean, weight i for the i-th oldest of n closes (1..n).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I011 SMMA/RMA(n)** [close] (in_code: no)
+  - definition: Wilder: RMA_t = (RMA_{t-1}×(n-1)+C_t)/n, seed SMA(n).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I012 DEMA(n)** [close] (in_code: no)
+  - definition: 2×EMA(n) - EMA(EMA(n)).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I013 TEMA(n)** [close] (in_code: no)
+  - definition: 3E1-3E2+E3 of nested EMA(n).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I014 HMA(n)** [close] (in_code: no)
+  - definition: WMA(2×WMA(n/2)-WMA(n), floor(sqrt(n))).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I015 ALMA(n,offset=0.85,sigma=6)** [close] (in_code: no)
+  - definition: Gaussian-weighted mean, weights exp(-(i-m)^2/(2s^2)), m=offset×(n-1), s=n/sigma.
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I016 KAMA(n,2,30)** [close] (in_code: no)
+  - definition: KAMA_t = KAMA_{t-1}+SC^2(C_t-KAMA_{t-1}); ER = |C_t-C_{t-n}|/sum|ΔC|; SC = ER(2/3-2/31)+2/31.
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I017 LSMA(n)** [close] (in_code: no)
+  - definition: Endpoint of the OLS line fitted to the last n closes.
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I018 VWMA(n)** [close] (in_code: no)
+  - definition: sum(C×V)/sum(V) over n bars.
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I019 McGinley(n)** [close] (in_code: no)
+  - definition: MD_t = MD_{t-1}+(C-MD_{t-1})/(n×(C/MD_{t-1})^4).
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I020 Median(n)** [close] (in_code: no)
+  - definition: Median of the last n closes.
+  - inputs: close (+volume for VWMA)
+  - window: n
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n bars (×3 for recursive). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20 default; test 9|20|50|100|200
+- **I021 MA_group stack** [SMA5/10/20/30] (in_code: differs: named 10/20/50/200 in the tree, but the code uses 5/10/20/30)
+  - definition: Stack = full_bull if SMA5>SMA10>SMA20>SMA30; full_bear if all reversed; partial_bull if >=2 of the 3 adjacent pairs are bull; partial_bear if >=2 are bear. Spread = (max-min of the 4 SMAs)/ATR14: tight <1, wide >3.
+  - inputs: close
+  - window: 30
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 30 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: lengths=5,10,20,30 (code) vs 10,20,50,200 (name); test both
+- **I022 Weekly MA proxy** [SMA50/100/200 daily] (in_code: differs (proxy, not true weekly bars))
+  - definition: ~10/20/40-week MAs taken as SMA50/100/200 of DAILY closes (not weekly bars). Weekly trend = SMA100_t/SMA100_{t-N}-1 > 3% rising, < -3% falling.
+  - inputs: close
+  - window: 200
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 200. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=100; cut=3%
+- **I023 MA Ribbon / MA Cross / 2-line cross** [fast,slow] (in_code: no)
+  - definition: Cross of MA(fast) over MA(slow) per the Cross concept; ribbon = MAs 20,30,...,90 with stack order as in MA_group.
+  - inputs: close
+  - window: slow
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: slow bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: fast=50,slow=200 (golden/death); test 5/20, 10/50, 20/50, 50/200
+
+## 2 Oscillators / momentum
+
+- **I024 RSI(6)** [close] (in_code: yes)
+  - definition: Wilder RSI: gains/losses = max(ΔC,0)/max(-ΔC,0); avg = Wilder RMA(6) seeded with SMA of the first 6; RSI = 100 - 100/(1+avgG/avgL). Zones: high > 70, low < 30, cross level 50.
+  - inputs: close
+  - window: 6 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 7 bars (TA-Lib unstable period 0; values drift until ~60 bars). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: avgL=0 -> RSI 100
+  - parameters: n=6; zone lo=30, hi=70; test lo 20|25|30|35, hi 65|70|75|80
+- **I025 RSI(12)** [close] (in_code: yes)
+  - definition: Wilder RSI: gains/losses = max(ΔC,0)/max(-ΔC,0); avg = Wilder RMA(12) seeded with SMA of the first 12; RSI = 100 - 100/(1+avgG/avgL). Zones: high > 70, low < 30, cross level 50.
+  - inputs: close
+  - window: 12 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 13 bars (TA-Lib unstable period 0; values drift until ~120 bars). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: avgL=0 -> RSI 100
+  - parameters: n=12; zone lo=30, hi=70; test lo 20|25|30|35, hi 65|70|75|80
+- **I026 RSI(14)** [close] (in_code: yes)
+  - definition: Wilder RSI: gains/losses = max(ΔC,0)/max(-ΔC,0); avg = Wilder RMA(14) seeded with SMA of the first 14; RSI = 100 - 100/(1+avgG/avgL). Zones: high > 70, low < 30, cross level 50.
+  - inputs: close
+  - window: 14 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 15 bars (TA-Lib unstable period 0; values drift until ~140 bars). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: avgL=0 -> RSI 100
+  - parameters: n=14; zone lo=30, hi=70; test lo 20|25|30|35, hi 65|70|75|80
+- **I027 RSI(24)** [close] (in_code: yes)
+  - definition: Wilder RSI: gains/losses = max(ΔC,0)/max(-ΔC,0); avg = Wilder RMA(24) seeded with SMA of the first 24; RSI = 100 - 100/(1+avgG/avgL). Zones: high > 70, low < 30, cross level 50.
+  - inputs: close
+  - window: 24 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 25 bars (TA-Lib unstable period 0; values drift until ~240 bars). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: avgL=0 -> RSI 100
+  - parameters: n=24; zone lo=30, hi=70; test lo 20|25|30|35, hi 65|70|75|80
+- **I028 Stochastic(14,3,3)** [high,low,close] (in_code: yes)
+  - definition: %K_raw = 100×(C - LL14)/(HH14 - LL14); slowK = SMA3(%K_raw); value used = slowK (talib.STOCH output[0]); slowD = SMA3(slowK) is not used. Zones 20/80, cross 50.
+  - inputs: high,low,close
+  - window: 14+3
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 16 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: HH==LL -> 0 (TA-Lib)
+  - parameters: fastk=14, slowk=3; lo=20, hi=80
+- **I029 Williams %R(14)** [high,low,close] (in_code: yes)
+  - definition: %R = -100×(HH14 - C)/(HH14 - LL14). Zones -80/-20, cross -50.
+  - inputs: h,l,c
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 14. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=14; -80/-20
+- **I030 MACD(12,26,9)** [close] (in_code: differs (only the MACD line in ATR units; signal/hist not used))
+  - definition: MACD line = EMA12 - EMA26 (signal EMA9 is computed but NOT used by the code; histogram not used). The code divides by ATR14: zones high > +0.25 ATR, low < -0.25 ATR, cross 0.
+  - inputs: close, ATR14
+  - window: 26+9
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 34 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: fast=12, slow=26, sig=9; zone=±0.25 ATR; test ±0.1..0.5
+- **I031 ROC(5)** [close] (in_code: yes)
+  - definition: ROC = 100×(C_t/C_t-5 - 1). Zones (ROC20) > +5, < -5; cross 0.
+  - inputs: close
+  - window: 6
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 6 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=5; zone ±5%
+- **I032 ROC(20)** [close] (in_code: yes)
+  - definition: ROC = 100×(C_t/C_t-20 - 1). Zones (ROC20) > +5, < -5; cross 0.
+  - inputs: close
+  - window: 21
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20; zone ±5%
+- **I033 ROC(60)** [close] (in_code: yes)
+  - definition: ROC = 100×(C_t/C_t-60 - 1). Zones (ROC20) > +5, < -5; cross 0.
+  - inputs: close
+  - window: 61
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 61 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=60; zone ±5%
+- **I034 ADX(14) / +DI / -DI** [h,l,c] (in_code: yes)
+  - definition: Wilder DMI: +DM = H-H_{-1} if > (L_{-1}-L) and > 0 else 0; -DM mirrors; TR; +DI = 100×RMA14(+DM)/RMA14(TR); DX = 100|+DI - -DI|/(+DI + -DI); ADX = RMA14(DX). Trending > 25, none < 15.
+  - inputs: h,l,c
+  - window: ~28
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 28 bars (2n). If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=14; trend=25, weak=15
+- **I035 Ichimoku(9,26,52)** [h,l,c] (in_code: yes)
+  - definition: Tenkan = (HH9+LL9)/2; Kijun = (HH26+LL26)/2; SpanA = (T+K)/2 and SpanB = (HH52+LL52)/2, both plotted at t using the values computed 26 bars EARLIER (no forward data); cloud top/bottom = max/min(SpanA, SpanB). Chikou = sign(C_t - C_{t-26}).
+  - inputs: h,l,c
+  - window: 52+26
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 78 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: 9,26,52, shift 26
+- **I036 CCI(20)** [standard TradingView default] (in_code: no)
+  - definition: (TP - SMA20(TP))/(0.015×meanAbsDev20), TP=(H+L+C)/3
+  - inputs: h,l,c,(v)
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I037 CMO(14)** [standard TradingView default] (in_code: no)
+  - definition: 100×(sumUp-sumDn)/(sumUp+sumDn) over 14
+  - inputs: h,l,c,(v)
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 14 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I038 Awesome Osc(5,34)** [standard TradingView default] (in_code: no)
+  - definition: SMA5(HL2)-SMA34(HL2)
+  - inputs: h,l,c,(v)
+  - window: 34
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 34 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I039 BOP** [standard TradingView default] (in_code: no)
+  - definition: mean14 of (C-O)/(H-L)
+  - inputs: h,l,c,(v)
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 14 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I040 Bull Bear Power(13)** [standard TradingView default] (in_code: no)
+  - definition: (H-EMA13)+(L-EMA13)
+  - inputs: h,l,c,(v)
+  - window: 13
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 13 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I041 Aroon(14)** [standard TradingView default] (in_code: no)
+  - definition: Up=100×(14 - bars since HH14)/14, Down mirrors; Osc=Up-Down
+  - inputs: h,l,c,(v)
+  - window: 15
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 15 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I042 DPO(21)** [standard TradingView default] (in_code: no)
+  - definition: C_{t-11} - SMA21_t (centered; shifted to use only past: C_t - SMA21_{t-11})
+  - inputs: h,l,c,(v)
+  - window: 32
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 32 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I043 Fisher(9)** [standard TradingView default] (in_code: no)
+  - definition: 0.5ln((1+x)/(1-x)), x = 0.66(norm pos in 9-bar range - .5)+.67x_{-1}, clamp ±0.999
+  - inputs: h,l,c,(v)
+  - window: 9
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 9 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I044 KST** [standard TradingView default] (in_code: no)
+  - definition: RCMA1..4 = SMA10(ROC10), SMA10(ROC15), SMA10(ROC20), SMA15(ROC30); KST = 1×1+2×2+3×3+4×4; signal SMA9
+  - inputs: h,l,c,(v)
+  - window: 45
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 45 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I045 Coppock(10,14,11)** [standard TradingView default] (in_code: no)
+  - definition: WMA10(ROC14+ROC11) monthly convention; daily bars here
+  - inputs: h,l,c,(v)
+  - window: 24
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 24 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I046 PPO(12,26,9)** [standard TradingView default] (in_code: no)
+  - definition: 100×(EMA12-EMA26)/EMA26
+  - inputs: h,l,c,(v)
+  - window: 26
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 26 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I047 Momentum(10)** [standard TradingView default] (in_code: no)
+  - definition: C_t - C_{t-10}
+  - inputs: h,l,c,(v)
+  - window: 11
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 11 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I048 RVI(10)** [standard TradingView default] (in_code: no)
+  - definition: Relative Vigor: SMA10 of sym-weighted (C-O) / sym-weighted (H-L)
+  - inputs: h,l,c,(v)
+  - window: 13
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 13 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I049 Relative Volatility Index(10,14)** [standard TradingView default] (in_code: no)
+  - definition: RSI formula on stdev10 split by up/down closes, RMA14
+  - inputs: h,l,c,(v)
+  - window: 24
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 24 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I050 SMI Ergodic(5,20,5)** [standard TradingView default] (in_code: no)
+  - definition: TSI with long 20, short 5, signal 5
+  - inputs: h,l,c,(v)
+  - window: 25
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 25 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I051 SMI(10,3,3)** [standard TradingView default] (in_code: no)
+  - definition: 100×EMA3(EMA3(C - mid10))/(0.5×EMA3(EMA3(HH10-LL10)))
+  - inputs: h,l,c,(v)
+  - window: 16
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 16 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I052 StochRSI(14,14,3,3)** [standard TradingView default] (in_code: no)
+  - definition: Stoch of RSI14 over 14, K SMA3, D SMA3
+  - inputs: h,l,c,(v)
+  - window: 31
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 31 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I053 TRIX(18)** [standard TradingView default] (in_code: no)
+  - definition: 1-bar % change of EMA(EMA(EMA(C,18)))
+  - inputs: h,l,c,(v)
+  - window: 54
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 54 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I054 TSI(25,13)** [standard TradingView default] (in_code: no)
+  - definition: 100×EMA13(EMA25(ΔC))/EMA13(EMA25|ΔC|)
+  - inputs: h,l,c,(v)
+  - window: 38
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 38 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I055 Ultimate Osc(7,14,28)** [standard TradingView default] (in_code: no)
+  - definition: weighted 4:2:1 of BP/TR sums, BP=C-min(L,C_{-1})
+  - inputs: h,l,c,(v)
+  - window: 29
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 29 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I056 Connors RSI(3,2,100)** [standard TradingView default] (in_code: no)
+  - definition: mean(RSI3(C), RSI2(streak), PercentRank100(ROC1))
+  - inputs: h,l,c,(v)
+  - window: 101
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 101 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I057 Chande Kroll Stop(10,1,9)** [standard TradingView default] (in_code: no)
+  - definition: stop = HH9(HH10 - 1×ATR10), LL9(LL10 + 1×ATR10)
+  - inputs: h,l,c,(v)
+  - window: 19
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 19 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I058 Choppiness(14)** [standard TradingView default] (in_code: no)
+  - definition: 100×log10(sum ATR1 over 14/(HH14-LL14))/log10(14)
+  - inputs: h,l,c,(v)
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 14 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I059 Mass Index(9,25)** [standard TradingView default] (in_code: no)
+  - definition: sum25 of EMA9(H-L)/EMA9(EMA9(H-L))
+  - inputs: h,l,c,(v)
+  - window: 42
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 42 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I060 Vortex(14)** [standard TradingView default] (in_code: no)
+  - definition: VI+ = sum|H-L_{-1}|/sumTR, VI- = sum|L-H_{-1}|/sumTR
+  - inputs: h,l,c,(v)
+  - window: 15
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 15 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I061 Parabolic SAR(0.02,0.2)** [standard TradingView default] (in_code: no)
+  - definition: Wilder SAR, AF start 0.02 step 0.02 max 0.2
+  - inputs: h,l,c,(v)
+  - window: 2
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 2 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I062 Supertrend(10,3)** [standard TradingView default] (in_code: no)
+  - definition: band = HL2 ± 3×ATR10, trailing flip rule
+  - inputs: h,l,c,(v)
+  - window: 10
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 10 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I063 Chandelier Exit(22,3)** [standard TradingView default] (in_code: no)
+  - definition: HH22 - 3×ATR22 (long), LL22+3×ATR22 (short)
+  - inputs: h,l,c,(v)
+  - window: 22
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 22 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I064 Volatility Stop(20,2)** [standard TradingView default] (in_code: no)
+  - definition: trailing C ∓ 2×ATR20, flips on close through
+  - inputs: h,l,c,(v)
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I065 Williams Alligator(13,8,5)** [standard TradingView default] (in_code: no)
+  - definition: SMMA13 shift 8, SMMA8 shift 5, SMMA5 shift 3 of HL2; shifts use past values only
+  - inputs: h,l,c,(v)
+  - window: 21
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I066 Williams Fractal(2)** [standard TradingView default] (in_code: no)
+  - definition: = PivotStrict(k=2) on High/Low
+  - inputs: h,l,c,(v)
+  - window: 5
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 5 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I067 Zigzag(5%)** [standard TradingView default] (in_code: no)
+  - definition: ZZ with % reversal instead of ATR
+  - inputs: h,l,c,(v)
+  - window: path
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: path bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I068 Linear Regression(100)** [standard TradingView default] (in_code: no)
+  - definition: OLS of close over 100 bars; value = endpoint, slope/ATR, R²
+  - inputs: h,l,c,(v)
+  - window: 100
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 100 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I069 Correlation(20) vs SPY** [standard TradingView default] (in_code: no)
+  - definition: Pearson corr of the stock and SPY daily returns over 20
+  - inputs: h,l,c,(v)
+  - window: 21
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I070 Historical Volatility(20)** [standard TradingView default] (in_code: no)
+  - definition: stdev20(ln C/C_{-1})×sqrt(252)×100
+  - inputs: h,l,c,(v)
+  - window: 21
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I071 Ulcer Index(14)** [standard TradingView default] (in_code: no)
+  - definition: sqrt(mean14(((C-CH14)/CH14×100)^2))
+  - inputs: h,l,c,(v)
+  - window: 28
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 28 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I072 ADR(14)** [standard TradingView default] (in_code: no)
+  - definition: mean14(H-L)/C ×100
+  - inputs: h,l,c,(v)
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 14 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I073 Performance (1W..1Y)** [standard TradingView default] (in_code: no)
+  - definition: C_t/C_{t-n}-1 for n=5,21,63,126,252 and YTD from the last close of the prior year
+  - inputs: h,l,c,(v)
+  - window: n+1
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: n+1 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I074 Pivot Points Standard** [standard TradingView default] (in_code: no)
+  - definition: from the PRIOR completed calendar month (fixed): P=(H+L+C)/3, R1=2P-L, S1=2P-H, R2=P+(H-L), S2=P-(H-L)
+  - inputs: h,l,c,(v)
+  - window: 1 month (fixed)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 1 month (fixed) bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I075 Pivot Points High Low(10,10)** [standard TradingView default] (in_code: no)
+  - definition: PivotStrict k=10 left/right on H/L
+  - inputs: h,l,c,(v)
+  - window: 21
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21 bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I076 Auto Fib Retracement** [standard TradingView default] (in_code: no)
+  - definition: last confirmed ZZ(3ATR) swing; levels 0.236,0.382,0.5,0.618,0.786 of the swing range
+  - inputs: h,l,c,(v)
+  - window: path
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: path bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I077 Auto key levels** [standard TradingView default] (in_code: no)
+  - definition: AvgLine of the last K swing highs/lows
+  - inputs: h,l,c,(v)
+  - window: L
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: L bars. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults as in name; test ±50% of each length
+- **I078 Fibonacci_swing** [tree questions (289)] (in_code: no (tree has 289 questions, no code))
+  - definition: Swing = the last confirmed ZZ(3ATR) leg; level_k = Low + r×(High-Low) (up leg). Not computed (no series).
+  - inputs: h,l
+  - window: path
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: -. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: r=.236,.382,.5,.618,.786; m=3
+
+## 3 Volume
+
+- **I079 Volume** [shares] (in_code: yes)
+  - definition: V_t raw shares (split-adjusted); raw = V/f.
+  - inputs: volume
+  - window: 1
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 1. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: -
+- **I080 RVOL20** [volume] (in_code: yes)
+  - definition: See core Volume spike.
+  - inputs: volume
+  - window: 20 prior
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20; spike 3
+- **I081 Dollar volume** [C×V] (in_code: yes)
+  - definition: dv = adjusted C × adjusted V (equals raw $). Tiers <$1M, $1–10M, >$10M.
+  - inputs: close,volume
+  - window: 1
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 1. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: tiers 1e6,1e7
+- **I082 OBV** [c,v] (in_code: differs (percentile of OBV, not raw OBV))
+  - definition: OBV_t = OBV_{t-1} ± V_t by the sign of ΔC (0 if unchanged), seeded at bar 0 = V_0. The code uses its 250-bar OwnPct (obv_p) as the oscillator, zones 20/80.
+  - inputs: c,v
+  - window: cumulative
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 251 for obv_p. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: pct L=250
+- **I083 A/D line** [h,l,c,v] (in_code: differs (percentile))
+  - definition: AD_t = AD_{t-1} + V×((C-L)-(H-C))/(H-L). Used as OwnPct250 (ad_p).
+  - inputs: h,l,c,v
+  - window: cumulative
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 251. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: L=250
+- **I084 MFI(14)** [h,l,c,v] (in_code: yes)
+  - definition: TP=(H+L+C)/3; raw MF=TP×V; MFI=100-100/(1+sumPosMF14/sumNegMF14). Zones 20/80.
+  - inputs: h,l,c,v
+  - window: 14
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 15. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=14
+- **I085 Up/Down volume** [c,v] (in_code: yes)
+  - definition: UpV = sum V on bars with C>C_{-1}; DnV on C<C_{-1}; ratio = UpV/(DnV+1). Up-heavy > 1.3, down-heavy < 0.77.
+  - inputs: c,v
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: 1.3/0.77
+- **I086 Anchored VWAP (window start)** [h,l,c,v] (in_code: differs (anchor = window start, not swing/earnings anchor))
+  - definition: AVWAP_j = cumsum(TP×V)/cumsum(V) from the FIRST bar of the window (anchor = window start t-N+1) to bar j.
+  - inputs: h,l,c,v
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: anchor = window start | last ZZ pivot | last earnings (test)
+- **I087 Volume profile (POC/VA)** [h,l,c,v] (in_code: no (340 tree questions, no code))
+  - definition: Price bins = 50 equal bins between LL(N) and HH(N); each bar's V is spread evenly over the bins its H-L touches; POC = max bin; value area = the smallest set of bins around POC holding 70% of V. Not computed.
+  - inputs: h,l,v
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: bins=50; VA=70%
+- **I088 CMF(20)** [TV default] (in_code: no)
+  - definition: sum20(MFV)/sum20(V), MFV=V×((C-L)-(H-C))/(H-L)
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I089 Chaikin Osc(3,10)** [TV default] (in_code: no)
+  - definition: EMA3(AD)-EMA10(AD)
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I090 EOM(14)** [TV default] (in_code: no)
+  - definition: SMA14(((H+L)/2-(H_{-1}+L_{-1})/2)/(V/1e8/(H-L)))
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I091 EFI(13)** [TV default] (in_code: no)
+  - definition: EMA13(ΔC×V)
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I092 Klinger(34,55,13)** [TV default] (in_code: no)
+  - definition: EMA34(VF)-EMA55(VF), signal EMA13
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I093 NVI/PVI** [TV default] (in_code: no)
+  - definition: cumulative % change applied on bars where V < / > V_{-1}, base 1000
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I094 Net Volume** [TV default] (in_code: no)
+  - definition: V×sign(ΔC)
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I095 PVO(12,26,9)** [TV default] (in_code: no)
+  - definition: 100×(EMA12(V)-EMA26(V))/EMA26(V)
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+- **I096 PVT** [TV default] (in_code: no)
+  - definition: cum(V×ΔC/C_{-1})
+  - inputs: h,l,c,v
+  - window: per name
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: longest length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: defaults; test ±50%
+
+## 4 Volatility / bands
+
+- **I097 ATR(14)** [h,l,c] (in_code: yes)
+  - definition: TR = max(H-L, |H-C_{-1}|, |L-C_{-1}|); ATR = Wilder RMA14(TR), seed SMA14 (TA-Lib). Used ÷C (ATR%) in the questions.
+  - inputs: h,l,c
+  - window: 14 (infinite memory)
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 15. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=14; test 10|14|20
+- **I098 Bollinger(20,2)** [close] (in_code: yes)
+  - definition: Mid=SMA20; up/low = mid ± 2×POPULATION stdev20 (TA-Lib ddof=0). %b=(C-L)/(U-L); width=(U-L)/mid; band walk = >=3 consecutive closes >= 0.99×U.
+  - inputs: close
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20, k=2; walk 3 bars @1%
+- **I099 Keltner(20,1.5)** [h,l,c] (in_code: differs (ATR14 with EMA20; TV default ATR10 ×2))
+  - definition: Mid=EMA20(C); bands = mid ± 1.5×ATR14 (not ATR20).
+  - inputs: h,l,c
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: mult=1.5
+- **I100 Squeeze (BB inside KC)** [-] (in_code: yes)
+  - definition: Squeeze_t = 1 if BBup < KCup AND BBlow > KClow.
+  - inputs: BB, KC
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: -
+- **I101 Donchian(20)** [h,l] (in_code: yes)
+  - definition: Upper_t = max(H[t-20..t-1]), lower = min(L[t-20..t-1]) (excludes bar t).
+  - inputs: h,l
+  - window: 20 prior
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 21. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: n=20
+- **I102 HiLo window** [h,l] (in_code: yes)
+  - definition: HH(N), LL(N) of the window itself (including the last bar), repeated across the window.
+  - inputs: h,l
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=window
+- **I103 52w range** [h,l] (in_code: yes)
+  - definition: H52 = max(H,252 bars incl. t), L52 = min(L,252). Width = H52/L52: wide > 2, narrow < 1.3.
+  - inputs: h,l
+  - window: 252
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 252. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: 252; 2/1.3
+- **I104 Drawdown** [close] (in_code: yes)
+  - definition: dd_j = (running max close from the window start to j - C_j)/ATR14_t; depth shallow < 2, deep > 5 ATR; count of separate >= 2×ATR declines.
+  - inputs: c,ATR
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: 2/5 ATR; count 2 ATR
+- **I105 BBW / %b standalone** [close] (in_code: yes)
+  - definition: From Bollinger(20,2).
+  - inputs: close
+  - window: 20
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 20. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: -
+
+## 5 Price structure
+
+- **I106 Candles OHLC facets** [daily] (in_code: yes)
+  - definition: Body=C-O, range=H-L, upper wick=H-max(O,C), lower wick=min(O,C)-L, close location=(C-L)/(H-L). green: C>O, red: C<O, doji per TA-Lib.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I107 Inside/outside bar** [daily] (in_code: yes)
+  - definition: inside: H<H_{-1} and L>L_{-1} (strict); outside: H>H_{-1} and L<L_{-1}.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I108 Candle patterns (61 TA-Lib CDL*)** [daily] (in_code: partial (15 of 61))
+  - definition: TA-Lib CDL function on the bar (and the prior 1–2 bars); nonzero = present. TA-Lib's internal body/shadow averages use its default 10-bar periods. Code uses: HAMMER, INVERTEDHAMMER, SHOOTINGSTAR, HANGINGMAN, DOJI, SPINNINGTOP, MARUBOZU, ENGULFING, HARAMI, PIERCING, DARKCLOUDCOVER, 3WHITESOLDIERS, 3BLACKCROWS, MORNINGSTAR, EVENINGSTAR. All others: no.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I109 Tweezer top/bottom** [daily] (in_code: no)
+  - definition: |H - H_{-1}| <= 0.05×ATR14 after an up close then a down close (top); mirror on L.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I110 Rising/Falling window** [daily] (in_code: yes (as gap))
+  - definition: = Gap (core) up/down.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I111 Chart patterns (flag, wedge, triangle, double top/bottom, H&S, rectangle)** [daily] (in_code: no)
+  - definition: Built from ZZ(3ATR) pivots: double top = 2 swing highs within 0.5 ATR of each other separated by >= 10 bars with a swing low between them that is >= 3 ATR lower; others not defined.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I112 3ATR legs / phases** [daily] (in_code: yes)
+  - definition: Phases from ZZ(3ATR) labeled up/down/fast-up(>=3ATR in <=3 bars)/fast-down/base(>=10 bars, range <=3ATR).
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I113 Prior pivots levels** [daily] (in_code: no (310 tree q))
+  - definition: Price levels = confirmed PivotStrict(k=2) highs/lows; level cluster = pivots within 0.5 ATR.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I114 Unfilled gaps (multi)** [daily] (in_code: no (266 tree q; only the most recent gap is in code))
+  - definition: All gaps (core) still unfilled at D-1, with age in bars.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I115 Old ranges / breakdowns** [daily] (in_code: no (238 tree q))
+  - definition: Base ranges (core Range) that price later closed below by >= 0.5ATR; level = range low.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I116 Round numbers** [daily] (in_code: yes)
+  - definition: Step = $1 if raw C < 10, $10 if < 100, else $100; cross = floor(C/step) changes; magnet = |C/level - 1| < 2% on > 50% of bars.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+- **I117 Heikin Ashi / Renko / Kagi / P&F / Line break / Range bars** [daily] (in_code: no)
+  - definition: Alternative bar builds (HA: C=(O+H+L+C)/4, O=(O_{-1}+C_{-1})/2); box size Renko = ATR14 at build start.
+  - inputs: o,h,l,c
+  - window: 1–3 bars / N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: pattern length. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: see definition
+
+## 6 Candle patterns (one per pattern)
+
+- **I118 Abandoned Baby - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLABANDONEDBABY(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I119 Abandoned Baby - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLABANDONEDBABY(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I120 Dark Cloud Cover - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLDARKCLOUDCOVER(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I121 Doji** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLDOJI(O,H,L,C)[t] != 0 and any nonzero. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I122 Doji Star - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLDOJISTAR(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I123 Doji Star - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLDOJISTAR(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I124 Downside Tasuki Gap - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLTASUKIGAP(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I125 Dragonfly Doji - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLDRAGONFLYDOJI(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I126 Engulfing - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLENGULFING(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I127 Engulfing - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLENGULFING(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I128 Evening Doji Star - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLEVENINGDOJISTAR(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I129 Evening Star - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLEVENINGSTAR(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I130 Falling Three Methods - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLRISEFALL3METHODS(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I131 Falling Window - Bearish** [daily] (in_code: no)
+  - definition: Defined in Structure: Tweezer/Window rows.
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I132 Gravestone Doji - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLGRAVESTONEDOJI(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I133 Hammer - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLHAMMER(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I134 Hanging Man - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLHANGINGMAN(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I135 Harami - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLHARAMI(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I136 Harami - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLHARAMI(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I137 Harami Cross - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLHARAMICROSS(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I138 Harami Cross - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLHARAMICROSS(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I139 Inverted Hammer - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLINVERTEDHAMMER(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I140 Kicking - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLKICKING(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I141 Kicking - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLKICKING(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I142 Long Lower Shadow - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLLONGLINE(lower)(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I143 Long Upper Shadow - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLLONGLINE(upper)(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I144 Marubozu Black - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLMARUBOZU(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I145 Marubozu White - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLMARUBOZU(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I146 Morning Doji Star - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLMORNINGDOJISTAR(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I147 Morning Star - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLMORNINGSTAR(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I148 On Neck - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLONNECK(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I149 Piercing - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLPIERCING(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I150 Rising Three Methods - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLRISEFALL3METHODS(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I151 Rising Window - Bullish** [daily] (in_code: no)
+  - definition: Defined in Structure: Tweezer/Window rows.
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I152 Shooting Star - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLSHOOTINGSTAR(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I153 Spinning Top Black** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLSPINNINGTOP(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I154 Spinning Top White** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDLSPINNINGTOP(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I155 Three Black Crows - Bearish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDL3BLACKCROWS(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I156 Three White Soldiers - Bullish** [daily] (in_code: yes)
+  - definition: Present on bar t if talib.CDL3WHITESOLDIERS(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I157 Tri Star - Bearish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLTRISTAR(O,H,L,C)[t] != 0 and bearish = TA-Lib output < 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I158 Tri Star - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLTRISTAR(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I159 Tweezer Bottom - Bullish** [daily] (in_code: no)
+  - definition: Defined in Structure: Tweezer/Window rows.
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I160 Tweezer Top - Bearish** [daily] (in_code: no)
+  - definition: Defined in Structure: Tweezer/Window rows.
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+- **I161 Upside Tasuki Gap - Bullish** [daily] (in_code: no)
+  - definition: Present on bar t if talib.CDLTASUKIGAP(O,H,L,C)[t] != 0 and bullish = TA-Lib output > 0. Bars used = t and the pattern's prior bars (1–3), all <= D-1. TA-Lib's default candle settings (body/shadow averages over 10 bars).
+  - inputs: o,h,l,c
+  - window: 1–3 bars
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: ~11 bars for TA-Lib averages. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: MA period for the 'long body' test = 10 (TA-Lib)
+  - parameters: penetration=0.3 (Dark cloud/Piercing), 0.3 (Morning/Evening star), TA-Lib defaults
+
+## 7 Relative & market
+
+- **I162 RS vs SPY** [log(C/SPY)] (in_code: yes)
+  - definition: rs_t = ln(C_t/SPY_t) (SPY adjusted close, aligned by date, forward-filled); rs trend = TSlope; rs new high = rs_t >= max(rs over the window).
+  - inputs: close, SPY
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60
+- **I163 RS vs QQQ** [log(C/QQQ)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark QQQ (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: QQQ_t/QQQ_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I164 RS vs IWM** [log(C/IWM)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark IWM (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: IWM_t/IWM_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I165 RS vs XLK** [log(C/XLK)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLK (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLK_t/XLK_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I166 RS vs XLF** [log(C/XLF)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLF (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLF_t/XLF_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I167 RS vs XLV** [log(C/XLV)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLV (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLV_t/XLV_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I168 RS vs XLY** [log(C/XLY)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLY (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLY_t/XLY_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I169 RS vs XLP** [log(C/XLP)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLP (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLP_t/XLP_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I170 RS vs XLE** [log(C/XLE)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLE (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLE_t/XLE_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I171 RS vs XLI** [log(C/XLI)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLI (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLI_t/XLI_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I172 RS vs XLB** [log(C/XLB)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLB (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLB_t/XLB_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I173 RS vs XLU** [log(C/XLU)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLU (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLU_t/XLU_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I174 RS vs XLRE** [log(C/XLRE)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLRE (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLRE_t/XLRE_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I175 RS vs XLC** [log(C/XLC)] (in_code: no (data on disk, not read))
+  - definition: Same as RS vs SPY with benchmark XLC (etf_2015.parquet). For sector ETFs, the benchmark = the ticker's own sector as of D-1 (core Sector). Return over n: XLC_t/XLC_{t-n}-1.
+  - inputs: close, ETF close
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60; n=5|20|60
+- **I176 RS vs theme peers** [equal-weight peer index] (in_code: no (374 tree q, no series))
+  - definition: Peer index = equal-weight mean of daily returns of theme_radar universe(D-1) members excluding the stock, compounded; rs as vs SPY.
+  - inputs: close, theme map
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=10|20|60
+- **I177 RS vs sector peers** [equal-weight] (in_code: no (374 tree q, no series))
+  - definition: As theme peers using the SIC-sector members as of D-1.
+  - inputs: close, sector map
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: -
+- **I178 VIX level** [VIXCLS] (in_code: yes)
+  - definition: FRED VIXCLS close of D-1; zones <15, 15–25, >25; spike = VIX_t/min(VIX over the window) > 1.3 (see code vix_spike).
+  - inputs: FRED VIXCLS
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: 15/25
+- **I179 Market breadth %>SMA50** [survivor universe] (in_code: differs (survivor-only universe, not all listed))
+  - definition: breadth_t = share of universe stocks with C > SMA50, only when > 100 stocks have a valid SMA50. Survivor universe (biased).
+  - inputs: universe closes
+  - window: 50
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 50. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: MA=50; test 20|50|200
+- **I180 A/D line, A/D ratio, new highs-lows (market)** [universe] (in_code: no)
+  - definition: ADv = #up closes - #down closes per day, cumulative; ratio = ups/downs; NH-NL = # at a 252-bar high minus # at a 252-bar low.
+  - inputs: universe
+  - window: 1/252
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: 252. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: -
+- **I181 SPY trend** [SPY close] (in_code: yes)
+  - definition: TSlope of the SPY close over N.
+  - inputs: SPY
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: t=2
+- **I182 Beta** [returns] (in_code: yes)
+  - definition: OLS beta of the stock's daily returns on SPY's daily returns over N.
+  - inputs: c, SPY
+  - window: N
+  - rolling_or_fixed: rolling
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: N. If there is not enough history, the value is NaN, and every question that reads it answers -1 (blank). Blank never counts as no.
+  - edge_cases: Division by zero -> NaN -> blank. Ties follow the core boundary rule.
+  - parameters: N=20|60
+- **I183 Calendar context** [D's own date] (in_code: yes)
+  - definition: Uses date D itself (known in advance; no shift): month turn, days to OPEX (3rd Friday), pre-holiday (NYSE calendar), quarter elapsed share.
+  - inputs: date, sessions
+  - window: -
+  - rolling_or_fixed: fixed calendar
+  - pit_rule: Computed only from bars whose close is on or before the D-1 close. engine.py shifts every answer down 1 row (A.shift(1)), so day D's open/high/low/close/volume are never read.
+  - warmup: PIT: the calendar is public in advance
+  - edge_cases: OPEX holiday Friday -> Thursday (not handled)
+  - parameters: opex buckets 0-5/6-10/>10
+
+## 8 Non-price data
+
+- **I184 Earnings: date & timing** [BMO/AMC] (in_code: no (56 tree q; data on disk, unread))
+  - definition: Earnings event e = an 8-K Item 2.02 or a calendar record. 'Day of reaction' = the first session whose open comes after the release (BMO -> same day, AMC -> next day).
+  - inputs: earnings calendar on disk
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Usable on D if the announcement time < D 09:30 ET; the future date is known if it was published before D (calendar list date)
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: window 5|20|60
+- **I185 Earnings: surprise** [EPS actual vs consensus] (in_code: no)
+  - definition: surprise = (EPS_actual - EPS_consensus)/|consensus|; beat if > +s, miss if < -s.
+  - inputs: estimates feed
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Consensus as of the day before the release
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: s=2%
+- **I186 Earnings: gap reaction / drift** [bars] (in_code: no)
+  - definition: gap = O_react/C_prev - 1; drift = C_{react+n}/C_react - 1 (only if react+n <= D-1).
+  - inputs: price
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: price PIT
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: n=1|5|20
+- **I187 Form 4 insider trades** [open-market P/S] (in_code: no)
+  - definition: Count and $ of code P (purchase) / S (sale) transactions by officers/directors/10% holders; net = $P - $S; cluster = >= 3 distinct insiders buying within 10 sessions.
+  - inputs: SEC EDGAR Form 4
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Filing acceptance timestamp (<= D 09:30 ET); NOT the transaction date
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: window 20|60|120; cluster 3 in 10
+- **I188 FINRA short interest** [SI, days to cover] (in_code: no)
+  - definition: SI = shares short at settlement date; DTC = SI / mean(V over the 20 bars before settlement); SI% = SI/shares outstanding.
+  - inputs: FINRA bi-monthly
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: FINRA publication date (~ settlement + 7–8 business days), never the settlement date
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: trend over 2|4|6 reports
+- **I189 FINRA daily short volume** [ratio] (in_code: no)
+  - definition: ShortVol/TotalVol (FINRA RegSHO daily files, all TRFs summed).
+  - inputs: FINRA CDN
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Published after 18:00 ET on the same day -> usable D+1
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: N=5|20
+- **I190 Reg SHO threshold list** [on/off] (in_code: yes)
+  - definition: On-list flag from Nasdaq threshold files for date d (on disk 2020–24).
+  - inputs: Nasdaq RegSHO
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: File for date d is published after the close of d -> the code uses d <= D-1 via the shift
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: days on 0/1-5/>5
+- **I191 Trading halts** [LULD/news/T1/T12] (in_code: no (56 tree q))
+  - definition: Halt events with code and resume time; count over the window; direction = sign of C_prehalt - C_{-5}.
+  - inputs: Nasdaq halts (halts/ folder)
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Halt start timestamp < D 09:30
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: N=20|60
+- **I192 SEC XBRL fundamentals** [each us-gaap tag] (in_code: differs (only dei shares outstanding is used, for mcap))
+  - definition: Value = the latest 10-Q/10-K fact for the tag with filed <= D-1 (original filing, not later restated). TTM = sum of the last 4 quarters. Ratios: P/E = mcap/TTM NetIncome; P/B, P/S, EV/EBITDA, margins, ROE/ROA/ROIC, FCF = OCF - Capex, current ratio, debt/equity, revenue growth YoY.
+  - inputs: SEC companyfacts
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Filing 'filed' date; usable from the next session
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: growth lag 4q
+- **I193 Shares outstanding / float** [dei] (in_code: differs (named float_turnover; it is shares out))
+  - definition: Shares = dei:EntityCommonStockSharesOutstanding, latest filed <= D-1. This is NOT the free float.
+  - inputs: SEC
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: filed date
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I194 Altman Z / Piotroski F / Beneish M** [standard] (in_code: no)
+  - definition: Computed from XBRL with the standard coefficients (Altman 1968 manufacturing version).
+  - inputs: SEC XBRL
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: filed date
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I195 FRED macro** [DGS10, DGS2, T10Y2Y, DTWEXBGS, DCOILWTICO, BAMLH0A0HYM2, FEDFUNDS, CPI, UNRATE] (in_code: no (only VIXCLS used))
+  - definition: Daily series: the value of D-1. Monthly series: the latest release with ALFRED realtime_start <= D-1 (first vintage).
+  - inputs: FRED/ALFRED
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Release/vintage date, not the observation period
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: change windows 20|60
+- **I196 Dividends / splits** [ex-date, amount] (in_code: partial (split factor used for raw prices))
+  - definition: Ex-date and $/share; yield = TTM dividends / C. Split ratio and date.
+  - inputs: SEC/Nasdaq
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Declaration date for the future ex-date; ex-date for the event
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I197 Analyst actions** [upgrades/downgrades/PT] (in_code: no (56 tree q))
+  - definition: Net direction = #up - #down in the window; count; price target change %.
+  - inputs: Finviz scrape / feed
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Publish timestamp. RAW FINVIZ SNAPSHOT FIELDS ARE LIVE-ONLY, UNTESTED (start ~2026-08): excluded from scoring and from the 2025–26 check until enough live days exist
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: N=20|60
+- **I198 Finviz snapshot fields (all)** [ratings, PT, short float, inst own, etc.] (in_code: no)
+  - definition: Raw daily Finviz field values.
+  - inputs: Finviz snapshots
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: LIVE-ONLY, UNTESTED: excluded from scoring, the grid and the 2025–26 check until >= the minimum number of live days
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: min live days=250 (suggested)
+- **I199 13F holdings** [fund count, shares] (in_code: no)
+  - definition: # of 13F filers holding the stock, total shares, quarter change.
+  - inputs: SEC 13F
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Filing date (up to 45 days after quarter end), never the quarter end
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I200 GDELT news** [count, tone] (in_code: no)
+  - definition: Article count mentioning the company (name match) per day and the mean V2Tone; spike = count > 3× its 60-day median.
+  - inputs: GDELT 2.0
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Article publish time < D 09:30 ET
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: spike 3×, base 60
+- **I201 CBOE market-wide options** [total & equity put/call, VIX9D/VIX/VIX3M term, SKEW] (in_code: no)
+  - definition: P/C = put vol/call vol of D-1; term = VIX/VIX3M (contango < 1).
+  - inputs: CBOE
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: Published end of day d -> usable D+1 (=d<=D-1)
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I202 Single-stock options** [IV, OI] (in_code: no)
+  - definition: Not available free: GAP.
+  - inputs: -
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: -
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
+- **I203 Checklist score path** [engine's own score] (in_code: no (195 tree q))
+  - definition: Own checklist score series; undefined until the score exists.
+  - inputs: engine
+  - window: window N trading days ending D-1
+  - rolling_or_fixed: rolling
+  - pit_rule: -
+  - warmup: Source start date; before it -> blank
+  - edge_cases: Missing record = 'none' only if the source covers the ticker; otherwise blank
+  - parameters: -
