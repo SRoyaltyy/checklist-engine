@@ -1,0 +1,69 @@
+name: world_build
+# World snapshot (METHODOLOGY 0b 2026-10-25 12:30 HKT): point-in-time per-ticker
+# per-day column store -> release world-2020-26-v1. Block A (full TA-Lib + 61
+# candle patterns) + Block K (market breadth). Shift-by-one discipline: row D
+# uses bars <= D-1 close and breadth dated < D. Heavy work on runners only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      shards:
+        description: number of shard legs to run (1-8); legs with matrix index >= shards exit OK (smoke mode)
+        default: '8'
+        required: true
+      tickers:
+        description: optional comma list to restrict build (smoke), empty = all
+        default: ''
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        i: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ matrix.i < fromJSON(inputs.shards) }}
+        with:
+          ref: kimi/world-snapshot
+      - name: TA-Lib C library + Python wrapper
+        if: ${{ matrix.i < fromJSON(inputs.shards) }}
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Fetch world inputs from data-2020-24-v1
+        if: ${{ matrix.i < fromJSON(inputs.shards) }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/world_fetch.sh "$RUNNER_TEMP/world_in"
+      - name: Build world shard ${{ matrix.i }}
+        if: ${{ matrix.i < fromJSON(inputs.shards) }}
+        env:
+          CHECKLIST_DATA_DIR: ${{ runner.temp }}/world_in
+          WORLD_END: '2026-12-31'
+          TICKERS: ${{ inputs.tickers }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/world_out"
+          ARGS="--shard ${{ matrix.i }} --shards 8 --out $RUNNER_TEMP/world_out"
+          if [ -n "$TICKERS" ]; then ARGS="$ARGS --tickers $TICKERS"; fi
+          python3 -X utf8 facets_world.py build $ARGS
+      - name: Upload shard to world-2020-26-v1
+        if: ${{ matrix.i < fromJSON(inputs.shards) }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          f="$RUNNER_TEMP/world_out/world_shard_$(printf '%03d' ${{ matrix.i }}).parquet"
+          if [ ! -f "$f" ]; then echo "no shard output"; exit 0; fi
+          python3 ci/release_assets.py upload world-2020-26-v1 \
+            "$f" "${f%.parquet}.json"
+          echo "shard ${{ matrix.i }} uploaded"

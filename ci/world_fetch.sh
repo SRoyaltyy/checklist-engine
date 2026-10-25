@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Fetch only the inputs facets_world.py needs from release data-2020-24-v1. Usage: world_fetch.sh <dest>
+set -euo pipefail
+DEST="$1"; mkdir -p "$DEST"
+API="https://api.github.com/repos/${GH_REPO:-${GITHUB_REPOSITORY}}"
+TAG="data-2020-24-v1"
+FILES=(bars_all_le2024.parquet universe_2020_survivors_le2024.parquet breadth_2020_24.parquet)
+python3 - "$API" "$TAG" "$DEST" <<'PY'
+import sys, json, os, urllib.request
+api, tag, dest = sys.argv[1], sys.argv[2], sys.argv[3]
+tok = os.environ['GITHUB_TOKEN']
+want = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'breadth_2020_24.parquet', 'SHA256SUMS'}
+req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
+rel = json.load(urllib.request.urlopen(req))
+for a in rel['assets']:
+    if a['name'] not in want:
+        continue
+    out = os.path.join(dest, a['name'])
+    if os.path.exists(out) and os.path.getsize(out) == a['size']:
+        print('cached', a['name']); continue
+    req = urllib.request.Request(a['url'], headers={'Authorization': f'token {tok}', 'Accept': 'application/octet-stream'})
+    with urllib.request.urlopen(req) as r, open(out, 'wb') as f:
+        while True:
+            b = r.read(1 << 20)
+            if not b: break
+            f.write(b)
+    print('downloaded', a['name'], a['size'])
+PY
+cd "$DEST"
+grep -E "bars_all_le2024\.parquet|universe_2020_survivors_le2024\.parquet|breadth_2020_24\.parquet" SHA256SUMS > SUBSET_SUMS
+sha256sum -c SUBSET_SUMS
