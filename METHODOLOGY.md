@@ -218,6 +218,13 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:30 HKT — dictionary differs audit CLOSED: all 14 rows dispositioned.**
+  - Fixed in code (9): I021, I006, I030, I082, I083, C07, C08, C27 (batch 1, `0c161a9`) + C11 (batch 2, `4e75734`).
+  - No code change needed (3): I086 + I099 (code already matches the dictionary rows exactly; differs notes compare to TradingView defaults - awaiting confirm), I022 (k=5 weekly composites already in the dial machinery; needs dial-table ROWS only, frozen file, War-room addition).
+  - Flagged/documented (2): I193 (values correct, only the name `float_turnover` is misleading; frozen tree, left as-is), I179 (breadth is survivors-only; data limitation, bias flagged per ground rules).
+  - Data-side (1): I192 (SEC XBRL per-tag) - fetcher built (`kimi/data-fetch`), integration into engine waits on fetched data + War-room priority.
+  - Queue watch: 14 grid legs in flight (caps 300/350min hit ~07:32-07:42 UTC); pieces still 3/34; queued batch behind them continues automatically.
+
 - **2026-10-25 ~14:20 HKT — step_a `--force` ready (`kimi/dictionary-fixes` `2ba7e93`); shortlist path verified end-to-end.**
   - `step_a.py --force 3,17,...` recomputes named chunk indices even when scores+answers exist; normal resume path untouched. Seeding still copies old pieces in, forced ones get overwritten locally and checkpoint-pushed by the push loop. Combined with rerun_plan.py: impact-diff -> affected chunk list -> one step_a run redoes exactly those pieces -> re-aggregate those grid pieces.
   - Reviewed shortlist workflow + `scoring/shortlist.py` (prereg SS3-5 logic intact, partial-tolerant, idempotent). It is already queued (40156872713) and will run when a slot frees; must be RE-dispatched once after 34/34 to refresh shortlist.csv on the full grid.
