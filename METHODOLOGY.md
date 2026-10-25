@@ -125,6 +125,11 @@ This file is the single source of truth. The newest entry overrides any pasted p
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~09:45 HKT — LEAK-SWEEP FAIL CLEARED (verdict: PASS, no lookahead). Verifying run: https://github.com/SRoyaltyy/checklist-engine/actions/runs/40151183202.**
+  - Sweep run 40099037308 flagged 61 (ticker, cut) rows / 4,822 col_set_diff flags on families `breakout`, `range_max_position`, `segment_compare`, `fail_shape`, `vol_direction_link`, with **0 answer-value mismatches**. Verifier `tests/leak_verify_history.py` (`6dbaf3c` on `kimi/step-a-wincompat`; workflow `leak_verify.yml`, registered on main `c47f5a6`) re-checked every flagged missing column against the engine's skip rule: `run_ticker` drops a whole k-day bar group when the truncated frame has `< 15` k-day bars, so a column is absent **iff** `bars(ticker, ≤ D) < 15k` — a "not enough history yet" gap.
+  - Runner result: 305 missing columns checked, **0 unexplained**, 0 value mismatches → `LEAK VERIFY PASS`. (Caveat, honest: the sweep artifact stores 5 example columns per row, so the bound check covers all 305 examples across the 61 rows, 100% conforming; the iff rule itself is deterministic in code.)
+  - First verify attempt (run 40148289202) failed on an infra bug — GitHub's signed artifact redirect rejects the re-sent Authorization header; fixed in `6dbaf3c` (no-redirect download). Re-dispatched run passed.
+  - Per the 09:26 §0b order: freed runners by cancelling 14 queued grid-chunk duplicates + 4 in-progress grid legs (all idempotent; ACK line below). Grid raw tables may now be treated as usable.
 - ACK 2026-10-25 09:36 HKT: read James §0b leak-priority + ack-test; freeing runner for leak-verify 40148289202 (cancelled 14 queued grid-chunk duplicates ahead of it + 4 in-progress grid legs). §0b entry @ `3a9d097`.
 - **2026-10-24 ~23:15 HKT — Parallel Step A live; combiner code written; two infra bugs found and fixed.**
   - **What changed**
