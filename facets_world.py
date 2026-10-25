@@ -508,6 +508,54 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                     knox[t] = 1.0
             prev_lo_i = t
     out['tv_knox'] = knox.astype(np.float32)
+    # M268 classic chart patterns (approximation): pattern-state flags from the
+    # last confirmed pivots. Heuristic rules, deterministic and PIT via shift.
+    EPS_S = 0.0003         # ~0.03%/bar slope threshold
+    pat_cols = {k: np.zeros(nn, dtype=np.float64) for k in
+                ('dbltop', 'dblbot', 'tri', 'rect', 'flag', 'wedge', 'hs')}
+    hs_i = []; ls_i = []
+    ei = 0
+    for t in range(nn):
+        while ei < len(events) and events[ei][0] + P <= t:
+            _, kind, val = events[ei]
+            (hs_i if kind == 1 else ls_i).append((events[ei][0], val))
+            ei += 1
+        hslope = lslope = None
+        if len(hs_i) >= 2 and t - hs_i[-1][0] <= 60:
+            (a1, v1), (a2, v2) = hs_i[-2], hs_i[-1]
+            hslope = (v2 - v1) / max(a2 - a1, 1) / v1
+        if len(ls_i) >= 2 and t - ls_i[-1][0] <= 60:
+            (b1, w1), (b2, w2) = ls_i[-2], ls_i[-1]
+            lslope = (w2 - w1) / max(b2 - b1, 1) / w1
+        if len(hs_i) >= 2:
+            (a1, v1), (a2, v2) = hs_i[-2], hs_i[-1]
+            if abs(v2 - v1) <= 0.015 * max(v1, v2) and t - a2 <= 30:
+                pat_cols['dbltop'][t] = 1.0
+        if len(ls_i) >= 2:
+            (b1, w1), (b2, w2) = ls_i[-2], ls_i[-1]
+            if abs(w2 - w1) <= 0.015 * max(w1, w2) and t - b2 <= 30:
+                pat_cols['dblbot'][t] = 1.0
+        if hslope is not None and lslope is not None:
+            if hslope < -EPS_S and lslope > EPS_S:
+                pat_cols['tri'][t] = 1.0        # converging: descending tops, ascending bottoms
+            if abs(hslope) < EPS_S and abs(lslope) < EPS_S:
+                pat_cols['rect'][t] = 1.0
+            if hslope > EPS_S and lslope > EPS_S and hslope < lslope:
+                pat_cols['wedge'][t] = 1.0      # rising wedge (bearish)
+            if hslope < -EPS_S and lslope < -EPS_S and hslope > lslope:
+                pat_cols['wedge'][t] = 1.0      # falling wedge (bullish)
+        if len(hs_i) >= 3 and t - hs_i[-1][0] <= 40:
+            (_, v1), (_, v2), (_, v3) = hs_i[-3], hs_i[-2], hs_i[-1]
+            if v2 > v1 * 1.02 and v2 > v3 * 1.02 and abs(v1 - v3) <= 0.03 * v2:
+                pat_cols['hs'][t] = 1.0
+        if t >= 15:
+            seg15 = c[max(0, t - 15):t]
+            mom_rng = seg15.max() / seg15.min() - 1.0
+            tight = (c[t - 5:t].max() - c[t - 5:t].min()) / c[t]
+            if mom_rng > 0.08 and tight < 0.03:
+                pat_cols['flag'][t] = 1.0
+    for k, arr in pat_cols.items():
+        out[f'tv_pat_{k}'] = arr.astype(np.float32)
     return out
 
 def moon_age(dates):
