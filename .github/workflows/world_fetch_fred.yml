@@ -1,0 +1,40 @@
+name: world_fetch_fred
+# Block I / I195: FRED/ALFRED macro vintages -> data-ext/fred_wide_2020_26.parquet.
+# BLOCKED_SECRET until Cyrus adds FRED_API_KEY. The fetch exits 2 without the key;
+# this workflow treats that as a clean skip so scheduled/dispatch runs stay green.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Fetch ALFRED vintages (skips cleanly without the secret)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          set +e
+          python3 fetch/fetch_fred.py --out "$RUNNER_TEMP/fred_wide_2020_26.parquet"
+          rc=$?
+          set -e
+          if [ $rc -eq 2 ]; then echo "BLOCKED_SECRET: FRED_API_KEY not set; skipping"; exit 0; fi
+          exit $rc
+      - name: Upload to data-ext-2020-26-v1
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          f="$RUNNER_TEMP/fred_wide_2020_26.parquet"
+          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
+            || echo "no output to upload"
