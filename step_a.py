@@ -58,7 +58,10 @@ def w_score(jm):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--workers', type=int, default=5); ap.add_argument('--chunk', type=int, default=400)
-    ap.add_argument('--tickers'); a = ap.parse_args()
+    ap.add_argument('--tickers'); ap.add_argument('--force', default='',
+        help='comma chunk indices to recompute even if finished (dictionary-fix reruns); empty = normal resume')
+    a = ap.parse_args()
+    force = {int(x) for x in a.force.split(',') if x.strip()}
     import threading
     def heartbeat():
         lw, lm = time.time(), time.monotonic()
@@ -100,7 +103,7 @@ if __name__ == '__main__':
     for ci, ch in enumerate(chunks):
         fo = f'{OUT}/chunks/scores_{ci:03d}.parquet'
         fa = f'{OUT}/chunks/answers_{ci:03d}.npz'
-        if os.path.exists(fo) and (not SAVE or os.path.exists(fa)): continue
+        if ci not in force and os.path.exists(fo) and (not SAVE or os.path.exists(fa)): continue
         while True:
             ok, free, need = disk_ok(OUT)
             if ok: break
