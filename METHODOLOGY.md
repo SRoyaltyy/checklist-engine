@@ -223,6 +223,10 @@ This file is the single source of truth. Dated entries below are newest first. T
   - Taskforce stops its local copy as soon as Kimi posts "Kimi started Step A".
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
+- **2026-10-25 ~15:40 HKT — world block C (theme peers) DONE (`kimi/world-snapshot` `bc6b972`). Phase 3 + world.**
+  - Frozen correlation clusters: connected components over formation-year daily-return corr >= 0.5 (numpy union-find), membership PIT-safe because clusters never use data after the formation year; fixed-taxonomy label bias flagged in meta (same spirit as the SPDR note). 9 new columns: `peer_id/peer_n/peer_r1/r5/r20/vs_peer_r1/r5/r20/peer_corr60`, all shifted one bar.
+  - Synthetic 2-theme test: clusters correct, isolated ticker gets no cluster, full-vs-truncated identical at cut dates, formation-year warmup masked to NaN. Leak test now passes peers through.
+  - Remaining world blocks: E (Form 4, waits on box-only F4TR upload), H (XBRL) / I (FRED) / J (divsplits) wait on data_fetch runs, L analyst + M 13F + O GDELT need fetchers, N stays a declared gap.
 - **2026-10-25 ~15:05 HKT — audit fixes 1-2 (part) + 5 (part): box-only blocks F+G wired into world build. Phase 3 + world.**
   - Code: `kimi/world-snapshot` `4d12dba`. New strict-PIT columns: FINRA SI (I188: `si_qty/si_dtc/si_chg/si_days`, keyed publication_date < D, never settlement), daily short volume (I189: `shv_ratio/shv_r5/shv_r20`, dated X usable next session), Reg SHO (I190: `regsho_days/regsho_on`, file for d usable next session, on = listed within 7 cal days), halts (I191: `halt_days/halt_gap/halt_rsn/halt_n20/halt_n60`; gap only when resume also < D so ongoing halts leak nothing; reason factorized to int).
   - Bug caught locally BEFORE any runner burned: `merge_asof` exact-match on a record dated D returned NaN instead of falling back to D-1; fixed with `allow_exact_matches=False` in `_asof_strict` (affects si/shvol/regsho whenever a record lands exactly on a trading day).
