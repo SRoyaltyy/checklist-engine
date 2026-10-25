@@ -1,0 +1,52 @@
+name: world_fetch_analyst
+# Block L / I197: analyst actions (Yahoo yfinance upgrades_downgrades) for the
+# full universe -> data-ext/analyst_actions_2020_26.parquet. Resumable: downloads
+# the previous parquet and passes --resume, so a cut-off run continues next
+# dispatch. Partial output uploads even on failure (save-as-it-runs).
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: smoke limit (tickers); 0 = full universe
+        default: '0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow yfinance
+      - name: Download universe + previous actions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/an"
+          cd "$RUNNER_TEMP/an"
+          gh release download data-2020-24-v1 -p 'universe_2020_survivors_le2024.parquet'
+          gh release download data-ext-2020-26-v1 -p 'analyst_actions_2020_26.parquet' \
+            && echo "resume base found" || echo "no previous actions (fresh run)"
+      - name: Fetch analyst actions
+        run: |
+          cd "$RUNNER_TEMP/an"
+          ARGS="--universe universe_2020_survivors_le2024.parquet --out analyst_actions_2020_26.parquet --limit ${{ inputs.limit }}"
+          [ -f analyst_actions_2020_26.parquet ] && ARGS="$ARGS --resume" || true
+          python3 "$GITHUB_WORKSPACE/fetch/fetch_analyst.py" $ARGS
+      - name: Upload to data-ext-2020-26-v1
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          f="$RUNNER_TEMP/an/analyst_actions_2020_26.parquet"
+          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
+            || echo "no output to upload"
