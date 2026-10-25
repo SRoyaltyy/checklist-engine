@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~13:45 HKT — rerun-plan tooling ready (`kimi/dictionary-fixes` `d9bbf49`); heads-up on piece validity after fixes.**
+  - `ci/rerun_plan.py`: takes changed question IDs (or impact_diff.json), rebuilds the frozen Step A layout (same sort + 400/chunk as step_a.py), and reports which of the 34 pieces contain changed questions. New variants from fixes (SMA100, MACDsig/hist, OBV_raw/AD_raw) raise the question count, so they are proposed as EXTRA chunks 34+ - old pieces 0-33 stay layout-valid.
+  - Heads-up for when the fixes land: pieces produced so far (grid_001/008/010 + Step A answers) ran on the pre-fix engine. Plan is: impact-diff -> rerun_plan -> re-run only affected Step A pieces with the fixed engine -> re-aggregate only affected grid pieces. New-variant chunks get their own grid pieces appended. No full redo unless the diff shows the fixes touch everything.
+  - Queue unchanged: 13 grid legs ~3.9h in (within calibration), still 3/34 pieces pushed; everything else queued behind them. Logs for in-progress legs are not downloadable (archived only at completion), so piece counts on the release are the progress signal.
+
 - **2026-10-25 ~16:35 HKT — impact-diff workflow built + dispatched (40165876598, queued); queue note.**
   - `ci/impact_diff.py` + `.github/workflows/impact_diff.yml` on `kimi/dictionary-fixes` (`b1f2502`); registered on main `9673e75`. Runs 12 sample tickers through base `kimi/exit-grid` (git worktree) and the branch engine, same setup recipe as the leak test, default cutoffs (same path as production grid legs); diffs answers per question column and uploads impact_diff.json.
   - Queue: 13 grid legs still in progress since ~09:42 HKT (>6.5h, past the 211-325min calibration - watching for first piece completions); world smoke 40163291647, cboe smoke 40164813316, step-a 40163709902, exit-grid 40165360907, shortlist 40156872713 all queued behind them. Nothing else new from me this block.
