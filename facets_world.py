@@ -87,6 +87,77 @@ def compute_talib(o, h, l, c, v, funcs):
             continue
     return out
 
+# ---------------- Block B: sector/style ETF overlays ----------------
+def etf_wide():
+    """All 14 ETFs (SPY, QQQ, IWM, 11 SPDRs) as wide daily columns.
+    Every column is shifted by one ETF bar: value labelled D uses the ETF close
+    of its last trading day <= D-1, then joins by merge_asof backward, so a
+    stock-day D never sees ETF data from D itself. Survivor/label bias: the
+    11 SPDR set uses today's sector definitions (flagged in METHODOLOGY)."""
+    p = D('/workspace/etf/etf_2015.parquet')
+    if not os.path.exists(p):
+        return None
+    e = pd.read_parquet(p)
+    e['date'] = pd.to_datetime(e['date'])
+    parts = {}
+    for tk, d in e.groupby('ticker'):
+        d = d.sort_values('date')
+        c = d.close.to_numpy(float)
+        s = pd.Series(c)
+        cols = {
+            f'etf_{tk}_c': c,
+            f'etf_{tk}_r1': s.pct_change(1).to_numpy(),
+            f'etf_{tk}_r5': s.pct_change(5).to_numpy(),
+            f'etf_{tk}_r20': s.pct_change(20).to_numpy(),
+            f'etf_{tk}_d50': (s / s.rolling(50).mean() - 1).to_numpy(),
+            f'etf_{tk}_d200': (s / s.rolling(200).mean() - 1).to_numpy(),
+        }
+        dd = pd.DataFrame(cols)
+        dd['date'] = d.date.to_numpy()
+        parts[tk] = dd
+    wide = None
+    for tk, dd in parts.items():
+        wide = dd if wide is None else pd.merge(wide, dd, on='date', how='outer')
+    wide = wide.sort_values('date').reset_index(drop=True)
+    val_cols = [c for c in wide.columns if c != 'date']
+    wide[val_cols] = wide[val_cols].shift(1)          # D sees the prior ETF bar
+    return wide.dropna(subset=val_cols[:1]).sort_values('date')
+
+# ---------------- Block D: earnings calendar ----------------
+def load_earnings(tickers):
+    """Nasdaq earnings calendars 2020-24 (release nasdaq_earn_2020-24.tar ->
+    data/earnings/nasdaq_calendar_*.parquet). Point-in-time: only rows with
+    report_date < D are used (strict; an AMC report on D-1 is in, a BMO report
+    on D itself is out, keeping one convention for every name)."""
+    base = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data', 'earnings')
+    if not os.path.isdir(base):
+        return None
+    fs = [os.path.join(base, f) for f in sorted(os.listdir(base)) if f.startswith('nasdaq_calendar_') and f.endswith('.parquet')]
+    if not fs:
+        return None
+    df = pd.concat([pd.read_parquet(f, columns=['symbol', 'report_date', 'time_label',
+                                                'surprise_pct_fill', 'eps_delta']) for f in fs], ignore_index=True)
+    df = df[df.symbol.isin(tickers)]
+    df['report_date'] = pd.to_datetime(df['report_date'])
+    df = df.sort_values('report_date').reset_index(drop=True)
+    df['amc'] = df.time_label.astype(str).str.upper().str.contains('AMC').astype(np.float32)
+    return df
+
+def earn_for(dates, edf):
+    """Earnings columns for one ticker's sorted dates (as strings). Uses only
+    reports strictly before each date."""
+    if edf is None or len(edf) == 0:
+        return None
+    q = pd.DataFrame({'date': pd.to_datetime(dates)})
+    m = pd.merge_asof(q, edf[['report_date', 'amc', 'surprise_pct_fill', 'eps_delta']],
+                      left_on='date', right_on='report_date', direction='backward')
+    m = m.where(m.report_date < m.date)               # strict: nothing from D onward
+    days = (m.date - m.report_date).dt.days.to_numpy(dtype=np.float32)
+    return pd.DataFrame({'earn_days': days,
+                         'earn_amc': m.amc.to_numpy(dtype=np.float32),
+                         'earn_surp': m.surprise_pct_fill.to_numpy(dtype=np.float32),
+                         'earn_deps': m.eps_delta.to_numpy(dtype=np.float32)})
+
 # ---------------- build ----------------
 def load_bars(tickers=None):
     p = D('/workspace/updown/bars_all.parquet')
@@ -128,8 +199,19 @@ def main():
         bcols = [c for c in breadth.columns if c != 'date']
     else:
         bcols = []
+    etf = etf_wide()
+    ecols = [c for c in etf.columns if c != 'date'] if etf is not None else []
+    if etf is not None: print('ETF overlay cols:', len(ecols), flush=True)
+    edf_by_tk = None
+    edf = load_earnings(set(mine))
+    ecols2 = ['earn_days', 'earn_amc', 'earn_surp', 'earn_deps'] if edf is not None else []
+    if edf is not None:
+        edf_by_tk = dict(tuple(edf.groupby('symbol')))
+        print('earnings rows for shard:', len(edf), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
-                       'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols}
+                       'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
+                       'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
+                       'earn_cols': ecols2, 'earn_note': 'strict report_date < D (BMO-on-D excluded)'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
@@ -145,6 +227,17 @@ def main():
                               breadth, on='date', direction='backward')
             for bc in bcols:
                 df[bc] = m[bc].to_numpy(dtype=np.float32)
+        if ecols:
+            key = pd.to_datetime(df['date'])
+            m = pd.merge_asof(pd.DataFrame({'date': key}), etf, on='date', direction='backward')
+            for ec in ecols:
+                df[ec] = m[ec].to_numpy(dtype=np.float32)
+        if ecols2:
+            e2 = earn_for(d.date.to_numpy(), edf_by_tk.get(tk))
+            if e2 is not None:
+                df = pd.concat([df.reset_index(drop=True), e2.reset_index(drop=True)], axis=1)
+            else:
+                for c2 in ecols2: df[c2] = np.nan
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
