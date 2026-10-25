@@ -6,18 +6,19 @@
 set -euo pipefail
 TAG="${GRID_RELEASE:?need GRID_RELEASE}"
 CHUNK="${CHUNK:?need CHUNK}"
+CP=$(printf '%03d' "$CHUNK")   # assets are zero-padded: gridy_004_2020.parquet
 W="$RUNNER_TEMP"
 mkdir -p "$W/grid_out"
-python3 ci/release_assets.py getmatch "$TAG" "$W/grid_out" "gridy_${CHUNK}_*.parquet" "grid_${CHUNK}.parquet"
+python3 ci/release_assets.py getmatch "$TAG" "$W/grid_out" "gridy_${CP}_*.parquet" "grid_${CP}.parquet"
 N=$(ls "$W/grid_out" | grep -c -E '^gridy?_' || true)
 if [ "$N" -eq 0 ]; then
     echo "chunk $CHUNK: no grid files yet; nothing to do"
     exit 0
 fi
 echo "chunk $CHUNK: processing $N grid files"
-python3 scoring/shortlist.py --shard "$CHUNK" --indir "$W/grid_out" --out "$W/shortlist_shard_${CHUNK}.parquet"
-FORCE_UPLOAD=1 python3 ci/release_assets.py upload "$TAG" "$W/shortlist_shard_${CHUNK}.parquet"
-LEG="$W/shortlist_shard_${CHUNK}.parquet.leg.parquet"
+python3 scoring/shortlist.py --shard "$CHUNK" --indir "$W/grid_out" --out "$W/shortlist_shard_${CP}.parquet"
+FORCE_UPLOAD=1 python3 ci/release_assets.py upload "$TAG" "$W/shortlist_shard_${CP}.parquet"
+LEG="$W/shortlist_shard_${CP}.parquet.leg.parquet"
 if [ -f "$LEG" ]; then
     FORCE_UPLOAD=1 python3 ci/release_assets.py upload "$TAG" "$LEG"
 fi
