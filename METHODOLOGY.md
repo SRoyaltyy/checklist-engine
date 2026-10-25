@@ -63,6 +63,29 @@ This file explains, in plain English, what the scanner is for, how it works, and
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
 This file is the single source of truth. The newest entry overrides any pasted prompt and any older house rule it conflicts with.
+- **2026-10-25 ~12:30 HKT (Cyrus via James): TOP PRIORITY: world snapshot, EVERYTHING ticked (Cyrus order). Kimi, ACK this entry in §0c.**
+  - **Cyrus order.** The tests must use ALL the data, like a TradingView chart with every indicator and every data overlay ticked. Today's bank is about 94% own-price and volume only. 206 questions (1.5%) are non-price. 1,024 written questions are in `QUESTION_TREE_v2.7.1.csv` and are not built in step_a or the facets: vs_sector_peers 374, vs_theme_peers 374, earnings 56, form4 60, analyst 56, halts 56, short_interest 48. The ETF file already has QQQ, IWM, and the 11 SPDRs, and only SPY is read. `nasdaq_earn_2020-24.tar` is unused. Only about 25 of about 150 TA-Lib indicators are used.
+  - **World snapshot.** Build a point-in-time world snapshot per ticker per day D. Every column has `available_from_date` < D. Prices go up to the D−1 close. Filings are dated by filing date or publish date. FINRA short interest is dated by publication date. FRED uses ALFRED vintages. Questions read one column into yes/no or a fixed bucket set. No free text.
+  - **Blocks.**
+    - **A.** Full TA-Lib indicator set, plus all 61 candle patterns.
+    - **B.** Sector and style ETFs. Sector as of D−1. Flag the current-label survivor bias.
+    - **C.** Theme peers (correlation clusters).
+    - **D.** Earnings.
+    - **K.** Market breadth: new highs minus new lows (NH−NL), advance/decline (A/D), and the share of names above the 200-day.
+    - **E.** SEC Form 4.
+    - **F.** FINRA short interest.
+    - **G.** Halts, plus Reg SHO.
+    - **H.** SEC XBRL fundamentals.
+    - **I.** FRED macro.
+    - **J.** Dividends and splits.
+    - **L.** Analyst actions (Finviz ratings history). Runner-only, rate-limited. Verify it goes back to 2020.
+    - **M.** 13F.
+    - **O.** GDELT news counts and tone.
+    - **N.** Single-stock options is a gap (market-wide CBOE only).
+    - **P.** Finviz snapshot fields are a live check for 2025–26 only.
+  - **Order.** A, B, C, D, K first (that data is already held). Then E, F, G, H, I, J. Then L, M, O.
+  - **How.** New workflow `world_build.yml`, producing release `world-2020-26-v1` (2025–26 unlocked). New `facets_world.py`, plus new question groups 034 and up, through the same `step_a.yml`. Same 26,100 sell rules. Lower priority, so `grid_000`–`grid_033` keep their runners. Do not touch or restart `grid_000`–`grid_033` or the shortlist. Run `leak_verify` on the new groups before any scoring. Keep the ≥ $100M / untradeable filter. All heavy work on GitHub runners only. No secrets in the repo. Run jobs concurrently where possible.
+  - **Kimi.** ACK in §0c with your plan and the first workflow run IDs, and log every change in the Kimi change log.
 - **2026-10-25 ~09:43 HKT (Cyrus via James, Asia/Hong_Kong): Standing working method. Binding. Overrides older "narrative only" / end-of-day-only update habits. Kimi, ACK this entry in §0c.**
   - **TEST-2 (2026-10-25 ~09:44 HKT): Ping only.** As soon as you read this, append ONE §0c Kimi change-log line on main: `ACK-TEST-2 2026-10-25 <HKT time>: read James §0b @ <this commit short SHA>; channel alive.` Do this within ~10 minutes even if you are mid-work. No other work is required for this ping. This ping sits inside this same §0b. Also post the standing ACK in the next bullet (phase + what is running in parallel). The ping does not replace that ACK, and it does not cancel the project map below.
   - **ACK this §0b.** Within ~10 minutes, one §0c line on main naming this commit's short SHA, the current phase number from the map below, and what is running in parallel versus what is waiting.
