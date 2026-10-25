@@ -160,6 +160,55 @@ def load_form4(tickers):
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
 
+# ---------------- Block L: analyst action columns (I197) ----------------
+def analyst_columns(dates, af):
+    """Days-since-last-action + trailing-window counts from a ticker's analyst
+    action frame (ticker, date, n_up, n_down, n_init, n_oth). All windows are
+    strict < D, same convention as event_columns."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    nan = np.full(n, np.nan, dtype=np.float32)
+    out = {k: nan.copy() for k in ('an_days', 'an_n20', 'an_up20', 'an_dn20',
+                                   'an_up60', 'an_dn60', 'an_dir')}
+    if af is None or not len(af):
+        return out
+    af = af.sort_values('date')
+    ed = af.date.to_numpy(dtype='datetime64[ns]')
+    dd = d.to_numpy(dtype='datetime64[ns]')
+    one = np.timedelta64(1, 'D')
+    pos = np.searchsorted(ed, dd, side='left')        # events with date < D
+    has = pos > 0
+    idx = np.clip(pos - 1, 0, len(ed) - 1)
+    out['an_days'] = np.where(has, (dd - ed[idx]) / one, np.nan).astype(np.float32)
+    tot = (af.n_up + af.n_down + af.n_init + af.n_oth).to_numpy(dtype=np.float32)
+    up = af.n_up.to_numpy(dtype=np.float32); dn = af.n_down.to_numpy(dtype=np.float32)
+    for w, tag in ((20, '20'), (60, '60')):
+        lo = np.searchsorted(ed, dd - np.timedelta64(w, 'D'), side='left')
+        cs = np.cumsum(tot); cup = np.cumsum(up); cdn = np.cumsum(dn)
+        s = lambda cs_: np.where(has, (cs_[np.clip(pos - 1, 0, len(ed) - 1)]
+                                       - np.where(lo > 0, cs_[lo - 1], 0)).astype(np.float32), np.nan)
+        out[f'an_n{tag}'] = s(cs); out[f'an_up{tag}'] = s(cup); out[f'an_dn{tag}'] = s(cdn)
+    # an_dir: direction of the most recent day with a directional move
+    # (up != down); NaN before the first such day. ffill over the event timeline.
+    dir_ev = np.where(up != dn, np.sign(up - dn), np.nan).astype(np.float32)
+    dir_ff = pd.Series(dir_ev).ffill().to_numpy()
+    out['an_dir'] = np.where(has, dir_ff[idx], np.nan).astype(np.float32)
+    return out
+
+# ---------------- Block L loader: analyst actions (I197) ----------------
+def load_analyst(tickers):
+    """Per-ticker analyst action day counts from fetch/fetch_analyst.py (release
+    data-ext-2020-26-v1 asset analyst_actions_2020_26.parquet): ticker, date,
+    n_up / n_down / n_init / n_oth. Actions are public on their date; joins in
+    ticker_frame are strict < D."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'analyst_actions_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df = df[df.ticker.isin(tickers)]
+    df['date'] = pd.to_datetime(df['date'])
+    return df.sort_values('date').reset_index(drop=True)
+
 # ---------------- Market-wide daily series (I178 VIX, block I market columns) ----------------
 def load_mkt():
     """Market-wide daily frame from fetch/fetch_mkt.py (release data-ext-2020-26-v1
@@ -542,7 +591,7 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -550,7 +599,8 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
     `ext` is the ticker's box-only block dict: si/shvol/regsho frames and the
     halt event frame; every one of those joins is strict < D as well. `peers`
     is a frozen Peers object; cluster returns are consumed shifted one bar.
-    `mkt` is the market-wide daily frame (VIX etc.); joined strict < D."""
+    `mkt` is the market-wide daily frame (VIX etc.); joined strict < D.
+    `an` is the ticker's analyst-action day-count frame (strict < D)."""
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
         o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
@@ -565,6 +615,9 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
                           mkt, on='date', direction='backward')
         for mc in mcols:
             df[f'mkt_{mc}'] = m[mc].to_numpy(dtype=np.float32)
+    if an is not None:
+        for c, v in analyst_columns(df['date'].to_numpy(), an).items():
+            df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
         key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: breadth date < D
@@ -691,6 +744,11 @@ def main():
     mkt_cols = [f'mkt_{c}' for c in mkt.columns if c != 'date'] if mkt is not None else []
     if mkt is not None:
         print('market-wide cols:', mkt_cols, mkt.date.min().date(), '->', mkt.date.max().date(), flush=True)
+    an = load_analyst(set(mine))
+    an_by_tk = {tk: g.reset_index(drop=True) for tk, g in an.groupby('ticker')} if an is not None else {}
+    an_cols = ['an_days', 'an_n20', 'an_up20', 'an_dn20', 'an_n60', 'an_up60', 'an_dn60', 'an_dir'] if an is not None else []
+    if an is not None:
+        print('analyst action rows for shard:', len(an), 'tickers with actions:', len(an_by_tk), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -707,13 +765,16 @@ def main():
                                      'halts': 'I191: halt_date < D strict; gap only when resume also < D; reason = factorized int',
                                      'f4': 'I187 date-count lens: Form 4 filingDate < D strict (public on filingDate, usable next session); value lens (shares/role) later'},
                        'mkt_cols': mkt_cols,
-                       'mkt_notes': 'I178 VIX via keyless FRED CSV (never revised); strict date < D; mkt_ prefix'}
+                       'mkt_notes': 'I178 VIX via keyless FRED CSV (never revised); strict date < D; mkt_ prefix',
+                       'an_cols': an_cols,
+                       'an_notes': 'I197 analyst actions (yfinance upgrades_downgrades); strict date < D; counts by direction'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
         df = ticker_frame(tk, d, funcs, etf if ecols else None,
                           breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
-                          ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None)
+                          ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None,
+                          an=an_by_tk.get(tk) if an_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:

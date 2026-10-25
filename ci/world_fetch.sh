@@ -75,7 +75,8 @@ python3 - "$API2" "$TAG2" "$DEST" <<'PY'
 import sys, json, os, urllib.request
 api, tag, dest = sys.argv[1], sys.argv[2], sys.argv[3]
 tok = os.environ['GITHUB_TOKEN']
-want = {'mkt_wide_2020_26.parquet', 'form4_counts_2020_26.parquet'}
+want = {'mkt_wide_2020_26.parquet', 'form4_counts_2020_26.parquet',
+        'analyst_actions_2020_26.parquet'}
 req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
 rel = json.load(urllib.request.urlopen(req))
 for a in rel['assets']:

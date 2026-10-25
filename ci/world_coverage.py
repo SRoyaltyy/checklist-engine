@@ -54,6 +54,8 @@ OVERRIDES = {  # item_id -> (status, columns, note)
              'VIX level: keyless FRED CSV via fetch/fetch_mkt.py (never revised, strict < D); 2025-26 refreshed on runner'),
     'I187': ('WIRED', 'f4_n|f4_days|f4_n20|f4_n60',
              'Form 4 date-count lens via SEC submissions API (fetch/fetch_form4.py); filingDate < D strict; value lens later'),
+    'I197': ('WIRED', 'an_days|an_n20|an_up20|an_dn20|an_up60|an_dn60|an_dir',
+             'analyst actions via yfinance upgrades_downgrades (fetch/fetch_analyst.py); strict date < D; counts by direction'),
     'I195': ('BLOCKED_SECRET', '', 'FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing'),
     'I202': ('PENDING', '', 'single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested'),
 }
