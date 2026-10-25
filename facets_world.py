@@ -195,6 +195,46 @@ def analyst_columns(dates, af):
     out['an_dir'] = np.where(has, dir_ff[idx], np.nan).astype(np.float32)
     return out
 
+# ---------------- Block O: GDELT mention columns (I200) ----------------
+def gd_columns(dates, gdf):
+    """Trailing mention windows from a ticker's GDELT daily counts (date, n).
+    gd_n7/gd_n30 sum counts over [D-w, D); gd_spike = n7 / (90d baseline daily
+    mean, excluding the last 7d); gd_days = days since last mentioned day.
+    A true 0 means 'covered by GDELT but silent'; NaN means 'no GDELT data yet'."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    out = {k: np.full(n, np.nan, dtype=np.float32)
+           for k in ('gd_days', 'gd_n7', 'gd_n30', 'gd_spike')}
+    if gdf is None or not len(gdf):
+        return out
+    gdf = gdf.sort_values('date')
+    ed = gdf.date.to_numpy(dtype='datetime64[ns]')
+    dd = d.to_numpy(dtype='datetime64[ns]')
+    nv = gdf.n.to_numpy(dtype=np.float32)
+    cs = np.cumsum(nv)
+    one = np.timedelta64(1, 'D')
+
+    def winsum(w, lag=0):
+        hi = np.searchsorted(ed, dd - np.timedelta64(lag, 'D'), side='left') - 1
+        lo = np.searchsorted(ed, dd - np.timedelta64(w + lag, 'D'), side='left') - 1
+        s = np.where(hi >= 0,
+                     cs[np.clip(hi, 0, len(ed) - 1)]
+                     - np.where(lo >= 0, cs[np.clip(lo, 0, len(ed) - 1)], 0), np.nan)
+        return s.astype(np.float32)
+
+    out['gd_n7'] = winsum(7)
+    out['gd_n30'] = winsum(30)
+    base = winsum(90, lag=7) / 90.0
+    out['gd_spike'] = np.where(base > 0, out['gd_n7'] / (base + 1.0), np.nan).astype(np.float32)
+    nz = np.nonzero(nv > 0)[0]
+    pos = np.searchsorted(ed, dd, side='left')          # events < D
+    li = np.searchsorted(nz, pos, side='left') - 1
+    has = li >= 0
+    idx = nz[np.clip(li, 0, len(nz) - 1)]
+    out['gd_days'] = np.where(has, (dd - ed[idx]) / one, np.nan).astype(np.float32)
+    return out
+
+
 # ---------------- Block H: XBRL fundamentals columns (I192) ----------------
 def xbrl_columns(dates, xb):
     """Latest-filed fundamentals per metric, strict filed < D, from the ticker's
@@ -234,6 +274,21 @@ def load_xbrl(tickers):
     df = df[df.ticker.isin(tickers)]
     df['filed'] = pd.to_datetime(df['filed'])
     return df.sort_values('filed').reset_index(drop=True)
+
+
+# ---------------- Block O loader: GDELT mention counts (I200) ----------------
+def load_gdelt(tickers):
+    """Per-ticker GDELT daily mention counts from fetch/fetch_gdelt.py (release
+    data-ext-2020-26-v1 asset gdelt_counts_2020_26.parquet): ticker, date, n.
+    Query = exact ticker symbol; short-symbol noise bias is uniform and noted
+    in the meta."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'gdelt_counts_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df = df[df.ticker.isin(tickers)]
+    df['date'] = pd.to_datetime(df['date'])
+    return df.sort_values('date').reset_index(drop=True)
 
 
 # ---------------- Block L loader: analyst actions (I197) ----------------
@@ -632,7 +687,7 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -661,6 +716,9 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[c] = v
     if xb is not None:
         for c, v in xbrl_columns(df['date'].to_numpy(), xb).items():
+            df[c] = v
+    if gd is not None:
+        for c, v in gd_columns(df['date'].to_numpy(), gd).items():
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
@@ -800,6 +858,12 @@ def main():
     xb_cols = XB_COLS if xb is not None else []
     if xb is not None:
         print('xbrl rows for shard:', len(xb), 'tickers covered:', len(xb_by_tk), flush=True)
+    gdv = load_gdelt(set(mine))
+    gd_by_tk = {tk: g.reset_index(drop=True) for tk, g in gdv.groupby('ticker')} if gdv is not None else {}
+    GD_COLS = ['gd_days', 'gd_n7', 'gd_n30', 'gd_spike']
+    gd_cols = GD_COLS if gdv is not None else []
+    if gdv is not None:
+        print('gdelt rows for shard:', len(gdv), 'tickers covered:', len(gd_by_tk), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -820,7 +884,9 @@ def main():
                        'an_cols': an_cols,
                        'an_notes': 'I197 analyst actions (yfinance upgrades_downgrades); strict date < D; counts by direction',
                        'xb_cols': xb_cols,
-                       'xb_notes': 'I192 XBRL via SEC frames API; keyed filed < D (restatement-safe); CY-frame coverage sparser for fiscal-offset filers'}
+                       'xb_notes': 'I192 XBRL via SEC frames API; keyed filed < D (restatement-safe); CY-frame coverage sparser for fiscal-offset filers',
+                       'gd_cols': gd_cols,
+                       'gd_notes': 'I200 GDELT 2.0 timelinevol mention counts; exact-symbol query (short-symbol noise uniform); strict < D; 0 = covered-but-silent, NaN = no data yet'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
@@ -828,7 +894,8 @@ def main():
                           breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None,
                           ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None,
                           an=an_by_tk.get(tk) if an_cols else None,
-                          xb=xb_by_tk.get(tk) if xb_cols else None)
+                          xb=xb_by_tk.get(tk) if xb_cols else None,
+                          gd=gd_by_tk.get(tk) if gd_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
