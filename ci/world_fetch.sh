@@ -4,12 +4,13 @@ set -euo pipefail
 DEST="$1"; mkdir -p "$DEST"
 API="https://api.github.com/repos/${GH_REPO:-${GITHUB_REPOSITORY}}"
 TAG="data-2020-24-v1"
-FILES=(bars_all_le2024.parquet universe_2020_survivors_le2024.parquet breadth_2020_24.parquet)
+FILES=(bars_all_le2024.parquet universe_2020_survivors_le2024.parquet breadth_2020_24.parquet etf_2015_le2024.parquet)
 python3 - "$API" "$TAG" "$DEST" <<'PY'
 import sys, json, os, urllib.request
 api, tag, dest = sys.argv[1], sys.argv[2], sys.argv[3]
 tok = os.environ['GITHUB_TOKEN']
-want = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'breadth_2020_24.parquet', 'SHA256SUMS'}
+want = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'breadth_2020_24.parquet',
+        'etf_2015_le2024.parquet', 'nasdaq_earn_2020-24.tar', 'SHA256SUMS'}
 req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
 rel = json.load(urllib.request.urlopen(req))
 for a in rel['assets']:
@@ -27,5 +28,10 @@ for a in rel['assets']:
     print('downloaded', a['name'], a['size'])
 PY
 cd "$DEST"
-grep -E "bars_all_le2024\.parquet|universe_2020_survivors_le2024\.parquet|breadth_2020_24\.parquet" SHA256SUMS > SUBSET_SUMS
+grep -E "nasdaq_earn_2020-24.tar|bars_all_le2024\.parquet|universe_2020_survivors_le2024\.parquet|breadth_2020_24\.parquet|etf_2015_le2024\.parquet" SHA256SUMS > SUBSET_SUMS
 sha256sum -c SUBSET_SUMS
+# earnings calendar lives inside the tar; unpack it next to the other inputs
+if [ -f nasdaq_earn_2020-24.tar ]; then
+  tar xf nasdaq_earn_2020-24.tar
+  echo "earnings calendars:"; ls data/earnings/ | head -8
+fi
