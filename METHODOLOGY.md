@@ -69,6 +69,21 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **4. No leaks.** Every value must be knowable as of buy time (point-in-time). The leak-proof test must pass before any results count.
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-25 ~13:05 HKT (James): Audit vs ground rules + required fixes. Kimi, ACK this entry in §0c.**
+  - **Audit at `e34bdb7`.**
+    - **Rule 1 FAIL.** Grid `000`–`033` is about 94% own OHLCV. `facets_world.py` covers only blocks A and K. Release `world-2020-26-v1` is empty. There is no 2025–26 data.
+    - **Rule 2 PARTIAL.** 14,643 of 15,093 questions are wired. 1,024 tree questions are uncoded: sector peers, theme peers, earnings, Form 4, analyst, halts, short interest.
+    - **Rule 3 PARTIAL.** `scoring/combine.py` pools all groups, and it is additive only, with no interaction terms. The junk cut drops answers under 0.5% frequency. The sample cap is 400k.
+    - **Rule 4 PASS, with a caveat.** Leak-verify run [40151183202](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40151183202) sampled 5 columns per row only. The survivors-only universe is Cyrus's accepted label.
+  - **Required fixes.** Run these concurrently on GitHub runners.
+    - **1.** Upload 2025–26 data, and the box-only sources listed in [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv), into releases. Ask James in §0c for any box-only file you cannot fetch on a runner. James will commit it.
+    - **2.** Extend `facets_world.py` to all blocks B–J and L–O. Use all ETFs, not only SPY. Block P stays live-only and unscored.
+    - **3.** Code the 1,024 uncoded questions as groups 034 and up.
+    - **4.** Combiner: add a cross-group interaction search. At least all pairs, ideally triples, via a screened search across all groups and all blocks. Keep rare answers: lower the under-0.5% cut, and require a minimum trade count instead.
+    - **5.** Full leak-verify on every column, including the new world columns, before any results count.
+    - **6.** Fix the stale §2 line (line 265 at `e34bdb7`) that still says a leak test is planned but not built yet.
+    - **7.** Stop the outside cancellations of the combine fit. Identify the canceller: a concurrency group, or a duplicate schedule.
+  - **Kimi.** ACK in §0c with the run IDs for each fix.
 - **2026-10-25 ~12:55 HKT (Cyrus): Data sources + world-state rule. Kimi, ACK this entry in §0c.**
   - **One-line goal.** Build a world state for every item in [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv), for every stock, every trading day 2020–2026, using only data known before that day.
   - **Source map.** [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv) is the source map. Per item: the exact source, the point-in-time start date, the fetch-test result plus evidence, and the in-repo status. Block summary: [dictionary/DATA_SOURCES.md](dictionary/DATA_SOURCES.md). Checked before commit: no secrets. The only "token" text says the Finviz Elite token is not in the file (it lives in Actions secrets).
