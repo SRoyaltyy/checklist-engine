@@ -58,6 +58,8 @@ OVERRIDES = {  # item_id -> (status, columns, note)
              'analyst actions via yfinance upgrades_downgrades (fetch/fetch_analyst.py); strict date < D; counts by direction'),
     'I192': ('WIRED', 'xb_days|xb_rev|xb_rev_days|xb_rev_g|xb_ni|xb_ni_days|xb_ni_g|xb_assets|xb_assets_days|xb_debt|xb_debt_days|xb_shares|xb_shares_days',
              'SEC XBRL frames API keyed filed < D (restatement-safe); fiscal-offset filers sparser; value lens via fetch/fetch_xbrl.py'),
+    'I199': ('WIRED', 'f13_days|f13_qdays|f13_n|f13_q4',
+             '13F-HR(/A) via EDGAR FTS by CUSIP (OpenFIGI map, fetch/fetch_13f.py); f13_n lower-bounds mega caps; keyed file_date < D'),
     'I200': ('WIRED', 'gd_days|gd_n7|gd_n30|gd_spike',
              'GDELT 2.0 timelinevol exact-symbol mention counts (fetch/fetch_gdelt.py); sharded long-haul, strict < D; short-symbol noise uniform'),
     'I195': ('BLOCKED_SECRET', '', 'FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing'),

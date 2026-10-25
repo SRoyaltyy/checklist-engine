@@ -195,6 +195,51 @@ def analyst_columns(dates, af):
     out['an_dir'] = np.where(has, dir_ff[idx], np.nan).astype(np.float32)
     return out
 
+# ---------------- Block M: 13F holdings columns (I199) ----------------
+def f13_columns(dates, hits):
+    """Point-in-time institutional-holding recency from raw EDGAR FTS hits
+    (cik, adsh, period_ending, file_date). f13_days = days since the latest
+    13F-HR(/A) filing mentioning the ticker (filed < D); f13_qdays = days since
+    the most recent reported quarter-end; f13_n = distinct filers in that
+    quarter (page-cap saturation makes this a lower bound for mega caps);
+    f13_q4 = how many of the last ~4 reported quarters have >=1 filer."""
+    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
+    n = len(d)
+    keys = ('f13_days', 'f13_qdays', 'f13_n', 'f13_q4')
+    out = {k: np.full(n, np.nan, dtype=np.float32) for k in keys}
+    if hits is None or not len(hits):
+        return out
+    fd = pd.to_datetime(hits.file_date).to_numpy(dtype='datetime64[ns]')
+    pe = pd.to_datetime(hits.period_ending).to_numpy(dtype='datetime64[ns]')
+    dd = d.to_numpy(dtype='datetime64[ns]')
+    one = np.timedelta64(1, 'D')
+    pos_all = np.searchsorted(np.sort(fd), dd, side='left')   # hits with file_date < D
+    has_any = pos_all > 0
+    out['f13_days'] = np.where(has_any, (dd - np.sort(fd)[np.clip(pos_all - 1, 0, len(fd) - 1)]) / one,
+                               np.nan).astype(np.float32)
+    pes = np.unique(pe)
+    Q = len(pes)
+    hasq = np.zeros((Q, n), dtype=bool)
+    cntq = np.zeros((Q, n), dtype=np.float32)
+    for qi, q in enumerate(pes):
+        f = np.sort(fd[pe == q])
+        pos = np.searchsorted(f, dd, side='left')
+        hasq[qi] = pos > 0
+        cntq[qi] = pos.astype(np.float32)
+    anyq = hasq.any(axis=0)
+    # latest reported quarter index per day (NaN if none)
+    idx = np.where(hasq, np.arange(Q)[:, None], -1)
+    latest = idx.max(axis=0)
+    lk = np.clip(latest, 0, Q - 1)
+    out['f13_qdays'] = np.where(anyq, (dd - pes[lk]) / one, np.nan).astype(np.float32)
+    out['f13_n'] = np.where(anyq, np.take_along_axis(cntq, lk[None, :], axis=0)[0], np.nan).astype(np.float32)
+    # q4: distinct quarters reported within ~370 days of the latest quarter
+    window = pes[lk][None, :] - np.timedelta64(370, 'D')     # (1, n) lower bound per day
+    q4 = (hasq & (pes[:, None] >= window)).sum(axis=0)
+    out['f13_q4'] = np.where(anyq, q4, np.nan).astype(np.float32)
+    return out
+
+
 # ---------------- Block O: GDELT mention columns (I200) ----------------
 def gd_columns(dates, gdf):
     """Trailing mention windows from a ticker's GDELT daily counts (date, n).
@@ -274,6 +319,19 @@ def load_xbrl(tickers):
     df = df[df.ticker.isin(tickers)]
     df['filed'] = pd.to_datetime(df['filed'])
     return df.sort_values('filed').reset_index(drop=True)
+
+
+# ---------------- Block M loader: 13F hits (I199) ----------------
+def load_f13(tickers):
+    """Per-ticker raw 13F-HR(/A) FTS hits from fetch/fetch_13f.py (release
+    data-ext-2020-26-v1 asset f13_hits_2020_26.parquet): ticker, cik, adsh,
+    period_ending, file_date. Point-in-time keyed on file_date."""
+    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'f13_hits_2020_26.parquet')
+    if not os.path.exists(p):
+        return None
+    df = pd.read_parquet(p)
+    df = df[df.ticker.isin(tickers)]
+    return df.reset_index(drop=True)
 
 
 # ---------------- Block O loader: GDELT mention counts (I200) ----------------
@@ -687,7 +745,7 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -719,6 +777,9 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[c] = v
     if gd is not None:
         for c, v in gd_columns(df['date'].to_numpy(), gd).items():
+            df[c] = v
+    if f13 is not None:
+        for c, v in f13_columns(df['date'].to_numpy(), f13).items():
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
@@ -864,6 +925,12 @@ def main():
     gd_cols = GD_COLS if gdv is not None else []
     if gdv is not None:
         print('gdelt rows for shard:', len(gdv), 'tickers covered:', len(gd_by_tk), flush=True)
+    f13 = load_f13(set(mine))
+    f13_by_tk = {tk: g.reset_index(drop=True) for tk, g in f13.groupby('ticker')} if f13 is not None else {}
+    F13_COLS = ['f13_days', 'f13_qdays', 'f13_n', 'f13_q4']
+    f13_cols = F13_COLS if f13 is not None else []
+    if f13 is not None:
+        print('13f hits for shard:', len(f13), 'tickers covered:', len(f13_by_tk), flush=True)
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
@@ -886,7 +953,9 @@ def main():
                        'xb_cols': xb_cols,
                        'xb_notes': 'I192 XBRL via SEC frames API; keyed filed < D (restatement-safe); CY-frame coverage sparser for fiscal-offset filers',
                        'gd_cols': gd_cols,
-                       'gd_notes': 'I200 GDELT 2.0 timelinevol mention counts; exact-symbol query (short-symbol noise uniform); strict < D; 0 = covered-but-silent, NaN = no data yet'}
+                       'gd_notes': 'I200 GDELT 2.0 timelinevol mention counts; exact-symbol query (short-symbol noise uniform); strict < D; 0 = covered-but-silent, NaN = no data yet',
+                       'f13_cols': f13_cols,
+                       'f13_notes': 'I199 13F-HR(/A) via EDGAR FTS by CUSIP (OpenFIGI map); f13_n lower-bounds mega-cap filers (page cap); keyed file_date < D'}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
@@ -895,7 +964,8 @@ def main():
                           ext=ext_by_tk.get(tk), peers=peers, mkt=mkt if mkt_cols else None,
                           an=an_by_tk.get(tk) if an_cols else None,
                           xb=xb_by_tk.get(tk) if xb_cols else None,
-                          gd=gd_by_tk.get(tk) if gd_cols else None)
+                          gd=gd_by_tk.get(tk) if gd_cols else None,
+                          f13=f13_by_tk.get(tk) if f13_cols else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
