@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~15:20 HKT — queue unblocked per standing 0b: cancelled 2 cron copies + disabled 2 crons.**
+  - Cancelled queued `step-a` 40163709902 (cron; Step A already 34/34) and `exit-grid` 40165360907 (cron duplicate of the grid-chunk dispatches). Disabled both cron schedules on main (`4c8d0de` step-a, `1c32a81` exit-grid); workflow_dispatch retained on both, re-enable note in-file for after grid 34/34. Matches the 0b line 'cancel duplicate schedule spam that blocks the critical path'.
+  - Kept queued (all workflow_dispatch): world smoke 40163291647, cboe smoke 40164813316, impact-diff 40165876598, world leak-verify 40166189700, shortlist 40156872713 (partial-tolerant).
+  - State: 13 grid legs in flight; yearly legs 47 across 16 chunks (production path per prior note).
+
 - **2026-10-25 ~15:00 HKT — grid progress reality check: yearly legs are landing steadily, full-window legs are the cap casualty.**
   - Release now has 46 `gridy` legs covering chunks 0-15 (all 3 years) vs still 3/34 full `grid` tables. Diagnosed one failed leg (chunk 3): its 3 year legs succeeded + uploaded; the full-window aggregation step was cancelled at the 350-min job cap. Expect full tables to lag indefinitely under this cap.
   - No pipeline blocker: `scoring/shortlist.py` prefers yearly legs when present (fit 2020+2021, check 2022 from gridy), and the combiner fits from `answers_*.npz` + `grid_pre` (never touches grid tables). So shortlist at full coverage needs 34/34 chunks' YEAR legs only.
