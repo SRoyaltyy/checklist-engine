@@ -1,0 +1,5 @@
+numpy>=1.26,<3
+pandas>=2.2,<3
+pyarrow>=18
+TA-Lib==0.8.2
+pytest>=8,<10

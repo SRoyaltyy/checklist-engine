@@ -1,0 +1,297 @@
+item_id,item,category,block,snapshot_columns,status,reason
+M001,1 year active supply %,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M002,24-hour Volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M003,Accumulation Distribution (ADL),built-in indicator,A2,Taskforce v10.2: Accumulation/Distribution line change,WIRED,have per master; owner variant: Taskforce v10.2: Accumulation/Distribution line change — non-null % re-verified at gate measure on rebuilt shards
+M004,Active addresses with contracts,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M005,Addresses with balance ≥ X (% of supply),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M006,Addresses with balance ≥ X (USD),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M007,Advance/Decline Line,built-in indicator,A2,James v5.5c: Breadth rows,WIRED,have per master; owner variant: James v5.5c: Breadth rows — non-null % re-verified at gate measure on rebuilt shards
+M008,Advance/Decline Ratio,built-in indicator,A2,advdecl,WIRED,computed in world build (52f8b30); survivors-only universe provenance (same as breadth col)
+M009,Advance/Decline Ratio (Bars),built-in indicator,A2,tv_adbars_up14;tv_adbars_dn14;tv_adbars_ratio14,WIRED,computed in world build (c29b214)
+M010,Analyst price forecast,built-in indicator,A2,Theme Radar: Target price distance %; Grok Bot finviz/ratings: target changes,WIRED,have per master; owner variant: Theme Radar: Target price distance %; Grok Bot finviz/ratings: target changes — non-null % re-verified at gate measure on rebuilt shards
+M011,Arnaud Legoux Moving Average,built-in indicator,A2,"Taskforce v10.2: Close vs ALMA(9,0.85,6)",WIRED,"have per master; owner variant: Taskforce v10.2: Close vs ALMA(9,0.85,6) — non-null % re-verified at gate measure on rebuilt shards"
+M012,Aroon Indicator,built-in indicator,A2,Taskforce v10.2: Aroon up minus down (25),WIRED,have per master; owner variant: Taskforce v10.2: Aroon up minus down (25) — non-null % re-verified at gate measure on rebuilt shards
+M013,Aroon Oscillator,built-in indicator,A2,Taskforce v10.2: Aroon up minus down (25),WIRED,have per master; owner variant: Taskforce v10.2: Aroon up minus down (25) — non-null % re-verified at gate measure on rebuilt shards
+M014,Auto fib extension,built-in indicator,A2,tv_fibx,WIRED,computed in world build (59f5a00)
+M015,Auto Fib Retracement,built-in indicator,A2,Taskforce v10.2: Fibonacci zone of 10/20/60/252d swing,WIRED,have per master; owner variant: Taskforce v10.2: Fibonacci zone of 10/20/60/252d swing — non-null % re-verified at gate measure on rebuilt shards
+M016,Auto key levels,built-in indicator,A2,New Bot v4.4f: Distance to nearest round number,WIRED,have per master; owner variant: New Bot v4.4f: Distance to nearest round number — non-null % re-verified at gate measure on rebuilt shards
+M017,Auto Pitchfork,built-in indicator,A2,tv_pf_slope;tv_pf_pos,WIRED,computed in world build (59f5a00)
+M018,Auto trendlines,built-in indicator,A2,tv_tl_hslope;tv_tl_hdist;tv_tl_lslope;tv_tl_ldist,WIRED,computed in world build (59f5a00)
+M019,Average Daily Range (ADR) indicator,built-in indicator,A2,Taskforce v10.2: Average daily range % 20,WIRED,have per master; owner variant: Taskforce v10.2: Average daily range % 20 — non-null % re-verified at gate measure on rebuilt shards
+M020,Average Directional Index (ADX),built-in indicator,A2,Taskforce v10.2: ADX14 trend strength,WIRED,have per master; owner variant: Taskforce v10.2: ADX14 trend strength — non-null % re-verified at gate measure on rebuilt shards
+M021,Average transaction volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M022,Average True Range (ATR),built-in indicator,A2,Taskforce v10.2: ATR14 % of price,WIRED,have per master; owner variant: Taskforce v10.2: ATR14 % of price — non-null % re-verified at gate measure on rebuilt shards
+M023,Awesome Oscillator (AO),built-in indicator,A2,Taskforce v10.2: Awesome oscillator / C,WIRED,have per master; owner variant: Taskforce v10.2: Awesome oscillator / C — non-null % re-verified at gate measure on rebuilt shards
+M024,Balance of Power (BOP),built-in indicator,A2,Taskforce v10.2: Balance of power (SMA14),WIRED,have per master; owner variant: Taskforce v10.2: Balance of power (SMA14) — non-null % re-verified at gate measure on rebuilt shards
+M025,Basis,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M026,BBTrend,built-in indicator,A2,tv_bbtrend,WIRED,computed in world build (bf0ec81)
+M027,Block height,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M028,Blocks mined,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M029,Bollinger Bands (BB),built-in indicator,A2,Taskforce v10.2: Bollinger %B / Outside Bollinger band,WIRED,have per master; owner variant: Taskforce v10.2: Bollinger %B / Outside Bollinger band — non-null % re-verified at gate measure on rebuilt shards
+M030,Bollinger Bands %b (%b),built-in indicator,A2,"Taskforce v10.2: Bollinger %B(20,2)",WIRED,"have per master; owner variant: Taskforce v10.2: Bollinger %B(20,2) — non-null % re-verified at gate measure on rebuilt shards"
+M031,Bollinger BandWidth (BBW),built-in indicator,A2,Taskforce v10.2: Bollinger bandwidth,WIRED,have per master; owner variant: Taskforce v10.2: Bollinger bandwidth — non-null % re-verified at gate measure on rebuilt shards
+M032,Bollinger Bars,built-in indicator,A2,tv_bb_pos,WIRED,computed in world build (7fb1a8b)
+M033,Bull Bear Power,built-in indicator,A2,Taskforce v10.2: Elder ray bull-bear power / ATR,WIRED,have per master; owner variant: Taskforce v10.2: Elder ray bull-bear power / ATR — non-null % re-verified at gate measure on rebuilt shards
+M034,Chaikin Money Flow (CMF),built-in indicator,A2,Taskforce v10.2: Chaikin Money Flow 20,WIRED,have per master; owner variant: Taskforce v10.2: Chaikin Money Flow 20 — non-null % re-verified at gate measure on rebuilt shards
+M035,Chaikin Oscillator,built-in indicator,A2,"Taskforce v10.2: Chaikin oscillator (3,10)",WIRED,"have per master; owner variant: Taskforce v10.2: Chaikin oscillator (3,10) — non-null % re-verified at gate measure on rebuilt shards"
+M036,Chande Kroll Stop,built-in indicator,A2,Taskforce v10.2: Chande Kroll stop side,WIRED,have per master; owner variant: Taskforce v10.2: Chande Kroll stop side — non-null % re-verified at gate measure on rebuilt shards
+M037,Chande Momentum Oscillator (CMO),built-in indicator,A2,Taskforce v10.2: Chande momentum oscillator 14,WIRED,have per master; owner variant: Taskforce v10.2: Chande momentum oscillator 14 — non-null % re-verified at gate measure on rebuilt shards
+M038,Chandelier Exit,built-in indicator,A2,"Taskforce v10.2: Chandelier exit side (22,3)",WIRED,"have per master; owner variant: Taskforce v10.2: Chandelier exit side (22,3) — non-null % re-verified at gate measure on rebuilt shards"
+M039,Chop Zone,built-in indicator,A2,tv_chop_slope_bp;tv_chop_on,WIRED,computed in world build (bf0ec81)
+M040,Choppiness Index (CHOP),built-in indicator,A2,Taskforce v10.2: Choppiness index 14,WIRED,have per master; owner variant: Taskforce v10.2: Choppiness index 14 — non-null % re-verified at gate measure on rebuilt shards
+M041,Commodity Channel Index (CCI),built-in indicator,A2,Taskforce v10.2: CCI20,WIRED,have per master; owner variant: Taskforce v10.2: CCI20 — non-null % re-verified at gate measure on rebuilt shards
+M042,Connors RSI (CRSI),built-in indicator,A2,"Taskforce v10.2: Connors RSI (3,2,100)",WIRED,"have per master; owner variant: Taskforce v10.2: Connors RSI (3,2,100) — non-null % re-verified at gate measure on rebuilt shards"
+M043,Coppock Curve,built-in indicator,A2,Taskforce v10.2: Coppock curve,WIRED,have per master; owner variant: Taskforce v10.2: Coppock curve — non-null % re-verified at gate measure on rebuilt shards
+M044,Correlation Coefficient (CC),built-in indicator,A2,Taskforce v10.2: Correlation vs SPY 60d,WIRED,have per master; owner variant: Taskforce v10.2: Correlation vs SPY 60d — non-null % re-verified at gate measure on rebuilt shards
+M045,Created UTXOs,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M046,Cumulative Volume Delta,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M047,Cumulative Volume Index (CVI),built-in indicator,A2,cvi_m;cvi_chg20_m,WIRED,computed in world build (52f8b30); survivors-only universe provenance (same as breadth col)
+M048,Detrended Price Oscillator (DPO),built-in indicator,A2,Taskforce v10.2: Detrended price oscillator 20 / C,WIRED,have per master; owner variant: Taskforce v10.2: Detrended price oscillator 20 / C — non-null % re-verified at gate measure on rebuilt shards
+M049,Difficulty,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M050,Directional Movement (DMI),built-in indicator,A2,Taskforce v10.2: +DI minus -DI (14),WIRED,have per master; owner variant: Taskforce v10.2: +DI minus -DI (14) — non-null % re-verified at gate measure on rebuilt shards
+M051,Dividend Yield,built-in indicator,A2,"Theme Radar: Dividend Yield (slow, outlier-only)",WIRED,"have per master; owner variant: Theme Radar: Dividend Yield (slow, outlier-only) — non-null % re-verified at gate measure on rebuilt shards"
+M052,Donchian Channels (DC),built-in indicator,A2,Taskforce v10.2: Donchian 55d channel position,WIRED,have per master; owner variant: Taskforce v10.2: Donchian 55d channel position — non-null % re-verified at gate measure on rebuilt shards
+M053,Double Exponential Moving Average (EMA),built-in indicator,A2,Taskforce v10.2: Close vs DEMA20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs DEMA20 — non-null % re-verified at gate measure on rebuilt shards
+M054,Ease of Movement (EOM),built-in indicator,A2,Taskforce v10.2: Ease of movement 14,WIRED,have per master; owner variant: Taskforce v10.2: Ease of movement 14 — non-null % re-verified at gate measure on rebuilt shards
+M055,El Salvador Government balance,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M056,Elder's Force Index (EFI),built-in indicator,A2,Taskforce v10.2: Force index 13 / dollar vol,WIRED,have per master; owner variant: Taskforce v10.2: Force index 13 / dollar vol — non-null % re-verified at gate measure on rebuilt shards
+M057,Envelope (ENV),built-in indicator,A2,tv_env_pos,WIRED,computed in world build (bf0ec81)
+M058,ETF balances,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M059,ETF flows,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M060,Ethereum new deposits,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M061,Ethereum new unique depositors,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M062,Ethereum new value staked,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M063,Ethereum total number of deposits,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M064,Ethereum total unique depositors,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M065,Ethereum total value staked,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M066,Exponential Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs EMA10..200 in ATR units; EMA9 vs EMA21,WIRED,have per master; owner variant: Taskforce v10.2: Close vs EMA10..200 in ATR units; EMA9 vs EMA21 — non-null % re-verified at gate measure on rebuilt shards
+M067,Fisher Transform,built-in indicator,A2,Taskforce v10.2: Fisher transform 9,WIRED,have per master; owner variant: Taskforce v10.2: Fisher transform 9 — non-null % re-verified at gate measure on rebuilt shards
+M068,Funding rate: a guide to market sentiment,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M069,Hash Rate,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M070,Held tokens in addresses ≥ X (% of supply),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M071,Held tokens in addresses ≥ X (tokens),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M072,Held tokens in addresses ≥ X (USD),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M073,Historical Volatility,built-in indicator,A2,Taskforce v10.2: Realized vol 10d vs 60d,WIRED,have per master; owner variant: Taskforce v10.2: Realized vol 10d vs 60d — non-null % re-verified at gate measure on rebuilt shards
+M074,Hull Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs HMA20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs HMA20 — non-null % re-verified at gate measure on rebuilt shards
+M075,Ichimoku Cloud,built-in indicator,A2,Taskforce v10.2: Ichimoku cloud position,WIRED,have per master; owner variant: Taskforce v10.2: Ichimoku cloud position — non-null % re-verified at gate measure on rebuilt shards
+M076,Index price,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M077,Kaufman's Adaptive Moving Average (KAMA),built-in indicator,A2,"Taskforce v10.2: Close vs KAMA(10,2,30)",WIRED,"have per master; owner variant: Taskforce v10.2: Close vs KAMA(10,2,30) — non-null % re-verified at gate measure on rebuilt shards"
+M078,Keltner Channels (KC),built-in indicator,A2,Taskforce v10.2: Keltner channel position,WIRED,have per master; owner variant: Taskforce v10.2: Keltner channel position — non-null % re-verified at gate measure on rebuilt shards
+M079,Klinger Oscillator,built-in indicator,A2,Taskforce v10.2: Klinger volume oscillator,WIRED,have per master; owner variant: Taskforce v10.2: Klinger volume oscillator — non-null % re-verified at gate measure on rebuilt shards
+M080,Know Sure Thing (KST),built-in indicator,A2,Taskforce v10.2: KST minus signal,WIRED,have per master; owner variant: Taskforce v10.2: KST minus signal — non-null % re-verified at gate measure on rebuilt shards
+M081,Large transaction volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M082,Learn using seasonals,built-in indicator,A2,tv_seas_mo_up;tv_seas_dow_up,WIRED,computed in world build (7fb1a8b)
+M083,Least Squares Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs linear regression line 20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs linear regression line 20 — non-null % re-verified at gate measure on rebuilt shards
+M084,Linear Regression,built-in indicator,A2,Taskforce v10.2: Close vs regression stdev channel (all data to D-1),WIRED,have per master; owner variant: Taskforce v10.2: Close vs regression stdev channel (all data to D-1) — non-null % re-verified at gate measure on rebuilt shards
+M085,Liquidation data: what to watch and why it matters,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M086,Long / Short Ratio Accounts,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M087,Long Short Accounts %,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M088,MA Cross,built-in indicator,A2,Theme Radar: SMA50 vs SMA200 (golden/death cross),WIRED,have per master; owner variant: Theme Radar: SMA50 vs SMA200 (golden/death cross) — non-null % re-verified at gate measure on rebuilt shards
+M089,Mark price,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M090,Mass Index,built-in indicator,A2,"Taskforce v10.2: Mass index (9,25)",WIRED,"have per master; owner variant: Taskforce v10.2: Mass index (9,25) — non-null % re-verified at gate measure on rebuilt shards"
+M091,McGinley Dynamic,built-in indicator,A2,Taskforce v10.2: Close vs McGinley dynamic 10,WIRED,have per master; owner variant: Taskforce v10.2: Close vs McGinley dynamic 10 — non-null % re-verified at gate measure on rebuilt shards
+M092,Mean block interval,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M093,Mean block size in bytes,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M094,Mean gas used,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M095,Mean transaction fees,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M096,Mean transaction gas limit,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M097,Mean transaction gas price,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M098,Mean transaction size in bytes,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M099,Mean transfer volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M100,Mean UTXO value created,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M101,Mean UTXO value spent,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M102,Median,built-in indicator,A2,Taskforce v10.2: Close vs rolling median 30,WIRED,have per master; owner variant: Taskforce v10.2: Close vs rolling median 30 — non-null % re-verified at gate measure on rebuilt shards
+M103,Median block interval,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M104,Median gas used,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M105,Median transaction fees,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M106,Median transaction gas limit,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M107,Median transaction gas price,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M108,Median transfer volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M109,Median UTXO value created,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M110,Median UTXO value spent,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M111,Momentum,built-in indicator,A2,Taskforce v10.2: Momentum 10 / C,WIRED,have per master; owner variant: Taskforce v10.2: Momentum 10 / C — non-null % re-verified at gate measure on rebuilt shards
+M112,Money Flow (MFI),built-in indicator,A2,Taskforce v10.2: MFI14,WIRED,have per master; owner variant: Taskforce v10.2: MFI14 — non-null % re-verified at gate measure on rebuilt shards
+M113,Moon Phases,built-in indicator,A2,tv_moon_age,WIRED,computed in world build (c29b214)
+M114,Moving average convergence divergence (MACD) indicator,built-in indicator,A2,"Taskforce v10.2: MACD histogram (12,26,9)",WIRED,"have per master; owner variant: Taskforce v10.2: MACD histogram (12,26,9) — non-null % re-verified at gate measure on rebuilt shards"
+M115,Moving Average Ribbon,built-in indicator,A2,Taskforce v10.2: Stacked MAs,WIRED,have per master; owner variant: Taskforce v10.2: Stacked MAs — non-null % re-verified at gate measure on rebuilt shards
+M116,Moving Averages,built-in indicator,A2,Taskforce v10.2: Close vs SMA/EMA family,WIRED,have per master; owner variant: Taskforce v10.2: Close vs SMA/EMA family — non-null % re-verified at gate measure on rebuilt shards
+M117,MovingAvg Cross,built-in indicator,A2,Taskforce v10.2: Close vs SMA20/50/200,WIRED,have per master; owner variant: Taskforce v10.2: Close vs SMA20/50/200 — non-null % re-verified at gate measure on rebuilt shards
+M118,MovingAvg2Line Cross,built-in indicator,A2,Taskforce v10.2: EMA9 vs EMA21; Theme Radar: SMA20 vs SMA50,WIRED,have per master; owner variant: Taskforce v10.2: EMA9 vs EMA21; Theme Radar: SMA20 vs SMA50 — non-null % re-verified at gate measure on rebuilt shards
+M119,Multi-Time Period Charts indicator,built-in indicator,A2,tv_pw_high;tv_pw_low;tv_pw_close;tv_pw_pos,WIRED,computed in world build (bf0ec81)
+M120,Negative Volume Index (NVI),built-in indicator,A2,Taskforce v10.2: Negative volume index vs EMA255,WIRED,have per master; owner variant: Taskforce v10.2: Negative volume index vs EMA255 — non-null % re-verified at gate measure on rebuilt shards
+M121,Net Volume,built-in indicator,A2,Taskforce v10.2: Up-volume share (daily bars approximation),WIRED,have per master; owner variant: Taskforce v10.2: Up-volume share (daily bars approximation) — non-null % re-verified at gate measure on rebuilt shards
+M122,On Balance Volume (OBV),built-in indicator,A2,Taskforce v10.2: OBV change,WIRED,have per master; owner variant: Taskforce v10.2: OBV change — non-null % re-verified at gate measure on rebuilt shards
+M123,Open Interest,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M124,Parabolic SAR (SAR),built-in indicator,A2,Taskforce v10.2: Parabolic SAR side,WIRED,have per master; owner variant: Taskforce v10.2: Parabolic SAR side — non-null % re-verified at gate measure on rebuilt shards
+M125,Percentage Price Oscillator (PPO),built-in indicator,A2,"Taskforce v10.2: PPO(12,26,9) histogram",WIRED,"have per master; owner variant: Taskforce v10.2: PPO(12,26,9) histogram — non-null % re-verified at gate measure on rebuilt shards"
+M126,Percentage Volume Oscillator (PVO),built-in indicator,A2,"Taskforce v10.2: Percentage volume oscillator (12,26)",WIRED,"have per master; owner variant: Taskforce v10.2: Percentage volume oscillator (12,26) — non-null % re-verified at gate measure on rebuilt shards"
+M127,Performance,built-in indicator,A2,Theme Radar: Perf % window / YTD / Year,WIRED,have per master; owner variant: Theme Radar: Perf % window / YTD / Year — non-null % re-verified at gate measure on rebuilt shards
+M128,Pivot Points High Low,built-in indicator,A2,Taskforce v10.2: Williams fractal / swing pivots,WIRED,have per master; owner variant: Taskforce v10.2: Williams fractal / swing pivots — non-null % re-verified at gate measure on rebuilt shards
+M129,Pivot Points Standard,built-in indicator,A2,Taskforce v10.2: Close vs classic pivot R1/R2/S1/S2,WIRED,have per master; owner variant: Taskforce v10.2: Close vs classic pivot R1/R2/S1/S2 — non-null % re-verified at gate measure on rebuilt shards
+M130,Positive Volume Index (PVI),built-in indicator,A2,Taskforce v10.2: Positive volume index vs EMA255,WIRED,have per master; owner variant: Taskforce v10.2: Positive volume index vs EMA255 — non-null % re-verified at gate measure on rebuilt shards
+M131,Power-Law Model,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M132,Premium,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M133,Price Momentum Oscillator (PMO),built-in indicator,A2,tv_pmo;tv_pmo_sig;tv_pmo_x,WIRED,computed in world build (c29b214)
+M134,Price target - indicator,built-in indicator,A2,Theme Radar: Target price distance %,WIRED,have per master; owner variant: Theme Radar: Target price distance % — non-null % re-verified at gate measure on rebuilt shards
+M135,Price Volume Trend (PVT),built-in indicator,A2,Taskforce v10.2: Price volume trend change / avg V,WIRED,have per master; owner variant: Taskforce v10.2: Price volume trend change / avg V — non-null % re-verified at gate measure on rebuilt shards
+M136,Pring's Special K,built-in indicator,A2,tv_spec_k,WIRED,computed in world build (7fb1a8b)
+M137,Rank Correlation Index (RCI),built-in indicator,A2,tv_rci9;tv_rci26;tv_rci52,WIRED,computed in world build (c29b214)
+M138,Rate of Change (ROC),built-in indicator,A2,Taskforce v10.2: Rate of change 20,WIRED,have per master; owner variant: Taskforce v10.2: Rate of change 20 — non-null % re-verified at gate measure on rebuilt shards
+M139,RCI Ribbon,built-in indicator,A2,tv_rci_ribbon_up,WIRED,computed in world build (c29b214)
+M140,Realized market cap,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M141,Receiving addresses,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M142,Relative Strength Index (RSI),built-in indicator,A2,"Taskforce v10.2: RSI14, RSI2",WIRED,"have per master; owner variant: Taskforce v10.2: RSI14, RSI2 — non-null % re-verified at gate measure on rebuilt shards"
+M143,Relative Vigor Index,built-in indicator,A2,Taskforce v10.2: Relative vigor index minus signal,WIRED,have per master; owner variant: Taskforce v10.2: Relative vigor index minus signal — non-null % re-verified at gate measure on rebuilt shards
+M144,Relative Volatility Index,built-in indicator,A2,Taskforce v10.2: Relative volatility index 14,WIRED,have per master; owner variant: Taskforce v10.2: Relative volatility index 14 — non-null % re-verified at gate measure on rebuilt shards
+M145,Relative Volume at Time,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M146,Rob Booker - ADX Breakout,built-in indicator,A2,tv_adxbo,WIRED,computed in world build (bf0ec81)
+M147,Rob Booker - Knoxville Divergence,built-in indicator,A2,tv_knox,WIRED,computed in world build (59f5a00)
+M148,Rob Booker Intraday Pivot Points,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M149,Rob Booker Missed Pivot Points,built-in indicator,A2,tv_mpp_dist,WIRED,computed in world build (59f5a00)
+M150,Rob Booker Reversal,built-in indicator,A2,tv_rb_rev,WIRED,computed in world build (bf0ec81)
+M151,Rob Booker Ziv Ghost Pivots,built-in indicator,A2,tv_ghost_dist,WIRED,computed in world build (59f5a00)
+M152,RSI divergence indicator,built-in indicator,A2,Taskforce v10.2: Tired run: new high without RSI high / new low without RSI low,WIRED,have per master; owner variant: Taskforce v10.2: Tired run: new high without RSI high / new low without RSI low — non-null % re-verified at gate measure on rebuilt shards
+M153,"RVT ratio, 90 days",built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M154,Seasonality,built-in indicator,A2,tv_seas_mo_up;tv_seas_dow_up,WIRED,computed in world build (7fb1a8b)
+M155,Sending addresses,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M156,Simple Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs SMA20/50/200,WIRED,have per master; owner variant: Taskforce v10.2: Close vs SMA20/50/200 — non-null % re-verified at gate measure on rebuilt shards
+M157,SMI Ergodic Indicator,built-in indicator,A2,"Taskforce v10.2: True strength index (25,13)",WIRED,"have per master; owner variant: Taskforce v10.2: True strength index (25,13) — non-null % re-verified at gate measure on rebuilt shards"
+M158,SMI Ergodic Oscillator,built-in indicator,A2,"Taskforce v10.2: True strength index (25,13)",WIRED,"have per master; owner variant: Taskforce v10.2: True strength index (25,13) — non-null % re-verified at gate measure on rebuilt shards"
+M159,Smoothed Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs smoothed MA 7,WIRED,have per master; owner variant: Taskforce v10.2: Close vs smoothed MA 7 — non-null % re-verified at gate measure on rebuilt shards
+M160,Spent Output Profit Ratio (SOPR),built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M161,Spent UTXOs,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M162,Stochastic (STOCH),built-in indicator,A2,"Taskforce v10.2: Stochastic %K(14,3)",WIRED,"have per master; owner variant: Taskforce v10.2: Stochastic %K(14,3) — non-null % re-verified at gate measure on rebuilt shards"
+M163,Stochastic Momentum Index (SMI),built-in indicator,A2,"Taskforce v10.2: Stochastic momentum index (10,3,3)",WIRED,"have per master; owner variant: Taskforce v10.2: Stochastic momentum index (10,3,3) — non-null % re-verified at gate measure on rebuilt shards"
+M164,Stochastic RSI (STOCH RSI),built-in indicator,A2,Taskforce v10.2: StochRSI %K,WIRED,have per master; owner variant: Taskforce v10.2: StochRSI %K — non-null % re-verified at gate measure on rebuilt shards
+M165,Stock-to-Flow Ratio in USD,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M166,Supertrend,built-in indicator,A2,"Taskforce v10.2: Supertrend (10,3) side",WIRED,"have per master; owner variant: Taskforce v10.2: Supertrend (10,3) side — non-null % re-verified at gate measure on rebuilt shards"
+M167,Supply Equality Ratio,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M168,Technical Ratings,built-in indicator,A2,tv_tr_ma;tv_tr_osc;tv_tr_total,WIRED,computed in world build (7fb1a8b)
+M169,Time Weighted Average Price,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M170,Top trader long/short accounts,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M171,Top trader long/short accounts ratio,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M172,Top trader long/short positions,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M173,Top trader long/short positions ratio,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M174,Total block size in bytes,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M175,Total gas used,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M176,Total transactions size in bytes,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M177,Total UTXO value created,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M178,Total UTXO value spent,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M179,Total UTXOs,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M180,Trading Sessions,built-in indicator,A2,"New Bot v4.4f: AH first 30 min move %, AH first 30 min outlier move",WIRED,"have per master; owner variant: New Bot v4.4f: AH first 30 min move %, AH first 30 min outlier move — non-null % re-verified at gate measure on rebuilt shards"
+M181,Transaction fees,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M182,Transaction fees,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M183,Transaction rate,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M184,Transfer count,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M185,Transfer rate,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M186,Trend Strength Index,built-in indicator,A2,tv_ts_r2_20,WIRED,computed in world build (bf0ec81)
+M187,Triple EMA,built-in indicator,A2,Taskforce v10.2: Close vs TEMA20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs TEMA20 — non-null % re-verified at gate measure on rebuilt shards
+M188,TRIX,built-in indicator,A2,Taskforce v10.2: TRIX 15,WIRED,have per master; owner variant: Taskforce v10.2: TRIX 15 — non-null % re-verified at gate measure on rebuilt shards
+M189,True Strength Index,built-in indicator,A2,"Taskforce v10.2: True strength index (25,13)",WIRED,"have per master; owner variant: Taskforce v10.2: True strength index (25,13) — non-null % re-verified at gate measure on rebuilt shards"
+M190,Ulcer Index,built-in indicator,A2,Taskforce v10.2: Ulcer index 14,WIRED,have per master; owner variant: Taskforce v10.2: Ulcer index 14 — non-null % re-verified at gate measure on rebuilt shards
+M191,Ultimate Oscillator (UO),built-in indicator,A2,"Taskforce v10.2: Ultimate oscillator (7,14,28)",WIRED,"have per master; owner variant: Taskforce v10.2: Ultimate oscillator (7,14,28) — non-null % re-verified at gate measure on rebuilt shards"
+M192,Understanding crypto open interest,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M193,Up/Down Volume,built-in indicator,A2,James v5.5c: NYSE up/down volume ratio (MKT-JA-1576..1597),WIRED,have per master; owner variant: James v5.5c: NYSE up/down volume ratio (MKT-JA-1576..1597) — non-null % re-verified at gate measure on rebuilt shards
+M194,US spot crypto ETF balances,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M195,US spot crypto ETF flows,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
+M196,Visible Average Price,built-in indicator,A2,tv_vavg20,WIRED,computed in world build (bf0ec81)
+M197,Volatility Stop,built-in indicator,A2,"Taskforce v10.2: ATR trailing stop side (ATR-based trailing stop, same idea)",WIRED,"have per master; owner variant: Taskforce v10.2: ATR trailing stop side (ATR-based trailing stop, same idea) — non-null % re-verified at gate measure on rebuilt shards"
+M198,Volume,built-in indicator,A2,"Taskforce v10.2: Relative volume, Dollar volume; Theme Radar: Relative volume",WIRED,"have per master; owner variant: Taskforce v10.2: Relative volume, Dollar volume; Theme Radar: Relative volume — non-null % re-verified at gate measure on rebuilt shards"
+M199,Volume Delta,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M200,Volume Weighted Average Price (VWAP),built-in indicator,A2,Taskforce v10.2: anchored VWAPs (daily-bar); session VWAP needs intraday,WIRED,have per master; owner variant: Taskforce v10.2: anchored VWAPs (daily-bar); session VWAP needs intraday — non-null % re-verified at gate measure on rebuilt shards
+M201,Volume-Weighted Moving Average (VWMA),built-in indicator,A2,Taskforce v10.2: Close vs VWMA20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs VWMA20 — non-null % re-verified at gate measure on rebuilt shards
+M202,Vortex Indicator,built-in indicator,A2,Taskforce v10.2: Vortex VI+ minus VI- (14),WIRED,have per master; owner variant: Taskforce v10.2: Vortex VI+ minus VI- (14) — non-null % re-verified at gate measure on rebuilt shards
+M203,VWAP Auto Anchored,built-in indicator,A2,Taskforce v10.2: Close vs anchored VWAP from swing pivot / 52w high / 52w low,WIRED,have per master; owner variant: Taskforce v10.2: Close vs anchored VWAP from swing pivot / 52w high / 52w low — non-null % re-verified at gate measure on rebuilt shards
+M204,Weighted Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs WMA20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs WMA20 — non-null % re-verified at gate measure on rebuilt shards
+M205,Williams %R (%R),built-in indicator,A2,Taskforce v10.2: Williams %R(14),WIRED,have per master; owner variant: Taskforce v10.2: Williams %R(14) — non-null % re-verified at gate measure on rebuilt shards
+M206,Williams Alligator,built-in indicator,A2,Taskforce v10.2: Williams alligator spread,WIRED,have per master; owner variant: Taskforce v10.2: Williams alligator spread — non-null % re-verified at gate measure on rebuilt shards
+M207,Williams fractal indicator,built-in indicator,A2,Taskforce v10.2: Williams fractal (5-bar),WIRED,have per master; owner variant: Taskforce v10.2: Williams fractal (5-bar) — non-null % re-verified at gate measure on rebuilt shards
+M208,Woodies CCI,built-in indicator,A2,tv_cci6;tv_cci_zx,WIRED,computed in world build (bf0ec81)
+M209,Zigzag indicator,built-in indicator,A2,Taskforce v10.2: ZigZag 5% leg direction and age,WIRED,have per master; owner variant: Taskforce v10.2: ZigZag 5% leg direction and age — non-null % re-verified at gate measure on rebuilt shards
+M210,Bars / OHLC,chart type,A2,Taskforce v10.2: raw OHLCV,WIRED,have per master; owner variant: Taskforce v10.2: raw OHLCV — non-null % re-verified at gate measure on rebuilt shards
+M211,Candles,chart type,A2,Taskforce v10.2: Candlestick rows,WIRED,have per master; owner variant: Taskforce v10.2: Candlestick rows — non-null % re-verified at gate measure on rebuilt shards
+M212,Hollow candles,chart type,A2,Taskforce v10.2: Signed body % (close location),WIRED,have per master; owner variant: Taskforce v10.2: Signed body % (close location) — non-null % re-verified at gate measure on rebuilt shards
+M213,Line / Line with markers / Step line / Area / HLC area / Baseline,chart type,A2,Taskforce v10.2: close-based rows,WIRED,have per master; owner variant: Taskforce v10.2: close-based rows — non-null % re-verified at gate measure on rebuilt shards
+M214,High-low,chart type,A2,Taskforce v10.2: Range vs ATR14,WIRED,have per master; owner variant: Taskforce v10.2: Range vs ATR14 — non-null % re-verified at gate measure on rebuilt shards
+M215,Columns,chart type,A2,Taskforce v10.2: close vs prior close,WIRED,have per master; owner variant: Taskforce v10.2: close vs prior close — non-null % re-verified at gate measure on rebuilt shards
+M216,Heikin Ashi,chart type,A2,Taskforce v10.2: Heikin-Ashi colour streak,WIRED,have per master; owner variant: Taskforce v10.2: Heikin-Ashi colour streak — non-null % re-verified at gate measure on rebuilt shards
+M217,Renko,chart type,A2,tv_renko_dir;tv_renko_n,WIRED,computed in world build (7fb1a8b)
+M218,Line break,chart type,A2,tv_lb_dir,WIRED,computed in world build (7fb1a8b)
+M219,Kagi,chart type,A2,tv_kagi_dir,WIRED,computed in world build (7fb1a8b)
+M220,Point & figure,chart type,A2,tv_pnf_dir,WIRED,computed in world build (7fb1a8b)
+M221,Range bars,chart type,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M222,Volume candles,chart type,A2,tv_volr,WIRED,computed in world build (52f8b30)
+M223,Volume footprint / TPO,chart type,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M224,Abandoned Baby - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLABANDONEDBABY,WIRED,have per master; owner variant: Taskforce v10.2: CDLABANDONEDBABY — non-null % re-verified at gate measure on rebuilt shards
+M225,Abandoned Baby - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLABANDONEDBABY,WIRED,have per master; owner variant: Taskforce v10.2: CDLABANDONEDBABY — non-null % re-verified at gate measure on rebuilt shards
+M226,Dark Cloud Cover - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLDARKCLOUDCOVER,WIRED,have per master; owner variant: Taskforce v10.2: CDLDARKCLOUDCOVER — non-null % re-verified at gate measure on rebuilt shards
+M227,Doji,candlestick pattern,A2,Taskforce v10.2: CDLDOJI,WIRED,have per master; owner variant: Taskforce v10.2: CDLDOJI — non-null % re-verified at gate measure on rebuilt shards
+M228,Doji Star - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLDOJISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLDOJISTAR — non-null % re-verified at gate measure on rebuilt shards
+M229,Doji Star - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLDOJISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLDOJISTAR — non-null % re-verified at gate measure on rebuilt shards
+M230,Downside Tasuki Gap - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLTASUKIGAP,WIRED,have per master; owner variant: Taskforce v10.2: CDLTASUKIGAP — non-null % re-verified at gate measure on rebuilt shards
+M231,Dragonfly Doji - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLDRAGONFLYDOJI,WIRED,have per master; owner variant: Taskforce v10.2: CDLDRAGONFLYDOJI — non-null % re-verified at gate measure on rebuilt shards
+M232,Engulfing - Bearish,candlestick pattern,A2,Taskforce v10.2: Bullish/Bearish engulfing,WIRED,have per master; owner variant: Taskforce v10.2: Bullish/Bearish engulfing — non-null % re-verified at gate measure on rebuilt shards
+M233,Engulfing - Bullish,candlestick pattern,A2,Taskforce v10.2: Bullish/Bearish engulfing,WIRED,have per master; owner variant: Taskforce v10.2: Bullish/Bearish engulfing — non-null % re-verified at gate measure on rebuilt shards
+M234,Evening Doji Star - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLEVENINGDOJISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLEVENINGDOJISTAR — non-null % re-verified at gate measure on rebuilt shards
+M235,Evening Star - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLEVENINGSTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLEVENINGSTAR — non-null % re-verified at gate measure on rebuilt shards
+M236,Falling Three Methods - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLRISEFALL3METHODS,WIRED,have per master; owner variant: Taskforce v10.2: CDLRISEFALL3METHODS — non-null % re-verified at gate measure on rebuilt shards
+M237,Falling Window - Bearish,candlestick pattern,A2,tv_falling_window,WIRED,computed in world build (c29b214)
+M238,Gravestone Doji - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLGRAVESTONEDOJI,WIRED,have per master; owner variant: Taskforce v10.2: CDLGRAVESTONEDOJI — non-null % re-verified at gate measure on rebuilt shards
+M239,Hammer - Bullish,candlestick pattern,A2,Taskforce v10.2: Hammer,WIRED,have per master; owner variant: Taskforce v10.2: Hammer — non-null % re-verified at gate measure on rebuilt shards
+M240,Hanging Man - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLHANGINGMAN,WIRED,have per master; owner variant: Taskforce v10.2: CDLHANGINGMAN — non-null % re-verified at gate measure on rebuilt shards
+M241,Harami - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLHARAMI,WIRED,have per master; owner variant: Taskforce v10.2: CDLHARAMI — non-null % re-verified at gate measure on rebuilt shards
+M242,Harami - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLHARAMI,WIRED,have per master; owner variant: Taskforce v10.2: CDLHARAMI — non-null % re-verified at gate measure on rebuilt shards
+M243,Harami Cross - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLHARAMICROSS,WIRED,have per master; owner variant: Taskforce v10.2: CDLHARAMICROSS — non-null % re-verified at gate measure on rebuilt shards
+M244,Harami Cross - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLHARAMICROSS,WIRED,have per master; owner variant: Taskforce v10.2: CDLHARAMICROSS — non-null % re-verified at gate measure on rebuilt shards
+M245,Inverted Hammer - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLINVERTEDHAMMER,WIRED,have per master; owner variant: Taskforce v10.2: CDLINVERTEDHAMMER — non-null % re-verified at gate measure on rebuilt shards
+M246,Kicking - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLKICKING,WIRED,have per master; owner variant: Taskforce v10.2: CDLKICKING — non-null % re-verified at gate measure on rebuilt shards
+M247,Kicking - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLKICKING,WIRED,have per master; owner variant: Taskforce v10.2: CDLKICKING — non-null % re-verified at gate measure on rebuilt shards
+M248,Long Lower Shadow - Bullish,candlestick pattern,A2,Taskforce v10.2: Lower wick share (pushback),WIRED,have per master; owner variant: Taskforce v10.2: Lower wick share (pushback) — non-null % re-verified at gate measure on rebuilt shards
+M249,Long Upper Shadow - Bearish,candlestick pattern,A2,Taskforce v10.2: Upper wick share,WIRED,have per master; owner variant: Taskforce v10.2: Upper wick share — non-null % re-verified at gate measure on rebuilt shards
+M250,Marubozu Black - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLMARUBOZU,WIRED,have per master; owner variant: Taskforce v10.2: CDLMARUBOZU — non-null % re-verified at gate measure on rebuilt shards
+M251,Marubozu White - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLMARUBOZU,WIRED,have per master; owner variant: Taskforce v10.2: CDLMARUBOZU — non-null % re-verified at gate measure on rebuilt shards
+M252,Morning Doji Star - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLMORNINGDOJISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLMORNINGDOJISTAR — non-null % re-verified at gate measure on rebuilt shards
+M253,Morning Star - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLMORNINGSTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLMORNINGSTAR — non-null % re-verified at gate measure on rebuilt shards
+M254,On Neck - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLONNECK,WIRED,have per master; owner variant: Taskforce v10.2: CDLONNECK — non-null % re-verified at gate measure on rebuilt shards
+M255,Piercing - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLPIERCING,WIRED,have per master; owner variant: Taskforce v10.2: CDLPIERCING — non-null % re-verified at gate measure on rebuilt shards
+M256,Rising Three Methods - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLRISEFALL3METHODS,WIRED,have per master; owner variant: Taskforce v10.2: CDLRISEFALL3METHODS — non-null % re-verified at gate measure on rebuilt shards
+M257,Rising Window - Bullish,candlestick pattern,A2,New Bot v4.4f: Consecutive gap-ups,WIRED,have per master; owner variant: New Bot v4.4f: Consecutive gap-ups — non-null % re-verified at gate measure on rebuilt shards
+M258,Shooting Star - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLSHOOTINGSTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLSHOOTINGSTAR — non-null % re-verified at gate measure on rebuilt shards
+M259,Spinning Top Black,candlestick pattern,A2,Taskforce v10.2: CDLSPINNINGTOP,WIRED,have per master; owner variant: Taskforce v10.2: CDLSPINNINGTOP — non-null % re-verified at gate measure on rebuilt shards
+M260,Spinning Top White,candlestick pattern,A2,Taskforce v10.2: CDLSPINNINGTOP,WIRED,have per master; owner variant: Taskforce v10.2: CDLSPINNINGTOP — non-null % re-verified at gate measure on rebuilt shards
+M261,Three Black Crows - Bearish,candlestick pattern,A2,Taskforce v10.2: CDL3BLACKCROWS,WIRED,have per master; owner variant: Taskforce v10.2: CDL3BLACKCROWS — non-null % re-verified at gate measure on rebuilt shards
+M262,Three White Soldiers - Bullish,candlestick pattern,A2,Taskforce v10.2: CDL3WHITESOLDIERS,WIRED,have per master; owner variant: Taskforce v10.2: CDL3WHITESOLDIERS — non-null % re-verified at gate measure on rebuilt shards
+M263,Tri Star - Bearish,candlestick pattern,A2,Taskforce v10.2: CDLTRISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLTRISTAR — non-null % re-verified at gate measure on rebuilt shards
+M264,Tri Star - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLTRISTAR,WIRED,have per master; owner variant: Taskforce v10.2: CDLTRISTAR — non-null % re-verified at gate measure on rebuilt shards
+M265,Tweezer Bottom - Bullish,candlestick pattern,A2,tv_tweezer_bottom,WIRED,computed in world build (c29b214)
+M266,Tweezer Top - Bearish,candlestick pattern,A2,tv_tweezer_top,WIRED,computed in world build (c29b214)
+M267,Upside Tasuki Gap - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLTASUKIGAP,WIRED,have per master; owner variant: Taskforce v10.2: CDLTASUKIGAP — non-null % re-verified at gate measure on rebuilt shards
+M268,"All Chart Patterns (flags, wedges, triangles, double top/bottom, head & shoulders, rectangle)",chart pattern,A2,tv_pat_dbltop;tv_pat_dblbot;tv_pat_tri;tv_pat_rect;tv_pat_flag;tv_pat_wedge;tv_pat_hs,WIRED,computed in world build (5ad882f); heuristic approximation from confirmed pivots
+M269,Elliott Waves pattern,chart pattern,A2,tv_ew_dir;tv_ew_npiv,WIRED,computed in world build (59f5a00)
+M270,"Fixed Range Volume Profile (POC, value area)",volume profile,A2,Taskforce v10.2: Close vs volume-profile POC 20d/60d; Position in value area 20d/60d,WIRED,have per master; owner variant: Taskforce v10.2: Close vs volume-profile POC 20d/60d; Position in value area 20d/60d — non-null % re-verified at gate measure on rebuilt shards
+M271,Periodic Volume Profile,volume profile,A2,tv_poc_dist,WIRED,computed in world build (59f5a00)
+M272,Visible Range Volume Profile,volume profile,A2,Taskforce v10.2: POC 60d (window-based equivalent),WIRED,have per master; owner variant: Taskforce v10.2: POC 60d (window-based equivalent) — non-null % re-verified at gate measure on rebuilt shards
+M273,Session Volume Profile,volume profile,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M274,Anchored / Auto Anchored Volume Profile,volume profile,A2,tv_avp_dist,WIRED,computed in world build (59f5a00)
+M275,"Earnings event (date, EPS actual vs estimate)",chart event / data request,J,"Taskforce v10.2: Days to next earnings, Price reaction +1d; New Bot v4.4e: EPS surprise %, Revenue surprise %; Theme Radar: Sessions until/since earnings",WIRED,"have per master; owner variant: Taskforce v10.2: Days to next earnings, Price reaction +1d; New Bot v4.4e: EPS surprise %, Revenue surprise %; Theme Radar: Sessions until/since earnings — non-null % re-verified at gate measure on rebuilt shards"
+M276,"Dividend event (ex-date, amount)",chart event / data request,J,"New Bot v4.4e: Ex-dividend date, Special dividend; Theme Radar: Sessions until dividend ex-date",WIRED,"have per master; owner variant: New Bot v4.4e: Ex-dividend date, Special dividend; Theme Radar: Sessions until dividend ex-date — non-null % re-verified at gate measure on rebuilt shards"
+M277,Split event,chart event / data request,J,split_days;split_n,WIRED,split event dates already wired as block J event columns (40893b8)
+M278,request.earnings / dividends / splits series,chart event / data request,J,same as above,WIRED,have per master; owner variant: same as above — non-null % re-verified at gate measure on rebuilt shards
+M279,request.economic (macro series),chart event / data request,J,James v5.5c: Macro / Rates rows,WIRED,have per master; owner variant: James v5.5c: Macro / Rates rows — non-null % re-verified at gate measure on rebuilt shards
+M280,request.footprint (volume footprint),chart event / data request,J,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M281,request.security_lower_tf (intrabar),chart event / data request,J,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M282,Market cap / P/E / P/B / P/S / earnings yield,fundamental metric,A2,"Theme Radar: P/E, Forward P/E, P/S, PEG, and P/B (Valuation; P/B has 120 rows of its own)",WIRED,"have per master; owner variant: Theme Radar: P/E, Forward P/E, P/S, PEG, and P/B (Valuation; P/B has 120 rows of its own) — non-null % re-verified at gate measure on rebuilt shards"
+M283,"Revenue, EPS, net income, margins (income statement)",fundamental metric,A2,"Theme Radar: EPS Q/Q, Sales Q/Q, Gross Margin, Income (slow outlier)",WIRED,"have per master; owner variant: Theme Radar: EPS Q/Q, Sales Q/Q, Gross Margin, Income (slow outlier) — non-null % re-verified at gate measure on rebuilt shards"
+M284,"Balance sheet (cash, debt, book value, current ratio)",fundamental metric,A2,"Theme Radar: Cash/sh, Book/sh, Current Ratio (slow outlier)",WIRED,"have per master; owner variant: Theme Radar: Cash/sh, Book/sh, Current Ratio (slow outlier) — non-null % re-verified at gate measure on rebuilt shards"
+M285,"Cash flow statement (free cash flow, capex, buybacks)",fundamental metric,A2,Theme Radar: P/FCF (slow outlier),WIRED,have per master; owner variant: Theme Radar: P/FCF (slow outlier) — non-null % re-verified at gate measure on rebuilt shards
+M286,Shares outstanding / float,fundamental metric,A2,"Theme Radar: Shares outstanding, Shares float",WIRED,"have per master; owner variant: Theme Radar: Shares outstanding, Shares float — non-null % re-verified at gate measure on rebuilt shards"
+M287,Dividends per share / payout,fundamental metric,A2,"Theme Radar: Dividend TTM, Dividend Growth (slow outlier)",WIRED,"have per master; owner variant: Theme Radar: Dividend TTM, Dividend Growth (slow outlier) — non-null % re-verified at gate measure on rebuilt shards"
+M288,Enterprise value / EV-EBITDA,fundamental metric,A2,Theme Radar: EV/EBITDA (slow outlier),WIRED,have per master; owner variant: Theme Radar: EV/EBITDA (slow outlier) — non-null % re-verified at gate measure on rebuilt shards
+M289,Return on equity / assets / invested capital,fundamental metric,A2,Theme Radar: Return on Equity/Assets/Invested Capital (slow outlier),WIRED,have per master; owner variant: Theme Radar: Return on Equity/Assets/Invested Capital (slow outlier) — non-null % re-verified at gate measure on rebuilt shards
+M290,Altman Z / Piotroski F / Beneish (Pine scores),fundamental metric,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
+M291,Analyst estimates (EPS/revenue forecasts),fundamental metric,A2,Theme Radar: EPS next Q estimate; Grok Bot finviz/ratings: EPS/revenue next Q revision,WIRED,have per master; owner variant: Theme Radar: EPS next Q estimate; Grok Bot finviz/ratings: EPS/revenue next Q revision — non-null % re-verified at gate measure on rebuilt shards
+M292,"Short volume ratio (FINRA daily) — only via community script, not a TradingView built-in",short data,A2,Taskforce v10.2: FINRA short volume ratio,WIRED,have per master; owner variant: Taskforce v10.2: FINRA short volume ratio — non-null % re-verified at gate measure on rebuilt shards
+M293,Short interest / days to cover (not a built-in TradingView chart item; Pine financials do not list it),short data,A2,"Taskforce v10.2: Short % of float, Days to cover; Theme Radar: Short float %, Short ratio",WIRED,"have per master; owner variant: Taskforce v10.2: Short % of float, Days to cover; Theme Radar: Short float %, Short ratio — non-null % re-verified at gate measure on rebuilt shards"
+M294,"Compare symbol / relative performance vs another symbol (e.g. SPY, sector ETF)",chart feature,A2,"Taskforce v10.2: Return vs SPY, Return vs sector ETF; New Bot v4.4f: Up on SPY down day, Linked asset overnight vs stock; James v5.5c: IWM/SPY, Sector ETF/SPY, SMH/SPY, RSP/SPY ratios, Stock vs sector ratio",WIRED,"have per master; owner variant: Taskforce v10.2: Return vs SPY, Return vs sector ETF; New Bot v4.4f: Up on SPY down day, Linked asset overnight vs stock; James v5.5c: IWM/SPY, Sector ETF/SPY, SMH/SPY, RSP/SPY ratios, Stock vs sector ratio — non-null % re-verified at gate measure on rebuilt shards"
+M295,Other symbol's own chart (index/ETF/futures/VIX/crypto candles used as a market signal),chart feature,A2,"James v5.5c: SPY/QQQ/IWM, VIX, Bitcoin, WTI, gold, copper, dollar index, HYG and sector ETF rows (streaks, Bollinger, outliers, gaps); S&P and Nasdaq futures, NQ futures gap",WIRED,"have per master; owner variant: James v5.5c: SPY/QQQ/IWM, VIX, Bitcoin, WTI, gold, copper, dollar index, HYG and sector ETF rows (streaks, Bollinger, outliers, gaps); S&P and Nasdaq futures, NQ futures gap — non-null % re-verified at gate measure on rebuilt shards"
+M296,"Market breadth symbols (S5FI/S5TH/S5TW % above MA, new highs minus lows)",chart feature,A2,"James v5.5c: % S&P above SMA50, % S&P 500 above SMA200, % above SMA20, % sector members above SMA50; NYSE new highs-lows, Nasdaq new 52w highs minus lows, Sector new highs minus lows",WIRED,"have per master; owner variant: James v5.5c: % S&P above SMA50, % S&P 500 above SMA200, % above SMA20, % sector members above SMA50; NYSE new highs-lows, Nasdaq new 52w highs minus lows, Sector new highs minus lows — non-null % re-verified at gate measure on rebuilt shards"

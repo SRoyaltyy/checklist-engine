@@ -1,0 +1,93 @@
+name: world-v2-prerequisites
+on:
+  push:
+    branches: [codex/world-state-v2]
+    paths:
+      - 'facets_world.py'
+      - 'world_*.py'
+      - 'fetch/fetch_xbrl.py'
+      - 'ci/world_v2_*.py'
+      - 'ci/world_fetch.sh'
+      - 'tests/test_world_v2.py'
+      - 'requirements-world-v2.txt'
+      - '.github/workflows/world_v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_v2.py -q
+  companyfacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pandas pyarrow numpy
+      - name: Filing-version fetch on real companies
+        run: |
+          python -c "import pandas as pd; pd.DataFrame({'ticker':['AAPL','MSFT','GE']}).to_parquet('smoke_universe.parquet',index=False)"
+          python fetch/fetch_xbrl.py --universe smoke_universe.parquet --shards 1 --out xbrl-smoke --resume
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xbrl-v2-source
+          path: xbrl-smoke/
+  smoke:
+    needs: [verify, companyfacts]
+    if: ${{ always() && needs.verify.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      CHECKLIST_DATA_DIR: ${{ runner.temp }}/world_in
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Fetch frozen and external inputs
+        run: bash ci/world_fetch.sh "$CHECKLIST_DATA_DIR"
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: xbrl-v2-source
+          path: ${{ runner.temp }}/world_in/data-ext
+      - name: Build real multi-timeframe smoke snapshot
+        id: build
+        run: python world_snapshot_v2.py --out world-smoke --shards 1 --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE
+      - name: Rebuild every column with future inputs removed
+        id: leak
+        run: python ci/world_v2_leak.py --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --out world-smoke/WORLD_LEAK.json
+      - name: Measured coverage gate (fail closed)
+        id: coverage
+        if: always() && steps.build.outcome == 'success'
+        run: python ci/world_v2_coverage.py --shards world-smoke/world_shard_*_part_*.parquet --out world-smoke --gate
+      - name: Preserve evidence even when a gate fails
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: world-v2-evidence
+          path: |
+            world-smoke/*.parquet
+            world-smoke/*.json
+            world-smoke/*.csv
+      - name: Publish separate immutable provisional smoke release
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          tag="world-smoke-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes "PROVISIONAL smoke only. See measured coverage and leak verdicts. All legacy assets preserved; this is not a complete or approved world state."
+          gh release upload "$tag" world-smoke/*.parquet world-smoke/*.json world-smoke/*.csv

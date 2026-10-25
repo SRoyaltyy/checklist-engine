@@ -51,7 +51,7 @@ want = {f'finra_si_{y}.parquet' for y in range(2020, 2027)} | \
 req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
 rel = json.load(urllib.request.urlopen(req))
 for a in rel['assets']:
-    if a['name'] not in want:
+    if a['name'] not in want and not a['name'].startswith(('xbrl_shard_', 'divsplits_shard_')):
         continue
     out = os.path.join(dest, 'data-ext', a['name'])
     if os.path.exists(out) and os.path.getsize(out) == a['size']:
@@ -80,7 +80,7 @@ want = {'mkt_wide_2020_26.parquet', 'form4_counts_2020_26.parquet', 'xbrl_fundam
 req = urllib.request.Request(f"{api}/releases/tags/{tag}", headers={'Authorization': f'token {tok}'})
 rel = json.load(urllib.request.urlopen(req))
 for a in rel['assets']:
-    if a['name'] not in want:
+    if a['name'] not in want and not a['name'].startswith(('xbrl_shard_', 'divsplits_shard_')):
         continue
     out = os.path.join(dest, 'data-ext', a['name'])
     if os.path.exists(out) and os.path.getsize(out) == a['size']:

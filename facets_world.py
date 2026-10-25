@@ -42,71 +42,67 @@ END = os.environ.get('WORLD_END', '2026-12-31')   # bars file decides the real e
 
 # ---------------- TA-Lib auto-discovery (Block A) ----------------
 def _feed(name):
-    """Call TA-Lib function `name` on (o,h,l,c,v); return output array(s) or None if
-    it needs inputs we don't provide. price-like inputs get close, volume gets v."""
-    try:
-        f = abstract.Function(name)
-        need = f.input_names
-        if isinstance(need, str): need = [need]
-        d = {}
-        for inp in need:
-            k = inp.lower()
-            if k in ('open',): d[inp] = None
-            elif k in ('high',): d[inp] = None
-            elif k in ('low',): d[inp] = None
-            elif k in ('close', 'price'): d[inp] = None
-            elif 'volume' in k: d[inp] = None
-            elif 'openinterest' in k.replace('_', '').replace(' ', ''): return None, f'needs {inp}'
-            else: return None, f'needs {inp}'
-        return d, None
-    except Exception as e:
-        return None, f'{type(e).__name__}'
+    """Flatten the real abstract API's grouped input values, not group labels."""
+    f = abstract.Function(name)
+    spec = f.input_names
+    if isinstance(spec, dict):
+        names = []
+        for value in spec.values():
+            names.extend(value if isinstance(value, (list, tuple)) else [value])
+    else:
+        names = [spec] if isinstance(spec, str) else list(spec)
+    names = list(dict.fromkeys(str(x).lower() for x in names))
+    unknown = set(names) - {'open', 'high', 'low', 'close', 'volume', 'price'}
+    if unknown:
+        return None, 'needs ' + ','.join(sorted(unknown))
+    return {name: None for name in names}, None
+
+
+DISCOVERY_EXCLUSIONS = {}
+
 
 def discover():
-    """Split all TA-Lib functions into candle patterns (int8) and indicators (float32).
-    Returns {name: (kind, [input names])} — the INPUT-NAME LIST, not the placeholder
-    dict: compute_talib consumes the list to build its own array feed. (Bug fix
-    2026-10-25: this used to store the {input: None} dict, so compute_talib fell
-    into its non-list branch and every function raised KeyError -> all 76 functions
-    silently produced zero columns on the runner.)"""
-    groups = talib.get_function_groups()
-    cands = groups.get('Pattern Recognition', [])
+    """Discover every OHLCV-fed function, including all 61 candle patterns."""
+    patterns = set(talib.get_function_groups().get('Pattern Recognition', []))
     out = {}
     for name in talib.get_functions():
-        kind = 'pattern' if name in cands else 'indicator'
-        feed, why = _feed(name)
-        if feed is not None:
-            out[name] = (kind, list(feed.keys()))
+        feed, reason = _feed(name)
+        if feed is None:
+            DISCOVERY_EXCLUSIONS[name] = reason
+            continue
+        out[name] = ('pattern' if name in patterns else 'indicator', list(feed))
     return out
+
 
 COVERAGE_NOTE = None
 
+
 def compute_talib(o, h, l, c, v, funcs):
-    """Compute every discovered function for one ticker. Returns dict column -> array.
-    All arrays are shifted by one bar: value at index t uses bars <= t-1.
-    Single-output functions keep the plain function name; multi-output functions
-    (MACD, BBANDS, STOCH, AROON, ...) emit one column per output: NAME_outputname."""
+    """Unshifted values; ticker_frame applies the one-bar availability shift.
+
+    Never suppress a failed function. Multiple outputs from the real API are
+    a list, unlike the tuple used by the old stub regression test.
+    """
     feed = {'open': o, 'high': h, 'low': l, 'close': c, 'price': c, 'volume': v}
     out = {}
     for name, (kind, need) in funcs.items():
         try:
             f = abstract.Function(name)
-            d = {inp: feed[inp.lower()] if inp.lower() in feed else feed['price']
-                 for inp in need}
-            r = f(d)
-            onames = list(f.output_names)
-            if not isinstance(r, tuple):
-                r = (r,)
-            multi = len(onames) > 1
-            for onm, arr in zip(onames, r):
-                col = f'{name}_{onm}' if multi else name
-                a = np.asarray(arr, dtype=np.float64)
+            result = f(feed)
+            arrays = result if isinstance(result, (list, tuple)) else [result]
+            outputs = list(f.output_names)
+            if len(arrays) != len(outputs):
+                raise ValueError('output arity mismatch')
+            for label, values in zip(outputs, arrays):
+                col = f'{name}_{label}' if len(outputs) > 1 else name
+                values = np.asarray(values, dtype=np.float64)
+                if values.shape != np.asarray(c).shape:
+                    raise ValueError(f'bad output shape {values.shape}')
                 if kind == 'pattern':
-                    out[col] = np.where(np.isnan(a), 0, a / 100).astype(np.float32)   # -1/0/+1
-                else:
-                    out[col] = a.astype(np.float32)
-        except Exception:
-            continue
+                    values = values / 100.0
+                out[col] = values.astype(np.float32)
+        except Exception as exc:
+            raise RuntimeError(f'TA-Lib {name} failed; refusing partial snapshot') from exc
     return out
 
 # ---------------- Block A2: TradingView computed extras (OHLCV-derived M-items) ----------------
@@ -612,6 +608,7 @@ def load_form4(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
@@ -666,28 +663,31 @@ def load_fred(tickers=None):
 
 
 def fred_columns(dates, fr):
-    """Point-in-time macro levels: per series, the latest observation whose
-    VINTAGE_DATE < D (a revision is only knowable from its own vintage date).
-    fred_{sid} = level; fred_{sid}_odays = age of that observation in days."""
-    d = pd.to_datetime(pd.Series(dates)).reset_index(drop=True)
-    n = len(d)
-    dd = d.to_numpy(dtype='datetime64[ns]')
-    one = np.timedelta64(1, 'D')
+    """Latest observed period as known at D; revisions of older periods do not
+    replace a newer observation. Same-day vintages remain invisible."""
+    q = pd.DataFrame({'date': pd.to_datetime(dates).astype('datetime64[ns]')})
     out = {}
-    if fr is None or not len(fr):
-        return out
-    for sid, g in fr.groupby('series'):
-        g = g.sort_values(['vintage_date', 'obs_date'])
-        vd = g.vintage_date.to_numpy(dtype='datetime64[ns]')
-        od = g.obs_date.to_numpy(dtype='datetime64[ns]')
-        vv = g.value.to_numpy(dtype=np.float32)
-        pos = np.searchsorted(vd, dd, side='left')       # vintages < D
-        has = pos > 0
-        k = np.clip(pos - 1, 0, len(g) - 1)
-        # latest obs_date among vintages < D: take the last row of each prefix --
-        # rows are sorted by (vintage, obs) so row k-1 has the max obs of that prefix
-        out[f'fred_{sid.lower()}'] = np.where(has, vv[k], np.nan).astype(np.float32)
-        out[f'fred_{sid.lower()}_odays'] = np.where(has, (dd - od[k]) / one, np.nan).astype(np.float32)
+    if fr is None or not len(fr): return out
+    for sid,group in fr.groupby('series'):
+        known = {}; timeline = []
+        for vintage,changes in group.sort_values(['vintage_date','obs_date']).groupby('vintage_date',sort=True):
+            for row in changes.itertuples():
+                observation = pd.Timestamp(row.obs_date)
+                if observation <= pd.Timestamp(vintage):
+                    known[observation] = row.value
+            if known:
+                observation = max(known)
+                timeline.append((vintage,observation,known[observation]))
+        prefix = f'fred_{sid.lower()}'
+        if not timeline:
+            out[prefix] = np.full(len(q),np.nan,np.float32)
+            out[prefix+'_odays'] = np.full(len(q),np.nan,np.float32)
+            continue
+        right = pd.DataFrame(timeline,columns=['vintage_date','obs_date','value'])
+        right['vintage_date'] = pd.to_datetime(right.vintage_date).astype('datetime64[ns]')
+        joined = pd.merge_asof(q,right,left_on='date',right_on='vintage_date',direction='backward',allow_exact_matches=False)
+        out[prefix] = joined.value.to_numpy(np.float32)
+        out[prefix+'_odays'] = (joined.date-joined.obs_date).dt.days.to_numpy(np.float32)
     return out
 
 
@@ -771,6 +771,8 @@ def gd_columns(dates, gdf):
     pos = np.searchsorted(ed, dd, side='left')          # events < D
     li = np.searchsorted(nz, pos, side='left') - 1
     has = li >= 0
+    if not len(nz):
+        return out
     idx = nz[np.clip(li, 0, len(nz) - 1)]
     out['gd_days'] = np.where(has, (dd - ed[idx]) / one, np.nan).astype(np.float32)
     return out
@@ -805,16 +807,15 @@ def xbrl_columns(dates, xb):
 
 # ---------------- Block H loader: XBRL fundamentals (I192) ----------------
 def load_xbrl(tickers):
-    """Per-ticker long fundamentals frame from fetch/fetch_xbrl.py (release
-    data-ext-2020-26-v1 asset xbrl_fundamentals_2020_26.parquet): ticker, metric,
-    period_end, filed, val, yoy. Point-in-time keyed on filed."""
-    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'xbrl_fundamentals_2020_26.parquet')
-    if not os.path.exists(p):
-        return None
-    df = pd.read_parquet(p)
-    df = df[df.ticker.isin(tickers)]
-    df['filed'] = pd.to_datetime(df['filed'])
-    return df.sort_values('filed').reset_index(drop=True)
+    """Read filing-version-preserving companyfacts shards, never latest-only frames."""
+    from pathlib import Path
+    files = sorted(Path(_data_ext_dir()).glob('xbrl_shard_*.parquet'))
+    if not files: return None
+    frame = pd.concat([pd.read_parquet(p) for p in files],ignore_index=True)
+    if frame.empty: return None
+    frame = frame[frame.ticker.isin(tickers)].copy()
+    frame['filed'] = pd.to_datetime(frame.filed)
+    return frame.sort_values(['filed','period_end','accn']).reset_index(drop=True)
 
 
 # ---------------- Block M loader: 13F hits (I199) ----------------
@@ -826,6 +827,7 @@ def load_f13(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
     return df.reset_index(drop=True)
 
@@ -840,6 +842,7 @@ def load_gdelt(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
@@ -855,6 +858,7 @@ def load_analyst(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df: return None
     df = df[df.ticker.isin(tickers)]
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
@@ -1007,7 +1011,7 @@ def peer_columns(dates, bars_tk, peers, cid):
     cr = peers.cluster_ret[['date', f'peer_cret_{cid}']].rename(columns={f'peer_cret_{cid}': 'cret'})
     cr['date'] = pd.to_datetime(cr['date']).astype('datetime64[ns]')
     q = pd.DataFrame({'date': d.astype('datetime64[ns]')})
-    m = pd.merge_asof(q, cr, on='date', direction='backward', allow_exact_matches=False)
+    m = pd.merge_asof(q, cr, on='date', direction='backward', allow_exact_matches=True)
     cret = m.cret.astype(np.float32).to_numpy()               # cluster ret, strict < D
     def roll_prod(a, w, mp):
         return pd.Series(a).rolling(w, min_periods=mp).apply(lambda s: (1 + s).prod() - 1, raw=True).to_numpy(dtype=np.float32)
@@ -1103,8 +1107,9 @@ def load_halts(tickers):
     hd = pd.to_datetime(df.halt_date, format='%m/%d/%Y', errors='coerce')
     rd = pd.to_datetime(df.resume_date, format='%m/%d/%Y', errors='coerce')
     df = df.assign(halt_d=hd, resume_d=rd).dropna(subset=['halt_d'])
-    codes, uniques = pd.factorize(df.reason.astype(str).fillna(''))
-    df['halt_rsn'] = codes.astype(np.float32)
+    # Fixed categorical codes; labels cannot change with other tickers/future rows.
+    reasons = {'T1':1,'T2':2,'T3':3,'T12':12,'H4':14,'H9':19,'H10':20,'H11':21,'LUDP':30,'LUDS':31,'MWC1':40,'MWC2':41,'MWC3':42}
+    df['halt_rsn'] = df.reason.fillna('').str.strip().map(reasons).fillna(99).astype(np.float32)
     return df[['symbol', 'halt_d', 'resume_d', 'halt_rsn']].sort_values('halt_d')
 
 def load_regsho(tickers):
@@ -1171,7 +1176,7 @@ def halt_columns(dates, hf):
     n = len(d)
     nan = np.full(n, np.nan, dtype=np.float32)
     out = {'halt_days': nan.copy(), 'halt_gap': nan.copy(), 'halt_rsn': nan.copy(),
-           'halt_n20': nan.copy(), 'halt_n60': nan.copy()}
+           'halt_n20': nan.copy(), 'halt_n60': nan.copy(), 'halt_duration_days': nan.copy()}
     if hf is None or not len(hf):
         return out
     he = np.sort(hf.halt_d.to_numpy(dtype='datetime64[ns]'))
@@ -1186,7 +1191,7 @@ def halt_columns(dates, hf):
         out['halt_days'][i] = (D - he[k]) / one_day
         out['halt_rsn'][i] = rsn[k]
         if not np.isnat(res[k]) and res[k] < D:
-            out['halt_gap'][i] = (res[k] - he[k]) / one_day
+            out['halt_duration_days'][i] = (res[k] - he[k]) / one_day
         out['halt_n20'][i] = j - np.searchsorted(he, D - np.timedelta64(20, 'D'), side='left')
         out['halt_n60'][i] = j - np.searchsorted(he, D - np.timedelta64(60, 'D'), side='left')
     return out
@@ -1483,7 +1488,7 @@ def main():
                        {f'fred_{s.lower()}_odays' for s in fred.series}) if fred is not None else []
     if fred is not None:
         print('fred series:', sorted(fred.series.unique()), flush=True)
-    parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
+    parts, meta = [], {'talib_funcs': sorted(funcs), 'talib_exclusions': DISCOVERY_EXCLUSIONS, 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols,
                        'etf_cols': ecols, 'etf_note': 'shifted 1 ETF bar, asof join; SPDR set uses current sector labels (bias flagged)',
                        'earn_cols': ecols2, 'earn_note': 'strict report_date < D (BMO-on-D excluded)',
