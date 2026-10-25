@@ -70,6 +70,24 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-25 ~20:00 HKT (James): Dictionary pins: cp_* chart tags, ratio rule, raw vs adjusted prices. Kimi, ACK this entry in §0c.**
+  - **1. Timing.** Every `cp_*` tag and every rolling-window item is computed on bars ending at t = D−1. Nothing from day D. The day-D open is the buy price only.
+  - **2. `cp_*` definitions.** Pinned verbatim from New Bot. Source `CHART_PICTURE_V2_FORMULAS.md` sha `0badaa4a…0c05`, `build_cp_v2.py` sha `8d2be01f…`.
+    - green = `C>O`, red = `C<O`, doji = neither. body = `|C-O|`.
+    - TR = `max(H-L, |H-prevC|, |L-prevC|)`. First bar is `H-L`.
+    - ATR(N) is Wilder. Seed = SMA of the first N TR. Default 14.
+    - Bollinger(N,k): mid = SMA(N) of close, sd = population (`ddof=0`). Defaults 20, 2.
+    - `%B = (C-lower)/(upper-lower)`. Blank if upper = lower.
+    - X-day high = max High over X days ending t. `i_h` = the most recent bar on ties. X = 20.
+    - `s_low` = min Low over `i_h-S .. i_h-1`. S = 20.
+    - run = `Xhigh - s_low`. Blank if `<= 0`.
+    - drawdown = `Xhigh - min Low` over `i_h..t`.
+    - Need at least 60 bars, otherwise all blank. Blank = fail in the hard gate.
+    - Tags, with test variables and defaults: `cp_mid_slope_up` (M=5, `>0`); `cp_gr_body20` (W=20, G=0.9, `>=`); `cp_pctB` (P=0.12, `>=`); `cp_dip_atr` (`(Xhigh-C)/ATR14 <= D`, D=4.2); `cp_days_since_h20` (A..B inclusive, 5..18, range 0..X-1); `cp_dd_vs_run` (R=0.5, `>=`); `cp_redgreen_vol10` (W=10, V=1.0, `>`, warning only); `cp_hard_all` = tags 1–6 all yes, blank = no; `lower_highs10` = count of days in the last 10 with High < prior High (plain count).
+  - **3. Single ratio rule,** for the whole dictionary. A zero denominator with a positive numerator = infinite, and that passes any `>=` / `>` threshold. Both zero = blank. Where a Taskforce item (for example `green_red_body_ratio`) used blank-on-zero, keep that as a separate variant suffixed `_blank`. The default built version is suffixed `_inf`. Never silently rewrite a built tag.
+  - **4. Prices.** Split-adjusted and dividend-adjusted prices are used only for ratios, returns, and indicators. Any price level or size test (minimum price, the $100M market-cap cut, "close above $X") uses the raw point-in-time D−1 close and the shares outstanding known as of that date.
+  - **5. Theme Radar raw Finviz fields** (ratings, targets, short float, earnings dates) are live-only and excluded from backtest scoring. Only peer and sector items are backtested, with an industry-code fallback.
+  - **Kimi.** Apply these to `WORLD_COVERAGE.csv` and the dictionary. ACK in §0c.
 - **2026-10-25 ~17:45 HKT (James): Step A rerun crash chunks 0/1. Kimi, ACK this entry in §0c.**
   - Run [40180498392](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40180498392) failed after about 2 minutes with `IndexError: index 0 is out of bounds for axis 0 with size 0`. Find which array is empty (likely a new or fixed question family, or a data block with no rows for that chunk). Guard it: an empty array skips with a logged count, and never silently drops a whole family. Add a regression test. Redispatch chunks 0 and 1.
   - Shortlist run [40175232753](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40175232753) was still producing shards after the 17:35 full-data-first pause. Confirm in §0c whether it was cancelled. Cancel any remaining shards if it was not.
