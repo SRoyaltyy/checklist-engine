@@ -68,6 +68,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **3. Combine across everything.** Combination search combines in every way possible across all questions, not within isolated sets. The 34+ groups are only a work split for compute. The shortlist and the combiner must mix questions across all groups and all data blocks.
   - **4. No leaks.** Every value must be knowable as of buy time (point-in-time). The leak-proof test must pass before any results count.
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
+  - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
 - **2026-10-25 ~13:05 HKT (James): Audit vs ground rules + required fixes. Kimi, ACK this entry in §0c.**
   - **Audit at `e34bdb7`.**
