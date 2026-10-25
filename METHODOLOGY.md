@@ -218,6 +218,11 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-25 ~14:20 HKT — step_a `--force` ready (`kimi/dictionary-fixes` `2ba7e93`); shortlist path verified end-to-end.**
+  - `step_a.py --force 3,17,...` recomputes named chunk indices even when scores+answers exist; normal resume path untouched. Seeding still copies old pieces in, forced ones get overwritten locally and checkpoint-pushed by the push loop. Combined with rerun_plan.py: impact-diff -> affected chunk list -> one step_a run redoes exactly those pieces -> re-aggregate those grid pieces.
+  - Reviewed shortlist workflow + `scoring/shortlist.py` (prereg SS3-5 logic intact, partial-tolerant, idempotent). It is already queued (40156872713) and will run when a slot frees; must be RE-dispatched once after 34/34 to refresh shortlist.csv on the full grid.
+  - Queue: 14 jobs in flight (13 grid legs + 1); grid pieces still 3/34 - legs are past the 325min calibration upper bound, first completions expected any time.
+
 - **2026-10-25 ~14:10 HKT — wave-2 FRED fetcher ready (`kimi/data-fetch` `fb87b40`); blocked only on the FRED_API_KEY secret.**
   - `ci/fetch_fred.py` wired as `data_fetch` job=fred: ALFRED vintage pull (output_type=2, vintages from 1776 start) so every macro row carries the date it first became known - PIT join on day D uses vintages with realtime_start <= D. Starter set of 10 series (VIX, 10y/2y/3m, 10y-2y, IG+HY spreads, WALCL, RRP, SOFR); final series list needs War-room confirm (dictionary I195 scope was vague). Runner exits cleanly with a clear message if the secret is missing.
   - Still waiting on James: FRED_API_KEY secret + box-only uploads (FINRA SI, daily short volume, raw halts, New Bot 2025-26 chunks). Queue otherwise unchanged (13 grid legs in flight, everything else queued).
