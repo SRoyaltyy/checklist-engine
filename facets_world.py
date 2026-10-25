@@ -187,6 +187,9 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
     out['tv_env_pos'] = ((cs - env_lo) / (env_hi - env_lo)).to_numpy(np.float32)
     # M196 Visible Average Price: mean close over 20 bars.
     out['tv_vavg20'] = sma20.to_numpy(np.float32)
+    # M222 Volume candles (chart type; proxy): volume relative to its 20-bar mean.
+    vma20 = pd.Series(v).rolling(20, min_periods=20).mean()
+    out['tv_volr'] = (pd.Series(v) / vma20).to_numpy(np.float32)
     # M186 Trend Strength Index: rolling-20 squared Pearson corr(close, bar index).
     w = 20
     ts = np.full(len(c), np.nan, dtype=np.float64)
@@ -1189,6 +1192,49 @@ def event_columns(dates, evt, value_name, days_name, count_name, count_window=No
         out[count_name] = np.where(has, (pos - lo).astype(np.float32), np.nan).astype(np.float32)
     return out
 
+# ---------------- Block K extension: M008 / M047 breadth math ----------------
+def extend_breadth(breadth):
+    """M008 Advance/Decline Ratio and M047 Cumulative Volume Index, derived daily
+    from the universe file — the SAME provenance as the existing breadth column
+    (universe_2020_survivors; survivors-only bias unchanged, flagged in coverage).
+    advdecl = n_adv / n_dec across the universe; cvi_m = cumulative (up-day volume
+    − down-day volume) in $millions; cvi_chg20_m = its 20-day change. All are
+    market-wide rows keyed by date, joined strict < D like the other breadth cols.
+    Returns `breadth` unchanged if the universe or volume data is unavailable
+    (then M047 stays pending; logged, not silent)."""
+    u = D('/workspace/pricehist/universe_2020_survivors.parquet')
+    if breadth is None or not os.path.exists(u):
+        print('extend_breadth: skipped (no breadth frame or universe file)', flush=True)
+        return breadth
+    cols = ['ticker', 'date', 'close']
+    try:
+        import pyarrow.parquet as _pq
+        has_vol = 'volume' in _pq.read_schema(u).names
+    except Exception as e:
+        print(f'extend_breadth: schema check failed ({e}); using close only', flush=True)
+        has_vol = False
+    if has_vol:
+        cols.append('volume')
+    px = pd.read_parquet(u, columns=cols)
+    px['date'] = pd.to_datetime(px['date'])
+    px = px.sort_values(['ticker', 'date'])
+    px['prev'] = px.groupby('ticker')['close'].shift(1)
+    up = px.close > px.prev
+    dn = px.close < px.prev
+    n_adv = up.groupby(px.date).sum()
+    n_dec = dn.groupby(px.date).sum()
+    adr = (n_adv / n_dec.replace(0, np.nan)).rename('advdecl').reset_index()
+    out = breadth.merge(adr, on='date', how='left')
+    if has_vol:
+        uv = px.assign(vol_up=px.volume.where(up)).groupby('date')['vol_up'].sum()
+        dv = px.assign(vol_dn=px.volume.where(dn)).groupby('date')['vol_dn'].sum()
+        cvi = (uv - dv).cumsum() / 1e6
+        cdf = pd.DataFrame({'date': cvi.index, 'cvi_m': cvi.to_numpy(),
+                            'cvi_chg20_m': cvi.diff(20).to_numpy()})
+        out = out.merge(cdf, on='date', how='left')
+    print(f'extend_breadth: added advdecl{"+cvi_m+cvi_chg20_m" if has_vol else " (no volume col)"}', flush=True)
+    return out
+
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
 def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None, fred=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
@@ -1323,6 +1369,7 @@ def main():
             breadth = breadth.reset_index()          # file stores date as the index
         breadth['date'] = pd.to_datetime(breadth['date'])
         breadth = breadth.sort_values('date')
+    breadth = extend_breadth(breadth)
     if breadth is not None: print('breadth cols:', list(breadth.columns), flush=True)
 
     bars = load_bars(set(mine))
