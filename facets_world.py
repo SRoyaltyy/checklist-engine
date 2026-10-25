@@ -90,9 +90,11 @@ def compute_talib(o, h, l, c, v, funcs):
 # ---------------- build ----------------
 def load_bars(tickers=None):
     p = D('/workspace/updown/bars_all.parquet')
-    f = [('date', '<=', END)]
-    if tickers: f.append(('ticker', 'in', tickers))
-    return pd.read_parquet(p, filters=f)
+    df = pd.read_parquet(p)
+    df['date'] = pd.to_datetime(df['date'])       # file stores timestamp; filter after parse
+    df = df[df.date <= END]
+    if tickers: df = df[df.ticker.isin(tickers)]
+    return df
 
 def main():
     global COVERAGE_NOTE
@@ -116,18 +118,18 @@ def main():
     print('tickers in shard:', len(mine), flush=True)
 
     br = D('/workspace/updown/breadth_2020_24.parquet')
-    breadth = pd.read_parquet(br) if os.path.exists(br) else None
+    breadth = None
+    if os.path.exists(br):
+        breadth = pd.read_parquet(br)
+        if 'date' not in breadth.columns:
+            breadth = breadth.reset_index()          # file stores date as the index
+        breadth['date'] = pd.to_datetime(breadth['date'])
+        breadth = breadth.sort_values('date')
     if breadth is not None: print('breadth cols:', list(breadth.columns), flush=True)
 
     bars = load_bars(set(mine))
     os.makedirs(a.out, exist_ok=True)
-    if breadth is not None:
-        breadth = breadth.copy()
-        breadth['date'] = pd.to_datetime(breadth['date'])
-        breadth = breadth.sort_values('date')
-        bcols = [c for c in breadth.columns if c != 'date']
-    else:
-        bcols = []
+    bcols = [c for c in breadth.columns if c != 'date'] if breadth is not None else []
     parts, meta = [], {'talib_funcs': sorted(funcs), 'shift': 'value at D uses bars <= D-1',
                        'shard': a.shard, 'shards': a.shards, 'breadth_cols': bcols}
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
