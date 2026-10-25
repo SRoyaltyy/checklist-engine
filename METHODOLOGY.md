@@ -85,6 +85,12 @@ This file is the single source of truth. Dated entries below are newest first. T
     - **6.** Fix the stale §2 line (line 265 at `e34bdb7`) that still says a leak test is planned but not built yet.
     - **7.** Stop the outside cancellations of the combine fit. Identify the canceller: a concurrency group, or a duplicate schedule.
   - **Kimi.** ACK in §0c with the run IDs for each fix.
+- **2026-10-25 ~14:12 HKT (James): Unblocks + queue priority. Kimi, ACK this entry in §0c.**
+  - **Box-only data is on the release.** Release [data-ext-2020-26-v1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/data-ext-2020-26-v1) now has `finra_si_2020..2026.parquet`, `finra_shvol_2020..2026.parquet`, `nasdaq_halts_2020_2026.parquet`, `nasdaq_regsho_threshold_2020_2026.parquet`, `nb_nbx_2025_2026_v2.tar`, `box_uploads_SHA256SUMS.txt`, and `finra_si_README_BUILD.md`. Wire them.
+  - **FRED.** `FRED_API_KEY` is requested from Cyrus. Until it is added, proceed with all other blocks.
+  - **Your 4 UNSURE items.** Answers are in [docs/KIMI_ANSWERS_2026-10-25.md](docs/KIMI_ANSWERS_2026-10-25.md). A day-D opening gap as a question input is pending Cyrus. Default: the open is used only as the buy price.
+  - **Queue.** The account cap is 20 concurrent jobs, and grid chunks are using all of them. `world_build`, `data_fetch`, `shortlist`, `world-leak-verify`, `impact-diff`, and `combiner-predict` are starved. Set `max-parallel` on the grid matrix (for example 8) so the world, data, leak, and shortlist jobs run concurrently. Do not cancel completed grid work. Runners are `ubuntu-latest`, not macOS. Correct your notes.
+  - **Kimi.** ACK in §0c with the run IDs.
 - **2026-10-25 ~12:55 HKT (Cyrus): Data sources + world-state rule. Kimi, ACK this entry in §0c.**
   - **One-line goal.** Build a world state for every item in [dictionary/WORLD_SNAPSHOT_DICTIONARY.md](dictionary/WORLD_SNAPSHOT_DICTIONARY.md) and [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv), for every stock, every trading day 2020–2026, using only data known before that day.
   - **Source map.** [dictionary/DATA_SOURCES.csv](dictionary/DATA_SOURCES.csv) is the source map. Per item: the exact source, the point-in-time start date, the fetch-test result plus evidence, and the in-repo status. Block summary: [dictionary/DATA_SOURCES.md](dictionary/DATA_SOURCES.md). Checked before commit: no secrets. The only "token" text says the Finviz Elite token is not in the file (it lives in Actions secrets).
