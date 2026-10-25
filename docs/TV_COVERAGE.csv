@@ -266,7 +266,7 @@ M264,Tri Star - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLTRISTAR,WIRED
 M265,Tweezer Bottom - Bullish,candlestick pattern,A2,tv_tweezer_bottom,WIRED,computed in world build (c29b214)
 M266,Tweezer Top - Bearish,candlestick pattern,A2,tv_tweezer_top,WIRED,computed in world build (c29b214)
 M267,Upside Tasuki Gap - Bullish,candlestick pattern,A2,Taskforce v10.2: CDLTASUKIGAP,WIRED,have per master; owner variant: Taskforce v10.2: CDLTASUKIGAP — non-null % re-verified at gate measure on rebuilt shards
-M268,"All Chart Patterns (flags, wedges, triangles, double top/bottom, head & shoulders, rectangle)",chart pattern,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M268,"All Chart Patterns (flags, wedges, triangles, double top/bottom, head & shoulders, rectangle)",chart pattern,A2,tv_pat_dbltop;tv_pat_dblbot;tv_pat_tri;tv_pat_rect;tv_pat_flag;tv_pat_wedge;tv_pat_hs,WIRED,computed in world build (5ad882f); heuristic approximation from confirmed pivots
 M269,Elliott Waves pattern,chart pattern,A2,tv_ew_dir;tv_ew_npiv,WIRED,computed in world build (59f5a00)
 M270,"Fixed Range Volume Profile (POC, value area)",volume profile,A2,Taskforce v10.2: Close vs volume-profile POC 20d/60d; Position in value area 20d/60d,WIRED,have per master; owner variant: Taskforce v10.2: Close vs volume-profile POC 20d/60d; Position in value area 20d/60d — non-null % re-verified at gate measure on rebuilt shards
 M271,Periodic Volume Profile,volume profile,A2,tv_poc_dist,WIRED,computed in world build (59f5a00)

@@ -74,6 +74,9 @@ BATCH5 = {
     'M047': 'cvi_m;cvi_chg20_m',
     'M222': 'tv_volr',
 }
+BATCH6 = {
+    'M268': 'tv_pat_dbltop;tv_pat_dblbot;tv_pat_tri;tv_pat_rect;tv_pat_flag;tv_pat_wedge;tv_pat_hs',
+}
 # already wired by another block, no new code needed
 ALREADY = {
     'M277': ('split_days;split_n',
@@ -84,6 +87,7 @@ WIRED_MAP.update(BATCH2)
 WIRED_MAP.update(BATCH3)
 WIRED_MAP.update(BATCH4)
 WIRED_MAP.update(BATCH5)
+WIRED_MAP.update(BATCH6)
 
 BLOCK_BY_CATEGORY = {
     'breadth': 'K', 'price math': 'A2', 'chart type': 'A2', 'patterns': 'A2',
@@ -107,10 +111,12 @@ def seed():
                              '(tested: none; see DATA_SOURCES.csv notes)'))
             elif status == 'missing-fetchable':
                 if iid in WIRED_MAP:
-                    sha = 'c29b214' if iid in BATCH1 else ('bf0ec81' if iid in BATCH2 else ('7fb1a8b' if iid in BATCH3 else ('59f5a00' if iid in BATCH4 else '52f8b30')))
+                    sha = 'c29b214' if iid in BATCH1 else ('bf0ec81' if iid in BATCH2 else ('7fb1a8b' if iid in BATCH3 else ('59f5a00' if iid in BATCH4 else ('52f8b30' if iid in BATCH5 else '5ad882f'))))
                     extra = ''
                     if iid in ('M008', 'M047'):
                         extra = '; survivors-only universe provenance (same as breadth col)'
+                    if iid in BATCH6:
+                        extra = '; heuristic approximation from confirmed pivots'
                     rows.append((iid, item, cat, block, WIRED_MAP[iid], 'WIRED',
                                  f'computed in world build ({sha}){extra}'))
                 elif iid in ALREADY:
