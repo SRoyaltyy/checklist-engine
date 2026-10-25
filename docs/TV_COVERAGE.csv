@@ -30,7 +30,7 @@ M028,Blocks mined,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only 
 M029,Bollinger Bands (BB),built-in indicator,A2,Taskforce v10.2: Bollinger %B / Outside Bollinger band,WIRED,have per master; owner variant: Taskforce v10.2: Bollinger %B / Outside Bollinger band — non-null % re-verified at gate measure on rebuilt shards
 M030,Bollinger Bands %b (%b),built-in indicator,A2,"Taskforce v10.2: Bollinger %B(20,2)",WIRED,"have per master; owner variant: Taskforce v10.2: Bollinger %B(20,2) — non-null % re-verified at gate measure on rebuilt shards"
 M031,Bollinger BandWidth (BBW),built-in indicator,A2,Taskforce v10.2: Bollinger bandwidth,WIRED,have per master; owner variant: Taskforce v10.2: Bollinger bandwidth — non-null % re-verified at gate measure on rebuilt shards
-M032,Bollinger Bars,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M032,Bollinger Bars,built-in indicator,A2,tv_bb_pos,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M033,Bull Bear Power,built-in indicator,A2,Taskforce v10.2: Elder ray bull-bear power / ATR,WIRED,have per master; owner variant: Taskforce v10.2: Elder ray bull-bear power / ATR — non-null % re-verified at gate measure on rebuilt shards
 M034,Chaikin Money Flow (CMF),built-in indicator,A2,Taskforce v10.2: Chaikin Money Flow 20,WIRED,have per master; owner variant: Taskforce v10.2: Chaikin Money Flow 20 — non-null % re-verified at gate measure on rebuilt shards
 M035,Chaikin Oscillator,built-in indicator,A2,"Taskforce v10.2: Chaikin oscillator (3,10)",WIRED,"have per master; owner variant: Taskforce v10.2: Chaikin oscillator (3,10) — non-null % re-verified at gate measure on rebuilt shards"
@@ -80,7 +80,7 @@ M078,Keltner Channels (KC),built-in indicator,A2,Taskforce v10.2: Keltner channe
 M079,Klinger Oscillator,built-in indicator,A2,Taskforce v10.2: Klinger volume oscillator,WIRED,have per master; owner variant: Taskforce v10.2: Klinger volume oscillator — non-null % re-verified at gate measure on rebuilt shards
 M080,Know Sure Thing (KST),built-in indicator,A2,Taskforce v10.2: KST minus signal,WIRED,have per master; owner variant: Taskforce v10.2: KST minus signal — non-null % re-verified at gate measure on rebuilt shards
 M081,Large transaction volume,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
-M082,Learn using seasonals,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M082,Learn using seasonals,built-in indicator,A2,tv_seas_mo_up;tv_seas_dow_up,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M083,Least Squares Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs linear regression line 20,WIRED,have per master; owner variant: Taskforce v10.2: Close vs linear regression line 20 — non-null % re-verified at gate measure on rebuilt shards
 M084,Linear Regression,built-in indicator,A2,Taskforce v10.2: Close vs regression stdev channel (all data to D-1),WIRED,have per master; owner variant: Taskforce v10.2: Close vs regression stdev channel (all data to D-1) — non-null % re-verified at gate measure on rebuilt shards
 M085,Liquidation data: what to watch and why it matters,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
@@ -134,7 +134,7 @@ M132,Premium,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per m
 M133,Price Momentum Oscillator (PMO),built-in indicator,A2,tv_pmo;tv_pmo_sig;tv_pmo_x,WIRED,computed from OHLCV in compute_tv_extra (c29b214)
 M134,Price target - indicator,built-in indicator,A2,Theme Radar: Target price distance %,WIRED,have per master; owner variant: Theme Radar: Target price distance % — non-null % re-verified at gate measure on rebuilt shards
 M135,Price Volume Trend (PVT),built-in indicator,A2,Taskforce v10.2: Price volume trend change / avg V,WIRED,have per master; owner variant: Taskforce v10.2: Price volume trend change / avg V — non-null % re-verified at gate measure on rebuilt shards
-M136,Pring's Special K,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M136,Pring's Special K,built-in indicator,A2,tv_spec_k,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M137,Rank Correlation Index (RCI),built-in indicator,A2,tv_rci9;tv_rci26;tv_rci52,WIRED,computed from OHLCV in compute_tv_extra (c29b214)
 M138,Rate of Change (ROC),built-in indicator,A2,Taskforce v10.2: Rate of change 20,WIRED,have per master; owner variant: Taskforce v10.2: Rate of change 20 — non-null % re-verified at gate measure on rebuilt shards
 M139,RCI Ribbon,built-in indicator,A2,tv_rci_ribbon_up,WIRED,computed from OHLCV in compute_tv_extra (c29b214)
@@ -152,7 +152,7 @@ M150,Rob Booker Reversal,built-in indicator,A2,tv_rb_rev,WIRED,computed from OHL
 M151,Rob Booker Ziv Ghost Pivots,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
 M152,RSI divergence indicator,built-in indicator,A2,Taskforce v10.2: Tired run: new high without RSI high / new low without RSI low,WIRED,have per master; owner variant: Taskforce v10.2: Tired run: new high without RSI high / new low without RSI low — non-null % re-verified at gate measure on rebuilt shards
 M153,"RVT ratio, 90 days",built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
-M154,Seasonality,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M154,Seasonality,built-in indicator,A2,tv_seas_mo_up;tv_seas_dow_up,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M155,Sending addresses,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
 M156,Simple Moving Average,built-in indicator,A2,Taskforce v10.2: Close vs SMA20/50/200,WIRED,have per master; owner variant: Taskforce v10.2: Close vs SMA20/50/200 — non-null % re-verified at gate measure on rebuilt shards
 M157,SMI Ergodic Indicator,built-in indicator,A2,"Taskforce v10.2: True strength index (25,13)",WIRED,"have per master; owner variant: Taskforce v10.2: True strength index (25,13) — non-null % re-verified at gate measure on rebuilt shards"
@@ -166,7 +166,7 @@ M164,Stochastic RSI (STOCH RSI),built-in indicator,A2,Taskforce v10.2: StochRSI 
 M165,Stock-to-Flow Ratio in USD,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
 M166,Supertrend,built-in indicator,A2,"Taskforce v10.2: Supertrend (10,3) side",WIRED,"have per master; owner variant: Taskforce v10.2: Supertrend (10,3) side — non-null % re-verified at gate measure on rebuilt shards"
 M167,Supply Equality Ratio,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
-M168,Technical Ratings,built-in indicator,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M168,Technical Ratings,built-in indicator,A2,tv_tr_ma;tv_tr_osc;tv_tr_total,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M169,Time Weighted Average Price,built-in indicator,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
 M170,Top trader long/short accounts,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
 M171,Top trader long/short accounts ratio,built-in indicator,A2,,EXCLUDED_FREE_TEXT,crypto/futures-only per master; not a US-stock chart question
@@ -215,10 +215,10 @@ M213,Line / Line with markers / Step line / Area / HLC area / Baseline,chart typ
 M214,High-low,chart type,A2,Taskforce v10.2: Range vs ATR14,WIRED,have per master; owner variant: Taskforce v10.2: Range vs ATR14 — non-null % re-verified at gate measure on rebuilt shards
 M215,Columns,chart type,A2,Taskforce v10.2: close vs prior close,WIRED,have per master; owner variant: Taskforce v10.2: close vs prior close — non-null % re-verified at gate measure on rebuilt shards
 M216,Heikin Ashi,chart type,A2,Taskforce v10.2: Heikin-Ashi colour streak,WIRED,have per master; owner variant: Taskforce v10.2: Heikin-Ashi colour streak — non-null % re-verified at gate measure on rebuilt shards
-M217,Renko,chart type,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
-M218,Line break,chart type,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
-M219,Kagi,chart type,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
-M220,Point & figure,chart type,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
+M217,Renko,chart type,A2,tv_renko_dir;tv_renko_n,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
+M218,Line break,chart type,A2,tv_lb_dir,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
+M219,Kagi,chart type,A2,tv_kagi_dir,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
+M220,Point & figure,chart type,A2,tv_pnf_dir,WIRED,computed from OHLCV in compute_tv_extra (7fb1a8b)
 M221,Range bars,chart type,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)
 M222,Volume candles,chart type,A2,,PENDING_CODE,pure OHLCV math; queued for a later compute batch
 M223,Volume footprint / TPO,chart type,A2,,NOT_AVAILABLE_FREE,needs intraday/tick history; no free dated source (tested: none; see DATA_SOURCES.csv notes)

@@ -65,6 +65,7 @@ ALREADY = {
 }
 WIRED_MAP = dict(BATCH1)
 WIRED_MAP.update(BATCH2)
+WIRED_MAP.update(BATCH3)
 
 BLOCK_BY_CATEGORY = {
     'breadth': 'K', 'price math': 'A2', 'chart type': 'A2', 'patterns': 'A2',
