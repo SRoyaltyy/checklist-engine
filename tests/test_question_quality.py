@@ -20,10 +20,10 @@ def fixture(tmp_path):
                                 writer.writerow(dict(question_id=qid,item_id=iid,block=block,derivative='raw',facet=facet,candle_days=k,lookback=window,
                                     threshold=threshold,direction=direction,formula=qid+' defined expression',inputs=iid+'__'+str(k)+'d',
                                     pit_rule='available_from < D',answer_set='[0,1]'))
-                                aw.writerow(dict(question_id=qid,n_total=100,answer_counts=json.dumps({'0':40,'1':60})))
+                                aw.writerow(dict(question_id=qid,n_total=600,answer_counts=json.dumps({'0':240,'1':360})))
                                 count+=1
     catalog=[dict(item_id='PRICE',block='A',is_price_volume=True),dict(item_id='INSIDER',block='E',is_price_volume=False)]
-    sample=dict(tickers=[f'S{i}' for i in range(200)],years=[2020,2021,2022],rows=100,input_manifest_sha256='fixture',question_tree_sha256=tree_digest([tree]))
+    sample=dict(tickers=[f'S{i}' for i in range(200)],years=[2020,2021,2022],rows=600,input_manifest_sha256='fixture',question_tree_sha256=tree_digest([tree]))
     return catalog,tree,tallies,sample,count
 
 
@@ -53,7 +53,7 @@ def test_insufficient_sample_and_tree_version_fail(tmp_path):
 def test_constant_question_fails(tmp_path):
     catalog,tree,tallies,sample,_=fixture(tmp_path)
     records=list(csv.DictReader(tallies.open()))
-    records[0]['answer_counts']='{"1":100}'
+    records[0]['answer_counts']='{"1":600}'
     with tallies.open('w',newline='') as stream:
         writer=csv.DictWriter(stream,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
     report,_,_=evaluate(catalog,[tree],[tallies],sample)

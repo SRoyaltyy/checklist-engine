@@ -47,12 +47,12 @@ def mappings():
     existing={r['item_id']:r for r in read_csv(ROOT/'dictionary/world_coverage_map.csv')}
     # Exact, documented settings; generic function defaults do not satisfy SMA5.
     explicit={
-      'I028':['STOCH_slowk','STOCH_slowd'],'I029':['WILLR14'],
+      'I028':['STOCH14_3_3_k','STOCH14_3_3_d'],'I029':['WILLR14'],
       'I030':['MACD_macd','MACD_macdsignal','MACD_macdhist'],
       'I034':['ADX14','PLUS_DI14','MINUS_DI14'],'I036':['CCI20'],
       'I079':['volume'],'I080':['RVOL20'],'I082':['OBV'],'I083':['AD'],
       'I084':['MFI14'],'I097':['ATR14'],
-      'I098':['BBANDS_upperband','BBANDS_middleband','BBANDS_lowerband'],
+      'I098':['BBANDS20_upper','BBANDS20_mid','BBANDS20_lower'],
       'I108':None,
     }
     for i,n in enumerate((5,10,20,30,50,100,200),1):explicit[f'I{i:03d}']=[f'SMA{n}']
@@ -83,6 +83,19 @@ def build(measured,root=ROOT):
             normalized=re.sub('[^A-Z0-9]','',name.upper())
             if namespace=='dictionary' and normalized in daily:
                 base=[normalized];status='WIRED'
+            incomplete={
+                'I180':'market breadth bundle still lacks verified new-high/new-low and all required A/D outputs',
+                'I187':'filing-date counts are not open-market insider P/S trades, shares and roles',
+                'I192':'full numeric XBRL tag coverage and source availability are not yet established',
+                'I193':'shares outstanding and float are distinct; full PIT float is not established',
+                'I194':'Altman Z / Piotroski F / Beneish M not yet implemented and measured',
+                'I197':'upgrade/downgrade counts do not cover the required price-target history',
+                'I199':'filing mentions are not verified fund holdings and share quantities',
+                'I200':'mention counts alone do not cover the required news tone',
+                'I201':'complete market-wide options/term-structure bundle is not yet joined',
+            }
+            if namespace=='dictionary' and iid in incomplete:
+                status='PENDING';reason=incomplete[iid]
             for tf in TIMEFRAMES:
                 columns=[c+'__'+tf for c in base]
                 missing=[c for c in columns if c not in observed]

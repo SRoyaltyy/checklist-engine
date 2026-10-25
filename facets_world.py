@@ -100,6 +100,7 @@ def compute_talib(o, h, l, c, v, funcs):
                     raise ValueError(f'bad output shape {values.shape}')
                 if kind == 'pattern':
                     values = values / 100.0
+                    values[:getattr(f,'lookback',0)] = np.nan
                 out[col] = values.astype(np.float32)
         except Exception as exc:
             raise RuntimeError(f'TA-Lib {name} failed; refusing partial snapshot') from exc

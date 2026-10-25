@@ -6,6 +6,7 @@ on:
       - 'facets_world.py'
       - 'world_*.py'
       - 'fetch/fetch_xbrl.py'
+      - 'fetch/fetch_world_prices.py'
       - 'ci/world_v2_*.py'
       - 'ci/question_quality.py'
       - 'tests/test_question_quality.py'
@@ -28,6 +29,22 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
       - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py -q
+  supplemental-prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Fetch 2025-2026 and indicator warmup history independently
+        run: python -m fetch.fetch_world_prices --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE --shards 1 --out supplemental-prices
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: supplemental-prices-v2
+          path: supplemental-prices/
   companyfacts:
     runs-on: ubuntu-latest
     timeout-minutes: 30

@@ -138,3 +138,35 @@ def test_earnings_same_day_preserves_previous_known_report_and_precision():
         amc=[1.,0.],surprise_pct_fill=[10.,20.],eps_delta=[.1,.2]))
     out=fw.earn_for(pd.to_datetime(['2020-02-01','2020-02-02']),source)
     np.testing.assert_equal(out.earn_surp.to_numpy(),[10.,20.])
+
+
+def test_named_band_stochastic_periods_and_pattern_warmup():
+    from world_timeframes import parameter_variants
+    b=bars(80)
+    a=[b[c].to_numpy(float) for c in ('open','high','low','close','volume')]
+    variants=parameter_variants(*a)
+    np.testing.assert_allclose(variants['BBANDS20_mid'],b.close.rolling(20).mean(),rtol=1e-6,equal_nan=True)
+    import talib
+    sk,sd=talib.STOCH(a[1],a[2],a[3],fastk_period=14,slowk_period=3,slowd_period=3)
+    np.testing.assert_allclose(variants['STOCH14_3_3_k'],sk,rtol=1e-6,equal_nan=True)
+    values=fw.compute_talib(*a,fw.discover())
+    lookback=fw.abstract.Function('CDLDOJI').lookback
+    assert np.isnan(values['CDLDOJI'][:lookback]).all()
+
+
+def test_supplemental_prices_preserve_quote_and_adjusted_bases():
+    from fetch.fetch_world_prices import chart_rows
+    payload={'chart':{'result':[{'timestamp':[1735830000,1735916400],
+        'indicators':{'quote':[{'open':[90,100],'high':[110,120],'low':[80,90],'close':[100,110],'volume':[1000,2000]}],
+                      'adjclose':[{'adjclose':[50,55]}]},'events':{}}]}}
+    frame,events=chart_rows('TEST',payload)
+    np.testing.assert_equal(frame.vendor_close.to_numpy(),[100,110])
+    np.testing.assert_equal(frame.close.to_numpy(),[50,55])
+    np.testing.assert_equal(frame.open.to_numpy(),[45,50])
+    assert events.empty
+
+
+def test_missing_adjusted_series_is_a_source_failure():
+    from fetch.fetch_world_prices import chart_rows
+    payload={'chart':{'result':[{'timestamp':[1735830000],'indicators':{'quote':[{'close':[100]}]}}]}}
+    with pytest.raises(ValueError,match='adjusted-close'):chart_rows('TEST',payload)

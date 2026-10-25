@@ -54,6 +54,13 @@ def parameter_variants(o, h, l, c, v):
         fn = getattr(talib, name)
         for n in periods:
             out[f'{name}{n}'] = fn(c, timeperiod=n).astype(np.float32)
+    upper,mid,lower=talib.BBANDS(c,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
+    out['BBANDS20_upper']=upper.astype(np.float32)
+    out['BBANDS20_mid']=mid.astype(np.float32)
+    out['BBANDS20_lower']=lower.astype(np.float32)
+    sk,sd=talib.STOCH(h,l,c,fastk_period=14,slowk_period=3,slowk_matype=0,slowd_period=3,slowd_matype=0)
+    out['STOCH14_3_3_k']=sk.astype(np.float32)
+    out['STOCH14_3_3_d']=sd.astype(np.float32)
     out['ATR14'] = talib.ATR(h,l,c,timeperiod=14).astype(np.float32)
     out['CCI20'] = talib.CCI(h,l,c,timeperiod=20).astype(np.float32)
     out['MFI14'] = talib.MFI(h,l,c,v,timeperiod=14).astype(np.float32)

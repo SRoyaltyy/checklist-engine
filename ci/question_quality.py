@@ -37,6 +37,7 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=()):
             if qid in tallies:global_errors.append('duplicate tally '+qid)
             outcomes=json.loads(row['answer_counts'])
             total=int(row['n_total']);nonblank=sum(int(v) for v in outcomes.values())
+            if sample.get('rows') and total!=int(sample['rows']):global_errors.append('tally does not cover the declared sample '+qid)
             if nonblank>total or min([total,*[int(v) for v in outcomes.values()]])<0:
                 global_errors.append('invalid answer counts '+qid)
             tallies[qid]=(100*nonblank/total if total else 0,len([v for v in outcomes.values() if int(v)>0])<=1)
@@ -64,7 +65,7 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=()):
                 if constant:fail[iid].add('constant question')
     if len(set(sample.get('tickers',[])))<200:global_errors.append('sample contains fewer than 200 unique stocks')
     if set(sample.get('years',[]))!={2020,2021,2022}:global_errors.append('sample years must be 2020-2022')
-    if int(sample.get('rows',0))<=0:global_errors.append('sample has no rows')
+    if int(sample.get('rows',0))<len(set(sample.get('tickers',[]))):global_errors.append('sample row count is smaller than its stock count')
     if not sample.get('input_manifest_sha256'):global_errors.append('sample input provenance missing')
     if sample.get('question_tree_sha256')!=tree_digest(tree_files):global_errors.append('sample is not bound to this exact question tree')
     for iid,item in items.items():
