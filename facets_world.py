@@ -158,12 +158,45 @@ def earn_for(dates, edf):
                          'earn_surp': m.surprise_pct_fill.to_numpy(dtype=np.float32),
                          'earn_deps': m.eps_delta.to_numpy(dtype=np.float32)})
 
+# ---------------- per-ticker assembly (single definition; main + leak test) ----------------
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk):
+    """Assemble one ticker's world rows from its sorted bar frame `d`.
+    Every join is backward-looking and every TA-Lib array is shifted by one bar:
+    row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
+    report_date < D. `edf_tk` is the ticker's earnings sub-frame (or None)."""
+    df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
+    if len(d) >= 30:
+        o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
+        c = d.close.to_numpy(float); v = d.volume.to_numpy(float)
+        cols = compute_talib(o, h, l, c, v, funcs)
+        for k, arr in cols.items():
+            df[k] = np.r_[np.nan, arr[:-1]]          # shift-by-one: D sees bars <= D-1
+    if breadth is not None:
+        bcols = [c for c in breadth.columns if c != 'date']
+        key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: breadth date < D
+        m = pd.merge_asof(pd.DataFrame({'date': key}).sort_values('date'),
+                          breadth, on='date', direction='backward')
+        for bc in bcols:
+            df[bc] = m[bc].to_numpy(dtype=np.float32)
+    if etf is not None:
+        ecols = [c for c in etf.columns if c != 'date']
+        key = pd.to_datetime(df['date'])
+        m = pd.merge_asof(pd.DataFrame({'date': key}), etf, on='date', direction='backward')
+        for ec in ecols:
+            df[ec] = m[ec].to_numpy(dtype=np.float32)
+    e2 = earn_for(d.date.to_numpy(), edf_tk) if edf_tk is not None else None
+    if e2 is not None:
+        df = pd.concat([df.reset_index(drop=True), e2.reset_index(drop=True)], axis=1)
+    return df
+
 # ---------------- build ----------------
 def load_bars(tickers=None):
     p = D('/workspace/updown/bars_all.parquet')
-    f = [('date', '<=', END)]
-    if tickers: f.append(('ticker', 'in', tickers))
-    return pd.read_parquet(p, filters=f)
+    df = pd.read_parquet(p)
+    df['date'] = pd.to_datetime(df['date'])       # file stores timestamp; filter after parse
+    df = df[df.date <= END]
+    if tickers: df = df[df.ticker.isin(tickers)]
+    return df
 
 def main():
     global COVERAGE_NOTE
@@ -187,18 +220,18 @@ def main():
     print('tickers in shard:', len(mine), flush=True)
 
     br = D('/workspace/updown/breadth_2020_24.parquet')
-    breadth = pd.read_parquet(br) if os.path.exists(br) else None
+    breadth = None
+    if os.path.exists(br):
+        breadth = pd.read_parquet(br)
+        if 'date' not in breadth.columns:
+            breadth = breadth.reset_index()          # file stores date as the index
+        breadth['date'] = pd.to_datetime(breadth['date'])
+        breadth = breadth.sort_values('date')
     if breadth is not None: print('breadth cols:', list(breadth.columns), flush=True)
 
     bars = load_bars(set(mine))
     os.makedirs(a.out, exist_ok=True)
-    if breadth is not None:
-        breadth = breadth.copy()
-        breadth['date'] = pd.to_datetime(breadth['date'])
-        breadth = breadth.sort_values('date')
-        bcols = [c for c in breadth.columns if c != 'date']
-    else:
-        bcols = []
+    bcols = [c for c in breadth.columns if c != 'date'] if breadth is not None else []
     etf = etf_wide()
     ecols = [c for c in etf.columns if c != 'date'] if etf is not None else []
     if etf is not None: print('ETF overlay cols:', len(ecols), flush=True)
@@ -215,29 +248,8 @@ def main():
     for i, (tk, d) in enumerate(bars.groupby('ticker', sort=False)):
         d = d.sort_values('date')
         if len(d) < 30: continue
-        o = d.open.to_numpy(float); h = d.high.to_numpy(float); l = d.low.to_numpy(float)
-        c = d.close.to_numpy(float); v = d.volume.to_numpy(float)
-        cols = compute_talib(o, h, l, c, v, funcs)
-        df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
-        for k, arr in cols.items():
-            df[k] = np.r_[np.nan, arr[:-1]]          # shift-by-one: D sees bars <= D-1
-        if bcols:
-            key = pd.to_datetime(df['date']) - pd.Timedelta(days=1)   # strict: breadth date < D
-            m = pd.merge_asof(pd.DataFrame({'date': key}).sort_values('date'),
-                              breadth, on='date', direction='backward')
-            for bc in bcols:
-                df[bc] = m[bc].to_numpy(dtype=np.float32)
-        if ecols:
-            key = pd.to_datetime(df['date'])
-            m = pd.merge_asof(pd.DataFrame({'date': key}), etf, on='date', direction='backward')
-            for ec in ecols:
-                df[ec] = m[ec].to_numpy(dtype=np.float32)
-        if ecols2:
-            e2 = earn_for(d.date.to_numpy(), edf_by_tk.get(tk))
-            if e2 is not None:
-                df = pd.concat([df.reset_index(drop=True), e2.reset_index(drop=True)], axis=1)
-            else:
-                for c2 in ecols2: df[c2] = np.nan
+        df = ticker_frame(tk, d, funcs, etf if ecols else None,
+                          breadth if bcols else None, edf_by_tk.get(tk) if ecols2 else None)
         parts.append(df)
         if i % 200 == 199: print(f'{i+1} tickers', flush=True)
     if parts:
