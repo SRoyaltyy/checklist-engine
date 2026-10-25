@@ -57,6 +57,9 @@ def series(I, v):
         if v == 'SPY_VIX': return I['spy']
         if v == 'float_turnover': return I['vraw']/I['shares']
         if v == 'reg_sho': return pd.Series(I['regsho']).rolling(20, min_periods=1).sum().to_numpy()
+        if v == 'halts': return I.get('halt_cnt')              # groups 034+: per-bar halt count
+        if v == 'short_interest': return I.get('si_rep')       # per-bar FINRA SI report count (publication-date keyed)
+        if v == 'earnings': return I.get('earn_cnt')           # per-bar earnings report count
         if v == '3ATR_legs':
             from facets_v26 import phases_asof
             Ps = phases_asof(I); return np.array([ps[-1]['size'] if ps else np.nan for ps in Ps])

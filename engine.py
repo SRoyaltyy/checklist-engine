@@ -6,7 +6,7 @@ from datapaths import D
 import sys as _s; _s.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'integrity')); import mcap_fix as MF
 import sys, os, time, json, argparse, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import facets, facets_ext, facets_cal, facets_v26, facets_v27
+import facets, facets_ext, facets_cal, facets_v26, facets_v27, facets_events
 from facets import REG, indicators
 import facets_v271 as H71
 from params import P, DEFAULTS, CROSS, set_params
@@ -31,7 +31,48 @@ def load_context():
         u = pd.read_parquet(D('/workspace/pricehist/universe_2020_survivors.parquet'), columns=['ticker', 'date', 'close'], filters=[('date', '<=', END)])
         px = u.pivot_table(index='date', columns='ticker', values='close'); m = px.rolling(50).mean()
         breadth = ((px > m).sum(1) / m.notna().sum(1)).where(m.notna().sum(1) > 100); breadth.to_frame('breadth').to_parquet(br)
-    return dict(spy=spy, vix=vix, shares=sh, regsho=rs, breadth=breadth, sessions=spy.index.values)
+    return dict(spy=spy, vix=vix, shares=sh, regsho=rs, breadth=breadth, sessions=spy.index.values,
+                halts_by=_load_halts(), si_by=_load_si(), earn_by=_load_earnings())
+
+# ---- event sources for groups 034+ (facets_events). Every load is OPTIONAL: a missing file yields an
+# empty dict and every event column answers -1 (n_a), so runs without the data are unaffected.
+def _opt_parq(name_glob):
+    import glob
+    fs = sorted(glob.glob(D(name_glob)))
+    if not fs: return None
+    return pd.concat([pd.read_parquet(f) for f in fs], ignore_index=True)
+
+def _load_halts():
+    """nasdaq halts: reason factorized LUDP=0 / regulatory(T12)=2 / everything else=1(news/other)."""
+    h = _opt_parq('/workspace/data-ext/nasdaq_halts_2020_2026.parquet')
+    if h is None: return {}
+    h = h.copy()
+    h['halt_dt'] = pd.to_datetime(h.halt_date, format='%m/%d/%Y').values
+    h['resume_dt'] = pd.to_datetime(h.resume_date, format='%m/%d/%Y').values
+    h = h[h.halt_dt <= END]
+    r = h.reason.astype(str).str.upper()
+    h['rsn_code'] = np.where(r.str.startswith('LUDP'), 0, np.where(r == 'T12', 2, 1))
+    return {k: g[['halt_dt', 'resume_dt', 'rsn_code']] for k, g in h.groupby('symbol')}
+
+def _load_si():
+    """FINRA short interest by PUBLICATION date (never settlement date)."""
+    s = _opt_parq('/workspace/data-ext/finra_si_*.parquet')
+    if s is None: return {}
+    s = s.copy()
+    s['pub'] = pd.to_datetime(s.publication_date).values
+    s = s[(s.pub <= END) & (s.current_short_qty > 0)].sort_values('pub')
+    return {k: g[['pub', 'current_short_qty', 'previous_short_qty', 'days_to_cover']] for k, g in s.groupby('symbol')}
+
+def _load_earnings():
+    """Nasdaq earnings calendar (report date, surprise %, eps delta)."""
+    e = _opt_parq('/workspace/data-ext/nasdaq_calendar_*.parquet')
+    if e is None: return {}
+    e = e.copy()
+    e['rep'] = pd.to_datetime(e.report_date).values
+    e = e[e.rep <= END]
+    tl = e.time_label.astype(str).str.upper()
+    e['bmo'] = tl.str.contains('BMO') & ~tl.str.contains('AMC')   # AMC/unknown prints are only knowable next session
+    return {k: g[['rep', 'surprise_pct_fill', 'eps_delta', 'bmo']] for k, g in e.groupby('symbol')}
 
 def load_bars(tickers=None):
     f = [('date', '<=', END)] + ([('ticker', 'in', tickers)] if tickers else [])
@@ -97,7 +138,140 @@ def make_I(d, tk, C):
     else: I['shares'] = np.full(len(d), np.nan)
     I['regsho'] = np.isin(dates, C['regsho_by'].get(tk, np.array([], 'datetime64[ns]'))).astype(float)
     I['regsho'][dates < np.datetime64('2020-01-02')] = np.nan
+    _events_I(I, tk, C, dates)
     return I
+
+def _ev_cnt_last(dates, ev):
+    """events (datetime64 sorted) -> (per-bar counts, per-bar last-event index or -1). An event dated e belongs to
+    the first bar whose end date >= e; events after the last bar are DROPPED (they must not pile onto the final
+    bar, which would leak future events into a truncated history). Values at bar t use only events <= dates[t]."""
+    T = len(dates); cnt = np.zeros(T); li = np.searchsorted(ev, dates, side='right') - 1
+    if len(ev):
+        j = np.searchsorted(dates, ev, side='right') - 1
+        j = j[(j >= 0) & (ev <= dates[-1])]          # events after the last bar are DROPPED, not piled onto it
+        np.add.at(cnt, j, 1)
+    return cnt, li
+
+def _asof_active(T, bars, vals, lag):
+    """per-bar array: vals[k] is knowable from bar bars[k]+lag onwards; NaN before. bars/vals aligned; lag >= 0."""
+    out = np.full(T, np.nan)
+    if len(bars):
+        ab = bars + lag; m = ab < T
+        if m.any():
+            ab = np.maximum(ab[m], 0); vv = vals[m]
+            li = np.searchsorted(ab, np.arange(T), side='right') - 1
+            mm = li >= 0; out[mm] = vv[np.clip(li, 0, None)][mm]
+    return out
+
+def _events_I(I, tk, C, dates):
+    """groups 034+ event columns (facets_events). ALL values at bar t use only events dated <= dates[t];
+    engine shifts one bar, so the stored answer for day D uses events <= D-1. No data -> all NaN / 0 counts."""
+    T = len(dates); idx = np.arange(T)
+    c = I['c']; o = I['o']
+    nan = np.full(T, np.nan)
+    # ---------------- halts
+    hf = (C.get('halts_by') or {}).get(tk)
+    if hf is not None and len(hf):
+        hd = np.sort(hf.halt_dt.values)
+        cnt, li = _ev_cnt_last(dates, hd)
+        I['halt_cnt'] = cnt
+        jb = np.searchsorted(dates, hd, side='right') - 1        # bar of each halt event
+        hbar = jb[np.clip(li, 0, None)]
+        I['halt_last'] = np.where(li >= 0, hbar, np.nan)
+        I['halt_since'] = np.where(li >= 0, idx - hbar, np.nan)
+        rsn = hf.rsn_code.values[np.argsort(hf.halt_dt.values, kind='stable')]
+        I['halt_rsn'] = np.where(li >= 0, rsn[np.clip(li, 0, None)], np.nan).astype(float)
+        ret = np.nan_to_num(I['ret'], nan=0.0)
+        cs = np.r_[0.0, np.cumsum(ret)]
+        hb = hbar
+        lo = np.maximum(hb - 5, 0)
+        pre = np.where(li >= 0, cs[hb] - cs[lo], np.nan)      # net 1-bar returns over <=5 bars before the halt
+        pre = np.where(li >= 0, np.where(hb >= 1, pre, np.nan), np.nan)
+        I['halt_predir'] = pre
+        rd = hf.resume_dt.values; mres = np.isfinite(rd) & (rd <= END)
+        if mres.any():
+            rsub = hf[mres].sort_values('resume_dt')
+            rb = np.searchsorted(dates, rsub.resume_dt.values, side='right') - 1   # resume session bar
+            mbar = (rb >= 0) & (rsub.resume_dt.values <= dates[-1])              # future resumes: dropped, not piled
+            rli = np.searchsorted(rsub.resume_dt.values[mbar], dates, side='right') - 1
+            rbb = rb[mbar]
+            hres = np.where(rli >= 0, rbb[np.clip(rli, 0, None)], -1)
+            know = (rli >= 0) & (hres >= 0) & (hres < T)
+            respx = c[np.clip(hres, 0, None)]
+            I['halt_res'] = np.where(know, hres, np.nan)
+            I['halt_resret'] = np.where(know & (respx > 0), c / respx - 1, np.nan)
+        else:
+            I['halt_res'] = nan; I['halt_resret'] = nan
+    else:
+        I['halt_cnt'] = np.zeros(T); I['halt_last'] = nan; I['halt_since'] = nan
+        I['halt_rsn'] = nan; I['halt_predir'] = nan; I['halt_res'] = nan; I['halt_resret'] = nan
+    # ---------------- short interest (publication-date keyed)
+    sf = (C.get('si_by') or {}).get(tk)
+    if sf is not None and len(sf):
+        sf = sf.sort_values('pub')
+        pb = np.searchsorted(dates, sf.pub.values, side='right') - 1      # report bar (pub date on a session)
+        mpb = (pb >= 0) & (sf.pub.values <= dates[-1])                    # future reports: dropped, not piled
+        pb = pb[mpb]; qty = sf.current_short_qty.values[mpb]; prv = sf.previous_short_qty.values[mpb]
+        dtc = sf.days_to_cover.values[mpb]; pubv = sf.pub.values[mpb]
+        rcnt, _ = _ev_cnt_last(dates, pubv)
+        I['si_rep'] = rcnt
+        li = np.searchsorted(pubv, dates, side='right') - 1
+        k = np.clip(li, 0, None); has = li >= 0
+        I['si_qty'] = np.where(has, qty[k], np.nan); I['si_prev'] = np.where(has, prv[k], np.nan)
+        I['si_dtc'] = np.where(has, dtc[k], np.nan)
+        sh = I['shares']; shb = np.where(np.isfinite(sh), sh, np.nan)
+        shp = shb[np.clip(pb, 0, T - 1)]
+        pct_at_pub = np.where((pb < T) & (shp > 0), qty / shp * 100, np.nan)
+        p26 = np.full(len(qty), np.nan)
+        for k2 in range(len(qty)):                                        # percentile of report k2's SI% within trailing 26
+            w = pct_at_pub[max(0, k2 - 25):k2 + 1]; w = w[np.isfinite(w)]
+            if len(w): p26[k2] = (w <= pct_at_pub[k2]).mean() * 100
+        I['si_pct26'] = np.where(has, p26[k], np.nan)
+        pchg = np.full(len(qty), np.nan)                                  # price change between consecutive report dates
+        for k2 in range(1, len(qty)):
+            b0, b1 = pb[k2 - 1], pb[k2]
+            if 0 <= b0 < T and 0 <= b1 < T and c[b0] > 0: pchg[k2] = c[b1] / c[b0] - 1
+        I['si_prchg'] = np.where(has & (li >= 1), pchg[k], np.nan)
+    else:
+        I['si_rep'] = np.zeros(T); I['si_qty'] = nan; I['si_prev'] = nan; I['si_dtc'] = nan
+        I['si_pct26'] = nan; I['si_prchg'] = nan
+    # ---------------- earnings (report-date calendar; the print itself lags one session unless BMO)
+    ef = (C.get('earn_by') or {}).get(tk)
+    if ef is not None and len(ef):
+        ef = ef.sort_values('rep')
+        rb = np.searchsorted(dates, ef.rep.values, side='right') - 1
+        mrb = (rb >= 0) & (ef.rep.values <= dates[-1])                    # future reports: dropped, not piled
+        rb = rb[mrb]; surp = ef.surprise_pct_fill.values[mrb]; bmo = ef.bmo.values[mrb].astype(int)
+        repv = ef.rep.values[mrb]
+        ecnt, li = _ev_cnt_last(dates, repv)
+        I['earn_cnt'] = ecnt
+        rlast = np.clip(li, 0, None)
+        I['earn_last'] = np.where(li >= 0, rb[rlast], np.nan)             # BAR of the last report (for staleness windows)
+        I['earn_since'] = np.where(li >= 0, idx - rb[rlast], np.nan)
+        lag = 1 - bmo                                                     # BMO prints knowable same session; AMC/unknown next
+        I['earn_surp'] = _asof_active(T, rb, surp, lag)
+        strk = np.zeros(len(surp), int)                                   # consecutive beats ending at each report
+        for k2 in range(len(surp)):
+            j2 = k2
+            while j2 >= 0 and surp[j2] > 0: j2 -= 1
+            strk[k2] = k2 - j2 if surp[k2] > 0 else 0
+        I['earn_streak'] = _asof_active(T, rb, strk.astype(float), lag)
+        prerun = np.full(len(rb), np.nan)                                 # 20-bar move into the report
+        for k2 in range(len(rb)):
+            if rb[k2] >= 20 and c[rb[k2] - 20] > 0: prerun[k2] = c[rb[k2]] / c[rb[k2] - 20] - 1
+        I['earn_prerun'] = _asof_active(T, rb, prerun, 0)
+        gap = np.full(len(rb), np.nan)                                    # first-session gap after the report
+        post5 = np.full(len(rb), np.nan)
+        for k2 in range(len(rb)):
+            r0 = rb[k2]
+            if 0 <= r0 + 1 < T and c[r0] > 0:
+                gap[k2] = o[r0 + 1] / c[r0] - 1
+                if 0 <= r0 + 5 < T: post5[k2] = c[r0 + 5] / c[r0] - 1
+        I['earn_gap'] = _asof_active(T, rb, gap, 1)
+        I['earn_post5'] = _asof_active(T, rb, post5, 5)
+    else:
+        I['earn_cnt'] = np.zeros(T); I['earn_last'] = nan; I['earn_since'] = nan
+        I['earn_surp'] = nan; I['earn_streak'] = nan; I['earn_prerun'] = nan; I['earn_gap'] = nan; I['earn_post5'] = nan
 
 def kbars(d, k, o):
     """k-day bars ending on every day t with t % k == o (bar = days t-k+1..t). Returns frame + positions in d."""

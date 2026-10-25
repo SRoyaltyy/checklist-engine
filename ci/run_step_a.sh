@@ -22,6 +22,13 @@ for f in "$DATA"/answers_*.npz; do
   cp "$f" "$CH/$base" && echo "seeded $base"
 done
 
+echo "== event data for groups 034+ (halts / FINRA SI from data-ext; earnings from release tar)"
+python3 ci/fetch_ext.py "$DATA" || echo "WARNING: data-ext fetch failed; event columns will answer blank"
+if [ -f "$DATA/nasdaq_earn_2020-24.tar" ]; then
+  tar -xf "$DATA/nasdaq_earn_2020-24.tar" -C "$TMP" 2>/dev/null || true
+  cp "$TMP"/data/earnings/nasdaq_calendar_*.parquet "$DATA"/ 2>/dev/null || echo "WARNING: earnings calendar missing; earnings columns will answer blank"
+fi
+
 echo "== launch engine + checkpoint push loop"
 FORCE_ARGS=""
 if [ -n "${FORCE_CHUNKS:-}" ]; then FORCE_ARGS="--force $FORCE_CHUNKS"; echo "FORCE rerun of chunks: $FORCE_CHUNKS"; fi
