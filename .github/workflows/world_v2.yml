@@ -52,7 +52,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       GITHUB_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
-      CHECKLIST_DATA_DIR: ${{ runner.temp }}/world_in
+      CHECKLIST_DATA_DIR: ${{ github.workspace }}/world_in
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -65,7 +65,7 @@ jobs:
         continue-on-error: true
         with:
           name: xbrl-v2-source
-          path: ${{ runner.temp }}/world_in/data-ext
+          path: ${{ github.workspace }}/world_in/data-ext
       - name: Build real multi-timeframe smoke snapshot
         id: build
         run: python world_snapshot_v2.py --out world-smoke --shards 1 --tickers AAPL,MSFT,NVDA,GE,ARQT,BLZE
