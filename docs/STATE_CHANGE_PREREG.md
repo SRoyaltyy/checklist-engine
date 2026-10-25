@@ -56,3 +56,38 @@ world state includes them from the start:
 - **yesterday's price move:** up day / down day / flat as plain yes/no questions.
 
 The state-change study layers the MODEL's probability change on top of those.
+
+---
+
+## 6. Addendum 2026-10-25 (Cyrus correction, 10:00/10:50 HKT): full-grid state changes
+
+**Supersedes nothing above — extends it.** The frozen 13 cells on the continuity cell stay
+exactly as registered. This addendum registers the SAME study on the full exit grid,
+because the end goal is a probability per parameter tuple, not one number.
+
+Cyrus's corrections this session: (a) no fixed exit rules — every margin 2–30%, every hold
+1–30, stop-loss 2–30%+none (26,100 cells), all tested; (b) dynamic exit — sell early when
+the price reaches the margin goal any time inside the hold period; (c) the deliverable is a
+**state→strategy map**: for every world state, the (margin, hold, stop) tuple with the best
+expected profit, plus P(win) per tuple.
+
+Registered extensions (same 13-cell structure, same residualisation, same 2023-24-only
+rule, same pass bar, all tries counted per §11):
+
+1. **Δp on the strategy-map cell.** Let (m*,h*,stop*) = argmax-EV cell of the frozen model
+   for state (s, D) (the published strategy map). Δp*(s, D) = p*(s, D) − p*(s, D−1), where
+   p* is P(win) on that cell. 13 cells as in §3.
+2. **Δ-strategy indicator.** yes/no: did the argmax cell change from D−1 to D? And a
+   fixed-bucket version: distance moved in (m, h, stop) space ∈ {same, near (≤2 steps in
+   any dim), far (>2 steps)}. 13-cell structure does not apply here — these 2 are single
+   questions with the ordinary pass rule, counted as extra tries (15 total).
+3. **EV-change cells.** Same 13 thresholds on ΔEV* (expected profit of the strategy-map
+   cell) instead of Δp*. 13 more cells, counted.
+
+Residualisation (§1) applies to every variant: the stock's own last-5/10/20-session return
+is regressed out first, per variant.
+
+Execution note: the strategy map and per-cell P(win) are exactly what combiner-predict
+publishes (strategy_map_YYYY.parquet + predict_summary.json), so no new model fits are
+needed — only post-processing on published outputs, on 2023–24, after the single frozen
+combining-model test.
