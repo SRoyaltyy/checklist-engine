@@ -5,8 +5,7 @@
 name: combiner-predict
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '9 * * * *'
+# hourly schedule disabled 2026-10-25 ~16:40 HKT per 0b (cron spam holds runner slots during grid phase; predict needs shortlist+models anyway); re-enable after combiner fit publishes
 concurrency:
   group: combiner-predict
   cancel-in-progress: false
