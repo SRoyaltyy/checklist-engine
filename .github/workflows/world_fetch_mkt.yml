@@ -25,5 +25,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: python3 ci/release_assets.py upload data-ext-2020-26-v1 \
-               "$RUNNER_TEMP/mkt_wide_2020_26.parquet"
+        run: python3 ci/release_assets.py upload data-ext-2020-26-v1 "$RUNNER_TEMP/mkt_wide_2020_26.parquet"
