@@ -63,8 +63,12 @@ def _feed(name):
         return None, f'{type(e).__name__}'
 
 def discover():
-    """Split all TA-Lib functions into candle patterns (int8) and indicators (float32),
-    keyed by how they consume OHLCV. Returns {name: (kind, feed_map)}."""
+    """Split all TA-Lib functions into candle patterns (int8) and indicators (float32).
+    Returns {name: (kind, [input names])} — the INPUT-NAME LIST, not the placeholder
+    dict: compute_talib consumes the list to build its own array feed. (Bug fix
+    2026-10-25: this used to store the {input: None} dict, so compute_talib fell
+    into its non-list branch and every function raised KeyError -> all 76 functions
+    silently produced zero columns on the runner.)"""
     groups = talib.get_function_groups()
     cands = groups.get('Pattern Recognition', [])
     out = {}
@@ -72,28 +76,35 @@ def discover():
         kind = 'pattern' if name in cands else 'indicator'
         feed, why = _feed(name)
         if feed is not None:
-            out[name] = (kind, feed)
+            out[name] = (kind, list(feed.keys()))
     return out
 
 COVERAGE_NOTE = None
 
 def compute_talib(o, h, l, c, v, funcs):
-    """Compute every discovered function for one ticker. Returns dict name -> array.
-    All arrays are shifted by one bar: value at index t uses bars <= t-1."""
+    """Compute every discovered function for one ticker. Returns dict column -> array.
+    All arrays are shifted by one bar: value at index t uses bars <= t-1.
+    Single-output functions keep the plain function name; multi-output functions
+    (MACD, BBANDS, STOCH, AROON, ...) emit one column per output: NAME_outputname."""
     feed = {'open': o, 'high': h, 'low': l, 'close': c, 'price': c, 'volume': v}
     out = {}
     for name, (kind, need) in funcs.items():
         try:
             f = abstract.Function(name)
-            d = {inp: feed[inp.lower()] if inp.lower() in feed else feed['price'] for inp in need} \
-                if isinstance(need, list) else {need: feed[str(need).lower()]}
+            d = {inp: feed[inp.lower()] if inp.lower() in feed else feed['price']
+                 for inp in need}
             r = f(d)
-            if isinstance(r, tuple): r = r[0]
-            a = np.asarray(r, dtype=np.float64)
-            if kind == 'pattern':
-                out[name] = np.where(np.isnan(a), 0, a / 100).astype(np.float32)   # -1/0/+1
-            else:
-                out[name] = a.astype(np.float32)
+            onames = list(f.output_names)
+            if not isinstance(r, tuple):
+                r = (r,)
+            multi = len(onames) > 1
+            for onm, arr in zip(onames, r):
+                col = f'{name}_{onm}' if multi else name
+                a = np.asarray(arr, dtype=np.float64)
+                if kind == 'pattern':
+                    out[col] = np.where(np.isnan(a), 0, a / 100).astype(np.float32)   # -1/0/+1
+                else:
+                    out[col] = a.astype(np.float32)
         except Exception:
             continue
     return out
