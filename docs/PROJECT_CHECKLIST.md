@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/296. Claimed awaiting James: 1.**
+**Verified by both: 13/297. Claimed awaiting James: 1.**
 
 ## Rules
 
@@ -31,7 +31,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 199 |
+| 1 | World rebuild | 200 |
 | 2 | Coverage gate | 10 |
 | 3 | Question tree v3 and the P3b quality gate | 28 |
 | 4 | Full leak test | 10 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 296 |
+|  | Total | 297 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -431,7 +431,13 @@ Note (2026-10-26 ~16:35 HKT, do not tick): EV/EBITDA, P/S, margins, ROIC, and th
 
 ### Live-only skips from the 16:35 list
 
-- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: NYSE TICK; single-stock ATM implied vol; 25-delta skew and risk reversal; max pain; max-OI strikes; unusual-activity flag; implied correlation; historical volatility minus implied volatility. Done when: Each name is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason. NYSE TICK is intraday and has no free daily history. The others have no free point-in-time history; I202 is that gap, and there is no paid vendor. Nothing in this list is fetched. Evidence:
+- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: max pain; max-OI strikes; unusual-activity flag; implied correlation. Done when: Each of those names is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason. They have no free point-in-time history, and there is no paid vendor. NYSE TICK is not in this list; it is box 1.200. Single-stock ATM implied vol, 25-delta skew and risk reversal, and historical volatility minus implied volatility stay on hold pending a Finviz Elite check. Do not log those three as a final exclusion, and do not fetch them, until that check. Evidence:
+
+### NYSE TICK
+
+Note (2026-10-26 ~16:50 HKT, do not tick): Reopened. Intraday is an acceptable source when it can be fetched for every day from 2020 through the present. Nothing here is ticked.
+
+- [ ] **1.200** NYSE TICK: free daily-complete history, or a log of what was tried. Done when: A free source covers every day from 2020 through the present, either as the daily close, high, and low of $TICK or computed from intraday that exists for every one of those days. The release holds numeric daily features: close, high, low, and a count of extreme readings, checksummed, and point-in-time as of D−1. If no free complete source exists, the exclusion list states exactly what was tried, and the column is absent rather than zero. Evidence:
 
 ## Phase 2 — Coverage gate
 
