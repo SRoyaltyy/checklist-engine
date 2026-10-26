@@ -15,7 +15,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-SEC_HEADERS = {'User-Agent': os.environ.get('SEC_USER_AGENT','ChecklistEngine research 104515113+SRoyaltyy@users.noreply.github.com'), 'Accept-Encoding':'gzip'}
+if __package__:
+    from .sec_client import SEC_HEADERS,get_json
+else:
+    from sec_client import SEC_HEADERS,get_json
 CONCEPTS = ['Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','SalesRevenueNet',
  'NetIncomeLoss','OperatingIncomeLoss','GrossProfit','Assets','AssetsCurrent',
  'Liabilities','LiabilitiesCurrent','StockholdersEquity','LongTermDebt','LongTermDebtNoncurrent',
@@ -25,29 +28,6 @@ CONCEPTS = ['Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','Sa
  'InventoryNet','PropertyPlantAndEquipmentNet','PaymentsToAcquirePropertyPlantAndEquipment']
 COLUMNS = ['ticker','metric','source_metric','unit','period_start','period_end','filed','accn','form','val','yoy']
 ALIASES = {'RevenueFromContractWithCustomerExcludingAssessedTax':'Revenues','SalesRevenueNet':'Revenues'}
-
-
-def get_json(url, retries=4, allow_404=False):
-    for attempt in range(retries):
-        try:
-            time.sleep(.15)  # global per-process request throttle; workflow uses one pilot shard
-            with urllib.request.urlopen(urllib.request.Request(url,headers=SEC_HEADERS),timeout=120) as response:
-                raw=response.read()
-                if raw[:2]==b'\x1f\x8b':
-                    import gzip
-                    raw=gzip.decompress(raw)
-                return json.loads(raw)
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404 and allow_404:
-                print('SKIP_404',url,flush=True)
-                return None
-            if exc.code not in (403,429,500,502,503,504) or attempt == retries-1:
-                raise
-        except (OSError,TimeoutError):
-            if attempt == retries-1:
-                raise
-        time.sleep(2**attempt)
-    raise RuntimeError('HTTP retry loop exhausted')
 
 
 def company_rows(ticker, payload, concepts=CONCEPTS):
@@ -151,7 +131,7 @@ def main():
                 rows.extend(batch)
                 done[ticker]='OK' if batch else 'NO_FACTS'
             except Exception as exc:
-                errors[ticker]=f'{type(exc).__name__}: {exc}'
+                errors[ticker]=getattr(exc,'evidence',dict(error_type=type(exc).__name__,message=str(exc)))
                 print('SOURCE_ERROR',ticker,errors[ticker],flush=True)
         if (i+1)%25==0: checkpoint()
         time.sleep(1.0)  # eight shards share SEC's account/IP fair-use budget

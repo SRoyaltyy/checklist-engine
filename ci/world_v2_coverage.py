@@ -8,6 +8,7 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from world_timeframes import TIMEFRAMES
+from ci.world_source_evidence import collect,verified_blocker
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -63,7 +64,8 @@ def mappings():
     return existing,explicit
 
 
-def build(measured,root=ROOT):
+def build(measured,root=ROOT,source_evidence=None):
+    source_evidence=source_evidence or {}
     existing,explicit=mappings()
     observed=measured['columns'];daily=[c[:-4] for c in observed if c.endswith('__1d')]
     patterns=sorted(c for c in daily if c.startswith('CDL'))
@@ -98,6 +100,9 @@ def build(measured,root=ROOT):
             }
             if namespace=='dictionary' and iid in incomplete:
                 status='PENDING';reason=incomplete[iid]
+            evidence=source_evidence.get(iid,{}) if namespace=='dictionary' else {}
+            if evidence.get('status')=='BLOCKED':
+                status='BLOCKED';reason=evidence['reason']
             for tf in TIMEFRAMES:
                 columns=[c+'__'+tf for c in base]
                 missing=[c for c in columns if c not in observed]
@@ -108,8 +113,10 @@ def build(measured,root=ROOT):
                     why='required output missing or empty: '+','.join(missing or empty or ['no exact column mapping'])
                 else:status_out=status;why=reason
                 # Exemptions require concrete evidence, never a blank reason.
-                if status_out not in ('WIRED','BLOCKED_SECRET','NOT_AVAILABLE_FREE','EXCLUDED_FREE_TEXT','EXCLUDED_LIVE_ONLY') or (status_out!='WIRED' and not why):
+                if status_out not in ('WIRED','BLOCKED','BLOCKED_SECRET','NOT_AVAILABLE_FREE','EXCLUDED_FREE_TEXT','EXCLUDED_LIVE_ONLY') or (status_out!='WIRED' and not why):
                     failures.append(namespace+':'+iid+'__'+tf)
+                if status_out=='BLOCKED' and (not evidence.get('evidence') or not all(verified_blocker(r) for r in evidence['evidence'])):
+                    failures.append(namespace+':'+iid+'__'+tf+':unverified blocker')
                 if status_out=='NOT_AVAILABLE_FREE' and not re.search(r'https?://|HTTP|tested|error',why,re.I):
                     failures.append(namespace+':'+iid+'__'+tf+':no tested-source evidence')
                 pcts=[observed[c]['non_null_pct'] for c in columns if c in observed]
@@ -117,7 +124,7 @@ def build(measured,root=ROOT):
                 output.append(dict(namespace=namespace,item_id=iid,item=name,timeframe=tf,block=item.get('block',''),
                     snapshot_columns='|'.join(columns),non_null_pct_2020_2026=min(pcts) if len(pcts)==len(columns) and columns else '',
                     first_date_available=max(first) if len(first)==len(columns) and columns else '',
-                    status=status_out,reason=why,column_measurements=json.dumps({c:observed.get(c) for c in columns},sort_keys=True)))
+                    status=status_out,reason=why,source_evidence=json.dumps(evidence,sort_keys=True),column_measurements=json.dumps({c:observed.get(c) for c in columns},sort_keys=True)))
     if measured['rows']==0:failures.append('zero snapshot rows')
     if measured['date_max']<'2026-01-01':failures.append('snapshot has no 2025-2026 coverage: end='+measured['date_max'])
     return output,sorted(set(failures))
@@ -125,9 +132,9 @@ def build(measured,root=ROOT):
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--shards',nargs='+',required=True)
-    ap.add_argument('--out',required=True);ap.add_argument('--gate',action='store_true');args=ap.parse_args()
+    ap.add_argument('--out',required=True);ap.add_argument('--gate',action='store_true');ap.add_argument('--source-root',default='');args=ap.parse_args()
     out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
-    measured=measure(args.shards);rows,failures=build(measured)
+    measured=measure(args.shards);rows,failures=build(measured,source_evidence=collect(args.source_root))
     (out/'WORLD_COLUMN_MEASUREMENTS.json').write_text(json.dumps(measured,indent=2))
     with open(out/'WORLD_COVERAGE.csv','w',encoding='utf-8',newline='') as stream:
         writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
