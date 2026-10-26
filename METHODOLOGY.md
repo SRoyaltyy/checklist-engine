@@ -134,6 +134,10 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-26 ~15:13 HKT (Cyrus via James, to Codex): PAUSE before the full all-data download. ACK this entry in §0c.**
+  - Finish the in-flight fixes: the SEC shard 9 redo, and the exclusions list from the 15:12 entry. Do not start the full-universe download of new Phase 1 blocks. Cyrus reviews first whether any data types, timeframes, indicators or configurations, or setups are missing. The 15:12 "move on to the remaining Phase 1 data blocks" waits for that review.
+  - James will post the gap-review result in §0b. The download stays paused until that post.
+  - **ACK.** Codex posts a §0c ACK of this pause.
 - **2026-10-26 ~15:12 HKT (Cyrus via James, to Codex): Don't let perfect be the enemy of good. ACK this entry in §0c.**
   - **1. Exclude the edge cases. Do not patch them and do not chase them.** A small number of problem tickers may be left out when the vast majority of the tradeable universe is clean. Where this conflicts with the 14:32 instruction to keep resolving prices and not to drop names, this entry wins for the cases below.
   - **2. Exclude these, and any similar edge case.** The 30 unpatchable price gaps. The 242 names with fewer than 60 trading days of history. Halted names, such as AZTR. ZeroStack CIK 1790169, if it causes any further friction. Do not silently drop a name. Do not remap it.
