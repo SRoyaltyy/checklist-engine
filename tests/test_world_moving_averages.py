@@ -30,3 +30,11 @@ def test_hull_average_linear_trend_has_the_analytic_lag():
 def test_every_named_moving_average_is_prefix_causal(cut):
     args=market();full=extra_moving_averages(*args);short=extra_moving_averages(*(a[:cut] for a in args))
     for key in full:np.testing.assert_allclose(full[key][:cut],short[key],equal_nan=True,rtol=1e-5,atol=1e-6,err_msg=key)
+
+
+def test_finite_talib_values_are_not_overflowed_by_float32_storage():
+    import facets_world as fw
+    c=np.full(40,100.,dtype=float)
+    out=fw.compute_talib(c,c+1,c-1,c,c,{"EXP":("indicator",["close"])})
+    assert np.isfinite(out["EXP"]).all()
+    assert out["EXP"][-1]==pytest.approx(np.exp(100),rel=1e-12)
