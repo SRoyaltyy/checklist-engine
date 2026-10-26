@@ -1,0 +1,40 @@
+{
+  "status": "REGISTRATION_PASS_NOT_WORLD_COVERAGE",
+  "code_merge": "3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc",
+  "validation_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826",
+  "registered_items": 60,
+  "registered_settings": 187,
+  "implemented_recipe_items": 58,
+  "pending_recipe_items": [
+    "I069",
+    "I074"
+  ],
+  "registered_new_bar_items": 17,
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "I070": "HV20 only; derived smoothing settings are explicitly distinguished; expanded HV windows belong to I209",
+  "world_gate": "NOT_RUN",
+  "scope": "Settings registration proof for 1.176 only. The counts table does not satisfy the later all-indicator question-tree audit."
+}

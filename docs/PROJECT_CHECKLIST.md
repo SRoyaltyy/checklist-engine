@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/274. Claimed awaiting James: 1.**
+**Verified by both: 10/274. Claimed awaiting James: 2.**
 
 ## Rules
 
@@ -379,7 +379,7 @@ Note (2026-10-26 ~15:36 HKT, do not tick): All of these are computed from the da
 
 ### Indicator setting grids
 
-- [ ] **1.176** Indicator setting grids written into the dictionary. Done when: [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) gives explicit short, default, and long settings, about three each, for every item whose only rule was "TV default ±50%" (I036–I077 and I088–I096). The same file adds MACD 5/35/5 and 8/17/9, Stochastic 5,3,3 and 21,5,5, Williams %R 7 and 28, ADX 7 and 28, MFI 7 and 28, Bollinger 10/1.5 and 50/2.5, Keltner 1.0 and 2.0, Donchian 10 and 55, and relative volume 5 and 50, beside the current defaults. Settings stack with candle sizes. A row that still says only "±50%" fails. Evidence:
+- [x] **1.176** Indicator setting grids written into the dictionary. Done when: [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) gives explicit short, default, and long settings, about three each, for every item whose only rule was "TV default ±50%" (I036–I077 and I088–I096). The same file adds MACD 5/35/5 and 8/17/9, Stochastic 5,3,3 and 21,5,5, Williams %R 7 and 28, ADX 7 and 28, MFI 7 and 28, Bollinger 10/1.5 and 50/2.5, Keltner 1.0 and 2.0, Donchian 10 and 55, and relative volume 5 and 50, beside the current defaults. Settings stack with candle sizes. A row that still says only "±50%" fails. Evidence: [registration proof](INDICATOR_SETTINGS_REGISTRATION_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT; awaiting James.
 
 ### Canonical candle grid
 
