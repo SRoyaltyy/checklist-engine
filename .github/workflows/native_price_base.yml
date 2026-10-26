@@ -1,7 +1,7 @@
 name: native-price-base
 on:
   push:
-    branches: [codex/native-world-blocks-v1, codex/native-price-upload-recovery]
+    branches: [codex/native-world-blocks-v1, codex/native-price-upload-recovery, codex/native-price-base-build-v2]
     paths: ['ci/NATIVE_PRICE_BASE_REQUEST.json', 'ci/native_price_base.py', 'ci/release_assets.py', 'tests/test_world_price_base.py', 'tests/test_world_release_assets.py', '.github/workflows/native_price_base.yml']
   pull_request:
     paths: ['ci/native_price_base.py', 'ci/release_assets.py', 'tests/test_world_price_base.py', 'tests/test_world_release_assets.py', '.github/workflows/native_price_base.yml']
@@ -26,10 +26,10 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m pytest tests/test_world_release_assets.py tests/test_world_price_base.py tests/test_world_native_blocks.py tests/test_price_bridge_basis.py -q
+      - run: python -m pytest tests/test_world_release_assets.py tests/test_world_native_transport.py tests/test_world_price_base.py tests/test_world_native_blocks.py tests/test_price_bridge_basis.py -q
   build:
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/native-world-blocks-v1'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/codex/native-world-blocks-v1' || github.ref == 'refs/heads/codex/native-price-base-build-v2')
     runs-on: ubuntu-latest
     timeout-minutes: 150
     strategy:
@@ -54,7 +54,7 @@ jobs:
           if-no-files-found: ignore
   merge:
     needs: [verify, build]
-    if: ${{ always() && needs.verify.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/codex/native-world-blocks-v1' }}
+    if: ${{ always() && needs.verify.result == 'success' && github.event_name == 'push' && (github.ref == 'refs/heads/codex/native-world-blocks-v1' || github.ref == 'refs/heads/codex/native-price-base-build-v2') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

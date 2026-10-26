@@ -33,11 +33,18 @@ The frozen preparation recipe and indicator calculations are unchanged. No old
 release or coverage result is rewritten. This does not add cross-run resume to
 the compact base builder; a new run still uses a new release prefix.
 
+The native indicator build also hit the same HTTP 500 upload failure in
+[shard 0](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40336250454/job/121619361068).
+`ci.native_price_run` now applies the verified transport to that builder's
+release uploads without changing its fingerprinted computation file. Its
+existing checkpoint recovery can therefore reuse the original frozen inputs
+and durable parts. A failed failure-report upload preserves the original cause.
+
 ## Validation and outstanding work
 
 Local validation uses the existing Python 3.12 runtime and existing packages;
-no dependencies were installed. **41 tests passed, 1 skipped** across
-`test_world_release_assets.py`, `test_world_price_base.py`,
+no dependencies were installed. **44 tests passed, 1 skipped** across
+`test_world_release_assets.py`, `test_world_native_transport.py`, `test_world_price_base.py`,
 `test_world_native_blocks.py` and `test_price_bridge_basis.py`.
 `git diff --check` also passed. Regression coverage includes partial upload,
 lost response, immutable conflict, empty starter, permanent error, retry
