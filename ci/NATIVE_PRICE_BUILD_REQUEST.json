@@ -1,5 +1,5 @@
 {
-  "version": 3,
-  "mode": "smoke",
-  "request": "Use pinned XNYS sessions verified against SPY; log missing VIX observations without modifying any price rows."
+  "version": 4,
+  "mode": "full",
+  "request": "Four-entity real build 40333811160 and all-column two-cut prefix proof 40335077436 passed. Build all accepted names minus current main exclusions on 64 shards, max 8 jobs; no scoring or full-world claim."
 }
