@@ -30,7 +30,7 @@ def test_future_observation_period_is_not_visible_early():
 def test_macro_change_window_counts_native_candles(monkeypatch):
     import world_timeframes as tf
     monkeypatch.setattr(tf,'TIMEFRAMES',('2d',))
-    monkeypatch.setattr(tf,'candle_features',lambda candles,funcs:candles[['available_from']].copy())
+    monkeypatch.setattr(tf,'candle_features',lambda candles,funcs,timeframe='1d':candles[['available_from']].copy())
     dates=pd.bdate_range('2020-01-01',periods=150)
     bars=pd.DataFrame(dict(date=dates,open=1.,high=1.,low=1.,close=1.,volume=1.))
     external=pd.DataFrame(dict(date=dates,fred_test=np.r_[np.nan,np.arange(149,dtype=float)**2]))
