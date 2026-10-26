@@ -88,3 +88,20 @@ def test_coverage_merge_rejects_incomplete_or_mixed_builds(damage):
     elif damage=="changed_recipe":summary["recipe_fingerprint"]="other"
     elif damage=="changed_inputs":summary["inputs_tag"]="other"
     with pytest.raises(ValueError):validate_shard(summary,inputs,0)
+
+
+def test_exchange_calendar_keeps_real_session_missing_from_vix():
+    xcals=pytest.importorskip("exchange_calendars")
+    from ci.native_price_blocks import market_session_calendar,CUTOFF
+    expected=xcals.get_calendar("XNYS",start="1990-01-01",end=CUTOFF).sessions.tz_localize(None).as_unit("ns")
+    spy=expected[expected>=pd.Timestamp("1993-01-29")]
+    vix=expected.difference(pd.DatetimeIndex(["1991-03-01"]))
+    sessions,receipt=market_session_calendar(spy,vix)
+    assert pd.Timestamp("1991-03-01") in sessions
+    for day in ("2001-09-11","2001-09-12","2012-10-29","2012-10-30","2025-01-09"):
+        assert pd.Timestamp(day) not in sessions
+    assert receipt["vix_missing_sessions"]==["1991-03-01"]
+    assert receipt["price_rows_modified"] is False
+    assert receipt["vix_values_imputed"] is False
+    with pytest.raises(ValueError,match="SPY/calendar validation"):
+        market_session_calendar(spy.difference(pd.DatetimeIndex(["2020-06-10"])),vix)

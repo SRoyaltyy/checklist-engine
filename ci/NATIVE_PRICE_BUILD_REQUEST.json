@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "mode": "smoke",
-  "request": "Log precise calendar mismatch dates on real-source smoke; no price repair or scoring."
+  "request": "Use pinned XNYS sessions verified against SPY; log missing VIX observations without modifying any price rows."
 }

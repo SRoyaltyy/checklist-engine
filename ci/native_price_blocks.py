@@ -47,7 +47,7 @@ def write_json(path,value):
 
 def recipe_fingerprint():
     names=["facets_world.py","world_timeframes.py","world_bar_statistics.py","world_food_statistics.py",
-           "world_indicator_settings.py","world_indicator_extra.py","world_moving_averages.py","world_dates.py","price_reconcile.py",
+           "world_indicator_settings.py","world_indicator_extra.py","world_moving_averages.py","world_dates.py","price_reconcile.py","requirements-world-v2.txt",
            "dictionary/INDICATOR_SETTINGS.json","dictionary/BAR_STATISTICS_REGISTRY.json","ci/native_price_blocks.py"]
     values={name:sha(name) for name in names}
     return hashlib.sha256(json.dumps(values,sort_keys=True).encode()).hexdigest(),values
@@ -69,6 +69,27 @@ def source_archive(stem,directory):
     archive=download(PRICE_TAG,stem+".tar",directory)
     if sha(archive)!=manifest["archive_sha256"]:raise ValueError("source archive hash mismatch")
     return archive,manifest,sha(mpath)
+
+def market_session_calendar(spy_dates,vix_dates):
+    import exchange_calendars as xcals
+    from importlib.metadata import version
+    dates=xcals.get_calendar("XNYS",start="1990-01-01",end=CUTOFF).sessions
+    dates=pd.DatetimeIndex(dates).tz_localize(None).as_unit("ns")
+    spy_dates=pd.DatetimeIndex(spy_dates).as_unit("ns")
+    vix_dates=pd.DatetimeIndex(vix_dates).as_unit("ns")
+    off_calendar=spy_dates.difference(dates)
+    missing_spy=dates[dates>=spy_dates.min()].difference(spy_dates)
+    receipt={"calendar_package":"exchange_calendars","version":version("exchange_calendars"),"exchange":"XNYS",
+             "first":str(dates.min())[:10],"last":str(dates.max())[:10],
+             "spy_off_calendar_dates":[str(d)[:10] for d in off_calendar],
+             "spy_missing_sessions":[str(d)[:10] for d in missing_spy],
+             "vix_missing_sessions":[str(d)[:10] for d in dates.difference(vix_dates)],
+             "vix_off_calendar_dates":[str(d)[:10] for d in vix_dates.difference(dates)],
+             "price_rows_modified":False,"vix_values_imputed":False}
+    if len(off_calendar) or len(missing_spy):raise ValueError("SPY/calendar validation failed: "+json.dumps(receipt))
+    if str(dates.max())[:10]!=CUTOFF:raise ValueError("calendar cutoff differs")
+    return dates,receipt
+
 
 def prepare(args):
     root=Path(args.directory);root.mkdir(parents=True,exist_ok=True)
@@ -125,10 +146,10 @@ def prepare(args):
     if hashlib.sha256(raw).hexdigest()!="9599af8baa788513a765e3d7bc8104eb4b9bfd43c14e55fb0196a03ad8949949":
         raise ValueError("VIX member changed")
     vix_dates=pd.DatetimeIndex(pd.read_parquet(io.BytesIO(raw)).DATE).as_unit("ns")
-    dates=vix_dates[vix_dates<spy_dates.min()].union(spy_dates)
-    dates=dates[dates<=pd.Timestamp(CUTOFF)]
-    if dates.has_duplicates or not dates.is_monotonic_increasing or str(dates.max())[:10]!=CUTOFF:
-        raise ValueError("invalid observed-session calendar")
+    # A single instrument can omit a real session (VIX omits 1991-03-01).
+    # Use a pinned exchange calendar, validated against the complete observed
+    # SPY lifetime. This changes no OHLCV source rows or missing index values.
+    dates,calendar_receipt=market_session_calendar(spy_dates,vix_dates)
     calendar_file=output/"market_sessions.parquet";pd.DataFrame({"date":dates}).to_parquet(calendar_file,index=False)
     inputs={"status":"PRICE_BLOCK_INPUTS_ONLY_NOT_WORLD","is_smoke":bool(args.tickers),
         "as_of_completed_session":CUTOFF,"price_source_release":PRICE_TAG,"frozen_source_hashes":FROZEN_HASHES,
@@ -136,7 +157,8 @@ def prepare(args):
         "current_exclusion_sha256":hashlib.sha256(exclusion_bytes).hexdigest(),"current_exclusions":len(excluded),"selected_tickers":len(records),"feature_shards":args.shards,"records":records,
         "prepared_shards":part_hashes,"recipe_fingerprint":fingerprint,"recipe_files":files,
         "calendar_sha256":sha(calendar_file),"calendar_first":str(dates.min())[:10],"calendar_last":str(dates.max())[:10],
-        "calendar_rule":"VIX observed sessions before SPY inception, then actual SPY sessions",
+        "calendar_rule":"pinned XNYS session calendar validated against actual SPY lifetime",
+        "calendar_validation":calendar_receipt,
         "calendar_source_spy_archive_sha256":manifest["archive_sha256"],
         "context_gate":"NOT_RUN; industry/sector/index/breadth/macro joins remain",
         "historical_tradeability_gate":"NOT_RUN; nominal market cap and PIT eligibility remain",
