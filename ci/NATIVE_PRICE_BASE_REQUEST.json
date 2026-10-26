@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
-  "request": "Compact full accepted-universe daily/execution/native OHLCV inputs plus stock-day weights; 16 shards, max4 jobs; no feature recomputation or vendor requests."
+  "request": "Rebuild the complete 8,447-name compact native OHLCV base from the existing frozen inputs using verified upload retries. No new vendor requests. Four concurrent build jobs; all 16 completion reports required."
 }
