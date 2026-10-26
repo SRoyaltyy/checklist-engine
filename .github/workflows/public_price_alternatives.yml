@@ -1,0 +1,49 @@
+name: public-price-gap-alternatives
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/public_price_alternatives.py','.github/workflows/public_price_alternatives.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create immutable provisional source release
+        id: release
+        run: |
+          tag="price-gap-alternatives-v5-${{ github.run_id }}-${{ github.run_attempt }}"
+          python -c "import json; from pathlib import Path; Path('SOURCE_SCOPE.json').write_text(json.dumps(dict(scope='Public alternative source evidence; no accepted replacements or world approval')))"
+          gh release create "$tag" --target "${{ github.sha }}" --title "$tag" --notes "Unresolved symbols retained. Public source evidence only; strict price acceptance remains." SOURCE_SCOPE.json
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        provider: [stooq,nasdaq,yahoo-events]
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pandas pyarrow
+      - run: python -m ci.public_price_alternatives --provider ${{ matrix.provider }} --tag ${{ needs.prepare.outputs.tag }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-alternatives-${{ matrix.provider }}
+          path: |
+            *_price_alternatives.json
+            *_price_alternatives.tar.gz
