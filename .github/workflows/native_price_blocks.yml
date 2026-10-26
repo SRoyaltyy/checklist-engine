@@ -1,7 +1,7 @@
 name: native-price-blocks
 on:
   push:
-    branches: [main, codex/native-world-blocks-v1]
+    branches: [codex/native-world-blocks-v1]
     paths: ['ci/NATIVE_PRICE_BUILD_REQUEST.json']
   workflow_dispatch:
 permissions:
