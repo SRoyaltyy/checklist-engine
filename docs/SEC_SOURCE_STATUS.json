@@ -1,46 +1,21 @@
 {
-  "status": "BLOCKED",
-  "rows": 0,
+  "status": "PASS",
+  "rows": 11657,
   "reports": [
     {
-      "done": {},
-      "errors": {
-        "AAPL": {
-          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
-          "http_status": 403,
-          "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {f",
-          "attempts": 4,
-          "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
-          "request_spacing_seconds": 1.0,
-          "accept_encoding": "gzip"
-        },
-        "GE": {
-          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000040545.json",
-          "http_status": 403,
-          "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {f",
-          "attempts": 4,
-          "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
-          "request_spacing_seconds": 1.0,
-          "accept_encoding": "gzip"
-        },
-        "MSFT": {
-          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
-          "http_status": 403,
-          "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {f",
-          "attempts": 4,
-          "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
-          "request_spacing_seconds": 1.0,
-          "accept_encoding": "gzip"
-        }
+      "done": {
+        "AAPL": "OK",
+        "GE": "OK",
+        "MSFT": "OK"
       },
+      "errors": {},
       "requested": 3,
-      "rows": 0
+      "rows": 11657
     }
   ],
-  "source_commit": "b0fb790d0d9cbd70155bcdc856dd3b7da8d90c49",
-  "run_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257153296",
-  "measured_world_gate": "FAIL",
-  "coverage_failures": 8184,
-  "measurements_sha256": "8242a97e293dcc10ebc057d0be96d23f527250539e391fe3e98dd565f547bf7b",
-  "scope": "Source handling proof only; six-stock released measurements, not full-universe coverage."
+  "run_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266375575",
+  "source_commit": "589d27a8e95ed9ad8dfc0202623fb40e1f5c4b8a",
+  "source_archive_sha256": "a56698ca3a892495929013e789a5e3faa92689fda86fb4d3cfd4b65fe7353573",
+  "raw_companyfacts": 3,
+  "scope": "Three-company source-access proof only. Full-universe world gate remains FAIL; these source rows are PENDING until rebuilt and measured."
 }
