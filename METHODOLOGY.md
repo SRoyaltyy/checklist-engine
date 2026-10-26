@@ -415,6 +415,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **Codex checklist 1.92 CLAIMED — 2026-10-26.** Self-verified all **13 required/preserved series** in the source result and the emitted **900,986** vintage rows, plus the archived Parquet SHA256 `91219b769e3a7f0f1d1f65e4d68c29ba5f368f1c7a75d500da315baf364de497` and archive SHA256 `16a60d96ccbc0f9e5424bc9dc5057e3a72327a48b8036078072cca4bfbedb5d8`. Release `fred-structured-v3-40266650669-1` preserves observation date, vintage date and value; CI logs mask the Actions key and source errors redact request credentials. This claims only **macro source fetched**, with source-date limits recorded, not world coverage or the global leak gate. James independent sign-off pending. **Verified by both 8/224; claimed awaiting James 2.**
+
+
+
 - **Codex checklist 1.91 CLAIMED — 2026-10-26.** Self-verified the real ALFRED source run **40266650669**, its per-series vintage/observation ranges and immutable archive/member hashes, then merged the source implementation and mandatory relay/cached macro infrastructure in **PR #9 / 2f3eaaa** (81 tests + real SEC/FRED proof in 40268156015). Main `docs/MACRO_SOURCE_STATUS_V3.json` records every I195 source, ALFRED VIXCLS for I178, CPI→CPIAUCSL and the explicit 2023 credit-spread archive limit. This claims only **source located**, not the full world join/coverage. James independent sign-off pending. **Verified by both 8/224; claimed awaiting James 1.**
 
 
