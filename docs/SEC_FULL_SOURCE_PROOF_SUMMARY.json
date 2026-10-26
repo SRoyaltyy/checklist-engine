@@ -1,0 +1,111 @@
+{
+  "status": "INTEGRITY_PASS_WITH_QUARANTINE",
+  "verified_ciks": 4034,
+  "numeric_fact_rows": 60921993,
+  "archives_verified": 208,
+  "quarantined": [
+    {
+      "cik": 1790169,
+      "fact_rows": 6027,
+      "quarantined": true,
+      "root_cik": null,
+      "official_cik": 1790169,
+      "entity_name": "ZeroStack Corp.",
+      "source_tag": "sec-world-shard9-repair-40282669220-1",
+      "raw_sha256": "6873d89fe09f26560a2af2af9225174ff4a14112c6e8e59050d507e4b816d4c3",
+      "parquet_sha256": "3c99b11921863bd46aca8731790cc23ee7858778d1532c64e9fb5accc23671f1"
+    }
+  ],
+  "universe_tickers": 8727,
+  "resolved_ticker_identities": 4040,
+  "unresolved_ticker_identities": 4687,
+  "base_tag": "sec-world-v4-40267486206-1",
+  "selected_sources": {
+    "0": "sec-world-v4-40267486206-1",
+    "1": "sec-world-v4-40267486206-1",
+    "2": "sec-world-v4-40267486206-1",
+    "3": "sec-world-v4-40267486206-1",
+    "4": "sec-world-v4-40267486206-1",
+    "5": "sec-world-v4-40267486206-1",
+    "6": "sec-world-v4-40267486206-1",
+    "7": "sec-world-v4-40267486206-1",
+    "8": "sec-world-v4-40267486206-1",
+    "9": "sec-world-shard9-repair-40282669220-1",
+    "10": "sec-world-v4-40267486206-1",
+    "11": "sec-world-v4-40267486206-1",
+    "12": "sec-world-v4-40267486206-1",
+    "13": "sec-world-v4-40267486206-1",
+    "14": "sec-world-v4-40267486206-1",
+    "15": "sec-world-v4-40267486206-1"
+  },
+  "proof_source_commit": "22efdf8ecbb543935fba3c754025bf5f05205ec5",
+  "run_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40283469118",
+  "world_gate": "FAIL",
+  "scope": "Every selected raw archive and member hash checked; every numeric Parquet reparsed exactly from raw companyfacts. CIK1790169 remains quarantined pending James review. Unmapped universe identities remain unresolved. Not Phase 1/world approval.",
+  "proof_files": [
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_000.json",
+      "sha256": "d5f861fbf3b738fc994f73c3bfd8993bdcd616349cadab45348dcdafbf11f1ac"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_001.json",
+      "sha256": "cf50dfc67a352b9471a9bbb7fbb3db88a8e1713c1620238c6d70fb2f3a75b07f"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_002.json",
+      "sha256": "28d44a916dcf65fa3a47c027bf724720e52965b14db55dc29c7c7cf45af79ff4"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_003.json",
+      "sha256": "b4428bff90ece5acf0d20ec1dcd825af5259bae3ab8e70dd22f18dcd5b7d96c5"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_004.json",
+      "sha256": "0ceffb611bd2e5bab96f6dd3975073ed111b1c058891a54f50d030496641a9c9"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_005.json",
+      "sha256": "b9e7e39a5bbbdc923d1b88d6ff918670ddd8be4e09c5e601f47901bd98e87b82"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_006.json",
+      "sha256": "8f7adf6616bdc9ae8863850337d6063e046b8a7afb52a568eac5f3a2bf561555"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_007.json",
+      "sha256": "06cddd678391a795c3b469ab6de3dacff35096af2985746ff529d1831cb22881"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_008.json",
+      "sha256": "340a0ead2c3e807aa58841fea54328601bbfbae29fc7900cd518ab739868bf1f"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_009.json",
+      "sha256": "fabe3c04e22bd73250c25829f3b758c43c849e7cf0150883222275cb30d35687"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_010.json",
+      "sha256": "6cd251421ad57634c764613f8efa0679be2aa22742d2954d2e53f2d9046f9082"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_011.json",
+      "sha256": "334198dbb2ee0215a7d96b8967f9cd29c7f6b4e3d2fd2c117210d4801142cc3e"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_012.json",
+      "sha256": "4fe5f5392fde981ebe041d4f8939211d4d3da0cc1a30f6ad0b907f56d427ddab"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_013.json",
+      "sha256": "01ca58d022d72a4687cec5316b5e2daa3802e259160e3bf4d39a578d80cb2fb4"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_014.json",
+      "sha256": "fa7c924f6c100abf11ad7591d4bf98d519d3b0f9e6dcee3b0f3e072206a59f86"
+    },
+    {
+      "name": "SEC_FULL_SOURCE_PROOF_015.json",
+      "sha256": "6eaa420c38b0f3298a17431918e7faa6c50316638f9a3c76444bff168933d191"
+    }
+  ]
+}
