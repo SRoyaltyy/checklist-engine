@@ -1,0 +1,47 @@
+name: dolt-date-index-coverage
+on:
+  push:
+    branches: [codex/phase1-gap-sources]
+    paths: ['ci/DOLT_DATE_COVERAGE_REQUEST.json']
+permissions:
+  contents: write
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.dolt_options_date_coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dolt-date-coverage-v5
+          path: dolt-coverage-v5/
+      - name: Version concrete source measurement
+        run: |
+          tar -czf dolt_coverage_v5.tar.gz dolt-coverage-v5
+          sha256sum dolt_coverage_v5.tar.gz > dolt_coverage_v5.sha256
+          tag="dolt-date-coverage-v5-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" dolt_coverage_v5.tar.gz dolt_coverage_v5.sha256 dolt-coverage-v5/DOLT_OPTIONS_COVERAGE_V5.json --title "$tag" --notes "Measured source presence only; no options-feature or complete-PIT claim." --target "$GITHUB_SHA"
+      - name: Publish source log to main
+        run: |
+          cp dolt-coverage-v5/DOLT_OPTIONS_COVERAGE_V5.json /tmp/
+          git fetch origin main
+          git checkout -B dolt-date-coverage-publication origin/main
+          cp /tmp/DOLT_OPTIONS_COVERAGE_V5.json docs/
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/DOLT_OPTIONS_COVERAGE_V5.json
+          git commit -m "Publish Dolt date-indexed coverage and explicit PIT limitations"
+          for attempt in 1 2 3 4; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
