@@ -1,0 +1,41 @@
+{
+  "status": "EXCLUSIONS_LOGGED_DOWNLOAD_PAUSED",
+  "as_of_completed_session": "2026-10-23",
+  "generated_at_hkt": "2026-10-26T15:42:26.709071+08:00",
+  "unique_excluded": 280,
+  "reason_counts": {
+    "STALE_LAST_PRICE_SESSION": 19,
+    "FROZEN_OVERLAP_LT_60": 242,
+    "UNRESOLVED_PRICE_BRIDGE": 30,
+    "UNRESOLVED_HALT": 1,
+    "UNVERIFIABLE_HISTORICAL_VOLUME_BASIS": 1,
+    "QUARANTINED_SEC_IDENTITY": 1
+  },
+  "original_universe": 8727,
+  "clean_price_inventory": 8447,
+  "clean_price_inventory_pct": 96.79156640311676,
+  "current_non_etf_listing_universe": 5147,
+  "excluded_current_non_etf": 84,
+  "clean_current_non_etf_listing_pct": 98.36798134835827,
+  "quarantined_cik1790169_tickers": [
+    "ZSTK"
+  ],
+  "exclusion_list": "docs/EXCLUDED.csv",
+  "exclusion_sha256": "555c4af64f6b25b86e0d1cf9d721bd14fc097edf5b9fb0dc167f08e1cbb84c98",
+  "input_hashes": {
+    "exclusion-evidence/prices/FULL_PRICE_RECONCILIATION_AUDIT.json": "caf24f83b656e3f9125be79f4cf0b51e1e65bd466df99dd2572e3d06104d3505",
+    "exclusion-evidence/identities/SEC_WORLD_IDENTITIES.json": "0f62ee169a82dcb7fcdd339fd2606c2de6ef41b886c8ea3d253e620578967f25",
+    "exclusion-evidence/listings/CURRENT_LISTING_CLASSIFICATION.csv": "e2ffbe14fbb2fa19ea032e7267771be2187071ea057332bdd80c8c5670280a5f",
+    "exclusion-evidence/halts/nasdaq_halts_2020_2026.parquet": "1dbeafd45903798b73d95d33314b7d989c8c744c4ef5e8b1c9d01b50ec886057"
+  },
+  "source_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40287396969",
+  "phase2_world_gate": "NOT_RUN",
+  "tradeable_97pct_gate": "NOT_CLAIMED: full point-in-time liquidity/size eligibility and required context still pending",
+  "notes": [
+    "One row per canonical ticker; reasons merged, no remapping or deletion of raw source evidence.",
+    "The 242 short-history cases have fewer than 60 frozen overlap sessions; this is not a claim that their entire current history is shorter than 60 days.",
+    "Current non-ETF listing classification is an inventory comparison, not full historical tradeability.",
+    "Candidate exclusions do not waive the required industry/sector/index/breadth/macro context blocks.",
+    "No new Phase 1 data block download; await James gap-review result in METHODOLOGY section 0b."
+  ]
+}
