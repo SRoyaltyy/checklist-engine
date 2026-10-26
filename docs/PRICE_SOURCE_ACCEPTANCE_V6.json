@@ -1,0 +1,42 @@
+{
+  "status": "SOURCE_ACCEPTANCE_PASS_WITH_EXCLUSIONS",
+  "as_of_completed_session": "2026-10-23",
+  "source_tag": "world-prices-v3-40259691137-1",
+  "source_collection_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40259691137",
+  "archive_and_member_hash_proof_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40281068048",
+  "acceptance_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40292775611",
+  "source_commit": "ef919f1cb062a2626dc169747beab28c246e5b39",
+  "input_hashes": {
+    "prices/FULL_PRICE_RECONCILIATION_AUDIT.json": "caf24f83b656e3f9125be79f4cf0b51e1e65bd466df99dd2572e3d06104d3505",
+    "listings/CURRENT_LISTING_CLASSIFICATION.csv": "e2ffbe14fbb2fa19ea032e7267771be2187071ea057332bdd80c8c5670280a5f",
+    "EXCLUDED.csv": "555c4af64f6b25b86e0d1cf9d721bd14fc097edf5b9fb0dc167f08e1cbb84c98"
+  },
+  "original_universe": 8727,
+  "explicit_exclusions": 280,
+  "accepted_source_tickers": 8447,
+  "original_listing_classification": {
+    "NON_ETF": 5147,
+    "ETF": 3548,
+    "UNKNOWN": 32
+  },
+  "accepted_listing_classification": {
+    "NON_ETF": 5063,
+    "ETF": 3372,
+    "UNKNOWN": 12
+  },
+  "current_non_etf_clean_inventory_pct": 98.36798134835827,
+  "strict_minimum_overlap": 60,
+  "all_accepted_sources_current": true,
+  "all_frozen_values_unchanged": true,
+  "inventory_sha256": "58383133dc32425de0be69aa8ead7e2c070bd62c6505c11e62c9c5ebd2501a3b",
+  "source_fetched_gate": "PASS_WITH_EXPLICIT_EXCLUSIONS",
+  "historical_tradeable_97pct_gate": "NOT_RUN: PIT liquidity and nominal market-cap eligibility remain",
+  "world_coverage_gate": "NOT_RUN: all required context/feature blocks still needed",
+  "notes": [
+    "No new market-data download and no excluded edge-case repairs.",
+    "Only existing immutable source evidence was read.",
+    "The 242 diagnostic short matches are excluded, never used to waive the 60-session bridge minimum.",
+    "Current listing inventory is not historical tradeability; 12 accepted UNKNOWN classifications require explicit later policy.",
+    "Source acceptance does not establish point-in-time nominal prices or dividend/split liquidity/size inputs."
+  ]
+}
