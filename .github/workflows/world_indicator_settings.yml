@@ -1,10 +1,11 @@
 name: world-indicator-settings
 on:
   push:
-    branches: [main, codex/phase1-indicator-grids]
+    branches: [main, codex/phase1-indicator-grids, codex/native-world-blocks-v1]
     paths:
       - 'world_timeframes.py'
       - 'world_bar_statistics.py'
+      - 'world_food_statistics.py'
       - 'world_indicator_settings.py'
       - 'world_indicator_extra.py'
       - 'dictionary/INDICATOR_SETTINGS.json'
@@ -13,6 +14,7 @@ on:
       - 'ci/*indicator_settings.py'
       - 'tests/test_world_settings.py'
       - 'tests/test_world_bar_statistics.py'
+      - 'tests/test_world_native_alignment.py'
       - '.github/workflows/world_indicator_settings.yml'
   workflow_dispatch:
 permissions:
@@ -28,4 +30,4 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
       - run: python -m ci.audit_indicator_settings
-      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py -q
+      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py tests/test_world_native_alignment.py -q

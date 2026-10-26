@@ -120,6 +120,48 @@
       "definition": "100*(EMA_N(high-low)/EMA_N(high-low) shifted L native candles - 1), SMA-seeded EMA; zero prior EMA blank.",
       "parameters": "N,L=5,5|10,10|20,20; default=10,10",
       "columns": "CHAIKIN_VOLATILITY{N}_{L}"
+    },
+    {
+      "id": "I221",
+      "item": "Elder Impulse",
+      "definition": "+1 if SMA-seeded EMA slope and MACD histogram change are both positive; -1 if both negative; otherwise 0. Any missing component remains blank.",
+      "parameters": "EMA=7|13|26; MACD=12,26,9; default EMA13",
+      "columns": "I221_{setting}_impulse|ema_change|histogram_change"
+    },
+    {
+      "id": "I222",
+      "item": "Twiggs Money Flow",
+      "definition": "True high=max(high,prior close), true low=min(low,prior close). Flow=volume*(2*close-true high-true low)/(true high-true low). Wilder-mean(flow,N)/Wilder-mean(volume,N), aligned to the same valid flow observations.",
+      "parameters": "N=10|21|42; default=21",
+      "columns": "I222_{setting}_value"
+    },
+    {
+      "id": "I223",
+      "item": "STARC bands",
+      "definition": "SMA_N(close) plus/minus multiplier*Wilder ATR_A. Explicit research presets, not a vendor-default claim.",
+      "parameters": "N,A,multiplier=10,7,1.5|20,14,2|40,28,2.5; default=20,14,2",
+      "columns": "I223_{setting}_mid|upper|lower"
+    },
+    {
+      "id": "I224",
+      "item": "Linear-regression slope intercept and errors",
+      "definition": "OLS close=a+b*x with local x=0..N-1. Emit b,a,residual standard error sqrt(SSE/(N-2)), slope SE and intercept SE. R-squared remains I217.",
+      "parameters": "N=20|60|120|200; default=60",
+      "columns": "I224_{N}_slope|intercept|residual_standard_error|slope_standard_error|intercept_standard_error"
+    },
+    {
+      "id": "I225",
+      "item": "Stock-versus-stock peer correlation",
+      "definition": "Rolling Pearson correlation of matched native-candle returns for each named peer. Membership is an explicit PIT input, unknown stays unavailable; no self-peer, no current-map backfill.",
+      "parameters": "N=20|60|120; peer set=dated industry or sector membership",
+      "columns": "world_food_statistics.peer_correlations; explicit peer columns, pending full-world membership join"
+    },
+    {
+      "id": "I226",
+      "item": "Schaff Trend Cycle",
+      "definition": "MACD=EMA_fast(close)-EMA_slow(close); apply stochastic cycle normalization then SMA-seeded EMA smoothing, repeat stochastic normalization and EMA smoothing. Zero stochastic range remains blank. Explicit causal startup convention.",
+      "parameters": "fast,slow,cycle,smooth=12,26,5,3|23,50,10,3|46,100,20,3; default=23,50,10,3",
+      "columns": "I226_{setting}_value"
     }
   ]
 }

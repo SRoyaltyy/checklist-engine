@@ -121,12 +121,12 @@ def write(root):
         ident=row["id"]
         if ident=="C01":
             row.update(setting="world: 1d through 21d plus calendar monthly",
-                definition="World candles: non-overlapping k-session OHLCV blocks anchored at the first supplied historical session; O first, H max, L min, C last, V sum. Calendar monthly uses the prior completed calendar month. A candle becomes available on the next observed session (monthly: next calendar month); incomplete candles are excluded. Legacy engine.kbars rolling-offset composites are a separate feature definition, never silently substituted for native world candles.",
+                definition="World candles: non-overlapping k-session OHLCV blocks anchored to a supplied shared market-session calendar for cross-entity builds, otherwise the first supplied entity session; O first, H max, L min, C last, V sum. Calendar monthly uses the prior completed calendar month. A candle becomes available on the next observed session (monthly: next calendar month); incomplete candles are excluded. Legacy engine.kbars rolling-offset composites are a separate feature definition, never silently substituted for native world candles.",
                 window="k completed sessions or one completed calendar month",
                 rolling_or_fixed="fixed non-overlapping world candles",
                 pit_rule="Candle end < query day D; only completed candles with available_from <= D. D open is execution only.",
                 warmup="Per indicator native-candle warmup; insufficient history remains blank.",
-                parameters="k="+ "|".join(map(str,range(1,22))) + "; calendar=monthly; anchor=first supplied session",
+                parameters="k="+ "|".join(map(str,range(1,22))) + "; calendar=monthly; anchor=shared market-session calendar when supplied, otherwise first entity session",
                 in_code="world_timeframes.completed_candles")
         elif ident in spec["items"]:
             item=spec["items"][ident]
@@ -146,7 +146,7 @@ def write(root):
             pit_rule="Only candles completed before buy day D; context and universe eligibility must be point-in-time.",
             warmup="Full registered window; unavailable or zero-denominator estimates remain blank.",
             edge_cases="No forward fill of mismatched candle boundaries; registration does not claim full-world measured coverage.",
-            in_code="world_bar_statistics; "+item["columns"],parameters=item["parameters"]+"; stack with all 22 native timeframes")
+            in_code=("world_food_statistics" if 221<=int(item["id"][1:])<=226 else "world_bar_statistics")+"; "+item["columns"],parameters=item["parameters"]+"; stack with all 22 native timeframes")
         if item["id"] in existing:
             rows=[record if r["id"]==item["id"] else r for r in rows]
         else:rows.append(record)

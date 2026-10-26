@@ -1,7 +1,8 @@
 """Completed-candle world state. No candle containing day D is visible at D.
 
-5d/10d/20d candles are non-overlapping trading-session blocks anchored at the
-first supplied historical session. monthly uses actual calendar months, not
+5d/10d/20d candles are non-overlapping trading-session blocks. A supplied
+market-session calendar fixes shared boundaries across entities; legacy callers
+without one retain the first supplied entity session as anchor. monthly uses actual calendar months, not
 21 daily values relabelled as monthly. Prefix truncation preserves the anchor.
 """
 import numpy as np
@@ -11,34 +12,57 @@ TIMEFRAMES = tuple(f'{k}d' for k in range(1,22)) + ('monthly',)
 PRICE_COLS = ('open', 'high', 'low', 'close', 'volume')
 
 
-def completed_candles(bars, timeframe):
+def completed_candles(bars, timeframe, session_calendar=None):
+    """Aggregate actual sessions. A supplied calendar gives every entity the
+    same interval boundaries; partial IPO/halt buckets are omitted explicitly.
+    Without it, retain the original per-entity anchor for legacy callers.
+    """
     b = bars.sort_values('date').reset_index(drop=True).copy()
     if b.date.duplicated().any():
         raise ValueError('duplicate ticker sessions')
     b['date'] = pd.to_datetime(b.date).astype('datetime64[ns]')
+    columns=['candle_start','date','available_from',*PRICE_COLS]
     if not len(b):
-        return pd.DataFrame(columns=['date', 'available_from', *PRICE_COLS])
+        return pd.DataFrame(columns=columns)
+    if timeframe not in TIMEFRAMES:
+        raise ValueError(timeframe)
+    cal=None;expected={}
+    if session_calendar is not None:
+        cal=pd.DatetimeIndex(pd.to_datetime(session_calendar)).as_unit('ns')
+        if cal.has_duplicates or not cal.is_monotonic_increasing:
+            raise ValueError('session calendar must be ordered and unique')
+        positions=cal.get_indexer(b.date)
+        if np.any(positions<0):
+            raise ValueError('entity has dates outside the shared session calendar')
     if timeframe == 'monthly':
         key = b.date.dt.to_period('M')
         avail = {p: (p + 1).start_time for p in key.unique()}
+        if cal is not None:
+            for p in key.unique():
+                # A source calendar ending inside a month cannot certify that
+                # month complete. Later months provide its completion proof.
+                if p>=cal[-1].to_period('M'):continue
+                expected[p]=cal[cal.to_period('M')==p]
     else:
-        if timeframe not in TIMEFRAMES:
-            raise ValueError(timeframe)
-        k = int(timeframe[:-1])
-        key = np.arange(len(b)) // k
-        # The next observed stock session is the earliest query row allowed to
-        # consume a completed candle. Last/incomplete groups are not exposed.
-        avail = {i: b.date.iloc[(i + 1) * k] for i in np.unique(key)
-                 if (i + 1) * k < len(b)}
-    rows = []
-    for group, g in b.groupby(key, sort=True):
-        if group not in avail:
-            continue
-        rows.append(dict(date=g.date.iloc[-1], available_from=avail[group],
-                         open=g.open.iloc[0], high=g.high.max(), low=g.low.min(),
-                         close=g.close.iloc[-1], volume=g.volume.sum()))
-    result=pd.DataFrame(rows, columns=['date','available_from',*PRICE_COLS])
-    for column in ('date','available_from'):
+        k=int(timeframe[:-1])
+        key=(positions//k) if cal is not None else np.arange(len(b))//k
+        if cal is not None:
+            avail={i:cal[(i+1)*k] for i in np.unique(key) if (i+1)*k<len(cal)}
+            expected={i:cal[i*k:(i+1)*k] for i in avail}
+        else:
+            avail={i:b.date.iloc[(i+1)*k] for i in np.unique(key) if (i+1)*k<len(b)}
+    rows=[]
+    for group,g in b.groupby(key,sort=True):
+        if group not in avail:continue
+        if cal is not None:
+            wanted=expected.get(group)
+            if wanted is None or not pd.DatetimeIndex(g.date).equals(wanted):continue
+        rows.append(dict(candle_start=g.date.iloc[0],date=g.date.iloc[-1],
+                         available_from=avail[group],open=g.open.iloc[0],
+                         high=g.high.max(),low=g.low.min(),close=g.close.iloc[-1],
+                         volume=g.volume.sum()))
+    result=pd.DataFrame(rows,columns=columns)
+    for column in ('candle_start','date','available_from'):
         result[column]=pd.to_datetime(result[column]).astype('datetime64[ns]')
     return result
 
@@ -82,6 +106,8 @@ def candle_features(candles, funcs, timeframe="1d"):
     from world_bar_statistics import bar_statistics
     cols.update(configured_indicators(*arrays, dates=candles.date.to_numpy()))
     cols.update(bar_statistics(*arrays, timeframe=timeframe))
+    from world_food_statistics import additional_bar_statistics
+    cols.update(additional_bar_statistics(*arrays))
     # Existing TV extras require at least one bar; all warmups remain explicit
     # NaNs. Schema alignment never treats an absent feature as an observed zero.
     cols.update(fw.compute_tv_extra(*arrays, dates=candles.date.to_numpy()))
@@ -103,14 +129,14 @@ def align_features(query_dates, features, timeframe):
     return aligned.rename(columns={c:f'{c}__{timeframe}' for c in aligned if c!='date'})
 
 
-def world_timeframes(bars, funcs, daily_external=None):
+def world_timeframes(bars, funcs, daily_external=None, session_calendar=None):
     """One row per stock session. External fields are already strictly PIT;
     aggregate their last KNOWN value at each completed candle boundary. Keep
     these separate from indicators recomputed on genuine composite OHLCV.
     """
     out = pd.DataFrame({'date': pd.to_datetime(bars.date).to_numpy()})
     for tf in TIMEFRAMES:
-        candles = completed_candles(bars, tf)
+        candles = completed_candles(bars, tf, session_calendar=session_calendar)
         features = candle_features(candles, funcs, timeframe=tf)
         if daily_external is not None and len(candles):
             ext = daily_external.sort_values('date').copy()
