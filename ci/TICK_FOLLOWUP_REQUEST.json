@@ -1,1 +1,1 @@
-{"version":3,"request":"Resolve id and nested name on the same NYSE TICK instrument object; stop on public API refusal."}
+{"version":4,"request":"Read instrument.base id bound to the exact instrument.name; ordinary public history request only."}

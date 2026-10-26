@@ -32,6 +32,9 @@ def main():
             matched=[n for n in names if re.sub(r"[^a-z]","",n.lower()) in ("nysetick","nysetickindex")]
             if matched:
                 ids={k:str(value[k]) for k in ("id","instrumentId","instrument_id","pairId","pair_ID","pair_id") if k in value and str(value[k]).isdigit()}
+                if isinstance(value.get("base"),dict):
+                    for key in ("id","instrumentId","instrument_id","pairId","pair_ID","pair_id"):
+                        if key in value["base"] and str(value["base"][key]).isdigit():ids["base."+key]=str(value["base"][key])
                 matching_names.append({"path":where,"names":matched,"ids":ids,"keys":list(value)[:40]})
                 for key,ident in ids.items():candidates.append({"path":where,"name":matched[0],"id_field":key,"instrument_id":ident})
             for key,item in value.items():walk(item,where+"."+str(key))
@@ -68,5 +71,5 @@ def main():
                 data=gzip.decompress(tar.extractfile(name).read()).decode("utf-8",errors="replace")
                 result.setdefault("stooq_preserved_response",[]).append({"member":name,"finding":"Provider requires browser verification; not a numeric history. No challenge was executed."})
             except KeyError:pass
-    (ROOT/"NYSE_TICK_SOURCE_FOLLOWUP_V3.json").write_text(json.dumps(result,indent=2)+"\n")
+    (ROOT/"NYSE_TICK_SOURCE_FOLLOWUP_V4.json").write_text(json.dumps(result,indent=2)+"\n")
 if __name__=="__main__":main()
