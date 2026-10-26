@@ -54,7 +54,7 @@ def test_sec_403_retries_before_reporting_blocked():
     import urllib.error
     from fetch.fetch_xbrl import get_json
     err=urllib.error.HTTPError('x',403,'blocked',None,None)
-    with patch('urllib.request.urlopen',side_effect=err) as request,patch('time.sleep'):
+    with patch.dict('os.environ',{'PRIMARY_ACTION_RELAY_URL':'https://unit-test-relay.example/'}),patch('urllib.request.urlopen',side_effect=err) as request,patch('time.sleep'):
         with pytest.raises(urllib.error.HTTPError):get_json('https://data.sec.gov/blocked')
         assert request.call_count==4
 

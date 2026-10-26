@@ -57,18 +57,20 @@ def context(tickers,supplemental_prices=''):
     ext={}
     for block,groups in box.items():
         for ticker,frame in groups.items():ext.setdefault(ticker,{})[block]=frame
+    from world_fred import compile_timelines
+    fred=fw.load_fred()
     return dict(funcs=funcs,etf=fw.etf_wide(etf_frame),breadth=breadth,
         earnings=by_ticker(fw.load_earnings(tickers),'symbol'),ext=ext,
         peers=fw.build_peers(fw.load_bars(None)),mkt=fw.load_mkt(),
         an=by_ticker(fw.load_analyst(tickers)),xb=by_ticker(fw.load_xbrl(tickers)),
-        gd=by_ticker(fw.load_gdelt(tickers)),f13=by_ticker(fw.load_f13(tickers)),fred=fw.load_fred())
+        gd=by_ticker(fw.load_gdelt(tickers)),f13=by_ticker(fw.load_f13(tickers)),fred=fred,fred_timelines=compile_timelines(fred))
 
 
 def ticker_snapshot(ticker,bars,ctx):
     bars=bars.copy()
     bars['date']=pd.to_datetime(bars.date).astype('datetime64[ns]')
     ctx=ctx.copy()
-    for key in ('etf','breadth','mkt','fred'):
+    for key in ('etf','breadth','mkt'):
         if ctx[key] is not None:
             frame=ctx[key].copy()
             for column in ('date','vintage_date','obs_date'):
@@ -77,7 +79,7 @@ def ticker_snapshot(ticker,bars,ctx):
     daily=fw.ticker_frame(ticker,bars,ctx['funcs'],ctx['etf'],ctx['breadth'],ctx['earnings'].get(ticker),
         ext=ctx['ext'].get(ticker),peers=ctx['peers'],mkt=ctx['mkt'],
         an=ctx['an'].get(ticker),xb=ctx['xb'].get(ticker),gd=ctx['gd'].get(ticker),
-        f13=ctx['f13'].get(ticker),fred=ctx['fred'])
+        f13=ctx['f13'].get(ticker),fred=ctx['fred'],fred_timelines=ctx.get('fred_timelines'))
     own=set()
     for name in ctx['funcs']:
         outputs=list(fw.abstract.Function(name).output_names)

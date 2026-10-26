@@ -60,7 +60,7 @@ def test_sec_request_headers_throttle_retries_and_response_excerpt():
     def blocked(request,**kwargs):
         calls.append(request)
         raise urllib.error.HTTPError(request.full_url,403,'Forbidden',{},io.BytesIO(b'<html>SEC request blocked</html>'))
-    with patch('urllib.request.urlopen',side_effect=blocked),patch('time.sleep') as delay:
+    with patch.dict('os.environ',{'PRIMARY_ACTION_RELAY_URL':'https://unit-test-relay.example/'}),patch('urllib.request.urlopen',side_effect=blocked),patch('time.sleep') as delay:
         with pytest.raises(urllib.error.HTTPError) as caught:get_json('https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json')
     record=caught.value.evidence
     assert verified_blocker(record) and record['attempts']==4 and record['response_excerpt']=='SEC request blocked'

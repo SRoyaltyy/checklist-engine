@@ -39,3 +39,17 @@ def test_relay_rejects_non_sec_targets(source):
 @pytest.mark.parametrize('relay',['http://proxy.example/','https://user:secret@proxy.example/'])
 def test_relay_rejects_insecure_or_embedded_credentials(relay):
     with pytest.raises(ValueError):relay_target(relay,SOURCE)
+
+
+def test_missing_relay_fails_before_any_sec_network_request(monkeypatch):
+    monkeypatch.delenv('PRIMARY_ACTION_RELAY_URL',raising=False)
+    with patch('urllib.request.urlopen') as network:
+        with pytest.raises(RuntimeError,match='DIRECT_SEC_REQUEST_FORBIDDEN'):get_json(SOURCE)
+    network.assert_not_called()
+
+
+def test_internal_transport_cannot_bypass_relay_guard():
+    from fetch.sec_client import _request_bytes
+    with patch('urllib.request.urlopen') as network:
+        with pytest.raises(RuntimeError,match='DIRECT_SEC_REQUEST_FORBIDDEN'):_request_bytes(SOURCE,SOURCE,4,False,'direct')
+    network.assert_not_called()

@@ -18,6 +18,7 @@ def _redact(value):
 
 def relay_target(relay,url):
     target=urllib.parse.urlsplit(url);base=urllib.parse.urlsplit(relay)
+    if target.scheme!='https' or target.username or target.password:raise ValueError('SEC source URL must be HTTPS without credentials')
     if target.hostname not in ('data.sec.gov','www.sec.gov','sec.gov'):raise ValueError('relay accepts only SEC source URLs')
     if base.scheme!='https' or not base.hostname or base.username or base.password:
         raise ValueError('SEC relay must be HTTPS without embedded credentials')
@@ -43,16 +44,17 @@ def error_evidence(exc,url,attempts,route):
         accept_encoding=SEC_HEADERS['Accept-Encoding'],route=route)
 
 
-def _request_json(request_url,source_url,retries,allow_404,route):
+def _request_bytes(request_url,source_url,retries,allow_404,route):
+    if urllib.parse.urlsplit(request_url).hostname in ('sec.gov','www.sec.gov','data.sec.gov'):
+        raise RuntimeError('DIRECT_SEC_REQUEST_FORBIDDEN: all SEC requests require PRIMARY_ACTION_RELAY_URL')
     for attempt in range(retries):
         time.sleep(REQUEST_SPACING)
         try:
             with urllib.request.urlopen(urllib.request.Request(request_url,headers=SEC_HEADERS),timeout=120) as response:
                 raw=response.read()
                 if raw[:2]==bytes([31,139]):raw=gzip.decompress(raw)
-                result=json.loads(raw)
                 print('SEC_SOURCE_OK',source_url,'route='+route,'bytes='+str(len(raw)),flush=True)
-                return result
+                return raw
         except urllib.error.HTTPError as exc:
             evidence=error_evidence(exc,source_url,attempt+1,route)
             if exc.code==404 and allow_404:
@@ -65,7 +67,12 @@ def _request_json(request_url,source_url,retries,allow_404,route):
     raise RuntimeError('SEC retry loop exhausted')
 
 
-def get_json(url,retries=4,allow_404=False):
+def get_bytes(url,retries=4,allow_404=False):
     relay=os.environ.get('PRIMARY_ACTION_RELAY_URL','').strip()
-    request_url=relay_target(relay,url) if relay else url
-    return _request_json(request_url,url,retries,allow_404,'relay' if relay else 'direct')
+    if not relay:raise RuntimeError('DIRECT_SEC_REQUEST_FORBIDDEN: PRIMARY_ACTION_RELAY_URL is required for '+url)
+    return _request_bytes(relay_target(relay,url),url,retries,allow_404,'relay')
+
+
+def get_json(url,retries=4,allow_404=False):
+    raw=get_bytes(url,retries,allow_404)
+    return json.loads(raw) if raw is not None else None
