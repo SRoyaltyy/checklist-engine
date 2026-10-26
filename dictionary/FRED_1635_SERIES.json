@@ -1,0 +1,113 @@
+{
+  "status": "OFFICIAL_ALFRED_SOURCES_LOCATED",
+  "series": {
+    "T10Y3M": {
+      "status": "PASS",
+      "source_series": "T10Y3M",
+      "requested_series": "T10Y3M",
+      "archive_first_vintage": "2014-01-27",
+      "rows": 100775,
+      "first_obs": "1990-01-02",
+      "last_obs": "2026-10-23",
+      "first_vintage": "2014-01-27",
+      "last_vintage": "2026-10-23",
+      "parquet_sha256": "465362fdc78f8e700acd83bb28b9ba1b072b120302f7a989ec659ddf588a204d",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "T5YIE": {
+      "status": "PASS",
+      "source_series": "T5YIE",
+      "requested_series": "T5YIE",
+      "archive_first_vintage": "2014-01-27",
+      "rows": 58498,
+      "first_obs": "2003-01-02",
+      "last_obs": "2026-10-23",
+      "first_vintage": "2014-01-27",
+      "last_vintage": "2026-10-23",
+      "parquet_sha256": "9dd758c21adef05b897290023e0660209a2e9c94b93b7bce950661e47a7ba735",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "T10YIE": {
+      "status": "PASS",
+      "source_series": "T10YIE",
+      "requested_series": "T10YIE",
+      "archive_first_vintage": "2014-01-27",
+      "rows": 58498,
+      "first_obs": "2003-01-02",
+      "last_obs": "2026-10-23",
+      "first_vintage": "2014-01-27",
+      "last_vintage": "2026-10-23",
+      "parquet_sha256": "5c54a6c4c967a6ce9c5d68ab2db8e686caef9ae75169f52f94866026f13a78ad",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "STICKCPIM159S": {
+      "status": "PASS",
+      "source_series": "STICKCPIM159SFRBATL",
+      "requested_series": "STICKCPIM159S",
+      "archive_first_vintage": "2014-03-07",
+      "rows": 8006,
+      "first_obs": "1990-01-01",
+      "last_obs": "2026-09-01",
+      "first_vintage": "2014-03-07",
+      "last_vintage": "2026-10-14",
+      "parquet_sha256": "4e911e399be6aab9f7dca0838b5770517b6113a27bb8f0690e86f96fd1af9f26",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "DFII10": {
+      "status": "PASS",
+      "source_series": "DFII10",
+      "requested_series": "DFII10",
+      "archive_first_vintage": "2005-10-12",
+      "rows": 74237,
+      "first_obs": "2003-01-02",
+      "last_obs": "2026-10-22",
+      "first_vintage": "2005-10-12",
+      "last_vintage": "2026-10-23",
+      "parquet_sha256": "d5eaa6eaafa733585747f316acee15bf688a64503f8a6fa3a623619b0e3f6da8",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "CIVPART": {
+      "status": "PASS",
+      "source_series": "CIVPART",
+      "requested_series": "CIVPART",
+      "archive_first_vintage": "1997-02-07",
+      "rows": 8447,
+      "first_obs": "1990-01-01",
+      "last_obs": "2026-09-01",
+      "first_vintage": "1997-02-07",
+      "last_vintage": "2026-10-02",
+      "parquet_sha256": "dd9c8217fe6c65181e7343c244de48113eee7194efed8e056c3ffd63b0181b17",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "INDPRO": {
+      "status": "PASS",
+      "source_series": "INDPRO",
+      "requested_series": "INDPRO",
+      "archive_first_vintage": "1927-01-26",
+      "rows": 17385,
+      "first_obs": "1990-01-01",
+      "last_obs": "2026-09-01",
+      "first_vintage": "1990-02-16",
+      "last_vintage": "2026-10-16",
+      "parquet_sha256": "aa15036df8170840f948660ef632255964877bc0d99e27b0f0843711876900ad",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    },
+    "BUSLOANS": {
+      "status": "PASS",
+      "source_series": "BUSLOANS",
+      "requested_series": "BUSLOANS",
+      "archive_first_vintage": "1996-12-13",
+      "rows": 39944,
+      "first_obs": "1990-01-01",
+      "last_obs": "2026-09-01",
+      "first_vintage": "1996-12-13",
+      "last_vintage": "2026-10-23",
+      "parquet_sha256": "6fee79fee808d1be1392638f1c6619e8794b0c8a620115e2556708b63ab73180",
+      "point_in_time_rule": "vintage_date < D; preserve original and subsequent filing/release versions"
+    }
+  },
+  "identifier_note": "Requested sticky-CPI shorthand STICKCPIM159S has no ALFRED archive. Official ALFRED Sticky Price CPI is STICKCPIM159SFRBATL; both identifiers are retained, not silently relabelled.",
+  "official_sticky_cpi_source": "https://alfred.stlouisfed.org/series?seid=STICKCPIM159SFRBATL",
+  "source_status": "docs/FRED_1635_SOURCE_STATUS_V2.json",
+  "key_handling": "existing phase-0 Actions secret; no key in files/logs"
+}
