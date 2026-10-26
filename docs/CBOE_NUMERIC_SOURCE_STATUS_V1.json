@@ -1,0 +1,133 @@
+{
+  "status": "SOURCE_EVALUATION_ONLY",
+  "series": {
+    "VIX": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+      "raw_sha256": "f94378e505b286168d8dd466cc3a30bb12606ba34084d7ac53de953c75ba2ecd",
+      "parquet_sha256": "9599af8baa788513a765e3d7bc8104eb4b9bfd43c14e55fb0196a03ad8949949",
+      "rows": 9301,
+      "first_date": "1990-01-02",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OPEN",
+        "HIGH",
+        "LOW",
+        "CLOSE"
+      ],
+      "has_true_ohlc": true,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "VIX9D": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX9D_History.csv",
+      "raw_sha256": "d1b050935cdcf402369423e17bad7901e2b8cef8d7e5e581b53865d4164250a0",
+      "parquet_sha256": "be284932b1917122f05f39d85b2aa46f1bb4d1ec01406b83289f48b41a44b4aa",
+      "rows": 3975,
+      "first_date": "2011-01-04",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OPEN",
+        "HIGH",
+        "LOW",
+        "CLOSE"
+      ],
+      "has_true_ohlc": true,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "VIX3M": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv",
+      "raw_sha256": "ff4cf6639eb68841c1efa8e7806c6cd1783da2527d0b5a5fe05f9f0e4237c6fb",
+      "parquet_sha256": "6e6118212d46f5cf01b7680f29544c781b1b1d706ba17998efb86c28d9906a12",
+      "rows": 4301,
+      "first_date": "2009-09-18",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OPEN",
+        "HIGH",
+        "LOW",
+        "CLOSE"
+      ],
+      "has_true_ohlc": true,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "VVIX": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VVIX_History.csv",
+      "raw_sha256": "369c1bb264144d6b9ad0b04f7fe8662d68748b2d927bd0351682249e2b4e2e0a",
+      "parquet_sha256": "616402e7ea5f4010e3687a6385254c80da886450d135a80970ef8a5550f55114",
+      "rows": 5132,
+      "first_date": "2006-03-06",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "VVIX"
+      ],
+      "has_true_ohlc": false,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "SKEW": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv",
+      "raw_sha256": "0f97cd721a6367ad3137cf8cf89bdeb8607b2f5a9636103de450183d0d1a350c",
+      "parquet_sha256": "c1256d3d69cbc4e0ad8de3140550033bc2b0c87a16161d142829f6950199be9f",
+      "rows": 9255,
+      "first_date": "1990-01-02",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "SKEW"
+      ],
+      "has_true_ohlc": false,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "OVX": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/OVX_History.csv",
+      "raw_sha256": "03fc44ea9722d43feb173113c2b1235fad4c9db65badc6bf5872c3f3a7e1dcfb",
+      "parquet_sha256": "c92be24705261a57987d995bc4c985c69dd90accbfa0997b8fb69359b05eba28",
+      "rows": 4299,
+      "first_date": "2009-09-18",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OVX"
+      ],
+      "has_true_ohlc": false,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "GVZ": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/GVZ_History.csv",
+      "raw_sha256": "023e1751aac4c7dd7647ae7f4df974b736d576d3f6c8157b0f0d5c388988f5e1",
+      "parquet_sha256": "83e6178f7b986e731fc65900d57ac1289e8698eba65c13c035229e44a1e794c9",
+      "rows": 4299,
+      "first_date": "2009-09-18",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "GVZ"
+      ],
+      "has_true_ohlc": false,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    }
+  },
+  "run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071",
+  "source_commit": "3124eec2dde081380b19ba29d81797542fbc987e",
+  "notes": [
+    "Close-only series retain their true schema; no artificial open/high/low/volume.",
+    "VIX may supply an observed-session alignment calendar after comparison to the accepted SPY price calendar.",
+    "No stock context join or measured full-world coverage is claimed."
+  ]
+}
