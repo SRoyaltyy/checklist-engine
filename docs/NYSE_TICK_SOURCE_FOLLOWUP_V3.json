@@ -1,0 +1,59 @@
+{
+  "status": "NO_COMPLETE_FREE_HISTORY_PROVEN",
+  "source_evidence_release": "nyse-tick-source-v1-40308374864-1",
+  "prior_archive_sha256": "89e4a5aa2bdaa82f70b59db07d0bf8790b90952661da14fba33353e0eb48378b",
+  "json_scripts": 3,
+  "matching_name_objects": [
+    {
+      "path": "script2.props.pageProps.state.indexStore.instrument",
+      "names": [
+        "NYSE Tick Index",
+        "NYSE Tick Index"
+      ],
+      "ids": {},
+      "keys": [
+        "base",
+        "name",
+        "price",
+        "exchange",
+        "fundamental",
+        "technical",
+        "volume",
+        "bidding",
+        "relatives",
+        "chartSettings",
+        "underlying"
+      ]
+    },
+    {
+      "path": "script2.props.pageProps.state.indexStore.instrument.name",
+      "names": [
+        "NYSE Tick Index",
+        "NYSE Tick Index"
+      ],
+      "ids": {},
+      "keys": [
+        "fullName",
+        "symbol",
+        "shortName",
+        "parentName"
+      ]
+    }
+  ],
+  "identity_candidates": [],
+  "probes": [],
+  "extreme_reading_count": "UNAVAILABLE_FROM_DAILY_OHLC",
+  "run": "40334009025",
+  "no_bypass": true,
+  "stopped_reason": "No unique instrument id on the same JSON object as the exact NYSE TICK name; navigation ids are not substituted.",
+  "stooq_preserved_response": [
+    {
+      "member": "tick-source/stooq_5e7469636b.raw.gz",
+      "finding": "Provider requires browser verification; not a numeric history. No challenge was executed."
+    },
+    {
+      "member": "tick-source/stooq_7469636b2e6e797365.raw.gz",
+      "finding": "Provider requires browser verification; not a numeric history. No challenge was executed."
+    }
+  ]
+}
