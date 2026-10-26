@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/235. Claimed awaiting James: 0.**
+**Verified by both: 10/274. Claimed awaiting James: 0.**
 
 ## Rules
 
@@ -31,9 +31,9 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 140 |
+| 1 | World rebuild | 177 |
 | 2 | Coverage gate | 10 |
-| 3 | Question tree v3 and the P3b quality gate | 26 |
+| 3 | Question tree v3 and the P3b quality gate | 28 |
 | 4 | Full leak test | 10 |
 | 5 | Step A full rerun | 6 |
 | 6 | Exit grid | 5 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 235 |
+|  | Total | 274 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -131,6 +131,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Breadth is a context block on every s
 
 Note (2026-10-26 ~14:52 HKT, do not tick): Sector-ETF features sit on every stock-day row, at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, point-in-time (bars ending D−1), with relative-to-sector facets. The index set on the stock row is SPY, QQQ, IWM, DIA, and VIX. DIA is not in boxes 1.41–1.45; it is boxes 1.136–1.140. The per-stock industry ETF map is boxes 1.131–1.135. A stock row that lacks these context blocks fails box 2.10.
 
+Note (2026-10-26 ~15:33 HKT, do not tick): Index membership history is skipped. No clean free source. Not a box.
+
 - [ ] **1.41** Sector and market baselines: source located. Items: I162 relative strength vs SPY, I163–I175 vs QQQ, IWM, and the 11 SPDRs, I181 SPY trend, I182 beta. Done when: Check fullscan and theme-radar, then data-2020-24-v1 asset etf_2015_le2024.parquet. Extend those ETF daily files through 2026 from the same free source as the stock bars. Evidence:
 - [ ] **1.42** Sector and market baselines: fetched onto a checklist-engine release. Done when: The release contains SPY, QQQ, IWM, and all 11 SPDRs through the same last date as the stock bars. Evidence:
 - [ ] **1.43** Sector and market baselines: joined point-in-time. Done when: Relative strength and beta use ETF closes dated < D, aligned by date. The sector benchmark is the stock's own sector as of D−1. Evidence:
@@ -154,6 +156,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Sector-ETF features sit on every stoc
 - [ ] **1.55** Theme peers: column count and fill rate measured. Done when: WORLD_COVERAGE has a measured row per candle size with either a non-null percent or that blocker. No silent PENDING. Evidence:
 
 ### Earnings
+
+Note (2026-10-26 ~15:33 HKT, do not tick): The 2025–26 dates and surprise source is boxes 1.161–1.165. Boxes 1.56–1.60 stay as they are.
 
 - [ ] **1.56** Earnings: source located. Items: I184 date and timing, I185 surprise, I186 gap reaction and drift. Done when: Check fullscan, theme-radar, and checklist-engine release data-2020-24-v1 asset nasdaq_earn_2020-24.tar. 2025–26 files that exist only on the box are uploaded, or refetched from the Nasdaq public calendar. Evidence:
 - [ ] **1.57** Earnings: fetched onto a checklist-engine release. Done when: The release holds the calendar and the surprise fields through 2026, checksummed. A before-open / after-close flag that is unknown is labelled unknown. Evidence:
@@ -203,6 +207,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Sector-ETF features sit on every stoc
 
 ### GDELT news counts and tone
 
+Note (2026-10-26 ~15:33 HKT, do not tick): The tone score is allowed as a numeric field. Do not read article text. Boxes 1.86–1.90 stay unticked.
+
 - [ ] **1.86** GDELT news counts and tone: source located. Items: I200. Done when: Source is GDELT 2.0 public events and GKG. Check fullscan and theme-radar first. Store counts and tone only. Free text is excluded. Evidence:
 - [ ] **1.87** GDELT news counts and tone: fetched onto a checklist-engine release. Done when: The release holds daily article counts and tone by ticker for 2020–2026, checksummed. Evidence:
 - [ ] **1.88** GDELT news counts and tone: joined point-in-time. Done when: A story counts on D only when its GDELT timestamp is before the open. Evidence:
@@ -228,6 +234,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Macro is a context block on every sto
 - [ ] **1.100** Finviz snapshot, live only: column count and fill rate measured. Done when: WORLD_COVERAGE has an EXCLUDED_LIVE_ONLY row for I198. A WIRED Finviz column fails this box. Evidence:
 
 ### FINRA short interest and daily short volume
+
+Note (2026-10-26 ~15:33 HKT, do not tick): Daily short volume is already this block (I189), with short interest (I188). No second block.
 
 - [ ] **1.101** FINRA short interest and daily short volume: source located. Items: I188 and I189. Done when: Check fullscan, theme-radar, and checklist-engine releases. DATA_SOURCES marks both box-only. CDN 403s on old short-volume files stay a tested error. Evidence names the asset actually used. Evidence:
 - [ ] **1.102** FINRA short interest and daily short volume: fetched onto a checklist-engine release. Done when: The release holds short interest by FINRA publication date and daily short volume for 2020–2026, checksummed. Evidence:
@@ -261,6 +269,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Macro is a context block on every sto
 
 ### Options
 
+Note (2026-10-26 ~15:33 HKT, do not tick): Keep options, including put/call ratio. Find a free point-in-time source, such as the CBOE archives. If no free history exists, log that series excluded-with-reason. Do not block the rest of Phase 1 on it.
+
 - [ ] **1.121** Options: source located. Items: I201 CBOE market-wide, and I202 single-stock. Done when: Check fullscan and theme-radar. CBOE public market-wide series are the free source for I201. Single-stock history is the known gap: DoltHub IV from 2020 to about October 2024, Monday/Wednesday/Friday, survivors only. CBOE delayed quotes have no history. No paid options vendor. Evidence:
 - [ ] **1.122** Options: fetched onto a checklist-engine release. Done when: Any free file that is used is a checksummed release asset. A live quote with no history is not stored as a 2020–26 panel. Evidence:
 - [ ] **1.123** Options: joined point-in-time. Done when: An options field joins on its publication timestamp < D. Survivors-only is labelled on I202. Evidence:
@@ -279,6 +289,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Macro is a context block on every sto
 
 Note (2026-10-26 ~14:52 HKT, do not tick): These boxes are the per-stock industry ETF, which is finer than the 11 sector SPDRs in 1.41–1.45. Nothing here is ticked.
 
+Note (2026-10-26 ~15:33 HKT, do not tick): Box 1.131 still needs a free source. Codex proposes one in §0c. Nothing here is ticked.
+
 - [ ] **1.131** Industry ETF map: source located. Done when: A point-in-time map from each stock to its industry ETF is named, with the free source that was checked (fullscan, theme-radar, then a public ETF list). The map is dated, so a later reclassification does not rewrite earlier days. Evidence:
 - [ ] **1.132** Industry ETF map: fetched onto a checklist-engine release. Done when: The release holds the industry-ETF daily bars, through the same last date as the stock bars, and the dated stock-to-ETF map, both checksummed. Evidence:
 - [ ] **1.133** Industry ETF map: joined point-in-time. Done when: The industry ETF on day D is the map known as of D−1, and the ETF features use bars ending at D−1. An unknown industry is blank, not a fallback to the sector ETF. Evidence:
@@ -295,6 +307,84 @@ Note (2026-10-26 ~14:52 HKT, do not tick): These boxes put SPY, QQQ, IWM, DIA, a
 - [ ] **1.139** Market index set on the stock row: built at every timeframe in the union. Done when: Index features and the stock-versus-index facets (relative change, divergence, relative strength) exist at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, for SPY, QQQ, IWM, and DIA. Evidence:
 - [ ] **1.140** Market index set on the stock row: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for DIA and for the on-row index block at every timeframe in that union. A build that omits DIA fails. Evidence:
 
+### VIX term structure
+
+Note (2026-10-26 ~15:33 HKT, do not tick): VIX9D, VIX3M, and VVIX from the CBOE CSV. VIX level stays the FRED series in 1.91–1.95. Nothing here is ticked.
+
+- [ ] **1.141** VIX term structure: source located. Items: VIX9D, VIX3M, VVIX. Done when: The free CBOE CSV for each series is named. A same-day print is not the source. Evidence:
+- [ ] **1.142** VIX term structure: downloaded onto a checklist-engine release. Done when: The release holds VIX9D, VIX3M, and VVIX through the same last date as the stock bars, checksummed. Evidence:
+- [ ] **1.143** VIX term structure: point-in-time and leak check. Done when: The value on D is the print whose publication is before the open of D, and the series does not change when day-D prices are withheld. Evidence:
+- [ ] **1.144** VIX term structure: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for VIX9D, VIX3M, and VVIX. A missing series is excluded-with-reason, not a zero column. Evidence:
+- [ ] **1.145** VIX term structure: multi-timeframe features. Done when: Each series, and the term-structure spreads between them, exist at the minimum grid of 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21 where a bar exists. Evidence:
+
+### Extra ETFs
+
+Note (2026-10-26 ~15:33 HKT, do not tick): TLT, HYG, LQD, UUP, GLD, CPER, USO, RSP, VXX, IBIT, and DIA, on the same price path as the stock bars. DIA may reuse the file from 1.136–1.140. Nothing here is ticked.
+
+- [ ] **1.146** Extra ETFs: source located. Items: TLT, HYG, LQD, UUP, GLD, CPER, USO, RSP, VXX, IBIT, DIA. Done when: The free daily source is the same path as the stock bars. Evidence names it. Evidence:
+- [ ] **1.147** Extra ETFs: downloaded onto a checklist-engine release. Done when: The release holds each of those ETFs through the same last date as the stock bars, checksummed. DIA is not downloaded a second time when 1.137 already holds it. Evidence:
+- [ ] **1.148** Extra ETFs: point-in-time and leak check. Done when: Features use bars ending at D−1. Withholding day-D prices does not change the columns. Evidence:
+- [ ] **1.149** Extra ETFs: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every ticker in the list. A missing ticker fails. Evidence:
+- [ ] **1.150** Extra ETFs: multi-timeframe features. Done when: Each ETF, and the stock-versus-ETF relative change, exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. Evidence:
+
+### Extra breadth
+
+Note (2026-10-26 ~15:33 HKT, do not tick): New highs minus new lows, percent above the 20-day average, percent above the 200-day average, and up volume versus down volume. New highs minus new lows already named in 1.37 is the same series, not a second download. Percent above SMA50 stays in 1.36–1.40. Nothing here is ticked.
+
+- [ ] **1.151** Extra breadth: source located. Done when: The series are built from the phase-1 universe bars. The note says whether new highs minus new lows is the 1.37 column. Evidence:
+- [ ] **1.152** Extra breadth: downloaded onto a checklist-engine release. Done when: The release holds percent above the 20-day average, percent above the 200-day average, and up volume versus down volume, checksummed, beside the 1.37 breadth file. Evidence:
+- [ ] **1.153** Extra breadth: point-in-time and leak check. Done when: Day D uses the universe and the bars as of D−1. Survivors-only is written on the column. Evidence:
+- [ ] **1.154** Extra breadth: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for the three added series and for new highs minus new lows. Evidence:
+- [ ] **1.155** Extra breadth: multi-timeframe features. Done when: Each added series exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. Evidence:
+
+### Macro event calendar
+
+Note (2026-10-26 ~15:33 HKT, do not tick): FOMC, CPI, jobs-report days, month-end and turn-of-month, days to opex, day of week, and day of month. Days to opex may reuse the 1.126 expiry flag. NYSE holidays stay in 1.126–1.130. Nothing here is ticked.
+
+- [ ] **1.156** Macro event calendar: source located. Done when: A free calendar is named for FOMC, CPI, and the jobs report. Month-end, turn-of-month, day of week, and day of month are rule-based. Evidence cites the calendar URL. Evidence:
+- [ ] **1.157** Macro event calendar: downloaded onto a checklist-engine release. Done when: The flags are generated for every session in the snapshot. A release date that was not public the morning of D is not flagged that day. Evidence:
+- [ ] **1.158** Macro event calendar: point-in-time and leak check. Done when: A flag on D uses only announcements known before the open. The flags do not read day-D prices. Evidence:
+- [ ] **1.159** Macro event calendar: coverage measured. Done when: WORLD_COVERAGE has a non-null percent for each flag: FOMC, CPI, jobs, month-end, turn-of-month, days to opex, day of week, and day of month. Evidence:
+- [ ] **1.160** Macro event calendar: multi-timeframe features. Done when: The flags are carried onto 1d, 5d, 10d, and 20d/monthly, and onto candle sizes 1 through 21, with a written note that they are calendar facts, not resampled prices. Evidence:
+
+### Earnings dates and surprise, 2025–26
+
+Note (2026-10-26 ~15:33 HKT, do not tick): This is the 2025–26 source on top of boxes 1.56–1.60. Nothing here is ticked.
+
+- [ ] **1.161** Earnings dates and surprise, 2025–26: source located. Items: I184 and I185 for 2025–26. Done when: The free source for dates and surprise after 2024-12-31 is named. The 2020–24 tar in 1.56 does not pass this block. Evidence:
+- [ ] **1.162** Earnings dates and surprise, 2025–26: downloaded onto a checklist-engine release. Done when: The release holds the 2025–26 calendar and surprise fields, checksummed, through the latest completed session. Evidence:
+- [ ] **1.163** Earnings dates and surprise, 2025–26: point-in-time and leak check. Done when: A row joins when its publication time is before the open of D. A report released on the morning of D is excluded. Evidence:
+- [ ] **1.164** Earnings dates and surprise, 2025–26: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date for 2025–26 are filled for the date and the surprise. A column that is constantly unknown does not count as a filled surprise. Evidence:
+- [ ] **1.165** Earnings dates and surprise, 2025–26: multi-timeframe features. Done when: Days since, days until, and the surprise are evaluated at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. Evidence:
+
+### IPO age
+
+Note (2026-10-26 ~15:33 HKT, do not tick): Days since listing. Nothing here is ticked.
+
+- [ ] **1.166** IPO age: source located. Done when: A free listing-date source is named, checked in fullscan and theme-radar first. Evidence:
+- [ ] **1.167** IPO age: downloaded onto a checklist-engine release. Done when: The release holds one listing date per ticker, checksummed. A missing date is blank, not zero. Evidence:
+- [ ] **1.168** IPO age: point-in-time and leak check. Done when: Days since listing on D uses a listing date known before the open of D. The column does not read day-D prices. Evidence:
+- [ ] **1.169** IPO age: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for the listing date and for days since listing. Evidence:
+- [ ] **1.170** IPO age: multi-timeframe features. Done when: Days since listing is carried onto 1d, 5d, 10d, and 20d/monthly, and onto candle sizes 1 through 21, with a written note that it is an age, not a resampled price. Evidence:
+
+### Gap-review price indicators
+
+Note (2026-10-26 ~15:36 HKT, do not tick): All of these are computed from the daily bars already in hand. No new vendor. Nothing here is ticked.
+
+- [ ] **1.171** Gap-review price indicators: source located. Items: RS rank percentile across the universe; Mansfield RS versus SPY, the sector ETF, and the industry ETF at 20/60/120; NATR; price z-score versus the 20-day and 50-day means; up-day and down-day streak count; historical volatility at 10/20/60/120 and the short/long vol ratio; gap size in ATR units and gap-fill rate; rolling skew, kurtosis, autocorrelation, and Hurst at 20/60; linear-regression R²; correlation and beta at 20/60/120 versus SPY and versus the sector ETF; Chaikin Volatility. Done when: The coverage row names the phase-1 bar file. I070 stays HV(20) only. Evidence:
+- [ ] **1.172** Gap-review price indicators: built onto a checklist-engine release. Done when: Each named series is a column on the release, checksummed. No second price download. Evidence:
+- [ ] **1.173** Gap-review price indicators: point-in-time and leak check. Done when: Every window ends at D−1. Withholding day-D prices does not change the columns. Evidence:
+- [ ] **1.174** Gap-review price indicators: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every named series. A missing series fails. Evidence:
+- [ ] **1.175** Gap-review price indicators: multi-timeframe features. Done when: Each series exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. The lookbacks named above stack with those candle sizes. Evidence:
+
+### Indicator setting grids
+
+- [ ] **1.176** Indicator setting grids written into the dictionary. Done when: [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) gives explicit short, default, and long settings, about three each, for every item whose only rule was "TV default ±50%" (I036–I077 and I088–I096). The same file adds MACD 5/35/5 and 8/17/9, Stochastic 5,3,3 and 21,5,5, Williams %R 7 and 28, ADX 7 and 28, MFI 7 and 28, Bollinger 10/1.5 and 50/2.5, Keltner 1.0 and 2.0, Donchian 10 and 55, and relative volume 5 and 50, beside the current defaults. Settings stack with candle sizes. A row that still says only "±50%" fails. Evidence:
+
+### Canonical candle grid
+
+- [ ] **1.177** Canonical candle grid: C01 and the code agree. Done when: C01 and `world_timeframes.py` both state Cyrus's rule. The minimum is 1d, 5d, 10d, and 20d/monthly. Candle sizes 1 through 21 are allowed. Monthly stays a calendar month, not 21 daily bars relabelled. A test fails if the dictionary set and TIMEFRAMES disagree. Evidence:
+
 ## Phase 2 — Coverage gate
 
 P1. CI fails a missing row and fails a WIRED row at 0 percent filled.
@@ -307,7 +397,7 @@ Note (2026-10-26 ~14:52 HKT, do not tick): The coverage gate fails if any stock-
 - [ ] **2.04** CI fails when an item has no row. Done when: A workflow on main exits non-zero if any master id or dictionary id is missing from docs/WORLD_COVERAGE.csv. The failing fixture is in the test log. Evidence:
 - [ ] **2.05** CI fails a WIRED row at 0 percent filled. Done when: A WIRED row whose non-null percent is 0 fails the build. I196 (dividends and splits) is the regression case: it was marked WIRED at 0 percent fill. The test fixture includes that case. Evidence:
 - [ ] **2.06** No silent PENDING left. Done when: Status is only WIRED, BLOCKED_SECRET, NOT_AVAILABLE_FREE, EXCLUDED_FREE_TEXT, or EXCLUDED_LIVE_ONLY. The PENDING count is 0. Every NOT_AVAILABLE_FREE row names the tested source and the error. Every exclusion has a written reason. Evidence:
-- [ ] **2.07** Fix exclusion reasons that do not match the data. Done when: M046, M145, M148, M169, M199, M221, M223, M273, M280, and M281 stay out only if an intraday blocker is still true after the source check. M290 (Altman Z / Piotroski / Beneish) drops the intraday reason and matches the I194 companyfacts row. docs/TV_COVERAGE.csv and docs/WORLD_COVERAGE.csv agree on these ids. Evidence:
+- [ ] **2.07** Fix exclusion reasons that do not match the data. Done when: M046, M145, M148, M169, M199, M221, M223, M273, M280, and M281 stay out only if an intraday blocker is still true after the source check. M290 (Altman Z / Piotroski / Beneish) drops the intraday reason and matches the I194 companyfacts row. M001 (1 year active supply %, crypto), M082 (Learn using seasonals), and M154 (Seasonality) are not free text: drop EXCLUDED_FREE_TEXT on those three. Crypto with no US-stock series is NOT_AVAILABLE_FREE or another written non-text reason. Seasonality is a calendar feature. docs/TV_COVERAGE.csv and docs/WORLD_COVERAGE.csv agree on these ids. Evidence:
 - [ ] **2.08** Survivors-only is labelled, and the size filter is counted. Done when: Universe, breadth, sector labels, and the single-stock options rows say survivors-only. The summary states how many names the untradeable filter and the <$100M filter remove as of D, and that an unknown market cap is excluded. Evidence:
 - [ ] **2.09** Status totals match the CSV. Done when: A summary committed next to the CSV gives counts by status and by block, and those counts equal a fresh group-by of the CSV. The §0c line quotes the same counts. Evidence:
 - [ ] **2.10** Context blocks are present on every stock row. Done when: CI fails when any stock-day row is missing its industry-ETF block, its sector-ETF block, its market-index block (SPY, QQQ, IWM, DIA, and VIX), its breadth block, or its macro block. The failing fixture names the missing block. A stock-only row fails. Evidence:
@@ -344,6 +434,8 @@ Note (2026-10-26 ~14:52 HKT, do not tick): The question tree includes cross-enti
 - [ ] **3.24** Totals by data kind, facet, and timeframe. Done when: A published table gives question counts for those three keys. The base-question total is at least about 26,000 per stock-day. Evidence:
 - [ ] **3.25** docs/QUESTION_QUALITY.csv shows 0 FAIL. Done when: Per item the file has facets covered over facets total, question count, median non-blank percent, percent constant, depth ratio versus the price median, and PASS or FAIL. The totals row has 0 FAIL. The file is on main before any Step A rerun. Evidence:
 - [ ] **3.26** JAMES TICKS THIS. Hand spot-check of 20 random items. Done when: James writes the 20 item ids and a pass or fail for each in Evidence. Codex and Kimi leave this box empty. Evidence:
+- [ ] **3.27** Cross-timeframe questions. Done when: The v3 tree has questions that compare timeframes on the same entity, including 1d versus 5d, plus timeframe-divergence facets. A row can state a 1d question and a 5d question together. Evidence:
+- [ ] **3.28** Settings count per indicator. Done when: A table on main lists every indicator and how many settings it has. An item whose only rule is still "TV default ±50%" fails. The alternates named in box 1.176 are present. Evidence:
 
 ## Phase 4 — Full leak test
 
