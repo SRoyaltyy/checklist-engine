@@ -1,15 +1,17 @@
 # Project checklist
 
-Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, and 2026-10-26 00:30. This file is the box list. Tick a box in the same commit as the work.
+Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
+
+**Verified by both: 8/224. Claimed awaiting James: 0.**
 
 ## Rules
 
-- Tick a box only when Evidence is filled with a commit SHA or a run URL, and the Done when proof is on main (a file, a column, a run, or a CSV row James can open).
+- Tick a box only when Evidence is filled with a commit SHA or a run URL, and the Done when proof is on main (a file, a column, a run, or a CSV row James can open). Before ticking, the contributor self-verifies: rerun or inspect the proof, not only cite it.
 - Never tick partial-data work. A six-stock smoke, a claimed list with no fill rate, and a provisional release do not count.
-- James verifies and may untick.
 - One checkbox is one commit-able unit.
-- Update this file in the same commit as the work, and add one §0c line per tick with the item id and the run id.
+- Update this file in the same commit as the work, and add one §0c line per tick with the item id and the run id. Update the summary counts in that same commit.
 - No boxes were pre-ticked when this file was created. Later ticks require the evidence below.
+- **DUAL SIGN-OFF (Cyrus 2026-10-26 10:36 HKT).** A box counts as DONE only when both signatures are present on its line: `GPT ✓ <date/SHA>` (the contributor ticks `[x]` with Evidence) and `James ✓ <date HKT>` (James independently verified the Evidence on GitHub). A box with only the contributor tick is claimed, awaiting James. Progress counts report both numbers: claimed, and verified. Phase N+1 may start only when every box in phase N is verified by both. James may reject a claim by adding `James ✗ <reason>` and unticking.
 
 ## Already on main, and why it is not a tick
 
@@ -22,7 +24,7 @@ Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on mai
 
 ## Shape of a line
 
-Each box starts with its id, then the task, then `Done when:` and the proof James can verify, then `Evidence:`. Leave Evidence blank until the proof exists. Then set it to a commit SHA or a run URL.
+Each box starts with its id, then the task, then `Done when:` and the proof James can verify, then `Evidence:`. Leave Evidence blank until the proof exists. Then set it to a commit SHA or a run URL, tick `[x]`, and add `GPT ✓ <date/SHA>`. James adds `James ✓ <date HKT>` after he checks that proof on GitHub. Both signatures are required before the box is DONE.
 
 ## Item counts
 
@@ -46,18 +48,18 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 
 Each crash James read from runs 40207164333 through 40209615520 needs a test on main. A fix that exists only on codex/world-state-v2 does not tick.
 
-- [x] **0.01** Date-key helper for merge dtypes. Done when: One load-time helper casts every date key to datetime64[ns], and a test merges the MSFT and NVDA keys that raised MergeError datetime64[ns] vs datetime64[us] in runs 40207164333–40209615520 on codex/world-state-v2. The test is on main and passes in CI. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
-- [x] **0.02** world_timeframes import path. Done when: The coverage gate imports world_timeframes on ubuntu-latest with no ModuleNotFoundError. The fix is a real package import or an explicit PYTHONPATH, and the passing CI log is linked. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
-- [x] **0.03** Import smoke before heavy steps. Done when: The world workflow runs an import smoke of the build, leak, and coverage modules and stops before fetch, build, leak, or publish if any import fails. A forced bad import fails that step in CI. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
-- [x] **0.04** SEC fair-access client. Done when: companyfacts requests send User-Agent `checklist-engine research cyrus-checklist@users.noreply.github.com`, Accept-Encoding gzip, at most 10 requests per second, and retry with backoff. A logged MSFT fetch no longer returns 403 for a missing header. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). See [SEC_SOURCE_STATUS.json](SEC_SOURCE_STATUS.json) and [WORLD_COVERAGE.csv](WORLD_COVERAGE.csv).
-- [x] **0.05** Persistent SEC 403 is BLOCKED, not a zero column. Done when: If companyfacts is still HTTP 403 after the fair-access client, WORLD_COVERAGE marks that source BLOCKED with the status code, URL, and response excerpt, and the column is absent rather than filled with zeros. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). See [SEC_SOURCE_STATUS.json](SEC_SOURCE_STATUS.json) and [WORLD_COVERAGE.csv](WORLD_COVERAGE.csv).
-- [x] **0.06** Publish fails when the asset list is empty. Done when: A test fails the publish step on an empty asset list. The failure mode of release world-smoke-v2-40207938044-1 (published with zero assets) is the regression case. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
-- [x] **0.07** Downstream steps name the upstream failure. Done when: Leak rebuild, the coverage gate, and publish each stop with the upstream step's command, exit code, and log excerpt. They do not continue into a second traceback that hides the first cause. A CI test breaks an upstream step and checks the downstream message. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
-- [x] **0.08** FRED_API_KEY wired, value never shown. Done when: The workflow passes ${{ secrets.FRED_API_KEY }} into the FRED fetch environment. The secret was set 2026-10-25 23:37 HKT. A run writes macro rows, the log does not contain the key, and git has no key. BLOCKED_SECRET is cleared only for series the fetch returned. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
+- [x] **0.01** Date-key helper for merge dtypes. Done when: One load-time helper casts every date key to datetime64[ns], and a test merges the MSFT and NVDA keys that raised MergeError datetime64[ns] vs datetime64[us] in runs 40207164333–40209615520 on codex/world-state-v2. The test is on main and passes in CI. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.02** world_timeframes import path. Done when: The coverage gate imports world_timeframes on ubuntu-latest with no ModuleNotFoundError. The fix is a real package import or an explicit PYTHONPATH, and the passing CI log is linked. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.03** Import smoke before heavy steps. Done when: The world workflow runs an import smoke of the build, leak, and coverage modules and stops before fetch, build, leak, or publish if any import fails. A forced bad import fails that step in CI. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.04** SEC fair-access client. Done when: companyfacts requests send User-Agent `checklist-engine research cyrus-checklist@users.noreply.github.com`, Accept-Encoding gzip, at most 10 requests per second, and retry with backoff. A logged MSFT fetch no longer returns 403 for a missing header. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). See [SEC_SOURCE_STATUS.json](SEC_SOURCE_STATUS.json) and [WORLD_COVERAGE.csv](WORLD_COVERAGE.csv). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked). James note: header/throttle/retry client verified; SEC still 403 so data comes via 0.05 BLOCKED path, source still needed in Phase 1.
+- [x] **0.05** Persistent SEC 403 is BLOCKED, not a zero column. Done when: If companyfacts is still HTTP 403 after the fair-access client, WORLD_COVERAGE marks that source BLOCKED with the status code, URL, and response excerpt, and the column is absent rather than filled with zeros. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). See [SEC_SOURCE_STATUS.json](SEC_SOURCE_STATUS.json) and [WORLD_COVERAGE.csv](WORLD_COVERAGE.csv). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.06** Publish fails when the asset list is empty. Done when: A test fails the publish step on an empty asset list. The failure mode of release world-smoke-v2-40207938044-1 (published with zero assets) is the regression case. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.07** Downstream steps name the upstream failure. Done when: Leak rebuild, the coverage gate, and publish each stop with the upstream step's command, exit code, and log excerpt. They do not continue into a second traceback that hides the first cause. A CI test breaks an upstream step and checks the downstream message. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
+- [x] **0.08** FRED_API_KEY wired, value never shown. Done when: The workflow passes ${{ secrets.FRED_API_KEY }} into the FRED fetch environment. The secret was set 2026-10-25 23:37 HKT. A run writes macro rows, the log does not contain the key, and git has no key. BLOCKED_SECRET is cleared only for series the fetch returned. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). GPT ✓ 38fb6d6. James ✓ 2026-10-26 10:25 HKT (merge 38fb6d6 + CI 40257553448 checked).
 
 ## Phase 1 — World rebuild
 
-Twenty-six blocks from dictionary/DATA_SOURCES.csv (blocks A–P, 233 items) and docs/TV_COVERAGE.csv (M001–M296). Each block is five boxes: source (check fullscan and theme-radar first), fetch, point-in-time join, candle sizes 1 through 21, and a measured fill. Free public sources only. No paid purchases.
+Phase 1 starts only after every Phase 0 box is verified by both signatures. Twenty-six blocks from dictionary/DATA_SOURCES.csv (blocks A–P, 233 items) and docs/TV_COVERAGE.csv (M001–M296). Each block is five boxes: source (check fullscan and theme-radar first), fetch, point-in-time join, candle sizes 1 through 21, and a measured fill. Free public sources only. No paid purchases.
 
 ### OHLC and volume bars, including 2025–26
 
@@ -329,9 +331,9 @@ P4. Every column, every candle size, and every v3 question. Windows end at D−1
 
 ## Phase 5 — Step A full rerun
 
-Only after phases 0 through 4 are all ticked. Step A output from before that gate does not count.
+Only after every box in phases 0 through 4 is verified by both signatures. Step A output from before that gate does not count.
 
-- [ ] **5.01** Gate: start only after phases 0, 1, 2, 3, and 4 are all ticked. Done when: Every box in those phases has Evidence filled, and James has not unticked them, and docs/QUESTION_QUALITY.csv shows 0 FAIL. Tick this box only when that is true. Run 40180498392 and any Step A attempt before the gate stay provisional. Evidence:
+- [ ] **5.01** Gate: start only after every box in phases 0, 1, 2, 3, and 4 is verified by both signatures. Done when: Every box in those phases has `GPT ✓` and `James ✓`, and docs/QUESTION_QUALITY.csv shows 0 FAIL. Tick this box only when that is true. Run 40180498392 and any Step A attempt before the gate stay provisional. Evidence:
 - [ ] **5.02** The empty-mask crash cannot recur. Done when: A regression test on main reproduces IndexError 'index 0 is out of bounds for axis 0 with size 0' from run 40180498392 and passes. Evidence:
 - [ ] **5.03** Rerun Step A on every chunk, including groups 034 and up. Done when: The matrix lists grid_000 through grid_033 and the new groups. Groups 034 and up include the 1,024 questions that were written and not built (vs_sector_peers 374, vs_theme_peers 374, earnings 56, form4 60, analyst 56, halts 56, short_interest 48) plus the rest of v3. Evidence:
 - [ ] **5.04** Answer columns match the v3 tree. Done when: The Step A column count equals the v3 question count. That is at least about 26,000 base questions, plus the history questions. The old 12,306 answer columns do not pass. Evidence:
@@ -340,9 +342,9 @@ Only after phases 0 through 4 are all ticked. Step A output from before that gat
 
 ## Phase 6 — Exit grid
 
-Only after phase 5 is all ticked.
+Only after every Phase 5 box is verified by both signatures.
 
-- [ ] **6.01** Gate: start only after phase 5 is all ticked. Done when: Every phase-5 box has Evidence. Older exit-grid tables, including release grid-2020-22-v1, stay provisional and are not reused as this phase's output. Evidence:
+- [ ] **6.01** Gate: start only after every Phase 5 box is verified by both signatures. Done when: Every Phase 5 box has `GPT ✓` and `James ✓`. Older exit-grid tables, including release grid-2020-22-v1, stay provisional and are not reused as this phase's output. Evidence:
 - [ ] **6.02** Rebuild the 26,100-rule exit grid. Done when: Take-profit 2–30 percent, hold 1–30 sessions, stop 2–30 percent or none. That is 29 by 30 by 30 = 26,100 sell rules. The release states that count. Evidence:
 - [ ] **6.03** Fees and the same-day baseline are in the result. Done when: Each rule's profit is after 30bp each way, and the same-day market return is stored beside it. Evidence:
 - [ ] **6.04** Dynamic target and stop exits are included. Done when: The dynamic target and stop exits named in the 2026-10-25 23:03 owner clarification are their own rows, separate from the fixed 26,100. Evidence:
@@ -350,9 +352,9 @@ Only after phase 5 is all ticked.
 
 ## Phase 7 — Shortlist, sharded
 
-Only after phase 6 is all ticked. Until the gate, the shortlist stays paused.
+Only after every Phase 6 box is verified by both signatures. Until the gate, the shortlist stays paused.
 
-- [ ] **7.01** Gate: start only after phase 6 is all ticked. Done when: The shortlist stays paused until then. Do not re-dispatch run 40175232753. Run 40156872713 (KeyError 2020) and run 40172094280 (cancelled mid-run) are not Evidence. Evidence:
+- [ ] **7.01** Gate: start only after every Phase 6 box is verified by both signatures. Done when: The shortlist stays paused until then. Do not re-dispatch run 40175232753. Run 40156872713 (KeyError 2020) and run 40172094280 (cancelled mid-run) are not Evidence. Evidence:
 - [ ] **7.02** KeyError 2020 is covered by a unit test. Done when: A test on main loads grid_001, grid_008, and grid_010 and does not raise KeyError 2020 from scoring/shortlist.py. The year key works whether the year is an int or a string. Evidence:
 - [ ] **7.03** One job per chunk, then a small merge. Done when: The workflow is a matrix on ubuntu-latest. Each job streams with bounded memory. The merge job reads only the shard outputs. Evidence:
 - [ ] **7.04** Each shard publishes a partial output. Done when: The release contains one partial file per chunk, written before the merge, so a failed merge does not drop finished chunks. Evidence:
@@ -362,9 +364,9 @@ Only after phase 6 is all ticked. Until the gate, the shortlist stays paused.
 
 ## Phase 8 — Combine (Amendment A1)
 
-Only after phase 7 is all ticked. The 34 groups are a compute split. Score each setup together with its exit rule.
+Only after every Phase 7 box is verified by both signatures. The 34 groups are a compute split. Score each setup together with its exit rule.
 
-- [ ] **8.01** Gate: start only after phase 7 is all ticked. Done when: Combiner fits stay paused until then. An additive sum of single-question scores does not pass any later box in this phase. Evidence:
+- [ ] **8.01** Gate: start only after every Phase 7 box is verified by both signatures. Done when: Combiner fits stay paused until then. An additive sum of single-question scores does not pass any later box in this phase. Evidence:
 - [ ] **8.02** The search crosses groups and blocks. Done when: The published condition sets mix questions from more than one of the 34 chunks and from more than one data block. The chunks are described as a compute split. Evidence:
 - [ ] **8.03** Pair search coverage. Done when: The release states how many pair candidates were searched, how many were excluded, and what pair space remains. Evidence:
 - [ ] **8.04** Triple search coverage. Done when: The release states the same three numbers for triples. Evidence:
@@ -375,18 +377,18 @@ Only after phase 7 is all ticked. The 34 groups are a compute split. Score each 
 
 ## Phase 9 — 2023–24 check
 
-Only after phase 8 is all ticked. The selection window is 2020–22.
+Only after every Phase 8 box is verified by both signatures. The selection window is 2020–22.
 
-- [ ] **9.01** Gate: start only after phase 8 is all ticked. Done when: Confirmation uses the setups chosen on 2020–22. This phase does not search new cutoffs. Evidence:
+- [ ] **9.01** Gate: start only after every Phase 8 box is verified by both signatures. Done when: Confirmation uses the setups chosen on 2020–22. This phase does not search new cutoffs. Evidence:
 - [ ] **9.02** 2023–24 confirm, with no refit. Done when: The same setups and the same exit rules are scored on 2023–24. Cutoffs are not retuned. The run URL is the Evidence. Evidence:
 - [ ] **9.03** The counting rule. Done when: A setup is kept only when expected profit after fees is above 0 and the win rate is at least 40 percent. The table also shows floors 35, 45, and 50. Evidence:
 - [ ] **9.04** State whether 2023–24 touched selection. Done when: The write-up names the selection period and the evaluation period. If 2023–24 informed selection or tuning, the score is labelled as not an untouched check. Evidence:
 
 ## Phase 10 — 2025–26 check
 
-Only after phase 9 is all ticked. The 2026-10-25 23:03 clarification allows 2025–26 in testing. Call a score untouched only when those years did not inform selection.
+Only after every Phase 9 box is verified by both signatures. The 2026-10-25 23:03 clarification allows 2025–26 in testing. Call a score untouched only when those years did not inform selection.
 
-- [ ] **10.01** Gate: start only after phase 9 is all ticked. Done when: This is the recorded 2025–26 check of the setups that survived phase 9. Evidence:
+- [ ] **10.01** Gate: start only after every Phase 9 box is verified by both signatures. Done when: This is the recorded 2025–26 check of the setups that survived phase 9. Evidence:
 - [ ] **10.02** The check reads the rebuilt 2025–26 snapshot. Done when: Inputs are the phase-1 bar file through 2026, not the separate six-pilot pull. Day-D inputs still exclude anything not knowable before the open. The seal lift of 2026-10-25 allows these years in testing. It does not allow a future bar. Evidence:
 - [ ] **10.03** A report released on the morning of D stays out. Done when: Earnings and filings whose report date or filed date is D are excluded. A calendar fact dated D that was published before the open may be used, and the column's point-in-time rule says so. Evidence:
 - [ ] **10.04** Label the period. Done when: The write-up says whether 2025–26 was used to choose or tune anything. If it was, the score is not called an untouched out-of-sample check. Evidence:
@@ -394,9 +396,9 @@ Only after phase 9 is all ticked. The 2026-10-25 23:03 clarification allows 2025
 
 ## Phase 11 — Publish probabilities
 
-Only after phase 10 is all ticked.
+Only after every Phase 10 box is verified by both signatures.
 
-- [ ] **11.01** Gate: start only after phase 10 is all ticked. Done when: The probability table is built only from the setups that survived phase 10. Evidence:
+- [ ] **11.01** Gate: start only after every Phase 10 box is verified by both signatures. Done when: The probability table is built only from the setups that survived phase 10. Evidence:
 - [ ] **11.02** One probability row per setup and exit rule. Done when: For every kept setup and every (take-profit, maximum hold, stop) the file has the probability that net profit is above 0, average win, average loss, expected net profit after fees, sample count, a significance statistic, and the same-day benchmark. Evidence:
 - [ ] **11.03** Rank by expected profit after fees. Done when: The table is sorted by expected net profit. Win probability is its own column and is not the sort key. Evidence:
 - [ ] **11.04** A thin sample is unsupported. Done when: A row under the stated minimum sample is marked unsupported and is left out of the ranked list. Evidence:
