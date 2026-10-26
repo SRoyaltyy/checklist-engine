@@ -1,0 +1,1799 @@
+{
+  "version": "phase1-settings-v1",
+  "status": "REGISTERED_NOT_MEASURED_COVERAGE",
+  "units": "Periods count native completed candles, unless explicitly calendar anchors.",
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "items": {
+    "I028": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fastk": 5,
+            "slowk": 3,
+            "slowd": 3
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fastk": 14,
+            "slowk": 3,
+            "slowd": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fastk": 21,
+            "slowk": 5,
+            "slowd": 5
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I029": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I030": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 5,
+            "slow": 35,
+            "signal": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 12,
+            "slow": 26,
+            "signal": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 8,
+            "slow": 17,
+            "signal": 9
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I034": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I036": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 40
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I037": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I038": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 3,
+            "slow": 17
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 5,
+            "slow": 34
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 10,
+            "slow": 68
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I039": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "mean_period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "mean_period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "mean_period": 28
+          }
+        }
+      ],
+      "note": "Raw BOP is also retained; mean_period smooths raw BOP as in the registered dictionary definition."
+    },
+    "I040": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 13
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 26
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I041": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I042": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 11
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 21
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 42
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I043": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 18
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I044": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "roc1": 5,
+            "roc2": 8,
+            "roc3": 10,
+            "roc4": 15,
+            "sma1": 5,
+            "sma2": 5,
+            "sma3": 5,
+            "sma4": 8,
+            "signal": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "roc1": 10,
+            "roc2": 15,
+            "roc3": 20,
+            "roc4": 30,
+            "sma1": 10,
+            "sma2": 10,
+            "sma3": 10,
+            "sma4": 15,
+            "signal": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "roc1": 20,
+            "roc2": 30,
+            "roc3": 40,
+            "roc4": 60,
+            "sma1": 20,
+            "sma2": 20,
+            "sma3": 20,
+            "sma4": 30,
+            "signal": 18
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I045": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "wma": 5,
+            "roc1": 7,
+            "roc2": 6
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "wma": 10,
+            "roc1": 14,
+            "roc2": 11
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "wma": 20,
+            "roc1": 28,
+            "roc2": 22
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I046": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 6,
+            "slow": 13,
+            "signal": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 12,
+            "slow": 26,
+            "signal": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 24,
+            "slow": 52,
+            "signal": 18
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I047": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I048": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I049": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "std_period": 5,
+            "rma_period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "std_period": 10,
+            "rma_period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "std_period": 20,
+            "rma_period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I050": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "short": 3,
+            "long": 10,
+            "signal": 3
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "short": 5,
+            "long": 20,
+            "signal": 5
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "short": 10,
+            "long": 40,
+            "signal": 10
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I051": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "range_period": 5,
+            "smooth1": 2,
+            "smooth2": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "range_period": 10,
+            "smooth1": 3,
+            "smooth2": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "range_period": 20,
+            "smooth1": 6,
+            "smooth2": 6
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I052": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "rsi": 7,
+            "stoch": 7,
+            "k": 2,
+            "d": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "rsi": 14,
+            "stoch": 14,
+            "k": 3,
+            "d": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "rsi": 28,
+            "stoch": 28,
+            "k": 6,
+            "d": 6
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I053": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 9
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 18
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 36
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I054": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "long": 13,
+            "short": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "long": 25,
+            "short": 13
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "long": 50,
+            "short": 26
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I055": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period1": 4,
+            "period2": 7,
+            "period3": 14
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period1": 7,
+            "period2": 14,
+            "period3": 28
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period1": 14,
+            "period2": 28,
+            "period3": 56
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I056": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "price_rsi": 2,
+            "streak_rsi": 2,
+            "rank": 50
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "price_rsi": 3,
+            "streak_rsi": 2,
+            "rank": 100
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "price_rsi": 6,
+            "streak_rsi": 4,
+            "rank": 200
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I057": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 5,
+            "multiplier": 1,
+            "stop_period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 10,
+            "multiplier": 1,
+            "stop_period": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 20,
+            "multiplier": 1,
+            "stop_period": 18
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I058": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I059": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 5,
+            "sum_period": 13
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 9,
+            "sum_period": 25
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 18,
+            "sum_period": 50
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I060": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I061": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "acceleration": 0.01,
+            "maximum": 0.1
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "acceleration": 0.02,
+            "maximum": 0.2
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "acceleration": 0.04,
+            "maximum": 0.4
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I062": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 5,
+            "multiplier": 3
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 10,
+            "multiplier": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 20,
+            "multiplier": 3
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I063": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 11,
+            "multiplier": 3
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 22,
+            "multiplier": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 44,
+            "multiplier": 3
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I064": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 10,
+            "multiplier": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20,
+            "multiplier": 2
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 40,
+            "multiplier": 2
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I065": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "jaw": 7,
+            "teeth": 4,
+            "lips": 3,
+            "jaw_shift": 4,
+            "teeth_shift": 3,
+            "lips_shift": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "jaw": 13,
+            "teeth": 8,
+            "lips": 5,
+            "jaw_shift": 8,
+            "teeth_shift": 5,
+            "lips_shift": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "jaw": 26,
+            "teeth": 16,
+            "lips": 10,
+            "jaw_shift": 16,
+            "teeth_shift": 10,
+            "lips_shift": 6
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I066": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "left": 1,
+            "right": 1
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "left": 2,
+            "right": 2
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "left": 4,
+            "right": 4
+          }
+        }
+      ],
+      "note": "Publish a pivot only after right bars have closed; never write it back onto its unconfirmed pivot date."
+    },
+    "I067": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "reversal_percent": 2.5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "reversal_percent": 5
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "reversal_percent": 10
+          }
+        }
+      ],
+      "note": "Only confirmed percentage-reversal pivots; live extremes are not confirmed pivots."
+    },
+    "I068": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 50
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 100
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 200
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I069": {
+      "settings": [
+        {
+          "name": "window_10",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "window_60",
+          "kind": "native",
+          "parameters": {
+            "period": 60
+          }
+        },
+        {
+          "name": "window_120",
+          "kind": "native",
+          "parameters": {
+            "period": 120
+          }
+        }
+      ],
+      "note": "Pearson correlation of stock and SPY native-candle returns; pairwise identical candle boundaries required."
+    },
+    "I070": {
+      "settings": [
+        {
+          "name": "window_10",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "window_60",
+          "kind": "native",
+          "parameters": {
+            "period": 60
+          }
+        },
+        {
+          "name": "window_120",
+          "kind": "native",
+          "parameters": {
+            "period": 120
+          }
+        }
+      ],
+      "note": "Annualized log-return sample volatility; daily sqrt(252), k-day sqrt(252/k), monthly sqrt(12)."
+    },
+    "I071": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I072": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I073": {
+      "settings": [
+        {
+          "name": "window_5",
+          "kind": "native",
+          "parameters": {
+            "period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 21
+          }
+        },
+        {
+          "name": "window_63",
+          "kind": "native",
+          "parameters": {
+            "period": 63
+          }
+        },
+        {
+          "name": "window_126",
+          "kind": "native",
+          "parameters": {
+            "period": 126
+          }
+        },
+        {
+          "name": "window_252",
+          "kind": "native",
+          "parameters": {
+            "period": 252
+          }
+        }
+      ],
+      "note": "All five explicit horizons plus calendar YTD from the prior year-end close."
+    },
+    "I074": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "anchor": "week"
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "anchor": "month"
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "anchor": "quarter"
+          }
+        }
+      ],
+      "note": "Traditional pivots from prior completed week/month/quarter; current partial block is never used."
+    },
+    "I075": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "left": 5,
+            "right": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "left": 10,
+            "right": 10
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "left": 20,
+            "right": 20
+          }
+        }
+      ],
+      "note": "Strict pivots; ties disqualify. Availability is after the right-hand confirmation bars close."
+    },
+    "I076": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 14,
+            "reversal_atr": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 14,
+            "reversal_atr": 3
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "atr_period": 14,
+            "reversal_atr": 5
+          }
+        }
+      ],
+      "note": "Last two confirmed ATR-reversal pivots, ATR frozen at each running extreme; levels 0.236/0.382/0.5/0.618/0.786."
+    },
+    "I077": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "last_pivots": 2,
+            "pivot_left": 2,
+            "pivot_right": 2
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "last_pivots": 3,
+            "pivot_left": 2,
+            "pivot_right": 2
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "last_pivots": 5,
+            "pivot_left": 2,
+            "pivot_right": 2
+          }
+        }
+      ],
+      "note": "Arithmetic mean of last K confirmed strict highs/lows. Unknown when fewer than K pivots exist."
+    },
+    "I080": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 50
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I084": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I088": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 40
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I089": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 2,
+            "slow": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 3,
+            "slow": 10
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 6,
+            "slow": 20
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I090": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 14
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 28
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I091": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 13
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 26
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I092": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 17,
+            "slow": 28,
+            "signal": 7
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 34,
+            "slow": 55,
+            "signal": 13
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 68,
+            "slow": 110,
+            "signal": 26
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I093": {
+      "settings": [
+        {
+          "name": "default",
+          "kind": "raw",
+          "parameters": {}
+        },
+        {
+          "name": "short",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 10
+          }
+        },
+        {
+          "name": "medium",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 40
+          }
+        }
+      ],
+      "note": "EMA of the raw NVI and PVI; raw cumulative base 1000 retained"
+    },
+    "I094": {
+      "settings": [
+        {
+          "name": "default",
+          "kind": "raw",
+          "parameters": {}
+        },
+        {
+          "name": "short",
+          "kind": "derived",
+          "parameters": {
+            "sum_period": 5
+          }
+        },
+        {
+          "name": "medium",
+          "kind": "derived",
+          "parameters": {
+            "sum_period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "derived",
+          "parameters": {
+            "sum_period": 60
+          }
+        }
+      ],
+      "note": "rolling sum of raw V*sign(close change); raw series retained"
+    },
+    "I095": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "fast": 6,
+            "slow": 13,
+            "signal": 5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "fast": 12,
+            "slow": 26,
+            "signal": 9
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "fast": 24,
+            "slow": 52,
+            "signal": 18
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I096": {
+      "settings": [
+        {
+          "name": "default",
+          "kind": "raw",
+          "parameters": {}
+        },
+        {
+          "name": "short",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 10
+          }
+        },
+        {
+          "name": "medium",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "derived",
+          "parameters": {
+            "ema_period": 40
+          }
+        }
+      ],
+      "note": "EMA of the raw cumulative PVT; raw series retained"
+    },
+    "I098": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 10,
+            "deviation": 1.5
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20,
+            "deviation": 2
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 50,
+            "deviation": 2.5
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I099": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 20,
+            "atr_period": 14,
+            "multiplier": 1
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 20,
+            "atr_period": 14,
+            "multiplier": 1.5
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "ema_period": 20,
+            "atr_period": 14,
+            "multiplier": 2
+          }
+        }
+      ],
+      "note": ""
+    },
+    "I101": {
+      "settings": [
+        {
+          "name": "short",
+          "kind": "native",
+          "parameters": {
+            "period": 10
+          }
+        },
+        {
+          "name": "default",
+          "kind": "native",
+          "parameters": {
+            "period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "native",
+          "parameters": {
+            "period": 55
+          }
+        }
+      ],
+      "note": ""
+    }
+  }
+}
