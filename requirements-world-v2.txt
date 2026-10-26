@@ -4,3 +4,4 @@ pyarrow>=18
 TA-Lib==0.8.2
 pytest>=8,<10
 PyYAML>=6,<7
+exchange_calendars==4.13.2

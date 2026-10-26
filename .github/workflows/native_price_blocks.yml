@@ -1,0 +1,105 @@
+name: native-price-blocks
+on:
+  push:
+    branches: [codex/native-world-blocks-v1]
+    paths: ['ci/NATIVE_PRICE_BUILD_REQUEST.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: native-price-blocks-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      tag: ${{ steps.inputs.outputs.tag }}
+      shards: ${{ steps.inputs.outputs.shards }}
+      resume_prefix: ${{ steps.inputs.outputs.resume_prefix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.audit_indicator_settings
+      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py tests/test_world_native_alignment.py tests/test_world_moving_averages.py tests/test_price_bridge_basis.py tests/test_world_native_blocks.py -q
+      - id: inputs
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          from ci.native_price_blocks import download,recipe_fingerprint
+          request=json.loads(Path("ci/NATIVE_PRICE_BUILD_REQUEST.json").read_text())
+          mode=request["mode"]
+          if mode=="reuse":
+              tag=request["inputs_tag"]
+              inputs=json.loads(download(tag,"BUILD_INPUTS.json","prepared").read_text())
+              if inputs["recipe_fingerprint"]!=recipe_fingerprint()[0]:raise ValueError("resume recipe changed")
+              with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+                  f.write("tag="+tag+"\nshards="+json.dumps(list(range(inputs["feature_shards"])))+"\n")
+          elif mode in ("smoke","full"):
+              args=["python","-m","ci.native_price_blocks","prepare","--directory","prepared","--shards",str(1 if mode=="smoke" else 64)]
+              if mode=="smoke":args+=["--tickers","SPY,AAPL,MSFT,NVDA"]
+              subprocess.run(args,check=True)
+          else:raise ValueError("unknown build mode")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("resume_prefix="+request.get("resume_prefix","")+"\n")
+          PY
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.shards) }}
+    env:
+      INPUTS_TAG: ${{ needs.prepare.outputs.tag }}
+      RESUME_PREFIX: ${{ needs.prepare.outputs.resume_prefix }}
+      FEATURE_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.native_price_blocks build --directory native-build --inputs-tag "$INPUTS_TAG" --shard "$FEATURE_SHARD" --resume-prefix "$RESUME_PREFIX"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-price-status-${{ matrix.shard }}
+          path: |
+            native-build/SHARD_*.json
+          if-no-files-found: ignore
+  merge:
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      INPUTS_TAG: ${{ needs.prepare.outputs.tag }}
+      BUILD_PREFIX: native-price-blocks-v1-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.native_price_blocks merge --directory measured --inputs-tag "$INPUTS_TAG" --build-prefix "$BUILD_PREFIX"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-price-measured-status
+          path: |
+            measured/*.json
+            measured/*.csv
+          if-no-files-found: ignore

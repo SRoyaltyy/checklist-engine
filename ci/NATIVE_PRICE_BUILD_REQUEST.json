@@ -1,0 +1,5 @@
+{
+  "version": 3,
+  "mode": "smoke",
+  "request": "Use pinned XNYS sessions verified against SPY; log missing VIX observations without modifying any price rows."
+}
