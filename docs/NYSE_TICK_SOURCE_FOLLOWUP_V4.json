@@ -1,0 +1,77 @@
+{
+  "status": "NO_COMPLETE_FREE_HISTORY_PROVEN",
+  "source_evidence_release": "nyse-tick-source-v1-40308374864-1",
+  "prior_archive_sha256": "89e4a5aa2bdaa82f70b59db07d0bf8790b90952661da14fba33353e0eb48378b",
+  "json_scripts": 3,
+  "matching_name_objects": [
+    {
+      "path": "script2.props.pageProps.state.indexStore.instrument",
+      "names": [
+        "NYSE Tick Index",
+        "NYSE Tick Index"
+      ],
+      "ids": {
+        "base.id": "961122"
+      },
+      "keys": [
+        "base",
+        "name",
+        "price",
+        "exchange",
+        "fundamental",
+        "technical",
+        "volume",
+        "bidding",
+        "relatives",
+        "chartSettings",
+        "underlying"
+      ]
+    },
+    {
+      "path": "script2.props.pageProps.state.indexStore.instrument.name",
+      "names": [
+        "NYSE Tick Index",
+        "NYSE Tick Index"
+      ],
+      "ids": {},
+      "keys": [
+        "fullName",
+        "symbol",
+        "shortName",
+        "parentName"
+      ]
+    }
+  ],
+  "identity_candidates": [
+    {
+      "path": "script2.props.pageProps.state.indexStore.instrument",
+      "name": "NYSE Tick Index",
+      "id_field": "base.id",
+      "instrument_id": "961122"
+    }
+  ],
+  "probes": [
+    {
+      "url": "https://api.investing.com/api/financialdata/historical/961122?start-date=2020-01-01&end-date=2020-12-31&time-frame=Daily&add-missing-rows=false",
+      "http_status": 403,
+      "bytes": 6000,
+      "sha256": "53005ff2795ef09608af0f26ee960c95c44295c17a56e699820bb1260b8dc125",
+      "year": 2020
+    }
+  ],
+  "extreme_reading_count": "UNAVAILABLE_FROM_DAILY_OHLC",
+  "run": "40334521879",
+  "no_bypass": true,
+  "verified_page_instrument_id": "961122",
+  "stopped_reason": "Public API refused/failed normal access; no authentication or bot-control bypass attempted.",
+  "stooq_preserved_response": [
+    {
+      "member": "tick-source/stooq_5e7469636b.raw.gz",
+      "finding": "Provider requires browser verification; not a numeric history. No challenge was executed."
+    },
+    {
+      "member": "tick-source/stooq_7469636b2e6e797365.raw.gz",
+      "finding": "Provider requires browser verification; not a numeric history. No challenge was executed."
+    }
+  ]
+}
