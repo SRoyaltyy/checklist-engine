@@ -1,11 +1,13 @@
 """Bounded public SQL probes for options coverage planning; never features."""
-import gzip,hashlib,json,os,time,urllib.request,urllib.parse,urllib.error
+import gzip,hashlib,json,os,re,time,urllib.request,urllib.parse,urllib.error
 from pathlib import Path
 ROOT=Path("gap-sources/dolt-index")
 REF="8fvk999ugbld4o782kvi36k7sv37ljbm"
-BASE="https://www.dolthub.com/api/v1alpha1/post-no-preference/options/"+REF
+BASE="https://www.dolthub.com/api/v1alpha1/post-no-preference/options/master"
 receipts=[]
 def query(name,sql):
+    if sql.startswith(("SELECT","EXPLAIN")):
+        sql=re.sub(r"FROM (volatility_history|option_chain|dolt_docs)\b",lambda m:m.group(0)+" AS OF '"+REF+"'",sql)
     url=BASE+"?"+urllib.parse.urlencode({"q":sql})
     started=time.time()
     try:

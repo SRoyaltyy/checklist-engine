@@ -1,1 +1,1 @@
-{"version":3,"request":"Pinned-ref v1 read, table indexes, bounded AAPL January-2020 source probes; no feature build."}
+{"version":4,"request":"Use documented branch read route with SQL AS OF; bounded source/index diagnostics only."}
