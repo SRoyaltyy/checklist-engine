@@ -1,6 +1,6 @@
 # Full frozen-universe source acquisition v3
 
-Scope: every ticker in the checksummed `data-2020-24-v1/universe_2020_survivors_le2024.parquet` asset (5,234 tickers in the verified baseline). No automatic ticker exclusions. This is source acquisition, not a world-state or scoring pass.
+Scope: every ticker in the checksummed `data-2020-24-v1/universe_2020_survivors_le2024.parquet` asset (8,727 measured universe tickers; the separate frozen bar file contains 5,234). No automatic ticker exclusions. This is source acquisition, not a world-state or scoring pass.
 
 The initial run is pinned through 2026-10-23, the latest completed US session when this version was prepared. Every shard uses the same New York end-date boundary. The original frozen bars are preserved. Vendor quote prices remain explicitly unverified as historical nominal prices; no market-cap or nominal-price cutoff is approved by these data.
 

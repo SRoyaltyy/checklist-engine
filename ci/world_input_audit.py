@@ -1,0 +1,59 @@
+"""Audit the two frozen inputs and current durable source checkpoints without scoring."""
+import argparse,collections,hashlib,json,os,re,urllib.request
+from pathlib import Path
+import pandas as pd
+import pyarrow.parquet as pq
+
+
+def input_info(file):
+    parquet=pq.ParquetFile(file)
+    frame=pd.read_parquet(file,columns=['ticker','date'])
+    dates=pd.to_datetime(frame.date)
+    names=set(frame.ticker.dropna().astype(str))
+    return dict(file=str(file),sha256=hashlib.sha256(Path(file).read_bytes()).hexdigest(),
+        rows=parquet.metadata.num_rows,columns={field.name:str(field.type) for field in parquet.schema_arrow},
+        ticker_count=len(names),first_date=str(dates.min())[:10],last_date=str(dates.max())[:10]),names
+
+
+def get(url,binary=False):
+    headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'User-Agent':'checklist-engine-source-audit'}
+    if binary:headers['Accept']='application/octet-stream'
+    with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=120) as response:
+        data=response.read()
+    return data if binary else json.loads(data)
+
+
+def main():
+    ap=argparse.ArgumentParser();ap.add_argument('--universe',required=True);ap.add_argument('--bars',required=True)
+    ap.add_argument('--source-tag',required=True);ap.add_argument('--out',required=True);args=ap.parse_args()
+    out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
+    universe,universe_names=input_info(args.universe);bars,bar_names=input_info(args.bars)
+    repo=os.environ['GITHUB_REPOSITORY'];api=f'https://api.github.com/repos/{repo}'
+    release=get(api+'/releases/tags/'+args.source_tag);assets=[];page=1
+    while True:
+        batch=get(api+f"/releases/{release['id']}/assets?per_page=100&page={page}")
+        assets.extend(batch)
+        if len(batch)<100:break
+        page+=1
+    latest={}
+    for asset in assets:
+        match=re.fullmatch(r'prices_shard_(\d+)_attempt_(\d+)_part_(\d+)\.json',asset['name'])
+        if match:
+            shard,attempt,part=map(int,match.groups())
+            if shard not in latest or (attempt,part)>latest[shard][0]:latest[shard]=((attempt,part),asset)
+    completed={};errors={}
+    for _,asset in latest.values():
+        record=json.loads(get(asset['url'],binary=True));completed.update(record['report']['completed']);errors.update(record['report']['errors'])
+    samples=[dict(ticker=t,in_frozen_bars=t in bar_names,**r) for t,r in sorted(errors.items())[:30]]
+    report=dict(status='READ_ONLY_AUDIT',source_tag=args.source_tag,asset_count=len(assets),
+        universe=universe,bars=bars,universe_without_frozen_bars=len(universe_names-bar_names),
+        missing_bar_sample=sorted(universe_names-bar_names)[:60],universe_names=sorted(universe_names),
+        frozen_bar_names=sorted(bar_names),checkpoint_shards=len(latest),currently_fetched=len(completed),
+        currently_failed=len(errors),currently_pending=len(universe_names-set(completed)-set(errors)),
+        error_types=dict(collections.Counter(str(r.get('http_status',r.get('error_type'))) for r in errors.values())),
+        error_samples=samples,world_coverage_approved=False)
+    (out/'WORLD_INPUT_AUDIT.json').write_text(json.dumps(report,indent=2))
+    print(json.dumps({k:v for k,v in report.items() if k not in ('universe_names','frozen_bar_names')}),flush=True)
+
+
+if __name__=='__main__':main()
