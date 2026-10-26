@@ -1,0 +1,168 @@
+{
+  "kind": "fred",
+  "source_commit": "7356587db4394b64c0509d1285e0fed4066f56f2",
+  "run_url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669",
+  "scope": "Source-only evidence; no complete world-state approval",
+  "status": {
+    "source": "FRED/ALFRED",
+    "status": "PASS",
+    "series": {
+      "DGS10": {
+        "status": "PASS",
+        "archive_first_vintage": "2005-06-28",
+        "rows": 145785,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-22",
+        "first_vintage": "2005-06-28",
+        "last_vintage": "2026-10-23"
+      },
+      "DGS2": {
+        "status": "PASS",
+        "archive_first_vintage": "2005-06-28",
+        "rows": 145785,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-22",
+        "first_vintage": "2005-06-28",
+        "last_vintage": "2026-10-23"
+      },
+      "T10Y2Y": {
+        "status": "PASS",
+        "archive_first_vintage": "2014-01-27",
+        "rows": 100775,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-23",
+        "first_vintage": "2014-01-27",
+        "last_vintage": "2026-10-23"
+      },
+      "DTWEXBGS": {
+        "status": "PASS",
+        "archive_first_vintage": "2019-02-04",
+        "rows": 51708,
+        "first_obs": "2006-01-02",
+        "last_obs": "2026-10-16",
+        "first_vintage": "2019-02-04",
+        "last_vintage": "2026-10-19"
+      },
+      "DCOILWTICO": {
+        "status": "PASS",
+        "archive_first_vintage": "2011-04-06",
+        "rows": 118774,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-20",
+        "first_vintage": "2011-04-06",
+        "last_vintage": "2026-10-21"
+      },
+      "BAMLH0A0HYM2": {
+        "status": "PASS",
+        "archive_first_vintage": "2023-10-24",
+        "rows": 1720,
+        "first_obs": "2023-10-24",
+        "last_obs": "2026-10-22",
+        "first_vintage": "2023-10-24",
+        "last_vintage": "2026-10-22"
+      },
+      "FEDFUNDS": {
+        "status": "PASS",
+        "archive_first_vintage": "1996-12-03",
+        "rows": 8154,
+        "first_obs": "1990-01-01",
+        "last_obs": "2026-09-01",
+        "first_vintage": "1996-12-03",
+        "last_vintage": "2026-10-01"
+      },
+      "CPIAUCSL": {
+        "status": "PASS",
+        "archive_first_vintage": "1972-07-21",
+        "rows": 9966,
+        "first_obs": "1990-01-01",
+        "last_obs": "2026-09-01",
+        "first_vintage": "1990-02-21",
+        "last_vintage": "2026-10-14"
+      },
+      "UNRATE": {
+        "status": "PASS",
+        "archive_first_vintage": "1960-03-15",
+        "rows": 8821,
+        "first_obs": "1990-01-01",
+        "last_obs": "2026-09-01",
+        "first_vintage": "1990-02-02",
+        "last_vintage": "2026-10-02"
+      },
+      "DTB3": {
+        "status": "PASS",
+        "archive_first_vintage": "2005-06-28",
+        "rows": 145817,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-22",
+        "first_vintage": "2005-06-28",
+        "last_vintage": "2026-10-23"
+      },
+      "ICSA": {
+        "status": "PASS",
+        "archive_first_vintage": "2009-05-28",
+        "rows": 31423,
+        "first_obs": "1990-01-06",
+        "last_obs": "2026-10-17",
+        "first_vintage": "2009-05-28",
+        "last_vintage": "2026-10-22"
+      },
+      "UMCSENT": {
+        "status": "PASS",
+        "archive_first_vintage": "1998-07-31",
+        "rows": 8013,
+        "first_obs": "1990-01-01",
+        "last_obs": "2026-09-01",
+        "first_vintage": "1998-07-31",
+        "last_vintage": "2026-09-25"
+      },
+      "VIXCLS": {
+        "status": "PASS",
+        "archive_first_vintage": "2010-11-22",
+        "rows": 124245,
+        "first_obs": "1990-01-02",
+        "last_obs": "2026-10-22",
+        "first_vintage": "2010-11-22",
+        "last_vintage": "2026-10-22"
+      }
+    },
+    "rows": 900986
+  },
+  "archive_sha256": "16a60d96ccbc0f9e5424bc9dc5057e3a72327a48b8036078072cca4bfbedb5d8",
+  "files": [
+    {
+      "path": "fred.parquet",
+      "bytes": 3268083,
+      "sha256": "91219b769e3a7f0f1d1f65e4d68c29ba5f368f1c7a75d500da315baf364de497"
+    },
+    {
+      "path": "fred.source.json",
+      "bytes": 3346,
+      "sha256": "94b2dce6d81dec583cefc56b4d1bc0df67f91d03631d956c3bebd15360001bc4"
+    }
+  ],
+  "release_url": "https://github.com/SRoyaltyy/checklist-engine/releases/tag/fred-structured-v3-40266650669-1",
+  "registered_I195": [
+    "DGS10",
+    "DGS2",
+    "T10Y2Y",
+    "DTWEXBGS",
+    "DCOILWTICO",
+    "BAMLH0A0HYM2",
+    "FEDFUNDS",
+    "CPIAUCSL",
+    "UNRATE"
+  ],
+  "registered_I178": [
+    "VIXCLS"
+  ],
+  "additional_preserved_series": [
+    "DTB3",
+    "ICSA",
+    "UMCSENT"
+  ],
+  "limitations": [
+    "Source fetch proof only; no full-universe world measurement approval.",
+    "ALFRED archives start on the dates reported per series. BAMLH0A0HYM2 starts 2023-10-24; earlier credit-spread observations were not fabricated.",
+    "CPI is bound to official CPIAUCSL. Monthly first-release and latest-known variants remain distinct; strict vintage_date < D applies."
+  ]
+}
