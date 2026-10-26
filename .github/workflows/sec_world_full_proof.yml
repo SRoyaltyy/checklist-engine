@@ -1,0 +1,86 @@
+name: full-sec-archive-and-numeric-proof
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['.github/workflows/sec_world_full_proof.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  repaired-source-ready:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for only the requested shard-9 rerun
+        run: gh run watch 40282669220 --exit-status --interval 15
+  verify:
+    needs: repaired-source-ready
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Check all hashes and independently reparse every numeric fact
+        run: python -m ci.sec_world_full_proof --base-tag sec-world-v4-40267486206-1 --repair-tag sec-world-shard9-repair-40282669220-1 --shard ${{ matrix.shard }} --out sec-full-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-full-proof-${{ matrix.shard }}
+          path: sec-full-proof/
+  combine:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sec-full-proof-*
+          merge-multiple: true
+          path: sec-full-proof
+      - name: Require complete CIK/shard proof and retain quarantine
+        run: python -m ci.sec_world_full_proof_combine
+      - name: Publish immutable proof
+        run: python -m ci.world_pipeline publish --directory sec-full-proof --tag sec-world-proof-v5-${{ github.run_id }}-${{ github.run_attempt }} --source-commit ${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sec-full-proof-summary
+          path: sec-full-proof/SEC_FULL_SOURCE_PROOF_SUMMARY.json
+      - name: Put reviewable source proof on main
+        run: |
+          cp sec-full-proof/SEC_FULL_SOURCE_PROOF_SUMMARY.json /tmp/SEC_FULL_SOURCE_PROOF_SUMMARY.json
+          git fetch origin main
+          git checkout -B sec-integrity-proof-publication origin/main
+          cp /tmp/SEC_FULL_SOURCE_PROOF_SUMMARY.json docs/SEC_FULL_SOURCE_PROOF_SUMMARY.json
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/SEC_FULL_SOURCE_PROOF_SUMMARY.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish complete raw SEC integrity proof with identity quarantine retained"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
