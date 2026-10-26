@@ -1,0 +1,29 @@
+name: existing-nbx-archive-source-audit
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/nbx_archive_source_audit.py','.github/workflows/nbx_archive_source_audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pyarrow
+      - name: Inspect the already-released 2025–26 archive
+        run: |
+          gh release download data-ext-2020-26-v1 -p nb_nbx_2025_2026_v2.tar
+          python -m ci.nbx_archive_source_audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: existing-nbx-archive-source-audit
+          path: NBX_ARCHIVE_SOURCE_AUDIT.json
