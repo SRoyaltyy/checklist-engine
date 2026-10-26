@@ -30,7 +30,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
       - run: python -m ci.audit_indicator_settings
-      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py tests/test_world_native_alignment.py tests/test_world_moving_averages.py tests/test_price_bridge_basis.py tests/test_world_native_blocks.py -q
+      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py tests/test_world_native_alignment.py tests/test_world_moving_averages.py tests/test_price_bridge_basis.py tests/test_world_native_blocks.py tests/test_world_release_assets.py tests/test_world_native_transport.py -q
       - id: inputs
         run: |
           python - <<'PY'
@@ -72,7 +72,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m ci.native_price_blocks build --directory native-build --inputs-tag "$INPUTS_TAG" --shard "$FEATURE_SHARD" --resume-prefix "$RESUME_PREFIX"
+      - run: python -m ci.native_price_run build --directory native-build --inputs-tag "$INPUTS_TAG" --shard "$FEATURE_SHARD" --resume-prefix "$RESUME_PREFIX"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
