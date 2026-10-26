@@ -1,0 +1,87 @@
+{
+  "status": "MULTITIMEFRAME_FRED_LEVELS_BUILT_NOT_FULL_WORLD",
+  "item": "1.187",
+  "source_commit": "fbf8da66e3b0bb9f5214a45697f6e101fb05a2f1",
+  "run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40363757188",
+  "release": "shared-context-v1-40363757188-1",
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "requested_series": [
+    "t10y3m",
+    "t5yie",
+    "t10yie",
+    "stickcpim159s",
+    "dfii10",
+    "civpart",
+    "indpro",
+    "busloans"
+  ],
+  "nonempty_series_timeframe_cells": 176,
+  "status_sha256": "440cbbf5f43a38cf912f9728d22a1d94a073276354e7aafd917d8bed170037b1",
+  "coverage_sha256": "0caf833d8ab7e4144e0be651f112209359a0e8919be2f2fbe53ea93de9e1cb79",
+  "inspected_parquets": [
+    {
+      "file": "shared_context_1d.parquet",
+      "sha256": "10fe9877708a448cfb8f1eb845aa58ef4f323ac9489ebc4d2a9f23bec7dbc573",
+      "native_rows": 9270,
+      "checked_level_columns": [
+        "fred_busloans",
+        "fred_civpart",
+        "fred_dfii10",
+        "fred_indpro",
+        "fred_stickcpim159s",
+        "fred_t10y3m",
+        "fred_t10yie",
+        "fred_t5yie"
+      ],
+      "all_available_before_buy": true
+    },
+    {
+      "file": "shared_context_monthly.parquet",
+      "sha256": "221900b3f25e8925f3eabf9d867fe3e6346291ec4ab49175ae961788af5f3421",
+      "native_rows": 441,
+      "checked_level_columns": [
+        "fred_busloans",
+        "fred_civpart",
+        "fred_dfii10",
+        "fred_indpro",
+        "fred_stickcpim159s",
+        "fred_t10y3m",
+        "fred_t10yie",
+        "fred_t5yie"
+      ],
+      "all_available_before_buy": true
+    }
+  ],
+  "prefix_checks": 44,
+  "prefix_mismatches": 0,
+  "source_frequency_note": "CIVPART, INDPRO, BUSLOANS and sticky CPI retain source observation frequency; values are last-known vintage levels sampled on completed candle boundaries, never interpolated.",
+  "denominator": "shared_market_sessions_not_stock_days",
+  "full_stock_context_gate": "NOT_RUN",
+  "full_world_gate": "NOT_RUN",
+  "james_signoff": "AWAITING_INDEPENDENT_REVIEW",
+  "repository_coverage_sha256": "f87ab85815b5a35d91e03bb9288630ffc4f93ee37601bf88892661d46cfe962d",
+  "repository_coverage_note": "Repository CSV uses LF line endings; coverage_sha256 binds the original release bytes."
+}

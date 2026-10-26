@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/298. Claimed awaiting James: 7.**
+**Verified by both: 13/298. Claimed awaiting James: 8.**
 
 ## Rules
 
@@ -403,7 +403,7 @@ Note (2026-10-26 ~16:35 HKT, do not tick): These are not on I195. T10Y2Y and BAM
 - [x] **1.184** FRED series named 2026-10-26 16:35: downloaded onto a checklist-engine release. Done when: The release holds each series as vintage rows (observation date, realtime start, value), checksummed. The log does not contain the API key. Evidence: [FRED_1635_DOWNLOAD_ACCEPTANCE_V1.json](FRED_1635_DOWNLOAD_ACCEPTANCE_V1.json), [checksummed release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/phase1-gap-fred-v2-40307954973-1) and [passed FRED job](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307954973/job/121521661708). All eight sources are vintage rows, including the explicit sticky-CPI identifier correction. GPT ✓ 2026-10-26 HKT; awaiting James.
 - [ ] **1.185** FRED series named 2026-10-26 16:35: point-in-time and leak check. Done when: The value on D is the vintage whose realtime period contains the morning of D and whose observation date is < D. A revised-today value fails. Evidence:
 - [ ] **1.186** FRED series named 2026-10-26 16:35: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every series. A series the fetch did not return is not left as a silent zero. Evidence:
-- [ ] **1.187** FRED series named 2026-10-26 16:35: multi-timeframe features. Done when: Each series is sampled at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21, with a written note where the source itself is monthly. Evidence:
+- [x] **1.187** FRED series named 2026-10-26 16:35: multi-timeframe features. Done when: Each series is sampled at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21, with a written note where the source itself is monthly. Evidence: [FRED_NATIVE_TIMEFRAME_ACCEPTANCE_V1.json](FRED_NATIVE_TIMEFRAME_ACCEPTANCE_V1.json), [native context status](SHARED_CONTEXT_NATIVE_STATUS_V1.json), [checksummed release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/shared-context-v1-40363757188-1), and [passed build 40363757188](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40363757188). All eight named series have nonempty native levels at all 22 timeframes (176 cells); monthly source facts remain sampled last-known vintage levels, never interpolated. This claims multi-timeframe construction, not full stock-day/world coverage. GPT ✓ 2026-10-27 HKT; awaiting James.
 
 ### Breadth from our universe, added 2026-10-26 16:35
 

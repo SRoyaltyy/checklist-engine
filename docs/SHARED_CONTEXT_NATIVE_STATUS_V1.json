@@ -1,0 +1,619 @@
+{
+  "status": "SHARED_MACRO_CBOE_NATIVE_BLOCKS_NOT_WORLD",
+  "source_commit": "fbf8da66e3b0bb9f5214a45697f6e101fb05a2f1",
+  "calendar_inputs": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "code_sha256": {
+    "world_context_native.py": "02bba90457605f5e6566d37b4d7a20f2f23254bceee4edd7d7cf7c352b93fa06",
+    "world_fred.py": "d9418182058c95abcf4455084f0e7eb10818a3069e0089a69804f929f618ffb1",
+    "ci/shared_context_build.py": "3b219a5d05f5fcf31d70fb294227e30008db0fd699fe9e9a57c4e847fcf57d5a"
+  },
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "fred_series": [
+    "BAMLH0A0HYM2",
+    "BUSLOANS",
+    "CIVPART",
+    "CPIAUCSL",
+    "DCOILWTICO",
+    "DFII10",
+    "DGS10",
+    "DGS2",
+    "DTB3",
+    "DTWEXBGS",
+    "FEDFUNDS",
+    "ICSA",
+    "INDPRO",
+    "STICKCPIM159S",
+    "T10Y2Y",
+    "T10Y3M",
+    "T10YIE",
+    "T5YIE",
+    "UMCSENT",
+    "UNRATE",
+    "VIXCLS"
+  ],
+  "cboe_series": [
+    "GVZ",
+    "OVX",
+    "SKEW",
+    "VIX",
+    "VIX3M",
+    "VIX9D",
+    "VVIX"
+  ],
+  "parts": [
+    {
+      "file": "shared_context_1d.parquet",
+      "sha256": "10fe9877708a448cfb8f1eb845aa58ef4f323ac9489ebc4d2a9f23bec7dbc573",
+      "timeframe": "1d",
+      "native_rows": 9270,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_2d.parquet",
+      "sha256": "39a97c8af93b0882e6b8e3caebd1711dcc766bac6dbba69da489bc1200e7c682",
+      "timeframe": "2d",
+      "native_rows": 4635,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_3d.parquet",
+      "sha256": "a08795cd433ec708be9d6d2138bf22b5a4f5b5da8c382fdc93c18c78d8629625",
+      "timeframe": "3d",
+      "native_rows": 3090,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_4d.parquet",
+      "sha256": "ad5cc34757af0512ddbeb0f5952362204647a57d6dabc1601b3bee5768b7741c",
+      "timeframe": "4d",
+      "native_rows": 2317,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_5d.parquet",
+      "sha256": "a94dcb78a06ea5484bf47e00c18e790d9c4be30a60b7d538607ef0fb1d5b014e",
+      "timeframe": "5d",
+      "native_rows": 1854,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_6d.parquet",
+      "sha256": "3a8447d7c8ab32fe7155e122e4c27af5b3454f0dff279f090e525476046a26b2",
+      "timeframe": "6d",
+      "native_rows": 1545,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_7d.parquet",
+      "sha256": "3d3d85e2d1fd9c28464a785d831de747d5bdaa93fb25d2849578067e8657de1a",
+      "timeframe": "7d",
+      "native_rows": 1324,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_8d.parquet",
+      "sha256": "26dd554f97d4e89b900f7f24159a9b20b6ef19623329b83caa2d59102161e5f9",
+      "timeframe": "8d",
+      "native_rows": 1158,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_9d.parquet",
+      "sha256": "4c37deabdfd537381b49e4cef2b67c81e2c00a6fbd2f33396d6b468c991db776",
+      "timeframe": "9d",
+      "native_rows": 1030,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_10d.parquet",
+      "sha256": "92731c441047ea917966bcd6d4f13e94bb17c912eeeaacccdb253025df0aeaa4",
+      "timeframe": "10d",
+      "native_rows": 927,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_11d.parquet",
+      "sha256": "88c9e528c06759b85f43b363c1f94c50aa4a03cbe16af45c97c063aae1d5e2fa",
+      "timeframe": "11d",
+      "native_rows": 842,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_12d.parquet",
+      "sha256": "dfcbada44f5e25100c936b11e0211c9ca073bcda853234ce65155d2948b3b14b",
+      "timeframe": "12d",
+      "native_rows": 772,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_13d.parquet",
+      "sha256": "6c5219f273825ab31a647188aabbca3bf4ddc1d24067feb29b05326c5c9c20e9",
+      "timeframe": "13d",
+      "native_rows": 713,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_14d.parquet",
+      "sha256": "2feb9916ac851c69f6adc19d0b4f47d2488e5d3425b12c01cf51c79a80a1f944",
+      "timeframe": "14d",
+      "native_rows": 662,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_15d.parquet",
+      "sha256": "ab2ebe3c45e8d2bcd301e99ca17e3a56d91da383dfcbe2b020304301e54dfe39",
+      "timeframe": "15d",
+      "native_rows": 618,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_16d.parquet",
+      "sha256": "61bfd171fcf5ab823b6442325a97b3b864a94c20466f0343a6e45f2135d5b1a5",
+      "timeframe": "16d",
+      "native_rows": 579,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_17d.parquet",
+      "sha256": "f089a3e89f2d4f6dc97feb8fd69df292aa78681f1a1a5112fcbc419bb3f93eb5",
+      "timeframe": "17d",
+      "native_rows": 545,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_18d.parquet",
+      "sha256": "0fc551160e7b35f6973d1788213f24818e06f5963afea311100a9aafeb7dc12d",
+      "timeframe": "18d",
+      "native_rows": 515,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_19d.parquet",
+      "sha256": "eeb60f79e9f4e8340423da55ed0c0032e91015288587573814baba33a6a1a1e0",
+      "timeframe": "19d",
+      "native_rows": 487,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_20d.parquet",
+      "sha256": "381993d27949a31d50af37f864590f41dd87984b0d2e4d2150f1b8c026f57b7a",
+      "timeframe": "20d",
+      "native_rows": 463,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_21d.parquet",
+      "sha256": "abc918eb5dbeb3380b8d4df8bb8014dd89dea814dc5dd1d35d6f65304f7ac3b7",
+      "timeframe": "21d",
+      "native_rows": 441,
+      "feature_columns": 200
+    },
+    {
+      "file": "shared_context_monthly.parquet",
+      "sha256": "221900b3f25e8925f3eabf9d867fe3e6346291ec4ab49175ae961788af5f3421",
+      "timeframe": "monthly",
+      "native_rows": 441,
+      "feature_columns": 200
+    }
+  ],
+  "prefix_checks": [
+    {
+      "cut": "2023-01-03",
+      "timeframe": "1d",
+      "rows": 8315,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "2d",
+      "rows": 4157,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "3d",
+      "rows": 2771,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "4d",
+      "rows": 2078,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "5d",
+      "rows": 1663,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "6d",
+      "rows": 1385,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "7d",
+      "rows": 1187,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "8d",
+      "rows": 1039,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "9d",
+      "rows": 923,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "10d",
+      "rows": 831,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "11d",
+      "rows": 755,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "12d",
+      "rows": 692,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "13d",
+      "rows": 639,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "14d",
+      "rows": 593,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "15d",
+      "rows": 554,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "16d",
+      "rows": 519,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "17d",
+      "rows": 489,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "18d",
+      "rows": 461,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "19d",
+      "rows": 437,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "20d",
+      "rows": 415,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "21d",
+      "rows": 395,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "monthly",
+      "rows": 396,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "1d",
+      "rows": 8817,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "2d",
+      "rows": 4408,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "3d",
+      "rows": 2939,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "4d",
+      "rows": 2204,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "5d",
+      "rows": 1763,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "6d",
+      "rows": 1469,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "7d",
+      "rows": 1259,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "8d",
+      "rows": 1102,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "9d",
+      "rows": 979,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "10d",
+      "rows": 881,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "11d",
+      "rows": 801,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "12d",
+      "rows": 734,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "13d",
+      "rows": 678,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "14d",
+      "rows": 629,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "15d",
+      "rows": 587,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "16d",
+      "rows": 551,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "17d",
+      "rows": 518,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "18d",
+      "rows": 489,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "19d",
+      "rows": 464,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "20d",
+      "rows": 440,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "21d",
+      "rows": 419,
+      "columns": 200,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "monthly",
+      "rows": 420,
+      "columns": 200,
+      "mismatches": 0
+    }
+  ],
+  "source_receipts": [
+    {
+      "kind": "macro",
+      "release": "fred-structured-v3-40266650669-1",
+      "asset": "fred_structured_source.tar.gz",
+      "sha256": "16a60d96ccbc0f9e5424bc9dc5057e3a72327a48b8036078072cca4bfbedb5d8"
+    },
+    {
+      "kind": "macro_extra",
+      "release": "phase1-gap-fred-v2-40307954973-1",
+      "asset": "fred_gap_source.tar.gz",
+      "sha256": "5b2dffa054d796355be0adf70807404010317cbaf25aa75f85670bb149452b0c"
+    },
+    {
+      "kind": "cboe",
+      "release": "phase1-gap-cboe-v1-40307220071-1",
+      "asset": "cboe_gap_source.tar.gz",
+      "sha256": "7f5e6cc98ffa0ae632f8b22454d4641cf4402d94f5b7bfbcf115cc3c81904710"
+    },
+    {
+      "kind": "macro_member",
+      "path": "fred.parquet",
+      "sha256": "91219b769e3a7f0f1d1f65e4d68c29ba5f368f1c7a75d500da315baf364de497"
+    },
+    {
+      "kind": "macro_extra_member",
+      "path": "fred/fred_1635.parquet",
+      "sha256": "ba9a5fa88a99bdaced070baf3e7c8479073128c766c14d36ae51ddb803bc1690",
+      "series_aliases": {
+        "T10Y3M": "T10Y3M",
+        "T5YIE": "T5YIE",
+        "T10YIE": "T10YIE",
+        "STICKCPIM159SFRBATL": "STICKCPIM159S",
+        "DFII10": "DFII10",
+        "CIVPART": "CIVPART",
+        "INDPRO": "INDPRO",
+        "BUSLOANS": "BUSLOANS"
+      }
+    },
+    {
+      "kind": "cboe_member",
+      "series": "GVZ",
+      "path": "cboe/GVZ.parquet",
+      "sha256": "83e6178f7b986e731fc65900d57ac1289e8698eba65c13c035229e44a1e794c9"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "OVX",
+      "path": "cboe/OVX.parquet",
+      "sha256": "c92be24705261a57987d995bc4c985c69dd90accbfa0997b8fb69359b05eba28"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "SKEW",
+      "path": "cboe/SKEW.parquet",
+      "sha256": "c1256d3d69cbc4e0ad8de3140550033bc2b0c87a16161d142829f6950199be9f"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "VIX",
+      "path": "cboe/VIX.parquet",
+      "sha256": "9599af8baa788513a765e3d7bc8104eb4b9bfd43c14e55fb0196a03ad8949949"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "VIX3M",
+      "path": "cboe/VIX3M.parquet",
+      "sha256": "6e6118212d46f5cf01b7680f29544c781b1b1d706ba17998efb86c28d9906a12"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "VIX9D",
+      "path": "cboe/VIX9D.parquet",
+      "sha256": "be284932b1917122f05f39d85b2aa46f1bb4d1ec01406b83289f48b41a44b4aa"
+    },
+    {
+      "kind": "cboe_member",
+      "series": "VVIX",
+      "path": "cboe/VVIX.parquet",
+      "sha256": "616402e7ea5f4010e3687a6385254c80da886450d135a80970ef8a5550f55114"
+    }
+  ],
+  "stock_day_attachment_gate": "NOT_RUN",
+  "full_world_gate": "NOT_RUN",
+  "scoring_gate": "CLOSED",
+  "coverage_sha256": "0caf833d8ab7e4144e0be651f112209359a0e8919be2f2fbe53ea93de9e1cb79"
+}
