@@ -2,7 +2,7 @@ name: world-full-sec-structured-sources
 on:
   push:
     branches: [codex/world-universe-v3]
-    paths: ['fetch/fetch_sec_world.py','tests/test_sec_world.py','.github/workflows/world_full_sec.yml']
+    paths: ['ci/FULL_SEC_COLLECTION_REQUEST.json']
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,0 +1,45 @@
+name: repair-sec-missing-root-identity
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['.github/workflows/sec_identity_repair.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_sec_world.py tests/test_sec_relay.py -q
+  repair:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Preserve a separately versioned repair source
+        run: |
+          python -c "import json; from pathlib import Path; Path('SEC_WORLD_IDENTITIES.json').write_text(json.dumps(dict(ciks=[1790169],base_tag='sec-world-v4-40267486206-1',reason='Companyfacts omits root CIK; require separate official CIK and exact entity name')))"
+          tag="sec-world-identity-repair-${{ github.run_id }}-${{ github.run_attempt }}"
+          gh release create "$tag" --target "${{ github.sha }}" --title "$tag" --notes "One-company source repair. Original raw root CIK omission preserved; independent official submission identity required. Base sec-world-v4-40267486206-1 remains immutable." SEC_WORLD_IDENTITIES.json
+          python -m fetch.fetch_sec_world collect --identities SEC_WORLD_IDENTITIES.json --shards 1 --out sec-repair --tag "$tag"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-identity-repair
+          path: sec-repair/

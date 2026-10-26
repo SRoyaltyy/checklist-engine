@@ -30,3 +30,13 @@ def test_checkpoint_upload_failure_preserves_local_source_files(tmp_path,monkeyp
         with pytest.raises(subprocess.CalledProcessError):publish_part(root,[source],dict(completed={}), 'tag',0,0)
     assert source.read_text()=='{"facts":1}'
     assert (tmp_path/'sec_world_shard_000_attempt_1_part_000.tar').exists()
+
+
+def test_missing_root_cik_needs_independent_official_id_and_exact_entity_name():
+    payload=dict(entityName='Example Corp.',facts={'us-gaap':{'Assets':{'units':{'USD':[dict(val=1,end='2024-12-31',filed='2025-02-01',accn='a')]}}}})
+    with pytest.raises(ValueError,match='CIK missing'):numeric_facts(123,payload)
+    assert len(numeric_facts(123,payload,dict(cik='0000000123',name='Example Corp.')))==1
+    for identity in [dict(cik=124,name='Example Corp.'),dict(cik=123,name='Another Corp.')]:
+        with pytest.raises(ValueError,match='CIK missing'):numeric_facts(123,payload,identity)
+    payload['cik']=124
+    with pytest.raises(ValueError,match='identity mismatch'):numeric_facts(123,payload,dict(cik=123,name='Example Corp.'))

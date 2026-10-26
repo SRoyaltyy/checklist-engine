@@ -6,8 +6,13 @@ from fetch.sec_client import get_json,SEC_HEADERS
 
 FACT_COLUMNS=['cik','taxonomy','metric','unit','period_start','period_end','filed','accn','form','frame','val']
 
-def numeric_facts(cik,payload):
-    if int(payload.get('cik',-1))!=int(cik):raise ValueError('Companyfacts CIK identity mismatch')
+def numeric_facts(cik,payload,official_identity=None):
+    declared=payload.get('cik')
+    if declared is not None:
+        if int(declared)!=int(cik):raise ValueError('Companyfacts CIK identity mismatch')
+    elif (official_identity is None or int(official_identity.get('cik',-1))!=int(cik)
+          or not payload.get('entityName') or payload['entityName']!=official_identity.get('name')):
+        raise ValueError('Companyfacts CIK missing; independent official CIK and exact entity-name binding required')
     rows=[]
     for taxonomy,concepts in payload.get('facts',{}).items():
         for metric,concept in concepts.items():
@@ -77,7 +82,9 @@ def collect(args):
             facts=get_json(url,allow_404=True)
             if facts is None:record.update(facts_status='NO_COMPANYFACTS_404',facts_url=url,fact_rows=0)
             else:
-                numeric=numeric_facts(cik,facts)
+                identity=get_json(f'https://data.sec.gov/submissions/{prefix}.json') if facts.get('cik') is None else None
+                numeric=numeric_facts(cik,facts,official_identity=identity)
+                record['identity_binding']='root_cik' if facts.get('cik') is not None else 'official_submissions_cik_and_exact_entity_name'
                 raw=root/(prefix+'.companyfacts.json.gz');write_json_gz(raw,facts);company_files.append(raw)
                 target=root/(prefix+'.facts.parquet');numeric.to_parquet(target,index=False);company_files.append(target)
                 record.update(facts_status='FETCHED',facts_url=url,fact_rows=len(numeric),metrics=int(numeric[['taxonomy','metric']].drop_duplicates().shape[0]),first_filed=str(numeric.filed.min()) if len(numeric) else None,last_filed=str(numeric.filed.max()) if len(numeric) else None)
