@@ -1,0 +1,12 @@
+{
+  "status": "FETCHED_SOURCE_GATE_PASS_WITH_EXPLICIT_EXCLUSIONS",
+  "source_release": "world-prices-v3-40259691137-1",
+  "acceptance_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40292775611",
+  "accepted_inventory_sha256": "58383133dc32425de0be69aa8ead7e2c070bd62c6505c11e62c9c5ebd2501a3b",
+  "accepted_tickers": 8447,
+  "excluded": 280,
+  "latest_completed_session": "2026-10-23",
+  "scope": "Checklist 1.02 only. Source-fetched gate does not establish the PIT feature join, historical tradeability or required context.",
+  "immutable_acceptance_release": "price-source-acceptance-v6-40292775611-1",
+  "code_merge": "152f55f3490777a4a037d30c4976401c1dcf5bf6"
+}

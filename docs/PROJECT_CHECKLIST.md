@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/274. Claimed awaiting James: 3.**
+**Verified by both: 10/274. Claimed awaiting James: 4.**
 
 ## Rules
 
@@ -64,7 +64,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 ### OHLC and volume bars, including 2025–26
 
 - [x] **1.01** OHLC and volume bars, including 2025–26: source located. Items: C01 daily OHLCV for the tradeable universe. Done when: Check SRoyaltyy/fullscan and SRoyaltyy/theme-radar releases, then checklist-engine release data-2020-24-v1 asset bars_all_le2024.parquet, before any new download. Stooq previously failed TLS; use a free public daily source. Evidence names the repo, release, and asset, or the public URL that was checked. Evidence: [PHASE1_PRICE_SOURCE_INVENTORY.json](PHASE1_PRICE_SOURCE_INVENTORY.json), [org-source audit 05ef8d7](https://github.com/SRoyaltyy/checklist-engine/commit/05ef8d7), and [source collection 40259691137](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40259691137). GPT ✓ 2026-10-26 HKT; awaiting James.
-- [ ] **1.02** OHLC and volume bars, including 2025–26: fetched onto a checklist-engine release. Done when: A checklist-engine release holds daily OHLCV for the full universe through the latest completed session, with a checksum. The six-pilot pull through 2026-10-23 inside run 40209615520 does not pass. Evidence:
+- [x] **1.02** OHLC and volume bars, including 2025–26: fetched onto a checklist-engine release. Done when: A checklist-engine release holds daily OHLCV for the full universe through the latest completed session, with a checksum. The six-pilot pull through 2026-10-23 inside run 40209615520 does not pass. Evidence: [PRICE_SOURCE_ACCEPTANCE_V6.json](PRICE_SOURCE_ACCEPTANCE_V6.json), [8,447-name accepted inventory](ACCEPTED_PRICE_INVENTORY_V6.csv), immutable [price source release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/world-prices-v3-40259691137-1), and [acceptance run 40292775611](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40292775611). GPT ✓ 2026-10-26 HKT; awaiting James. 280 named exclusions remain in the single EXCLUDED.csv. Historical liquidity/size and full-world context gates are not claimed.
 - [ ] **1.03** OHLC and volume bars, including 2025–26: joined point-in-time. Done when: Snapshot features read bars dated < D only. Day-D open is stored as the buy price and is not an input to any question column. Evidence:
 - [ ] **1.04** OHLC and volume bars, including 2025–26: built at candle sizes 1 through 21. Done when: The build emits a true OHLC aggregate for every integer candle size from 1 through 21 trading days. A daily series renamed to another timeframe does not pass. The manifest lists the 21 sizes that were built. Evidence:
 - [ ] **1.05** OHLC and volume bars, including 2025–26: column count and fill rate measured. Done when: WORLD_COVERAGE reports column count > 0, non-null percent over 2020–2026, and first date for the daily bar columns and for one column of each candle size, on the full universe. Evidence:
