@@ -1,0 +1,47 @@
+name: nyse-tick-identity-followup
+on:
+  push:
+    branches: [codex/phase1-gap-sources]
+    paths: ['ci/TICK_FOLLOWUP_REQUEST.json']
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.nyse_tick_identity_followup
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tick-source-followup
+          path: tick-followup/
+      - name: Preserve source-attempt receipt
+        run: |
+          tar -czf nyse_tick_followup.tar.gz tick-followup
+          sha256sum nyse_tick_followup.tar.gz > nyse_tick_followup.sha256
+          tag="nyse-tick-followup-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" nyse_tick_followup.tar.gz nyse_tick_followup.sha256 tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V2.json --title "$tag" --notes "Public source identity/access evaluation only; no complete history or feature claim." --target "$GITHUB_SHA"
+      - name: Put attempted-source receipt on main
+        run: |
+          cp tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V2.json /tmp/
+          git fetch origin main
+          git checkout -B tick-followup-publication origin/main
+          cp /tmp/NYSE_TICK_SOURCE_FOLLOWUP_V2.json docs/
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/NYSE_TICK_SOURCE_FOLLOWUP_V2.json
+          git commit -m "Log public NYSE TICK identity and historical-access follow-up"
+          for attempt in 1 2 3 4; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
