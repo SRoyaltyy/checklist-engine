@@ -1,0 +1,64 @@
+{
+  "status": "DOWNLOADED_AND_CHECKSUMMED_NOT_WORLD_GATE",
+  "series": {
+    "VIX9D": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX9D_History.csv",
+      "raw_sha256": "d1b050935cdcf402369423e17bad7901e2b8cef8d7e5e581b53865d4164250a0",
+      "parquet_sha256": "be284932b1917122f05f39d85b2aa46f1bb4d1ec01406b83289f48b41a44b4aa",
+      "rows": 3975,
+      "first_date": "2011-01-04",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OPEN",
+        "HIGH",
+        "LOW",
+        "CLOSE"
+      ],
+      "has_true_ohlc": true,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "VIX3M": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv",
+      "raw_sha256": "ff4cf6639eb68841c1efa8e7806c6cd1783da2527d0b5a5fe05f9f0e4237c6fb",
+      "parquet_sha256": "6e6118212d46f5cf01b7680f29544c781b1b1d706ba17998efb86c28d9906a12",
+      "rows": 4301,
+      "first_date": "2009-09-18",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "OPEN",
+        "HIGH",
+        "LOW",
+        "CLOSE"
+      ],
+      "has_true_ohlc": true,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    },
+    "VVIX": {
+      "status": "PASS",
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VVIX_History.csv",
+      "raw_sha256": "369c1bb264144d6b9ad0b04f7fe8662d68748b2d927bd0351682249e2b4e2e0a",
+      "parquet_sha256": "616402e7ea5f4010e3687a6385254c80da886450d135a80970ef8a5550f55114",
+      "rows": 5132,
+      "first_date": "2006-03-06",
+      "last_date": "2026-10-23",
+      "source_columns": [
+        "DATE",
+        "VVIX"
+      ],
+      "has_true_ohlc": false,
+      "point_in_time_rule": "date-only EOD levels usable from the next market session; do not use date D's close",
+      "features_built": false
+    }
+  },
+  "release": "phase1-gap-cboe-v1-40307220071-1",
+  "archive_sha256": "7f5e6cc98ffa0ae632f8b22454d4641cf4402d94f5b7bfbcf115cc3c81904710",
+  "archive_bytes": 852399,
+  "last_completed_session": "2026-10-23",
+  "features_built": false
+}

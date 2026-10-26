@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/298. Claimed awaiting James: 3.**
+**Verified by both: 13/298. Claimed awaiting James: 4.**
 
 ## Rules
 
@@ -312,7 +312,7 @@ Note (2026-10-26 ~14:52 HKT, do not tick): These boxes put SPY, QQQ, IWM, DIA, a
 Note (2026-10-26 ~15:33 HKT, do not tick): VIX9D, VIX3M, and VVIX from the CBOE CSV. VIX level stays the FRED series in 1.91–1.95. Nothing here is ticked.
 
 - [x] **1.141** VIX term structure: source located. Items: VIX9D, VIX3M, VVIX. Done when: The free CBOE CSV for each series is named. A same-day print is not the source. Evidence: [CBOE_SOURCE_LOCATIONS_V1.json](CBOE_SOURCE_LOCATIONS_V1.json), [source status](CBOE_NUMERIC_SOURCE_STATUS_V1.json) and [passed CBOE job](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071/job/121519195463). GPT ✓ 2026-10-26 HKT; awaiting James.
-- [ ] **1.142** VIX term structure: downloaded onto a checklist-engine release. Done when: The release holds VIX9D, VIX3M, and VVIX through the same last date as the stock bars, checksummed. Evidence:
+- [x] **1.142** VIX term structure: downloaded onto a checklist-engine release. Done when: The release holds VIX9D, VIX3M, and VVIX through the same last date as the stock bars, checksummed. Evidence: [CBOE_DOWNLOAD_ACCEPTANCE_V1.json](CBOE_DOWNLOAD_ACCEPTANCE_V1.json), [checksummed immutable release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/phase1-gap-cboe-v1-40307220071-1) and [passed CBOE job](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071/job/121519195463). GPT ✓ 2026-10-26 HKT; awaiting James.
 - [ ] **1.143** VIX term structure: point-in-time and leak check. Done when: The value on D is the print whose publication is before the open of D, and the series does not change when day-D prices are withheld. Evidence:
 - [ ] **1.144** VIX term structure: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for VIX9D, VIX3M, and VVIX. A missing series is excluded-with-reason, not a zero column. Evidence:
 - [ ] **1.145** VIX term structure: multi-timeframe features. Done when: Each series, and the term-structure spreads between them, exist at the minimum grid of 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21 where a bar exists. Evidence:
