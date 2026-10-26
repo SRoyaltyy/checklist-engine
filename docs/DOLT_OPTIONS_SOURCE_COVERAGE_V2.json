@@ -1,0 +1,449 @@
+{
+  "status": "SOURCE_EVALUATION_ONLY_NO_FEATURES",
+  "source": "post-no-preference/options",
+  "source_url": "https://www.dolthub.com/repositories/post-no-preference/options",
+  "evaluated_at": "2026-10-26T10:50:22.583339+00:00",
+  "database_ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+  "database_revision_pinned": true,
+  "period_requested": [
+    "2020-01-01",
+    "2026-10-23"
+  ],
+  "source_commit": "f6fc0f180c93111b2a42afc8deb6f3018715f1bf",
+  "run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307954973",
+  "accepted_inventory_sha256": "58383133dc32425de0be69aa8ead7e2c070bd62c6505c11e62c9c5ebd2501a3b",
+  "tables": {
+    "volatility_history": {
+      "schema_columns": [
+        "act_symbol",
+        "date",
+        "hv_current",
+        "hv_month_ago",
+        "hv_week_ago",
+        "hv_year_high",
+        "hv_year_high_date",
+        "hv_year_low",
+        "hv_year_low_date",
+        "iv_current",
+        "iv_month_ago",
+        "iv_week_ago",
+        "iv_year_high",
+        "iv_year_high_date",
+        "iv_year_low",
+        "iv_year_low_date"
+      ],
+      "has_open_interest": false,
+      "publication_timestamp_fields": [],
+      "global_totals": null,
+      "symbol_aggregation_complete": false,
+      "observed_source_symbols": 0,
+      "matched_accepted_tickers": 0,
+      "accepted_universe": 8447,
+      "accepted_ticker_presence_pct": null,
+      "matched_current_non_etf": 0,
+      "current_non_etf_universe": 5063,
+      "current_non_etf_ticker_presence_pct": null,
+      "unmatched_accepted_tickers": null,
+      "unmatched_names_status": "NOT_OBSERVED_PARTIAL_QUERY",
+      "identity_rule": "exact canonical symbol only, no silent aliases/remapping",
+      "date_counts_scope": "source date keys, not verified exchange-session or post-IPO/PIT tradeable denominators",
+      "yearly_accepted_source_date_counts": [
+        {
+          "year": 2020,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2021,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2022,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2023,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2024,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2025,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2026,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        }
+      ],
+      "pit_status": "UNVERIFIED: date keys alone do not establish original publication time, revision history or ATM definition",
+      "features_permitted": false
+    },
+    "option_chain": {
+      "schema_columns": [
+        "act_symbol",
+        "ask",
+        "bid",
+        "call_put",
+        "date",
+        "delta",
+        "expiration",
+        "gamma",
+        "rho",
+        "strike",
+        "theta",
+        "vega",
+        "vol"
+      ],
+      "has_open_interest": false,
+      "publication_timestamp_fields": [],
+      "global_totals": null,
+      "symbol_aggregation_complete": false,
+      "observed_source_symbols": 0,
+      "matched_accepted_tickers": 0,
+      "accepted_universe": 8447,
+      "accepted_ticker_presence_pct": null,
+      "matched_current_non_etf": 0,
+      "current_non_etf_universe": 5063,
+      "current_non_etf_ticker_presence_pct": null,
+      "unmatched_accepted_tickers": null,
+      "unmatched_names_status": "NOT_OBSERVED_PARTIAL_QUERY",
+      "identity_rule": "exact canonical symbol only, no silent aliases/remapping",
+      "date_counts_scope": "source date keys, not verified exchange-session or post-IPO/PIT tradeable denominators",
+      "yearly_accepted_source_date_counts": [
+        {
+          "year": 2020,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2021,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2022,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2023,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2024,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2025,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2026,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        }
+      ],
+      "pit_status": "UNVERIFIED: date keys alone do not establish original publication time, revision history or ATM definition",
+      "features_permitted": false
+    }
+  },
+  "queries": [
+    {
+      "name": "head",
+      "sql_file": "head.sql",
+      "sql_sha256": "6367b946f311ca7b8259bd7e36beea873ad4551132d27bfb0cc96f246d472eb2",
+      "ref": "master",
+      "status": "PASS",
+      "error": null,
+      "elapsed_s": 8.58,
+      "raw_sha256": "4ac4d042a1062c6396892b89af75b20bba3a3b1be4c4c5595f0de8aca2b8b3e5",
+      "raw_file": "head.json.gz",
+      "returned_rows": 1
+    },
+    {
+      "name": "tables",
+      "sql_file": "tables.sql",
+      "sql_sha256": "d4959ef74f660eaf13709b6d40d0449768be088466ae9652c2b330365999471a",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "PASS",
+      "error": null,
+      "elapsed_s": 53.1,
+      "raw_sha256": "85a065cefa03a9b0d512aa6a633f07ee2a1be2212ecf216d4df50330d046634b",
+      "raw_file": "tables.json.gz",
+      "returned_rows": 2
+    },
+    {
+      "name": "volatility_history_schema",
+      "sql_file": "volatility_history_schema.sql",
+      "sql_sha256": "e0d4d8a38cc7d797f00b71802d1f69c35cbeab95b4d2412983a578c925b2ce44",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "PASS",
+      "error": null,
+      "elapsed_s": 4.56,
+      "raw_sha256": "c5ca12d3f2ca5b925aa4258db0a5fce990bc686492420997cbcc7d716bcfb29a",
+      "raw_file": "volatility_history_schema.json.gz",
+      "returned_rows": 16
+    },
+    {
+      "name": "volatility_history_totals",
+      "sql_file": "volatility_history_totals.sql",
+      "sql_sha256": "9286c5ee4ab03cb81f6e91ae9fb87fcdf1a72f1d606d02dd356c15fcfd124a61",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "query status error: query error: context deadline exceeded",
+      "elapsed_s": 54.09,
+      "raw_sha256": "a7a84608dba7765930ffcc81aee64308eeb335ecd492ed0aad2e4d73bac3fb22",
+      "raw_file": "volatility_history_totals.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_symbol_page_00",
+      "sql_file": "volatility_history_symbol_page_00.sql",
+      "sql_sha256": "417a2fa291bd08a5b7a65894266cd39817f4d27dbd16c3c81fe31eb75c91bfd8",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "query status error: query error: context deadline exceeded",
+      "elapsed_s": 54.09,
+      "raw_sha256": "a7a84608dba7765930ffcc81aee64308eeb335ecd492ed0aad2e4d73bac3fb22",
+      "raw_file": "volatility_history_symbol_page_00.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2020",
+      "sql_file": "volatility_history_year_2020.sql",
+      "sql_sha256": "23fce5c8c9be1b0ea61fc8fcc4e2ed9523653ecf2f857017eb9fc2df66da166b",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2020.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2021",
+      "sql_file": "volatility_history_year_2021.sql",
+      "sql_sha256": "30f326d801bccf625e8f7d9321f7e1f2b0a6c9943cc3391b628d4aa92df2bb94",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2021.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2022",
+      "sql_file": "volatility_history_year_2022.sql",
+      "sql_sha256": "6963ac8b9fbb2a051093804e4f397f472b8c0acfa903fbc2a0339a202125c457",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.13,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2022.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2023",
+      "sql_file": "volatility_history_year_2023.sql",
+      "sql_sha256": "d859c39b5da913d6258ffa34f50b7ad02cf9c13d0efe3c8c2c4cd07cb6c12172",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2023.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2024",
+      "sql_file": "volatility_history_year_2024.sql",
+      "sql_sha256": "468006ba0c488c2dab19b7f8aa2b0ca88e6e15565e14530202c46cdd240d5e3f",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2024.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2025",
+      "sql_file": "volatility_history_year_2025.sql",
+      "sql_sha256": "7d928d4ece2fb8efafa3de638078a22a7207a1cea5ce9990f992fe416c78c4ab",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.11,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2025.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2026",
+      "sql_file": "volatility_history_year_2026.sql",
+      "sql_sha256": "421d3f82182c45c2e3a4b3b9c8d1236591e74a5bf608b971dead52c038d05aec",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.11,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "volatility_history_year_2026.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_schema",
+      "sql_file": "option_chain_schema.sql",
+      "sql_sha256": "b4091f81d5f728998afc3108f5fbb2def06619ed6b808f15b31613e194b41ead",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "PASS",
+      "error": null,
+      "elapsed_s": 18.75,
+      "raw_sha256": "e668bc4b945609b886959c7e271772bd6341b95bed7760350d1afecca398c092",
+      "raw_file": "option_chain_schema.json.gz",
+      "returned_rows": 13
+    },
+    {
+      "name": "option_chain_totals",
+      "sql_file": "option_chain_totals.sql",
+      "sql_sha256": "e7d23183d4ae8ed95f827b15ac46f3f19658423c4cc7525699f2913a1ec350c3",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "query status error: query error: context deadline exceeded",
+      "elapsed_s": 54.09,
+      "raw_sha256": "a7a84608dba7765930ffcc81aee64308eeb335ecd492ed0aad2e4d73bac3fb22",
+      "raw_file": "option_chain_totals.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_symbol_page_00",
+      "sql_file": "option_chain_symbol_page_00.sql",
+      "sql_sha256": "541311671004a2838639375567055c4b556ac4da962d78cfc2c9e81f49c3eee3",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "query status error: query error: context deadline exceeded",
+      "elapsed_s": 54.09,
+      "raw_sha256": "a7a84608dba7765930ffcc81aee64308eeb335ecd492ed0aad2e4d73bac3fb22",
+      "raw_file": "option_chain_symbol_page_00.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2020",
+      "sql_file": "option_chain_year_2020.sql",
+      "sql_sha256": "16ce6c07afcac3b807ccca6fdad40ef5f8db0f864ef1fa58b3dd78cb3a8eb6b5",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.11,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2020.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2021",
+      "sql_file": "option_chain_year_2021.sql",
+      "sql_sha256": "deeb5eb5613a1c1ecb36a87cb2468a77c175913ecbfa503e5b11c3c53e50d164",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2021.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2022",
+      "sql_file": "option_chain_year_2022.sql",
+      "sql_sha256": "b3f8ec174953507cf0bae2f80ed3d54ef25704ce6e901c2994a43fd342b7ab22",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2022.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2023",
+      "sql_file": "option_chain_year_2023.sql",
+      "sql_sha256": "70c406bd30e21baa1b8391f239b8a466b1591bfd57187817fffc63a53ecd117d",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2023.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2024",
+      "sql_file": "option_chain_year_2024.sql",
+      "sql_sha256": "b90c382e0a31c96d12d86301f17bbc594009e9d0e3eb6dbd636f22f689eee3cf",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2024.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2025",
+      "sql_file": "option_chain_year_2025.sql",
+      "sql_sha256": "996f72364df7cc37943de30aca4fc70b6e70ee8bd7ce99d798dd503810ece0b6",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2025.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2026",
+      "sql_file": "option_chain_year_2026.sql",
+      "sql_sha256": "334df1e6e99e43080c5bd0d680b0739ab9df345c0270f63cff337b93fca48e67",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP 504: upstream request timeout",
+      "elapsed_s": 60.12,
+      "raw_sha256": "89f2d4e6c7a6c41c13c2e7a75e526aa60b9d5274fe28b2d82801c6beb6beb879",
+      "raw_file": "option_chain_year_2026.json.gz",
+      "returned_rows": null
+    }
+  ],
+  "reopening_decision": "PENDING_JAMES_REVIEW: no options features built, no final ATM-IV/skew/risk-reversal/HV-minus-IV exclusion",
+  "notes": [
+    "Finviz Elite supplies current snapshots only; not historical backfill per owner 16:55.",
+    "Ticker presence is not daily completeness or PIT validity.",
+    "Unsuccessful queries have null coverage, never fabricated zero coverage.",
+    "Source vol fields are not automatically option volume or open interest."
+  ]
+}
