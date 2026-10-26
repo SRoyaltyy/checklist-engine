@@ -1,0 +1,56 @@
+name: publish-authorized-exclusion-roster
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/publish_excluded.py','.github/workflows/publish_excluded.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pandas pyarrow
+      - name: Read only already-published evidence for the authorized exclusion list
+        run: |
+          mkdir -p exclusion-evidence/identities exclusion-evidence/halts
+          gh run download 40281068048 -n full-universe-price-bridge-audit -D exclusion-evidence/prices
+          gh run download 40266650698 -n world-input-universe-audit -D exclusion-evidence/listings
+          gh release download sec-world-v4-40267486206-1 -p SEC_WORLD_IDENTITIES.json -D exclusion-evidence/identities
+          gh release download data-ext-2020-26-v1 -p nasdaq_halts_2020_2026.parquet -p box_uploads_SHA256SUMS.txt -D exclusion-evidence/halts
+          cd exclusion-evidence/halts
+          grep nasdaq_halts_2020_2026.parquet box_uploads_SHA256SUMS.txt | sha256sum -c -
+          cd ../..
+          gh api 'repos/SRoyaltyy/checklist-engine/contents/docs/SEC_FULL_SOURCE_PROOF_SUMMARY.json?ref=main' --jq .content | base64 -d > exclusion-evidence/SEC_FULL_SOURCE_PROOF_SUMMARY.json
+          python -m ci.publish_excluded
+      - uses: actions/upload-artifact@v4
+        with:
+          name: authorized-exclusion-roster
+          path: exclusion-publication/
+      - name: Put the one auditable exclusion list on main
+        run: |
+          mkdir -p /tmp/exclusion-publication
+          cp exclusion-publication/EXCLUDED.csv exclusion-publication/EXCLUSION_SUMMARY.json /tmp/exclusion-publication/
+          git fetch origin main
+          git checkout -B authorized-exclusion-publication origin/main
+          cp /tmp/exclusion-publication/EXCLUDED.csv docs/EXCLUDED.csv
+          cp /tmp/exclusion-publication/EXCLUSION_SUMMARY.json docs/EXCLUSION_SUMMARY.json
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/EXCLUDED.csv docs/EXCLUSION_SUMMARY.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish one explicit exclusion roster per Cyrus 15:12; keep further downloads paused"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
