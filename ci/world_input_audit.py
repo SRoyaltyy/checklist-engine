@@ -1,5 +1,6 @@
 """Audit the two frozen inputs and current durable source checkpoints without scoring."""
 import argparse,collections,hashlib,io,json,os,re,urllib.request
+from datetime import datetime,timezone
 from pathlib import Path
 import pandas as pd
 import pyarrow.parquet as pq
@@ -51,17 +52,20 @@ def main():
         try:
             request=urllib.request.Request(url,headers={'User-Agent':'checklist-engine research cyrus-checklist@users.noreply.github.com'})
             with urllib.request.urlopen(request,timeout=60) as response:raw=response.read().decode('utf8')
-            table=pd.read_csv(io.StringIO(raw),sep='|',dtype=str)
+            table=pd.read_csv(io.StringIO(raw),sep='|',dtype=str,keep_default_na=False)
             for _,row in table.iterrows():
                 for field in ('Symbol','ACT Symbol','CQS Symbol','NASDAQ Symbol'):
                     symbol=row.get(field)
-                    if isinstance(symbol,str) and not symbol.startswith('File Creation'):
+                    if isinstance(symbol,str) and symbol and not symbol.startswith('File Creation'):
                         record=dict(etf=row.get('ETF'),test_issue=row.get('Test Issue'),name=row.get('Security Name'),source=url)
                         for alias in (symbol,symbol.replace('/','.'),symbol.replace('/','-'),symbol.replace('.','-')):listings[alias]=record
-            listing_sources.append(dict(url=url,status='FETCHED',rows=len(table)))
+            (out/(name+'.txt')).write_text(raw)
+            listing_sources.append(dict(url=url,status='FETCHED',rows=len(table),sha256=hashlib.sha256(raw.encode()).hexdigest(),fetched_at=datetime.now(timezone.utc).isoformat()))
         except Exception as exc:listing_sources.append(dict(url=url,status='ERROR',error=str(exc)))
     stale=[dict(ticker=t,**r,listing=listings.get(t,{})) for t,r in sorted(completed.items()) if r['last']<'2026-10-23']
     classification=collections.Counter(listings.get(t,{}).get('etf','UNKNOWN') for t in universe_names)
+    pd.DataFrame([dict(ticker=t,classification='ETF' if listings.get(t,{}).get('etf')=='Y' else 'NON_ETF' if listings.get(t,{}).get('etf')=='N' else 'UNKNOWN',**listings.get(t,{})) for t in sorted(universe_names)]).to_csv(out/'CURRENT_LISTING_CLASSIFICATION.csv',index=False)
+    unknown_names=sorted(t for t in universe_names if not listings.get(t,{}).get('etf') in ('N','Y'))
     universe_source_counts={}
     if 'source' in universe['columns']:
         universe_source_counts={str(k):int(v) for k,v in pd.read_parquet(args.universe,columns=['source']).source.value_counts().items()}
@@ -72,7 +76,7 @@ def main():
         currently_failed=len(errors),currently_pending=len(universe_names-set(completed)-set(errors)),
         error_types=dict(collections.Counter(str(r.get('http_status',r.get('error_type'))) for r in errors.values())),
         error_samples=samples,stale_sources=stale,listing_sources=listing_sources,listing_etf_flags=dict(classification),
-        universe_source_counts=universe_source_counts,bars_without_universe=len(bar_names-universe_names),
+        unknown_listing_names=unknown_names,universe_source_counts=universe_source_counts,bars_without_universe=len(bar_names-universe_names),
         bars_without_universe_sample=sorted(bar_names-universe_names)[:60],world_coverage_approved=False)
     (out/'WORLD_INPUT_AUDIT.json').write_text(json.dumps(report,indent=2))
     print(json.dumps({k:v for k,v in report.items() if k not in ('universe_names','frozen_bar_names')}),flush=True)

@@ -25,7 +25,11 @@ def alfred_page(key, sid, offset, limit, vintage_start, vintage_end):
     qs=urllib.parse.urlencode(dict(series_id=sid,api_key=key,file_type='json',
         realtime_start=vintage_start,realtime_end=vintage_end,output_type=1,
         observation_start='1990-01-01',observation_end='2026-12-31',offset=offset,limit=limit))
-    req=urllib.request.Request('https://api.stlouisfed.org/fred/series/observations?'+qs,
+    return fred_json(key,sid,'observations',qs)
+
+
+def fred_json(key,sid,endpoint,qs):
+    req=urllib.request.Request('https://api.stlouisfed.org/fred/series/'+endpoint+'?'+qs,
         headers={'User-Agent':'checklist-engine research'})
     for attempt in range(4):
         time.sleep(.65)  # stay below the public API request budget
@@ -52,15 +56,16 @@ def fred_today(now=None):
     return current.astimezone(ZoneInfo('America/Chicago')).date().isoformat()
 
 
-def alfred_observations(key, sid, limit=100000, start_year=1990, end_year=2026, as_of=None):
+def alfred_observations(key, sid, limit=100000, start_year=1990, end_year=2026, as_of=None, available_from=None):
     # JSON allows at most 2,000 vintage dates per request. Calendar-year
     # intervals have at most 366 dates, including carry-in information known
     # at the interval start. Paginate observations separately in each interval.
     out=[]
     as_of=as_of or fred_today()
     for year in range(start_year,end_year+1):
-        start=f'{year}-01-01';end=min(f'{year}-12-31',as_of);offset=0
-        if start>end:break
+        start=max(f'{year}-01-01',available_from or f'{year}-01-01');end=min(f'{year}-12-31',as_of);offset=0
+        if start>as_of:break
+        if start>end:continue
         while True:
             page=alfred_page(key,sid,offset,limit,start,end)
             observations=page.get('observations',[])
@@ -77,6 +82,13 @@ def alfred_observations(key, sid, limit=100000, start_year=1990, end_year=2026, 
     return out
 
 
+def first_vintage(key,sid):
+    qs=urllib.parse.urlencode(dict(series_id=sid,api_key=key,file_type='json',sort_order='asc',limit=1))
+    dates=fred_json(key,sid,'vintagedates',qs).get('vintage_dates',[])
+    if not dates:raise ValueError(f'FRED {sid}: no archived vintages')
+    return dates[0]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default='fred_wide_2020_26.parquet')
@@ -91,9 +103,10 @@ def main():
     rows = []
     for sid in [s.strip() for s in a.series.split(',') if s.strip()]:
         try:
-            got = alfred_observations(key, sid)
+            available=first_vintage(key,sid)
+            got = alfred_observations(key, sid,available_from=available)
             if not got:raise ValueError(f'FRED {sid}: no numeric observations')
-            report['series'][sid]=dict(status='PASS',rows=len(got),first_obs=min(r['obs_date'] for r in got),last_obs=max(r['obs_date'] for r in got),first_vintage=min(r['vintage_date'] for r in got),last_vintage=max(r['vintage_date'] for r in got))
+            report['series'][sid]=dict(status='PASS',archive_first_vintage=available,rows=len(got),first_obs=min(r['obs_date'] for r in got),last_obs=max(r['obs_date'] for r in got),first_vintage=min(r['vintage_date'] for r in got),last_vintage=max(r['vintage_date'] for r in got))
         except Exception as exc:
             report.update(status='FAIL',error=str(exc))
             report_path.write_text(json.dumps(report,indent=2))
