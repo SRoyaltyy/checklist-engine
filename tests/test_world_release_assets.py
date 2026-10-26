@@ -20,16 +20,15 @@ def transport(tmp_path, monkeypatch):
 
     def run(*args):
         calls.append(tuple(map(str, args)))
-        if args[:2] == ("release", "view"):
-            return "123\n"
-        if args[0] == "api":
+        if args[0] == "api" and "--input" not in args:
             if args[-1] == "DELETE":
                 asset_id = int(args[1].rsplit("/", 1)[-1])
                 del assets[next(name for name, item in assets.items() if item["id"] == asset_id)]
                 return ""
-            return json.dumps([list(assets.values())])
-        assert args[:3] == ("release", "upload", "tag")
-        file = args[3]
+            return json.dumps({"id":123,"assets":list(assets.values())})
+        assert args[0] == "api" and args[1].startswith("https://uploads.github.com/")
+        assert "--input" in args
+        file = args[args.index("--input")+1]
         action = failures.pop(0) if failures else "success"
         if action in ("success", "lost_response"):
             assets[file.name] = {"id": len(assets) + 1, "name": file.name, "state": "uploaded",
@@ -38,7 +37,7 @@ def transport(tmp_path, monkeypatch):
             assets[file.name] = {"id": 42, "name": file.name, "state": "starter", "size": 0}
         if action != "success":
             raise subprocess.CalledProcessError(1, args, stderr="HTTP 403" if action == "forbidden" else "HTTP 500")
-        return ""
+        return json.dumps(assets[file.name])
 
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setattr(publisher, "_run", run)
@@ -47,7 +46,7 @@ def transport(tmp_path, monkeypatch):
 
 
 def uploads(calls):
-    return [call[-1] for call in calls if call[:2] == ("release", "upload")]
+    return [call[call.index("--input")+1] for call in calls if "--input" in call]
 
 
 def test_partial_batch_retries_only_failed_asset_and_publishes_manifest_last(transport):
@@ -125,3 +124,49 @@ def test_invalid_asset_lists_fail_before_accessing_github(transport):
 def test_digest_reads_file_contents(transport):
     files, *_ = transport
     assert publisher._digest(files[0]) == "sha256:" + hashlib.sha256(files[0].read_bytes()).hexdigest()
+
+
+def test_successful_batch_uses_one_inventory_read_and_one_post_per_asset(transport):
+    files, assets, calls, failures, sleeps = transport
+    publisher.publish_assets("tag",*files)
+    reads=[call for call in calls if call[0]=="api" and "--input" not in call]
+    assert len(reads)==1
+    assert len(uploads(calls))==len(files)
+
+
+def test_http_headers_are_retained_for_failed_rate_limited_requests(monkeypatch):
+    from types import SimpleNamespace
+    result=SimpleNamespace(returncode=1,stderr="HTTP 403: API rate limit exceeded",
+        stdout='HTTP/2.0 403 Forbidden\r\nX-RateLimit-Remaining: 0\r\nX-RateLimit-Reset: 12345\r\n\r\n{"message":"limited"}')
+    monkeypatch.setattr(publisher.subprocess,"run",lambda *a,**k:result)
+    with pytest.raises(subprocess.CalledProcessError) as error:publisher._run("api","test")
+    assert error.value.response_headers=={"x-ratelimit-remaining":"0","x-ratelimit-reset":"12345"}
+    assert json.loads(error.value.stdout)=={"message":"limited"}
+
+
+def test_rate_limit_wait_respects_reset_in_chunks_of_at_most_a_minute(monkeypatch):
+    sleeps=[]
+    monkeypatch.setattr(publisher.time,"time",lambda:1000)
+    monkeypatch.setattr(publisher.time,"sleep",sleeps.append)
+    error=subprocess.CalledProcessError(1,["gh"],stderr="HTTP 403: API rate limit exceeded")
+    error.response_headers={"x-ratelimit-remaining":"0","x-ratelimit-reset":"1124"}
+    publisher._wait_after(error,0)
+    assert sleeps==[60,60,5]
+
+
+def test_quota_failure_waits_before_any_metadata_retry(transport,monkeypatch):
+    files,assets,calls,failures,sleeps=transport
+    original=publisher._run;blocked=[True];events=[]
+    def run(*args):
+        if "--input" in args and blocked[0]:
+            blocked[0]=False;events.append("limited")
+            error=subprocess.CalledProcessError(1,args,stderr="HTTP 403: API rate limit exceeded")
+            error.response_headers={"x-ratelimit-remaining":"0","x-ratelimit-reset":"1001"}
+            raise error
+        if events:events.append("api")
+        return original(*args)
+    monkeypatch.setattr(publisher,"_run",run)
+    monkeypatch.setattr(publisher.time,"time",lambda:1000)
+    monkeypatch.setattr(publisher.time,"sleep",lambda seconds:events.append("wait"))
+    publisher.publish_assets("tag",files[0])
+    assert events[:3]==["limited","wait","api"]
