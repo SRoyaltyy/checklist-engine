@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "mode": "smoke",
+  "request": "Real SPY/AAPL/MSFT/NVDA native-price coverage smoke; no scoring or full-world claim."
+}
