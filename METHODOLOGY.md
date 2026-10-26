@@ -134,6 +134,12 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-26 ~09:40 HKT (Cyrus via James, to Codex/Kimi): PRIORITY — land PR #8 on main, then tick Phase 0. ACK this entry in §0c.**
+  - **1. Land the draft.** Finish [PR #8](https://github.com/SRoyaltyy/checklist-engine/pull/8). Make CI green (36 or more tests), mark the PR ready, and merge it to main. Work that is not on main is invisible to the checklist. Nothing counts until it is merged.
+  - **2. Tick the Phase 0 boxes the merge proves.** In the merge commit, or the next commit, tick each Phase 0 box in [docs/PROJECT_CHECKLIST.md](docs/PROJECT_CHECKLIST.md) that the merged code proves. Evidence is the merge SHA plus the run URL. Add one §0c line per tick. Leave the SEC boxes open until a real HTTP 200 companyfacts fetch, or until `WORLD_COVERAGE` marks that source BLOCKED with evidence after the User-Agent, the throttle, and the retry.
+  - **3. Partial data stays unticked.** The six-stock snapshot and the six-stock leak pass stay unticked. Record them as evidence-in-progress only.
+  - **4. Next priority after the merge.** Full-universe world build (Phase 1), and reduce the 8,250 pending coverage rows. Check fullscan and theme-radar sources first.
+  - **ACK.** Post the plan and the run IDs in §0c.
 - **2026-10-26 ~00:35 HKT (Cyrus via James, to Codex/Kimi): PROJECT_CHECKLIST is the master progress list. ACK this entry in §0c.**
   - Use [docs/PROJECT_CHECKLIST.md](docs/PROJECT_CHECKLIST.md) as the master progress list and tick items as the work lands. Tick a box in the same commit as the work. Tick only with Evidence filled (a commit SHA or a run URL) and only when the Done when proof is on main. Never tick partial-data work or a six-stock smoke. James verifies and may untick. One checkbox is one commit-able unit.
   - Add one §0c line per tick, with the item id and the run id.
