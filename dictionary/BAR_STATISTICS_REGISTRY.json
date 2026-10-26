@@ -1,0 +1,125 @@
+{
+  "version": "phase1-bar-statistics-v1",
+  "status": "REGISTERED_NOT_MEASURED_COVERAGE",
+  "items": [
+    {
+      "id": "I204",
+      "item": "Universe relative-strength percentile",
+      "definition": "Percentile across explicitly eligible universe of N-native-candle return; average tie ranks. Ineligible/missing names stay blank.",
+      "parameters": "N=20|60|120; benchmark=eligible universe",
+      "columns": "universe_rs_rank"
+    },
+    {
+      "id": "I205",
+      "item": "Mansfield relative strength",
+      "definition": "100*(stock/benchmark / SMA_N(stock/benchmark)-1); identical candle intervals required.",
+      "parameters": "N=20|60|120; benchmark=SPY|sector ETF|industry ETF",
+      "columns": "MANSFIELD_{role}_{N}"
+    },
+    {
+      "id": "I206",
+      "item": "Normalized ATR",
+      "definition": "100*Wilder ATR_N/close, seeded from first N true ranges after a prior close.",
+      "parameters": "N=7|14|28; default=14",
+      "columns": "NATR{N}"
+    },
+    {
+      "id": "I207",
+      "item": "Price z-score",
+      "definition": "(close-SMA_N(close))/population standard deviation_N(close); zero variance blank.",
+      "parameters": "N=20|50; default=20",
+      "columns": "PRICE_ZSCORE{N}"
+    },
+    {
+      "id": "I208",
+      "item": "Up and down streaks",
+      "definition": "Consecutive strictly rising/falling closes; ties reset both, unavailable first change blank.",
+      "parameters": "direction=up|down; raw integer count",
+      "columns": "UP_STREAK|DOWN_STREAK"
+    },
+    {
+      "id": "I209",
+      "item": "Historical volatility expanded",
+      "definition": "Sample standard deviation of N log returns, annualized by sqrt(252/k) or sqrt(12) for monthly, multiplied by 100.",
+      "parameters": "N=10|20|60|120; default=20",
+      "columns": "HV{N}"
+    },
+    {
+      "id": "I210",
+      "item": "Short over long volatility ratio",
+      "definition": "Historical volatility(short)/historical volatility(long), same native timeframe; zero long volatility blank.",
+      "parameters": "short,long=10,60|20,120",
+      "columns": "HV_RATIO{short}_{long}"
+    },
+    {
+      "id": "I211",
+      "item": "Gap size in ATR",
+      "definition": "Full gap: open above previous high or below previous low, signed distance divided by previous ATR14. Separate signed close-to-open gap variant.",
+      "parameters": "ATR=14; full_gap|close_to_open",
+      "columns": "GAP_ATR14|OPEN_CLOSE_GAP_ATR14"
+    },
+    {
+      "id": "I212",
+      "item": "Gap-fill rate",
+      "definition": "Gap at i assessed only at i+H, fill checked over i+1..i+H; fraction filled among gaps in last N mature cohorts. Both outcomes enter at maturity; no eligible gaps blank.",
+      "parameters": "N=20|60; H=5|20; default=20,5",
+      "columns": "GAP_FILL_RATE{N}_H{H}"
+    },
+    {
+      "id": "I213",
+      "item": "Rolling return skewness",
+      "definition": "Unbiased sample skewness of N native-candle log returns.",
+      "parameters": "N=20|60; default=20",
+      "columns": "RETURN_SKEW{N}"
+    },
+    {
+      "id": "I214",
+      "item": "Rolling excess kurtosis",
+      "definition": "Unbiased Fisher excess kurtosis of N native-candle log returns.",
+      "parameters": "N=20|60; default=20",
+      "columns": "RETURN_EXCESS_KURTOSIS{N}"
+    },
+    {
+      "id": "I215",
+      "item": "Rolling lag-one autocorrelation",
+      "definition": "Pearson correlation between adjacent returns within N native-candle log returns (N-1 pairs); zero variance blank.",
+      "parameters": "N=20|60; lag=1",
+      "columns": "RETURN_AUTOCORR1_{N}"
+    },
+    {
+      "id": "I216",
+      "item": "Rolling rescaled-range Hurst estimate",
+      "definition": "Single-window log(R/S)/log(N) on log returns; R is range of cumulative demeaned returns including zero and S sample standard deviation. Zero R/S blank. Explicit estimator, not an exact process parameter.",
+      "parameters": "N=20|60; estimator=single-window R/S",
+      "columns": "HURST_RS{N}"
+    },
+    {
+      "id": "I217",
+      "item": "Linear-regression R-squared",
+      "definition": "Squared Pearson correlation between close and bar index over N completed native candles; constant close blank.",
+      "parameters": "N=20|60|100; default=20",
+      "columns": "LINEARREG_R2_{N}"
+    },
+    {
+      "id": "I218",
+      "item": "Correlation to SPY and sector",
+      "definition": "Pearson correlation of N stock/benchmark simple native-candle returns on identical candle intervals.",
+      "parameters": "N=20|60|120; benchmark=SPY|sector ETF",
+      "columns": "CORRELATION_{role}_{N}"
+    },
+    {
+      "id": "I219",
+      "item": "Beta to SPY and sector",
+      "definition": "Sample covariance(stock returns,benchmark returns)/sample variance(benchmark returns), matching N native intervals; zero benchmark variance blank.",
+      "parameters": "N=20|60|120; benchmark=SPY|sector ETF",
+      "columns": "BETA_{role}_{N}"
+    },
+    {
+      "id": "I220",
+      "item": "Chaikin Volatility",
+      "definition": "100*(EMA_N(high-low)/EMA_N(high-low) shifted L native candles - 1), SMA-seeded EMA; zero prior EMA blank.",
+      "parameters": "N,L=5,5|10,10|20,20; default=10,10",
+      "columns": "CHAIKIN_VOLATILITY{N}_{L}"
+    }
+  ]
+}

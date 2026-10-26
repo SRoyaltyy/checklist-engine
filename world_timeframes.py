@@ -71,13 +71,17 @@ def parameter_variants(o, h, l, c, v):
     return out
 
 
-def candle_features(candles, funcs):
+def candle_features(candles, funcs, timeframe="1d"):
     import facets_world as fw
     if not len(candles):
         return pd.DataFrame(columns=['available_from'])
     arrays = [candles[x].to_numpy(dtype=float) for x in PRICE_COLS]
     cols = fw.compute_talib(*arrays, funcs)
     cols.update(parameter_variants(*arrays))
+    from world_indicator_settings import configured_indicators
+    from world_bar_statistics import bar_statistics
+    cols.update(configured_indicators(*arrays, dates=candles.date.to_numpy()))
+    cols.update(bar_statistics(*arrays, timeframe=timeframe))
     # Existing TV extras require at least one bar; all warmups remain explicit
     # NaNs. Schema alignment never treats an absent feature as an observed zero.
     cols.update(fw.compute_tv_extra(*arrays, dates=candles.date.to_numpy()))
@@ -107,7 +111,7 @@ def world_timeframes(bars, funcs, daily_external=None):
     out = pd.DataFrame({'date': pd.to_datetime(bars.date).to_numpy()})
     for tf in TIMEFRAMES:
         candles = completed_candles(bars, tf)
-        features = candle_features(candles, funcs)
+        features = candle_features(candles, funcs, timeframe=tf)
         if daily_external is not None and len(candles):
             ext = daily_external.sort_values('date').copy()
             ext['date']=pd.to_datetime(ext.date).astype('datetime64[ns]')

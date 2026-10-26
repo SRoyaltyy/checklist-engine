@@ -1,0 +1,31 @@
+name: world-indicator-settings
+on:
+  push:
+    branches: [main, codex/phase1-indicator-grids]
+    paths:
+      - 'world_timeframes.py'
+      - 'world_bar_statistics.py'
+      - 'world_indicator_settings.py'
+      - 'world_indicator_extra.py'
+      - 'dictionary/INDICATOR_SETTINGS.json'
+      - 'dictionary/BAR_STATISTICS_REGISTRY.json'
+      - 'dictionary/WORLD_SNAPSHOT_DICTIONARY.csv'
+      - 'ci/*indicator_settings.py'
+      - 'tests/test_world_settings.py'
+      - 'tests/test_world_bar_statistics.py'
+      - '.github/workflows/world_indicator_settings.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.audit_indicator_settings
+      - run: python -m pytest tests/test_world_settings.py tests/test_world_bar_statistics.py tests/test_world_v2.py -q
