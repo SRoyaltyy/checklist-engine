@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/224. Claimed awaiting James: 0.**
+**Verified by both: 10/235. Claimed awaiting James: 0.**
 
 ## Rules
 
@@ -31,8 +31,8 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 130 |
-| 2 | Coverage gate | 9 |
+| 1 | World rebuild | 140 |
+| 2 | Coverage gate | 10 |
 | 3 | Question tree v3 and the P3b quality gate | 26 |
 | 4 | Full leak test | 10 |
 | 5 | Step A full rerun | 6 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 224 |
+|  | Total | 235 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -119,6 +119,8 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Market breadth
 
+Note (2026-10-26 ~14:52 HKT, do not tick): Breadth is a context block on every stock-day row, at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, point-in-time as of buy time (bars ending D−1). A stock row with no breadth block fails box 2.10.
+
 - [ ] **1.36** Market breadth: source located. Items: dictionary I179 and I180, plus TradingView advance/decline items M007, M008, and M009. Done when: Check fullscan and theme-radar, then data-2020-24-v1 asset breadth_2020_24.parquet. Extend the same free construction through 2026. Evidence:
 - [ ] **1.37** Market breadth: fetched onto a checklist-engine release. Done when: The release contains percent above SMA50, the advance/decline line, the advance/decline ratio, and new highs minus new lows, checksummed. Evidence:
 - [ ] **1.38** Market breadth: joined point-in-time. Done when: Breadth on day D uses the universe as of D−1. Survivors-only is written on the column and on the WORLD_COVERAGE row. Evidence:
@@ -126,6 +128,8 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 - [ ] **1.40** Market breadth: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled, and the survivors-only label is on the row. Evidence:
 
 ### Sector and market baselines
+
+Note (2026-10-26 ~14:52 HKT, do not tick): Sector-ETF features sit on every stock-day row, at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, point-in-time (bars ending D−1), with relative-to-sector facets. The index set on the stock row is SPY, QQQ, IWM, DIA, and VIX. DIA is not in boxes 1.41–1.45; it is boxes 1.136–1.140. The per-stock industry ETF map is boxes 1.131–1.135. A stock row that lacks these context blocks fails box 2.10.
 
 - [ ] **1.41** Sector and market baselines: source located. Items: I162 relative strength vs SPY, I163–I175 vs QQQ, IWM, and the 11 SPDRs, I181 SPY trend, I182 beta. Done when: Check fullscan and theme-radar, then data-2020-24-v1 asset etf_2015_le2024.parquet. Extend those ETF daily files through 2026 from the same free source as the stock bars. Evidence:
 - [ ] **1.42** Sector and market baselines: fetched onto a checklist-engine release. Done when: The release contains SPY, QQQ, IWM, and all 11 SPDRs through the same last date as the stock bars. Evidence:
@@ -207,6 +211,8 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### FRED and ALFRED macro
 
+Note (2026-10-26 ~14:52 HKT, do not tick): Macro is a context block on every stock-day row, at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, using the ALFRED vintage known as of buy time. Boxes 1.91 and 1.92 stay as already signed. A stock row with no macro block fails box 2.10.
+
 - [x] **1.91** FRED and ALFRED macro: source located. Items: I195 FRED macro and I178 VIX. Done when: Source is the FRED API using the phase-0 secret. ALFRED vintage dates are the point-in-time values. The VIXCLS file in data-2020-24-v1 is not a vintage series and does not pass on its own. Evidence: [merge 2f3eaaa](https://github.com/SRoyaltyy/checklist-engine/commit/2f3eaaa2df798ce0febb93c870dcccef2060a39e) + [real vintage source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669) + [MACRO_SOURCE_STATUS_V3.json](MACRO_SOURCE_STATUS_V3.json). GPT ✓ 2026-10-26/2f3eaaa. James ✓ (2026-10-26 12:36 HKT: release fred-structured-v3-40266650669-1 exists with checksum, run 40266650669 green, no secret in log).
 - [x] **1.92** FRED and ALFRED macro: fetched onto a checklist-engine release. Done when: The release holds each required series as vintage rows (observation date, realtime start, value), checksummed. The log does not contain the API key. Evidence: [checksummed 13-series release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/fred-structured-v3-40266650669-1), [source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669), [source manifest](MACRO_SOURCE_STATUS_V3.json); 900,986 vintage rows, complete available source ranges with the earlier credit-spread archive gap explicit. GPT ✓ 2026-10-26/2f3eaaa. James ✓ (2026-10-26 12:36 HKT: release fred-structured-v3-40266650669-1 exists with checksum, run 40266650669 green, no secret in log).
 - [ ] **1.93** FRED and ALFRED macro: joined point-in-time. Done when: The value on D is the vintage whose realtime period contains the morning of D and whose observation date is < D. Evidence:
@@ -269,9 +275,31 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 - [ ] **1.129** Calendar context: built at candle sizes 1 through 21. Done when: The flags are carried onto candle sizes 1..21 with a written note that they are calendar facts, not resampled prices. Evidence:
 - [ ] **1.130** Calendar context: column count and fill rate measured. Done when: WORLD_COVERAGE has a row with a non-null percent for the holiday flag and for the expiry flag. Evidence:
 
+### Industry ETF map
+
+Note (2026-10-26 ~14:52 HKT, do not tick): These boxes are the per-stock industry ETF, which is finer than the 11 sector SPDRs in 1.41–1.45. Nothing here is ticked.
+
+- [ ] **1.131** Industry ETF map: source located. Done when: A point-in-time map from each stock to its industry ETF is named, with the free source that was checked (fullscan, theme-radar, then a public ETF list). The map is dated, so a later reclassification does not rewrite earlier days. Evidence:
+- [ ] **1.132** Industry ETF map: fetched onto a checklist-engine release. Done when: The release holds the industry-ETF daily bars, through the same last date as the stock bars, and the dated stock-to-ETF map, both checksummed. Evidence:
+- [ ] **1.133** Industry ETF map: joined point-in-time. Done when: The industry ETF on day D is the map known as of D−1, and the ETF features use bars ending at D−1. An unknown industry is blank, not a fallback to the sector ETF. Evidence:
+- [ ] **1.134** Industry ETF map: built at every timeframe in the union. Done when: Industry-ETF features and the stock-versus-industry-ETF facets (relative change, divergence, relative strength) exist at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21. Evidence:
+- [ ] **1.135** Industry ETF map: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for the map and for the industry-ETF feature columns at every timeframe in that union. A build that only has the 11 SPDRs fails this block. Evidence:
+
+### Market index set on the stock row
+
+Note (2026-10-26 ~14:52 HKT, do not tick): These boxes put SPY, QQQ, IWM, DIA, and VIX features on every stock-day row. DIA is not covered by 1.41–1.45. VIX level stays the FRED series in 1.91–1.95; this block is the index features sitting on the stock row. Nothing here is ticked.
+
+- [ ] **1.136** Market index set on the stock row: source located. Items: SPY, QQQ, IWM, DIA, and VIX. Done when: The free daily source for DIA is named beside the source already used for SPY, QQQ, and IWM. VIX cites the ALFRED VIX series, not a same-day print. Evidence:
+- [ ] **1.137** Market index set on the stock row: fetched onto a checklist-engine release. Done when: The release holds DIA through the same last date as the stock bars, checksummed, next to SPY, QQQ, and IWM. Evidence:
+- [ ] **1.138** Market index set on the stock row: joined point-in-time. Done when: Each stock-day row carries SPY, QQQ, IWM, DIA, and VIX features from bars and vintages ending at D−1. Evidence:
+- [ ] **1.139** Market index set on the stock row: built at every timeframe in the union. Done when: Index features and the stock-versus-index facets (relative change, divergence, relative strength) exist at every timeframe in the union of 1d, 5d, 10d, and 20d/monthly with candle sizes 1 through 21, for SPY, QQQ, IWM, and DIA. Evidence:
+- [ ] **1.140** Market index set on the stock row: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for DIA and for the on-row index block at every timeframe in that union. A build that omits DIA fails. Evidence:
+
 ## Phase 2 — Coverage gate
 
 P1. CI fails a missing row and fails a WIRED row at 0 percent filled.
+
+Note (2026-10-26 ~14:52 HKT, do not tick): The coverage gate fails if any stock-day row lacks a context block: industry ETF, sector ETF, market indices (SPY, QQQ, IWM, DIA, VIX), breadth, or macro. Box 2.10 is that check. Nothing here is ticked.
 
 - [ ] **2.01** Publish docs/WORLD_COVERAGE.csv on main, measured from the full-universe shards. Done when: The file is in git. Columns include item_id, name and setting, block, snapshot column(s), non-null percent over 2020–2026, first date available, and status. It is computed from the released shards. The six-stock file inside release world-smoke-v2-40209615520-1 (11,638 item by timeframe rows, 8,269 PENDING) does not pass. Evidence:
 - [ ] **2.02** One measured row for every TradingView master item. Done when: M001–M296 each appear once per candle size 1..21, or once with a written reason that a candle grid does not apply. docs/TV_COVERAGE.csv today is 296 items: 207 WIRED, 78 EXCLUDED_FREE_TEXT, 11 NOT_AVAILABLE_FREE, and it has no non-null percent. That file does not pass this box. Evidence:
@@ -282,10 +310,13 @@ P1. CI fails a missing row and fails a WIRED row at 0 percent filled.
 - [ ] **2.07** Fix exclusion reasons that do not match the data. Done when: M046, M145, M148, M169, M199, M221, M223, M273, M280, and M281 stay out only if an intraday blocker is still true after the source check. M290 (Altman Z / Piotroski / Beneish) drops the intraday reason and matches the I194 companyfacts row. docs/TV_COVERAGE.csv and docs/WORLD_COVERAGE.csv agree on these ids. Evidence:
 - [ ] **2.08** Survivors-only is labelled, and the size filter is counted. Done when: Universe, breadth, sector labels, and the single-stock options rows say survivors-only. The summary states how many names the untradeable filter and the <$100M filter remove as of D, and that an unknown market cap is excluded. Evidence:
 - [ ] **2.09** Status totals match the CSV. Done when: A summary committed next to the CSV gives counts by status and by block, and those counts equal a fresh group-by of the CSV. The §0c line quotes the same counts. Evidence:
+- [ ] **2.10** Context blocks are present on every stock row. Done when: CI fails when any stock-day row is missing its industry-ETF block, its sector-ETF block, its market-index block (SPY, QQQ, IWM, DIA, and VIX), its breadth block, or its macro block. The failing fixture names the missing block. A stock-only row fails. Evidence:
 
 ## Phase 3 — Question tree v3 and the P3b quality gate
 
 P3 and P3b. The target is at least about 26,000 base questions per stock-day. James ticks the hand check.
+
+Note (2026-10-26 ~14:52 HKT, do not tick): The question tree includes cross-entity facets — stock versus its industry ETF, stock versus its sector ETF, and stock versus each market index (relative change, divergence, and relative strength, at every timeframe) — and market-regime facets (VIX level, direction, and extreme, and breadth). Canonical picture (Cyrus 14:53 HKT): industry ETF has had an extreme fall while the stock itself stays steady (stock-vs-ETF divergence), AND VIX is falling (market getting more optimistic) → buy opportunity? It also includes cross-timeframe disagreement facets (timeframe divergence) on the same entity, so a 1d question and a 5d question on that entity can be asked together. Second picture (Cyrus 14:54 HKT): on the 1-day chart the stock isn't that positive, but zoom out to the 5-day chart and a pattern appears. Example the tree must be able to state: 1d question = neutral or negative AND 5d question = pattern present. Nothing is ticked.
 
 - [ ] **3.01** Write the v3 spec. Done when: docs/QUESTION_TREE_v3.md is on main. It states the 4-lever combinator (data type, candle size, derivative, facet) plus the history lever, the variable ranges, and the point-in-time rule for every question. Evidence:
 - [ ] **3.02** Generate the question CSV. Done when: docs/QUESTION_TREE_v3.csv is on main, one row per question, with item id, facet, candle size, lookback, threshold or setting, direction, exact formula, inputs, window, timeframe, and the point-in-time date rule. QUESTION_TREE_v2.7 (14,643 questions, 17 price/volume families) is not this file. Evidence:
@@ -371,6 +402,8 @@ Note (2026-10-26 ~12:02 HKT, do not tick): Probability is any (combination × ho
 Only after every Phase 7 box is verified by both signatures. The 34 groups are a compute split. Score each setup together with its exit rule.
 
 Note (2026-10-26 ~12:02 HKT, do not tick): A combination is any set of questions or setups, of any data type, any timeframe, and any count. No cap on size, and no within-group restriction. This search must allow cross-type mixes of arbitrary size, limited only by sample size and multiple-testing controls. In a word (Cyrus 12:03 HKT): as long as a method is expected to win, we mine it and use it. Acceptance is positive expected profit after fees that holds out of sample, not any particular combo shape.
+
+Note (2026-10-26 ~14:54 HKT, do not tick): Phase 8 must be able to search the multi-source combination from 14:53 (stock-versus-industry-ETF divergence AND VIX falling) and cross-timeframe combinations on the same entity. Example (Cyrus 14:54 HKT): a 1d question that is neutral or negative AND a 5d question that says the pattern is present. Timeframe divergence is a searchable facet. Nothing is ticked.
 
 - [ ] **8.01** Gate: start only after every Phase 7 box is verified by both signatures. Done when: Combiner fits stay paused until then. An additive sum of single-question scores does not pass any later box in this phase. Evidence:
 - [ ] **8.02** The search crosses groups and blocks. Done when: The published condition sets mix questions from more than one of the 34 chunks and from more than one data block. The chunks are described as a compute split. Evidence:
