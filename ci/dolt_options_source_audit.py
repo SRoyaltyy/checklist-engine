@@ -1,5 +1,5 @@
 """Read-only DoltHub coverage evaluation. No options feature construction."""
-import csv,gzip,hashlib,json,os,time,urllib.request,urllib.parse
+import csv,gzip,hashlib,json,os,re,time,urllib.request,urllib.parse,urllib.error
 from pathlib import Path
 from datetime import datetime,timezone
 import pandas as pd
@@ -9,7 +9,11 @@ BASE="https://www.dolthub.com/api/v2/databases/post-no-preference/options/sql"
 REF="master"
 receipts=[]
 def query(name,sql,limit=1000):
-    body=json.dumps({"ref":REF,"q":sql,"limit":limit,"timeout_ms":60000}).encode()
+    if REF!="master":
+        if sql=="SHOW TABLES":sql+=" AS OF '"+REF+"'"
+        elif sql.startswith("SHOW COLUMNS FROM "):sql="DESCRIBE "+sql.removeprefix("SHOW COLUMNS FROM ")+" AS OF '"+REF+"'"
+        else:sql=re.sub(r"FROM (volatility_history|option_chain)\b",lambda m:m.group(0)+" AS OF '"+REF+"'",sql)
+    body=json.dumps({"ref":"master","q":sql,"limit":limit,"timeout_ms":60000}).encode()
     req=urllib.request.Request(BASE,data=body,headers={"Content-Type":"application/json","User-Agent":"checklist-engine source coverage research"},method="POST")
     started=time.time()
     try:
@@ -23,6 +27,8 @@ def query(name,sql,limit=1000):
             columns=[c.get("name",c.get("columnName")) for c in data["columns"]]
             rows=[dict(zip(columns,row)) for row in rows]
         status="PASS";error=None
+    except urllib.error.HTTPError as exc:
+        raw=exc.read();rows=None;status="FAIL";error=("HTTP "+str(exc.code)+": "+raw.decode("utf-8",errors="replace"))[:1000]
     except Exception as exc:
         raw=json.dumps({"error":str(exc)[:500]}).encode();rows=None;status="FAIL";error=str(exc)[:500]
     path=ROOT/(name+".json.gz")
@@ -48,7 +54,7 @@ def main():
     for table in ("volatility_history","option_chain"):
         schema=query(table+"_schema","SHOW COLUMNS FROM "+table)
         columns={str(r.get("Field",r.get("field",""))).lower() for r in schema or []}
-        result={"schema_columns":sorted(columns),"has_open_interest":bool(columns&{"open_interest","openinterest","oi"}),
+        result={"schema_columns":sorted(columns),"has_open_interest":bool(columns&{"open_interest","openinterest","oi"}) if schema is not None else None,
             "publication_timestamp_fields":sorted(c for c in columns if any(x in c for x in ("publish","capture","available","timestamp")))}
         stats=query(table+"_totals",f"SELECT MIN(date) first_date,MAX(date) last_date,COUNT(*) raw_rows,COUNT(DISTINCT date) dates_present,COUNT(DISTINCT act_symbol) symbols FROM {table}")
         result["global_totals"]=stats[0] if stats else None
@@ -107,6 +113,6 @@ def main():
                "Ticker presence is not daily completeness or PIT validity.",
                "Unsuccessful queries have null coverage, never fabricated zero coverage.",
                "Source vol fields are not automatically option volume or open interest."] }
-    (ROOT/"DOLT_OPTIONS_SOURCE_COVERAGE_V1.json").write_text(json.dumps(summary,indent=2)+"\n")
+    (ROOT/"DOLT_OPTIONS_SOURCE_COVERAGE_V2.json").write_text(json.dumps(summary,indent=2)+"\n")
     print("DOLT_AUDIT_DONE",json.dumps({k:v for k,v in summary.items() if k not in ("tables","queries")}),flush=True)
 if __name__=="__main__":main()

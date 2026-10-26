@@ -1,9 +1,1 @@
-{
-  "request": "Evaluate DoltHub before any options feature build; collect 8 approved ALFRED series and CBOE histories; log four retained skips",
-  "owner_updates": [
-    "16:35",
-    "16:50",
-    "16:55"
-  ],
-  "features": false
-}
+{"request":"Retry only Dolt SQL AS OF and independently checkpoint eight macro sources", "version":2, "features":false}
