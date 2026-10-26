@@ -1,0 +1,34 @@
+name: dolt-index-source-probe
+on:
+  push:
+    branches: [codex/phase1-gap-sources]
+    paths: ['ci/DOLT_INDEX_PROBE_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: dolt-index-source-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.dolt_options_index_probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dolt-index-probe-v3
+          path: gap-sources/dolt-index/
+      - name: Preserve versioned probe receipts
+        run: |
+          tar -czf dolt_index_probe.tar.gz -C gap-sources dolt-index
+          sha256sum dolt_index_probe.tar.gz > dolt_index_probe.sha256
+          tag="dolt-index-probe-v3-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" dolt_index_probe.tar.gz dolt_index_probe.sha256 gap-sources/dolt-index/DOLT_OPTIONS_INDEX_PROBE_V3.json --title "$tag" --notes "Read-only bounded source diagnostics; no options features or universe-coverage claim." --target "$GITHUB_SHA"
