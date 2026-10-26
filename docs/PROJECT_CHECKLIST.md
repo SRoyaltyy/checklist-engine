@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/298. Claimed awaiting James: 1.**
+**Verified by both: 13/298. Claimed awaiting James: 2.**
 
 ## Rules
 
@@ -431,7 +431,7 @@ Note (2026-10-26 ~16:35 HKT, do not tick): EV/EBITDA, P/S, margins, ROIC, and th
 
 ### Live-only skips from the 16:35 list
 
-- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: max pain; max-OI strikes; unusual-activity flag; implied correlation. Done when: Each of those names is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason, unless box 1.201 moves it onto a real history. They are not fetched from a paid vendor. NYSE TICK is box 1.200. Finviz Elite was checked on 2026-10-26 16:55 and is today's snapshot only, so it cannot backfill 2020+. Single-stock ATM implied vol, IV rank and percentile, 25-delta skew and risk reversal, and historical volatility minus implied volatility stay off the fetch list until the DoltHub log in box 1.201 says the coverage is good. Do not log those as a final exclusion before that log. Evidence:
+- [x] **1.199** Live-only skips from the 16:35 list are logged. Items: max pain; max-OI strikes; unusual-activity flag; implied correlation. Done when: Each of those names is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason, unless box 1.201 moves it onto a real history. They are not fetched from a paid vendor. NYSE TICK is box 1.200. Finviz Elite was checked on 2026-10-26 16:55 and is today's snapshot only, so it cannot backfill 2020+. Single-stock ATM implied vol, IV rank and percentile, 25-delta skew and risk reversal, and historical volatility minus implied volatility stay off the fetch list until the DoltHub log in box 1.201 says the coverage is good. Do not log those as a final exclusion before that log. Evidence: [WORLD_COVERAGE.csv](WORLD_COVERAGE.csv) namespace series / LIVE_ONLY_*; [status](LIVE_ONLY_EXCLUSIONS_STATUS_V1.json), [self-verification receipt](LIVE_ONLY_EXCLUSIONS_PROOF_V1.json), and [passed retained-skips job](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071/job/121519195044). GPT ✓ 2026-10-26 HKT; awaiting James. Four retained series / 88 explicit exclusion rows; reopened TICK and IV-related series are not final exclusions.
 
 ### NYSE TICK
 

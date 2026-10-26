@@ -1,0 +1,12 @@
+{
+  "status": "SELF_VERIFIED_FOUR_RETAINED_LIVE_ONLY_SKIPS",
+  "coverage_blob_sha": "c73f56e3c9cefe27734a4acf062ce4e1bb76287d",
+  "series_count": 4,
+  "excluded_rows": 88,
+  "unique_series_timeframe_keys": 88,
+  "reasons_present": true,
+  "no_reopened_names_finally_excluded": true,
+  "source_job": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071/job/121519195044",
+  "overall_source_run_status": "FAILURE_IN_SEPARATE_FRED_JOB; retained-skip job passed",
+  "full_world_gate": "NOT_RUN"
+}
