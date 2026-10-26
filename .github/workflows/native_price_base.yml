@@ -1,0 +1,72 @@
+name: native-price-base
+on:
+  push:
+    branches: [codex/native-world-blocks-v1]
+    paths: ['ci/NATIVE_PRICE_BASE_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: native-price-base
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  INPUTS_TAG: native-price-inputs-v1-40336250454-1
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_price_base.py tests/test_world_native_blocks.py tests/test_price_bridge_basis.py -q
+  build:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    env:
+      SOURCE_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.native_price_base build --directory price-base --inputs-tag "$INPUTS_TAG" --shard "$SOURCE_SHARD"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-base-status-${{ matrix.shard }}
+          path: price-base/BASE_*.json
+          if-no-files-found: ignore
+  merge:
+    needs: [verify, build]
+    if: ${{ always() && needs.verify.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Verify the complete accepted universe and stock-day denominator
+        run: python -m ci.native_price_base merge --directory measured-base --inputs-tag "$INPUTS_TAG" --build-prefix "native-price-base-v1-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-base-measured-status
+          path: |
+            measured-base/*.json
+            measured-base/*.csv
+          if-no-files-found: ignore
