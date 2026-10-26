@@ -229,6 +229,9 @@ def build_entity(ticker,old,archive,manifest,calendar,funcs,directory):
     bars.to_parquet(directory/(hexname+".bars.parquet"),index=False)
     if events is not None:events.to_parquet(directory/(hexname+".events.parquet"),index=False)
     query=pd.to_datetime(bars.loc[bars.date>=pd.Timestamp("2020-01-01"),"date"]).astype("datetime64[ns]")
+    missing=pd.DatetimeIndex(bars.date).difference(calendar)
+    if len(missing):
+        raise ValueError("Observed-session calendar mismatch: "+json.dumps({"ticker":ticker,"count":len(missing),"dates":[str(d)[:10] for d in missing[:100]],"calendar_first":str(calendar.min())[:10],"calendar_last":str(calendar.max())[:10]}))
     counts={};metrics={}
     for tf in TIMEFRAMES:
         candles=completed_candles(bars,tf,session_calendar=calendar)

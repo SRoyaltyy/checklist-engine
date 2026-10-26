@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "mode": "smoke",
-  "request": "Real SPY/AAPL/MSFT/NVDA native-price coverage smoke; no scoring or full-world claim."
+  "request": "Log precise calendar mismatch dates on real-source smoke; no price repair or scoring."
 }
