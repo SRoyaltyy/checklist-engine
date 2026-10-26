@@ -1,0 +1,42 @@
+name: archive-world-inputs-v2
+on:
+  push:
+    branches: [codex/world-state-v2-integration]
+    paths: ['ci/archive_world_inputs.py', '.github/workflows/archive_world_inputs.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN: '40212948878'
+      SOURCE_SHA: f01b22aa758123486ac3ab1b7e5fd5dc0b91e382
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the source run and obtain its completed source artifacts
+        run: |
+          source_sha="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN" --jq '.head_sha')"
+          test "$source_sha" = "$SOURCE_SHA"
+          gh run download "$SOURCE_RUN" --name fred-v2-source --dir source-inputs/fred
+          gh run download "$SOURCE_RUN" --name supplemental-prices-v2 --dir source-inputs/prices
+          gh run download "$SOURCE_RUN" --name xbrl-v2-source --dir source-inputs/companyfacts
+      - name: Check actual source reports and fingerprint every input
+        run: python -m ci.archive_world_inputs
+      - name: Publish immutable provisional input archive
+        run: |
+          tag="world-inputs-v2-$SOURCE_RUN"
+          tar -czf WORLD_SOURCE_INPUTS.tar.gz -C source-inputs .
+          test -s WORLD_SOURCE_INPUTS.tar.gz
+          gh release create "$tag" --target main --title "$tag" --notes "PROVISIONAL inputs from source run $SOURCE_RUN @ $SOURCE_SHA. Five ALFRED series and 6 pilot stocks plus 14 ETFs. SEC companyfacts failure evidence preserved. Not full world coverage or an approved scanner result." WORLD_SOURCE_INPUTS.tar.gz WORLD_INPUT_MANIFEST.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: world-input-manifest
+          path: WORLD_INPUT_MANIFEST.json

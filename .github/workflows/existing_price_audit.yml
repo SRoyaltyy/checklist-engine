@@ -1,0 +1,31 @@
+name: existing-price-source-audit
+on:
+  push:
+    branches: [codex/world-state-v2, codex/world-state-v2-integration]
+    paths: ['ci/audit_existing_prices.py', '.github/workflows/existing_price_audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Download frozen baseline and verify its existing checksum
+        run: |
+          gh release download data-2020-24-v1 -p bars_all_le2024.parquet -p SHA256SUMS
+          grep bars_all_le2024.parquet SHA256SUMS | sha256sum -c -
+      - name: Compare every overlapping ticker in the existing fullscan file
+        run: python -m ci.audit_existing_prices --frozen bars_all_le2024.parquet --commit cc932d413b78dbd375f78aa99229da46752e9ac8 --expected-blob 9c45527570e5ada2b2a0f0f61eaa41e44f67e344 --out source-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: existing-price-source-audit
+          path: source-audit/EXISTING_PRICE_AUDIT.json
