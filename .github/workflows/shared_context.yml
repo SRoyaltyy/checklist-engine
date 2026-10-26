@@ -1,0 +1,35 @@
+name: shared-native-context
+on:
+  push:
+    branches: [codex/native-context-inputs]
+    paths: ['world_context_native.py', 'ci/shared_context_build.py', 'tests/test_world_context_native.py', '.github/workflows/shared_context.yml']
+permissions:
+  contents: write
+concurrency:
+  group: shared-native-context
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_context_native.py tests/test_world_context_sources.py tests/test_world_fred.py tests/test_world_bar_statistics.py tests/test_world_release_assets.py -q
+      - run: python -m ci.shared_context_build --directory shared-context
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shared-context-proof
+          path: |
+            shared-context/SHARED_CONTEXT_STATUS.json
+            shared-context/SHARED_CONTEXT_COVERAGE.csv
+          if-no-files-found: ignore
