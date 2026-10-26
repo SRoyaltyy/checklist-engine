@@ -1,0 +1,103 @@
+name: phase1-gap-source-evaluation
+on:
+  push:
+    branches: [codex/phase1-gap-sources]
+    paths: ['ci/GAP_SOURCE_REQUEST.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: phase1-gap-sources
+  cancel-in-progress: false
+jobs:
+  sources:
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [dolt,cboe,fred]
+      max-parallel: 3
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pandas pyarrow
+      - name: Evaluate the requested source, without building features
+        env:
+          KIND: ${{ matrix.kind }}
+        run: |
+          if [ "$KIND" = "dolt" ]; then python -m ci.dolt_options_source_audit; fi
+          if [ "$KIND" = "cboe" ]; then python -m ci.cboe_numeric_source_audit; fi
+          if [ "$KIND" = "fred" ]; then
+            mkdir -p gap-sources/fred
+            python fetch/fetch_fred.py --series T10Y3M,T5YIE,T10YIE,STICKCPIM159S,DFII10,CIVPART,INDPRO,BUSLOANS --out gap-sources/fred/fred_1635.parquet
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase1-gap-source-${{ matrix.kind }}
+          path: gap-sources/${{ matrix.kind }}/
+          if-no-files-found: warn
+      - name: Publish versioned source receipt and its raw evidence
+        env:
+          KIND: ${{ matrix.kind }}
+        run: |
+          cd "gap-sources/$KIND"
+          sha256sum * > SHA256SUMS
+          cd ../..
+          tar -czf "${KIND}_gap_source.tar.gz" -C gap-sources "$KIND"
+          sha256sum "${KIND}_gap_source.tar.gz" > "${KIND}_gap_source.sha256"
+          tag="phase1-gap-${KIND}-v1-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" "${KIND}_gap_source.tar.gz" "${KIND}_gap_source.sha256" --title "$tag" --notes "Source evaluation/acquisition only. No full-world or probability result." --target "$GITHUB_SHA"
+      - name: Put the concrete source log on main
+        env:
+          KIND: ${{ matrix.kind }}
+        run: |
+          mkdir -p /tmp/gap-status
+          if [ "$KIND" = "dolt" ]; then cp gap-sources/dolt/DOLT_OPTIONS_SOURCE_COVERAGE_V1.json /tmp/gap-status/; fi
+          if [ "$KIND" = "cboe" ]; then cp gap-sources/cboe/CBOE_NUMERIC_SOURCE_STATUS_V1.json /tmp/gap-status/; fi
+          if [ "$KIND" = "fred" ]; then cp gap-sources/fred/fred_1635.source.json /tmp/gap-status/FRED_1635_SOURCE_STATUS_V1.json; fi
+          git fetch origin main
+          git checkout -B "gap-source-${KIND}-publication" origin/main
+          cp /tmp/gap-status/* docs/
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/*SOURCE*V1.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish ${KIND} Phase 1 source evidence; no feature-gate claim"
+          for attempt in 1 2 3 4; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
+  retained_skips:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Log only the retained skips under the current owner policy
+        run: |
+          cp ci/log_retained_live_only.py /tmp/log_retained_live_only.py
+          git fetch origin main
+          git checkout -B retained-skip-publication origin/main
+          python /tmp/log_retained_live_only.py
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/WORLD_COVERAGE.csv docs/LIVE_ONLY_EXCLUSIONS_STATUS_V1.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Log four retained live-only series; leave reopened TICK and IV pending"
+          for attempt in 1 2 3 4; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
