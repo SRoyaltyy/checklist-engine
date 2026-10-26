@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 8/224. Claimed awaiting James: 2.**
+**Verified by both: 10/224. Claimed awaiting James: 0.**
 
 ## Rules
 
@@ -207,8 +207,8 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### FRED and ALFRED macro
 
-- [x] **1.91** FRED and ALFRED macro: source located. Items: I195 FRED macro and I178 VIX. Done when: Source is the FRED API using the phase-0 secret. ALFRED vintage dates are the point-in-time values. The VIXCLS file in data-2020-24-v1 is not a vintage series and does not pass on its own. Evidence: [merge 2f3eaaa](https://github.com/SRoyaltyy/checklist-engine/commit/2f3eaaa2df798ce0febb93c870dcccef2060a39e) + [real vintage source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669) + [MACRO_SOURCE_STATUS_V3.json](MACRO_SOURCE_STATUS_V3.json). GPT ✓ 2026-10-26/2f3eaaa.
-- [x] **1.92** FRED and ALFRED macro: fetched onto a checklist-engine release. Done when: The release holds each required series as vintage rows (observation date, realtime start, value), checksummed. The log does not contain the API key. Evidence: [checksummed 13-series release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/fred-structured-v3-40266650669-1), [source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669), [source manifest](MACRO_SOURCE_STATUS_V3.json); 900,986 vintage rows, complete available source ranges with the earlier credit-spread archive gap explicit. GPT ✓ 2026-10-26/2f3eaaa.
+- [x] **1.91** FRED and ALFRED macro: source located. Items: I195 FRED macro and I178 VIX. Done when: Source is the FRED API using the phase-0 secret. ALFRED vintage dates are the point-in-time values. The VIXCLS file in data-2020-24-v1 is not a vintage series and does not pass on its own. Evidence: [merge 2f3eaaa](https://github.com/SRoyaltyy/checklist-engine/commit/2f3eaaa2df798ce0febb93c870dcccef2060a39e) + [real vintage source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669) + [MACRO_SOURCE_STATUS_V3.json](MACRO_SOURCE_STATUS_V3.json). GPT ✓ 2026-10-26/2f3eaaa. James ✓ (2026-10-26 12:36 HKT: release fred-structured-v3-40266650669-1 exists with checksum, run 40266650669 green, no secret in log).
+- [x] **1.92** FRED and ALFRED macro: fetched onto a checklist-engine release. Done when: The release holds each required series as vintage rows (observation date, realtime start, value), checksummed. The log does not contain the API key. Evidence: [checksummed 13-series release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/fred-structured-v3-40266650669-1), [source run 40266650669](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40266650669), [source manifest](MACRO_SOURCE_STATUS_V3.json); 900,986 vintage rows, complete available source ranges with the earlier credit-spread archive gap explicit. GPT ✓ 2026-10-26/2f3eaaa. James ✓ (2026-10-26 12:36 HKT: release fred-structured-v3-40266650669-1 exists with checksum, run 40266650669 green, no secret in log).
 - [ ] **1.93** FRED and ALFRED macro: joined point-in-time. Done when: The value on D is the vintage whose realtime period contains the morning of D and whose observation date is < D. Evidence:
 - [ ] **1.94** FRED and ALFRED macro: built at candle sizes 1 through 21. Done when: Each macro series is sampled at candle sizes 1..21. Evidence:
 - [ ] **1.95** FRED and ALFRED macro: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled, and BLOCKED_SECRET is gone for every series the fetch returned. Evidence:
