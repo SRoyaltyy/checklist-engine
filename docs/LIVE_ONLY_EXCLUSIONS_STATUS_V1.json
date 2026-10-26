@@ -1,0 +1,20 @@
+{
+  "status": "RETAINED_OWNER_LIVE_ONLY_SKIPS_LOGGED",
+  "distinct_series": 4,
+  "excluded_timeframe_rows": 88,
+  "source": "docs/WORLD_COVERAGE.csv namespace=series status=EXCLUDED_LIVE_ONLY",
+  "reopened_not_excluded": [
+    "NYSE_TICK",
+    "ATM_IV",
+    "IV_RANK",
+    "IV_PERCENTILE",
+    "DELTA25_SKEW",
+    "RISK_REVERSAL",
+    "HV_MINUS_IV"
+  ],
+  "options_history_evaluation": "PENDING_DOLT_LOG_REVIEW",
+  "fetched_series": 0,
+  "zero_columns_added": 0,
+  "ticker_exclusion_roster": "docs/EXCLUDED.csv unchanged, 280 tickers",
+  "existing_scope": "Existing historical measurements remain provisional; no world gate is passed."
+}
