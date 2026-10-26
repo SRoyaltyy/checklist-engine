@@ -1,0 +1,68 @@
+{
+  "version": "phase1-price-source-inventory-v1",
+  "status": "SOURCE_LOCATED_ONLY_NOT_WORLD_GATE",
+  "as_of_completed_session": "2026-10-23",
+  "existing_org_sources_checked_first": [
+    {
+      "repository": "SRoyaltyy/fullscan",
+      "releases_checked": "https://api.github.com/repos/SRoyaltyy/fullscan/releases",
+      "release_count": 0,
+      "commit": "cc932d413b78dbd375f78aa99229da46752e9ac8",
+      "price_path": "data/prices/ohlc.parquet",
+      "metadata": {
+        "last_date": "2026-10-23",
+        "first_date": "2024-03-04",
+        "n_rows": 3107838,
+        "n_tickers": 11720,
+        "updated": "2026-10-23T17:05:27.294316-04:00"
+      },
+      "sha256": "31e6bf7f5a9054080123dff90a2f36d38e080d6ead72c6cfbb7752d959470cca",
+      "validation_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40281391807",
+      "use": "independent comparison only; insufficient frozen overlap for wholesale replacement"
+    },
+    {
+      "repository": "SRoyaltyy/theme-radar",
+      "releases_checked": "https://api.github.com/repos/SRoyaltyy/theme-radar/releases",
+      "release_count": 0,
+      "use": "no released historical OHLC asset located; existing repository sources audited in EXISTING_SOURCE_AUDIT_v2.md"
+    }
+  ],
+  "frozen_checklist_release": {
+    "tag": "data-2020-24-v1",
+    "assets": [
+      {
+        "name": "universe_2020_survivors_le2024.parquet",
+        "sha256": "df552a70afe4be60330ea3b1ee96bf8d48d89cd4c431e0de029d4c73a1b4f5b1",
+        "role": "authoritative canonical 2020-24 OHLCV and 8727-ticker universe"
+      },
+      {
+        "name": "bars_all_le2024.parquet",
+        "sha256": "cf6090bbb5769e7afee5825005d83df2c5f04d4082dff6d6dfae927110325cdc",
+        "role": "pre-2020 warmup only; not a substitute for canonical 2020-24"
+      }
+    ]
+  },
+  "supplemental_free_source": {
+    "provider": "Yahoo chart",
+    "url_template": "https://query1.finance.yahoo.com/v8/finance/chart/{provider_symbol}?period1=631152000&period2={exclusive_end}&interval=1d&events=div%2Csplits",
+    "release": "world-prices-v3-40259691137-1",
+    "collection_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40259691137",
+    "asset_count": 356,
+    "archive_count": 176,
+    "summary_asset": "https://github.com/SRoyaltyy/checklist-engine/releases/download/world-prices-v3-40259691137-1/PRICE_SOURCE_SUMMARY.json",
+    "immutable_member_manifests": "prices_shard_NNN_attempt_1_part_NNN.json beside each tar; archive/member SHA256 retained",
+    "basis": "Source vendor quote OHLC (split-adjusted, not additionally dividend-adjusted) is distinct from adjusted-close-derived OHLC; preserve both. Frozen values are not overwritten.",
+    "existing_validation_runs": [
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40281068048"
+    ],
+    "exclusions": "docs/EXCLUDED.csv",
+    "excluded_tickers": 280,
+    "strict_frozen_overlap_minimum": 60
+  },
+  "limits": [
+    "This proves locations and source roles for box 1.01 only, not joined world features or a Phase 1/2 pass.",
+    "Exclusion-summary pause metadata describes the historical generation time; METHODOLOGY 15:33 lifted that pause. Its numeric evidence is not rewritten.",
+    "Current non-ETF listing inventory is not full historical liquidity/size tradeability.",
+    "Do not restart excluded edge-case alternate-price searches."
+  ]
+}
