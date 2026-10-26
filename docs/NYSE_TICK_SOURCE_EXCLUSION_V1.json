@@ -1,0 +1,93 @@
+{
+  "status": "NOT_AVAILABLE_FREE_FROM_TESTED_SOURCES",
+  "item_id": "NYSE_TICK",
+  "requested": [
+    "2020-01-01",
+    "2026-10-23"
+  ],
+  "attempts": [
+    {
+      "name": "investing_page",
+      "url": "https://www.investing.com/indices/nyse-tick-index-historical-data",
+      "http_status": 200,
+      "finding": "Historical page inspected; no unique verified instrument id, so no blind id substitution."
+    },
+    {
+      "name": "sierra_statistics",
+      "url": "https://www.sierrachart.com/index.php?page=doc/SCMarketStatistics.php",
+      "http_status": 200,
+      "finding": "Provider documents historical TICK-NYSE, but service package/account access is required; no paid access requested."
+    },
+    {
+      "name": "sierra_service",
+      "url": "https://www.sierrachart.com/index.php?page=doc/SierraChartHistoricalData.php",
+      "http_status": 200,
+      "finding": "Provider documents historical TICK-NYSE, but service package/account access is required; no paid access requested."
+    },
+    {
+      "name": "eoddata",
+      "url": "https://www.eoddata.com/stockquote/INDEX/TICK.htm",
+      "http_status": 200,
+      "finding": "Recent public quotes do not prove free complete 2020-present history. Full EOD history is offered for purchase; quote basis/identity must be verified."
+    },
+    {
+      "name": "stockcharts",
+      "url": "https://stockcharts.com/h-sc/ui?s=%24TICK&p=D&b=5",
+      "http_status": 200,
+      "finding": "Public chart view is not a fetched complete numeric history."
+    },
+    {
+      "name": "yahoo_5e5449434b",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETICK?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "yahoo_5449434b2d4e595345",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/TICK-NYSE?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "yahoo_5e5449432e4e",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETIC.N?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "stooq_5e7469636b",
+      "url": "https://stooq.com/q/d/l/?s=%5Etick&i=d&d1=20200101&d2=20261023",
+      "http_status": 200,
+      "finding": "Response preserved; no acceptance without documented NYSE TICK identity and complete numeric date keys."
+    },
+    {
+      "name": "stooq_7469636b2e6e797365",
+      "url": "https://stooq.com/q/d/l/?s=tick.nyse&i=d&d1=20200101&d2=20261023",
+      "http_status": 200,
+      "finding": "Response preserved; no acceptance without documented NYSE TICK identity and complete numeric date keys."
+    },
+    {
+      "url": "https://api.investing.com/api/financialdata/historical/961122?start-date=2020-01-01&end-date=2020-12-31&time-frame=Daily&add-missing-rows=false",
+      "http_status": 403,
+      "bytes": 6000,
+      "sha256": "53005ff2795ef09608af0f26ee960c95c44295c17a56e699820bb1260b8dc125",
+      "year": 2020,
+      "name": "verified_investing_history_api",
+      "finding": "Exact NYSE TICK identity; ordinary 2020 historical API access returned HTTP403. Stopped without bypass."
+    }
+  ],
+  "latest_followup_run": "40334521879",
+  "source_release": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40308374864",
+  "zero_columns_added": 0,
+  "numeric_history_built": false,
+  "ticker_roster_modified": false,
+  "reason": "No tested free source yielded complete 2020-present numeric history. Investing verified id961122 API403; Yahoo candidates404; Stooq browser verification; Sierra/EODData require paid/account history; StockCharts public chart is not a complete numeric download.",
+  "extreme_readings": "No intraday history. An extreme count cannot be inferred from daily high/low.",
+  "evidence_sha256": {
+    "docs/NYSE_TICK_SOURCE_PROBE_V1.json": "84918bde5ad559346fc1066a3d8c5698aabe1322faf5d2e86d74b47c5d9b5ab6",
+    "docs/NYSE_TICK_SOURCE_FOLLOWUP_V4.json": "8f30843f271d381f5319b6e14e5ca74d8a8f382bd3e4dab5ab38357c59c911f1"
+  },
+  "options_IV_exclusion": "UNCHANGED_PENDING_DOLT; no options decision made here",
+  "coverage_rows_logged": 22,
+  "coverage_sha256": "75cc90af934dcb84325d83a2101c77ba51f245ff2f51fd0579de7ae40ec49163"
+}
