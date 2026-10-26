@@ -344,6 +344,8 @@ Only after every box in phases 0 through 4 is verified by both signatures. Step 
 
 Only after every Phase 5 box is verified by both signatures.
 
+Note (2026-10-26 ~12:02 HKT, do not tick): Hold period is a search variable, every length from 1 trading day through about 21 (about 1 month), not a fixed exit. This grid must span it. In a word (Cyrus 12:03 HKT): as long as a method is expected to win, we mine it and use it. Acceptance is positive expected profit after fees that holds out of sample (2023–24 and 2025–26), not any particular win rate or combo shape.
+
 - [ ] **6.01** Gate: start only after every Phase 5 box is verified by both signatures. Done when: Every Phase 5 box has `GPT ✓` and `James ✓`. Older exit-grid tables, including release grid-2020-22-v1, stay provisional and are not reused as this phase's output. Evidence:
 - [ ] **6.02** Rebuild the 26,100-rule exit grid. Done when: Take-profit 2–30 percent, hold 1–30 sessions, stop 2–30 percent or none. That is 29 by 30 by 30 = 26,100 sell rules. The release states that count. Evidence:
 - [ ] **6.03** Fees and the same-day baseline are in the result. Done when: Each rule's profit is after 30bp each way, and the same-day market return is stored beside it. Evidence:
@@ -353,6 +355,8 @@ Only after every Phase 5 box is verified by both signatures.
 ## Phase 7 — Shortlist, sharded
 
 Only after every Phase 6 box is verified by both signatures. Until the gate, the shortlist stays paused.
+
+Note (2026-10-26 ~12:02 HKT, do not tick): Probability is any (combination × hold) that reliably produces wins, judged by win rate or by win margin (expected profit after fees: win% × average win − loss% × average loss), with the existing minimum-win-rate floor and the 2023–24 and 2025–26 checks. In a word (Cyrus 12:03 HKT): as long as a method is expected to win, we mine it and use it. Acceptance is positive expected profit after fees that holds out of sample, not any particular win rate.
 
 - [ ] **7.01** Gate: start only after every Phase 6 box is verified by both signatures. Done when: The shortlist stays paused until then. Do not re-dispatch run 40175232753. Run 40156872713 (KeyError 2020) and run 40172094280 (cancelled mid-run) are not Evidence. Evidence:
 - [ ] **7.02** KeyError 2020 is covered by a unit test. Done when: A test on main loads grid_001, grid_008, and grid_010 and does not raise KeyError 2020 from scoring/shortlist.py. The year key works whether the year is an int or a string. Evidence:
@@ -365,6 +369,8 @@ Only after every Phase 6 box is verified by both signatures. Until the gate, the
 ## Phase 8 — Combine (Amendment A1)
 
 Only after every Phase 7 box is verified by both signatures. The 34 groups are a compute split. Score each setup together with its exit rule.
+
+Note (2026-10-26 ~12:02 HKT, do not tick): A combination is any set of questions or setups, of any data type, any timeframe, and any count. No cap on size, and no within-group restriction. This search must allow cross-type mixes of arbitrary size, limited only by sample size and multiple-testing controls. In a word (Cyrus 12:03 HKT): as long as a method is expected to win, we mine it and use it. Acceptance is positive expected profit after fees that holds out of sample, not any particular combo shape.
 
 - [ ] **8.01** Gate: start only after every Phase 7 box is verified by both signatures. Done when: Combiner fits stay paused until then. An additive sum of single-question scores does not pass any later box in this phase. Evidence:
 - [ ] **8.02** The search crosses groups and blocks. Done when: The published condition sets mix questions from more than one of the 34 chunks and from more than one data block. The chunks are described as a compute split. Evidence:
