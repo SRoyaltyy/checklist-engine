@@ -1,8 +1,10 @@
 name: native-price-base
 on:
   push:
-    branches: [codex/native-world-blocks-v1]
-    paths: ['ci/NATIVE_PRICE_BASE_REQUEST.json']
+    branches: [codex/native-world-blocks-v1, codex/native-price-upload-recovery]
+    paths: ['ci/NATIVE_PRICE_BASE_REQUEST.json', 'ci/native_price_base.py', 'ci/release_assets.py', 'tests/test_world_price_base.py', 'tests/test_world_release_assets.py', '.github/workflows/native_price_base.yml']
+  pull_request:
+    paths: ['ci/native_price_base.py', 'ci/release_assets.py', 'tests/test_world_price_base.py', 'tests/test_world_release_assets.py', '.github/workflows/native_price_base.yml']
 permissions:
   contents: write
 concurrency:
@@ -27,6 +29,7 @@ jobs:
       - run: python -m pytest tests/test_world_release_assets.py tests/test_world_price_base.py tests/test_world_native_blocks.py tests/test_price_bridge_basis.py -q
   build:
     needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/native-world-blocks-v1'
     runs-on: ubuntu-latest
     timeout-minutes: 150
     strategy:
@@ -51,7 +54,7 @@ jobs:
           if-no-files-found: ignore
   merge:
     needs: [verify, build]
-    if: ${{ always() && needs.verify.result == 'success' }}
+    if: ${{ always() && needs.verify.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/codex/native-world-blocks-v1' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
