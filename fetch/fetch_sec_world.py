@@ -54,11 +54,16 @@ def prepare(args):
     universe=pd.read_parquet(args.universe,columns=['ticker'])
     historical=pd.read_parquet(args.cik_map)
     if not {'ticker','cik'}<=set(historical):raise ValueError('Unrecognized frozen CIK map')
-    current=get_json('https://www.sec.gov/files/company_tickers.json')
+    try:
+        current=get_json('https://www.sec.gov/files/company_tickers.json')
+        current_map_status=dict(status='FETCHED')
+    except Exception as exc:
+        current={};current_map_status=dict(status='BLOCKED_OR_ERROR',evidence=getattr(exc,'evidence',dict(error_type=type(exc).__name__,message=str(exc))))
+        print('SEC_CURRENT_IDENTITY_MAP_UNAVAILABLE',json.dumps(current_map_status),flush=True)
     records=identities(universe,historical,current)
     ciks=sorted({v['cik'] for r in records for v in r['candidates']})
     root=Path(args.out);root.mkdir(parents=True,exist_ok=True)
-    (root/'SEC_WORLD_IDENTITIES.json').write_text(json.dumps(dict(records=records,ciks=ciks,universe_count=len(records),statuses=dict(collections.Counter(r['status'] for r in records)),source_commit=os.environ.get('GITHUB_SHA'),point_in_time_note='Identity evidence only; current mapping does not prove historical ticker validity'),indent=2))
+    (root/'SEC_WORLD_IDENTITIES.json').write_text(json.dumps(dict(current_map_status=current_map_status,records=records,ciks=ciks,universe_count=len(records),statuses=dict(collections.Counter(r['status'] for r in records)),source_commit=os.environ.get('GITHUB_SHA'),point_in_time_note='Identity evidence only; current mapping does not prove historical ticker validity'),indent=2))
     print('SEC_WORLD_IDENTITIES',len(records),len(ciks),dict(collections.Counter(r['status'] for r in records)),flush=True)
 
 def collect(args):

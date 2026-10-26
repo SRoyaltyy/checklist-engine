@@ -21,7 +21,8 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--source-tag',required=True);ap.add_argument('--out',required=True);a=ap.parse_args()
     out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
     import facets_world as fw
-    frozen=fw.load_bars();indices=frozen.groupby('ticker',observed=True).indices
+    canonical_names=set(pd.read_parquet(fw.D('/workspace/pricehist/universe_2020_survivors.parquet'),columns=['ticker']).ticker.astype(str))
+    frozen=fw.load_bars(canonical_names);indices=frozen.groupby('ticker',observed=True).indices
     requested=set(indices);results={};source_reports={};duplicates=[]
     api='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
     release=request(api+'/releases/tags/'+a.source_tag);assets={};page=1
@@ -48,11 +49,20 @@ def main():
                 if ticker in results:duplicates.append(ticker);continue
                 if ticker not in requested:results[ticker]=dict(status='NOT_IN_FROZEN_UNIVERSE');continue
                 new=pd.read_parquet(io.BytesIO(data));old=frozen.iloc[indices[ticker]]
+                quoted=new.copy()
+                for column in ('open','high','low','close'):quoted[column]=quoted['vendor_'+column]
+                try:
+                    _,quoted_report=reconcile_one(ticker,old,quoted)
+                except Exception as exc:quoted_report=dict(status='FAIL',reason=str(exc))
+                overlap=old[['date','close']].merge(new[['date','close','vendor_close']],on='date',suffixes=('_old','_adjusted'))
+                diagnostics=dict(quoted_candidate=quoted_report,frozen_min_close=float(old.close.min()),adjusted_min_close=float(new.close.min()),quoted_min_close=float(new.vendor_close.min()),overlap_rows=len(overlap))
+                if len(overlap):
+                    diagnostics['basis_samples']=overlap.iloc[sorted(set([0,len(overlap)//2,len(overlap)-1]))].astype({'date':str}).to_dict('records')
                 try:
                     _,report=reconcile_one(ticker,old,new)
-                    results[ticker]=report
+                    results[ticker]=dict(report,diagnostics=diagnostics)
                 except Exception as exc:
-                    results[ticker]=dict(ticker=ticker,status='FAIL',reason=str(exc),frozen_rows=len(old),supplemental_rows=len(new),frozen_first=str(old.date.min())[:10],frozen_last=str(old.date.max())[:10],source_first=str(new.date.min())[:10],source_last=str(new.date.max())[:10])
+                    results[ticker]=dict(ticker=ticker,status='FAIL',reason=str(exc),frozen_rows=len(old),supplemental_rows=len(new),frozen_first=str(old.date.min())[:10],frozen_last=str(old.date.max())[:10],source_first=str(new.date.min())[:10],source_last=str(new.date.max())[:10],diagnostics=diagnostics)
         print('BRIDGE_ARCHIVE_CHECKED',n,len(results),flush=True)
     alternatives={}
     for ticker,meta in sorted(source_reports.items()):
@@ -66,12 +76,13 @@ def main():
         except Exception as exc:alternatives[ticker]=dict(status='ERROR',url=url,error=str(exc),used_as_replacement=False)
         time.sleep(1)
     counts=collections.Counter(r['status'] for r in results.values())
-    summary=dict(source_tag=a.source_tag,source_commit=os.environ['GITHUB_SHA'],requested=len(requested),audited=len(results),counts=dict(counts),missing=sorted(requested-set(results)),duplicate_source_names=duplicates,all_archives_verified=True,alternative_stale_sources=alternatives,nominal_historical_price_verified=False,world_coverage_approved=False,results=results)
+    summary=dict(source_tag=a.source_tag,source_commit=os.environ['GITHUB_SHA'],requested=len(requested),audited=len(results),counts=dict(counts),quoted_candidate_counts=dict(collections.Counter(r.get('diagnostics',{}).get('quoted_candidate',{}).get('status','UNKNOWN') for r in results.values())),missing=sorted(requested-set(results)),duplicate_source_names=duplicates,all_archives_verified=True,alternative_stale_sources=alternatives,nominal_historical_price_verified=False,world_coverage_approved=False,results=results)
     (out/'FULL_PRICE_RECONCILIATION_AUDIT.json').write_text(json.dumps(summary,indent=2))
     rows=[dict(ticker=t,**{k:v for k,v in r.items() if k!='ticker'}) for t,r in sorted(results.items())]
     pd.DataFrame(rows).to_csv(out/'FULL_PRICE_RECONCILIATION_AUDIT.csv',index=False)
     print(json.dumps({k:v for k,v in summary.items() if k!='results'}),flush=True)
     failed=[dict(ticker=t,**{k:v for k,v in r.items() if k!='ticker'}) for t,r in results.items() if r['status']!='PASS']
     print('BRIDGE_FAILURES',json.dumps(failed),flush=True)
+    print('BASIS_SAMPLES',json.dumps([dict(ticker=t,diagnostics=r['diagnostics']) for t,r in sorted(results.items()) if t in ('AAPL','MSFT','CSWC','AFCG','NFE','TRSY','TSLY','NVDA','SPY')]),flush=True)
 
 if __name__=='__main__':main()
