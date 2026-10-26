@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/298. Claimed awaiting James: 6.**
+**Verified by both: 13/298. Claimed awaiting James: 7.**
 
 ## Rules
 
@@ -437,7 +437,7 @@ Note (2026-10-26 ~16:35 HKT, do not tick): EV/EBITDA, P/S, margins, ROIC, and th
 
 Note (2026-10-26 ~16:50 HKT, do not tick): Reopened. Intraday is an acceptable source when it can be fetched for every day from 2020 through the present. Nothing here is ticked.
 
-- [ ] **1.200** NYSE TICK: free daily-complete history, or a log of what was tried. Done when: A free source covers every day from 2020 through the present, either as the daily close, high, and low of $TICK or computed from intraday that exists for every one of those days. The release holds numeric daily features: close, high, low, and a count of extreme readings, checksummed, and point-in-time as of D−1. If no free complete source exists, the exclusion list states exactly what was tried, and the column is absent rather than zero. Evidence:
+- [x] **1.200** NYSE TICK: free daily-complete history, or a log of what was tried. Done when: A free source covers every day from 2020 through the present, either as the daily close, high, and low of $TICK or computed from intraday that exists for every one of those days. The release holds numeric daily features: close, high, low, and a count of extreme readings, checksummed, and point-in-time as of D−1. If no free complete source exists, the exclusion list states exactly what was tried, and the column is absent rather than zero. Evidence: [Tested-source exclusion](NYSE_TICK_SOURCE_EXCLUSION_V1.json), [verified-identity follow-up](NYSE_TICK_SOURCE_FOLLOWUP_V4.json), [22 explicit coverage rows](WORLD_COVERAGE.csv) and [publication run40335732061](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40335732061). GPT ✓ 2026-10-26 HKT; awaiting James. Eleven logged attempts; Investing id961122 confirmed then API403, Yahoo404, Stooq verification, other providers lack free complete numeric history. No zero columns or intraday-count invention.
 
 ### DoltHub options history
 
