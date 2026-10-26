@@ -1,0 +1,418 @@
+{
+  "status": "SOURCE_EVALUATION_ONLY_NO_FEATURES",
+  "source": "post-no-preference/options",
+  "source_url": "https://www.dolthub.com/repositories/post-no-preference/options",
+  "evaluated_at": "2026-10-26T10:25:55.140003+00:00",
+  "database_ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+  "database_revision_pinned": true,
+  "period_requested": [
+    "2020-01-01",
+    "2026-10-23"
+  ],
+  "source_commit": "3124eec2dde081380b19ba29d81797542fbc987e",
+  "run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40307220071",
+  "accepted_inventory_sha256": "58383133dc32425de0be69aa8ead7e2c070bd62c6505c11e62c9c5ebd2501a3b",
+  "tables": {
+    "volatility_history": {
+      "schema_columns": [],
+      "has_open_interest": false,
+      "publication_timestamp_fields": [],
+      "global_totals": null,
+      "symbol_aggregation_complete": false,
+      "observed_source_symbols": 0,
+      "matched_accepted_tickers": 0,
+      "accepted_universe": 8447,
+      "accepted_ticker_presence_pct": null,
+      "matched_current_non_etf": 0,
+      "current_non_etf_universe": 5063,
+      "current_non_etf_ticker_presence_pct": null,
+      "unmatched_accepted_tickers": null,
+      "unmatched_names_status": "NOT_OBSERVED_PARTIAL_QUERY",
+      "identity_rule": "exact canonical symbol only, no silent aliases/remapping",
+      "date_counts_scope": "source date keys, not verified exchange-session or post-IPO/PIT tradeable denominators",
+      "yearly_accepted_source_date_counts": [
+        {
+          "year": 2020,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2021,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2022,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2023,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2024,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2025,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2026,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        }
+      ],
+      "pit_status": "UNVERIFIED: date keys alone do not establish original publication time, revision history or ATM definition",
+      "features_permitted": false
+    },
+    "option_chain": {
+      "schema_columns": [],
+      "has_open_interest": false,
+      "publication_timestamp_fields": [],
+      "global_totals": null,
+      "symbol_aggregation_complete": false,
+      "observed_source_symbols": 0,
+      "matched_accepted_tickers": 0,
+      "accepted_universe": 8447,
+      "accepted_ticker_presence_pct": null,
+      "matched_current_non_etf": 0,
+      "current_non_etf_universe": 5063,
+      "current_non_etf_ticker_presence_pct": null,
+      "unmatched_accepted_tickers": null,
+      "unmatched_names_status": "NOT_OBSERVED_PARTIAL_QUERY",
+      "identity_rule": "exact canonical symbol only, no silent aliases/remapping",
+      "date_counts_scope": "source date keys, not verified exchange-session or post-IPO/PIT tradeable denominators",
+      "yearly_accepted_source_date_counts": [
+        {
+          "year": 2020,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2021,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2022,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2023,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2024,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2025,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        },
+        {
+          "year": 2026,
+          "status": "UNMEASURED_QUERY_FAILED",
+          "source_dates": null,
+          "observed_ticker_date_pairs": null
+        }
+      ],
+      "pit_status": "UNVERIFIED: date keys alone do not establish original publication time, revision history or ATM definition",
+      "features_permitted": false
+    }
+  },
+  "queries": [
+    {
+      "name": "head",
+      "sql_file": "head.sql",
+      "sql_sha256": "6367b946f311ca7b8259bd7e36beea873ad4551132d27bfb0cc96f246d472eb2",
+      "ref": "master",
+      "status": "PASS",
+      "error": null,
+      "elapsed_s": 16.49,
+      "raw_sha256": "4ac4d042a1062c6396892b89af75b20bba3a3b1be4c4c5595f0de8aca2b8b3e5",
+      "raw_file": "head.json.gz",
+      "returned_rows": 1
+    },
+    {
+      "name": "tables",
+      "sql_file": "tables.sql",
+      "sql_sha256": "0911281e30125ba385272b96dee2f5e947201513bb6a06be34aa19b36958341c",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "tables.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_schema",
+      "sql_file": "volatility_history_schema.sql",
+      "sql_sha256": "0d60cac459140b572e6de94396e1ba3678150ee64389f14a623cdc424a55a3aa",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_schema.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_totals",
+      "sql_file": "volatility_history_totals.sql",
+      "sql_sha256": "8d940c0637a093ccc7fbb7bfdabd1bd1fca554e04a65afb5ddcc468c0fe0d29d",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_totals.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_symbol_page_00",
+      "sql_file": "volatility_history_symbol_page_00.sql",
+      "sql_sha256": "cc66a580a0c01c81ddece64f699bce9188c40d2f101daf229ee0dc1667730993",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_symbol_page_00.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2020",
+      "sql_file": "volatility_history_year_2020.sql",
+      "sql_sha256": "97c074ab842e86a9ca8a8017d1ce3770401455f321867119047a0a8ad36ceab7",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2020.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2021",
+      "sql_file": "volatility_history_year_2021.sql",
+      "sql_sha256": "cf23fc512ba465a6caa4fe4b29a79492cf6e293dab9d74df8303c7d429bb5743",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2021.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2022",
+      "sql_file": "volatility_history_year_2022.sql",
+      "sql_sha256": "3c45bfff5bdf257cc6444af44d524c9fea1656f14494a41d7fcca037949cc8d1",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2022.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2023",
+      "sql_file": "volatility_history_year_2023.sql",
+      "sql_sha256": "be6e5f1c6117bb887dca82836d9cfdcd1369f19966b754aaafd9d5adb0bfe15a",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2023.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2024",
+      "sql_file": "volatility_history_year_2024.sql",
+      "sql_sha256": "7cf27f650117474e5f290b0e27d12566ab74e1b33989a01c6914b19c37770759",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2024.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2025",
+      "sql_file": "volatility_history_year_2025.sql",
+      "sql_sha256": "2e790c1a6b01235be12e118181c9f0462e700699eff07bbff58b1c4d3dec7476",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2025.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "volatility_history_year_2026",
+      "sql_file": "volatility_history_year_2026.sql",
+      "sql_sha256": "877f2d20c8eef8739d54221fd551ba85e737b2a22efe698256c4ef6105329464",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "volatility_history_year_2026.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_schema",
+      "sql_file": "option_chain_schema.sql",
+      "sql_sha256": "823f8e2985ebdb1fe5e7292f862755a0312b09cdf29b2ea0e057708b410d801a",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_schema.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_totals",
+      "sql_file": "option_chain_totals.sql",
+      "sql_sha256": "7c08526471fdfb975f07cdd770dabb9c7d2c4bad6c7fdd3790555df59e89492b",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.17,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_totals.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_symbol_page_00",
+      "sql_file": "option_chain_symbol_page_00.sql",
+      "sql_sha256": "1893d926ecdb667e546f779535c1f43a603c98a70535e93ce419a46969d712ee",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.18,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_symbol_page_00.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2020",
+      "sql_file": "option_chain_year_2020.sql",
+      "sql_sha256": "48a09cc5801abb0577972d2aeada07569f4dd24c97eab2b7afcda5540e04a518",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2020.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2021",
+      "sql_file": "option_chain_year_2021.sql",
+      "sql_sha256": "ad805fabb9f10f724978b4b6643a8e91122a17e3ebcc38e4e04ae80b0fde93ca",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2021.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2022",
+      "sql_file": "option_chain_year_2022.sql",
+      "sql_sha256": "aad8e1a251764dd0e26438eb86ed7773c7aea60a226a96bb804000ebf64e4f2a",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2022.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2023",
+      "sql_file": "option_chain_year_2023.sql",
+      "sql_sha256": "7feae95038f4e8b4d7263f9beed77462928cddefdc4b3386be0c4c7a927ea3a3",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2023.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2024",
+      "sql_file": "option_chain_year_2024.sql",
+      "sql_sha256": "e8e642953e90e35a2d7b41d2b66b429429dcd3df675cc0d02c4cde52a1aaf5fe",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.29,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2024.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2025",
+      "sql_file": "option_chain_year_2025.sql",
+      "sql_sha256": "aa65887f800d2ab8e69c6c5f9a7896fc48d0c56751609769a55607849263acc5",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2025.json.gz",
+      "returned_rows": null
+    },
+    {
+      "name": "option_chain_year_2026",
+      "sql_file": "option_chain_year_2026.sql",
+      "sql_sha256": "ff089276d4dc6b611a4994b2f97d6683d6ea656e9567c1b6f86463778b4f4e51",
+      "ref": "8fvk999ugbld4o782kvi36k7sv37ljbm",
+      "status": "FAIL",
+      "error": "HTTP Error 400: Bad Request",
+      "elapsed_s": 0.28,
+      "raw_sha256": "b6cc5f800b1160014c3438b0695fc7260be47ebc27615530c9074e5cd01ab243",
+      "raw_file": "option_chain_year_2026.json.gz",
+      "returned_rows": null
+    }
+  ],
+  "reopening_decision": "PENDING_JAMES_REVIEW: no options features built, no final ATM-IV/skew/risk-reversal/HV-minus-IV exclusion",
+  "notes": [
+    "Finviz Elite supplies current snapshots only; not historical backfill per owner 16:55.",
+    "Ticker presence is not daily completeness or PIT validity.",
+    "Unsuccessful queries have null coverage, never fabricated zero coverage.",
+    "Source vol fields are not automatically option volume or open interest."
+  ]
+}
