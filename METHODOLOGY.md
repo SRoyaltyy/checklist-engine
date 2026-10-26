@@ -392,6 +392,9 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **Phase 0.02 tick — 2026-10-26.** Build, timeframe, leak and coverage modules import successfully on ubuntu-latest. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). This is Phase 0 infrastructure proof; six-stock coverage/leak and full-universe/question gates remain unticked.
+
+
 - **Phase 0.01 tick — 2026-10-26.** Canonical date helper and MSFT/NVDA ns/us merge regressions pass on main. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). This is Phase 0 infrastructure proof; six-stock coverage/leak and full-universe/question gates remain unticked.
 
 
