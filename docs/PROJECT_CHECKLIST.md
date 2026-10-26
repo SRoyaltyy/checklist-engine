@@ -9,12 +9,12 @@ Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on mai
 - James verifies and may untick.
 - One checkbox is one commit-able unit.
 - Update this file in the same commit as the work, and add one §0c line per tick with the item id and the run id.
-- Nothing below is pre-ticked. The commit that added this file found no box whose Done when proof was already on main.
+- No boxes were pre-ticked when this file was created. Later ticks require the evidence below.
 
 ## Already on main, and why it is not a tick
 
 - `docs/TV_COVERAGE.csv` has 296 items, M001–M296: 207 WIRED, 78 EXCLUDED_FREE_TEXT, 11 NOT_AVAILABLE_FREE. WIRED rows name snapshot columns and carry no non-null percent. That is not P1.
-- `docs/WORLD_COVERAGE.csv` is not on main.
+- `docs/WORLD_COVERAGE.csv` is now on main, explicitly marked SIX_STOCK_PROVISIONAL_NOT_FULL_UNIVERSE. It provides SEC blocked-source evidence for Phase 0 and does not complete Phase 1, 2 or 4.
 - `docs/WORLD_COVERAGE_STATUS.md` records run [40209615520](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40209615520) and release [world-smoke-v2-40209615520-1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/world-smoke-v2-40209615520-1). Six stocks. Snapshot prices end 2024-12-31. Coverage FAIL: WIRED 1,367, PENDING 8,269, BLOCKED_SECRET 22, EXCLUDED_LIVE_ONLY 22, EXCLUDED_FREE_TEXT 1,716, NOT_AVAILABLE_FREE 242, over 11,638 item-by-timeframe rows. The leak PASS in that note is the six-stock smoke after the Kagi fix. It does not tick phase 2 or phase 4.
 - `docs/EXISTING_SOURCE_AUDIT_v2.md` (commit 05ef8d7) is the org-source inventory for prices, Form 4, 13F, analyst captures, companyfacts, FRED, earnings, Stooq, and options. It says itself that it is not full historical coverage. Use it when writing Evidence for a source-located box. It does not tick one.
 - `FRED_API_KEY` is a repository Actions secret, set 2026-10-25 23:37 HKT. Fetching with it is box 0.08, still open. Run 40212365543 is still in progress on the branch and is not a tick.
@@ -46,7 +46,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 
 Each crash James read from runs 40207164333 through 40209615520 needs a test on main. A fix that exists only on codex/world-state-v2 does not tick.
 
-- [ ] **0.01** Date-key helper for merge dtypes. Done when: One load-time helper casts every date key to datetime64[ns], and a test merges the MSFT and NVDA keys that raised MergeError datetime64[ns] vs datetime64[us] in runs 40207164333–40209615520 on codex/world-state-v2. The test is on main and passes in CI. Evidence:
+- [x] **0.01** Date-key helper for merge dtypes. Done when: One load-time helper casts every date key to datetime64[ns], and a test merges the MSFT and NVDA keys that raised MergeError datetime64[ns] vs datetime64[us] in runs 40207164333–40209615520 on codex/world-state-v2. The test is on main and passes in CI. Evidence: [merge 38fb6d6](https://github.com/SRoyaltyy/checklist-engine/commit/38fb6d626f2bb6e830d72eb925afec8648099d42) + [green main CI 40257553448](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40257553448). 
 - [ ] **0.02** world_timeframes import path. Done when: The coverage gate imports world_timeframes on ubuntu-latest with no ModuleNotFoundError. The fix is a real package import or an explicit PYTHONPATH, and the passing CI log is linked. Evidence:
 - [ ] **0.03** Import smoke before heavy steps. Done when: The world workflow runs an import smoke of the build, leak, and coverage modules and stops before fetch, build, leak, or publish if any import fails. A forced bad import fails that step in CI. Evidence:
 - [ ] **0.04** SEC fair-access client. Done when: companyfacts requests send User-Agent `checklist-engine research cyrus-checklist@users.noreply.github.com`, Accept-Encoding gzip, at most 10 requests per second, and retry with backoff. A logged MSFT fetch no longer returns 403 for a missing header. Evidence:
