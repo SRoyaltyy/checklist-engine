@@ -54,7 +54,7 @@ def test_sec_403_retries_before_reporting_blocked():
     import urllib.error
     from fetch.fetch_xbrl import get_json
     err=urllib.error.HTTPError('x',403,'blocked',None,None)
-    with patch('urllib.request.urlopen',side_effect=err) as request,patch('time.sleep'):
+    with patch.dict('os.environ',{'PRIMARY_ACTION_RELAY_URL':'https://unit-test-relay.example/'}),patch('urllib.request.urlopen',side_effect=err) as request,patch('time.sleep'):
         with pytest.raises(urllib.error.HTTPError):get_json('https://data.sec.gov/blocked')
         assert request.call_count==4
 
@@ -100,8 +100,8 @@ def test_fred_splits_vintage_ranges_below_json_limit():
     from fetch.fetch_fred import alfred_observations
     with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
         assert alfred_observations('test-key','TEST',as_of='2026-12-31')==[]
-    assert request.call_count==9
-    assert request.call_args_list[0].args[4:] == ('2018-01-01','2018-12-31')
+    assert request.call_count==37
+    assert request.call_args_list[0].args[4:] == ('1990-01-01','1990-12-31')
     assert request.call_args_list[-1].args[4:] == ('2026-01-01','2026-12-31')
 
 
@@ -111,3 +111,12 @@ def test_fred_current_vintage_interval_ends_today():
         alfred_observations('test-key','TEST',start_year=2026,end_year=2027,as_of='2026-10-25')
     assert request.call_count==1
     assert request.call_args.args[4:]==('2026-01-01','2026-10-25')
+
+
+def test_fred_never_requests_intervals_before_series_archive_exists():
+    from fetch.fetch_fred import alfred_observations
+    with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
+        alfred_observations('test-key','TEST',start_year=1990,end_year=2000,as_of='2000-12-31',available_from='1999-07-05')
+    assert request.call_count==2
+    assert request.call_args_list[0].args[4:]==('1999-07-05','1999-12-31')
+    assert request.call_args_list[1].args[4:]==('2000-01-01','2000-12-31')

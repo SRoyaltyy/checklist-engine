@@ -1,0 +1,126 @@
+name: world-universe-price-sources-v3
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths:
+      - '.github/workflows/world_universe_prices.yml'
+      - 'ci/full_price_sources.py'
+      - 'fetch/fetch_world_prices.py'
+      - 'tests/test_full_price_sources.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ github.token }}
+  END_DATE: '2026-10-23'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.world_pipeline imports
+      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py tests/test_full_price_sources.py -q
+  prepare:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Get and verify the entire frozen universe
+        run: |
+          gh release download data-2020-24-v1 -p universe_2020_survivors_le2024.parquet -p SHA256SUMS
+          grep universe_2020_survivors_le2024.parquet SHA256SUMS | sha256sum -c -
+          python -m ci.full_price_sources prepare --universe universe_2020_survivors_le2024.parquet --out source-prepare --end-date "$END_DATE" --shards 16
+      - name: Create immutable provisional acquisition release with universe provenance
+        id: release
+        run: |
+          tag="world-prices-v3-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" --target main --title "$tag" --notes "PROVISIONAL full frozen-universe source acquisition through $END_DATE. Code $GITHUB_SHA. Shards upload immutable checkpoints while running. Not approved world coverage; inspect final PRICE_SOURCE_SUMMARY.json." source-prepare/WORLD_UNIVERSE.json source-prepare/price_universe.parquet
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: full-price-universe
+          path: source-prepare/
+  prices:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: full-price-universe
+          path: source-prepare
+      - name: Fetch every assigned ticker and publish checkpoints after each 50 attempts
+        id: fetch
+        env:
+          SOURCE_TAG: ${{ needs.prepare.outputs.tag }}
+          SOURCE_SHARD: ${{ matrix.shard }}
+        run: python -m fetch.fetch_world_prices --universe source-prepare/price_universe.parquet --shard "$SOURCE_SHARD" --shards 16 --out price-source --end-date "$END_DATE" --publish-tag "$SOURCE_TAG" --checkpoint-every 50
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-price-report-${{ matrix.shard }}
+          path: price-source/PRICE_FETCH_REPORT.json
+      - name: Preserve recovery data if the fetch/publication step fails
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: full-price-recovery-${{ matrix.shard }}
+          retention-days: 7
+          compression-level: 0
+          path: |
+            price-source/*.parquet
+            price-source/PRICE_FETCH_REPORT.json
+  summarize:
+    needs: [prepare, prices]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SOURCE_TAG: ${{ needs.prepare.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: full-price-universe
+          path: source-prepare
+      - name: Collect all durable shard manifests
+        run: gh release download "$SOURCE_TAG" -p 'prices_shard_*_attempt_*_part_*.json' -D checkpoints
+      - name: Measure every requested ticker and fail unresolved source coverage
+        id: gate
+        run: python -m ci.full_price_sources summarize --universe source-prepare/WORLD_UNIVERSE.json --checkpoints checkpoints --out source-summary
+      - name: Publish measured source counts even on failure
+        if: always()
+        run: |
+          test -f source-summary/PRICE_SOURCE_SUMMARY.json
+          gh release upload "$SOURCE_TAG" source-summary/PRICE_SOURCE_SUMMARY.json source-summary/PRICE_SOURCE_COVERAGE.csv
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-price-source-summary
+          path: source-summary/

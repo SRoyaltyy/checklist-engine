@@ -117,5 +117,9 @@ def world_timeframes(bars, funcs, daily_external=None):
                                 left_on='available_from', right_on='date', direction='backward')
             for c in extcols:
                 features[c] = ext[c].to_numpy()
+            # Difference windows count native candles after sampling known levels.
+            for c in extcols:
+                if c.startswith('fred_') and not c.endswith(('_odays','_vintage_days')):
+                    for window in (20,60):features[c+'_change'+str(window)]=ext[c].diff(window).to_numpy()
         out = out.merge(align_features(bars.date, features, tf), on='date', how='left')
     return out

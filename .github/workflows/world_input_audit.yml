@@ -1,0 +1,30 @@
+name: world-input-universe-audit
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/world_input_audit.py', '.github/workflows/world_input_audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Read both verified frozen inputs and paginated live source manifests
+        run: |
+          gh release download data-2020-24-v1 -p universe_2020_survivors_le2024.parquet -p bars_all_le2024.parquet -p SHA256SUMS
+          grep -E 'universe_2020_survivors_le2024.parquet|bars_all_le2024.parquet' SHA256SUMS | sha256sum -c -
+          python -m ci.world_input_audit --universe universe_2020_survivors_le2024.parquet --bars bars_all_le2024.parquet --source-tag world-prices-v3-40259691137-1 --out input-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: world-input-universe-audit
+          path: input-audit/

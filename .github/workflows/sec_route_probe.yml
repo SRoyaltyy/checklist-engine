@@ -1,0 +1,25 @@
+name: sec-structured-endpoint-probe
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/sec_route_probe.py','.github/workflows/sec_route_probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.sec_route_probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-structured-endpoint-probe
+          path: sec-route-probe/

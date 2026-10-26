@@ -69,7 +69,8 @@ def test_all_timeframes_all_columns_future_truncation(cut):
     assert all(any(c.endswith('__'+tf) for c in full.index) for tf in TIMEFRAMES)
 
 
-def test_xbrl_404_is_skip_but_403_is_error():
+def test_xbrl_404_is_skip_but_403_is_error(monkeypatch):
+    monkeypatch.setenv('PRIMARY_ACTION_RELAY_URL','https://unit-test-relay.example/')
     with patch('urllib.request.urlopen',side_effect=urllib.error.HTTPError('x',404,'missing',None,None)):
         assert get_json('https://data.sec.gov/missing',allow_404=True) is None
     with patch('urllib.request.urlopen',side_effect=urllib.error.HTTPError('x',403,'blocked',None,None)):

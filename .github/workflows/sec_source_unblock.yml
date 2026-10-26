@@ -1,0 +1,23 @@
+name: publish-real-sec-access-proof
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/sec_source_unblock.py', '.github/workflows/sec_source_unblock.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prove-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify immutable real SEC source and clear obsolete access blocks
+        run: |
+          gh release download sec-structured-v3-40266375575-1 -p sec_structured_source.json -p sec_structured_source.tar.gz
+          python -m ci.sec_source_unblock

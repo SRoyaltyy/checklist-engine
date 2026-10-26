@@ -674,33 +674,10 @@ def load_fred(tickers=None):
     return df.sort_values('vintage_date').reset_index(drop=True)
 
 
-def fred_columns(dates, fr):
-    """Latest observed period as known at D; revisions of older periods do not
-    replace a newer observation. Same-day vintages remain invisible."""
-    q = pd.DataFrame({'date': date_ns(dates).astype('datetime64[ns]')})
-    out = {}
-    if fr is None or not len(fr): return out
-    for sid,group in fr.groupby('series'):
-        known = {}; timeline = []
-        for vintage,changes in group.sort_values(['vintage_date','obs_date']).groupby('vintage_date',sort=True):
-            for row in changes.itertuples():
-                observation = pd.Timestamp(row.obs_date)
-                if observation <= pd.Timestamp(vintage):
-                    known[observation] = row.value
-            if known:
-                observation = max(known)
-                timeline.append((vintage,observation,known[observation]))
-        prefix = f'fred_{sid.lower()}'
-        if not timeline:
-            out[prefix] = np.full(len(q),np.nan,np.float32)
-            out[prefix+'_odays'] = np.full(len(q),np.nan,np.float32)
-            continue
-        right = pd.DataFrame(timeline,columns=['vintage_date','obs_date','value'])
-        right['vintage_date'] = date_ns(right.vintage_date).astype('datetime64[ns]')
-        joined = pd.merge_asof(q,right,left_on='date',right_on='vintage_date',direction='backward',allow_exact_matches=False)
-        out[prefix] = joined.value.to_numpy(np.float32)
-        out[prefix+'_odays'] = (joined.date-joined.obs_date).dt.days.to_numpy(np.float32)
-    return out
+def fred_columns(dates, fr, timelines=None):
+    """Strict-availability macro state; compile once in the shared world context."""
+    from world_fred import compile_timelines,columns
+    return columns(dates,compile_timelines(fr) if timelines is None else timelines)
 
 
 # ---------------- Block M: 13F holdings columns (I199) ----------------
@@ -1308,7 +1285,7 @@ def extend_breadth(breadth):
     return out
 
 # ---------------- per-ticker assembly (single definition; main + leak test) ----------------
-def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None, fred=None):
+def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=None, an=None, xb=None, gd=None, f13=None, fred=None, fred_timelines=None):
     """Assemble one ticker's world rows from its sorted bar frame `d`.
     Every join is backward-looking and every TA-Lib array is shifted by one bar:
     row D uses bars <= D-1, ETF bars <= D-1, breadth dated < D, earnings with
@@ -1350,7 +1327,7 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
         for c, v in f13_columns(df['date'].to_numpy(), f13).items():
             df[c] = v
     if fred is not None:
-        for c, v in fred_columns(df['date'].to_numpy(), fred).items():
+        for c, v in fred_columns(df['date'].to_numpy(), fred, fred_timelines).items():
             df[c] = v
     if breadth is not None:
         bcols = [c for c in breadth.columns if c != 'date']
@@ -1406,12 +1383,21 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
 
 # ---------------- build ----------------
 def load_bars(tickers=None):
-    p = D('/workspace/updown/bars_all.parquet')
-    df = pd.read_parquet(p)
-    df['date'] = date_ns(df['date'])       # file stores timestamp; filter after parse
-    df = df[df.date <= END]
-    if tickers: df = df[df.ticker.isin(tickers)]
-    return df
+    """Match the locked engine's source roles exactly.
+    The price-history universe supplies 2020-24 OHLCV. The separate updown
+    file supplies ONLY pre-2020 warmup; it cannot override a practice bar.
+    """
+    columns=['ticker','date','open','high','low','close','volume']
+    canonical=pd.read_parquet(D('/workspace/pricehist/universe_2020_survivors.parquet'),columns=columns)
+    warmup=pd.read_parquet(D('/workspace/updown/bars_all.parquet'),columns=columns)
+    canonical=normalize_dates(canonical);warmup=normalize_dates(warmup)
+    canonical=canonical[(canonical.date>=pd.Timestamp('2020-01-01'))&(canonical.date<=pd.Timestamp('2024-12-31'))]
+    warmup=warmup[warmup.date<pd.Timestamp('2020-01-01')]
+    frame=pd.concat([warmup,canonical],ignore_index=True)
+    frame['ticker']=frame.ticker.astype(str)
+    frame=frame[frame.date<=pd.Timestamp(END)]
+    if tickers:frame=frame[frame.ticker.isin(tickers)]
+    return frame.drop_duplicates(['ticker','date']).sort_values(['ticker','date']).reset_index(drop=True)
 
 def main():
     global COVERAGE_NOTE

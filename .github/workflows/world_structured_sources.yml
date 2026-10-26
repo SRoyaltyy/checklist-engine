@@ -1,0 +1,96 @@
+name: world-structured-sources-v3
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths:
+      - 'fetch/sec_client.py'
+      - 'fetch/fetch_xbrl.py'
+      - 'fetch/fetch_fred.py'
+      - 'facets_world.py'
+      - 'world_fred.py'
+      - 'world_snapshot_v2.py'
+      - 'world_timeframes.py'
+      - 'tests/test_world_fred.py'
+      - 'tests/test_world_v2.py'
+      - 'tests/test_sec_relay.py'
+      - 'tests/test_world_input_bindings.py'
+      - 'ci/structured_source_publish.py'
+      - '.github/workflows/world_structured_sources.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.world_pipeline imports
+      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py tests/test_full_price_sources.py tests/test_world_input_bindings.py tests/test_sec_relay.py tests/test_sec_world.py tests/test_world_fred.py -q
+  sec:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Verify frozen SEC identity map
+        run: |
+          python -c "import pandas as pd; pd.DataFrame({'ticker':['AAPL','MSFT','GE']}).to_parquet('source_universe.parquet',index=False)"
+          gh release download data-2020-24-v1 -p sec_shares_out_filed_le_2024.parquet -p SHA256SUMS
+          grep sec_shares_out_filed_le_2024.parquet SHA256SUMS | sha256sum -c -
+          gh release download world-smoke-v2-40213446937-1 -p WORLD_COLUMN_MEASUREMENTS.json
+      - name: Fetch real companyfacts through existing SEC relay
+        env:
+          PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+        run: |
+          python -c "import os; assert os.environ.get('PRIMARY_ACTION_RELAY_URL'); print('SEC relay configured')"
+          python -m fetch.fetch_xbrl --universe source_universe.parquet --shards 1 --out sec-source --raw-dir sec-source/raw --cik-map-file sec_shares_out_filed_le_2024.parquet
+      - name: Require numeric data and publish immutable raw evidence
+        run: |
+          python -m ci.source_fetch_status --source-root sec-source --measurements WORLD_COLUMN_MEASUREMENTS.json --out source-proof
+          python -m ci.structured_source_publish --source sec-source --kind sec --tag sec-structured-v3-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-structured-source-v3
+          path: |
+            sec-source/
+            source-proof/
+  fred:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Fetch every registered macro series and warmup vintages
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          mkdir -p fred-source
+          python -m fetch.fetch_fred --out fred-source/fred.parquet
+      - run: python -m ci.structured_source_publish --source fred-source --kind fred --tag fred-structured-v3-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fred-structured-source-v3
+          path: fred-source/

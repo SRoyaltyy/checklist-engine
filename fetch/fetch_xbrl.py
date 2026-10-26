@@ -6,6 +6,7 @@ unavailable; HTTP/auth/server failures are errors, never a successful empty fetc
 https://www.sec.gov/search-filings/edgar-application-programming-interfaces
 """
 import argparse
+import gzip
 import json
 import os
 import time
@@ -20,14 +21,14 @@ if __package__:
 else:
     from sec_client import SEC_HEADERS,get_json
 CONCEPTS = ['Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','SalesRevenueNet',
- 'NetIncomeLoss','OperatingIncomeLoss','GrossProfit','Assets','AssetsCurrent',
+ 'EntityCommonStockSharesOutstanding','NetIncomeLoss','OperatingIncomeLoss','GrossProfit','Assets','AssetsCurrent',
  'Liabilities','LiabilitiesCurrent','StockholdersEquity','LongTermDebt','LongTermDebtNoncurrent',
  'DebtCurrent','CashAndCashEquivalentsAtCarryingValue','CommonStockSharesOutstanding',
  'EarningsPerShareBasic','EarningsPerShareDiluted','ResearchAndDevelopmentExpense',
  'NetCashProvidedByUsedInOperatingActivities','CostOfRevenue','AccountsReceivableNetCurrent',
  'InventoryNet','PropertyPlantAndEquipmentNet','PaymentsToAcquirePropertyPlantAndEquipment']
 COLUMNS = ['ticker','metric','source_metric','unit','period_start','period_end','filed','accn','form','val','yoy']
-ALIASES = {'RevenueFromContractWithCustomerExcludingAssessedTax':'Revenues','SalesRevenueNet':'Revenues'}
+ALIASES = {'EntityCommonStockSharesOutstanding':'CommonStockSharesOutstanding','RevenueFromContractWithCustomerExcludingAssessedTax':'Revenues','SalesRevenueNet':'Revenues'}
 
 
 def company_rows(ticker, payload, concepts=CONCEPTS):
@@ -89,6 +90,7 @@ def main():
     ap.add_argument('--shards',type=int,default=8)
     ap.add_argument('--count',type=int,default=0)
     ap.add_argument('--resume',action='store_true')
+    ap.add_argument('--raw-dir',default='')
     ap.add_argument('--cik-map-file',default='')
     args=ap.parse_args()
     output=Path(args.out);output.mkdir(parents=True,exist_ok=True)
@@ -127,6 +129,9 @@ def main():
         else:
             try:
                 payload=get_json(f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json',allow_404=True)
+                if args.raw_dir and payload:
+                    raw_dir=Path(args.raw_dir);raw_dir.mkdir(parents=True,exist_ok=True)
+                    with gzip.open(raw_dir/f'CIK{cik:010d}.json.gz','wt',encoding='utf8') as stream:json.dump(payload,stream,separators=(',',':'))
                 batch=company_rows(ticker,payload) if payload else []
                 rows.extend(batch)
                 done[ticker]='OK' if batch else 'NO_FACTS'

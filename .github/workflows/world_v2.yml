@@ -60,6 +60,7 @@ jobs:
     timeout-minutes: 30
     env:
       GH_TOKEN: ${{ github.token }}
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
       GH_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4

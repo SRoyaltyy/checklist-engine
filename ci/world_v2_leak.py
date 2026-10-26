@@ -25,6 +25,8 @@ def truncate_context(ctx,day):
         result[key]={ticker:before(frame,column,day) for ticker,frame in ctx[key].items()}
     result['mkt']=before(ctx['mkt'],'date',day)
     result['fred']=before(ctx['fred'],'vintage_date',day)
+    from world_fred import compile_timelines
+    result['fred_timelines']=compile_timelines(result['fred'])  # independent truncated rebuild; never reuse the full cache
     dates={'si':'publication_date','shvol':'date','regsho':'date','halts':'halt_d','divs':'date','splits':'date','f4':'date'}
     result['ext']={ticker:{block:before(frame,dates[block],day) for block,frame in blocks.items()} for ticker,blocks in ctx['ext'].items()}
     if ctx['peers'] is not None:
