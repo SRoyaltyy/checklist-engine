@@ -144,3 +144,10 @@ def test_unattempted_tickers_cannot_hide_behind_a_source_exemption(tmp_path):
     (tmp_path/'xbrl_shard_000.progress.json').write_text(json.dumps(report))
     assert collect(tmp_path)=={}
     with pytest.raises(ValueError,match='incomplete'):assess(tmp_path)
+
+
+def test_fred_date_tracks_server_calendar_across_utc_midnight():
+    from datetime import datetime,timezone
+    from fetch.fetch_fred import fred_today
+    assert fred_today(datetime(2026,10,26,2,0,tzinfo=timezone.utc))=='2026-10-25'
+    assert fred_today(datetime(2026,10,26,12,0,tzinfo=timezone.utc))=='2026-10-26'
