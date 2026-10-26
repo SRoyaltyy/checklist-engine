@@ -9,7 +9,7 @@ observation date wins. Series that are never revised (market rates) pass
 through the same machinery harmlessly.
 
 Output (long): series, obs_date, vintage_date, value.
-Default series (v1): DGS10, T10Y2Y, DTB3, ICSA (weekly claims), UMCSENT (monthly).
+Registered I195 series, legacy macro inputs and VIX; CPI uses official CPIAUCSL.
 
 Runner:  FRED_API_KEY=... python3 fetch/fetch_fred.py --out fred_wide_2020_26.parquet
 """
@@ -18,16 +18,17 @@ import pandas as pd
 from datetime import datetime,timezone
 from zoneinfo import ZoneInfo
 
-SERIES = ['DGS10', 'T10Y2Y', 'DTB3', 'ICSA', 'UMCSENT']
+SERIES = ['DGS10','DGS2','T10Y2Y','DTWEXBGS','DCOILWTICO','BAMLH0A0HYM2','FEDFUNDS','CPIAUCSL','UNRATE','DTB3','ICSA','UMCSENT','VIXCLS']
 
 
 def alfred_page(key, sid, offset, limit, vintage_start, vintage_end):
     qs=urllib.parse.urlencode(dict(series_id=sid,api_key=key,file_type='json',
         realtime_start=vintage_start,realtime_end=vintage_end,output_type=1,
-        observation_start='2018-01-01',observation_end='2026-12-31',offset=offset,limit=limit))
+        observation_start='1990-01-01',observation_end='2026-12-31',offset=offset,limit=limit))
     req=urllib.request.Request('https://api.stlouisfed.org/fred/series/observations?'+qs,
         headers={'User-Agent':'checklist-engine research'})
     for attempt in range(4):
+        time.sleep(.65)  # stay below the public API request budget
         try:
             with urllib.request.urlopen(req,timeout=180) as response:return json.loads(response.read())
         except urllib.error.HTTPError as exc:
@@ -51,7 +52,7 @@ def fred_today(now=None):
     return current.astimezone(ZoneInfo('America/Chicago')).date().isoformat()
 
 
-def alfred_observations(key, sid, limit=100000, start_year=2018, end_year=2026, as_of=None):
+def alfred_observations(key, sid, limit=100000, start_year=1990, end_year=2026, as_of=None):
     # JSON allows at most 2,000 vintage dates per request. Calendar-year
     # intervals have at most 366 dates, including carry-in information known
     # at the interval start. Paginate observations separately in each interval.
@@ -91,7 +92,8 @@ def main():
     for sid in [s.strip() for s in a.series.split(',') if s.strip()]:
         try:
             got = alfred_observations(key, sid)
-            report['series'][sid]=dict(status='PASS',rows=len(got))
+            if not got:raise ValueError(f'FRED {sid}: no numeric observations')
+            report['series'][sid]=dict(status='PASS',rows=len(got),first_obs=min(r['obs_date'] for r in got),last_obs=max(r['obs_date'] for r in got),first_vintage=min(r['vintage_date'] for r in got),last_vintage=max(r['vintage_date'] for r in got))
         except Exception as exc:
             report.update(status='FAIL',error=str(exc))
             report_path.write_text(json.dumps(report,indent=2))
@@ -101,8 +103,8 @@ def main():
         time.sleep(1.5)
     if not rows:
         sys.exit('no observations fetched -- check key/quota')
-    df = pd.DataFrame(rows)
-    df = df[(df.obs_date >= '2018-01-01') & (df.obs_date <= '2026-12-31')]
+    df = pd.DataFrame(rows).drop_duplicates()
+    df = df[(df.obs_date >= '1990-01-01') & (df.obs_date <= '2026-12-31')]
     df.to_parquet(a.out, index=False)
     report.update(status='PASS',rows=len(df))
     report_path.write_text(json.dumps(report,indent=2))

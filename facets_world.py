@@ -1406,12 +1406,21 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
 
 # ---------------- build ----------------
 def load_bars(tickers=None):
-    p = D('/workspace/updown/bars_all.parquet')
-    df = pd.read_parquet(p)
-    df['date'] = date_ns(df['date'])       # file stores timestamp; filter after parse
-    df = df[df.date <= END]
-    if tickers: df = df[df.ticker.isin(tickers)]
-    return df
+    """Match the locked engine's source roles exactly.
+    The price-history universe supplies 2020-24 OHLCV. The separate updown
+    file supplies ONLY pre-2020 warmup; it cannot override a practice bar.
+    """
+    columns=['ticker','date','open','high','low','close','volume']
+    canonical=pd.read_parquet(D('/workspace/pricehist/universe_2020_survivors.parquet'),columns=columns)
+    warmup=pd.read_parquet(D('/workspace/updown/bars_all.parquet'),columns=columns)
+    canonical=normalize_dates(canonical);warmup=normalize_dates(warmup)
+    canonical=canonical[(canonical.date>=pd.Timestamp('2020-01-01'))&(canonical.date<=pd.Timestamp('2024-12-31'))]
+    warmup=warmup[warmup.date<pd.Timestamp('2020-01-01')]
+    frame=pd.concat([warmup,canonical],ignore_index=True)
+    frame['ticker']=frame.ticker.astype(str)
+    frame=frame[frame.date<=pd.Timestamp(END)]
+    if tickers:frame=frame[frame.ticker.isin(tickers)]
+    return frame.drop_duplicates(['ticker','date']).sort_values(['ticker','date']).reset_index(drop=True)
 
 def main():
     global COVERAGE_NOTE

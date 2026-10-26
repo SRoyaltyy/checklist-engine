@@ -100,8 +100,8 @@ def test_fred_splits_vintage_ranges_below_json_limit():
     from fetch.fetch_fred import alfred_observations
     with patch('fetch.fetch_fred.alfred_page',return_value=dict(count=0,observations=[])) as request,patch('time.sleep'):
         assert alfred_observations('test-key','TEST',as_of='2026-12-31')==[]
-    assert request.call_count==9
-    assert request.call_args_list[0].args[4:] == ('2018-01-01','2018-12-31')
+    assert request.call_count==37
+    assert request.call_args_list[0].args[4:] == ('1990-01-01','1990-12-31')
     assert request.call_args_list[-1].args[4:] == ('2026-01-01','2026-12-31')
 
 
