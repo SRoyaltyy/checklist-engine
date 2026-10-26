@@ -9,7 +9,9 @@ URLS=[
 'https://www.sec.gov/files/company_tickers.json?source=checklist-engine',
 'https://www.sec.gov/files/datastandardsinnovation/data/insider-transactions-data-sets/2026q3_form345.zip',
 'https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2020q1_form345.zip',
-'https://www.sec.gov/Archives/edgar/full-index/2026/QTR4/master.idx'
+'https://www.sec.gov/Archives/edgar/full-index/2026/QTR4/master.idx',
+'https://data.sec.gov/api/xbrl/companyfacts/CIK0001790169.json',
+'https://data.sec.gov/submissions/CIK0001790169.json'
 ]
 def main():
     root=Path('sec-route-probe');root.mkdir(exist_ok=True);records=[]
@@ -19,6 +21,10 @@ def main():
             suffix='.zip' if url.endswith('.zip') else '.json' if '.json' in url else '.txt'
             path=root/(str(index)+suffix);path.write_bytes(raw)
             record=dict(url=url,status='FETCHED',bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+            if suffix=='.json':
+                payload=json.loads(raw)
+                record['structured_identity']={k:payload.get(k) for k in ('cik','entityName','name','tickers','exchanges')}
+                record['top_level_keys']=list(payload)
             if suffix=='.zip':
                 with zipfile.ZipFile(io.BytesIO(raw)) as z:
                     record['members']=z.namelist()

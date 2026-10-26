@@ -41,6 +41,12 @@ def main():
         members={m['name']:m for m in manifest['members']}
         with tarfile.open(fileobj=io.BytesIO(raw)) as tar:
             if set(tar.getnames())!=set(members):raise ValueError('archive member mismatch '+n)
+            event_frames={}
+            for member in tar.getmembers():
+                if member.name.endswith('.events.parquet'):
+                    event_data=tar.extractfile(member).read()
+                    if hashlib.sha256(event_data).hexdigest()!=members[member.name]['sha256']:raise ValueError('Event fingerprint mismatch')
+                    event_frames[member.name.removesuffix('.events.parquet')]=pd.read_parquet(io.BytesIO(event_data))
             for member in tar:
                 data=tar.extractfile(member).read();meta=members[member.name]
                 if len(data)!=meta['bytes'] or hashlib.sha256(data).hexdigest()!=meta['sha256']:raise ValueError('source member fingerprint mismatch')
@@ -59,7 +65,7 @@ def main():
                 if len(overlap):
                     diagnostics['basis_samples']=overlap.iloc[sorted(set([0,len(overlap)//2,len(overlap)-1]))].astype({'date':str}).to_dict('records')
                 try:
-                    _,report=reconcile_one(ticker,old,new)
+                    _,report=reconcile_one(ticker,old,new,allow_short_history=True,events=event_frames.get(member.name.removesuffix('.parquet')))
                     results[ticker]=dict(report,diagnostics=diagnostics)
                 except Exception as exc:
                     results[ticker]=dict(ticker=ticker,status='FAIL',reason=str(exc),frozen_rows=len(old),supplemental_rows=len(new),frozen_first=str(old.date.min())[:10],frozen_last=str(old.date.max())[:10],source_first=str(new.date.min())[:10],source_last=str(new.date.max())[:10],diagnostics=diagnostics)
@@ -76,7 +82,7 @@ def main():
         except Exception as exc:alternatives[ticker]=dict(status='ERROR',url=url,error=str(exc),used_as_replacement=False)
         time.sleep(1)
     counts=collections.Counter(r['status'] for r in results.values())
-    summary=dict(source_tag=a.source_tag,source_commit=os.environ['GITHUB_SHA'],requested=len(requested),audited=len(results),counts=dict(counts),quoted_candidate_counts=dict(collections.Counter(r.get('diagnostics',{}).get('quoted_candidate',{}).get('status','UNKNOWN') for r in results.values())),missing=sorted(requested-set(results)),duplicate_source_names=duplicates,all_archives_verified=True,alternative_stale_sources=alternatives,nominal_historical_price_verified=False,world_coverage_approved=False,results=results)
+    summary=dict(source_tag=a.source_tag,source_commit=os.environ['GITHUB_SHA'],requested=len(requested),audited=len(results),counts=dict(counts),short_history_exact_count=sum(r.get('short_history_all_sessions_exact',False) for r in results.values()),split_normalized_count=sum(bool(r.get('split_normalization_events')) for r in results.values()),zero_volume_bridge_count=sum(r.get('all_overlap_volumes_zero',False) for r in results.values()),quoted_candidate_counts=dict(collections.Counter(r.get('diagnostics',{}).get('quoted_candidate',{}).get('status','UNKNOWN') for r in results.values())),missing=sorted(requested-set(results)),duplicate_source_names=duplicates,all_archives_verified=True,alternative_stale_sources=alternatives,nominal_historical_price_verified=False,world_coverage_approved=False,results=results)
     (out/'FULL_PRICE_RECONCILIATION_AUDIT.json').write_text(json.dumps(summary,indent=2))
     rows=[dict(ticker=t,**{k:v for k,v in r.items() if k!='ticker'}) for t,r in sorted(results.items())]
     pd.DataFrame(rows).to_csv(out/'FULL_PRICE_RECONCILIATION_AUDIT.csv',index=False)

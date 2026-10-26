@@ -99,12 +99,13 @@ def align_features(query_dates, features, timeframe):
     return aligned.rename(columns={c:f'{c}__{timeframe}' for c in aligned if c!='date'})
 
 
-def world_timeframes(bars, funcs, daily_external=None):
+def world_timeframes(bars, funcs, daily_external=None, query_start=None):
     """One row per stock session. External fields are already strictly PIT;
     aggregate their last KNOWN value at each completed candle boundary. Keep
     these separate from indicators recomputed on genuine composite OHLCV.
     """
-    out = pd.DataFrame({'date': pd.to_datetime(bars.date).to_numpy()})
+    query_dates=bars.date if query_start is None else bars.loc[pd.to_datetime(bars.date)>=pd.Timestamp(query_start),'date']
+    out = pd.DataFrame({'date': pd.to_datetime(query_dates).to_numpy()})
     for tf in TIMEFRAMES:
         candles = completed_candles(bars, tf)
         features = candle_features(candles, funcs)
@@ -121,5 +122,5 @@ def world_timeframes(bars, funcs, daily_external=None):
             for c in extcols:
                 if c.startswith('fred_') and not c.endswith(('_odays','_vintage_days')):
                     for window in (20,60):features[c+'_change'+str(window)]=ext[c].diff(window).to_numpy()
-        out = out.merge(align_features(bars.date, features, tf), on='date', how='left')
+        out = out.merge(align_features(query_dates, features, tf), on='date', how='left')
     return out

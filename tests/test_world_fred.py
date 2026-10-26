@@ -38,3 +38,19 @@ def test_macro_change_window_counts_native_candles(monkeypatch):
     assert np.isnan(result.loc[40,'fred_test_change20__2d'])
     assert result.loc[42,'fred_test_change20__2d']==41.**2-1.**2
     assert result.loc[42,'fred_test_change20__2d']!=41.**2-21.**2
+
+
+def test_narrow_output_retains_full_native_candle_warmup(monkeypatch):
+    import world_timeframes as tf
+    monkeypatch.setattr(tf,'TIMEFRAMES',('2d','3d'))
+    def features(candles,funcs):
+        out=candles[['available_from']].copy()
+        out['MEAN5']=candles.close.rolling(5).mean().to_numpy()
+        return out
+    monkeypatch.setattr(tf,'candle_features',features)
+    dates=pd.bdate_range('2019-10-01',periods=150);price=np.arange(150,dtype=float)+1
+    bars=pd.DataFrame(dict(date=dates,open=price,high=price,low=price,close=price,volume=1.))
+    full=tf.world_timeframes(bars,{})
+    narrow=tf.world_timeframes(bars,{},query_start='2020-01-01')
+    pd.testing.assert_frame_equal(narrow.reset_index(drop=True),full[full.date>='2020-01-01'].reset_index(drop=True))
+    assert not narrow[['MEAN5__2d','MEAN5__3d']].iloc[0].isna().any()

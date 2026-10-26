@@ -32,7 +32,9 @@ def load_reconciled_bars(tickers, directory='', report_path=None):
             file=Path(directory)/(str(ticker).encode().hex()+'.parquet')
             new=pd.read_parquet(file)
             new=new[pd.to_datetime(new.date)<=pd.Timestamp(fw.END)]
-            frame,evidence=reconcile_one(ticker,old,new)
+            event_file=Path(directory)/(str(ticker).encode().hex()+'.events.parquet')
+            events=pd.read_parquet(event_file) if event_file.exists() else None
+            frame,evidence=reconcile_one(ticker,old,new,allow_short_history=True,events=events)
             frames.append(frame);reports[ticker]=evidence
     except Exception as exc:
         reports['_error']=str(exc)
@@ -86,7 +88,7 @@ def ticker_snapshot(ticker,bars,ctx):
         own.update([name] if len(outputs)==1 else [name+'_'+x for x in outputs])
     external=daily[[c for c in daily if c not in own and (not c.startswith('tv_') or c=='tv_moon_age')]].copy()
     external['date']=pd.to_datetime(external.date).astype('datetime64[ns]')
-    out=world_timeframes(bars,ctx['funcs'],external)
+    out=world_timeframes(bars,ctx['funcs'],external,query_start='2020-01-01')
     out.insert(0,'ticker',ticker)
     return out
 

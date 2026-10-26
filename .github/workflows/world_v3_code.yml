@@ -1,0 +1,20 @@
+name: world-v3-code-ci
+on:
+  push:
+    branches: [main,codex/world-universe-v3]
+    paths: ['facets_world.py','world_*.py','price_reconcile.py','fetch/*.py','ci/*.py','tests/test_world*.py','tests/test_sec*.py','tests/test_price*.py','tests/test_question_quality.py','tests/test_full_price_sources.py','.github/workflows/world_v3_code.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.world_pipeline imports
+      - run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py tests/test_full_price_sources.py tests/test_world_input_bindings.py tests/test_sec_relay.py tests/test_sec_world.py tests/test_world_fred.py tests/test_price_bridge_basis.py -q
