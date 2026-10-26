@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/297. Claimed awaiting James: 1.**
+**Verified by both: 13/298. Claimed awaiting James: 1.**
 
 ## Rules
 
@@ -31,7 +31,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 200 |
+| 1 | World rebuild | 201 |
 | 2 | Coverage gate | 10 |
 | 3 | Question tree v3 and the P3b quality gate | 28 |
 | 4 | Full leak test | 10 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 297 |
+|  | Total | 298 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -431,13 +431,19 @@ Note (2026-10-26 ~16:35 HKT, do not tick): EV/EBITDA, P/S, margins, ROIC, and th
 
 ### Live-only skips from the 16:35 list
 
-- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: max pain; max-OI strikes; unusual-activity flag; implied correlation. Done when: Each of those names is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason. They have no free point-in-time history, and there is no paid vendor. NYSE TICK is not in this list; it is box 1.200. Single-stock ATM implied vol, 25-delta skew and risk reversal, and historical volatility minus implied volatility stay on hold pending a Finviz Elite check. Do not log those three as a final exclusion, and do not fetch them, until that check. Evidence:
+- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: max pain; max-OI strikes; unusual-activity flag; implied correlation. Done when: Each of those names is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason, unless box 1.201 moves it onto a real history. They are not fetched from a paid vendor. NYSE TICK is box 1.200. Finviz Elite was checked on 2026-10-26 16:55 and is today's snapshot only, so it cannot backfill 2020+. Single-stock ATM implied vol, IV rank and percentile, 25-delta skew and risk reversal, and historical volatility minus implied volatility stay off the fetch list until the DoltHub log in box 1.201 says the coverage is good. Do not log those as a final exclusion before that log. Evidence:
 
 ### NYSE TICK
 
 Note (2026-10-26 ~16:50 HKT, do not tick): Reopened. Intraday is an acceptable source when it can be fetched for every day from 2020 through the present. Nothing here is ticked.
 
 - [ ] **1.200** NYSE TICK: free daily-complete history, or a log of what was tried. Done when: A free source covers every day from 2020 through the present, either as the daily close, high, and low of $TICK or computed from intraday that exists for every one of those days. The release holds numeric daily features: close, high, low, and a count of extreme readings, checksummed, and point-in-time as of D−1. If no free complete source exists, the exclusion list states exactly what was tried, and the column is absent rather than zero. Evidence:
+
+### DoltHub options history
+
+Note (2026-10-26 ~16:55 HKT, do not tick): Finviz Elite is today's snapshot only and cannot backfill 2020+. This box is the coverage log. Feature boxes for ATM IV, IV rank, and the chain-derived fields are added only after the log says coverage is good. Nothing here is ticked.
+
+- [ ] **1.201** DoltHub options history: coverage log. Done when: The free dataset `post-no-preference/options` is measured for `volatility_history` (per-ticker IV and HV) and `option_chain`, point-in-time, from 2020 through the present, across our universe. The log on main states the coverage percent, the date range, and what was skipped. If coverage is good, the same commit adds unticked boxes for ATM IV, IV rank and percentile, and HV minus IV, and, where the chain table allows, skew and risk reversal, max pain, and the max-OI strike. Put/call open interest uses box 1.198 rather than a second box. If coverage is not good, the log says so and those names stay off the fetch list. Evidence:
 
 ## Phase 2 — Coverage gate
 
