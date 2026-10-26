@@ -1,0 +1,159 @@
+{
+  "status": "SOURCE_PROBES_NOT_COMPLETE_HISTORY",
+  "requested": [
+    "2020-01-01",
+    "2026-10-23"
+  ],
+  "run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/40308374864",
+  "source_commit": "ffd6eb889463b742f7c64501c0b7ce3322b84f44",
+  "probes": [
+    {
+      "name": "investing_page",
+      "url": "https://www.investing.com/indices/nyse-tick-index-historical-data",
+      "http_status": 200,
+      "bytes": 974341,
+      "raw_sha256": "d858245a0d4b5195fab6e3d9016c572dab19449116359eb00a5a68f6229ee497",
+      "usable_complete_history": false,
+      "candidate_ids": [
+        "1043109",
+        "1050732",
+        "1081628",
+        "1088195",
+        "1089648",
+        "1179808",
+        "1228090",
+        "1243846",
+        "13841",
+        "13994",
+        "13999",
+        "166",
+        "167",
+        "172",
+        "20",
+        "20744",
+        "23778",
+        "251",
+        "252",
+        "26490",
+        "27",
+        "27626",
+        "284",
+        "302",
+        "44336",
+        "469",
+        "6369",
+        "6400",
+        "6408",
+        "6435",
+        "6497",
+        "6888",
+        "6917",
+        "8092",
+        "8229",
+        "8274",
+        "8833",
+        "8849",
+        "8858",
+        "961122"
+      ],
+      "finding": "Historical page inspected; no unique verified instrument id, so no blind id substitution."
+    },
+    {
+      "name": "sierra_statistics",
+      "url": "https://www.sierrachart.com/index.php?page=doc/SCMarketStatistics.php",
+      "http_status": 200,
+      "bytes": 76097,
+      "raw_sha256": "c2faea9d39e659f12349a01370ec9713b9b03a0aacbf32d554ef7f42f93b2f51",
+      "usable_complete_history": false,
+      "finding": "Provider documents historical TICK-NYSE, but service package/account access is required; no paid access requested."
+    },
+    {
+      "name": "sierra_service",
+      "url": "https://www.sierrachart.com/index.php?page=doc/SierraChartHistoricalData.php",
+      "http_status": 200,
+      "bytes": 43043,
+      "raw_sha256": "23e3663f82e4024eece2a7f5e5e263db7e021bab830721b800e105b453c56d3c",
+      "usable_complete_history": false,
+      "finding": "Provider documents historical TICK-NYSE, but service package/account access is required; no paid access requested."
+    },
+    {
+      "name": "eoddata",
+      "url": "https://www.eoddata.com/stockquote/INDEX/TICK.htm",
+      "http_status": 200,
+      "bytes": 46292,
+      "raw_sha256": "6458addece5763cf19dc608b1825ae721222699ff95d8a7b08b72dc87d881d59",
+      "usable_complete_history": false,
+      "finding": "Recent public quotes do not prove free complete 2020-present history. Full EOD history is offered for purchase; quote basis/identity must be verified."
+    },
+    {
+      "name": "stockcharts",
+      "url": "https://stockcharts.com/h-sc/ui?s=%24TICK&p=D&b=5",
+      "http_status": 200,
+      "bytes": 2665,
+      "raw_sha256": "85b55b42c455b55bdb0b89fc45215e26f79fcb2ec6a56f72db98f7eef896e80b",
+      "usable_complete_history": false,
+      "finding": "Public chart view is not a fetched complete numeric history."
+    },
+    {
+      "name": "yahoo_5e5449434b",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETICK?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "bytes": 108,
+      "raw_sha256": "f0b5f9feeac9f1fc93c31b1edc03fbc1fda4acb3ec5e233ebb39d6f8b66e1769",
+      "usable_complete_history": false,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "yahoo_5449434b2d4e595345",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/TICK-NYSE?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "bytes": 108,
+      "raw_sha256": "f0b5f9feeac9f1fc93c31b1edc03fbc1fda4acb3ec5e233ebb39d6f8b66e1769",
+      "usable_complete_history": false,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "yahoo_5e5449432e4e",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETIC.N?period1=1577836800&period2=1792800000&interval=1d",
+      "http_status": 404,
+      "bytes": 108,
+      "raw_sha256": "f0b5f9feeac9f1fc93c31b1edc03fbc1fda4acb3ec5e233ebb39d6f8b66e1769",
+      "usable_complete_history": false,
+      "finding": "{'code': 'Not Found', 'description': 'No data found, symbol may be delisted'}"
+    },
+    {
+      "name": "stooq_5e7469636b",
+      "url": "https://stooq.com/q/d/l/?s=%5Etick&i=d&d1=20200101&d2=20261023",
+      "http_status": 200,
+      "bytes": 796,
+      "raw_sha256": "0b5343b9a57bb9053a68ba7127da3b4f8aed6688c1d63ce860b242fea905ba3b",
+      "usable_complete_history": false,
+      "finding": "Response preserved; no acceptance without documented NYSE TICK identity and complete numeric date keys."
+    },
+    {
+      "name": "stooq_7469636b2e6e797365",
+      "url": "https://stooq.com/q/d/l/?s=tick.nyse&i=d&d1=20200101&d2=20261023",
+      "http_status": 200,
+      "bytes": 796,
+      "raw_sha256": "efc49219028498813eec7131747e49e7a303938955c99cee21ef4fabb693c167",
+      "usable_complete_history": false,
+      "finding": "Response preserved; no acceptance without documented NYSE TICK identity and complete numeric date keys."
+    }
+  ],
+  "feature_requirements": {
+    "daily": [
+      "close",
+      "high",
+      "low"
+    ],
+    "intraday_only": [
+      "count of extreme readings"
+    ]
+  },
+  "notes": [
+    "NYSE TICK is reopened under box 1.200, not a final 1.199 exclusion.",
+    "Daily highs/lows cannot reveal how many extreme intraday readings occurred.",
+    "A blocked or unverified candidate is not a zero column or a proxy.",
+    "No paid source, credential purchase, authentication bypass or TLS-verification override."
+  ]
+}
