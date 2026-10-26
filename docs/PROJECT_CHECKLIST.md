@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/274. Claimed awaiting James: 2.**
+**Verified by both: 10/274. Claimed awaiting James: 3.**
 
 ## Rules
 
@@ -383,7 +383,7 @@ Note (2026-10-26 ~15:36 HKT, do not tick): All of these are computed from the da
 
 ### Canonical candle grid
 
-- [ ] **1.177** Canonical candle grid: C01 and the code agree. Done when: C01 and `world_timeframes.py` both state Cyrus's rule. The minimum is 1d, 5d, 10d, and 20d/monthly. Candle sizes 1 through 21 are allowed. Monthly stays a calendar month, not 21 daily bars relabelled. A test fails if the dictionary set and TIMEFRAMES disagree. Evidence:
+- [x] **1.177** Canonical candle grid: C01 and the code agree. Done when: C01 and `world_timeframes.py` both state Cyrus's rule. The minimum is 1d, 5d, 10d, and 20d/monthly. Candle sizes 1 through 21 are allowed. Monthly stays a calendar month, not 21 daily bars relabelled. A test fails if the dictionary set and TIMEFRAMES disagree. Evidence: [CANDLE_GRID_STATUS.json](CANDLE_GRID_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT; awaiting James.
 
 ## Phase 2 — Coverage gate
 
