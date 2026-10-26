@@ -1,0 +1,46 @@
+name: repair-only-original-sec-shard-nine
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['.github/workflows/sec_shard_nine_repair.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_sec_world.py tests/test_sec_relay.py -q
+  shard-nine:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Reuse exact original identity assignment and rerun only shard 9
+        run: |
+          gh release download sec-world-v4-40267486206-1 -p SEC_WORLD_IDENTITIES.json
+          echo "0f62ee169a82dcb7fcdd339fd2606c2de6ef41b886c8ea3d253e620578967f25  SEC_WORLD_IDENTITIES.json" | sha256sum -c -
+          tag="sec-world-shard9-repair-${{ github.run_id }}-${{ github.run_attempt }}"
+          gh release create "$tag" --target "${{ github.sha }}" --title "$tag" --notes "Rerun only original shard 9. Base sec-world-v4-40267486206-1 remains immutable; CIK1790169 remains explicitly quarantined with independently bound official identity." SEC_WORLD_IDENTITIES.json
+          python -m fetch.fetch_sec_world collect --identities SEC_WORLD_IDENTITIES.json --shard 9 --shards 16 --out sec-shard9-repair --tag "$tag"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-sec-shard9-repair
+          path: sec-shard9-repair/

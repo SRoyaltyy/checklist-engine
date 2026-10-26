@@ -34,7 +34,7 @@ def load_reconciled_bars(tickers, directory='', report_path=None):
             new=new[pd.to_datetime(new.date)<=pd.Timestamp(fw.END)]
             event_file=Path(directory)/(str(ticker).encode().hex()+'.events.parquet')
             events=pd.read_parquet(event_file) if event_file.exists() else None
-            frame,evidence=reconcile_one(ticker,old,new,allow_short_history=True,events=events)
+            frame,evidence=reconcile_one(ticker,old,new,events=events)
             frames.append(frame);reports[ticker]=evidence
     except Exception as exc:
         reports['_error']=str(exc)
