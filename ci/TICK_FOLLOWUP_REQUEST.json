@@ -1,1 +1,1 @@
-{"version":2,"request":"Inspect saved exact NYSE TICK identity and ordinary public API access; stop on refusal."}
+{"version":3,"request":"Resolve id and nested name on the same NYSE TICK instrument object; stop on public API refusal."}

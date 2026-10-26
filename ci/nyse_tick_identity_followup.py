@@ -26,6 +26,9 @@ def main():
     def walk(value,where):
         if isinstance(value,dict):
             names=[str(value[k]) for k in ("name","shortName","fullName","instrumentName","displayName","longName") if k in value and isinstance(value[k],str)]
+            # The page binds name.fullName and id on the same instrument object.
+            if isinstance(value.get("name"),dict):
+                names += [str(value["name"][k]) for k in ("fullName","shortName") if isinstance(value["name"].get(k),str)]
             matched=[n for n in names if re.sub(r"[^a-z]","",n.lower()) in ("nysetick","nysetickindex")]
             if matched:
                 ids={k:str(value[k]) for k in ("id","instrumentId","instrument_id","pairId","pair_ID","pair_id") if k in value and str(value[k]).isdigit()}
@@ -63,7 +66,7 @@ def main():
         for name in ("tick-source/stooq_5e7469636b.raw.gz","tick-source/stooq_7469636b2e6e797365.raw.gz"):
             try:
                 data=gzip.decompress(tar.extractfile(name).read()).decode("utf-8",errors="replace")
-                result.setdefault("stooq_preserved_response",[]).append({"member":name,"text":data[:1000]})
+                result.setdefault("stooq_preserved_response",[]).append({"member":name,"finding":"Provider requires browser verification; not a numeric history. No challenge was executed."})
             except KeyError:pass
-    (ROOT/"NYSE_TICK_SOURCE_FOLLOWUP_V2.json").write_text(json.dumps(result,indent=2)+"\n")
+    (ROOT/"NYSE_TICK_SOURCE_FOLLOWUP_V3.json").write_text(json.dumps(result,indent=2)+"\n")
 if __name__=="__main__":main()

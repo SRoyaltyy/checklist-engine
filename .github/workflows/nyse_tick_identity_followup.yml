@@ -27,17 +27,17 @@ jobs:
         run: |
           tar -czf nyse_tick_followup.tar.gz tick-followup
           sha256sum nyse_tick_followup.tar.gz > nyse_tick_followup.sha256
-          tag="nyse-tick-followup-v2-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$tag" nyse_tick_followup.tar.gz nyse_tick_followup.sha256 tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V2.json --title "$tag" --notes "Public source identity/access evaluation only; no complete history or feature claim." --target "$GITHUB_SHA"
+          tag="nyse-tick-followup-v3-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" nyse_tick_followup.tar.gz nyse_tick_followup.sha256 tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V3.json --title "$tag" --notes "Public source identity/access evaluation only; no complete history or feature claim." --target "$GITHUB_SHA"
       - name: Put attempted-source receipt on main
         run: |
-          cp tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V2.json /tmp/
+          cp tick-followup/NYSE_TICK_SOURCE_FOLLOWUP_V3.json /tmp/
           git fetch origin main
           git checkout -B tick-followup-publication origin/main
-          cp /tmp/NYSE_TICK_SOURCE_FOLLOWUP_V2.json docs/
+          cp /tmp/NYSE_TICK_SOURCE_FOLLOWUP_V3.json docs/
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add docs/NYSE_TICK_SOURCE_FOLLOWUP_V2.json
+          git add docs/NYSE_TICK_SOURCE_FOLLOWUP_V3.json
           git commit -m "Log public NYSE TICK identity and historical-access follow-up"
           for attempt in 1 2 3 4; do
             if git push origin HEAD:main; then exit 0; fi
