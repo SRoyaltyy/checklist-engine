@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "request": "Compact full accepted-universe daily/execution/native OHLCV inputs plus stock-day weights; 16 shards, max4 jobs; no feature recomputation or vendor requests."
+}
