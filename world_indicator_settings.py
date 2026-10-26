@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from world_bar_statistics import ema
+from world_indicator_extra import EXTRA_IDS,extra_recipe
 
 SUPPORTED_IDS = frozenset({
 "I028","I029","I030","I034","I036","I037","I038","I039","I040","I041",
@@ -15,7 +16,7 @@ SUPPORTED_IDS = frozenset({
 "I057","I058","I059","I060","I061","I063","I066","I068","I070","I071","I072",
 "I075","I080","I084","I088","I089","I090","I091","I093","I094","I095","I096",
 "I098","I099","I101",
-})
+}) | EXTRA_IDS
 
 def load_settings():
     return json.loads((Path(__file__).resolve().parent/"dictionary/INDICATOR_SETTINGS.json").read_text(encoding="utf-8"))
@@ -24,7 +25,7 @@ def _ratio(a,b):
     a,b=np.asarray(a,dtype=float),np.asarray(b,dtype=float)
     return np.divide(a,b,out=np.full(a.shape,np.nan),where=b!=0)
 
-def configured_indicators(o,h,l,c,v):
+def configured_indicators(o,h,l,c,v,dates=None):
     import talib as ta
     o,h,l,c,v=map(lambda a:np.asarray(a,dtype=float),(o,h,l,c,v))
     out={};cs=pd.Series(c);vs=pd.Series(v);hl=(h+l)/2
@@ -50,7 +51,9 @@ def configured_indicators(o,h,l,c,v):
         for setting in item["settings"]:
             p=setting["parameters"]; name=ident+"_"+setting["name"]; result={}
             n=p.get("period")
-            if ident=="I028":
+            if ident in EXTRA_IDS:
+                result=extra_recipe(ident,p,o,h,l,c,v,dates)
+            elif ident=="I028":
                 k,d=ta.STOCH(h,l,c,fastk_period=p["fastk"],slowk_period=p["slowk"],
                     slowd_period=p["slowd"],slowk_matype=0,slowd_matype=0)
                 result={"k":k,"d":d}
@@ -133,7 +136,8 @@ def configured_indicators(o,h,l,c,v):
             elif ident=="I070":
                 # Annualization belongs to bar_statistics where timeframe is known.
                 logret=np.log(cs.where(cs>0)/cs.shift(1).where(cs.shift(1)>0))
-                result={"per_candle_sigma":logret.rolling(n).std(ddof=1).to_numpy()}
+                sigma=logret.rolling(n).std(ddof=1).to_numpy()
+                result={"per_candle_sigma":sigma if setting["kind"]=="native" else ema(sigma,p["ema_period"])}
             elif ident=="I071":
                 peak=cs.rolling(n).max();dd=100*(cs/peak-1)
                 result={"value":np.sqrt(dd.pow(2).rolling(n).mean()).to_numpy()}

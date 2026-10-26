@@ -80,7 +80,7 @@ def candle_features(candles, funcs, timeframe="1d"):
     cols.update(parameter_variants(*arrays))
     from world_indicator_settings import configured_indicators
     from world_bar_statistics import bar_statistics
-    cols.update(configured_indicators(*arrays))
+    cols.update(configured_indicators(*arrays, dates=candles.date.to_numpy()))
     cols.update(bar_statistics(*arrays, timeframe=timeframe))
     # Existing TV extras require at least one bar; all warmups remain explicit
     # NaNs. Schema alignment never treats an absent feature as an observed zero.

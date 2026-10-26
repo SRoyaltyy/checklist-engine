@@ -50,7 +50,6 @@ GRIDS = {
 "I067": ("reversal_percent", [(2.5,),(5,),(10,)]),
 "I068": ("period", [(50,),(100,),(200,)]),
 "I069": ("period", [(10,),(20,),(60,),(120,)]),
-"I070": ("period", [(10,),(20,),(60,),(120,)]),
 "I071": ("period", [(7,),(14,),(28,)]),
 "I072": ("period", [(7,),(14,),(28,)]),
 "I073": ("period", [(5,),(21,),(63,),(126,),(252,)]),
@@ -103,6 +102,10 @@ def registry():
         items[ident] = {"settings": [{"name":"default","kind":"raw","parameters":{}}] + [
             {"name":name,"kind":"derived","parameters":{key:v}}
             for name,v in zip(("short","medium","long"),values)], "note":note}
+    items["I070"]={"settings":[{"name":"default","kind":"native","parameters":{"period":20}}]+[
+        {"name":name,"kind":"derived","parameters":{"period":20,"ema_period":n}}
+        for name,n in zip(("short","medium","long"),(10,20,40))],
+        "note":"I070 retains HV(20) only. The extra HV(10/60/120) windows belong to I209. Derived variants smooth HV(20); annualization follows native candle duration."}
     return {"version":"phase1-settings-v1","status":"REGISTERED_NOT_MEASURED_COVERAGE",
             "units":"Periods count native completed candles, unless explicitly calendar anchors.",
             "timeframes":[f"{k}d" for k in range(1,22)]+["monthly"],
@@ -133,6 +136,20 @@ def write(root):
                 for s in item["settings"])
             if item["note"]: row["parameters"] += "; " + item["note"]
             row["parameters"] += "; registry=dictionary/INDICATOR_SETTINGS.json; stack with every native timeframe"
+    additions=json.loads((root/"dictionary/BAR_STATISTICS_REGISTRY.json").read_text(encoding="utf-8"))["items"]
+    existing={row["id"] for row in rows}
+    for item in additions:
+        record=dict(id=item["id"],group="8 Expanded bar statistics",item=item["item"],
+            setting="explicit native-candle grid",definition=item["definition"],
+            inputs="completed native OHLCV; explicit PIT eligibility and matching benchmark intervals where required",
+            window=item["parameters"],rolling_or_fixed="rolling over completed native candles",
+            pit_rule="Only candles completed before buy day D; context and universe eligibility must be point-in-time.",
+            warmup="Full registered window; unavailable or zero-denominator estimates remain blank.",
+            edge_cases="No forward fill of mismatched candle boundaries; registration does not claim full-world measured coverage.",
+            in_code="world_bar_statistics; "+item["columns"],parameters=item["parameters"]+"; stack with all 22 native timeframes")
+        if item["id"] in existing:
+            rows=[record if r["id"]==item["id"] else r for r in rows]
+        else:rows.append(record)
     with target.open("w",encoding="utf-8",newline="") as fh:
         writer=csv.DictWriter(fh,fieldnames=fields);writer.writeheader();writer.writerows(rows)
     audit=root/"docs/INDICATOR_SETTINGS_COUNTS.csv"

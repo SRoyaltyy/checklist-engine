@@ -28,7 +28,11 @@ def audit(root):
     core=rows["C01"]
     if "k="+"|".join(map(str,range(1,22))) not in core["parameters"] or "monthly" not in core["parameters"]:
         raise ValueError("C01 grid differs")
-    result={"status":"REGISTRATION_PASS_NOT_WORLD_COVERAGE",
+    additions=json.loads((root/"dictionary/BAR_STATISTICS_REGISTRY.json").read_text(encoding="utf-8"))["items"]
+    for item in additions:
+        if rows[item["id"]]["definition"]!=item["definition"]:
+            raise ValueError("new statistic absent or definition differs: "+item["id"])
+    result={"new_bar_statistic_items":len(additions),"status":"REGISTRATION_PASS_NOT_WORLD_COVERAGE",
             "registered_items":len(spec["items"]),
             "registered_settings":sum(len(x["settings"]) for x in spec["items"].values()),
             "native_timeframes":list(TIMEFRAMES),

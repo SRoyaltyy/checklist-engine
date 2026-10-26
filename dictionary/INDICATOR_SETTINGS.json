@@ -1154,13 +1154,6 @@
     "I070": {
       "settings": [
         {
-          "name": "window_10",
-          "kind": "native",
-          "parameters": {
-            "period": 10
-          }
-        },
-        {
           "name": "default",
           "kind": "native",
           "parameters": {
@@ -1168,21 +1161,31 @@
           }
         },
         {
-          "name": "window_60",
-          "kind": "native",
+          "name": "short",
+          "kind": "derived",
           "parameters": {
-            "period": 60
+            "period": 20,
+            "ema_period": 10
           }
         },
         {
-          "name": "window_120",
-          "kind": "native",
+          "name": "medium",
+          "kind": "derived",
           "parameters": {
-            "period": 120
+            "period": 20,
+            "ema_period": 20
+          }
+        },
+        {
+          "name": "long",
+          "kind": "derived",
+          "parameters": {
+            "period": 20,
+            "ema_period": 40
           }
         }
       ],
-      "note": "Annualized log-return sample volatility; daily sqrt(252), k-day sqrt(252/k), monthly sqrt(12)."
+      "note": "I070 retains HV(20) only. The extra HV(10/60/120) windows belong to I209. Derived variants smooth HV(20); annualization follows native candle duration."
     },
     "I071": {
       "settings": [
