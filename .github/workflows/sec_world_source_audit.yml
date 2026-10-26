@@ -1,0 +1,25 @@
+name: full-sec-source-receipt-audit
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/sec_world_source_audit.py','.github/workflows/sec_world_source_audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.sec_world_source_audit --tag sec-world-v4-40267486206-1 --out sec-source-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-sec-source-receipt-audit
+          path: sec-source-audit/

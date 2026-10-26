@@ -1,0 +1,30 @@
+name: unresolved-price-org-source-probe
+on:
+  push:
+    branches: [codex/world-universe-v3]
+    paths: ['ci/price_gap_source_probe.py','.github/workflows/price_gap_source_probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pandas pyarrow
+      - name: Check verified org prices and existing official halt events
+        run: |
+          gh release download data-ext-2020-26-v1 -p nasdaq_halts_2020_2026.parquet -p box_uploads_SHA256SUMS.txt
+          grep nasdaq_halts_2020_2026.parquet box_uploads_SHA256SUMS.txt | sha256sum -c -
+          python -m ci.price_gap_source_probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unresolved-price-org-source-probe
+          path: price-gap-probe/
