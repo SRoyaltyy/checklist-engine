@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 10/274. Claimed awaiting James: 4.**
+**Verified by both: 13/296. Claimed awaiting James: 1.**
 
 ## Rules
 
@@ -31,7 +31,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 177 |
+| 1 | World rebuild | 199 |
 | 2 | Coverage gate | 10 |
 | 3 | Question tree v3 and the P3b quality gate | 28 |
 | 4 | Full leak test | 10 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 274 |
+|  | Total | 296 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -63,7 +63,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### OHLC and volume bars, including 2025–26
 
-- [x] **1.01** OHLC and volume bars, including 2025–26: source located. Items: C01 daily OHLCV for the tradeable universe. Done when: Check SRoyaltyy/fullscan and SRoyaltyy/theme-radar releases, then checklist-engine release data-2020-24-v1 asset bars_all_le2024.parquet, before any new download. Stooq previously failed TLS; use a free public daily source. Evidence names the repo, release, and asset, or the public URL that was checked. Evidence: [PHASE1_PRICE_SOURCE_INVENTORY.json](PHASE1_PRICE_SOURCE_INVENTORY.json), [org-source audit 05ef8d7](https://github.com/SRoyaltyy/checklist-engine/commit/05ef8d7), and [source collection 40259691137](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40259691137). GPT ✓ 2026-10-26 HKT; awaiting James.
+- [x] **1.01** OHLC and volume bars, including 2025–26: source located. Items: C01 daily OHLCV for the tradeable universe. Done when: Check SRoyaltyy/fullscan and SRoyaltyy/theme-radar releases, then checklist-engine release data-2020-24-v1 asset bars_all_le2024.parquet, before any new download. Stooq previously failed TLS; use a free public daily source. Evidence names the repo, release, and asset, or the public URL that was checked. Evidence: [docs/PHASE1_PRICE_SOURCE_INVENTORY.json](https://github.com/SRoyaltyy/checklist-engine/blob/main/docs/PHASE1_PRICE_SOURCE_INVENTORY.json), [org-source audit 05ef8d7](https://github.com/SRoyaltyy/checklist-engine/commit/05ef8d7), and [source collection 40259691137](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40259691137). GPT ✓ 2026-10-26 HKT. James ✓ 2026-10-26.
 - [x] **1.02** OHLC and volume bars, including 2025–26: fetched onto a checklist-engine release. Done when: A checklist-engine release holds daily OHLCV for the full universe through the latest completed session, with a checksum. The six-pilot pull through 2026-10-23 inside run 40209615520 does not pass. Evidence: [PRICE_SOURCE_ACCEPTANCE_V6.json](PRICE_SOURCE_ACCEPTANCE_V6.json), [8,447-name accepted inventory](ACCEPTED_PRICE_INVENTORY_V6.csv), immutable [price source release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/world-prices-v3-40259691137-1), and [acceptance run 40292775611](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40292775611). GPT ✓ 2026-10-26 HKT; awaiting James. 280 named exclusions remain in the single EXCLUDED.csv. Historical liquidity/size and full-world context gates are not claimed.
 - [ ] **1.03** OHLC and volume bars, including 2025–26: joined point-in-time. Done when: Snapshot features read bars dated < D only. Day-D open is stored as the buy price and is not an input to any question column. Evidence:
 - [ ] **1.04** OHLC and volume bars, including 2025–26: built at candle sizes 1 through 21. Done when: The build emits a true OHLC aggregate for every integer candle size from 1 through 21 trading days. A daily series renamed to another timeframe does not pass. The manifest lists the 21 sizes that were built. Evidence:
@@ -379,11 +379,59 @@ Note (2026-10-26 ~15:36 HKT, do not tick): All of these are computed from the da
 
 ### Indicator setting grids
 
-- [x] **1.176** Indicator setting grids written into the dictionary. Done when: [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) gives explicit short, default, and long settings, about three each, for every item whose only rule was "TV default ±50%" (I036–I077 and I088–I096). The same file adds MACD 5/35/5 and 8/17/9, Stochastic 5,3,3 and 21,5,5, Williams %R 7 and 28, ADX 7 and 28, MFI 7 and 28, Bollinger 10/1.5 and 50/2.5, Keltner 1.0 and 2.0, Donchian 10 and 55, and relative volume 5 and 50, beside the current defaults. Settings stack with candle sizes. A row that still says only "±50%" fails. Evidence: [registration proof](INDICATOR_SETTINGS_REGISTRATION_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT; awaiting James.
+- [x] **1.176** Indicator setting grids written into the dictionary. Done when: [dictionary/WORLD_SNAPSHOT_DICTIONARY.csv](dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) gives explicit short, default, and long settings, about three each, for every item whose only rule was "TV default ±50%" (I036–I077 and I088–I096). The same file adds MACD 5/35/5 and 8/17/9, Stochastic 5,3,3 and 21,5,5, Williams %R 7 and 28, ADX 7 and 28, MFI 7 and 28, Bollinger 10/1.5 and 50/2.5, Keltner 1.0 and 2.0, Donchian 10 and 55, and relative volume 5 and 50, beside the current defaults. Settings stack with candle sizes. A row that still says only "±50%" fails. Evidence: [docs/INDICATOR_SETTINGS_REGISTRATION_STATUS.json](https://github.com/SRoyaltyy/checklist-engine/blob/main/docs/INDICATOR_SETTINGS_REGISTRATION_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT. James ✓ 2026-10-26.
 
 ### Canonical candle grid
 
-- [x] **1.177** Canonical candle grid: C01 and the code agree. Done when: C01 and `world_timeframes.py` both state Cyrus's rule. The minimum is 1d, 5d, 10d, and 20d/monthly. Candle sizes 1 through 21 are allowed. Monthly stays a calendar month, not 21 daily bars relabelled. A test fails if the dictionary set and TIMEFRAMES disagree. Evidence: [CANDLE_GRID_STATUS.json](CANDLE_GRID_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT; awaiting James.
+- [x] **1.177** Canonical candle grid: C01 and the code agree. Done when: C01 and `world_timeframes.py` both state Cyrus's rule. The minimum is 1d, 5d, 10d, and 20d/monthly. Candle sizes 1 through 21 are allowed. Monthly stays a calendar month, not 21 daily bars relabelled. A test fails if the dictionary set and TIMEFRAMES disagree. Evidence: [docs/CANDLE_GRID_STATUS.json](https://github.com/SRoyaltyy/checklist-engine/blob/main/docs/CANDLE_GRID_STATUS.json), [merge 3ad57bc](https://github.com/SRoyaltyy/checklist-engine/commit/3ad57bc2d7f99cd35d651888cb6cfa5c0021a1cc) and [green main CI 40291999826](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40291999826). GPT ✓ 2026-10-26 HKT. James ✓ 2026-10-26.
+
+### Food-for-thought price indicators
+
+Note (2026-10-26 ~16:35 HKT, do not tick): Missing from the dictionary. Computed from the daily bars already in hand. Aroon oscillator stays inside I041. Linear-regression R² stays I217. Correlation to SPY and the sector stays I218. Nothing here is ticked.
+
+- [ ] **1.178** Food-for-thought price indicators: source located. Items: Elder Impulse; Twiggs Money Flow; STARC bands; linear-regression slope, intercept, and standard error at more than one length; stock-versus-stock rolling correlation versus peers; Schaff Trend Cycle. Done when: The coverage row names the phase-1 bar file. No second vendor. Evidence:
+- [ ] **1.179** Food-for-thought price indicators: built onto a checklist-engine release. Done when: Each named series is a numeric column with a fixed definition, checksummed. Peer correlation uses the peer set known as of D−1. Evidence:
+- [ ] **1.180** Food-for-thought price indicators: point-in-time and leak check. Done when: Every window ends at D−1. Withholding day-D prices does not change the columns. Evidence:
+- [ ] **1.181** Food-for-thought price indicators: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every named series. A missing series fails. Evidence:
+- [ ] **1.182** Food-for-thought price indicators: multi-timeframe features. Done when: Each series exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. The lengths stack with those candle sizes. Evidence:
+
+### FRED series named 2026-10-26 16:35
+
+Note (2026-10-26 ~16:35 HKT, do not tick): These are not on I195. T10Y2Y and BAMLH0A0HYM2 stay on I195. Vintage rule is the same as box 1.93. Nothing here is ticked.
+
+- [ ] **1.183** FRED series named 2026-10-26 16:35: source located. Items: T10Y3M, T5YIE, T10YIE, STICKCPIM159S, DFII10, CIVPART, INDPRO, BUSLOANS. Done when: Each series is named on the FRED API, using the phase-0 secret. ALFRED vintage dates are the point-in-time values. Evidence:
+- [ ] **1.184** FRED series named 2026-10-26 16:35: downloaded onto a checklist-engine release. Done when: The release holds each series as vintage rows (observation date, realtime start, value), checksummed. The log does not contain the API key. Evidence:
+- [ ] **1.185** FRED series named 2026-10-26 16:35: point-in-time and leak check. Done when: The value on D is the vintage whose realtime period contains the morning of D and whose observation date is < D. A revised-today value fails. Evidence:
+- [ ] **1.186** FRED series named 2026-10-26 16:35: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every series. A series the fetch did not return is not left as a silent zero. Evidence:
+- [ ] **1.187** FRED series named 2026-10-26 16:35: multi-timeframe features. Done when: Each series is sampled at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21, with a written note where the source itself is monthly. Evidence:
+
+### Breadth from our universe, added 2026-10-26 16:35
+
+Note (2026-10-26 ~16:35 HKT, do not tick): The advance/decline line, the advance/decline ratio, net new 52-week highs, and percent above the 20, 50, and 200-day averages are already I179, I180, and boxes 1.36–1.40 and 1.151–1.155. Nothing here is ticked.
+
+- [ ] **1.188** Breadth from our universe, added 2026-10-26 16:35: source located. Items: advance/decline volume line, McClellan oscillator, McClellan summation, TRIN, Bullish Percent (point and figure). Done when: Each series is defined from the phase-1 universe bars, not from a paid breadth feed. Evidence:
+- [ ] **1.189** Breadth from our universe, added 2026-10-26 16:35: built onto a checklist-engine release. Done when: The release holds those five series, checksummed, with a fixed numeric definition for each. Evidence:
+- [ ] **1.190** Breadth from our universe, added 2026-10-26 16:35: point-in-time and leak check. Done when: Day D uses the universe and the bars as of D−1. Survivors-only is written on the column. Evidence:
+- [ ] **1.191** Breadth from our universe, added 2026-10-26 16:35: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for each of the five series. Evidence:
+- [ ] **1.192** Breadth from our universe, added 2026-10-26 16:35: multi-timeframe features. Done when: Each series exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. Evidence:
+
+### XBRL ratios named 2026-10-26 16:35
+
+Note (2026-10-26 ~16:35 HKT, do not tick): EV/EBITDA, P/S, margins, ROIC, and the FCF level stay on I192. Piotroski F and Beneish M stay on I194. Nothing here is ticked.
+
+- [ ] **1.193** XBRL ratios named 2026-10-26 16:35: source located. Items: EV/CFO, P/FCF, shareholder yield, accruals, earnings variability, direction of margin change, sales per share, cash EPS, BVPS, payout ratio, internal growth g. Done when: Each ratio names the companyfacts tags it uses. Filing date is the known-date. Evidence:
+- [ ] **1.194** XBRL ratios named 2026-10-26 16:35: downloaded onto a checklist-engine release. Done when: The release holds each ratio as a numeric column, checksummed, built from the companyfacts already fetched. No second vendor. Evidence:
+- [ ] **1.195** XBRL ratios named 2026-10-26 16:35: point-in-time and leak check. Done when: The value on D uses the latest filing whose filed or acceptance time is before the open of D. Substituting the period end changes the column and fails. Evidence:
+- [ ] **1.196** XBRL ratios named 2026-10-26 16:35: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every ratio. A missing tag is blank, not zero. Evidence:
+- [ ] **1.197** XBRL ratios named 2026-10-26 16:35: multi-timeframe features. Done when: Each ratio, and the direction-of-change where the item is a trend, is carried onto 1d, 5d, 10d, and 20d/monthly, and onto candle sizes 1 through 21, with a written note that these are filing facts sampled onto the grid, not resampled prices. Evidence:
+
+### Put/call open interest
+
+- [ ] **1.198** Put/call open interest: free history or a logged exclusion. Done when: A free CBOE open-interest history is a checksummed release asset and joins on its publication time before the open of D, or the series is on the exclusion list with the reason and is not a zero column. Put/call volume stays I201. This box does not block the rest of Phase 1. Evidence:
+
+### Live-only skips from the 16:35 list
+
+- [ ] **1.199** Live-only skips from the 16:35 list are logged. Items: NYSE TICK; single-stock ATM implied vol; 25-delta skew and risk reversal; max pain; max-OI strikes; unusual-activity flag; implied correlation; historical volatility minus implied volatility. Done when: Each name is on the exclusion list, or on WORLD_COVERAGE as EXCLUDED_LIVE_ONLY, with the reason. NYSE TICK is intraday and has no free daily history. The others have no free point-in-time history; I202 is that gap, and there is no paid vendor. Nothing in this list is fetched. Evidence:
 
 ## Phase 2 — Coverage gate
 
