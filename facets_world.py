@@ -102,7 +102,10 @@ def compute_talib(o, h, l, c, v, funcs):
                 if kind == 'pattern':
                     values = values / 100.0
                     values[:getattr(f,'lookback',0)] = np.nan
-                out[col] = values.astype(np.float32)
+                # Conversion overflow is not a valid infinite-ratio observation.
+                finite=values[np.isfinite(values)]
+                dtype=np.float64 if finite.size and np.max(np.abs(finite))>np.finfo(np.float32).max else np.float32
+                out[col] = values.astype(dtype)
         except Exception as exc:
             raise RuntimeError(f'TA-Lib {name} failed; refusing partial snapshot') from exc
     return out

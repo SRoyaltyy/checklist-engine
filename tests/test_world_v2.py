@@ -40,7 +40,7 @@ def test_five_session_candle_and_availability():
     assert len(c)==2
     assert c.iloc[0].available_from==b.date.iloc[5]
     assert c.iloc[0].high==b.high.iloc[:5].max()
-    assert c.iloc[0].volume==b.volume.iloc[:5].sum()
+    assert c.iloc[0].volume==pytest.approx(b.volume.iloc[:5].sum(),rel=1e-14,abs=1e-10)
     assert c.iloc[0].close==b.close.iloc[4]
 
 
@@ -51,7 +51,7 @@ def test_monthly_is_calendar_not_daily_proxy():
     first=c.iloc[0]
     assert first.available_from==pd.Timestamp('2019-02-01')
     assert first.high==jan.high.max()
-    assert first.volume==jan.volume.sum()
+    assert first.volume==pytest.approx(jan.volume.sum(),rel=1e-14,abs=1e-10)
 
 
 @pytest.mark.parametrize('cut',[260,519,800])

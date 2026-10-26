@@ -51,17 +51,21 @@ def completed_candles(bars, timeframe, session_calendar=None):
             expected={i:cal[i*k:(i+1)*k] for i in avail}
         else:
             avail={i:b.date.iloc[(i+1)*k] for i in np.unique(key) if (i+1)*k<len(b)}
-    rows=[]
-    for group,g in b.groupby(key,sort=True):
-        if group not in avail:continue
-        if cal is not None:
-            wanted=expected.get(group)
-            if wanted is None or not pd.DatetimeIndex(g.date).equals(wanted):continue
-        rows.append(dict(candle_start=g.date.iloc[0],date=g.date.iloc[-1],
-                         available_from=avail[group],open=g.open.iloc[0],
-                         high=g.high.max(),low=g.low.min(),close=g.close.iloc[-1],
-                         volume=g.volume.sum()))
-    result=pd.DataFrame(rows,columns=columns)
+    grouped=b.groupby(key,sort=True)
+    result=grouped.agg(candle_start=('date','first'),date=('date','last'),
+        open=('open','first'),high=('high','max'),low=('low','min'),
+        close=('close','last'),volume=('volume','sum'))
+    result['available_from']=result.index.map(avail.get)
+    valid=result.available_from.notna()
+    if cal is not None:
+        counts=grouped.size()
+        wanted_count=pd.Series({g:len(ds) for g,ds in expected.items()})
+        wanted_start=pd.Series({g:ds[0] for g,ds in expected.items()})
+        wanted_end=pd.Series({g:ds[-1] for g,ds in expected.items()})
+        valid &= counts.eq(wanted_count.reindex(result.index))
+        valid &= result.candle_start.eq(wanted_start.reindex(result.index))
+        valid &= result.date.eq(wanted_end.reindex(result.index))
+    result=result.loc[valid,columns].reset_index(drop=True)
     for column in ('candle_start','date','available_from'):
         result[column]=pd.to_datetime(result[column]).astype('datetime64[ns]')
     return result
@@ -71,10 +75,10 @@ def parameter_variants(o, h, l, c, v):
     """Named dictionary periods, distinct from TA-Lib's default instances."""
     import talib
     out = {}
-    for name, periods in {'SMA': (5,10,20,30,50,100,200),
-                          'EMA': (20,21), 'RSI': (6,12,14,24),
-                          'ROC': (5,20,60), 'WMA': (20,), 'DEMA': (20,),
-                          'TEMA': (20,), 'KAMA': (20,), 'LINEARREG': (100,)}.items():
+    for name, periods in {'SMA': tuple(range(5,251)),
+                          'EMA': (8,13,20,21,34,55), 'RSI': (6,12,14,24),
+                          'ROC': (5,20,60), 'WMA': (9,20,50,100,200), 'DEMA': (9,20,50,100,200),
+                          'TEMA': (9,20,50,100,200), 'KAMA': (9,20,50,100,200), 'LINEARREG': (9,20,50,100,200)}.items():
         fn = getattr(talib, name)
         for n in periods:
             out[f'{name}{n}'] = fn(c, timeperiod=n).astype(np.float32)
@@ -108,6 +112,8 @@ def candle_features(candles, funcs, timeframe="1d"):
     cols.update(bar_statistics(*arrays, timeframe=timeframe))
     from world_food_statistics import additional_bar_statistics
     cols.update(additional_bar_statistics(*arrays))
+    from world_moving_averages import extra_moving_averages
+    cols.update(extra_moving_averages(*arrays))
     # Existing TV extras require at least one bar; all warmups remain explicit
     # NaNs. Schema alignment never treats an absent feature as an observed zero.
     cols.update(fw.compute_tv_extra(*arrays, dates=candles.date.to_numpy()))
