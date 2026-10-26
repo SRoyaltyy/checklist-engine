@@ -11,6 +11,7 @@ on:
       - 'world_snapshot_v2.py'
       - 'world_timeframes.py'
       - 'tests/test_world_fred.py'
+      - 'tests/test_world_v2.py'
       - 'tests/test_sec_relay.py'
       - 'tests/test_world_input_bindings.py'
       - 'ci/structured_source_publish.py'
