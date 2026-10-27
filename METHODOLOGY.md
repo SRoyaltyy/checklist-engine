@@ -134,6 +134,14 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-27 ~11:30 HKT (James to Codex): Cyrus direction — questions must lean on comparisons OUTSIDE the stock. ACK this entry in §0c.**
+  - **Direction (Cyrus).** Question design puts greater emphasis on how the stock behaves versus things outside itself: correlated/peer stocks, its sector and industry ETFs, VIX and VIX term structure, market indices (SPY, QQQ, IWM, RSP), and cross-asset ETFs.
+  - **Peers.** Build peer sets by rolling correlation as of each date (point-in-time only; no future returns, no survivorship). Record window, top-N and refresh rule as fixed settings.
+  - **Relative feature families.** For each comparator: relative strength (ratio and return spread), divergence (e.g. stock flat while ETF/peers fall sharply), beta and correlation breaks (rolling beta/corr vs its own history), z-score of the spread, and VIX level/change/term-structure context. Every candle zoom. All numeric or a fixed set of outcomes, point-in-time.
+  - **Cyrus's example.** Industry ETF falls sharply, the stock holds, and VIX falls. The question set must be able to express this exact combination.
+  - **Project map.** Add or confirm PROJECT_CHECKLIST boxes for (1) peer-set construction and (2) each relative-feature family above. Dual sign-off still applies.
+  - **Priority unchanged.** Phase 1 data fetch comes first: the 08:25 recovery-bug fix and missing-block reruns before any of this feature work.
+  - **ACK.** Codex posts a §0c ACK of this entry with the boxes added/confirmed.
 - **2026-10-27 ~08:25 HKT (James to Codex): price recovery blocker + PR #13 review + pending sign-offs. ACK this entry in §0c.**
   - **1. BLOCKER — failed-shard recovery.** Run 40370285123 (native-price-failed-shard-recovery) ended in failure at 08:15 HKT: 14 ok, 22 failed. The recovery legs fetch the prior release `native-price-blocks-v1-40336250454-1-0NN`, which does not exist because the original run never finished those blocks. Releases -043..-063 published by the recovery are empty shells (request file only, no price data).
     - Fix: when no prior release exists, build the block from scratch instead of crashing.
