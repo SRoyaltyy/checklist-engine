@@ -10,10 +10,12 @@ from pathlib import Path
 import pandas as pd
 
 from ci import native_price_base as base
+from ci import native_price_blocks as frozen
 from ci.native_price_blocks import read_member, sha, write_json, measure_availability
 from ci.release_assets import download_asset, gh_retry, publish_assets
 from world_context_native import KEYS, combine_contexts, price_native
 from world_timeframes import TIMEFRAMES, PRICE_COLS
+from price_reconcile import reconcile_one
 
 
 def target_parts(inputs, symbols, root, prefix):
@@ -57,6 +59,58 @@ def validated_bars(raw, symbol, calendar):
     if not pd.DatetimeIndex(frame.date).isin(calendar).all():
         raise ValueError('ETF source dates outside frozen calendar: ' + symbol)
     return frame
+
+
+def reconcile_etf(symbol, old, new, events, calendar):
+    new = new[pd.to_datetime(new.date) <= pd.Timestamp(frozen.CUTOFF)]
+    bars, bridge = reconcile_one(symbol, old, new, min_overlap=60,
+                                 allow_short_history=False, events=events)
+    if bridge['all_overlap_volumes_zero'] or bridge['supplemental_end'] != frozen.CUTOFF:
+        raise ValueError('ETF fallback rejected/stale source: ' + symbol)
+    return validated_bars(bars.to_parquet(index=False), symbol, calendar), bridge
+
+
+def missing_etf_sources(inputs, symbols, root, calendar):
+    """Reconcile only explicitly requested absent ETF checkpoints, using old recipe."""
+    if not symbols:
+        return {}, []
+    if len(symbols) > 25 or inputs['price_source_release'] != frozen.PRICE_TAG:
+        raise ValueError('unexpected ETF fallback source scope')
+    if frozen.recipe_fingerprint()[0] != inputs['recipe_fingerprint']:
+        raise ValueError('ETF fallback requires the unchanged frozen recipe')
+    records = {row['ticker']: row for row in inputs['records']}
+    bars = {}
+    receipts = []
+    original = frozen.download
+    frozen.download = download_asset
+    try:
+        for symbol in symbols:
+            record = records[symbol]
+            if record.get('current_listing_classification') != 'ETF':
+                raise ValueError('missing-source fallback is restricted to accepted ETFs')
+            name = f"frozen_{int(record['feature_shard']):03d}.parquet"
+            file = download_asset(inputs['inputs_tag'], name, root / symbol)
+            if sha(file) != inputs['prepared_shards'][name]['sha256']:
+                raise ValueError('ETF prepared frozen shard differs')
+            old = pd.read_parquet(file)
+            old = old[old.ticker == symbol].reset_index(drop=True)
+            archive, manifest, manifest_sha = frozen.source_archive(record['source_part'], root / symbol)
+            member = symbol.encode().hex()
+            new = pd.read_parquet(io.BytesIO(read_member(archive, manifest, member + '.parquet')))
+            event_name = member + '.events.parquet'
+            events = (pd.read_parquet(io.BytesIO(read_member(archive, manifest, event_name)))
+                      if any(m['name'] == event_name for m in manifest['members']) else None)
+            bars[symbol], bridge = reconcile_etf(symbol, old, new, events, calendar)
+            receipts.append(dict(ticker=symbol, mode='MISSING_COMPACT_ETF_ONLY_SAME_FROZEN_RECONCILIATION',
+                                 frozen_asset=name, frozen_sha256=sha(file), source_release=frozen.PRICE_TAG,
+                                 archive=archive.name, archive_sha256=manifest['archive_sha256'],
+                                 manifest_sha256=manifest_sha, bridge=bridge,
+                                 members=[m for m in manifest['members'] if m['name'] in (member + '.parquet', event_name)]))
+            archive.unlink()
+            file.unlink()
+    finally:
+        frozen.download = original
+    return bars, receipts
 
 
 def contexts(bars, calendar):
@@ -109,6 +163,12 @@ def build(root, request):
                                  first=str(bars[symbol].date.min())[:10],
                                  last=str(bars[symbol].date.max())[:10], rows=len(bars[symbol])))
         archive.unlink()
+    missing_from_compact = list(missing)
+    recovered, fallback_receipts = missing_etf_sources(inputs,
+        sorted(set(missing) & set(request.get('fallback_symbols', []))), root / 'fallback', calendar)
+    bars.update(recovered)
+    receipts.extend(fallback_receipts)
+    missing = sorted(set(missing) - set(recovered))
     if not bars:
         raise ValueError('No verified ETF bars; do not publish a request-only release')
     full = contexts(bars, calendar)
@@ -134,7 +194,8 @@ def build(root, request):
     files.append(file)
     status = dict(status='ETF_NATIVE_SOURCE_CONTEXT_ONLY', source_commit=os.environ['GITHUB_SHA'],
                   request=request, requested_symbols=symbols, available_symbols=sorted(bars),
-                  missing_symbols=missing, source_receipts=receipts, parts=parts,
+                  missing_symbols=missing, missing_from_compact=missing_from_compact,
+                  source_receipts=receipts, parts=parts,
                   calendar_sha256=inputs['calendar_sha256'], recipe_fingerprint=inputs['recipe_fingerprint'],
                   coverage_sha256=sha(file), prefix_checks=checks, timeframes=list(TIMEFRAMES),
                   price_basis='frozen reference units; not nominal PIT prices or market-cap eligibility',

@@ -64,3 +64,27 @@ def test_partial_compact_shard_reports_missing_target_without_substitution(tmp_p
     assert parts[0][2] == ['SPY']
     assert missing == ['ABSENT', 'QQQ']
     assert source.base.download is original_download
+
+
+def test_explicit_missing_etf_reconciliation_preserves_old_prices_and_rejects_stale_or_incompatible_source():
+    dates = pd.bdate_range(end='2026-10-23', periods=140)
+    close = 50 + np.arange(140) * .05
+    new = pd.DataFrame(dict(ticker='XLI', date=dates, open=close, high=close + 1,
+                            low=close - 1, close=close, volume=1000.))
+    old = new.iloc[20:110].copy()
+    old[['open', 'high', 'low', 'close']] *= 3
+    out, bridge = source.reconcile_etf('XLI', old, new, None, dates)
+    np.testing.assert_allclose(out.close, new.close * 3)
+    assert bridge['frozen_values_unchanged']
+    assert not bridge['nominal_historical_price_verified']
+    with pytest.raises(ValueError, match='rejected/stale'):
+        source.reconcile_etf('XLI', old, new.iloc[:-1], None, dates)
+    with pytest.raises(ValueError, match='RECONCILIATION_FAIL'):
+        source.reconcile_etf('XLI', old, new.assign(volume=100000.), None, dates)
+
+
+def test_missing_etf_fallback_rejects_changed_recipe_before_source_io(tmp_path, monkeypatch):
+    monkeypatch.setattr(source.frozen, 'recipe_fingerprint', lambda: ('changed', {}))
+    with pytest.raises(ValueError, match='unchanged frozen recipe'):
+        source.missing_etf_sources(dict(price_source_release=source.frozen.PRICE_TAG,
+                                       recipe_fingerprint='original'), ['XLI'], tmp_path, [])
