@@ -1,0 +1,118 @@
+{
+  "audit_run": 40480548598,
+  "audit_report_sha256": "6b000e12b1f309cd6a0460af2a85b8267c3e597421017d68f77152c7fba07b64",
+  "canonical_tickers": 8447,
+  "sources": {
+    "analyst": {
+      "source_rows": 350374,
+      "parts": 344,
+      "attempts": {
+        "ROWS_RETURNED": 4041,
+        "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 4406
+      },
+      "rows_by_year": {
+        "2018": 16933,
+        "2019": 15912,
+        "2020": 29595,
+        "2021": 25793,
+        "2022": 36233,
+        "2023": 49665,
+        "2024": 60071,
+        "2025": 61400,
+        "2026": 54772
+      },
+      "tickers_by_year": {
+        "2018": 1900,
+        "2019": 2007,
+        "2020": 2327,
+        "2021": 2575,
+        "2022": 2778,
+        "2023": 3127,
+        "2024": 3419,
+        "2025": 3523,
+        "2026": 3509
+      },
+      "field_nonnull_rows": {
+        "ticker": 350374,
+        "event_timestamp": 350374,
+        "event_date": 350374,
+        "source_timezone": 350374,
+        "firm": 350374,
+        "from_grade": 350374,
+        "to_grade": 350374,
+        "action": 350374,
+        "direction": 350374
+      },
+      "attempts_by_current_listing_classification": {
+        "NON_ETF": {
+          "ROWS_RETURNED": 4035,
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 1028
+        },
+        "ETF": {
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 3372
+        },
+        "UNKNOWN": {
+          "ROWS_RETURNED": 6,
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 6
+        }
+      }
+    },
+    "earnings": {
+      "source_rows": 112760,
+      "parts": 344,
+      "attempts": {
+        "ROWS_RETURNED": 4195,
+        "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 4252
+      },
+      "rows_by_year": {
+        "2018": 9905,
+        "2019": 10597,
+        "2020": 11146,
+        "2021": 12444,
+        "2022": 13660,
+        "2023": 13979,
+        "2024": 14373,
+        "2025": 14889,
+        "2026": 11767
+      },
+      "tickers_by_year": {
+        "2018": 2592,
+        "2019": 2763,
+        "2020": 2933,
+        "2021": 3349,
+        "2022": 3543,
+        "2023": 3634,
+        "2024": 3758,
+        "2025": 3856,
+        "2026": 3864
+      },
+      "field_nonnull_rows": {
+        "ticker": 112760,
+        "event_timestamp": 112760,
+        "event_date": 112760,
+        "source_timezone": 112760,
+        "eps_estimate": 111686,
+        "eps_actual": 111529,
+        "surprise_pct": 110324
+      },
+      "attempts_by_current_listing_classification": {
+        "NON_ETF": {
+          "ROWS_RETURNED": 4185,
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 878
+        },
+        "ETF": {
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 3372
+        },
+        "UNKNOWN": {
+          "ROWS_RETURNED": 10,
+          "NO_ROWS_RETURNED_HISTORY_UNPROVEN": 2
+        }
+      }
+    }
+  },
+  "classification_limitation": "Current source classification only; not historical PIT eligibility or permission to drop missing entities",
+  "historical_completeness": "NOT_PROVEN",
+  "point_in_time_gate": "NOT_PROVEN",
+  "world_gate": "NOT_RUN",
+  "scoring_gate": "CLOSED"
+}

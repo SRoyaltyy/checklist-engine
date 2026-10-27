@@ -88,3 +88,16 @@ def test_missing_etf_fallback_rejects_changed_recipe_before_source_io(tmp_path, 
     with pytest.raises(ValueError, match='unchanged frozen recipe'):
         source.missing_etf_sources(dict(price_source_release=source.frozen.PRICE_TAG,
                                        recipe_fingerprint='original'), ['XLI'], tmp_path, [])
+
+
+def test_daily_source_retains_final_session_separately_from_completed_native_features(tmp_path):
+    frame=bars();calendar=pd.DatetimeIndex(frame.date)
+    inputs=dict(inputs_tag='frozen',recipe_fingerprint='recipe',calendar_sha256='calendar',
+                as_of_completed_session=str(frame.date.max().date()))
+    files,records=source.daily_source_proof({'SPY':frame},inputs,calendar,tmp_path)
+    saved=pd.read_parquet(next(f for f in files if f.suffix=='.parquet'))
+    assert saved.date.max()==frame.date.max()
+    assert source.contexts({'SPY':frame},calendar)['1d'].source_candle_end.max()<saved.date.max()
+    assert records[0]['missing_sessions_after_first_source_date']==[]
+    with pytest.raises(ValueError,match='stock cutoff'):
+        source.daily_source_proof({'SPY':frame.iloc[:-1]},inputs,calendar,tmp_path)
