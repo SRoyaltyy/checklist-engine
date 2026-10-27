@@ -41,6 +41,8 @@ def transport(tmp_path, monkeypatch):
         return json.dumps(assets[file.name])
 
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
+    monkeypatch.setattr(publisher,"_RELEASE_IDS",{})
+    monkeypatch.setattr(publisher,"_DRAFTS_SCANNED",set())
     monkeypatch.setattr(publisher, "_run", run)
     monkeypatch.setattr(publisher.time, "sleep", sleeps.append)
     return files, assets, calls, failures, sleeps
@@ -125,6 +127,54 @@ def test_invalid_asset_lists_fail_before_accessing_github(transport):
 def test_digest_reads_file_contents(transport):
     files, *_ = transport
     assert publisher._digest(files[0]) == "sha256:" + hashlib.sha256(files[0].read_bytes()).hexdigest()
+
+
+def test_draft_is_resolved_by_authenticated_listing_and_id_when_tag_lookup_is_404(monkeypatch):
+    calls=[];draft={"id":456,"tag_name":"draft-tag","draft":True,"assets":[]}
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    monkeypatch.setattr(publisher,"_RELEASE_IDS",{});monkeypatch.setattr(publisher,"_DRAFTS_SCANNED",set())
+    def run(*args):
+        calls.append(args)
+        if "/tags/" in args[1]:raise subprocess.CalledProcessError(1,args,stderr="gh: Not Found (HTTP 404)")
+        if "?per_page" in args[1]:return json.dumps([draft])
+        assert args[1].endswith("/releases/456");return json.dumps(draft)
+    monkeypatch.setattr(publisher,"_run",run)
+    assert publisher.release_info("draft-tag")["id"]==456
+    assert publisher.release_info("draft-tag")["draft"]
+    assert sum("/tags/" in call[1] for call in calls)==1
+    assert sum("?per_page" in call[1] for call in calls)==1
+
+
+def test_missing_release_draft_scan_is_cached_and_creation_invalidates_it(monkeypatch):
+    calls=[];drafts=[]
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    monkeypatch.setattr(publisher,"_RELEASE_IDS",{});monkeypatch.setattr(publisher,"_DRAFTS_SCANNED",set())
+    def run(*args):
+        calls.append(args)
+        if args[:2]==("release","create"):
+            drafts.append({"id":7,"tag_name":"new","draft":True,"assets":[]});return "created"
+        if "/tags/" in args[1]:raise subprocess.CalledProcessError(1,args,stderr="HTTP 404")
+        if "?per_page" in args[1]:return json.dumps(drafts)
+        return json.dumps(drafts[0])
+    monkeypatch.setattr(publisher,"_run",run)
+    for tag in ("absent1","absent2"):
+        with pytest.raises(subprocess.CalledProcessError):publisher.release_info(tag)
+    assert sum("?per_page" in str(call) for call in calls)==1
+    publisher.gh_retry("release","create","new","--draft")
+    assert publisher.release_info("new")["id"]==7
+
+
+def test_draft_binary_download_is_authenticated_and_digest_checked(tmp_path,monkeypatch):
+    raw=b"draft bytes";asset={"id":77,"name":"part.bin","state":"uploaded","size":len(raw),
+            "digest":"sha256:"+hashlib.sha256(raw).hexdigest(),"_draft_release":True,"browser_download_url":"not-public"}
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo");monkeypatch.setattr(publisher,"_DOWNLOAD_INVENTORIES",{})
+    monkeypatch.setattr(publisher,"asset_index",lambda tag:{"part.bin":asset})
+    def run(command,stdout,stderr,timeout):
+        from types import SimpleNamespace
+        assert command==["gh","api","repos/owner/repo/releases/assets/77","--header","Accept: application/octet-stream"]
+        stdout.write(raw);return SimpleNamespace(returncode=0,stderr=b"")
+    monkeypatch.setattr(publisher.subprocess,"run",run)
+    assert publisher.download_asset("draft","part.bin",tmp_path).read_bytes()==raw
 
 
 def test_successful_batch_uses_one_inventory_read_and_one_post_per_asset(transport):

@@ -1,0 +1,11 @@
+{
+  "version": 5,
+  "source_run": 40450227376,
+  "source_run_attempt": 1,
+  "source_run_sha": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "resume_prefix": "native-price-blocks-v1-40450227376-1",
+  "additional_resume_prefixes": ["native-price-blocks-v1-40446419246-1", "native-price-blocks-v1-40370285123-1", "native-price-blocks-v1-40336250454-1"],
+  "shards": [41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+  "request": "Retry only the 22 confirmed draft-tag lookup failures after a real draft upload/authenticated download/publication/public download smoke passes. Preserve source jobs 18 and 40 while live, all successful shards and every immutable checkpoint. No new calculation recipe."
+}

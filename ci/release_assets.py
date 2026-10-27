@@ -13,6 +13,8 @@ import urllib.request
 
 ATTEMPTS = 5
 _DOWNLOAD_INVENTORIES = {}
+_RELEASE_IDS = {}
+_DRAFTS_SCANNED = set()
 TRANSIENT = re.compile(
     r"HTTP (?:408|429|5\d\d)\b|connection reset|unexpected EOF|"
     r"TLS handshake timeout|i/o timeout|temporary failure|timed out",
@@ -100,7 +102,38 @@ def _read(*args):
 
 def gh_retry(*args):
     """CLI operations with quota-aware bounded retries; never retries permission errors."""
-    return _read(*args)
+    result=_read(*args)
+    if args[:2]==("release","create") and ("--draft" in args or "--draft=true" in args):
+        _DRAFTS_SCANNED.discard(os.environ["GITHUB_REPOSITORY"])
+    return result
+
+
+def release_info(tag):
+    """Tag lookup is published-only; authenticate draft discovery and use its ID."""
+    repository=os.environ["GITHUB_REPOSITORY"];key=(repository,tag)
+    if key in _RELEASE_IDS:
+        return json.loads(_read("api",f"repos/{repository}/releases/{_RELEASE_IDS[key]}"))
+    try:
+        result=json.loads(_read("api",f"repos/{repository}/releases/tags/{quote(tag,safe='')}"))
+    except subprocess.CalledProcessError as original:
+        if not re.search(r"\bHTTP\s+404\b",str(original.stderr or "")):raise
+        if repository not in _DRAFTS_SCANNED:
+            page=1
+            while True:
+                batch=json.loads(_read("api",f"repos/{repository}/releases?per_page=100&page={page}"))
+                for release in batch:
+                    if not release.get("draft"):continue
+                    draft_key=(repository,release["tag_name"]);release_id=int(release["id"])
+                    if draft_key in _RELEASE_IDS and _RELEASE_IDS[draft_key]!=release_id:
+                        raise ValueError("ambiguous draft release tag")
+                    _RELEASE_IDS[draft_key]=release_id
+                if len(batch)<100:break
+                page+=1
+            _DRAFTS_SCANNED.add(repository)
+        if key not in _RELEASE_IDS:raise original
+        result=json.loads(_read("api",f"repos/{repository}/releases/{_RELEASE_IDS[key]}"))
+    _RELEASE_IDS[key]=int(result["id"])
+    return result
 
 
 def _digest(path):
@@ -112,12 +145,11 @@ def _digest(path):
 
 
 def asset_index(tag):
-    repository = os.environ["GITHUB_REPOSITORY"]
-    release = json.loads(_read("api", f"repos/{repository}/releases/tags/{quote(tag, safe='')}"))
+    release = release_info(tag)
     assets = release["assets"]
     if len({asset["name"] for asset in assets}) != len(assets):
         raise ValueError("duplicate release asset names")
-    return {asset["name"]: asset for asset in assets}
+    return {asset["name"]: dict(asset,_draft_release=True) if release.get("draft") else asset for asset in assets}
 
 
 def download_asset(tag, name, directory):
@@ -136,7 +168,8 @@ def download_asset(tag, name, directory):
     if not asset or asset["state"] != "uploaded" or not asset.get("digest", "").startswith("sha256:"):
         raise ValueError("published asset missing or unverified: " + name)
     url = f"https://github.com/{repository}/releases/download/{quote(tag, safe='')}/{quote(name, safe='')}"
-    if asset["browser_download_url"] != url:
+    draft=asset.get("_draft_release",False)
+    if not draft and asset["browser_download_url"] != url:
         raise ValueError("published download URL differs from requested repository/tag/asset")
     directory = Path(directory);directory.mkdir(parents=True, exist_ok=True)
     target = directory / name
@@ -147,17 +180,26 @@ def download_asset(tag, name, directory):
     temporary = directory / (name + ".download")
     for attempt in range(ATTEMPTS):
         try:
-            request = urllib.request.Request(url, headers={"User-Agent": "checklist-engine artifact reader"})
-            with urllib.request.urlopen(request, timeout=180) as response, temporary.open("wb") as stream:
-                for chunk in iter(lambda: response.read(1 << 20), b""):
-                    stream.write(chunk)
+            if draft:
+                # Draft assets have no public URL. gh handles authenticated
+                # redirect/download; the token is never placed in a URL or log.
+                command=["gh","api",f"repos/{repository}/releases/assets/{int(asset['id'])}","--header","Accept: application/octet-stream"]
+                with temporary.open("wb") as stream:
+                    result=subprocess.run(command,stdout=stream,stderr=subprocess.PIPE,timeout=360)
+                if result.returncode:raise subprocess.CalledProcessError(result.returncode,command,stderr=result.stderr.decode("utf-8",errors="replace"))
+            else:
+                request = urllib.request.Request(url, headers={"User-Agent": "checklist-engine artifact reader"})
+                with urllib.request.urlopen(request, timeout=180) as response, temporary.open("wb") as stream:
+                    for chunk in iter(lambda: response.read(1 << 20), b""):
+                        stream.write(chunk)
             if temporary.stat().st_size != asset["size"] or _digest(temporary) != asset["digest"]:
                 raise ValueError("downloaded asset fingerprint differs: " + name)
             temporary.replace(target)
             return target
         except Exception as exc:
             temporary.unlink(missing_ok=True)
-            if isinstance(exc, urllib.error.HTTPError):
+            if isinstance(exc,subprocess.CalledProcessError):error=exc
+            elif isinstance(exc, urllib.error.HTTPError):
                 error = subprocess.CalledProcessError(exc.code, ["public-asset-download", url], stderr=f"HTTP {exc.code}")
                 error.response_headers = {key.lower(): value for key, value in exc.headers.items()}
             elif isinstance(exc, (urllib.error.URLError, TimeoutError)):
@@ -181,8 +223,7 @@ def publish_assets(tag, *paths):
         raise ValueError("expected nonempty, uniquely named release assets")
     fingerprints = [(path, path.stat().st_size, _digest(path)) for path in paths]
     repository = os.environ["GITHUB_REPOSITORY"]
-    endpoint = f"repos/{repository}/releases/tags/{quote(tag, safe='')}"
-    release = json.loads(_read("api", endpoint));release_id = int(release["id"])
+    release = release_info(tag);release_id = int(release["id"])
     assets = {asset["name"]: asset for asset in release["assets"]}
     if len(assets) != len(release["assets"]):
         raise ValueError("duplicate release asset names")

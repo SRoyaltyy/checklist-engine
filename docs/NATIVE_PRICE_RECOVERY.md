@@ -129,3 +129,23 @@ unique archive bytes. `recipe_review_gate` remains
 `CLOSED_PENDING_PR13_MATH_REVIEW`; full-world, historical tradeability and
 scoring gates remain closed. This transports and measures the existing recipe;
 it does not accept its known math issues or silently replace any old result.
+
+## Draft transport regression and real acceptance probe
+
+The six-way run 40450227376 exposed a publication regression: all 22 new draft
+releases had zero uploaded assets because the uploader queried them by tag.
+GitHub's [tag lookup](https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name)
+returns published releases. Authenticated release listings expose drafts; the
+transport now discovers their IDs and reads fresh inventories by release ID.
+It caches the draft scan and invalidates it after creating another draft.
+Draft downloads use authenticated asset IDs with the same size/SHA-256 checks;
+published data retains the verified public binary reader.
+
+The old smoke created an already published fixture and missed this path. Its
+replacement must upload into a real draft, reuse identical bytes, read them
+while still draft, publish, then verify fresh public downloads. A main-only
+controller dispatches the 22 confirmed failed shards only after that smoke
+passes. It does not cancel or duplicate live 18/40. Its stable request-hash
+identity reuses an existing dispatch across controller reruns. The request ID
+also separates the nonoverlapping matrix from the two preserved live jobs.
+All old completed shards and assets stay immutable; no recipe file changes.

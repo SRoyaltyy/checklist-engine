@@ -18,7 +18,7 @@ permissions:
   contents: write
   actions: read
 concurrency:
-  group: native-price-failed-shard-recovery
+  group: native-price-recovery-${{ inputs.recovery_id || 'push' }}
   cancel-in-progress: false
 env:
   GH_TOKEN: ${{ github.token }}
