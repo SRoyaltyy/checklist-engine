@@ -1,0 +1,11 @@
+name: world_fetch_earnings
+on:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: write
+jobs:
+  acquire:
+    uses: ./.github/workflows/world_fetch_event_source.yml
+    with:
+      kind: earnings

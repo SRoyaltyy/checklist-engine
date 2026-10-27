@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "sources": ["analyst", "earnings"],
+  "shards": 8,
+  "max_parallel_per_source": 2,
+  "request": "Launch the independent dated analyst and earnings history fetches per James 12:20 HKT. Preserve available provider timestamps and numeric/fixed-outcome fields, use all accepted names, save per-entity attempts and immutable checkpoints. No rows is not zero activity. Historical completeness, first-observation and revision availability remain unproven until measured."
+}
