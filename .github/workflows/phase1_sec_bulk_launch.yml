@@ -1,0 +1,38 @@
+name: phase1-independent-sec-sources
+on:
+  push:
+    branches: [main]
+    paths: ['ci/SEC_BULK_FETCH_REQUEST.json']
+  pull_request:
+    paths: ['fetch/sec_bulk.py', 'tests/test_sec_bulk.py', '.github/workflows/world_fetch_sec_bulk.yml', '.github/workflows/world_fetch_form4.yml', '.github/workflows/world_fetch_xbrl.yml', '.github/workflows/world_fetch_13f.yml', '.github/workflows/phase1_sec_bulk_launch.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'pytest>=8,<10'
+      - run: python -m pytest tests/test_sec_bulk.py tests/test_sec_relay.py -q
+  form4:
+    if: github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
+    uses: ./.github/workflows/world_fetch_form4.yml
+    secrets: inherit
+  xbrl:
+    if: github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
+    uses: ./.github/workflows/world_fetch_xbrl.yml
+    secrets: inherit
+  f13:
+    if: github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
+    uses: ./.github/workflows/world_fetch_13f.yml
+    secrets: inherit

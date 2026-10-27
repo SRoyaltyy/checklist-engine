@@ -1,19 +1,31 @@
 name: native-price-failed-shard-recovery
+run-name: native-recovery-${{ github.event_name }}-${{ inputs.recovery_id || 'v3' }}
 on:
   push:
     branches: [codex/native-price-failed-shards]
     paths: ['ci/NATIVE_PRICE_RECOVERY_REQUEST.json']
+  workflow_dispatch:
+    inputs:
+      request_json:
+        description: Audited immutable recovery request
+        required: true
+        type: string
+      recovery_id:
+        description: Unique request identifier for audit
+        required: true
+        type: string
 permissions:
   contents: write
   actions: read
 concurrency:
-  group: native-price-failed-shard-recovery
+  group: native-price-recovery-${{ inputs.recovery_id || 'push' }}
   cancel-in-progress: false
 env:
   GH_TOKEN: ${{ github.token }}
   PYTHONUNBUFFERED: '1'
   OPENBLAS_NUM_THREADS: '1'
   OMP_NUM_THREADS: '1'
+  NATIVE_RECOVERY_REQUEST_JSON: ${{ inputs.request_json }}
 jobs:
   transport:
     runs-on: ubuntu-latest
@@ -50,7 +62,7 @@ jobs:
     timeout-minutes: 350
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 6
       matrix:
         shard: ${{ fromJSON(needs.plan.outputs.shards) }}
     env:

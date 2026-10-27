@@ -1,0 +1,11 @@
+{
+  "version": 6,
+  "source_run": 40450227376,
+  "source_run_attempt": 1,
+  "source_run_sha": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "resume_prefix": "native-price-blocks-v1-40450227376-1",
+  "additional_resume_prefixes": ["native-price-blocks-v1-40446419246-1", "native-price-blocks-v1-40370285123-1", "native-price-blocks-v1-40336250454-1"],
+  "shards": [40],
+  "request": "Retry only terminal failed shard 40, job 122011092529: hosted runner lost communication, completed 2026-10-27T09:05:22Z. No underlying CPU/memory/network cause is proven. Reuse every available immutable checkpoint under the unchanged recipe after the real draft transport smoke. Preserve still-live shard 18 and the separate 22-shard retry 40453879193; no cancellations or competing shards."
+}

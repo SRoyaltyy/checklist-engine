@@ -37,7 +37,7 @@ def test_recorded_stitch_request_routes_every_shard_to_a_successful_pinned_run(m
         return {"id":spec["run"],"head_sha":spec["head"],"run_attempt":spec["attempt"]}
     monkeypatch.setattr(stitch,"api",api);proof=stitch.source_plan(request)
     assert [r["shard"] for r in proof]==list(range(64))
-    assert proof[40]["source_run"]==40446419246 and proof[42]["source_run"]==40370285123
+    assert proof[40]["source_run"]==40450227376 and proof[42]["source_run"]==40370285123
 
 
 @pytest.mark.parametrize("event,status,conclusion",[("pull_request","completed","success"),("workflow_run","in_progress",None),("workflow_run","completed","failure")])

@@ -1,0 +1,58 @@
+name: verified-draft-transport-and-failed-retry
+on:
+  push:
+    branches: [codex/draft-release-transport, main]
+    paths: ['ci/release_assets.py', 'ci/release_transport_smoke.py', 'ci/NATIVE_FAILED_RETRY_REQUEST.json', '.github/workflows/draft_transport_probe.yml']
+  pull_request:
+    paths: ['ci/release_assets.py', 'ci/release_transport_smoke.py', 'ci/retry_failed_native.py', 'ci/NATIVE_FAILED_RETRY_REQUEST.json', 'tests/test_failed_native_retry.py', '.github/workflows/draft_transport_probe.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_release_assets.py tests/test_world_native_transport.py tests/test_world_native_recovery.py tests/test_world_recovery_speedup.py tests/test_failed_native_retry.py -q
+  smoke:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m ci.release_transport_smoke --directory draft-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-draft-transport-proof
+          path: draft-proof/TRANSPORT_SMOKE_STATUS.json
+          if-no-files-found: ignore
+  retry:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m ci.retry_failed_native --directory failed-retry
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: failed-native-retry-handoff
+          path: failed-retry/*.json
+          if-no-files-found: ignore

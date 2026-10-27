@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "datasets": ["form4", "13f", "xbrl"],
+  "start_year": 2018,
+  "end_year": 2026,
+  "request": "James 12:20 HKT speed-up: acquire independent Phase 1 SEC structured sources now, using existing world_fetch workflows restored to current relay and immutable publication code. Reuse org source audit and companyfacts evidence; these official bulk datasets supply broader as-filed ownership/financial sources. Preserve raw accession/filed fields, record windows and missing latest-session data honestly. No full-world or checklist acceptance claim."
+}

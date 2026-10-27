@@ -1,0 +1,17 @@
+{
+  "source_run": 40450227376,
+  "source_head": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
+  "source_attempt": 1,
+  "job": 122011092529,
+  "job_name": "build (40)",
+  "status": "completed",
+  "conclusion": "failure",
+  "started_at": "2026-10-27T04:32:13Z",
+  "completed_at": "2026-10-27T09:05:22Z",
+  "failure_annotation": "The hosted runner lost communication with the server. Anything in your workflow that terminates the runner process, starves it for CPU/Memory, or blocks its network access can cause this error.",
+  "underlying_cause": "UNPROVEN: the annotation does not distinguish CPU, memory, network or infrastructure",
+  "log_download": "GitHub returned BlobNotFound; job and check annotations independently verified through public REST",
+  "next_action": "Failed-only checkpoint-resuming shard-40 retry; preserve live shard 18 and independent 22-shard recovery",
+  "old_assets_modified": false,
+  "recipe_changed": false
+}

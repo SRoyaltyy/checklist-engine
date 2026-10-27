@@ -1,0 +1,37 @@
+name: authorized-recovery-speedup
+on:
+  push:
+    branches: [main]
+    paths: ['ci/RECOVERY_SPEEDUP_REQUEST.json']
+  pull_request:
+    paths: ['ci/recovery_speedup.py', 'tests/test_world_recovery_speedup.py', '.github/workflows/recovery_speedup.yml', '.github/workflows/native_price_recovery.yml', '.github/workflows/native_price_base_recovery.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_recovery_speedup.py tests/test_world_native_recovery.py tests/test_world_native_transport.py tests/test_world_release_assets.py -q
+  restart:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m ci.recovery_speedup --directory speedup-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-speedup-handoff
+          path: speedup-proof/*.json
+          if-no-files-found: ignore

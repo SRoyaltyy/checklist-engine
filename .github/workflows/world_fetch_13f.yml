@@ -1,56 +1,12 @@
 name: world_fetch_13f
-# Block M / I199: 13F-HR(/A) holdings mentions per ticker (EDGAR FTS by CUSIP,
-# OpenFIGI ticker->CUSIP map) -> data-ext/f13_hits_2020_26.parquet. Long-haul
-# sharded job: --count tickers per dispatch from --offset; resumes across
-# dispatches (skips finished tickers). Smoke with offset 0 / count 10 first.
-
 on:
   workflow_dispatch:
-    inputs:
-      offset:
-        description: ticker offset into the sorted universe
-        default: '0'
-        required: true
-      count:
-        description: tickers to cover this dispatch (0 = rest of universe)
-        default: '50'
-        required: true
-
+  workflow_call:
 permissions:
   contents: write
-
 jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    timeout-minutes: 330
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: kimi/world-snapshot
-      - name: Install deps
-        run: python3 -m pip install -q pandas pyarrow
-      - name: Download universe + previous hits
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/f13"
-          cd "$RUNNER_TEMP/f13"
-          gh release download data-2020-24-v1 -p 'universe_2020_survivors_le2024.parquet'
-          gh release download data-ext-2020-26-v1 -p 'f13_hits_2020_26.parquet' \
-            && echo "resume base found" || echo "no previous hits (fresh run)"
-      - name: Fetch 13F hits
-        run: |
-          cd "$RUNNER_TEMP/f13"
-          ARGS="--universe universe_2020_survivors_le2024.parquet --out f13_hits_2020_26.parquet --offset ${{ inputs.offset }} --count ${{ inputs.count }}"
-          [ -f f13_hits_2020_26.parquet ] && ARGS="$ARGS --resume" || true
-          python3 "$GITHUB_WORKSPACE/fetch/fetch_13f.py" $ARGS
-      - name: Upload to data-ext-2020-26-v1
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          f="$RUNNER_TEMP/f13/f13_hits_2020_26.parquet"
-          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
-            || echo "no output to upload"
+  acquire:
+    uses: ./.github/workflows/world_fetch_sec_bulk.yml
+    with:
+      dataset: '13f'
+    secrets: inherit

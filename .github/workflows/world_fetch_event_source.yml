@@ -1,0 +1,58 @@
+name: world-fetch-dated-events
+on:
+  workflow_call:
+    inputs:
+      kind:
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      KIND: ${{ inputs.kind }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt yfinance
+      - run: python -m fetch.fetch_event_history --kind "$KIND" --directory event-probe --probe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: event-provider-probe-${{ inputs.kind }}
+          path: event-probe/EVENT_SOURCE_PROBE.json
+          if-no-files-found: ignore
+  fetch:
+    needs: probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    env:
+      GH_TOKEN: ${{ github.token }}
+      KIND: ${{ inputs.kind }}
+      SHARD: ${{ matrix.shard }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt yfinance
+      - run: python -m fetch.fetch_event_history --kind "$KIND" --directory event-history --shard "$SHARD" --shards 8
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: event-source-${{ inputs.kind }}-${{ matrix.shard }}
+          path: event-history/EVENT_SOURCE_STATUS.json
+          if-no-files-found: ignore
