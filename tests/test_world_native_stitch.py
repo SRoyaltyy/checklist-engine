@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import pytest
 from ci import native_price_stitch as stitch
+from ci import native_price_routes as routes
 
 
 def source():
@@ -23,7 +24,7 @@ def test_stitch_accepts_only_pinned_successful_source_jobs():
 
 @pytest.mark.parametrize("shards",[list(range(63)),list(range(64))+[0],list(range(63))+[True],list(range(1,65))])
 def test_stitch_requires_a_complete_nonduplicated_64_shard_route_map(monkeypatch,shards):
-    monkeypatch.setattr(stitch,"api",lambda *args:pytest.fail("invalid route map must fail before API work"))
+    monkeypatch.setattr(routes,"api",lambda *args:pytest.fail("invalid route map must fail before API work"))
     with pytest.raises(ValueError,match="exactly once"):stitch.source_plan({"sources":[dict(source(),shards=shards)]})
 
 
@@ -35,9 +36,10 @@ def test_recorded_stitch_request_routes_every_shard_to_a_successful_pinned_run(m
             jobs=[{"id":s,"name":f"build ({s})","status":"completed","conclusion":"success"} for s in spec["shards"]]
             return {"total_count":len(jobs),"jobs":jobs}
         return {"id":spec["run"],"head_sha":spec["head"],"run_attempt":spec["attempt"]}
-    monkeypatch.setattr(stitch,"api",api);proof=stitch.source_plan(request)
+    monkeypatch.setattr(routes,"api",api);proof=stitch.source_plan(request)
     assert [r["shard"] for r in proof]==list(range(64))
-    assert proof[40]["source_run"]==40450227376 and proof[42]["source_run"]==40370285123
+    assert proof[40]["source_run"]==40480988662 and proof[42]["source_run"]==40370285123
+    assert proof[41]["source_run"]==40453879193
 
 
 @pytest.mark.parametrize("event,status,conclusion",[("pull_request","completed","success"),("workflow_run","in_progress",None),("workflow_run","completed","failure")])

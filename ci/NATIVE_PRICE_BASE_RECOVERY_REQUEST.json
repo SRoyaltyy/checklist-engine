@@ -1,7 +1,7 @@
 {
-  "version": 1,
-  "prerequisite_native_run": 40450227376,
-  "prerequisite_native_sha": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
+  "version": 2,
+  "prerequisite": "All 64 exact routed source jobs must have succeeded; superseded failures elsewhere in an older matrix do not replace this proof",
+  "require_all_native_sources": true,
   "source_run": 40360947486,
   "source_run_attempt": 1,
   "source_run_sha": "40b5158cd23ac8de607e9450874ca7cfc24747bc",
