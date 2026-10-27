@@ -69,5 +69,6 @@ jobs:
           name: recovery-shard-${{ matrix.shard }}
           path: |
             native-recovery/SHARD_*.json
-            native-recovery/resume/RECOVERY_SKIPPED_PARTS.json
+            native-recovery/resume/RECOVERY_CHAIN.json
+            native-recovery/resume/source_*/RECOVERY_SKIPPED_PARTS.json
           if-no-files-found: ignore

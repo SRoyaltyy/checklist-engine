@@ -44,3 +44,27 @@ def test_cancelled_shard_requires_explicit_rerun_authorization_in_request():
     with pytest.raises(ValueError):validate_failed_shards(request,run,jobs)
     request["allowed_cancelled_shards"]=[0]
     assert validate_failed_shards(request,run,jobs)[0]["conclusion"]=="cancelled"
+
+
+def test_plan_validates_each_overridden_run_before_emitting_shards(monkeypatch,tmp_path):
+    import json
+    from ci import native_price_recovery as recovery
+    request={"shards":[18,41],"source_run":200,"source_run_sha":"new","source_run_attempt":1,
+             "allowed_cancelled_shards":[18],"source_overrides":{"18":{
+                 "source_run":100,"source_run_sha":"old","source_run_attempt":1}}}
+    calls=[]
+    def api(endpoint):
+        calls.append(endpoint)
+        old="/100" in endpoint
+        if endpoint.endswith("/jobs?per_page=100"):
+            return {"total_count":1,"jobs":[{"id":1 if old else 2,"name":"build (18)" if old else "build (41)",
+                    "status":"completed","conclusion":"cancelled" if old else "failure"}]}
+        return {"id":100 if old else 200,"head_sha":"old" if old else "new","run_attempt":1}
+    monkeypatch.setattr(recovery,"api",api)
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    monkeypatch.setenv("GITHUB_OUTPUT",str(tmp_path/"output"))
+    recovery.plan(request,tmp_path)
+    report=json.loads((tmp_path/"RECOVERY_PLAN.json").read_text())
+    assert [(r["shard"],r["source_run"]) for r in report["source_jobs"]]==[(18,100),(41,200)]
+    assert len(calls)==4
+    assert json.loads((tmp_path/"output").read_text().split("=",1)[1])==[18,41]
