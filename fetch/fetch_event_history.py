@@ -11,6 +11,20 @@ SCHEMAS={"analyst":["ticker","event_timestamp","event_date","source_timezone","f
          "earnings":["ticker","event_timestamp","event_date","source_timezone","eps_estimate","eps_actual","surprise_pct"]}
 
 
+def probe_source(kind,root):
+    import yfinance as yf
+    root.mkdir(parents=True,exist_ok=True)
+    report={"kind":kind,"ticker":"AAPL","library_version":yf.__version__,"status":"FAIL_PROVIDER_PROBE_ONLY","world_gate":"NOT_RUN"}
+    try:
+        obj=yf.Ticker("AAPL")
+        frame=obj.get_upgrades_downgrades() if kind=="analyst" else obj.get_earnings_dates(limit=100)
+        rows=normalize_rows("AAPL",frame,kind)
+        if rows.empty:raise ValueError("known active source probe returned no rows; do not launch full-universe requests")
+        report.update(status="PASS_PROVIDER_PROBE_ONLY",rows=len(rows),columns=list(rows),first_event=rows.event_date.min(),last_event=rows.event_date.max())
+    except Exception as exc:report["error"]=describe_failure(exc);raise
+    finally:(root/"EVENT_SOURCE_PROBE.json").write_text(json.dumps(report,indent=2)+"\n")
+
+
 def normalize_rows(ticker,frame,kind):
     if frame is None or frame.empty:return pd.DataFrame(columns=SCHEMAS[kind])
     rows=[]
@@ -114,9 +128,11 @@ def acquire(kind,root,shard,shards):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument("--kind",choices=SCHEMAS,required=True);parser.add_argument("--directory",required=True)
     parser.add_argument("--shard",type=int,default=0);parser.add_argument("--shards",type=int,default=8)
+    parser.add_argument("--probe",action="store_true")
     args=parser.parse_args()
     if not 0<=args.shard<args.shards:raise ValueError("invalid event source shard")
-    acquire(args.kind,Path(args.directory),args.shard,args.shards)
+    if args.probe:probe_source(args.kind,Path(args.directory))
+    else:acquire(args.kind,Path(args.directory),args.shard,args.shards)
 
 
 if __name__=="__main__":main()

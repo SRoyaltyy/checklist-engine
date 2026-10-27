@@ -20,3 +20,16 @@ def test_earnings_keeps_reported_eps_missing_surprise_and_unproven_naive_timezon
     assert row.source_timezone=="PROVIDER_NAIVE_TIMEZONE_UNPROVEN"
     assert normalize_rows("A",None,"earnings").empty
     with pytest.raises(ValueError,match="schema differs"):normalize_rows("A",frame,"analyst")
+
+
+def test_unavailable_provider_probe_stops_before_full_universe_requests(tmp_path,monkeypatch):
+    import json,sys
+    from types import SimpleNamespace
+    from fetch.fetch_event_history import probe_source
+    requests=[]
+    def ticker(name):
+        requests.append(name);return SimpleNamespace(get_earnings_dates=lambda limit:None)
+    monkeypatch.setitem(sys.modules,"yfinance",SimpleNamespace(__version__="test",Ticker=ticker))
+    with pytest.raises(ValueError,match="do not launch"):probe_source("earnings",tmp_path)
+    assert requests==["AAPL"]
+    assert json.loads((tmp_path/"EVENT_SOURCE_PROBE.json").read_text())["status"]=="FAIL_PROVIDER_PROBE_ONLY"
