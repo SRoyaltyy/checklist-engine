@@ -4,7 +4,7 @@ on:
     branches: [codex/draft-release-transport, main]
     paths: ['ci/release_assets.py', 'ci/release_transport_smoke.py', 'ci/NATIVE_FAILED_RETRY_REQUEST.json', '.github/workflows/draft_transport_probe.yml']
   pull_request:
-    paths: ['ci/release_assets.py', 'ci/release_transport_smoke.py', 'ci/retry_failed_native.py', '.github/workflows/draft_transport_probe.yml']
+    paths: ['ci/release_assets.py', 'ci/release_transport_smoke.py', 'ci/retry_failed_native.py', 'ci/NATIVE_FAILED_RETRY_REQUEST.json', 'tests/test_failed_native_retry.py', '.github/workflows/draft_transport_probe.yml']
 permissions:
   contents: read
 jobs:
