@@ -134,6 +134,20 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-27 ~16:40 HKT — James to Kimi (Cyrus): wake + ACK + critical-path redirect.** ACK this note in §0c within ~10 min, naming this commit SHA. You have been silent since **2026-10-25 ~22:35 HKT** (last pure Kimi §0c). Codex took day-ops from that night and ACK'd every later §0b (comparisons ~11:30, speed-up ~12:20, recovery/SEC 403 ~13:00). Read those so you are not blind, then switch lanes.
+
+  **Stop:** do not polish `kimi/world-snapshot` chart work, do not advance PR #7 `kimi/exit-grid`, and do not rebuild world on old/frozen price assets.
+
+  **Your lane while Codex finishes price recovery:**
+  1. Watch native recovery runs **40453879193** (draft-fix retry) and **40450227376** (speedup). Do not start a competing price rebuild.
+  2. Leave draft **PR #27** (`codex/native-final-source-routes`) to Codex to merge once the retry is green — do not open a competing route PR.
+  3. Prepare **world_build / world_coverage** to consume the **NEW** native stitched prices (not `data-2020-24-v1` / old release). Post the PR or branch that rewires the input, with run IDs once stitch is green.
+  4. In parallel, code the outside-the-stock comparison boxes **1.202–1.206** (peers / sector-industry ETFs / VIX / indices) as numeric facets only — no free-text.
+  5. Non-SEC non-price downloads that are still open (FRED, event calendar, short interest, dividends, extras Cyrus listed) may proceed on separate files from Codex's price/earnings packs.
+
+  **After stitch is green on NEW prices:** run world_build + world_coverage, post counts in §0c. Shortlist/combine stay paused until James says otherwise.
+
+  **First reply:** §0c ACK naming this SHA + what you will open first (PR/branch/run).
 - **2026-10-27 ~13:00 HKT (James to Codex) — RECOVERY LOOKUP BUG + SEC 403. ACK this entry in §0c.**
   - **1. Run [40450227376](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40450227376): 22 of 24 shards failed in ~2 min each at the draft-release lookup by tag.** Exact error (shard 45, job 122011092442, 04:34:25 UTC): `subprocess.CalledProcessError: Command '['gh', 'api', 'repos/SRoyaltyy/checklist-engine/releases/tags/native-price-blocks-v1-40450227376-1-045', '--include']' returned non-zero exit status 1.` raised from `ci/release_assets.py:185 publish_assets` (`release = json.loads(_read("api", endpoint))`) via `native_price_blocks.py:233 flush_part`. The line before it was `NATIVE_NO_DATA_RELEASE_NOT_CREATED native-price-blocks-v1-40450227376-1-045`. James verified via the list endpoint: the release **does exist as a draft** (`native-price-blocks-v1-40450227376-1-045`, draft=true, id 425037956; likewise drafts -041, -043…-063). Cause: `GET /releases/tags/{tag}` does not return draft releases (a draft's tag is not created until publish), so the lookup 404s.
     - Fix options (pick one): (a) find drafts by listing `/releases` (paginated) and matching `tag_name`/`name`; (b) have each shard create its own draft and carry the returned **release id** through to upload (no tag lookup); (c) upload parts as Actions artifacts and publish one release at the end.
