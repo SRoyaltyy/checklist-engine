@@ -38,7 +38,7 @@ def test_recorded_stitch_request_routes_every_shard_to_a_successful_pinned_run(m
         return {"id":spec["run"],"head_sha":spec["head"],"run_attempt":spec["attempt"]}
     monkeypatch.setattr(routes,"api",api);proof=stitch.source_plan(request)
     assert [r["shard"] for r in proof]==list(range(64))
-    assert proof[40]["source_run"]==40450227376 and proof[42]["source_run"]==40370285123
+    assert proof[40]["source_run"]==40480988662 and proof[42]["source_run"]==40370285123
     assert proof[41]["source_run"]==40453879193
 
 

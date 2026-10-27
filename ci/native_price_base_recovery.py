@@ -7,13 +7,14 @@ REQUEST=Path("ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json")
 
 
 def plan(request,directory):
-    prerequisite=api(f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{request['prerequisite_native_run']}")
-    if prerequisite["head_sha"]!=request["prerequisite_native_sha"] or prerequisite["status"]!="completed" or prerequisite["conclusion"]!="success":
-        raise ValueError("required native recovery has not completed successfully at its pinned commit")
     native_proof=[]
     if request.get("require_all_native_sources") is True:
         from ci.native_price_routes import source_plan
         native_proof=source_plan(json.loads(Path("ci/NATIVE_PRICE_STITCH_REQUEST.json").read_text()))
+    else:
+        prerequisite=api(f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{request['prerequisite_native_run']}")
+        if prerequisite["head_sha"]!=request["prerequisite_native_sha"] or prerequisite["status"]!="completed" or prerequisite["conclusion"]!="success":
+            raise ValueError("required native recovery has not completed successfully at its pinned commit")
     endpoint=f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{request['source_run']}"
     run=api(endpoint);jobs=api(endpoint+"/jobs?per_page=100")
     if len(jobs["jobs"])!=jobs["total_count"]:raise ValueError("incomplete source job listing")

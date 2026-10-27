@@ -21,7 +21,7 @@
       "head": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
       "attempt": 1,
       "prefix": "native-price-blocks-v1-40450227376-1",
-      "shards": [18, 40]
+      "shards": [18]
     },
     {
       "run": 40453879193,
@@ -29,6 +29,13 @@
       "attempt": 1,
       "prefix": "native-price-blocks-v1-40453879193-1",
       "shards": [41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+    },
+    {
+      "run": 40480988662,
+      "head": "c069d8c91e75f3595ff3d76c991a21bdc03ae357",
+      "attempt": 1,
+      "prefix": "native-price-blocks-v1-40480988662-1",
+      "shards": [40]
     }
   ],
   "request": "Stitch only after native recovery and compact coverage succeed. Validate all 64 source jobs and immutable manifests, preserve mixed-source part references, and compare the accepted stock-day denominator with compact coverage. Measure provisional price-only coverage; do not approve the pending PR13 math review or any full-world/scoring gate."
