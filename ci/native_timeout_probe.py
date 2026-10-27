@@ -17,6 +17,7 @@ def main():
     args=parser.parse_args();root=Path(args.directory);root.mkdir(parents=True,exist_ok=True)
     if args.worker:
         import pandas as pd
+        import inspect,math
         import facets_world as fw
         from world_timeframes import completed_candles,PRICE_COLS
         bars=pd.read_parquet(root/'WKSP.bars.parquet')
@@ -24,9 +25,29 @@ def main():
         candles=completed_candles(bars,args.timeframe,session_calendar=calendar)
         print('TIMEOUT_PROBE_BEGIN',args.timeframe,len(candles),flush=True)
         faulthandler.dump_traceback_later(10,repeat=True)
+        source_lines,start_line=inspect.getsourcelines(fw.compute_tv_extra)
+        loop_lines={start_line+i:1 if '>=' in line else -1 for i,line in enumerate(source_lines)
+                    if line.strip().startswith('while c[t]')}
+        previous={};steps={}
+        def trace(frame,event,arg):
+            if event=='line' and frame.f_code is fw.compute_tv_extra.__code__ and frame.f_lineno in loop_lines:
+                local=frame.f_locals;bar=int(local['t']);key=(bar,frame.f_lineno)
+                last=float(local['last_brick']);box=float(local['box']);sign=loop_lines[frame.f_lineno]
+                steps[key]=steps.get(key,0)+1
+                unchanged=key in previous and last==previous[key]
+                previous[key]=last
+                if unchanged or steps[key]>=100000:
+                    state=dict(reason='NO_FLOAT_PROGRESS' if unchanged else 'EXCESSIVE_BRICK_STEPS',
+                               line=frame.f_lineno,bar=bar,date=str(candles.date.iloc[bar]),close=float(local['c'][bar]),
+                               last_brick=last,box=box,ulp=math.ulp(last),next_brick=last+sign*box,
+                               next_equals_last=(last+sign*box==last),observed_loop_steps=steps[key])
+                    print('RENKO_FAILURE_STATE '+json.dumps(state),flush=True)
+                    raise RuntimeError('DIAGNOSTIC_RENKO_STOP; frozen function source remains unchanged')
+            return trace
+        sys.settrace(trace)
         started=time.perf_counter()
-        values=fw.compute_tv_extra(*(candles[c].to_numpy(float) for c in PRICE_COLS),dates=candles.date.to_numpy())
-        faulthandler.cancel_dump_traceback_later()
+        try:values=fw.compute_tv_extra(*(candles[c].to_numpy(float) for c in PRICE_COLS),dates=candles.date.to_numpy())
+        finally:sys.settrace(None);faulthandler.cancel_dump_traceback_later()
         print('TIMEOUT_PROBE_RETURNED',len(values),time.perf_counter()-started,flush=True)
         return
     from ci import native_price_base as base
@@ -66,9 +87,11 @@ def main():
             row=dict(timeframe=tf,timed_out=True,stdout=(exc.stdout or b'').decode(errors='replace')[-2000:],
                      stderr=(exc.stderr or b'').decode(errors='replace')[-12000:])
         row['seconds']=time.perf_counter()-started;report['probes'].append(row)
+        for line in row['stdout'].splitlines():
+            if line.startswith('RENKO_FAILURE_STATE '):row['renko_state']=json.loads(line.split(' ',1)[1])
         print('BOUNDED_NATIVE_PROBE',json.dumps(row),flush=True)
         write_json(root/'NATIVE_TIMEOUT_PROBE.json',report)
-        if row['timed_out']:break
+        if row['timed_out'] or 'renko_state' in row:break
 
 
 if __name__=='__main__':main()
