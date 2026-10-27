@@ -1,0 +1,155 @@
+{
+  "checklist_item": "1.41",
+  "source_run": 40484930003,
+  "source_release": "etf-native-context-v1-40484930003-1",
+  "source_head": "1434de94b6867ca4a3951d0ef1eb28453089a9c3",
+  "original_source_reference": {
+    "release": "data-2020-24-v1",
+    "asset": "etf_2015_le2024.parquet",
+    "sha256": "964f355a91ef2df6859e2a144772651c67613e42faf4acc1e02154ffd401ac5e",
+    "rows": 34160,
+    "tickers": [
+      "IWM",
+      "QQQ",
+      "SPY",
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLP",
+      "XLRE",
+      "XLU",
+      "XLV",
+      "XLY"
+    ],
+    "first": "2015-01-02",
+    "last": "2024-12-31",
+    "org_review": "org-context-sources-v1-40478973715-1; pinned fullscan/theme-radar captures are not historical ETF price extensions"
+  },
+  "required_symbols": [
+    "IWM",
+    "QQQ",
+    "SPY",
+    "XLB",
+    "XLC",
+    "XLE",
+    "XLF",
+    "XLI",
+    "XLK",
+    "XLP",
+    "XLRE",
+    "XLU",
+    "XLV",
+    "XLY"
+  ],
+  "stock_cutoff": "2026-10-23",
+  "org_source_reviews": [
+    "docs/EXISTING_SOURCE_AUDIT_v2.md",
+    "org-context-sources-v1-40478973715-1"
+  ],
+  "extension_provider": "Yahoo chart, same fetch_world_prices.py provider and published world-prices-v3-40259691137-1 inputs as the stock bars",
+  "price_source_inventory": "docs/PHASE1_PRICE_SOURCE_INVENTORY.json",
+  "verified_source_assets": [
+    {
+      "ticker": "IWM",
+      "file": "etf_daily_IWM.parquet",
+      "sha256": "92b4550700c9b62798e51ec25b8c86b740685e2908a167e807651efe71fe5091",
+      "first": "2000-05-26",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "QQQ",
+      "file": "etf_daily_QQQ.parquet",
+      "sha256": "b0af78964bb496cb9361101160630761dc3e6e73801de80b6ae248a663c8b626",
+      "first": "1999-03-10",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "SPY",
+      "file": "etf_daily_SPY.parquet",
+      "sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d",
+      "first": "1993-01-29",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLB",
+      "file": "etf_daily_XLB.parquet",
+      "sha256": "446d05640bb820a93775a7a193066221f9835ccd8a6d3906b733c1e17ff0269d",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLC",
+      "file": "etf_daily_XLC.parquet",
+      "sha256": "da46e35ad9e5510974df2d802f298ba7dd9ee0c2da1bb8449d6cfa12cc006ebd",
+      "first": "2018-06-19",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLE",
+      "file": "etf_daily_XLE.parquet",
+      "sha256": "937e0d256623e693402620f95a8307ca6c6419680c667a733cdfeed05309b27e",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLF",
+      "file": "etf_daily_XLF.parquet",
+      "sha256": "6491747524db7e10ac58f2371b345650b457d667f965f9421e270b1068870d49",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLI",
+      "file": "etf_daily_XLI.parquet",
+      "sha256": "72f34d1a5ef03b60eacfff8ede6b159c82facbd4407c82d23ff6ea473d4572ec",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLK",
+      "file": "etf_daily_XLK.parquet",
+      "sha256": "e2cac1f6b99886f57bb775602b0743324eadfb215b7e68b6a5ec2674b9990099",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLP",
+      "file": "etf_daily_XLP.parquet",
+      "sha256": "6303937f053249eb33597b4812a685b575377ef5fd4e95eb51474a93e85613fa",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLRE",
+      "file": "etf_daily_XLRE.parquet",
+      "sha256": "9ce1072e50a02e1bc9ce205efc0dac81989995a3116154682c1f7c7999b7b473",
+      "first": "2015-10-08",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLU",
+      "file": "etf_daily_XLU.parquet",
+      "sha256": "833d155cdb449790c8f040a8e73c23f070eac4812d5b8cc814c37ff594f9005b",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLV",
+      "file": "etf_daily_XLV.parquet",
+      "sha256": "d8dcb76b233ce3808afa04d21d0e391de2fe0d1a454b9efff636e32a6cbf537a",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "XLY",
+      "file": "etf_daily_XLY.parquet",
+      "sha256": "b22e5866d91543c588baa98ed00eca31c0f6945ae3086472b108b62fae71da24",
+      "first": "1998-12-22",
+      "last": "2026-10-23"
+    }
+  ],
+  "claim_scope": "Source located and extended only; PIT joins, indicator grid, world coverage and scoring remain open"
+}
