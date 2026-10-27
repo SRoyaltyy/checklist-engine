@@ -7,7 +7,7 @@ on:
     paths: ['ci/native_price_base.py', 'ci/native_price_base_recovery.py', 'tests/test_world_price_base.py', '.github/workflows/native_price_base_recovery.yml']
   workflow_run:
     workflows: [native-price-failed-shard-recovery]
-    branches: [codex/native-price-failed-shards]
+    branches: [main, codex/native-price-failed-shards]
     types: [completed]
 permissions:
   contents: read
@@ -22,7 +22,7 @@ env:
   OMP_NUM_THREADS: '1'
 jobs:
   verify:
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.id == 40446419246 && github.event.workflow_run.head_sha == '02977e6ba3c1e2783d1c4305a5f3f8f4811cad57' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.repository.full_name == github.repository)
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.id == 40450227376 && github.event.workflow_run.head_sha == '343b4fcddd04eee36aaba2dc4feba9cef05cdfdc' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.repository.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

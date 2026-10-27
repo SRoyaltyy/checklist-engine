@@ -17,10 +17,10 @@
       "shards": [0, 2, 3, 4, 5, 6, 7, 36, 37, 38, 39, 42]
     },
     {
-      "run": 40446419246,
-      "head": "02977e6ba3c1e2783d1c4305a5f3f8f4811cad57",
+      "run": 40450227376,
+      "head": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
       "attempt": 1,
-      "prefix": "native-price-blocks-v1-40446419246-1",
+      "prefix": "native-price-blocks-v1-40450227376-1",
       "shards": [18, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
     }
   ],
