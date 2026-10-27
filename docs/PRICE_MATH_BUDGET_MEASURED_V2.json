@@ -1,0 +1,1512 @@
+{
+  "status": "PASS_SAMPLE_BUDGET_ONLY",
+  "source_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+  "request": {
+    "version": 1,
+    "baseline_commit": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40",
+    "inputs_tag": "native-price-inputs-v1-40336250454-1",
+    "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+    "compact_source": "native-price-base-v1-40360947486-1-000",
+    "compact_part": "base_0000",
+    "sample_entities": 3,
+    "request": "Compare frozen and corrected math on three deterministic real released entities across all 22 native timeframes. Measure compressed bytes, width, wall time and peak RSS on a runner. Publish sample-based projections and limits, never a full-universe acceptance claim. No vendors, no replacement of old checkpoints."
+  },
+  "fixtures": {
+    "request": {
+      "version": 1,
+      "baseline_commit": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40",
+      "inputs_tag": "native-price-inputs-v1-40336250454-1",
+      "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+      "compact_source": "native-price-base-v1-40360947486-1-000",
+      "compact_part": "base_0000",
+      "sample_entities": 3,
+      "request": "Compare frozen and corrected math on three deterministic real released entities across all 22 native timeframes. Measure compressed bytes, width, wall time and peak RSS on a runner. Publish sample-based projections and limits, never a full-universe acceptance claim. No vendors, no replacement of old checkpoints."
+    },
+    "samples": [
+      {
+        "ticker": "MAN",
+        "input_rows": 9271,
+        "max_reference_close": 136.02000427246094,
+        "file": "4d414e.bars.parquet",
+        "sha256": "016d25f3e57b5d42d0badfb26df01140f9eba136323dba9fad2eec5213b97a0a"
+      },
+      {
+        "ticker": "MNTS",
+        "input_rows": 1712,
+        "max_reference_close": 342750.0,
+        "file": "4d4e5453.bars.parquet",
+        "sha256": "5cf165b06d347ceabfd4e77df95558aefafa5b4c3b06f1a27f37277491a86005"
+      },
+      {
+        "ticker": "EYE",
+        "input_rows": 2259,
+        "max_reference_close": 64.94999694824219,
+        "file": "455945.bars.parquet",
+        "sha256": "fb04c5856ec1337f661caef500ff3ca7c3a1d3a4ea42530fad854b99360aec99"
+      }
+    ],
+    "recipe_files": [
+      "facets_world.py",
+      "world_timeframes.py",
+      "world_bar_statistics.py",
+      "world_food_statistics.py",
+      "world_indicator_settings.py",
+      "world_indicator_extra.py",
+      "world_moving_averages.py",
+      "world_dates.py",
+      "price_reconcile.py",
+      "requirements-world-v2.txt",
+      "dictionary/INDICATOR_SETTINGS.json",
+      "dictionary/BAR_STATISTICS_REGISTRY.json",
+      "ci/native_price_blocks.py"
+    ],
+    "baseline_fingerprint": "0738f12902e29f1272d06f30fdd56d6f80e200bc25f825cf9a737404acdffcc4",
+    "selected_tickers": 8447,
+    "max_shard_entities": 136,
+    "source_manifest_sha256": "8a3ae36f2b7e11951f4314db7cb1e653441fd4a75b36894f4f999d66fec2359c",
+    "inputs_manifest_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+    "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074"
+  },
+  "baseline": {
+    "label": "baseline",
+    "recipe_fingerprint": "0738f12902e29f1272d06f30fdd56d6f80e200bc25f825cf9a737404acdffcc4",
+    "entities": [
+      {
+        "ticker": "MAN",
+        "input_rows": 9271,
+        "max_reference_close": 136.02000427246094,
+        "seconds": 26.74960377,
+        "compressed_bytes": 150521898,
+        "timeframes": {
+          "1d": {
+            "native_rows": 9270,
+            "feature_columns": 1044,
+            "bytes": 39921737,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "2d": {
+            "native_rows": 4635,
+            "feature_columns": 1044,
+            "bytes": 19949962,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "3d": {
+            "native_rows": 3090,
+            "feature_columns": 1044,
+            "bytes": 13269352,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "4d": {
+            "native_rows": 2317,
+            "feature_columns": 1044,
+            "bytes": 10038783,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "5d": {
+            "native_rows": 1854,
+            "feature_columns": 1044,
+            "bytes": 7971180,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "6d": {
+            "native_rows": 1545,
+            "feature_columns": 1044,
+            "bytes": 6722914,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "7d": {
+            "native_rows": 1324,
+            "feature_columns": 1044,
+            "bytes": 5822874,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "8d": {
+            "native_rows": 1158,
+            "feature_columns": 1044,
+            "bytes": 5126525,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "9d": {
+            "native_rows": 1030,
+            "feature_columns": 1044,
+            "bytes": 4531959,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "10d": {
+            "native_rows": 927,
+            "feature_columns": 1044,
+            "bytes": 4120763,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "11d": {
+            "native_rows": 842,
+            "feature_columns": 1044,
+            "bytes": 3782875,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "12d": {
+            "native_rows": 772,
+            "feature_columns": 1044,
+            "bytes": 3505473,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "13d": {
+            "native_rows": 713,
+            "feature_columns": 1044,
+            "bytes": 3267357,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "14d": {
+            "native_rows": 662,
+            "feature_columns": 1044,
+            "bytes": 3059977,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "15d": {
+            "native_rows": 618,
+            "feature_columns": 1044,
+            "bytes": 2882177,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "16d": {
+            "native_rows": 579,
+            "feature_columns": 1044,
+            "bytes": 2722469,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "17d": {
+            "native_rows": 545,
+            "feature_columns": 1044,
+            "bytes": 2575474,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "18d": {
+            "native_rows": 515,
+            "feature_columns": 1044,
+            "bytes": 2429210,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "19d": {
+            "native_rows": 487,
+            "feature_columns": 1044,
+            "bytes": 2320039,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "20d": {
+            "native_rows": 463,
+            "feature_columns": 1044,
+            "bytes": 2223544,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "21d": {
+            "native_rows": 441,
+            "feature_columns": 1044,
+            "bytes": 2137963,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "monthly": {
+            "native_rows": 441,
+            "feature_columns": 1044,
+            "bytes": 2139291,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          }
+        }
+      },
+      {
+        "ticker": "MNTS",
+        "input_rows": 1712,
+        "max_reference_close": 342750.0,
+        "seconds": 7.597775339000009,
+        "compressed_bytes": 34614200,
+        "timeframes": {
+          "1d": {
+            "native_rows": 1711,
+            "feature_columns": 1044,
+            "bytes": 7461529,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "2d": {
+            "native_rows": 855,
+            "feature_columns": 1044,
+            "bytes": 3888140,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "3d": {
+            "native_rows": 570,
+            "feature_columns": 1044,
+            "bytes": 2717845,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "4d": {
+            "native_rows": 427,
+            "feature_columns": 1044,
+            "bytes": 2112987,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "5d": {
+            "native_rows": 342,
+            "feature_columns": 1044,
+            "bytes": 1774331,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "6d": {
+            "native_rows": 285,
+            "feature_columns": 1044,
+            "bytes": 1539781,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "7d": {
+            "native_rows": 244,
+            "feature_columns": 1044,
+            "bytes": 1361949,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "8d": {
+            "native_rows": 213,
+            "feature_columns": 1044,
+            "bytes": 1242045,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "9d": {
+            "native_rows": 190,
+            "feature_columns": 1044,
+            "bytes": 1153835,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "10d": {
+            "native_rows": 171,
+            "feature_columns": 1044,
+            "bytes": 1083769,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "11d": {
+            "native_rows": 154,
+            "feature_columns": 1044,
+            "bytes": 1019140,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "12d": {
+            "native_rows": 142,
+            "feature_columns": 1044,
+            "bytes": 974378,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "13d": {
+            "native_rows": 131,
+            "feature_columns": 1044,
+            "bytes": 933004,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "14d": {
+            "native_rows": 122,
+            "feature_columns": 1044,
+            "bytes": 902357,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "15d": {
+            "native_rows": 114,
+            "feature_columns": 1044,
+            "bytes": 874535,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "16d": {
+            "native_rows": 106,
+            "feature_columns": 1044,
+            "bytes": 846753,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "17d": {
+            "native_rows": 100,
+            "feature_columns": 1044,
+            "bytes": 826795,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "18d": {
+            "native_rows": 95,
+            "feature_columns": 1044,
+            "bytes": 810124,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "19d": {
+            "native_rows": 89,
+            "feature_columns": 1044,
+            "bytes": 789168,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "20d": {
+            "native_rows": 85,
+            "feature_columns": 1044,
+            "bytes": 776280,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "21d": {
+            "native_rows": 81,
+            "feature_columns": 1044,
+            "bytes": 762768,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          },
+          "monthly": {
+            "native_rows": 81,
+            "feature_columns": 1044,
+            "bytes": 762687,
+            "dtype_counts": {
+              "float32": 1041,
+              "float64": 3
+            },
+            "schema_sha256": "eca1ee8817bce46136db7d6b320d69d9546b5b20e30e6fad9a060fcd69ba3d48"
+          }
+        }
+      },
+      {
+        "ticker": "EYE",
+        "input_rows": 2259,
+        "max_reference_close": 64.94999694824219,
+        "seconds": 8.949291996,
+        "compressed_bytes": 42620627,
+        "timeframes": {
+          "1d": {
+            "native_rows": 2258,
+            "feature_columns": 1044,
+            "bytes": 9833816,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "2d": {
+            "native_rows": 1129,
+            "feature_columns": 1044,
+            "bytes": 5024523,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "3d": {
+            "native_rows": 752,
+            "feature_columns": 1044,
+            "bytes": 3437701,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "4d": {
+            "native_rows": 564,
+            "feature_columns": 1044,
+            "bytes": 2667000,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "5d": {
+            "native_rows": 451,
+            "feature_columns": 1044,
+            "bytes": 2182331,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "6d": {
+            "native_rows": 376,
+            "feature_columns": 1044,
+            "bytes": 1890630,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "7d": {
+            "native_rows": 322,
+            "feature_columns": 1044,
+            "bytes": 1675847,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "8d": {
+            "native_rows": 281,
+            "feature_columns": 1044,
+            "bytes": 1509611,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "9d": {
+            "native_rows": 250,
+            "feature_columns": 1044,
+            "bytes": 1378976,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "10d": {
+            "native_rows": 225,
+            "feature_columns": 1044,
+            "bytes": 1281974,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "11d": {
+            "native_rows": 204,
+            "feature_columns": 1044,
+            "bytes": 1201980,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "12d": {
+            "native_rows": 187,
+            "feature_columns": 1044,
+            "bytes": 1137919,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "13d": {
+            "native_rows": 173,
+            "feature_columns": 1044,
+            "bytes": 1086618,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "14d": {
+            "native_rows": 161,
+            "feature_columns": 1044,
+            "bytes": 1042704,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "15d": {
+            "native_rows": 150,
+            "feature_columns": 1044,
+            "bytes": 1003463,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "16d": {
+            "native_rows": 140,
+            "feature_columns": 1044,
+            "bytes": 965816,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "17d": {
+            "native_rows": 132,
+            "feature_columns": 1044,
+            "bytes": 937261,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "18d": {
+            "native_rows": 125,
+            "feature_columns": 1044,
+            "bytes": 912126,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "19d": {
+            "native_rows": 117,
+            "feature_columns": 1044,
+            "bytes": 884031,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "20d": {
+            "native_rows": 112,
+            "feature_columns": 1044,
+            "bytes": 866534,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "21d": {
+            "native_rows": 107,
+            "feature_columns": 1044,
+            "bytes": 849912,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          },
+          "monthly": {
+            "native_rows": 107,
+            "feature_columns": 1044,
+            "bytes": 849854,
+            "dtype_counts": {
+              "float32": 1044
+            },
+            "schema_sha256": "8734a1756e6829ce742b1036e315484711f19156412015ce631d2dc0dad98c42"
+          }
+        }
+      }
+    ],
+    "versions": {
+      "numpy": "2.5.4",
+      "pandas": "2.3.3",
+      "pyarrow": "26.0.0",
+      "TA-Lib": "0.8.2"
+    },
+    "python": "3.12.15 (main, Oct  1 2026, 02:35:59) [GCC 13.3.0]",
+    "peak_rss_bytes": 342769664,
+    "schema_variants_by_timeframe": {
+      "1d": 2,
+      "2d": 2,
+      "3d": 2,
+      "4d": 2,
+      "5d": 2,
+      "6d": 2,
+      "7d": 2,
+      "8d": 2,
+      "9d": 2,
+      "10d": 2,
+      "11d": 2,
+      "12d": 2,
+      "13d": 2,
+      "14d": 2,
+      "15d": 2,
+      "16d": 2,
+      "17d": 2,
+      "18d": 2,
+      "19d": 2,
+      "20d": 2,
+      "21d": 2,
+      "monthly": 2
+    }
+  },
+  "corrected": {
+    "label": "corrected",
+    "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+    "entities": [
+      {
+        "ticker": "MAN",
+        "input_rows": 9271,
+        "max_reference_close": 136.02000427246094,
+        "seconds": 27.600351454999995,
+        "compressed_bytes": 237056770,
+        "timeframes": {
+          "1d": {
+            "native_rows": 9270,
+            "feature_columns": 1044,
+            "bytes": 63343832,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "2d": {
+            "native_rows": 4635,
+            "feature_columns": 1044,
+            "bytes": 31885210,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "3d": {
+            "native_rows": 3090,
+            "feature_columns": 1044,
+            "bytes": 21334501,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "4d": {
+            "native_rows": 2317,
+            "feature_columns": 1044,
+            "bytes": 16116435,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "5d": {
+            "native_rows": 1854,
+            "feature_columns": 1044,
+            "bytes": 12455368,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "6d": {
+            "native_rows": 1545,
+            "feature_columns": 1044,
+            "bytes": 10506628,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "7d": {
+            "native_rows": 1324,
+            "feature_columns": 1044,
+            "bytes": 9082488,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "8d": {
+            "native_rows": 1158,
+            "feature_columns": 1044,
+            "bytes": 8002439,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "9d": {
+            "native_rows": 1030,
+            "feature_columns": 1044,
+            "bytes": 7096705,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "10d": {
+            "native_rows": 927,
+            "feature_columns": 1044,
+            "bytes": 6446962,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "11d": {
+            "native_rows": 842,
+            "feature_columns": 1044,
+            "bytes": 5900573,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "12d": {
+            "native_rows": 772,
+            "feature_columns": 1044,
+            "bytes": 5439191,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "13d": {
+            "native_rows": 713,
+            "feature_columns": 1044,
+            "bytes": 5060727,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "14d": {
+            "native_rows": 662,
+            "feature_columns": 1044,
+            "bytes": 4722608,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "15d": {
+            "native_rows": 618,
+            "feature_columns": 1044,
+            "bytes": 4433120,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "16d": {
+            "native_rows": 579,
+            "feature_columns": 1044,
+            "bytes": 4175005,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "17d": {
+            "native_rows": 545,
+            "feature_columns": 1044,
+            "bytes": 3943665,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "18d": {
+            "native_rows": 515,
+            "feature_columns": 1044,
+            "bytes": 3722831,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "19d": {
+            "native_rows": 487,
+            "feature_columns": 1044,
+            "bytes": 3537762,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "20d": {
+            "native_rows": 463,
+            "feature_columns": 1044,
+            "bytes": 3379290,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "21d": {
+            "native_rows": 441,
+            "feature_columns": 1044,
+            "bytes": 3234034,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "monthly": {
+            "native_rows": 441,
+            "feature_columns": 1044,
+            "bytes": 3237396,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          }
+        }
+      },
+      {
+        "ticker": "MNTS",
+        "input_rows": 1712,
+        "max_reference_close": 342750.0,
+        "seconds": 7.636519466999999,
+        "compressed_bytes": 48192618,
+        "timeframes": {
+          "1d": {
+            "native_rows": 1711,
+            "feature_columns": 1044,
+            "bytes": 11211088,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "2d": {
+            "native_rows": 855,
+            "feature_columns": 1044,
+            "bytes": 5835898,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "3d": {
+            "native_rows": 570,
+            "feature_columns": 1044,
+            "bytes": 4021053,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "4d": {
+            "native_rows": 427,
+            "feature_columns": 1044,
+            "bytes": 3092086,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "5d": {
+            "native_rows": 342,
+            "feature_columns": 1044,
+            "bytes": 2550438,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "6d": {
+            "native_rows": 285,
+            "feature_columns": 1044,
+            "bytes": 2171389,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "7d": {
+            "native_rows": 244,
+            "feature_columns": 1044,
+            "bytes": 1888137,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "8d": {
+            "native_rows": 213,
+            "feature_columns": 1044,
+            "bytes": 1690501,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "9d": {
+            "native_rows": 190,
+            "feature_columns": 1044,
+            "bytes": 1547002,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "10d": {
+            "native_rows": 171,
+            "feature_columns": 1044,
+            "bytes": 1432670,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "11d": {
+            "native_rows": 154,
+            "feature_columns": 1044,
+            "bytes": 1329678,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "12d": {
+            "native_rows": 142,
+            "feature_columns": 1044,
+            "bytes": 1257019,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "13d": {
+            "native_rows": 131,
+            "feature_columns": 1044,
+            "bytes": 1189813,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "14d": {
+            "native_rows": 122,
+            "feature_columns": 1044,
+            "bytes": 1138651,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "15d": {
+            "native_rows": 114,
+            "feature_columns": 1044,
+            "bytes": 1092664,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "16d": {
+            "native_rows": 106,
+            "feature_columns": 1044,
+            "bytes": 1046963,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "17d": {
+            "native_rows": 100,
+            "feature_columns": 1044,
+            "bytes": 1013429,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "18d": {
+            "native_rows": 95,
+            "feature_columns": 1044,
+            "bytes": 986027,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "19d": {
+            "native_rows": 89,
+            "feature_columns": 1044,
+            "bytes": 951369,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "20d": {
+            "native_rows": 85,
+            "feature_columns": 1044,
+            "bytes": 929866,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "21d": {
+            "native_rows": 81,
+            "feature_columns": 1044,
+            "bytes": 908391,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "monthly": {
+            "native_rows": 81,
+            "feature_columns": 1044,
+            "bytes": 908486,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          }
+        }
+      },
+      {
+        "ticker": "EYE",
+        "input_rows": 2259,
+        "max_reference_close": 64.94999694824219,
+        "seconds": 9.197598030000009,
+        "compressed_bytes": 63487546,
+        "timeframes": {
+          "1d": {
+            "native_rows": 2258,
+            "feature_columns": 1044,
+            "bytes": 16173963,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "2d": {
+            "native_rows": 1129,
+            "feature_columns": 1044,
+            "bytes": 7958044,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "3d": {
+            "native_rows": 752,
+            "feature_columns": 1044,
+            "bytes": 5386032,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "4d": {
+            "native_rows": 564,
+            "feature_columns": 1044,
+            "bytes": 4106219,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "5d": {
+            "native_rows": 451,
+            "feature_columns": 1044,
+            "bytes": 3323124,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "6d": {
+            "native_rows": 376,
+            "feature_columns": 1044,
+            "bytes": 2827473,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "7d": {
+            "native_rows": 322,
+            "feature_columns": 1044,
+            "bytes": 2460412,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "8d": {
+            "native_rows": 281,
+            "feature_columns": 1044,
+            "bytes": 2179767,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "9d": {
+            "native_rows": 250,
+            "feature_columns": 1044,
+            "bytes": 1961205,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "10d": {
+            "native_rows": 225,
+            "feature_columns": 1044,
+            "bytes": 1790627,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "11d": {
+            "native_rows": 204,
+            "feature_columns": 1044,
+            "bytes": 1654580,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "12d": {
+            "native_rows": 187,
+            "feature_columns": 1044,
+            "bytes": 1545530,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "13d": {
+            "native_rows": 173,
+            "feature_columns": 1044,
+            "bytes": 1457893,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "14d": {
+            "native_rows": 161,
+            "feature_columns": 1044,
+            "bytes": 1384182,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "15d": {
+            "native_rows": 150,
+            "feature_columns": 1044,
+            "bytes": 1317761,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "16d": {
+            "native_rows": 140,
+            "feature_columns": 1044,
+            "bytes": 1255756,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "17d": {
+            "native_rows": 132,
+            "feature_columns": 1044,
+            "bytes": 1208623,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "18d": {
+            "native_rows": 125,
+            "feature_columns": 1044,
+            "bytes": 1167137,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "19d": {
+            "native_rows": 117,
+            "feature_columns": 1044,
+            "bytes": 1118444,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "20d": {
+            "native_rows": 112,
+            "feature_columns": 1044,
+            "bytes": 1089125,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "21d": {
+            "native_rows": 107,
+            "feature_columns": 1044,
+            "bytes": 1061002,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          },
+          "monthly": {
+            "native_rows": 107,
+            "feature_columns": 1044,
+            "bytes": 1060647,
+            "dtype_counts": {
+              "float64": 983,
+              "float32": 61
+            },
+            "schema_sha256": "30872961c3e995f97b9f6ecea05d726e21789f6a40d5b65845d87e876c1a1b28"
+          }
+        }
+      }
+    ],
+    "versions": {
+      "numpy": "2.5.4",
+      "pandas": "2.3.3",
+      "pyarrow": "26.0.0",
+      "TA-Lib": "0.8.2"
+    },
+    "python": "3.12.15 (main, Oct  1 2026, 02:35:59) [GCC 13.3.0]",
+    "peak_rss_bytes": 474533888,
+    "schema_variants_by_timeframe": {
+      "1d": 1,
+      "2d": 1,
+      "3d": 1,
+      "4d": 1,
+      "5d": 1,
+      "6d": 1,
+      "7d": 1,
+      "8d": 1,
+      "9d": 1,
+      "10d": 1,
+      "11d": 1,
+      "12d": 1,
+      "13d": 1,
+      "14d": 1,
+      "15d": 1,
+      "16d": 1,
+      "17d": 1,
+      "18d": 1,
+      "19d": 1,
+      "20d": 1,
+      "21d": 1,
+      "monthly": 1
+    }
+  },
+  "limits": {
+    "runner_memory_bytes": 16765378560,
+    "free_disk_bytes": 90444578816,
+    "peak_rss_bytes": 474533888,
+    "projected_max_shard_seconds_with_25pct_and_30min_io_margin": 6492.059747349999,
+    "workflow_timeout_seconds": 21000,
+    "scratch_bytes_including_7GB_reserve": 10886113540,
+    "projected_all_entity_compressed_bytes_max_sample_times_universe_with_25pct_margin": 2503023170237.5
+  },
+  "compressed_byte_ratio": 1.5311817203202231,
+  "full_world_gate": "NOT_RUN",
+  "scoring_gate": "CLOSED",
+  "recipe_review_gate": "PENDING_FULL_VERIFICATION",
+  "limitation": "Three deterministic real entities from one published part; projections are measured sample bounds with margins, not full-universe guarantees."
+}

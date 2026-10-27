@@ -48,4 +48,5 @@ jobs:
           path: |
             etf-context/ETF_CONTEXT_STATUS.json
             etf-context/ETF_CONTEXT_COVERAGE.csv
+            etf-context/ETF_DAILY_SOURCE_MANIFEST.json
           if-no-files-found: ignore
