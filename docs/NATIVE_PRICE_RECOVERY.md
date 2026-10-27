@@ -109,3 +109,23 @@ large archives were downloaded for that check. Canonical Git object bytes
 match frozen recipe fingerprint `0738f12902e29f1272d06f30fdd56d6f80e200bc25f825cf9a737404acdffcc4`.
 Windows CRLF working-copy bytes differ, so this is not a local full-build pass;
 the production guard remains unchanged and runs against the Linux checkout.
+
+## Final native stitch
+
+`NATIVE_PRICE_STITCH_REQUEST.json` routes each shard exactly once: 28 successful
+original shards, 12 successful first-recovery shards (including 42), and 24
+replacements in run 40446419246 (including 18/40). The planner verifies every
+source run head, attempt and successful terminal job. The frozen merge recipe
+receives these explicit completion routes while retaining each part's actual
+immutable release. Remote archive/coverage digests must match the part
+manifest; coverage bytes are downloaded and verified before aggregation.
+
+The stitch starts after successful compact recovery, refuses a review-only
+run, verifies its released status/coverage/stock-day weights, and compares its
+accepted ticker count, stock-day denominator, recipe and timeframe grid against
+the native result. Publication stays draft until all evidence uploads verify.
+The result includes all 64 source-job proofs, compact evidence reference and
+unique archive bytes. `recipe_review_gate` remains
+`CLOSED_PENDING_PR13_MATH_REVIEW`; full-world, historical tradeability and
+scoring gates remain closed. This transports and measures the existing recipe;
+it does not accept its known math issues or silently replace any old result.

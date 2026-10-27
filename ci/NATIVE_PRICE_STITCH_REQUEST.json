@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "sources": [
+    {
+      "run": 40336250454,
+      "head": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40",
+      "attempt": 1,
+      "prefix": "native-price-blocks-v1-40336250454-1",
+      "shards": [1, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+    },
+    {
+      "run": 40370285123,
+      "head": "b2ca7901a63f3b5616eb65da6dad8c27468fd862",
+      "attempt": 1,
+      "prefix": "native-price-blocks-v1-40370285123-1",
+      "shards": [0, 2, 3, 4, 5, 6, 7, 36, 37, 38, 39, 42]
+    },
+    {
+      "run": 40446419246,
+      "head": "02977e6ba3c1e2783d1c4305a5f3f8f4811cad57",
+      "attempt": 1,
+      "prefix": "native-price-blocks-v1-40446419246-1",
+      "shards": [18, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+    }
+  ],
+  "request": "Stitch only after native recovery and compact coverage succeed. Validate all 64 source jobs and immutable manifests, preserve mixed-source part references, and compare the accepted stock-day denominator with compact coverage. Measure provisional price-only coverage; do not approve the pending PR13 math review or any full-world/scoring gate."
+}
