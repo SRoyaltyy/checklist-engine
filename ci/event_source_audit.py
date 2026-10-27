@@ -12,6 +12,16 @@ from ci.release_assets import download_asset, publish_assets, gh_retry
 from fetch.fetch_event_history import SCHEMAS
 
 
+def field_counts(frame):
+    """A blank category is missing; a zero numeric value or ticker NA is not."""
+    raw={column:int(frame[column].notna().sum()) for column in frame}
+    blanks={column:0 for column in frame}
+    for column in frame.select_dtypes(include=['object','string']):
+        blank=frame[column].notna() & frame[column].astype('string').str.strip().eq('').fillna(False)
+        blanks[column]=int(blank.sum())
+    return raw,{column:raw[column]-blanks[column] for column in frame},blanks
+
+
 def validate_status(report, kind, expected, source_head):
     if report['kind'] != kind or report['source_commit'] != source_head:
         raise ValueError('event source identity differs')
@@ -61,12 +71,16 @@ def audit(root, request):
     report = dict(status='INCOMPLETE_EVENT_SOURCE_AUDIT', request=request,
                   source_commit=os.environ['GITHUB_SHA'], canonical_tickers=len(names), sources={},
                   historical_completeness='NOT_PROVEN; no rows returned is not proof of zero events',
+                  semantic_missingness_rule='Null values and whitespace-only categorical strings are missing; numeric zeros and nonempty identifiers are retained',
                   point_in_time_gate='NOT_PROVEN; provider event timestamps do not establish original availability/revisions',
                   world_gate='NOT_RUN', scoring_gate='CLOSED')
     try:
         for kind in SCHEMAS:
             statuses = Counter()
             fields = Counter()
+            raw_fields = Counter()
+            blank_fields = Counter()
+            timezones = Counter()
             years = Counter()
             year_tickers = defaultdict(set)
             shards = []
@@ -92,7 +106,9 @@ def audit(root, request):
                     validate_part(frame, kind, receipt, expected)
                     actual_ticker_rows.update(frame.groupby('ticker').size().to_dict())
                     total += len(frame)
-                    fields.update({c: int(frame[c].notna().sum()) for c in frame})
+                    raw,meaningful,blanks=field_counts(frame)
+                    raw_fields.update(raw);fields.update(meaningful);blank_fields.update(blanks)
+                    timezones.update(frame.source_timezone.value_counts().to_dict())
                     for year, group in frame.groupby(frame.event_date.str[:4]):
                         years[year] += len(group)
                         year_tickers[year].update(group.ticker)
@@ -107,6 +123,8 @@ def audit(root, request):
                 print('EVENT_AUDIT_SHARD', kind, shard, len(expected), own['source_rows'], flush=True)
             report['sources'][kind] = dict(attempt_status_counts=dict(statuses), source_rows=total,
                                           field_nonnull_rows=dict(fields), rows_by_year=dict(sorted(years.items())),
+                                          raw_field_nonnull_rows=dict(raw_fields), blank_string_rows=dict(blank_fields),
+                                          source_timezone_rows=dict(timezones),
                                           tickers_by_year={y: len(v) for y, v in sorted(year_tickers.items())}, shards=shards)
         report['status'] = 'ALL_RELEASED_EVENT_BYTES_AND_ATTEMPTS_AUDITED_SOURCE_ONLY'
     except Exception as exc:
@@ -114,7 +132,7 @@ def audit(root, request):
         raise
     finally:
         write_json(root / 'EVENT_SOURCE_AUDIT.json', report)
-    tag = f"event-source-audit-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
+    tag = f"event-source-audit-v{request['version']}-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
     gh_retry('release', 'create', tag, '--draft', '--target', os.environ['GITHUB_SHA'], '--title', tag,
              '--notes', 'Audit of all released event rows/attempts. Historical completeness, PIT availability and world acceptance remain unproven.')
     publish_assets(tag, root / 'EVENT_SOURCE_AUDIT.json')

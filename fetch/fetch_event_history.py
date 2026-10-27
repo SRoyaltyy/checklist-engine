@@ -11,6 +11,12 @@ SCHEMAS={"analyst":["ticker","event_timestamp","event_date","source_timezone","f
          "earnings":["ticker","event_timestamp","event_date","source_timezone","eps_estimate","eps_actual","surprise_pct"]}
 
 
+def source_text(value):
+    if pd.isna(value):return None
+    value=str(value).strip()
+    return value or None
+
+
 def probe_source(kind,root):
     import yfinance as yf
     root.mkdir(parents=True,exist_ok=True)
@@ -38,12 +44,12 @@ def normalize_rows(ticker,frame,kind):
         if kind=="analyst":
             required={"Firm","FromGrade","ToGrade","Action"}
             if not required<=set(row.index):raise ValueError("analyst source schema differs")
-            action=str(row["Action"]).lower()
+            action=source_text(row['Action'])
+            action=action.lower() if action is not None else None
             directions={"up":1,"upgrade":1,"upgraded":1,"down":-1,"downgrade":-1,"downgraded":-1,
                         "main":0,"reit":0,"reiterate":0,"init":0,"initiate":0,"reinit":0,"coverage":0}
             direction=directions.get(action)
-            text=lambda value:None if pd.isna(value) else str(value)
-            out.update(firm=text(row["Firm"]),from_grade=text(row["FromGrade"]),to_grade=text(row["ToGrade"]),action=action,direction=direction)
+            out.update(firm=source_text(row["Firm"]),from_grade=source_text(row["FromGrade"]),to_grade=source_text(row["ToGrade"]),action=action,direction=direction)
         else:
             if not {"EPS Estimate","Reported EPS"}<=set(row.index):raise ValueError("earnings source schema differs")
             for source,target in (("EPS Estimate","eps_estimate"),("Reported EPS","eps_actual"),("Surprise(%)","surprise_pct")):
