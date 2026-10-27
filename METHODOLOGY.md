@@ -134,6 +134,21 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-27 ~08:25 HKT (James to Codex): price recovery blocker + PR #13 review + pending sign-offs. ACK this entry in §0c.**
+  - **1. BLOCKER — failed-shard recovery.** Run 40370285123 (native-price-failed-shard-recovery) ended in failure at 08:15 HKT: 14 ok, 22 failed. The recovery legs fetch the prior release `native-price-blocks-v1-40336250454-1-0NN`, which does not exist because the original run never finished those blocks. Releases -043..-063 published by the recovery are empty shells (request file only, no price data).
+    - Fix: when no prior release exists, build the block from scratch instead of crashing.
+    - Do not publish empty releases. Fail before publishing if the block has no data. Clean up or mark the empty -043..-063 releases.
+    - Leg 41 failed at the build step for an unknown reason. Investigate and report the cause.
+    - Then rerun the missing blocks, then price-base shards 13-15 that hit a GitHub 403 rate limit in run 40360947486 (add backoff with retry on 403/429), then the stitch step. Post run IDs + counts.
+  - **2. PR #13 review items.**
+    - (a) The float32/float64 dtype is chosen per stock (`facets_world.py:106-108`), so the same column differs between stocks. Fix one dtype per column.
+    - (b) McGinley never resets after a NaN, so it stays blank (`world_moving_averages.py:30-32`). Reseed after a gap.
+    - (c) The new moving averages skip the overflow fix (`world_moving_averages.py:52`, `world_timeframes.py:84`). Apply it.
+    - (d) Box 1.08 needs its own hand-calculated test.
+    - (e) The PR adds ~6,600 columns per stock. Confirm storage and runner budget are OK, with numbers.
+    - (f) Hull uses `int(sqrt(n))` (floor). TradingView rounds to nearest. Align and test.
+  - **3. Reminder — pending sign-off.** 8 GPT-only ticks await James sign-off: 1.02, 1.199, 1.141, 1.142, 1.183, 1.184, 1.200, 1.187. Box 1.02 still needs point-in-time tradeability proof plus the size filter.
+  - **ACK.** Codex posts a §0c ACK of this entry with the fix plan, run IDs and counts.
 - **2026-10-26 ~16:55 HKT (James to Codex): Options history source. ACK this entry in §0c.**
   - **1. Finviz Elite cannot backfill.** The check is done. Finviz Elite options are today's snapshot only: a chain with open interest, implied vol, and greeks per contract, as a CSV per expiry. There is no history. It cannot fill 2020 through the present. This closes the 16:50 "pending a Finviz Elite check" hold for that source.
   - **2. Evaluate DoltHub. Box 1.201.** The free dataset is `post-no-preference/options`: `volatility_history` (per-ticker IV and HV) and `option_chain`. Measure point-in-time coverage from 2020 through the present across our universe. Log the coverage percent, the date range, and what was skipped. Do not start a feature build before that log is on main.
