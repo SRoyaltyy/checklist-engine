@@ -1,7 +1,7 @@
 import copy
 import pandas as pd
 import pytest
-from ci.event_source_audit import validate_status, validate_part
+from ci.event_source_audit import validate_status, validate_part, field_counts
 
 
 def status():
@@ -33,3 +33,11 @@ def test_audit_verifies_actual_row_identity_counts_and_local_event_date():
         validate_part(frame.assign(ticker='OTHER'), 'analyst', receipt, ['A', 'B'])
     with pytest.raises(ValueError, match='per-ticker'):
         validate_part(frame, 'analyst', dict(rows=1, attempts=[dict(ticker='B', rows=1)]), ['A', 'B'])
+
+
+def test_field_coverage_distinguishes_blank_categories_from_real_zero_and_ticker_na():
+    frame=pd.DataFrame(dict(ticker=['NA','A','B'],grade=[None,'  ','Buy'],number=[0.,None,2.]))
+    raw,meaningful,blanks=field_counts(frame)
+    assert raw['grade']==2 and meaningful['grade']==1 and blanks['grade']==1
+    assert meaningful['ticker']==3 and blanks['ticker']==0
+    assert meaningful['number']==2 and blanks['number']==0
