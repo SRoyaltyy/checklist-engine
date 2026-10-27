@@ -1,7 +1,8 @@
 {
-  "version": 2,
-  "prerequisite": "All 64 exact routed source jobs must have succeeded; superseded failures elsewhere in an older matrix do not replace this proof",
-  "require_all_native_sources": true,
+  "version": 3,
+  "prerequisite": "James 19:00 directive: raw-only compact recovery does not depend on dense indicators. Preserve original price/recipe checks and reuse complete parts.",
+  "prerequisite_mode": "RAW_ONLY_NO_DENSE_FEATURE_DEPENDENCY",
+  "authority": "ca56c456716dec5c583b193fdc2775522a590377",
   "source_run": 40360947486,
   "source_run_attempt": 1,
   "source_run_sha": "40b5158cd23ac8de607e9450874ca7cfc24747bc",

@@ -1,7 +1,7 @@
 name: compact-price-failed-shard-recovery
 on:
   push:
-    branches: [main, codex/native-price-base-recovery]
+    branches: [main, codex/native-price-base-recovery, codex/native-final-source-routes]
     paths: ['ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json', 'ci/NATIVE_PRICE_STITCH_REQUEST.json']
   workflow_dispatch:
   pull_request:

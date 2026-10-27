@@ -284,3 +284,21 @@ def test_compact_all_sources_guard_uses_selected_jobs_instead_of_a_mixed_run_con
     recovery.plan(request,tmp_path)
     report=json.loads((tmp_path/'BASE_RECOVERY_PLAN.json').read_text())
     assert report['native_source_jobs']==proof
+
+
+def test_owner_authorized_raw_recovery_does_not_wait_for_dense_indicators(tmp_path,monkeypatch):
+    from ci import native_price_base_recovery as recovery
+    request=json.loads(recovery.REQUEST.read_text(encoding="utf-8"))
+    def api(endpoint):
+        assert '/40360947486' in endpoint
+        if '/jobs?' in endpoint:
+            jobs=[{'id':n,'name':f'build ({n})','status':'completed','conclusion':'failure'} for n in (13,14,15)]
+            return {'jobs':jobs,'total_count':3}
+        return {'id':request['source_run'],'head_sha':request['source_run_sha'],'run_attempt':1}
+    monkeypatch.setattr(recovery,'api',api);monkeypatch.setenv('GITHUB_REPOSITORY','owner/repo')
+    monkeypatch.setenv('GITHUB_OUTPUT',str(tmp_path/'output'))
+    recovery.plan(request,tmp_path)
+    report=json.loads((tmp_path/'BASE_RECOVERY_PLAN.json').read_text())
+    assert report['native_source_jobs']==[] and len(report['source_jobs'])==3
+    request['authority']='other'
+    with pytest.raises(ValueError,match='authority/input/source differs'):recovery.plan(request,tmp_path)
