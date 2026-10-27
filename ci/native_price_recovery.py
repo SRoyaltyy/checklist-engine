@@ -32,7 +32,8 @@ def validate_failed_shards(request, run, jobs):
     proof = []
     for shard in shards:
         job = names.get(shard)
-        if not job or job["status"] != "completed" or job["conclusion"] != "failure":
+        allowed = {"failure", "cancelled"} if shard in request.get("allowed_cancelled_shards", []) else {"failure"}
+        if not job or job["status"] != "completed" or job["conclusion"] not in allowed:
             raise ValueError(f"refusing to duplicate nonfailed/live source shard {shard}")
         proof.append({"shard": shard, "source_job_id": job["id"], "conclusion": job["conclusion"]})
     return proof
@@ -45,12 +46,19 @@ def api(endpoint):
 
 def plan(request, directory):
     repository = os.environ["GITHUB_REPOSITORY"]
-    endpoint = f"repos/{repository}/actions/runs/{request['source_run']}"
-    run = api(endpoint)
-    jobs = api(endpoint + "/jobs?per_page=100")
-    if jobs["total_count"] != len(jobs["jobs"]):
-        raise ValueError("source job listing is not complete")
-    proof = validate_failed_shards(request, run, jobs["jobs"])
+    groups = {}
+    for shard in request["shards"]:
+        source = dict(request, **request.get("source_overrides", {}).get(str(shard), {}))
+        key = (source["source_run"], source["source_run_sha"], source["source_run_attempt"])
+        groups.setdefault(key, []).append(shard)
+    proof = []
+    for (run_id, head, attempt), shards in groups.items():
+        endpoint = f"repos/{repository}/actions/runs/{run_id}"
+        run = api(endpoint);jobs = api(endpoint + "/jobs?per_page=100")
+        if jobs["total_count"] != len(jobs["jobs"]):
+            raise ValueError("source job listing is not complete")
+        source = dict(request, source_run=run_id, source_run_sha=head, source_run_attempt=attempt, shards=shards)
+        proof.extend(dict(row, source_run=run_id) for row in validate_failed_shards(source, run, jobs["jobs"]))
     directory.mkdir(parents=True, exist_ok=True)
     report = {"status": "TARGETED_FAILED_SHARD_RECOVERY_ONLY", "request": request,
               "source_jobs": proof, "live_source_shards_untouched": True,
@@ -72,9 +80,10 @@ def main():
         return
     if args.shard not in request["shards"]:
         raise ValueError("unrequested recovery shard")
+    environment = dict(os.environ, NATIVE_RESUME_PREFIXES=json.dumps(request.get("additional_resume_prefixes", [])))
     subprocess.run([sys.executable, "-m", "ci.native_price_run", "build", "--directory", args.directory,
                     "--inputs-tag", request["inputs_tag"], "--shard", str(args.shard),
-                    "--resume-prefix", request["resume_prefix"]], check=True)
+                    "--resume-prefix", request["resume_prefix"]], check=True, env=environment)
 
 
 if __name__ == "__main__":

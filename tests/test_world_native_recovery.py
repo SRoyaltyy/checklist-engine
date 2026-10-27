@@ -37,3 +37,10 @@ def test_recovery_rejects_changed_source_run(field,value):
 def test_ambiguous_source_job_listing_cannot_start_duplicate_work():
     request,run,jobs=source();jobs.append(dict(jobs[0],id=99))
     with pytest.raises(ValueError,match="ambiguous"):validate_failed_shards(request,run,jobs)
+
+
+def test_cancelled_shard_requires_explicit_rerun_authorization_in_request():
+    request,run,jobs=source();jobs[0]["conclusion"]="cancelled"
+    with pytest.raises(ValueError):validate_failed_shards(request,run,jobs)
+    request["allowed_cancelled_shards"]=[0]
+    assert validate_failed_shards(request,run,jobs)[0]["conclusion"]=="cancelled"

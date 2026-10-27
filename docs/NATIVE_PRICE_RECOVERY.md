@@ -42,3 +42,26 @@ complete, consistent evidence. Full-world and scoring gates remain closed.
 
 References: [GitHub rate-limit rules](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api),
 [release asset upload response](https://docs.github.com/en/rest/releases/assets#upload-a-release-asset).
+
+## 2026-10-27 recovery audit
+
+Run 40370285123 is terminal: transport and planner passed, 12 build shards
+succeeded, 22 failed and one was cancelled. The successful shards are preserved.
+Missing prior releases were a second blocker: an original shard that never
+published a release caused recovery to stop on HTTP 404. That case now returns
+an explicit zero-checkpoint scratch-build path. A 403 permission error does not.
+
+New price releases are not created for a request alone. The first nonempty
+completed part is verified in a draft before the release becomes public. An
+all-resumed completion must reference real nonempty data. Old request-only
+shells 043–063 are marked incomplete drafts only after their terminal source run
+and absence of data/diagnostic assets are verified. No price assets are deleted.
+
+Leg 41's GitHub check annotation reports that the hosted runner lost
+communication with the server. Its build step and post-job steps were not
+finalized, job log retrieval returns BlobNotFound, and no normal shard artifact
+exists. This is an observed infrastructure disconnect; its underlying CPU,
+memory or network cause cannot be inferred. Six completed parts remain in the
+recovery release, alongside earlier complete original parts. Recovery chains
+can reuse disjoint complete parts from both attempts; overlapping older parts
+are skipped and their uncovered entities rebuilt.
