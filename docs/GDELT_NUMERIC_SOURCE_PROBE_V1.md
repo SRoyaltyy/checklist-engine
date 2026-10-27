@@ -1,0 +1,11 @@
+# Numeric GDELT history source probe
+
+The old workflow checked out `kimi/world-snapshot`, called a fetcher absent on main, and masked missing output. The replacement first measures the source actually available from the runner. Six paced requests test January 2020, January 2025 and October 2026 using only `TimelineVolRaw` and `TimelineTone`. No article list or text mode is used. Access/rate-limit responses stop subsequent requests; unavailable/empty windows remain errors, never zero event counts.
+
+The [official DOC API documentation](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/) distinguishes normalized volume percentages from raw article counts and their `norm` totals. It defines tone as the mean tone of matching coverage. The [2018 history update](https://blog.gdeltproject.org/doc-geo-2-0-api-updates-full-year-searching-and-more/) expanded searching to a year; this still does not establish access to 2020 from a 2026 request. The live requests determine the available windows instead of assuming either historical or recent-only support.
+
+Output dates must be inside the requested window, unique and ordered. Raw counts and norms must be finite nonnegative integers, with count no greater than norm. Decimal signed tone is retained. The one-step smoothing parameter is an identity window. A provider silently substituting recent dates for an old request fails validation.
+
+The evidence records request URLs, observation times, HTTP/provider errors and response/data hashes. Actual numeric rows, when returned, are preserved in an immutable source-probe release. If no numeric rows are available, only the Actions evidence artifact is retained. Any unavailable window fails the job after saving evidence. These limited probes do not prove full historical or universe coverage, ticker disambiguation, historical first observation, PIT joins or world acceptance. A historical archive/other source still needs investigation when the DOC windows fail.
+
+Validation: 27 local parser/transport tests passed, including fractional-count rejection, decimal tone preservation, empty/text payload rejection and substituted-date rejection. Linux CI precedes source requests. No local dependency installation or SEC request is involved.

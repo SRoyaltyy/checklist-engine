@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "query": "\"Apple\" (AAPL OR \"Apple Inc\")",
+  "windows": [
+    {"name": "history_2020", "start": "20200101000000", "end": "20200131235959"},
+    {"name": "history_2025", "start": "20250101000000", "end": "20250131235959"},
+    {"name": "recent_2026", "start": "20261001000000", "end": "20261026235959"}
+  ],
+  "scope": "Six paced numeric-only requests; no article text, no universe fetch until actual source/history results are inspected"
+}
