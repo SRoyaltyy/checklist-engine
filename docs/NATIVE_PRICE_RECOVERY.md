@@ -16,6 +16,12 @@ inventory. Explicit primary/secondary rate errors wait according to response
 reset/retry headers, in logged chunks of at most 60 seconds; ordinary permission
 errors are not retried. Published assets are never overwritten.
 
+Artifact readers cache one authenticated inventory per source release, then use
+GitHub's documented public binary-download URL. Every downloaded file must match
+that inventory's size and SHA-256 before its temporary file is promoted. This
+avoids repeated REST lookups for every checkpoint member without changing the
+source bytes or rotating credentials.
+
 The workflow verifies the actual uploader on a small immutable fixture release
 before launching recovery. `ci.native_price_recovery plan` checks the source
 head/attempt and complete job listing, refusing any live, successful, missing or

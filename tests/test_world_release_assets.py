@@ -2,6 +2,7 @@
 import hashlib
 import json
 import subprocess
+import io
 
 import pytest
 
@@ -170,3 +171,50 @@ def test_quota_failure_waits_before_any_metadata_retry(transport,monkeypatch):
     monkeypatch.setattr(publisher.time,"sleep",lambda seconds:events.append("wait"))
     publisher.publish_assets("tag",files[0])
     assert events[:3]==["limited","wait","api"]
+
+
+@pytest.fixture
+def public_downloads(monkeypatch):
+    payloads={"a.bin":b"verified A","b.bin":b"verified B"}
+    assets={name:{"name":name,"state":"uploaded","size":len(raw),
+                  "digest":"sha256:"+hashlib.sha256(raw).hexdigest(),
+                  "browser_download_url":"https://github.com/owner/repo/releases/download/tag/"+name}
+            for name,raw in payloads.items()}
+    calls=[]
+    def inventory(tag):calls.append("inventory");return assets
+    def open_url(request,timeout):
+        assert request.get_header("Authorization") is None
+        calls.append(request.full_url)
+        return io.BytesIO(payloads[request.full_url.rsplit("/",1)[1]])
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    monkeypatch.setattr(publisher,"_DOWNLOAD_INVENTORIES",{})
+    monkeypatch.setattr(publisher,"asset_index",inventory)
+    monkeypatch.setattr(publisher.urllib.request,"urlopen",open_url)
+    return payloads,assets,calls
+
+
+def test_public_downloads_share_one_inventory_and_verify_actual_bytes(tmp_path,public_downloads):
+    payloads,assets,calls=public_downloads
+    for name,raw in payloads.items():
+        assert publisher.download_asset("tag",name,tmp_path).read_bytes()==raw
+    assert calls.count("inventory")==1
+    assert len(calls)==3
+    publisher.download_asset("tag","a.bin",tmp_path)
+    assert len(calls)==3  # A verified local copy causes no new request.
+
+
+def test_corrupt_public_download_is_never_promoted_to_a_source_file(tmp_path,public_downloads):
+    payloads,assets,calls=public_downloads;payloads["a.bin"]=b"wrong"
+    with pytest.raises(ValueError,match="fingerprint differs"):
+        publisher.download_asset("tag","a.bin",tmp_path)
+    assert not list(tmp_path.iterdir())
+
+
+def test_download_refuses_wrong_repository_urls_and_changed_local_bytes(tmp_path,public_downloads):
+    payloads,assets,calls=public_downloads
+    target=publisher.download_asset("tag","a.bin",tmp_path);target.write_bytes(b"changed")
+    with pytest.raises(ValueError,match="cached source"):
+        publisher.download_asset("tag","a.bin",tmp_path)
+    assets["b.bin"]["browser_download_url"]="https://example.com/b.bin"
+    with pytest.raises(ValueError,match="download URL differs"):
+        publisher.download_asset("tag","b.bin",tmp_path)

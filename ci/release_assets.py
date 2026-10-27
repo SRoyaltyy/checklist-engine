@@ -7,12 +7,15 @@ import re
 import subprocess
 import time
 from urllib.parse import quote
+import urllib.error
+import urllib.request
 
 
 ATTEMPTS = 5
+_DOWNLOAD_INVENTORIES = {}
 TRANSIENT = re.compile(
     r"HTTP (?:408|429|5\d\d)\b|connection reset|unexpected EOF|"
-    r"TLS handshake timeout|i/o timeout|temporary failure|connection timed out",
+    r"TLS handshake timeout|i/o timeout|temporary failure|timed out",
     re.IGNORECASE,
 )
 
@@ -115,6 +118,55 @@ def asset_index(tag):
     if len({asset["name"] for asset in assets}) != len(assets):
         raise ValueError("duplicate release asset names")
     return {asset["name"]: asset for asset in assets}
+
+
+def download_asset(tag, name, directory):
+    """Use one release inventory, then GitHub's published binary-download URL.
+
+    Public artifact bytes need no repeated REST metadata lookup. Downloaded
+    bytes must still match the authenticated inventory's size and SHA-256.
+    """
+    if Path(name).name != name or "/" in name or "\\" in name:
+        raise ValueError("asset name must be a basename")
+    repository = os.environ["GITHUB_REPOSITORY"]
+    key = (repository, tag)
+    if key not in _DOWNLOAD_INVENTORIES:
+        _DOWNLOAD_INVENTORIES[key] = asset_index(tag)
+    asset = _DOWNLOAD_INVENTORIES[key].get(name)
+    if not asset or asset["state"] != "uploaded" or not asset.get("digest", "").startswith("sha256:"):
+        raise ValueError("published asset missing or unverified: " + name)
+    url = f"https://github.com/{repository}/releases/download/{quote(tag, safe='')}/{quote(name, safe='')}"
+    if asset["browser_download_url"] != url:
+        raise ValueError("published download URL differs from requested repository/tag/asset")
+    directory = Path(directory);directory.mkdir(parents=True, exist_ok=True)
+    target = directory / name
+    if target.exists():
+        if target.stat().st_size == asset["size"] and _digest(target) == asset["digest"]:
+            return target
+        raise ValueError("cached source asset fingerprint differs: " + name)
+    temporary = directory / (name + ".download")
+    for attempt in range(ATTEMPTS):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": "checklist-engine artifact reader"})
+            with urllib.request.urlopen(request, timeout=180) as response, temporary.open("wb") as stream:
+                for chunk in iter(lambda: response.read(1 << 20), b""):
+                    stream.write(chunk)
+            if temporary.stat().st_size != asset["size"] or _digest(temporary) != asset["digest"]:
+                raise ValueError("downloaded asset fingerprint differs: " + name)
+            temporary.replace(target)
+            return target
+        except Exception as exc:
+            temporary.unlink(missing_ok=True)
+            if isinstance(exc, urllib.error.HTTPError):
+                error = subprocess.CalledProcessError(exc.code, ["public-asset-download", url], stderr=f"HTTP {exc.code}")
+                error.response_headers = {key.lower(): value for key, value in exc.headers.items()}
+            elif isinstance(exc, (urllib.error.URLError, TimeoutError)):
+                error = subprocess.CalledProcessError(1, ["public-asset-download", url], stderr=str(exc))
+            else:
+                raise
+            if not _transient(error) or attempt == ATTEMPTS - 1:
+                raise
+            _wait_after(error, attempt)
 
 
 def publish_assets(tag, *paths):

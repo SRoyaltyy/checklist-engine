@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 
-from ci.release_assets import gh_retry, publish_assets, asset_index
+from ci.release_assets import gh_retry, publish_assets, asset_index, download_asset
 
 
 def main():
@@ -28,9 +28,12 @@ def main():
     for file in files:
         if assets[file.name]["size"]!=file.stat().st_size or assets[file.name].get("digest")!="sha256:"+digest(file):
             raise ValueError("smoke asset fingerprint differs")
+        downloaded=download_asset(tag,file.name,root/"download-check")
+        if digest(downloaded)!=digest(file):raise ValueError("public asset bytes differ")
     report={"status":"PASS_TRANSPORT_ONLY_NOT_WORLD","release":tag,"source_commit":os.environ["GITHUB_SHA"],
             "transport_code_sha256":digest(Path("ci/release_assets.py")),
             "verified_assets":{p.name:digest(p) for p in files},"identical_second_upload_reused":True,
+            "public_downloads_verified":True,
             "world_gate":"NOT_RUN"}
     output=root/"TRANSPORT_SMOKE_STATUS.json";output.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     publish_assets(tag,output)

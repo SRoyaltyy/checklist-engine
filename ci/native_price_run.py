@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 
 from ci import native_price_blocks as builder
-from ci.release_assets import describe_failure, publish_assets, asset_index, gh_retry
+from ci.release_assets import describe_failure, publish_assets, asset_index, gh_retry, download_asset
 
 
 def recovered_parts(tag, inputs, directory):
@@ -50,6 +50,7 @@ def recovered_parts(tag, inputs, directory):
 def main():
     original_gh = builder.gh
     original_recovered = builder.recovered_parts
+    original_download = builder.download
 
     def durable_gh(*args):
         if args[:2] != ("release", "upload"):
@@ -70,11 +71,13 @@ def main():
 
     builder.gh = durable_gh
     builder.recovered_parts = recovered_parts
+    builder.download = download_asset
     try:
         builder.main()
     finally:
         builder.gh = original_gh
         builder.recovered_parts = original_recovered
+        builder.download = original_download
 
 
 if __name__ == "__main__":

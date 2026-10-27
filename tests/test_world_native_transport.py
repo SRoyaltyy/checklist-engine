@@ -92,3 +92,15 @@ def test_recovery_rejects_changed_completed_bytes(tmp_path,monkeypatch,name):
     assets[name]["digest"]="sha256:"+"0"*64
     with pytest.raises(ValueError,match="remote digest differs"):
         runner.recovered_parts("tag",{"inputs_tag":"inputs","recipe_fingerprint":"recipe"},tmp_path)
+
+
+def test_compact_entry_restores_source_helpers_even_on_failure(monkeypatch):
+    from ci import native_price_base_run as compact
+    original=(compact.base.gh,compact.base.download,compact.sources.gh,compact.sources.download)
+    def build():
+        assert compact.base.gh is compact.sources.gh is compact.gh_retry
+        assert compact.base.download is compact.sources.download is compact.download_asset
+        raise ValueError("original build failure")
+    monkeypatch.setattr(compact.base,"main",build)
+    with pytest.raises(ValueError,match="original build failure"):compact.main()
+    assert (compact.base.gh,compact.base.download,compact.sources.gh,compact.sources.download)==original
