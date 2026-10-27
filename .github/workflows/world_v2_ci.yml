@@ -15,6 +15,14 @@ on:
       - 'requirements-world-v2.txt'
       - '.github/workflows/world_v2*.yml'
   workflow_dispatch:
+    inputs:
+      sec_relay_confirmed:
+        description: Run the live SEC probe only after Cyrus confirms the relay fix
+        type: boolean
+        required: true
+        default: false
+  pull_request:
+    paths: ['.github/workflows/world_v2_ci.yml']
 permissions:
   contents: read
 jobs:
@@ -32,6 +40,9 @@ jobs:
       - name: Regression tests including forced failures
         run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py -q
   sec-source-evidence:
+    # James 13:00 HKT, 01059da: SEC stays held until Cyrus confirms the fix.
+    # Ordinary code pushes and PR checks must never perform a live SEC probe.
+    if: github.event_name == 'workflow_dispatch' && inputs.sec_relay_confirmed == true
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -86,6 +97,7 @@ jobs:
           done
           exit 1
   fred-source:
+    if: github.event_name != 'pull_request'
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 15
