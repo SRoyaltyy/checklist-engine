@@ -36,7 +36,7 @@ def test_native_source_future_truncation_all_timeframes_and_preipo_blanks():
 @pytest.mark.parametrize('change', ['ticker', 'order', 'calendar'])
 def test_verified_member_still_requires_correct_ticker_dates_and_calendar(change):
     frame = bars()
-    calendar = pd.DatetimeIndex(frame.date)
+    calendar = pd.DatetimeIndex(frame.date).copy(deep=True)
     if change == 'ticker':
         frame.loc[0, 'ticker'] = 'QQQ'
     elif change == 'order':
