@@ -1,0 +1,33 @@
+name: world-fetch-sec-bulk
+on:
+  workflow_call:
+    inputs:
+      dataset:
+        required: true
+        type: string
+    secrets:
+      PRIMARY_ACTION_RELAY_URL:
+        required: true
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+      DATASET: ${{ inputs.dataset }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m fetch.sec_bulk --dataset "$DATASET" --directory sec-bulk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-bulk-${{ inputs.dataset }}-status
+          path: sec-bulk/SEC_BULK_STATUS.json
+          if-no-files-found: ignore

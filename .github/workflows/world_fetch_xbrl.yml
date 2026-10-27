@@ -1,33 +1,12 @@
 name: world_fetch_xbrl
-# Block H / I192: SEC XBRL fundamentals via the frames API (filed-date PIT) ->
-# data-ext/xbrl_fundamentals_2020_26.parquet. ~12 concepts x ~35 calendar periods
-# of keyless SEC requests at fair-use pace; saves as it runs and uploads even on
-# failure, so re-dispatch continues seamlessly.
-
 on:
   workflow_dispatch:
-
+  workflow_call:
 permissions:
   contents: write
-
 jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    timeout-minutes: 300
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: kimi/world-snapshot
-      - name: Install deps
-        run: python3 -m pip install -q pandas pyarrow
-      - name: Fetch XBRL fundamentals
-        run: python3 fetch/fetch_xbrl.py --out "$RUNNER_TEMP/xbrl_fundamentals_2020_26.parquet"
-      - name: Upload to data-ext-2020-26-v1
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          f="$RUNNER_TEMP/xbrl_fundamentals_2020_26.parquet"
-          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
-            || echo "no output to upload"
+  acquire:
+    uses: ./.github/workflows/world_fetch_sec_bulk.yml
+    with:
+      dataset: 'xbrl'
+    secrets: inherit
