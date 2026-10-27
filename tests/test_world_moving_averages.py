@@ -113,3 +113,22 @@ def test_corrected_math_recipe_cannot_accept_old_checkpoint_fingerprint():
     assert MATH_RECIPE_VERSION==2 and fingerprint!=old
     summary,inputs=complete_shard();summary["recipe_fingerprint"]=old;inputs["recipe_fingerprint"]=fingerprint
     with pytest.raises(ValueError,match="recipe differs"):validate_shard(summary,inputs,0)
+
+
+def test_price_scaled_aliases_and_channel_means_do_not_overflow_during_storage():
+    import pandas as pd
+    import facets_world as fw
+    from world_indicator_settings import configured_indicators
+    from world_food_statistics import additional_bar_statistics
+    c=np.full(260,1e39);h=c*1.01;l=c*.99;v=np.ones(len(c))
+    dates=pd.bdate_range('2020-01-02',periods=len(c))
+    tv=fw.compute_tv_extra(c,h,l,c,v,dates=dates)
+    configured=configured_indicators(c,h,l,c,v,dates=dates)
+    food=additional_bar_statistics(c,h,l,c,v)
+    for family,keys in ((tv,('tv_vavg20','tv_pw_high','tv_pw_low','tv_pw_close')),
+                        (configured,('I098_short_mid','I101_long_upper')),
+                        (food,('I223_default_mid','I223_default_upper'))):
+        for key in keys:
+            assert family[key].dtype==np.dtype('float64'),key
+            assert np.isfinite(family[key][-1]),key
+    assert tv['tv_vavg20'][-1]==pytest.approx(1e39,rel=1e-12)

@@ -185,5 +185,5 @@ def configured_indicators(o,h,l,c,v,dates=None):
                 result={"upper":pd.Series(h).shift(1).rolling(n).max().to_numpy(),
                         "lower":pd.Series(l).shift(1).rolling(n).min().to_numpy()}
             if not result:raise RuntimeError("declared recipe produced no columns: "+ident)
-            out.update({name+"_"+key:np.asarray(value,dtype=np.float32) for key,value in result.items()})
+            out.update({name+"_"+key:np.asarray(value,dtype=np.float64) for key,value in result.items()})
     return out

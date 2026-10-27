@@ -166,55 +166,55 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
     roc1[1:] = 100.0 * (c[1:] - c[:-1]) / np.where(c[:-1] == 0, np.nan, c[:-1])
     pmo = _ema_np(_ema_np(_ema_np(roc1, 35), 20), 10)
     pmo_sig = _ema_np(pmo, 10)
-    out['tv_pmo'] = pmo.astype(np.float32)
-    out['tv_pmo_sig'] = pmo_sig.astype(np.float32)
-    out['tv_pmo_x'] = (pmo > pmo_sig).astype(np.float32)          # bull crossover state
+    out['tv_pmo'] = pmo.astype(np.float64)
+    out['tv_pmo_sig'] = pmo_sig.astype(np.float64)
+    out['tv_pmo_x'] = (pmo > pmo_sig).astype(np.float64)          # bull crossover state
     # M137 / M139 RCI + RCI ribbon: Spearman(close, time) over 9 / 26 / 52 bars.
     for w in (9, 26, 52):
         rci = np.full(len(c), np.nan, dtype=np.float64)
         for t in range(w - 1, len(c)):
             rci[t] = _spearman_rank_last(c[t - w + 1:t + 1])
-        out[f'tv_rci{w}'] = rci.astype(np.float32)
+        out[f'tv_rci{w}'] = rci.astype(np.float64)
     out['tv_rci_ribbon_up'] = ((out['tv_rci9'] > out['tv_rci26']) &
-                               (out['tv_rci26'] > out['tv_rci52'])).astype(np.float32)
+                               (out['tv_rci26'] > out['tv_rci52'])).astype(np.float64)
     # M009 Advance/Decline Ratio (Bars): own-bar advancers vs decliners over 14 bars.
     up = (c[1:] > c[:-1]).astype(np.float64); dn = (c[1:] < c[:-1]).astype(np.float64)
     up_s = pd.Series(np.r_[0.0, up]).rolling(14, min_periods=14).sum().to_numpy()
     dn_s = pd.Series(np.r_[0.0, dn]).rolling(14, min_periods=14).sum().to_numpy()
     with np.errstate(divide='ignore', invalid='ignore'):
         ratio = np.where((up_s + dn_s) > 0, up_s / np.where(dn_s == 0, np.nan, dn_s), np.nan)
-    out['tv_adbars_up14'] = up_s.astype(np.float32)
-    out['tv_adbars_dn14'] = dn_s.astype(np.float32)
-    out['tv_adbars_ratio14'] = ratio.astype(np.float32)
+    out['tv_adbars_up14'] = up_s.astype(np.float64)
+    out['tv_adbars_dn14'] = dn_s.astype(np.float64)
+    out['tv_adbars_ratio14'] = ratio.astype(np.float64)
     # M265 Tweezer Bottom / M266 Tweezer Top: 2-bar matching lows/highs (tolerance
     # 0.1% of the level) with a direction confirmation bar.
     tol_l = l * 1e-3; tol_h = h * 1e-3
     out['tv_tweezer_bottom'] = np.r_[0.0, ((np.abs(l[1:] - l[:-1]) <= tol_l[1:]) &
-                                           (c[1:] > c[:-1])).astype(np.float32)]
+                                           (c[1:] > c[:-1])).astype(np.float64)]
     out['tv_tweezer_top'] = np.r_[0.0, ((np.abs(h[1:] - h[:-1]) <= tol_h[1:]) &
-                                        (c[1:] < c[:-1])).astype(np.float32)]
+                                        (c[1:] < c[:-1])).astype(np.float64)]
     # M237 Falling Window (bearish gap between bars): today's high below yesterday's low.
-    out['tv_falling_window'] = np.r_[0.0, (h[1:] < l[:-1]).astype(np.float32)]
+    out['tv_falling_window'] = np.r_[0.0, (h[1:] < l[:-1]).astype(np.float64)]
     # M039 Chop Zone (approximation): EMA34 slope in bp/day; 'chop' when |slope| < 5bp.
     ema34 = _ema_np(c, 34)
     slope_bp = np.full(len(c), np.nan, dtype=np.float64)
     slope_bp[1:] = (ema34[1:] / np.where(ema34[:-1] == 0, np.nan, ema34[:-1]) - 1.0) * 1e4
-    out['tv_chop_slope_bp'] = slope_bp.astype(np.float32)
-    out['tv_chop_on'] = (np.abs(slope_bp) < 5.0).astype(np.float32)
+    out['tv_chop_slope_bp'] = slope_bp.astype(np.float64)
+    out['tv_chop_on'] = (np.abs(slope_bp) < 5.0).astype(np.float64)
     # M026 BBTrend: (Bollinger width on SMA20 − width on EMA20) / close.
     cs = pd.Series(c)
     sma20 = cs.rolling(20, min_periods=20).mean()
     std20 = cs.rolling(20, min_periods=20).std(ddof=0)
     estd20 = (cs - pd.Series(_ema_np(c, 20))).rolling(20, min_periods=20).std(ddof=0)
-    out['tv_bbtrend'] = ((4 * (std20 - estd20)) / cs).to_numpy(np.float32)
+    out['tv_bbtrend'] = ((4 * (std20 - estd20)) / cs).to_numpy(np.float64)
     # M057 Envelope (2.5%): close position inside the band, 0..1.
     env_lo = sma20 * 0.975; env_hi = sma20 * 1.025
-    out['tv_env_pos'] = ((cs - env_lo) / (env_hi - env_lo)).to_numpy(np.float32)
+    out['tv_env_pos'] = ((cs - env_lo) / (env_hi - env_lo)).to_numpy(np.float64)
     # M196 Visible Average Price: mean close over 20 bars.
-    out['tv_vavg20'] = sma20.to_numpy(np.float32)
+    out['tv_vavg20'] = sma20.to_numpy(np.float64)
     # M222 Volume candles (chart type; proxy): volume relative to its 20-bar mean.
     vma20 = pd.Series(v).rolling(20, min_periods=20).mean()
-    out['tv_volr'] = (pd.Series(v) / vma20).to_numpy(np.float32)
+    out['tv_volr'] = (pd.Series(v) / vma20).to_numpy(np.float64)
     # M186 Trend Strength Index: rolling-20 squared Pearson corr(close, bar index).
     w = 20
     ts = np.full(len(c), np.nan, dtype=np.float64)
@@ -226,7 +226,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         yc = y - y.mean()
         denom = np.sqrt((yc ** 2).sum() * (tidx_c ** 2).sum())
         ts[t] = (yc * tidx_c).sum() / denom if denom > 0 else np.nan
-    out['tv_ts_r2_20'] = (ts ** 2).astype(np.float32)
+    out['tv_ts_r2_20'] = (ts ** 2).astype(np.float64)
     if dates is not None:
         # M119 Multi-Time Period Charts: prior completed ISO week (Mon-Fri) H/L/C.
         wkey = (date_ns(dates).isocalendar()['year'].astype(np.int64) * 100
@@ -242,16 +242,16 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         pw_high = np.where(has_prior, wh.to_numpy()[p], np.nan)
         pw_low = np.where(has_prior, wl.to_numpy()[p], np.nan)
         rng = np.where(pw_high > pw_low, pw_high - pw_low, np.nan)
-        out['tv_pw_high'] = pw_high.astype(np.float32)
-        out['tv_pw_low'] = pw_low.astype(np.float32)
-        out['tv_pw_close'] = np.where(has_prior, wclose.astype(np.float32)[p], np.nan)
-        out['tv_pw_pos'] = ((c - pw_low) / rng).astype(np.float32)
+        out['tv_pw_high'] = pw_high.astype(np.float64)
+        out['tv_pw_low'] = pw_low.astype(np.float64)
+        out['tv_pw_close'] = np.where(has_prior, wclose.astype(np.float64)[p], np.nan)
+        out['tv_pw_pos'] = ((c - pw_low) / rng).astype(np.float64)
     # M146 Rob Booker ADX Breakout: ADX>25 and high exceeds the prior 20-bar high.
     adx14 = talib.ADX(h, l, c, timeperiod=14)
     hh20 = pd.Series(h).rolling(20, min_periods=20).max().shift(1).to_numpy()  # excl today
     adxbo = (h > hh20) & (adx14 > 25.0)
     out['tv_adxbo'] = np.where(np.isnan(adx14) | np.isnan(hh20), np.nan,
-                               adxbo.astype(np.float64)).astype(np.float32)
+                               adxbo.astype(np.float64)).astype(np.float64)
     # M150 Rob Booker Reversal: MACD histogram side + stochastic cross at extremes.
     _, _, mhist = talib.MACD(c, fastperiod=12, slowperiod=26, signalperiod=9)
     sk, sd = talib.STOCH(h, l, c, fastk_period=14, slowk_period=3, slowd_period=3)
@@ -261,19 +261,19 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
     rev[1:] = np.where(kx_up & (mhist[1:] > 0) & (sk[1:] < 20), 1.0,
                        np.where(kx_dn & (mhist[1:] < 0) & (sk[1:] > 80), -1.0, 0.0))
     rev[np.isnan(mhist) | np.isnan(sk) | np.isnan(sd)] = 0.0
-    out['tv_rb_rev'] = rev.astype(np.float32)
+    out['tv_rb_rev'] = rev.astype(np.float64)
     # M208 Woodies CCI: turbo CCI(6) + CCI(14) zero-line cross direction.
     cci14 = talib.CCI(h, l, c, timeperiod=14)
-    out['tv_cci6'] = talib.CCI(h, l, c, timeperiod=6).astype(np.float32)
+    out['tv_cci6'] = talib.CCI(h, l, c, timeperiod=6).astype(np.float64)
     zx = np.zeros(len(c), dtype=np.float64)
     zx[1:] = np.where(np.isnan(cci14[1:]) | np.isnan(cci14[:-1]), 0.0,
                       np.where((cci14[1:] > 0) & (cci14[:-1] <= 0), 1.0,
                                np.where((cci14[1:] < 0) & (cci14[:-1] >= 0), -1.0, 0.0)))
-    out['tv_cci_zx'] = zx.astype(np.float32)
+    out['tv_cci_zx'] = zx.astype(np.float64)
     # M032 Bollinger Bars (%B): close position inside the 20,2 band, may exceed 0..1.
     bb_up, bb_mid2, bb_lo2 = talib.BBANDS(c, timeperiod=20, nbdevup=2.0, nbdevdn=2.0)
     bbw = np.where(bb_up > bb_lo2, bb_up - bb_lo2, np.nan)
-    out['tv_bb_pos'] = ((c - bb_lo2) / bbw).astype(np.float32)
+    out['tv_bb_pos'] = ((c - bb_lo2) / bbw).astype(np.float64)
     # M136 Pring's Special K (approximation): sum of SMA10-smoothed ROCs over spans
     # {10,15,20,30,40,65}. TV's exact weight table is proprietary; flagged.
     spec_k = np.zeros(len(c), dtype=np.float64)
@@ -281,7 +281,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         roc = np.zeros(len(c), dtype=np.float64)
         roc[span:] = 100.0 * (c[span:] - c[:-span]) / np.where(c[:-span] == 0, np.nan, c[:-span])
         spec_k += pd.Series(roc).rolling(10, min_periods=10).mean().fillna(0.0).to_numpy()
-    out['tv_spec_k'] = spec_k.astype(np.float32)
+    out['tv_spec_k'] = spec_k.astype(np.float64)
     # M168 Technical Ratings (approximation of TV's published composite): MA half =
     # mean sign(close-MA) over SMA10/20 + EMA10/20/30/50/100/200; oscillator half =
     # RSI14 vs 50, CCI14 vs 0, MACD hist sign, STOCH k>d, ADX>25 ? sign(+DI-DI) : 0,
@@ -298,9 +298,9 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                      np.sign(sk - sd), np.where(adx14 > 25.0, np.sign(pdi - mdi), 0.0),
                      np.sign(wr14 + 50.0)])
     osc_score = np.nanmean(osc, axis=0)
-    out['tv_tr_ma'] = ma_score.astype(np.float32)
-    out['tv_tr_osc'] = osc_score.astype(np.float32)
-    out['tv_tr_total'] = (np.nan_to_num(ma_score) * 0.5 + np.nan_to_num(osc_score) * 0.5).astype(np.float32)
+    out['tv_tr_ma'] = ma_score.astype(np.float64)
+    out['tv_tr_osc'] = osc_score.astype(np.float64)
+    out['tv_tr_total'] = (np.nan_to_num(ma_score) * 0.5 + np.nan_to_num(osc_score) * 0.5).astype(np.float64)
     if dates is not None:
         # M154/M082 Seasonality: expanding PIT historical up-day frequency for the
         # same calendar month / day-of-week (only bars strictly before t count).
@@ -316,7 +316,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             prior_n = g_nn - nn_f.astype(np.float64)
             prior_sum = g_u - u0
             seas = np.where(prior_n > 0, prior_sum / np.where(prior_n > 0, prior_n, np.nan), np.nan)
-            out[colname] = seas.astype(np.float32)
+            out[colname] = seas.astype(np.float64)
     # M218 3-Line Break direction (approximation: close vs the 3 prior closes).
     lb_dir = np.zeros(len(c), dtype=np.float64)
     cur = 0.0
@@ -326,9 +326,9 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         elif c[t] < min(c[t - 3:t]):
             cur = -1.0
         lb_dir[t] = cur
-    out['tv_lb_dir'] = lb_dir.astype(np.float32)
+    out['tv_lb_dir'] = lb_dir.astype(np.float64)
     # M219 Kagi direction: 4% reversal from the running extreme (close-only).
-    out['tv_kagi_dir'] = kagi_direction(c).astype(np.float32)
+    out['tv_kagi_dir'] = kagi_direction(c).astype(np.float64)
     # M217 Renko: ATR(14) bricks; direction state + bricks since last direction flip.
     atr14 = talib.ATR(h, l, c, timeperiod=14)
     rk_dir = np.zeros(len(c), dtype=np.float64)
@@ -348,8 +348,8 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                     nbf = 0.0
                 state = -1.0; nbf += 1.0
         rk_dir[t] = state; rk_n[t] = nbf
-    out['tv_renko_dir'] = rk_dir.astype(np.float32)
-    out['tv_renko_n'] = rk_n.astype(np.float32)
+    out['tv_renko_dir'] = rk_dir.astype(np.float64)
+    out['tv_renko_n'] = rk_n.astype(np.float64)
     # M220 Point & Figure: 1% boxes, 3-box reversal, close-only (approximation).
     pf_dir = np.zeros(len(c), dtype=np.float64)
     state = 0.0; ext = c[0]
@@ -364,7 +364,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         elif state < 0 and c[t] >= ext + 3.0 * box:
             state = 1.0; ext = c[t]
         pf_dir[t] = state
-    out['tv_pnf_dir'] = pf_dir.astype(np.float32)
+    out['tv_pnf_dir'] = pf_dir.astype(np.float64)
     # ---- M014/M017/M018/M149/M151/M269: strict swing pivots (left=right=2,
     # dictionary swing rule; a pivot at bar j is knowable once bar j+2 has closed,
     # which the caller's shift-by-one makes strictly leak-safe). ----
@@ -390,10 +390,10 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                 line = price[j2] + slope * price[j1] * (t - j2)
                 slope_col[t] = slope * 100.0
                 dist_col[t] = (c[t] - line) / c[t]
-    out['tv_tl_hslope'] = tl_hs.astype(np.float32)
-    out['tv_tl_hdist'] = tl_hdist.astype(np.float32)
-    out['tv_tl_lslope'] = tl_ls.astype(np.float32)
-    out['tv_tl_ldist'] = tl_ldist.astype(np.float32)
+    out['tv_tl_hslope'] = tl_hs.astype(np.float64)
+    out['tv_tl_hdist'] = tl_hdist.astype(np.float64)
+    out['tv_tl_lslope'] = tl_ls.astype(np.float64)
+    out['tv_tl_ldist'] = tl_ldist.astype(np.float64)
     # M014 Auto fib extension: position in units of the last confirmed swing range,
     # 0 = at the swing high, −1 = at the swing low, >0 = extension beyond the high.
     fibx = np.full(nn, np.nan)
@@ -412,7 +412,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             ei += 1
         if hi_i is not None and lo_i is not None and hi_v > lo_v:
             fibx[t] = (c[t] - hi_v) / (hi_v - lo_v)
-    out['tv_fibx'] = fibx.astype(np.float32)
+    out['tv_fibx'] = fibx.astype(np.float64)
     # M017 Auto Pitchfork (approximation): midline through the midpoints of the last
     # two confirmed pivot pairs; tv_pf_pos = close distance to the midline.
     pf_slope = np.full(nn, np.nan); pf_pos = np.full(nn, np.nan)
@@ -431,12 +431,12 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                 line = m2 + slope * m1 * (t - a4)
                 pf_slope[t] = slope * 100.0
                 pf_pos[t] = (c[t] - line) / c[t]
-    out['tv_pf_slope'] = pf_slope.astype(np.float32)
-    out['tv_pf_pos'] = pf_pos.astype(np.float32)
+    out['tv_pf_slope'] = pf_slope.astype(np.float64)
+    out['tv_pf_pos'] = pf_pos.astype(np.float64)
     # M149 Missed Pivot Points: distance to the classic prior-bar floor pivot
     # pp = (H+L+C)/3 of the previous bar.
     pp_prev = (h[:-1] + l[:-1] + c[:-1]) / 3.0
-    out['tv_mpp_dist'] = np.r_[np.nan, ((c[1:] - pp_prev) / c[1:])].astype(np.float32)
+    out['tv_mpp_dist'] = np.r_[np.nan, ((c[1:] - pp_prev) / c[1:])].astype(np.float64)
     # M151 Ziv Ghost Pivots: the most recent confirmed pivot whose level was later
     # exceeded (a 'failed' pivot). Distance to that ghost level.
     ghost = np.full(nn, np.nan)
@@ -455,7 +455,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                 cur_ghost = val
         if not np.isnan(cur_ghost):
             ghost[t] = (c[t] - cur_ghost) / c[t]
-    out['tv_ghost_dist'] = ghost.astype(np.float32)
+    out['tv_ghost_dist'] = ghost.astype(np.float64)
     # M269 Elliott Waves (approximation): direction of the last-5-pivot net move and
     # total confirmed pivot count.
     ew_dir = np.zeros(nn); ew_npiv = np.zeros(nn)
@@ -468,8 +468,8 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
         ew_npiv[t] = float(len(seq))
         if len(seq) >= 5:
             ew_dir[t] = float(np.sign(seq[-1][2] - seq[-5][2]))
-    out['tv_ew_dir'] = ew_dir.astype(np.float32)
-    out['tv_ew_npiv'] = ew_npiv.astype(np.float32)
+    out['tv_ew_dir'] = ew_dir.astype(np.float64)
+    out['tv_ew_npiv'] = ew_npiv.astype(np.float64)
     # M271 Periodic Volume Profile POC (rolling 20 bars, typical price, 20 bins):
     # distance of close to the point of control.
     tp = (h + l + c) / 3.0
@@ -484,7 +484,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             volsum = np.bincount(bins, weights=vol, minlength=20)
             poc = lo_ + (volsum.argmax() + 0.5) * (hi_ - lo_) / 20.0
         poc_dist[t] = (c[t] - poc) / c[t]
-    out['tv_poc_dist'] = poc_dist.astype(np.float32)
+    out['tv_poc_dist'] = poc_dist.astype(np.float64)
     # M274 Anchored Volume Profile POC: anchored at the highest-high bar of the
     # 60-bar window ending 5 bars back, so the anchored profile always has >=6 bars
     # and the anchor itself is unambiguously in the past.
@@ -500,7 +500,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             volsum = np.bincount(bins, weights=vol, minlength=20)
             poc = lo_ + (volsum.argmax() + 0.5) * (hi_ - lo_) / 20.0
         avp_dist[t] = (c[t] - poc) / c[t]
-    out['tv_avp_dist'] = avp_dist.astype(np.float32)
+    out['tv_avp_dist'] = avp_dist.astype(np.float64)
     # M147 Knoxville Divergence: new 20-day high with RSI lower than at the previous
     # 20-day high (bearish, −1); mirror for lows (bullish, +1). Event column.
     knox = np.zeros(nn)
@@ -518,7 +518,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
                 if rsi14[t] > rsi14[prev_lo_i] + 5.0:
                     knox[t] = 1.0
             prev_lo_i = t
-    out['tv_knox'] = knox.astype(np.float32)
+    out['tv_knox'] = knox.astype(np.float64)
     # M268 classic chart patterns (approximation): pattern-state flags from the
     # last confirmed pivots. Heuristic rules, deterministic and PIT via shift.
     EPS_S = 0.0003         # ~0.03%/bar slope threshold
@@ -566,7 +566,7 @@ def compute_tv_extra(o, h, l, c, v, dates=None):
             if mom_rng > 0.08 and tight < 0.03:
                 pat_cols['flag'][t] = 1.0
     for k, arr in pat_cols.items():
-        out[f'tv_pat_{k}'] = arr.astype(np.float32)
+        out[f'tv_pat_{k}'] = arr.astype(np.float64)
     return out
 
 def moon_age(dates):
