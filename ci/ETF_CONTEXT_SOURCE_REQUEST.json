@@ -1,7 +1,8 @@
 {
-  "version": 1,
+  "version": 2,
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
   "compact_prefix": "native-price-base-v1-40360947486-1",
+  "fallback_symbols": ["XLI"],
   "symbols": ["SPY", "QQQ", "IWM", "DIA", "RSP", "XLK", "XLF", "XLE", "XLY", "XLP", "XLV", "XLI", "XLB", "XLU", "XLRE", "XLC", "TLT", "HYG", "LQD", "UUP", "GLD", "CPER", "USO", "VXX", "IBIT"]
 }
