@@ -1,0 +1,66 @@
+import io
+import json
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from ci import etf_context_source as source
+from world_timeframes import TIMEFRAMES
+
+
+def bars():
+    calendar = pd.bdate_range('2019-01-02', periods=320)
+    close = np.arange(len(calendar), dtype=float) + 100
+    return pd.DataFrame(dict(ticker='SPY', date=calendar, open=close,
+                             high=close + 2, low=close - 2, close=close + 1, volume=1000.))
+
+
+def test_native_source_future_truncation_all_timeframes_and_preipo_blanks():
+    frame = bars()
+    ipo = frame.iloc[170:].copy().assign(ticker='IBIT')
+    sources = {'SPY': frame, 'IBIT': ipo}
+    full = source.contexts(sources, pd.DatetimeIndex(frame.date))
+    checks = source.prefix_checks(full, sources, pd.DatetimeIndex(frame.date),
+                                  cuts=(str(frame.date.iloc[150].date()), str(frame.date.iloc[250].date())))
+    assert len(checks) == 2 * len(TIMEFRAMES)
+    assert all(c['mismatches'] == 0 for c in checks)
+    daily = full['1d']
+    assert daily.etf_ibit_close.iloc[:170].isna().all()
+    assert daily.etf_ibit_close.iloc[170] == ipo.close.iloc[0]
+    assert daily.etf_ibit_d200.isna().all()
+    # A five-candle return on 5d is a 25-session price change.
+    assert full['5d'].etf_spy_r5.iloc[5] == pytest.approx(frame.close.iloc[29] / frame.close.iloc[4] - 1)
+
+
+@pytest.mark.parametrize('change', ['ticker', 'order', 'calendar'])
+def test_verified_member_still_requires_correct_ticker_dates_and_calendar(change):
+    frame = bars()
+    calendar = pd.DatetimeIndex(frame.date)
+    if change == 'ticker':
+        frame.loc[0, 'ticker'] = 'QQQ'
+    elif change == 'order':
+        frame = frame.iloc[::-1]
+    else:
+        frame.loc[0, 'date'] = pd.Timestamp('1900-01-01')
+    raw = io.BytesIO()
+    frame.to_parquet(raw, index=False)
+    with pytest.raises(ValueError, match='ETF source'):
+        source.validated_bars(raw.getvalue(), 'SPY', calendar)
+
+
+def test_partial_compact_shard_reports_missing_target_without_substitution(tmp_path, monkeypatch):
+    inputs = {'records': [dict(ticker='SPY', ordinal=0), dict(ticker='QQQ', ordinal=16)]}
+    original_download = source.base.download
+
+    def complete_parts(tag, inputs, selected, directory):
+        assert selected == {'SPY', 'QQQ'}
+        directory.mkdir(parents=True)
+        (directory / 'base_0000.json').write_text(json.dumps({'members': []}))
+        return [dict(part='base_0000', release=tag, tickers=['SPY'])], []
+
+    monkeypatch.setattr(source.base, 'recover_base_parts', complete_parts)
+    parts, missing = source.target_parts(inputs, ['SPY', 'QQQ', 'ABSENT'], tmp_path, 'compact')
+    assert parts[0][2] == ['SPY']
+    assert missing == ['ABSENT', 'QQQ']
+    assert source.base.download is original_download
