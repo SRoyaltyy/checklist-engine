@@ -1,8 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
   "source_prefix": "native-price-base-v1-40360947486-1",
   "minimum_coverage_percent": 95,
-  "authority": "James/Cyrus 19:00 HKT directive ca56c456716dec5c583b193fdc2775522a590377: proceed at >=95%, publish excluded names and reasons; no dense-feature dependency for raw-price stitch"
+  "authority": "James/Cyrus 19:00 HKT directive ca56c456716dec5c583b193fdc2775522a590377: >=95% of original 8727 universe, including pinned 280 prior source exclusions and current missing checkpoints",
+  "recovery_prefix": "native-price-base-v1-40494316284-1"
 }
