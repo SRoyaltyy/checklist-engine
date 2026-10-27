@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "source_run_id": 40454756033,
+  "source_run_attempt": 1,
+  "source_head_sha": "126aeaa76d49a2fb238c16b0bb0b45e937c7d936",
+  "shards": 8,
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4"
+}
