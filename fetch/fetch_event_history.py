@@ -25,8 +25,11 @@ def normalize_rows(ticker,frame,kind):
             required={"Firm","FromGrade","ToGrade","Action"}
             if not required<=set(row.index):raise ValueError("analyst source schema differs")
             action=str(row["Action"]).lower()
-            direction=1 if action in ("up","upgrade","upgraded") else -1 if action in ("down","downgrade","downgraded") else 0
-            out.update(firm=str(row["Firm"]),from_grade=str(row["FromGrade"]),to_grade=str(row["ToGrade"]),action=action,direction=direction)
+            directions={"up":1,"upgrade":1,"upgraded":1,"down":-1,"downgrade":-1,"downgraded":-1,
+                        "main":0,"reit":0,"reiterate":0,"init":0,"initiate":0,"reinit":0,"coverage":0}
+            direction=directions.get(action)
+            text=lambda value:None if pd.isna(value) else str(value)
+            out.update(firm=text(row["Firm"]),from_grade=text(row["FromGrade"]),to_grade=text(row["ToGrade"]),action=action,direction=direction)
         else:
             if not {"EPS Estimate","Reported EPS"}<=set(row.index):raise ValueError("earnings source schema differs")
             for source,target in (("EPS Estimate","eps_estimate"),("Reported EPS","eps_actual"),("Surprise(%)","surprise_pct")):
@@ -46,6 +49,11 @@ def acquire(kind,root,shard,shards):
             "requested_tickers":names,"attempts":[],"parts":[],"source_rows":0,"status":"INCOMPLETE_SOURCE_ONLY",
             "point_in_time_gate":"NOT_RUN; provider event dates are not proof of first historical observation or revision history",
             "historical_coverage":"NOT_PROVEN; no rows returned is not a zero event count","world_gate":"NOT_RUN","scoring_gate":"CLOSED"}
+    if kind=="earnings":
+        import hashlib
+        frozen=download_asset("data-2020-24-v1","nasdaq_earn_2020-24.tar",root)
+        report["existing_frozen_earnings_reference"]={"release":"data-2020-24-v1","asset":frozen.name,"sha256":hashlib.sha256(frozen.read_bytes()).hexdigest(),
+                                                    "scope":"Original 2020–24 source preserved; provider fetch is additional dated evidence, not a replacement"}
     pending=[];ledger=[];created=False;part=0;consecutive_errors=0
 
     def flush():
