@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "source_run": 40446419246,
+  "source_head": "02977e6ba3c1e2783d1c4305a5f3f8f4811cad57",
+  "source_attempt": 1,
+  "shards": [18, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "additional_resume_prefixes": ["native-price-blocks-v1-40370285123-1", "native-price-blocks-v1-40336250454-1"],
+  "authorization": "METHODOLOGY 2026-10-27 12:20 HKT: raise both recovery caps to six and restart, keeping finished pieces. Preserve completed shards and all durable immutable parts. Drop to four if 403s reappear."
+}
