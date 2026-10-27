@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 8.**
+**Verified by both: 13/303. Claimed awaiting James: 9.**
 
 ## Rules
 
@@ -133,7 +133,7 @@ Note (2026-10-26 ~14:52 HKT, do not tick): Sector-ETF features sit on every stoc
 
 Note (2026-10-26 ~15:33 HKT, do not tick): Index membership history is skipped. No clean free source. Not a box.
 
-- [ ] **1.41** Sector and market baselines: source located. Items: I162 relative strength vs SPY, I163–I175 vs QQQ, IWM, and the 11 SPDRs, I181 SPY trend, I182 beta. Done when: Check fullscan and theme-radar, then data-2020-24-v1 asset etf_2015_le2024.parquet. Extend those ETF daily files through 2026 from the same free source as the stock bars. Evidence:
+- [x] **1.41** Sector and market baselines: source located. Items: I162 relative strength vs SPY, I163–I175 vs QQQ, IWM, and the 11 SPDRs, I181 SPY trend, I182 beta. Done when: Check fullscan and theme-radar, then data-2020-24-v1 asset etf_2015_le2024.parquet. Extend those ETF daily files through 2026 from the same free source as the stock bars. Evidence: [source-location proof](ETF_BASELINE_SOURCE_LOCATION_V1.json), [complete ETF source run 40484930003](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40484930003), and source collector on main at 1434de9. All 14 required ETF histories self-verified through the stock cutoff 2026-10-23, with org/original-source review recorded. GPT ✓ 2026-10-27 / 1434de9. Awaiting James.
 - [ ] **1.42** Sector and market baselines: fetched onto a checklist-engine release. Done when: The release contains SPY, QQQ, IWM, and all 11 SPDRs through the same last date as the stock bars. Evidence:
 - [ ] **1.43** Sector and market baselines: joined point-in-time. Done when: Relative strength and beta use ETF closes dated < D, aligned by date. The sector benchmark is the stock's own sector as of D−1. Evidence:
 - [ ] **1.44** Sector and market baselines: built at candle sizes 1 through 21. Done when: Each baseline exists at candle sizes 1..21. Evidence:
