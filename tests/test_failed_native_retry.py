@@ -7,7 +7,8 @@ from ci import retry_failed_native as retry
 def test_failed_only_dispatch_preserves_live_jobs_and_reuses_same_request_across_controller_runs(tmp_path,monkeypatch):
     request=json.loads(retry.Path("ci/NATIVE_FAILED_RETRY_REQUEST.json").read_text())
     jobs=[{"id":s,"name":f"build ({s})","status":"completed","conclusion":"failure"} for s in request["shards"]]
-    jobs += [{"id":s,"name":f"build ({s})","status":"in_progress","conclusion":None} for s in (18,40)]
+    live_shards=[s for s in (18,40) if s not in request["shards"]]
+    jobs += [{"id":s,"name":f"build ({s})","status":"in_progress","conclusion":None} for s in live_shards]
     before=deepcopy(jobs);dispatched=[];visible=[]
     def api(endpoint):
         if "/workflows/" in endpoint:return {"workflow_runs":visible}
@@ -24,5 +25,5 @@ def test_failed_only_dispatch_preserves_live_jobs_and_reuses_same_request_across
     retry.main();monkeypatch.setenv("GITHUB_RUN_ID","a-later-controller-run");retry.main()
     report=json.loads((tmp_path/"FAILED_NATIVE_RETRY_HANDOFF.json").read_text())
     assert len(dispatched)==1 and jobs==before
-    assert report["live_source_jobs_untouched"]==["build (18)","build (40)"] and report["replacement_run"]==999
-    assert not {18,40}&set(report["request"]["shards"])
+    assert report["live_source_jobs_untouched"]==[f"build ({s})" for s in live_shards] and report["replacement_run"]==999
+    assert not set(live_shards)&set(report["request"]["shards"])

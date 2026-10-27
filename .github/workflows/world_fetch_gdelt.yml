@@ -1,57 +1,47 @@
 name: world_fetch_gdelt
-# Block O / I200: GDELT 2.0 mention counts per ticker -> data-ext/gdelt_counts_2020_26.parquet.
-# GDELT free-tier pace is ~1 req / 5s, so this is a LONG-HAUL sharded job: each
-# dispatch covers --count tickers starting at --offset; re-dispatch with the next
-# offset (or the same one -- it resumes and skips finished tickers). Smoke with
-# offset 0 / count 20 first to validate the API payload shape.
-
 on:
+  push:
+    branches: [main]
+    paths: ['ci/GDELT_SOURCE_PROBE_REQUEST.json']
   workflow_dispatch:
-    inputs:
-      offset:
-        description: ticker offset into the sorted universe
-        default: '0'
-        required: true
-      count:
-        description: tickers to cover this dispatch (0 = rest of universe)
-        default: '50'
-        required: true
-
+  pull_request:
+    paths: ['fetch/gdelt_source_probe.py', 'tests/test_gdelt_source_probe.py', 'ci/GDELT_SOURCE_PROBE_REQUEST.json', '.github/workflows/world_fetch_gdelt.yml']
 permissions:
-  contents: write
-
+  contents: read
+concurrency:
+  group: gdelt-numeric-source-${{ github.event_name }}
+  cancel-in-progress: false
 jobs:
-  fetch:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          ref: kimi/world-snapshot
-      - name: Install deps
-        run: python3 -m pip install -q pandas pyarrow
-      - name: Download universe + previous counts
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/gd"
-          cd "$RUNNER_TEMP/gd"
-          gh release download data-2020-24-v1 -p 'universe_2020_survivors_le2024.parquet'
-          gh release download data-ext-2020-26-v1 -p 'gdelt_counts_2020_26.parquet' \
-            && echo "resume base found" || echo "no previous counts (fresh run)"
-      - name: Fetch GDELT mention counts
-        run: |
-          cd "$RUNNER_TEMP/gd"
-          ARGS="--universe universe_2020_survivors_le2024.parquet --out gdelt_counts_2020_26.parquet --offset ${{ inputs.offset }} --count ${{ inputs.count }}"
-          [ -f gdelt_counts_2020_26.parquet ] && ARGS="$ARGS --resume" || true
-          python3 "$GITHUB_WORKSPACE/fetch/fetch_gdelt.py" $ARGS
-      - name: Upload to data-ext-2020-26-v1
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_gdelt_source_probe.py tests/test_world_release_assets.py -q
+  probe:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m fetch.gdelt_source_probe --directory gdelt-probe
+      - uses: actions/upload-artifact@v4
         if: always()
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          f="$RUNNER_TEMP/gd/gdelt_counts_2020_26.parquet"
-          [ -f "$f" ] && python3 ci/release_assets.py upload data-ext-2020-26-v1 "$f" \
-            || echo "no output to upload"
+        with:
+          name: gdelt-numeric-source-proof
+          path: gdelt-probe/GDELT_SOURCE_PROBE.json
+          if-no-files-found: ignore
