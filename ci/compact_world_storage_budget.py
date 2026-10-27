@@ -33,6 +33,9 @@ def worker(root,recipe):
         raw=(root/sample['file']).read_bytes()
         if sha(raw)!=sample['sha256']:raise ValueError('raw price sample changed')
         bars=pd.read_parquet(io.BytesIO(raw));started=time.perf_counter()
+        query=calendar[calendar>=pd.Timestamp('2020-01-01')]
+        if config.get('restrict_query_to_source_sessions'):
+            query=query[query.isin(pd.DatetimeIndex(bars.date))]
         source_years=len(bars[bars.date>=pd.Timestamp('2020-01-01')])/252
         archive_buffer=io.BytesIO();questions=0;constant=0;empty=0;packed_raw=0
         with tarfile.open(fileobj=archive_buffer,mode='w') as tar:
