@@ -65,3 +65,47 @@ memory or network cause cannot be inferred. Six completed parts remain in the
 recovery release, alongside earlier complete original parts. Recovery chains
 can reuse disjoint complete parts from both attempts; overlapping older parts
 are skipped and their uncovered entities rebuilt.
+
+Request v2's planner rejected successful shard 42 before any build started.
+The continuation summary had transposed recovery shards 40 and 42; a fresh
+complete job listing confirmed 40 cancelled and 42 successful. Request v3 in
+run 40446419246 preserves 42 and targets only 18, 40, 41 and 43–63 (24 total).
+Its transport smoke and source-job plan passed. All 21 request-only shells
+were marked incomplete drafts in run 40445518486, artifact 12707644293; no
+assets were deleted.
+
+## Compact checkpoint recovery
+
+The compact source run 40360947486 has 13 successful shards and three terminal
+failures (13–15). Recovery validates the exact source head/attempt and each
+failed job. A complete part requires its JSON manifest, archive, coverage CSV
+and stock-day weights, all with uploaded state and matching remote SHA-256.
+Input identity, recipe fingerprint, entity membership, query counts and the
+complete native timeframe grid must agree. Orphan trailing uploads stay intact.
+Completed entities are skipped; an entirely checkpointed shard emits its
+completion without fetching price archives or recomputing entities.
+
+New compact releases start as drafts. The first fully verified nonempty part
+or all-resumed completion publishes the release. The stitch uses explicit
+routes: successful original shards 0–12 plus new completion reports 13–15,
+whose parts may still refer to their original immutable releases. It verifies
+the remote archive/coverage/date-weight digests and full accepted membership
+before producing measured OHLCV coverage. Export code SHA-256 and source
+routes remain explicit. No indicator formula, accepted universe or frozen
+recipe file changes here; full-world and historical tradeability gates remain
+closed. This preparation does not complete the separately versioned PR13 math
+review or count a checklist box.
+
+The workflow waits for successful completion of native recovery run
+40446419246 at its exact pinned head before scheduling compact builds. An
+independent planner checks that prerequisite again and refuses live, failed or
+different-head runs. The completion event can start the compact recovery after
+this workflow lands on main; a review-only branch push cannot start builds.
+
+`COMPACT_PRICE_RESUME_PROOF_V1.json` records validation against released JSON
+manifests: 527/527 entities reusable in shard 13, 450/524 in 14 and 350/531 in
+15 (1,327 reusable, 255 remaining; 615,137,280 archive bytes preserved). No
+large archives were downloaded for that check. Canonical Git object bytes
+match frozen recipe fingerprint `0738f12902e29f1272d06f30fdd56d6f80e200bc25f825cf9a737404acdffcc4`.
+Windows CRLF working-copy bytes differ, so this is not a local full-build pass;
+the production guard remains unchanged and runs against the Linux checkout.

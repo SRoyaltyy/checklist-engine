@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "prerequisite_native_run": 40446419246,
+  "prerequisite_native_sha": "02977e6ba3c1e2783d1c4305a5f3f8f4811cad57",
+  "source_run": 40360947486,
+  "source_run_attempt": 1,
+  "source_run_sha": "40b5158cd23ac8de607e9450874ca7cfc24747bc",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "resume_prefix": "native-price-base-v1-40360947486-1",
+  "shards": [13, 14, 15],
+  "request": "Recover only the three terminal compact export failures, reusing complete immutable parts and preserving source shards 0–12. No vendor requests, no indicator recomputation. Validate recipe/input/remote digests, then stitch all 16 explicit shard routes and measure accepted-price coverage. Historical tradeability and full-world scoring remain unapproved."
+}

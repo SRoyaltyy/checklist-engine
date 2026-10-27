@@ -3,7 +3,7 @@
 Reuses the exact prepared inputs of the large price-feature build. Never
 re-downloads prices from vendors and never changes excluded tickers or bars.
 """
-import argparse,csv,hashlib,io,json,os,shutil,tarfile,time
+import argparse,csv,hashlib,io,json,os,re,shutil,tarfile,time
 from collections import Counter,defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -13,7 +13,47 @@ import pandas as pd
 from price_reconcile import reconcile_one
 from world_timeframes import TIMEFRAMES,PRICE_COLS,completed_candles
 from ci.native_price_blocks import download,source_archive,read_member,sha,gh,write_json,recipe_fingerprint,measure_availability,add_metrics,CUTOFF
-from ci.release_assets import publish_assets,describe_failure
+from ci.release_assets import publish_assets,describe_failure,asset_index
+
+
+def recover_base_parts(tag,inputs,selected,directory):
+    """Reuse complete compact parts without fetching their large archives."""
+    directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
+    assets=asset_index(tag);parts=[];records=[];seen=set();skipped=[]
+    for name in sorted(n for n in assets if re.fullmatch(r"base_\d+\.json",n)):
+        stem=name[:-5]
+        required=[name,stem+".tar",stem+".coverage.csv",stem+".stock_days.csv"]
+        if any(n not in assets or assets[n]["state"]!="uploaded" for n in required):
+            skipped.append(stem);continue
+        file=download(tag,name,directory)
+        if assets[name].get("digest")!="sha256:"+sha(file):raise ValueError("base checkpoint manifest digest differs")
+        report=json.loads(file.read_text())
+        if report["status"]!="PRICE_BASE_PART_ONLY_NOT_WORLD":raise ValueError("base checkpoint status differs")
+        if report["inputs_tag"]!=inputs["inputs_tag"] or report["recipe_fingerprint"]!=inputs["recipe_fingerprint"]:
+            raise ValueError("base checkpoint recipe/input differs")
+        for suffix,key in ((".tar","archive_sha256"),(".coverage.csv","coverage_sha256"),(".stock_days.csv","stock_days_sha256")):
+            if assets[stem+suffix].get("digest")!="sha256:"+report[key]:raise ValueError("base checkpoint asset digest differs")
+        tickers=[r["ticker"] for r in report["records"]]
+        if not tickers or len(tickers)!=len(set(tickers)) or seen&set(tickers) or not set(tickers)<=selected:
+            raise ValueError("base checkpoint membership differs")
+        if not report.get("members") or sum(r["query_rows"] for r in report["records"])!=report["query_rows"]:
+            raise ValueError("base checkpoint records incomplete")
+        names=[m["name"] for m in report["members"]]
+        required={ticker.encode().hex()+suffix for ticker in tickers for suffix in (".bars.parquet",".execution.parquet",".native.parquet")}
+        if len(names)!=len(set(names)) or not required<=set(names):raise ValueError("base checkpoint entity files incomplete")
+        if any(set(r["native_rows"])!=set(TIMEFRAMES) or any(n<=0 for n in r["native_rows"].values()) for r in report["records"]):
+            raise ValueError("base checkpoint native grid differs")
+        seen.update(tickers);records.extend(report["records"])
+        parts.append(dict(part=stem,release=tag,tickers=tickers,**{key:report[key] for key in ("archive_sha256","coverage_sha256","stock_days_sha256")}))
+    write_json(Path(directory)/"BASE_RESUME.json",{"source_release":tag,"completed_parts":len(parts),"completed_entities":len(records),"skipped_incomplete":skipped})
+    return parts,records
+
+
+def verify_base_asset_digests(part,assets):
+    for suffix,key in ((".tar","archive_sha256"),(".coverage.csv","coverage_sha256"),(".stock_days.csv","stock_days_sha256")):
+        asset=assets.get(part["part"]+suffix,{})
+        if asset.get("state")!="uploaded" or asset.get("digest")!="sha256:"+part[key]:
+            raise ValueError("compact part remote asset differs")
 
 def execution_rows(bars):
     """Separate execution-only D-open from every historical feature column."""
@@ -63,6 +103,7 @@ def flush(root,tag,number,records,metrics,date_counts,inputs,receipts):
             "historical_tradeability_gate":"NOT_RUN"}
     meta=root/(stem+".json");write_json(meta,report)
     publish_assets(tag,archive,coverage,dates,meta)
+    gh("release","edit",tag,"--draft=false")
     for p in files:p.unlink()
     for p in (archive,coverage,dates,meta):p.unlink()
     print("PRICE_BASE_PART_DURABLE",tag,stem,len(records),flush=True)
@@ -76,6 +117,9 @@ def build(args):
     if inputs["feature_shards"]%16:raise ValueError("prepared shard grid cannot be grouped into 16 source shards")
     records=[r for r in inputs["records"] if int(r["ordinal"])%16==args.shard]
     selected={r["ticker"] for r in records}
+    resume_tag=getattr(args,"resume_prefix",None)
+    resume_tag=resume_tag+f"-{args.shard:03d}" if resume_tag else None
+    prior_parts,prior_records=recover_base_parts(resume_tag,inputs,selected,root/"resume") if resume_tag else ([],[])
     frames=[]
     for n in range(args.shard,inputs["feature_shards"],16):
         name=f"frozen_{n:03d}.parquet";file=download(args.inputs_tag,name,root)
@@ -88,11 +132,14 @@ def build(args):
     calendar=pd.DatetimeIndex(pd.read_parquet(file).date)
     tag=f"native-price-base-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}-{args.shard:03d}"
     request=root/"BASE_REQUEST.json";write_json(request,{"inputs":args.inputs_tag,"selected":len(records),"shard":args.shard,"scope":"PRICE_BASE_ONLY_NOT_WORLD"})
-    gh("release","create",tag,request,"--title",tag,"--notes","Compact verified daily, execution-only open and native OHLCV inputs; not nominal PIT prices or full-world approval.","--target",os.environ["GITHUB_SHA"])
+    gh("release","create",tag,request,"--draft","--title",tag,"--notes","Compact verified daily, execution-only open and native OHLCV inputs; not nominal PIT prices or full-world approval.","--target",os.environ["GITHUB_SHA"])
     current=root/"current";current.mkdir(exist_ok=True);stage=root/"entity";stage.mkdir(exist_ok=True)
     groups=defaultdict(list)
+    resumed={r["ticker"] for r in prior_records}
     for r in records:groups[r["source_part"]].append(r["ticker"])
-    all_records=[];parts=[];pending=[];metrics={};dates=Counter();receipts=[];number=0;ticker=None
+    groups={stem:[ticker for ticker in names if ticker not in resumed] for stem,names in groups.items()}
+    groups={stem:names for stem,names in groups.items() if names}
+    all_records=list(prior_records);parts=list(prior_parts);pending=[];metrics={};dates=Counter();receipts=[];number=0;ticker=None
     try:
         for stem,names in sorted(groups.items()):
             archive,manifest,mhash=source_archive(stem,root/"source")
@@ -138,15 +185,17 @@ def build(args):
     result={"status":"COMPLETE_PRICE_BASE_SHARD_NOT_WORLD","inputs_tag":args.inputs_tag,"recipe_fingerprint":inputs["recipe_fingerprint"],
             "shard":args.shard,"selected":len(selected),"completed":len(all_records),"records":all_records,"parts":parts,"timeframes":list(TIMEFRAMES),
             "query_rows":sum(r["query_rows"] for r in all_records),"source_commit":os.environ["GITHUB_SHA"],
+            "checkpoint_sources":[resume_tag] if resume_tag else [],"base_export_code_sha256":sha(__file__),
             "full_world_gate":"NOT_RUN","historical_tradeability_gate":"NOT_RUN"}
     file=root/"BASE_COMPLETE.json";write_json(file,result);publish_assets(tag,file)
+    gh("release","edit",tag,"--draft=false")
     print("PRICE_BASE_SHARD_COMPLETE",tag,len(all_records),result["query_rows"],flush=True)
 
-def collect_base_reports(root,inputs,inputs_tag,build_prefix):
+def collect_base_reports(root,inputs,inputs_tag,build_prefix,routes=None):
     """Fail with all upstream shard errors before aggregating any coverage."""
     reports=[];errors=[]
     for shard in range(16):
-        tag=build_prefix+f"-{shard:03d}";directory=root/str(shard)
+        tag=(routes or {}).get(str(shard),build_prefix+f"-{shard:03d}");directory=root/str(shard)
         try:
             report=json.loads(download(tag,"BASE_COMPLETE.json",directory).read_text())
             expected={r["ticker"] for r in inputs["records"] if r["ordinal"]%16==shard}
@@ -159,7 +208,9 @@ def collect_base_reports(root,inputs,inputs_tag,build_prefix):
             for row in report["records"]:
                 if set(row["native_rows"])!=set(TIMEFRAMES) or any(v<=0 for v in row["native_rows"].values()):raise ValueError("missing native grid")
             if sorted(t for p in report["parts"] for t in p["tickers"])!=sorted(expected):raise ValueError("durable part membership differs")
-            if any(p["release"]!=tag for p in report["parts"]):raise ValueError("base part release differs")
+            permitted={tag,*report.get("checkpoint_sources",[])}
+            if any(not source.endswith(f"-{shard:03d}") for source in permitted):raise ValueError("base checkpoint source shard differs")
+            if any(p["release"] not in permitted for p in report["parts"]):raise ValueError("base part release differs")
             reports.append((tag,directory,report))
         except Exception as exc:
             error={"shard":shard,"release":tag,"error":describe_failure(exc)}
@@ -177,13 +228,19 @@ def merge(args):
     root=Path(args.directory);root.mkdir(parents=True,exist_ok=True)
     inputs=json.loads(download(args.inputs_tag,"BUILD_INPUTS.json",root).read_text())
     if recipe_fingerprint()[0]!=inputs["recipe_fingerprint"]:raise ValueError("merge recipe differs")
-    records=[];parts=[];total={};dates=Counter()
-    for tag,directory,report in collect_base_reports(root,inputs,args.inputs_tag,args.build_prefix):
+    records=[];parts=[];total={};dates=Counter();inventories={}
+    routes=json.loads(Path(args.routes).read_text()) if getattr(args,"routes",None) else {}
+    if not isinstance(routes,dict) or not set(routes)<={str(n) for n in range(16)} or any(not isinstance(v,str) for v in routes.values()):
+        raise ValueError("invalid compact shard routes")
+    for tag,directory,report in collect_base_reports(root,inputs,args.inputs_tag,args.build_prefix,routes):
         records.extend(report["records"]);parts.extend(report["parts"])
         for part in report["parts"]:
             pdir=directory/part["part"]
-            coverage=download(tag,part["part"]+".coverage.csv",pdir)
-            stock_days=download(tag,part["part"]+".stock_days.csv",pdir)
+            source=part["release"]
+            if source not in inventories:inventories[source]=asset_index(source)
+            verify_base_asset_digests(part,inventories[source])
+            coverage=download(source,part["part"]+".coverage.csv",pdir)
+            stock_days=download(source,part["part"]+".stock_days.csv",pdir)
             if sha(coverage)!=part["coverage_sha256"] or sha(stock_days)!=part["stock_days_sha256"]:raise ValueError("base coverage/date weights changed")
             with coverage.open(newline="") as f:
                 for row in csv.DictReader(f):
@@ -209,6 +266,7 @@ def merge(args):
             "query_rows":query_rows,"timeframes":list(TIMEFRAMES),"column_timeframe_rows":len(rows),"parts":parts,
             "coverage_sha256":sha(coverage),"stock_day_weights_sha256":sha(stock_days),"recipe_fingerprint":inputs["recipe_fingerprint"],
             "base_build_prefix":args.build_prefix,"source_commit":os.environ["GITHUB_SHA"],"execution_open_separate":True,
+            "base_shard_routes":routes,"base_export_code_sha256":sha(__file__),
             "price_basis":"frozen reference units, nominal historical price NOT proven","historical_tradeability_gate":"NOT_RUN",
             "full_world_gate":"NOT_RUN","scoring_gate":"CLOSED"}
     file=root/"NATIVE_PRICE_BASE_STATUS_V1.json";write_json(file,result)
@@ -219,7 +277,9 @@ def main():
     ap=argparse.ArgumentParser();sub=ap.add_subparsers(dest="operation",required=True)
     for op in ("build","merge"):
         p=sub.add_parser(op);p.add_argument("--directory",required=True);p.add_argument("--inputs-tag",required=True)
-        if op=="build":p.add_argument("--shard",type=int,required=True)
-        else:p.add_argument("--build-prefix",required=True)
+        if op=="build":
+            p.add_argument("--shard",type=int,required=True);p.add_argument("--resume-prefix")
+        else:
+            p.add_argument("--build-prefix",required=True);p.add_argument("--routes")
     args=ap.parse_args();(build if args.operation=="build" else merge)(args)
 if __name__=="__main__":main()

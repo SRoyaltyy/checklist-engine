@@ -1,0 +1,33 @@
+{
+  "status": "PASS_RELEASED_COMPACT_CHECKPOINT_VALIDATION_ONLY",
+  "recipe_fingerprint": "0738f12902e29f1272d06f30fdd56d6f80e200bc25f825cf9a737404acdffcc4",
+  "shards": [
+    {
+      "shard": 13,
+      "selected": 527,
+      "reused_entities": 527,
+      "reused_parts": 11,
+      "remaining_entities": 0,
+      "archive_bytes_preserved": 249835520
+    },
+    {
+      "shard": 14,
+      "selected": 524,
+      "reused_entities": 450,
+      "reused_parts": 9,
+      "remaining_entities": 74,
+      "archive_bytes_preserved": 195031040
+    },
+    {
+      "shard": 15,
+      "selected": 531,
+      "reused_entities": 350,
+      "reused_parts": 7,
+      "remaining_entities": 181,
+      "archive_bytes_preserved": 170270720
+    }
+  ],
+  "large_archives_downloaded": false,
+  "full_world_gate": "NOT_RUN",
+  "recipe_identity": "Git object bytes match released recipe; Windows working-copy CRLF differs, so no local build acceptance claimed"
+}

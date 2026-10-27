@@ -64,6 +64,7 @@ def test_flush_removes_local_data_only_after_entire_part_verifies(tmp_path,monke
     from collections import Counter
     current=tmp_path/"current";current.mkdir();source=current/"entity.parquet";source.write_bytes(b"source")
     monkeypatch.setenv("GITHUB_SHA","commit")
+    monkeypatch.setattr(base,"gh",lambda *args:None)
     monkeypatch.setattr(base.shutil,"disk_usage",lambda path:SimpleNamespace(free=10**12))
     def upload(tag,*paths):
         assert source.exists()
@@ -128,3 +129,125 @@ def test_merge_rejects_mixed_or_incomplete_completion_reports(tmp_path,monkeypat
     inputs=complete_reports(tmp_path,monkeypatch,damage)
     with pytest.raises(ValueError,match="price base incomplete"):
         base.collect_base_reports(tmp_path,inputs,"inputs","build")
+
+
+def checkpoint(tmp_path,monkeypatch,damage=None):
+    report={"status":"PRICE_BASE_PART_ONLY_NOT_WORLD","recipe_fingerprint":"recipe","inputs_tag":"inputs",
+            "archive_sha256":"archive","coverage_sha256":"coverage","stock_days_sha256":"dates",
+            "members":[{"name":"4e41"+suffix} for suffix in (".bars.parquet",".execution.parquet",".native.parquet")],"query_rows":2,
+            "records":[{"ticker":"NA","query_rows":2,"native_rows":{tf:1 for tf in TIMEFRAMES}}]}
+    if damage:damage(report)
+    directory=tmp_path/"source";directory.mkdir();file=directory/"base_0000.json";file.write_text(json.dumps(report))
+    assets={file.name:{"state":"uploaded","digest":"sha256:"+base.sha(file)}}
+    for suffix,value in ((".tar","archive"),(".coverage.csv","coverage"),(".stock_days.csv","dates")):
+        assets["base_0000"+suffix]={"state":"uploaded","digest":"sha256:"+value}
+    monkeypatch.setattr(base,"asset_index",lambda tag:assets)
+    monkeypatch.setattr(base,"download",lambda *args:file)
+    return assets
+
+
+def test_compact_resume_reuses_complete_data_and_skips_orphan_manifest(tmp_path,monkeypatch):
+    assets=checkpoint(tmp_path,monkeypatch);assets["base_0001.json"]={"state":"uploaded","digest":"sha256:orphan"}
+    parts,records=base.recover_base_parts("old-013",{"inputs_tag":"inputs","recipe_fingerprint":"recipe"},{"NA"},tmp_path)
+    assert [r["ticker"] for r in records]==["NA"]
+    assert [(p["part"],p["release"]) for p in parts]==[("base_0000","old-013")]
+    assert json.loads((tmp_path/"BASE_RESUME.json").read_text())["skipped_incomplete"]==["base_0001"]
+
+
+@pytest.mark.parametrize("damage",[
+    lambda r:r.update(inputs_tag="other"),lambda r:r.update(recipe_fingerprint="other"),
+    lambda r:r.update(query_rows=3),lambda r:r.update(members=[]),lambda r:r["members"].pop(),
+    lambda r:r["records"].append(r["records"][0]),lambda r:r["records"][0].update(ticker="OTHER"),
+    lambda r:r["records"][0]["native_rows"].pop("5d")])
+def test_compact_resume_rejects_wrong_inputs_incomplete_data_and_foreign_entities(tmp_path,monkeypatch,damage):
+    checkpoint(tmp_path,monkeypatch,damage)
+    with pytest.raises(ValueError):base.recover_base_parts("old-013",{"inputs_tag":"inputs","recipe_fingerprint":"recipe"},{"NA"},tmp_path)
+
+
+def test_compact_resume_rejects_changed_remote_archive(tmp_path,monkeypatch):
+    assets=checkpoint(tmp_path,monkeypatch);assets["base_0000.tar"]["digest"]="sha256:changed"
+    with pytest.raises(ValueError,match="digest differs"):
+        base.recover_base_parts("old-013",{"inputs_tag":"inputs","recipe_fingerprint":"recipe"},{"NA"},tmp_path)
+
+
+def test_all_resumed_compact_shard_publishes_completion_without_recomputing_entities(tmp_path,monkeypatch):
+    from types import SimpleNamespace
+    record={"ticker":"NA","query_rows":2,"native_rows":{tf:1 for tf in TIMEFRAMES}}
+    part={"part":"base_0000","release":"old-013","tickers":["NA"]}
+    inputs={"recipe_fingerprint":"recipe","records":[{"ticker":"NA","ordinal":13,"source_part":"source"}],
+            "feature_shards":64,"prepared_shards":{f"frozen_{n:03d}.parquet":{"sha256":"hash"} for n in (13,29,45,61)},"calendar_sha256":"hash"}
+    def download(tag,name,directory):
+        directory.mkdir(parents=True,exist_ok=True);file=directory/name
+        if name=="BUILD_INPUTS.json":file.write_text(json.dumps(inputs))
+        elif name=="market_sessions.parquet":pd.DataFrame({"date":pd.bdate_range("2020-01-01",periods=2)}).to_parquet(file)
+        else:pd.DataFrame({"ticker":["NA"] if name=="frozen_013.parquet" else []}).to_parquet(file)
+        return file
+    monkeypatch.setattr(base,"download",download);monkeypatch.setattr(base,"sha",lambda p:"hash")
+    monkeypatch.setattr(base,"recipe_fingerprint",lambda:("recipe",{}))
+    monkeypatch.setattr(base,"recover_base_parts",lambda *args:([part],[record]))
+    def forbidden(*args):raise AssertionError("completed entities must not be recomputed")
+    monkeypatch.setattr(base,"source_archive",forbidden)
+    calls=[];monkeypatch.setattr(base,"gh",lambda *args:calls.append(args))
+    monkeypatch.setattr(base,"publish_assets",lambda *args:None)
+    for key,value in (("GITHUB_RUN_ID","123"),("GITHUB_RUN_ATTEMPT","1"),("GITHUB_SHA","commit")):monkeypatch.setenv(key,value)
+    base.build(SimpleNamespace(directory=str(tmp_path),inputs_tag="inputs",shard=13,resume_prefix="old"))
+    report=json.loads((tmp_path/"BASE_COMPLETE.json").read_text())
+    assert report["completed"]==1 and report["records"]==[record] and report["parts"]==[part]
+    assert report["checkpoint_sources"]==["old-013"]
+    assert "--draft" in calls[0] and "--draft=false" in calls[-1]
+
+
+def test_compact_stitch_uses_explicit_shard_routes_and_declared_checkpoint_sources(tmp_path,monkeypatch):
+    def damage(shard,report):
+        if shard==13:
+            report["checkpoint_sources"]=["old-013"];report["parts"][0]["release"]="old-013"
+    inputs=complete_reports(tmp_path,monkeypatch,damage)
+    reports=base.collect_base_reports(tmp_path,inputs,"inputs","original",{"13":"recovery-013"})
+    assert reports[13][0]=="recovery-013" and reports[13][2]["parts"][0]["release"]=="old-013"
+
+
+def test_compact_stitch_rejects_part_from_another_shard(tmp_path,monkeypatch):
+    def damage(shard,report):
+        if shard==13:
+            report["checkpoint_sources"]=["old-014"];report["parts"][0]["release"]="old-014"
+    inputs=complete_reports(tmp_path,monkeypatch,damage)
+    with pytest.raises(ValueError,match="price base incomplete"):base.collect_base_reports(tmp_path,inputs,"inputs","original")
+
+
+def test_compact_stitch_requires_uploaded_archive_and_matching_digests():
+    part={"part":"base_0000","archive_sha256":"a","coverage_sha256":"b","stock_days_sha256":"c"}
+    assets={"base_0000"+suffix:{"state":"uploaded","digest":"sha256:"+value} for suffix,value in ((".tar","a"),(".coverage.csv","b"),(".stock_days.csv","c"))}
+    base.verify_base_asset_digests(part,assets)
+    assets["base_0000.tar"]["state"]="starter"
+    with pytest.raises(ValueError,match="remote asset differs"):base.verify_base_asset_digests(part,assets)
+
+
+@pytest.mark.parametrize("status,conclusion,head",[("in_progress",None,"pinned"),("completed","failure","pinned"),("completed","success","other")])
+def test_compact_plan_cannot_start_before_pinned_native_recovery_passes(tmp_path,monkeypatch,status,conclusion,head):
+    from ci import native_price_base_recovery as recovery
+    calls=[]
+    def api(endpoint):
+        calls.append(endpoint)
+        return {"head_sha":head,"status":status,"conclusion":conclusion}
+    monkeypatch.setattr(recovery,"api",api);monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    with pytest.raises(ValueError,match="required native recovery"):
+        recovery.plan({"prerequisite_native_run":10,"prerequisite_native_sha":"pinned"},tmp_path)
+    assert len(calls)==1
+
+
+def test_compact_plan_preserves_thirteen_successes_and_selects_only_three_failures(tmp_path,monkeypatch):
+    from ci import native_price_base_recovery as recovery
+    request={"prerequisite_native_run":10,"prerequisite_native_sha":"native","source_run":20,
+             "source_run_sha":"compact","source_run_attempt":1,"shards":[13,14,15]}
+    def api(endpoint):
+        if endpoint.endswith("/10"):return {"head_sha":"native","status":"completed","conclusion":"success"}
+        if "/jobs?" in endpoint:
+            jobs=[{"id":n,"name":f"build ({n})","status":"completed","conclusion":"success" if n<13 else "failure"} for n in range(16)]
+            return {"jobs":jobs,"total_count":16}
+        return {"id":20,"head_sha":"compact","run_attempt":1}
+    monkeypatch.setattr(recovery,"api",api);monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    monkeypatch.setenv("GITHUB_OUTPUT",str(tmp_path/"output"))
+    recovery.plan(request,tmp_path)
+    report=json.loads((tmp_path/"BASE_RECOVERY_PLAN.json").read_text())
+    assert [r["shard"] for r in report["source_jobs"]]==[13,14,15]
+    assert report["successful_shards_preserved"]==list(range(13))
