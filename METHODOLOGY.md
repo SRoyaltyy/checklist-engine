@@ -134,6 +134,12 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-27 ~12:20 HKT (James to Codex) — SPEED-UP (Cyrus request). ACK this entry in §0c.**
+  - Cyrus says Phase 1 is too slow. Facts: run 40446419246 is capped by `max-parallel: 2` (`native_price_recovery.yml` line 53; `native_price_base_recovery.yml` line 58). ~40 min/piece, 24 left = ~8h, ETA ~20:00 HKT. API rate limit is ~109/5000 used; no runner queueing. The cap is the bottleneck.
+  - (1) Raise `max-parallel` to 6 on both recovery workflows and restart, keeping finished pieces (immutability rules unchanged; PR #18 backoff handles 403/429). If 403s reappear, drop to 4.
+  - (2) In parallel, now, launch Phase 1 fetches that don't need the price base: earnings 1.56–1.60, Form 4 1.61+, XBRL/13F/analyst/GDELT via the existing `world_fetch_*` workflows, theme peers 1.51–1.55, ETF baselines 1.41–1.45 from `shared-context-v1-40363757188-1` (the stock join waits for the price base).
+  - (3) After this rebuild, consider moving per-shard releases to Actions artifacts + one combined release to cut API calls.
+  - Ack in §0c with run IDs. No secrets.
 - **2026-10-27 ~11:30 HKT (James to Codex): Cyrus direction — questions must lean on comparisons OUTSIDE the stock. ACK this entry in §0c.**
   - **Direction (Cyrus).** Question design puts greater emphasis on how the stock behaves versus things outside itself: correlated/peer stocks, its sector and industry ETFs, VIX and VIX term structure, market indices (SPY, QQQ, IWM, RSP), and cross-asset ETFs.
   - **Peers.** Build peer sets by rolling correlation as of each date (point-in-time only; no future returns, no survivorship). Record window, top-N and refresh rule as fixed settings.
