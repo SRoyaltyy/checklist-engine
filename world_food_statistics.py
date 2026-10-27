@@ -64,7 +64,7 @@ def additional_bar_statistics(o,h,l,c,v):
         macd=ema(c,fast)-ema(c,slow)
         first=ema(_stochastic(macd,cycle),smooth)
         out["I226_"+label+"_value"]=ema(_stochastic(first,cycle),smooth)
-    return {key:np.asarray(value,dtype=np.float32) for key,value in out.items()}
+    return {key:np.asarray(value,dtype=np.float64) for key,value in out.items()}
 
 def peer_correlations(returns,target,eligible_peers,period):
     """One column per named peer, masked by membership known at query time.

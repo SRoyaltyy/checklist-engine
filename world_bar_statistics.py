@@ -116,7 +116,7 @@ def bar_statistics(open_,high,low,close,volume,timeframe):
         smooth=pd.Series(ema(h-l,n))
         prior=smooth.shift(n)
         out[f"CHAIKIN_VOLATILITY{n}_{n}"]=(100*(smooth/prior.where(prior>0)-1)).to_numpy()
-    return {key:np.asarray(value,dtype=np.float32) for key,value in out.items()}
+    return {key:np.asarray(value,dtype=np.float64) for key,value in out.items()}
 
 def relative_statistics(stock,benchmark,role):
     """Compare exactly matching candle intervals, never as-of different buckets.

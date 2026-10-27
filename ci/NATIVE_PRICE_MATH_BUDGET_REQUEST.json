@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "baseline_commit": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+  "compact_source": "native-price-base-v1-40360947486-1-000",
+  "compact_part": "base_0000",
+  "sample_entities": 3,
+  "request": "Compare frozen and corrected math on three deterministic real released entities across all 22 native timeframes. Measure compressed bytes, width, wall time and peak RSS on a runner. Publish sample-based projections and limits, never a full-universe acceptance claim. No vendors, no replacement of old checkpoints."
+}
