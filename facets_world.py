@@ -21,8 +21,9 @@ Reg SHO: file for date d is published after the close of d -> usable next sessio
 Block J: dividend/split EVENT dates (I196) from fetch_divsplits.py; bars are
 already split-adjusted, events power 'in last N days' questions (strict < D).
 
-Output: shard parquets world_shard_NNN.parquet keyed by (ticker, date), float32
-for indicators, int8 for candle patterns (-100/0/100). A JSON sidecar per shard
+Output: shard parquets world_shard_NNN.parquet keyed by (ticker, date). TA-Lib
+indicators use fixed float64; normalized candle patterns use fixed float32
+with NaN warmup. A JSON sidecar per shard
 lists the columns and provenance. Not a question module: groups 034+ read these
 columns into yes/no / fixed buckets later.
 
@@ -102,10 +103,10 @@ def compute_talib(o, h, l, c, v, funcs):
                 if kind == 'pattern':
                     values = values / 100.0
                     values[:getattr(f,'lookback',0)] = np.nan
-                # Conversion overflow is not a valid infinite-ratio observation.
-                finite=values[np.isfinite(values)]
-                dtype=np.float64 if finite.size and np.max(np.abs(finite))>np.finfo(np.float32).max else np.float32
-                out[col] = values.astype(dtype)
+                # Fixed column policy across every ticker/part. Preserve finite
+                # float64 results instead of selecting storage from one stock's
+                # observed range or overflowing them during a float32 cast.
+                out[col] = values.astype(np.float32 if kind == 'pattern' else np.float64)
         except Exception as exc:
             raise RuntimeError(f'TA-Lib {name} failed; refusing partial snapshot') from exc
     return out

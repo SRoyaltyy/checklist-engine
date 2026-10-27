@@ -81,21 +81,21 @@ def parameter_variants(o, h, l, c, v):
                           'TEMA': (9,20,50,100,200), 'KAMA': (9,20,50,100,200), 'LINEARREG': (9,20,50,100,200)}.items():
         fn = getattr(talib, name)
         for n in periods:
-            out[f'{name}{n}'] = fn(c, timeperiod=n).astype(np.float32)
+            out[f'{name}{n}'] = fn(c, timeperiod=n).astype(np.float64)
     upper,mid,lower=talib.BBANDS(c,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
-    out['BBANDS20_upper']=upper.astype(np.float32)
-    out['BBANDS20_mid']=mid.astype(np.float32)
-    out['BBANDS20_lower']=lower.astype(np.float32)
+    out['BBANDS20_upper']=upper.astype(np.float64)
+    out['BBANDS20_mid']=mid.astype(np.float64)
+    out['BBANDS20_lower']=lower.astype(np.float64)
     sk,sd=talib.STOCH(h,l,c,fastk_period=14,slowk_period=3,slowk_matype=0,slowd_period=3,slowd_matype=0)
-    out['STOCH14_3_3_k']=sk.astype(np.float32)
-    out['STOCH14_3_3_d']=sd.astype(np.float32)
-    out['ATR14'] = talib.ATR(h,l,c,timeperiod=14).astype(np.float32)
-    out['CCI20'] = talib.CCI(h,l,c,timeperiod=20).astype(np.float32)
-    out['MFI14'] = talib.MFI(h,l,c,v,timeperiod=14).astype(np.float32)
-    out['WILLR14'] = talib.WILLR(h,l,c,timeperiod=14).astype(np.float32)
+    out['STOCH14_3_3_k']=sk.astype(np.float64)
+    out['STOCH14_3_3_d']=sd.astype(np.float64)
+    out['ATR14'] = talib.ATR(h,l,c,timeperiod=14).astype(np.float64)
+    out['CCI20'] = talib.CCI(h,l,c,timeperiod=20).astype(np.float64)
+    out['MFI14'] = talib.MFI(h,l,c,v,timeperiod=14).astype(np.float64)
+    out['WILLR14'] = talib.WILLR(h,l,c,timeperiod=14).astype(np.float64)
     for name in ('ADX','PLUS_DI','MINUS_DI'):
-        out[f'{name}14'] = getattr(talib,name)(h,l,c,timeperiod=14).astype(np.float32)
-    out['RVOL20'] = (pd.Series(v)/pd.Series(v).rolling(20).mean()).to_numpy(np.float32)
+        out[f'{name}14'] = getattr(talib,name)(h,l,c,timeperiod=14).astype(np.float64)
+    out['RVOL20'] = (pd.Series(v)/pd.Series(v).rolling(20).mean()).to_numpy(np.float64)
     return out
 
 
@@ -117,7 +117,7 @@ def candle_features(candles, funcs, timeframe="1d"):
     # Existing TV extras require at least one bar; all warmups remain explicit
     # NaNs. Schema alignment never treats an absent feature as an observed zero.
     cols.update(fw.compute_tv_extra(*arrays, dates=candles.date.to_numpy()))
-    cols.update({name: values.astype(np.float32) for name,values in zip(PRICE_COLS,arrays)})
+    cols.update({name: values.astype(np.float64) for name,values in zip(PRICE_COLS,arrays)})
     frame = pd.DataFrame(cols)
     frame['available_from'] = pd.to_datetime(candles.available_from).astype('datetime64[ns]').to_numpy()
     return frame
