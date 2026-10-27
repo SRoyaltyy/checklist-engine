@@ -251,3 +251,17 @@ def test_compact_plan_preserves_thirteen_successes_and_selects_only_three_failur
     report=json.loads((tmp_path/"BASE_RECOVERY_PLAN.json").read_text())
     assert [r["shard"] for r in report["source_jobs"]]==[13,14,15]
     assert report["successful_shards_preserved"]==list(range(13))
+
+
+def test_compact_recovery_cannot_start_with_a_missing_preserved_native_shard(tmp_path,monkeypatch):
+    from ci import native_price_base_recovery as recovery,native_price_routes as routes
+    calls=[]
+    def api(endpoint):
+        calls.append(endpoint)
+        return {"head_sha":"latest","status":"completed","conclusion":"success"}
+    def incomplete(request):raise ValueError("native source shard 18 has not succeeded")
+    monkeypatch.setattr(recovery,"api",api);monkeypatch.setattr(routes,"source_plan",incomplete)
+    monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
+    with pytest.raises(ValueError,match="shard 18 has not succeeded"):
+        recovery.plan({"prerequisite_native_run":10,"prerequisite_native_sha":"latest","require_all_native_sources":True},tmp_path)
+    assert len(calls)==1

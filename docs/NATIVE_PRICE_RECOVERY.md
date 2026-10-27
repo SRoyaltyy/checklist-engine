@@ -149,3 +149,12 @@ passes. It does not cancel or duplicate live 18/40. Its stable request-hash
 identity reuses an existing dispatch across controller reruns. The request ID
 also separates the nonoverlapping matrix from the two preserved live jobs.
 All old completed shards and assets stay immutable; no recipe file changes.
+
+The real draft probe passed in 40453526434 and the main acceptance/controller
+passed in 40453743814. Failed-only replacement run 40453879193 uses head
+f4b8deb39ee631042d3a1f1aea80231aa9f62ae9. Its production shard 043 published two
+durable parts, confirming the repaired path with real price data. Final source
+routes retain 18/40 from 40450227376 and replace only its other 22 failed shards.
+The compact planner requires all 64 routed source jobs to have succeeded before
+it starts; a successful newest matrix alone cannot hide an unfinished preserved
+shard. Source-route validation uses only the standard library in that planner.

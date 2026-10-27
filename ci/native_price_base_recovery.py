@@ -10,13 +10,18 @@ def plan(request,directory):
     prerequisite=api(f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{request['prerequisite_native_run']}")
     if prerequisite["head_sha"]!=request["prerequisite_native_sha"] or prerequisite["status"]!="completed" or prerequisite["conclusion"]!="success":
         raise ValueError("required native recovery has not completed successfully at its pinned commit")
+    native_proof=[]
+    if request.get("require_all_native_sources") is True:
+        from ci.native_price_routes import source_plan
+        native_proof=source_plan(json.loads(Path("ci/NATIVE_PRICE_STITCH_REQUEST.json").read_text()))
     endpoint=f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{request['source_run']}"
     run=api(endpoint);jobs=api(endpoint+"/jobs?per_page=100")
     if len(jobs["jobs"])!=jobs["total_count"]:raise ValueError("incomplete source job listing")
     if request["shards"]!=[13,14,15]:raise ValueError("only audited failed compact shards may be recovered")
     proof=validate_failed_shards(request,run,jobs["jobs"])
     directory.mkdir(parents=True,exist_ok=True)
-    report={"request":request,"source_jobs":proof,"successful_shards_preserved":list(range(13)),"full_world_gate":"NOT_RUN"}
+    report={"request":request,"source_jobs":proof,"native_source_jobs":native_proof,
+            "successful_shards_preserved":list(range(13)),"full_world_gate":"NOT_RUN"}
     (directory/"BASE_RECOVERY_PLAN.json").write_text(json.dumps(report,indent=2)+"\n")
     with open(os.environ["GITHUB_OUTPUT"],"a") as stream:stream.write("shards="+json.dumps(request["shards"])+"\n")
     print(json.dumps(report),flush=True)

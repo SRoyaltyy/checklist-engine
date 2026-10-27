@@ -1,7 +1,8 @@
 {
   "version": 1,
-  "prerequisite_native_run": 40450227376,
-  "prerequisite_native_sha": "343b4fcddd04eee36aaba2dc4feba9cef05cdfdc",
+  "prerequisite_native_run": 40453879193,
+  "prerequisite_native_sha": "f4b8deb39ee631042d3a1f1aea80231aa9f62ae9",
+  "require_all_native_sources": true,
   "source_run": 40360947486,
   "source_run_attempt": 1,
   "source_run_sha": "40b5158cd23ac8de607e9450874ca7cfc24747bc",
