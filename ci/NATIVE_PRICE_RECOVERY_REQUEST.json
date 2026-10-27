@@ -1,13 +1,13 @@
 {
-  "version": 2,
+  "version": 3,
   "source_run": 40370285123,
   "source_run_attempt": 1,
   "source_run_sha": "b2ca7901a63f3b5616eb65da6dad8c27468fd862",
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "resume_prefix": "native-price-blocks-v1-40370285123-1",
   "additional_resume_prefixes": ["native-price-blocks-v1-40336250454-1"],
-  "shards": [18, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
-  "allowed_cancelled_shards": [18, 42],
+  "shards": [18, 40, 41, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+  "allowed_cancelled_shards": [18, 40],
   "source_overrides": {
     "18": {
       "source_run": 40336250454,
@@ -15,5 +15,5 @@
       "source_run_sha": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40"
     }
   },
-  "request": "Recover only the remaining 24 terminal shards: original cancelled 18, recovery infrastructure failure 41, cancelled 42, and missing-prior-release failures 43–63. Verify each exact source job before work. Reuse disjoint verified parts from recovery then original, build missing entities from frozen inputs, and publish only nonempty data. Preserve 40 completed shards. No vendor requests; frozen calculation recipe remains provisional pending the separately versioned PR13 math review."
+  "request": "Recover only the remaining 24 terminal shards: original cancelled 18, recovery cancelled 40, infrastructure failure 41, and missing-prior-release failures 43–63. Shard 42 succeeded and must remain untouched. Verify each exact source job before work. Reuse disjoint verified parts from recovery then original, build missing entities from frozen inputs, and publish only nonempty data. Preserve 40 completed shards. No vendor requests; frozen calculation recipe remains provisional pending the separately versioned PR13 math review."
 }
