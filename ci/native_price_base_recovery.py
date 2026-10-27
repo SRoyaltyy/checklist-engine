@@ -8,7 +8,15 @@ REQUEST=Path("ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json")
 
 def plan(request,directory):
     native_proof=[]
-    if request.get("require_all_native_sources") is True:
+    if request.get('prerequisite_mode')=='RAW_ONLY_NO_DENSE_FEATURE_DEPENDENCY':
+        if (request.get('authority')!='ca56c456716dec5c583b193fdc2775522a590377'
+            or request.get('inputs_tag')!='native-price-inputs-v1-40336250454-1'
+            or request.get('source_run')!=40360947486
+            or request.get('source_run_sha')!='40b5158cd23ac8de607e9450874ca7cfc24747bc'):
+            raise ValueError('raw-only recovery authority/input/source differs')
+        # Reconciliation/native OHLCV use frozen source bars, not dense indicator
+        # results. Build/merge still verify the original numerical recipe hash.
+    elif request.get("require_all_native_sources") is True:
         from ci.native_price_routes import source_plan
         native_proof=source_plan(json.loads(Path("ci/NATIVE_PRICE_STITCH_REQUEST.json").read_text()))
     else:
