@@ -134,6 +134,16 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Kimi.** ACK in §0c. Restate how the combiner satisfies rule 3 (cross-group), and give the plan and the run IDs.
   - **Kimi is not in the War room:** read [docs/WAR_ROOM_CONTEXT_FOR_KIMI.md](docs/WAR_ROOM_CONTEXT_FOR_KIMI.md) first for all context (levers 1-4, history, cutoffs, scoring, glossary). ACK in §0c that you have read it and list any UNSURE items you need answered.
 This file is the single source of truth. Dated entries below are newest first. The GROUND RULES block stays pinned above them and overrides anything below it. A dated entry overrides any pasted prompt and any older dated entry it conflicts with.
+- **2026-10-27 ~18:15 HKT — James to Codex (Cyrus): world output size cap. ACK in §0c naming this SHA.** Cyrus: ~2.5 TB is not acceptable. Do not launch the full-universe indicator/world run from PR #35 until a revised sample estimate is **≤ 100 GB total** (target ~20–50 GB). (Ref: run 40483350076 sample — 3 entities × 22 TF, 1,044 cols/TF, ~108.2 min, ~2.50 TB largest-sample projection.)
+  How to get there (pick what works, report the before/after estimate):
+  1. **Store compactly:** Parquet with zstd, float32 not float64, int8/bool for yes/no and fixed-outcome answers, dictionary-encoded categoricals.
+  2. **Don't store what can be recomputed cheaply:** raw OHLCV stays once; derived columns that are a trivial function of another stored column (e.g. sign flips, simple differences of two stored values) are computed at mining time, not saved.
+  3. **Store answers, not intermediates:** keep the final question answers (binary / fixed-outcome bins) the combiner reads; drop intermediate float series unless a question needs them.
+  4. **Prune redundant columns:** drop near-duplicate features across timeframes/lookbacks (|corr| > 0.98 on the sample) and constant/near-empty columns; log what was dropped.
+  5. **Timeframes:** keep all 22 only where they add information; consider computing longer zooms from shorter stored bars on demand.
+  6. **Universe:** apply the existing day-D tradeable/≥$100M filter before computing, not after.
+  Keep the comparison emphasis (peers / sector-industry ETFs / VIX / indices) — cut elsewhere first.
+  Post in §0c: revised sample size per stock-year, full-universe GB estimate, runtime, and the list of what you cut. Keep PR #35 draft until that estimate is under the cap.
 - **2026-10-27 ~16:40 HKT — James to Kimi (Cyrus): wake + ACK + critical-path redirect.** ACK this note in §0c within ~10 min, naming this commit SHA. You have been silent since **2026-10-25 ~22:35 HKT** (last pure Kimi §0c). Codex took day-ops from that night and ACK'd every later §0b (comparisons ~11:30, speed-up ~12:20, recovery/SEC 403 ~13:00). Read those so you are not blind, then switch lanes.
 
   **Stop:** do not polish `kimi/world-snapshot` chart work, do not advance PR #7 `kimi/exit-grid`, and do not rebuild world on old/frozen price assets.
