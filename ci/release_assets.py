@@ -6,21 +6,37 @@ from pathlib import Path
 import re
 import subprocess
 import time
+from urllib.parse import quote
+import urllib.error
+import urllib.request
 
 
 ATTEMPTS = 5
+_DOWNLOAD_INVENTORIES = {}
 TRANSIENT = re.compile(
     r"HTTP (?:408|429|5\d\d)\b|connection reset|unexpected EOF|"
-    r"TLS handshake timeout|i/o timeout|temporary failure|connection timed out",
+    r"TLS handshake timeout|i/o timeout|temporary failure|timed out",
     re.IGNORECASE,
 )
 
 
 def _run(*args):
-    return subprocess.run(
-        ["gh", *map(str, args)], check=True, capture_output=True, text=True,
-        encoding="utf-8",
-    ).stdout
+    command = ["gh", *map(str, args)]
+    if args[0] == "api":
+        command.append("--include")
+    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
+    body = result.stdout.replace("\r\n", "\n");headers = {}
+    while body.startswith("HTTP/"):
+        head, separator, body = body.partition("\n\n")
+        if not separator:
+            raise ValueError("incomplete GitHub HTTP response headers")
+        headers = {key.strip().lower(): value.strip() for line in head.splitlines()[1:]
+                   if ":" in line for key, value in [line.split(":", 1)]}
+    if result.returncode:
+        exc = subprocess.CalledProcessError(result.returncode, command, output=body, stderr=result.stderr)
+        exc.response_headers = headers
+        raise exc
+    return body
 
 
 def describe_failure(exc):
@@ -30,11 +46,46 @@ def describe_failure(exc):
 
 
 def _transient(exc):
-    return bool(TRANSIENT.search(str(exc.stderr or "") + str(exc.stdout or "")))
+    return _rate_limited(exc) or isinstance(exc, json.JSONDecodeError) or bool(
+        TRANSIENT.search(str(getattr(exc, "stderr", "") or "") + str(getattr(exc, "stdout", "") or "")))
+
+
+def _rate_limited(exc):
+    message = str(getattr(exc, "stderr", "") or "") + str(getattr(exc, "stdout", "") or "")
+    headers = getattr(exc, "response_headers", {})
+    return headers.get("x-ratelimit-remaining") == "0" or bool(re.search(
+        r"API rate limit exceeded|secondary rate limit|HTTP 429\b", message, re.IGNORECASE))
 
 
 def _pause(attempt):
     time.sleep(2 ** (attempt + 1))
+
+
+def _wait_after(exc, attempt):
+    if not _rate_limited(exc):
+        _pause(attempt)
+        return
+    headers = getattr(exc, "response_headers", {})
+    delay = 60 * 2 ** attempt
+    if headers.get("retry-after", "").isdigit():
+        delay = max(delay, int(headers["retry-after"]))
+    reset = headers.get("x-ratelimit-reset") if headers.get("x-ratelimit-remaining") == "0" else None
+    if reset is None and not headers:
+        # This endpoint does not consume primary quota; do not poll it repeatedly.
+        try:
+            core = json.loads(_run("api", "rate_limit"))["resources"]["core"]
+            if core["remaining"] == 0:
+                reset = str(core["reset"])
+        except (subprocess.CalledProcessError, ValueError, KeyError):
+            pass
+    if reset is not None:
+        delay = max(delay, int(reset) - int(time.time()) + 1)
+    if delay > 3605:
+        raise RuntimeError("GitHub quota reset exceeds bounded one-hour wait; local assets retained") from exc
+    while delay > 0:
+        step = min(60, delay)
+        print("GITHUB_RATE_LIMIT_WAIT", step, "remaining", delay, flush=True)
+        time.sleep(step);delay -= step
 
 
 def _read(*args):
@@ -44,7 +95,12 @@ def _read(*args):
         except subprocess.CalledProcessError as exc:
             if not _transient(exc) or attempt == ATTEMPTS - 1:
                 raise
-            _pause(attempt)
+            _wait_after(exc, attempt)
+
+
+def gh_retry(*args):
+    """CLI operations with quota-aware bounded retries; never retries permission errors."""
+    return _read(*args)
 
 
 def _digest(path):
@@ -53,6 +109,64 @@ def _digest(path):
         for chunk in iter(lambda: stream.read(1 << 20), b""):
             value.update(chunk)
     return "sha256:" + value.hexdigest()
+
+
+def asset_index(tag):
+    repository = os.environ["GITHUB_REPOSITORY"]
+    release = json.loads(_read("api", f"repos/{repository}/releases/tags/{quote(tag, safe='')}"))
+    assets = release["assets"]
+    if len({asset["name"] for asset in assets}) != len(assets):
+        raise ValueError("duplicate release asset names")
+    return {asset["name"]: asset for asset in assets}
+
+
+def download_asset(tag, name, directory):
+    """Use one release inventory, then GitHub's published binary-download URL.
+
+    Public artifact bytes need no repeated REST metadata lookup. Downloaded
+    bytes must still match the authenticated inventory's size and SHA-256.
+    """
+    if Path(name).name != name or "/" in name or "\\" in name:
+        raise ValueError("asset name must be a basename")
+    repository = os.environ["GITHUB_REPOSITORY"]
+    key = (repository, tag)
+    if key not in _DOWNLOAD_INVENTORIES:
+        _DOWNLOAD_INVENTORIES[key] = asset_index(tag)
+    asset = _DOWNLOAD_INVENTORIES[key].get(name)
+    if not asset or asset["state"] != "uploaded" or not asset.get("digest", "").startswith("sha256:"):
+        raise ValueError("published asset missing or unverified: " + name)
+    url = f"https://github.com/{repository}/releases/download/{quote(tag, safe='')}/{quote(name, safe='')}"
+    if asset["browser_download_url"] != url:
+        raise ValueError("published download URL differs from requested repository/tag/asset")
+    directory = Path(directory);directory.mkdir(parents=True, exist_ok=True)
+    target = directory / name
+    if target.exists():
+        if target.stat().st_size == asset["size"] and _digest(target) == asset["digest"]:
+            return target
+        raise ValueError("cached source asset fingerprint differs: " + name)
+    temporary = directory / (name + ".download")
+    for attempt in range(ATTEMPTS):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": "checklist-engine artifact reader"})
+            with urllib.request.urlopen(request, timeout=180) as response, temporary.open("wb") as stream:
+                for chunk in iter(lambda: response.read(1 << 20), b""):
+                    stream.write(chunk)
+            if temporary.stat().st_size != asset["size"] or _digest(temporary) != asset["digest"]:
+                raise ValueError("downloaded asset fingerprint differs: " + name)
+            temporary.replace(target)
+            return target
+        except Exception as exc:
+            temporary.unlink(missing_ok=True)
+            if isinstance(exc, urllib.error.HTTPError):
+                error = subprocess.CalledProcessError(exc.code, ["public-asset-download", url], stderr=f"HTTP {exc.code}")
+                error.response_headers = {key.lower(): value for key, value in exc.headers.items()}
+            elif isinstance(exc, (urllib.error.URLError, TimeoutError)):
+                error = subprocess.CalledProcessError(1, ["public-asset-download", url], stderr=str(exc))
+            else:
+                raise
+            if not _transient(error) or attempt == ATTEMPTS - 1:
+                raise
+            _wait_after(error, attempt)
 
 
 def publish_assets(tag, *paths):
@@ -67,41 +181,49 @@ def publish_assets(tag, *paths):
         raise ValueError("expected nonempty, uniquely named release assets")
     fingerprints = [(path, path.stat().st_size, _digest(path)) for path in paths]
     repository = os.environ["GITHUB_REPOSITORY"]
-    release_id = int(_read("release", "view", tag, "--json", "databaseId", "--jq", ".databaseId"))
-    endpoint = f"repos/{repository}/releases/{release_id}/assets"
+    endpoint = f"repos/{repository}/releases/tags/{quote(tag, safe='')}"
+    release = json.loads(_read("api", endpoint));release_id = int(release["id"])
+    assets = {asset["name"]: asset for asset in release["assets"]}
+    if len(assets) != len(release["assets"]):
+        raise ValueError("duplicate release asset names")
 
-    def existing(name):
-        pages = json.loads(_read("api", endpoint, "--paginate", "--slurp"))
-        matches = [asset for page in pages for asset in page if asset["name"] == name]
-        if len(matches) > 1:
-            raise ValueError("duplicate release asset: " + name)
-        return matches[0] if matches else None
+    def matches(asset, path, size, digest):
+        return bool(asset and asset.get("name") == path.name and asset["state"] == "uploaded"
+                    and asset["size"] == size and asset.get("digest") == digest)
 
     for path, size, digest in fingerprints:
         for attempt in range(ATTEMPTS):
-            asset = existing(path.name)
+            asset = assets.get(path.name)
             if asset is not None:
-                if asset["state"] == "uploaded" and asset["size"] == size and asset.get("digest") == digest:
+                if matches(asset, path, size, digest):
                     break
                 if asset["state"] == "starter" and asset["size"] == 0:
                     # Only an empty failed upload, never a published data asset.
-                    _run("api", f"repos/{repository}/releases/assets/{int(asset['id'])}", "--method", "DELETE")
+                    _read("api", f"repos/{repository}/releases/assets/{int(asset['id'])}", "--method", "DELETE")
+                    assets.pop(path.name)
                 else:
                     raise ValueError("immutable release asset differs or has no verified digest: " + path.name)
             try:
-                _run("release", "upload", tag, path)
-            except subprocess.CalledProcessError as exc:
+                upload = f"https://uploads.github.com/repos/{repository}/releases/{release_id}/assets?name={quote(path.name, safe='')}"
+                asset = json.loads(_run("api", upload, "--method", "POST", "--header",
+                                        "Content-Type: application/octet-stream", "--input", path))
+            except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
                 # An upload can succeed remotely but lose its response. Reconcile
                 # before deciding to retry, including on the final attempt.
-                asset = existing(path.name)
-                if asset and asset["state"] == "uploaded" and asset["size"] == size and asset.get("digest") == digest:
+                if _rate_limited(exc):
+                    if attempt == ATTEMPTS - 1:
+                        raise
+                    _wait_after(exc, attempt)
+                assets = asset_index(tag);asset = assets.get(path.name)
+                if matches(asset, path, size, digest):
                     break
                 if not _transient(exc) or attempt == ATTEMPTS - 1:
                     raise
                 print("RELEASE_UPLOAD_RETRY", tag, path.name, attempt + 1, flush=True)
-                _pause(attempt)
+                if not _rate_limited(exc):
+                    _wait_after(exc, attempt)
                 continue
-            asset = existing(path.name)
-            if not asset or asset["state"] != "uploaded" or asset["size"] != size or asset.get("digest") != digest:
+            if not matches(asset, path, size, digest):
                 raise ValueError("release upload did not verify: " + path.name)
+            assets[path.name] = asset
             break

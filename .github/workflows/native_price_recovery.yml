@@ -1,0 +1,73 @@
+name: native-price-failed-shard-recovery
+on:
+  push:
+    branches: [codex/native-price-failed-shards]
+    paths: ['ci/NATIVE_PRICE_RECOVERY_REQUEST.json']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: native-price-failed-shard-recovery
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.release_transport_smoke --directory transport-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-transport-smoke
+          path: transport-proof/TRANSPORT_SMOKE_STATUS.json
+          if-no-files-found: ignore
+  plan:
+    needs: transport
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        run: python -m ci.native_price_recovery plan --directory recovery-proof
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recovery-plan
+          path: recovery-proof/RECOVERY_PLAN.json
+  build:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    env:
+      FEATURE_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_native_recovery.py tests/test_world_native_transport.py tests/test_world_release_assets.py -q
+      - run: python -m ci.native_price_recovery build --directory native-recovery --shard "$FEATURE_SHARD"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-shard-${{ matrix.shard }}
+          path: |
+            native-recovery/SHARD_*.json
+            native-recovery/resume/RECOVERY_SKIPPED_PARTS.json
+          if-no-files-found: ignore

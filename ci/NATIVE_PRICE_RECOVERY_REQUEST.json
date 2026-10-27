@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "source_run": 40336250454,
+  "source_run_attempt": 1,
+  "source_run_sha": "3140fa6fdf8a091dbdeddc2a8168179bbd698e40",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "resume_prefix": "native-price-blocks-v1-40336250454-1",
+  "shards": [0, 2, 3, 4, 5, 6, 7, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+  "request": "Recover only 35 verified terminal HTTP 500/API-quota failures. Verify the reduced-request uploader in a real release smoke first, wait for rate resets, and reuse durable original parts with the unchanged computation recipe. Preserve every live and successful original shard. No new vendor requests."
+}

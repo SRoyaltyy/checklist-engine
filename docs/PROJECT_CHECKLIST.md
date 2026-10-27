@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/298. Claimed awaiting James: 8.**
+**Verified by both: 13/303. Claimed awaiting James: 8.**
 
 ## Rules
 
@@ -31,7 +31,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | Phase | Title | Boxes |
 |---|---|---|
 | 0 | Infra (crash fixes and the FRED secret) | 8 |
-| 1 | World rebuild | 201 |
+| 1 | World rebuild | 206 |
 | 2 | Coverage gate | 10 |
 | 3 | Question tree v3 and the P3b quality gate | 28 |
 | 4 | Full leak test | 10 |
@@ -42,7 +42,7 @@ Each box starts with its id, then the task, then `Done when:` and the proof Jame
 | 9 | 2023–24 check | 4 |
 | 10 | 2025–26 check | 5 |
 | 11 | Publish probabilities | 6 |
-|  | Total | 298 |
+|  | Total | 303 |
 
 ## Phase 0 — Infra (crash fixes and the FRED secret)
 
@@ -445,6 +445,21 @@ Note (2026-10-26 ~16:55 HKT, do not tick): Finviz Elite is today's snapshot only
 
 - [ ] **1.201** DoltHub options history: coverage log. Done when: The free dataset `post-no-preference/options` is measured for `volatility_history` (per-ticker IV and HV) and `option_chain`, point-in-time, from 2020 through the present, across our universe. The log on main states the coverage percent, the date range, and what was skipped. If coverage is good, the same commit adds unticked boxes for ATM IV, IV rank and percentile, and HV minus IV, and, where the chain table allows, skew and risk reversal, max pain, and the max-OI strike. Put/call open interest uses box 1.198 rather than a second box. If coverage is not good, the log says so and those names stay off the fetch list. Evidence:
 
+### Comparisons outside the stock — 2026-10-27 11:30 HKT
+
+Priority remains recovery and missing Phase 1 blocks first. These are explicit
+open obligations, not claims. Comparator scope: PIT correlated/peer stocks,
+sector/industry ETFs, SPY/QQQ/IWM/RSP (and the previously required DIA), VIX and
+its term structure, and the registered cross-asset ETFs. Every family uses all
+22 candle zooms. VIX level/change and term structure remain in 1.91–1.95 and
+1.141–1.145; RSP source/price history is already in 1.146–1.150. None is duplicated.
+
+- [ ] **1.202** Point-in-time correlation peer sets. Done when: Fixed registered trailing windows, top-N and refresh settings produce versioned dated peer sets using only prices and historical eligible membership known before D. Exclude self; no future returns, current-map backfill or survivors-only peer universe. A future-cut rebuild preserves the peer sets, and measured coverage includes every eligible stock/date. Evidence:
+- [ ] **1.203** Relative strength against every registered comparator. Done when: Ratio/log-ratio and native-window return spread are numeric released columns with explicit formulas, price basis, windows and parameter grids for peer stocks, sector/industry ETFs, market indices and cross-asset comparators at every zoom. Exact matching candle intervals and pre-D source availability are verified; full WORLD_COVERAGE names every comparator/family. Evidence:
+- [ ] **1.204** Cross-entity divergence inputs. Done when: Released numeric/fixed-outcome features express stock-flat/comparator-falling and the opposite, including registered return thresholds/windows and confirmed-pivot divergence where specified, for every comparator and candle zoom. Future cuts preserve outputs. The stock-holds/industry-ETF-falls/VIX-falls example is expressible without reading text. Evidence:
+- [ ] **1.205** Beta and correlation breaks versus own history. Done when: Rolling beta/correlation against each comparator, and their deviation/break relative to explicitly registered earlier-history baselines, are released at every zoom. Windows, thresholds, minimum observations and zero-variance handling are fixed before evaluation; blanks remain unavailable; full coverage and future-cut evidence exist. Evidence:
+- [ ] **1.206** Spread z-scores. Done when: Each registered stock/comparator spread has a released historical z-score at every zoom, with fixed spread definition, normalization window, ddof and threshold grid. Zero variance and insufficient history stay blank. Exact pre-D lineage, full comparator coverage and future-cut proof exist. Evidence:
+
 ## Phase 2 — Coverage gate
 
 P1. CI fails a missing row and fails a WIRED row at 0 percent filled.
@@ -463,6 +478,12 @@ Note (2026-10-26 ~14:52 HKT, do not tick): The coverage gate fails if any stock-
 - [ ] **2.10** Context blocks are present on every stock row. Done when: CI fails when any stock-day row is missing its industry-ETF block, its sector-ETF block, its market-index block (SPY, QQQ, IWM, DIA, and VIX), its breadth block, or its macro block. The failing fixture names the missing block. A stock-only row fails. Evidence:
 
 ## Phase 3 — Question tree v3 and the P3b quality gate
+
+2026-10-27 direction: emphasize comparisons outside the stock. The generated
+tree and coverage tables must explicitly include 1.202–1.206 plus VIX
+level/change/term-structure context. Cross-entity combinations must express
+stock holds while its industry ETF falls and VIX falls. Phase 1 recovery and
+data completion precede this feature/question expansion; no box is ticked here.
 
 P3 and P3b. The target is at least about 26,000 base questions per stock-day. James ticks the hand check.
 

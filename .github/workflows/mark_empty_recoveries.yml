@@ -1,0 +1,23 @@
+name: mark-empty-recovery-releases
+on:
+  push:
+    branches: [codex/native-price-failed-shards]
+    paths: ['ci/EMPTY_RECOVERY_MARK_REQUEST.json']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  mark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m ci.mark_empty_recoveries --directory empty-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: empty-recovery-marking
+          path: empty-proof/EMPTY_RECOVERY_MARKING.json
