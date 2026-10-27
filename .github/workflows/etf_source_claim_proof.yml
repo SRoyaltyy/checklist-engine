@@ -1,0 +1,39 @@
+name: etf-source-claim-byte-proof
+on:
+  pull_request:
+    paths: ['ci/verify_etf_daily_source.py', 'docs/ETF_BASELINE_SOURCE_LOCATION_V1.json', 'docs/ETF_BASELINE_SOURCE_FETCHED_V1.json', '.github/workflows/etf_source_claim_proof.yml']
+  push:
+    branches: [main]
+    paths: ['ci/verify_etf_daily_source.py', 'docs/ETF_BASELINE_SOURCE_LOCATION_V1.json', 'docs/ETF_BASELINE_SOURCE_FETCHED_V1.json', '.github/workflows/etf_source_claim_proof.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Independently verify every released ETF daily bar file
+        run: python -m ci.verify_etf_daily_source --tag etf-native-context-v1-40484930003-1 --head 1434de94b6867ca4a3951d0ef1eb28453089a9c3 --out ETF_SOURCE_CLAIM_BYTE_AUDIT.json
+      - name: Require the committed source proof to match the actual released bytes
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          actual=json.loads(Path('ETF_SOURCE_CLAIM_BYTE_AUDIT.json').read_text())
+          location=json.loads(Path('docs/ETF_BASELINE_SOURCE_LOCATION_V1.json').read_text())
+          assert actual['required_symbols']==location['required_symbols']
+          assert actual['release']==location['source_release']
+          fetched=Path('docs/ETF_BASELINE_SOURCE_FETCHED_V1.json')
+          if fetched.exists():assert actual==json.loads(fetched.read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: etf-source-claim-byte-proof
+          path: ETF_SOURCE_CLAIM_BYTE_AUDIT.json
+          if-no-files-found: ignore

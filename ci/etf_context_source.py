@@ -118,6 +118,30 @@ def contexts(bars, calendar):
                                 for symbol, frame in sorted(bars.items())]) for tf in TIMEFRAMES}
 
 
+def daily_source_proof(bars, inputs, calendar, root):
+    """Keep the final source session, even though it has no next query date yet."""
+    expected = inputs['as_of_completed_session']
+    files = []
+    records = []
+    for symbol, frame in sorted(bars.items()):
+        last = str(frame.date.max().date())
+        if last != expected:
+            raise ValueError('ETF daily source does not reach the stock cutoff: ' + symbol)
+        file = root / ('etf_daily_' + symbol + '.parquet')
+        frame[['ticker', 'date', *PRICE_COLS]].to_parquet(file, index=False, compression='zstd')
+        files.append(file)
+        absent = calendar[(calendar >= frame.date.min()) & (calendar <= frame.date.max())].difference(frame.date)
+        records.append(dict(ticker=symbol, file=file.name, sha256=sha(file), rows=len(frame),
+                            first=str(frame.date.min().date()), last=last,
+                            missing_sessions_after_first_source_date=[str(d.date()) for d in absent]))
+    manifest = root / 'ETF_DAILY_SOURCE_MANIFEST.json'
+    write_json(manifest, dict(inputs_tag=inputs['inputs_tag'], recipe_fingerprint=inputs['recipe_fingerprint'],
+                             stock_source_cutoff=expected, calendar_sha256=inputs['calendar_sha256'], records=records,
+                             price_basis='frozen reference units, not nominal historical prices',
+                             scope='Source bars only; historical features still require completed bars strictly before D'))
+    return [*files, manifest], records
+
+
 def prefix_checks(full, bars, calendar, cuts=('2023-01-03', '2025-01-02')):
     checks = []
     for value in cuts:
@@ -139,6 +163,14 @@ def build(root, request):
         raise ValueError('ETF frozen input manifest differs')
     inputs = json.loads(file.read_text())
     inputs['inputs_tag'] = request['inputs_tag']
+    reference = request['original_etf_source']
+    original_file = download_asset(reference['release'], reference['asset'], root)
+    if sha(original_file) != reference['sha256']:
+        raise ValueError('original ETF source fingerprint differs')
+    original = pd.read_parquet(original_file)
+    original_source = dict(reference, rows=len(original), tickers=sorted(original.ticker.unique()),
+                           first=str(original.date.min())[:10], last=str(original.date.max())[:10],
+                           org_review='org-context-sources-v1-40478973715-1; pinned fullscan/theme-radar captures are not historical ETF price extensions')
     file = download_asset(request['inputs_tag'], 'market_sessions.parquet', root)
     if sha(file) != inputs['calendar_sha256']:
         raise ValueError('ETF calendar differs')
@@ -174,7 +206,7 @@ def build(root, request):
     full = contexts(bars, calendar)
     checks = prefix_checks(full, bars, calendar)
     coverage = []
-    files = []
+    files, daily_sources = daily_source_proof(bars, inputs, calendar, root)
     parts = []
     query = calendar[calendar >= pd.Timestamp('2020-01-01')]
     for tf, frame in full.items():
@@ -196,6 +228,9 @@ def build(root, request):
                   request=request, requested_symbols=symbols, available_symbols=sorted(bars),
                   missing_symbols=missing, missing_from_compact=missing_from_compact,
                   source_receipts=receipts, parts=parts,
+                  daily_sources=daily_sources,
+                  daily_manifest_sha256=sha(root / 'ETF_DAILY_SOURCE_MANIFEST.json'),
+                  original_source_reference=original_source,
                   calendar_sha256=inputs['calendar_sha256'], recipe_fingerprint=inputs['recipe_fingerprint'],
                   coverage_sha256=sha(file), prefix_checks=checks, timeframes=list(TIMEFRAMES),
                   price_basis='frozen reference units; not nominal PIT prices or market-cap eligibility',

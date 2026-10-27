@@ -33,3 +33,14 @@ def test_unavailable_provider_probe_stops_before_full_universe_requests(tmp_path
     with pytest.raises(ValueError,match="do not launch"):probe_source("earnings",tmp_path)
     assert requests==["AAPL"]
     assert json.loads((tmp_path/"EVENT_SOURCE_PROBE.json").read_text())["status"]=="FAIL_PROVIDER_PROBE_ONLY"
+
+
+def test_blank_provider_categories_are_missing_and_canonical_na_ticker_is_preserved():
+    frame=pd.DataFrame(dict(Firm=['  ',None],FromGrade=['',None],ToGrade=[' Buy ','Hold'],Action=[' up ',None]),
+                       index=pd.to_datetime(['2020-01-02','2020-01-03']))
+    rows=normalize_rows('NA',frame,'analyst')
+    assert rows.ticker.tolist()==['NA','NA']
+    assert rows.firm.isna().all() and rows.from_grade.isna().all()
+    assert rows.to_grade.tolist()==['Buy','Hold']
+    assert rows.action.iloc[0]=='up' and rows.direction.iloc[0]==1
+    assert pd.isna(rows.action.iloc[1]) and pd.isna(rows.direction.iloc[1])

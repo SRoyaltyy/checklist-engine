@@ -1,8 +1,13 @@
 {
-  "version": 2,
+  "version": 3,
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
   "compact_prefix": "native-price-base-v1-40360947486-1",
   "fallback_symbols": ["XLI"],
+  "original_etf_source": {
+    "release": "data-2020-24-v1",
+    "asset": "etf_2015_le2024.parquet",
+    "sha256": "964f355a91ef2df6859e2a144772651c67613e42faf4acc1e02154ffd401ac5e"
+  },
   "symbols": ["SPY", "QQQ", "IWM", "DIA", "RSP", "XLK", "XLF", "XLE", "XLY", "XLP", "XLV", "XLI", "XLB", "XLU", "XLRE", "XLC", "TLT", "HYG", "LQD", "UUP", "GLD", "CPER", "USO", "VXX", "IBIT"]
 }
