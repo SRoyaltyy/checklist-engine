@@ -74,7 +74,7 @@ def main():
     parser.add_argument("operation", choices=("plan", "build"))
     parser.add_argument("--directory", required=True)
     parser.add_argument("--shard", type=int)
-    args = parser.parse_args();request = json.loads(REQUEST.read_text())
+    args = parser.parse_args();request = json.loads(os.environ.get("NATIVE_RECOVERY_REQUEST_JSON") or REQUEST.read_text())
     if args.operation == "plan":
         plan(request, Path(args.directory))
         return
