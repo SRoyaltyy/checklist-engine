@@ -40,6 +40,8 @@ def prepare(root,request):
     status_file=download_asset(request['accepted_price_release'],'ACCEPTED_PRICE_STITCH.json',root)
     status=json.loads(status_file.read_text())
     if (status['status']!='ACCEPTED_PRICE_BASE_WITH_LOGGED_EXCLUSIONS_NOT_WORLD'
+        or status['original_universe']!=8727 or 100*status['accepted_tickers']/8727<95
+        or status['accepted_tickers']+status['excluded_tickers']!=8727
         or status['accepted_percent']<95 or status['inputs_sha256']!=request['inputs_sha256']):
         raise ValueError('accepted new-price stitch is not ready')
     parts=status['parts']
@@ -49,7 +51,8 @@ def prepare(root,request):
         if part['release'] not in inventories:inventories[part['release']]=asset_index(part['release'])
         item=inventories[part['release']][part['part']+'.tar']
         if item['digest']!='sha256:'+part['archive_sha256']:raise ValueError('raw source asset changed')
-        source_bytes+=item['size']
+        source_bytes+=sum(inventories[part['release']][part['part']+suffix]['size']
+                          for suffix in ('.tar','.json','.coverage.csv','.stock_days.csv'))
     if source_bytes>request['raw_source_budget_bytes']:raise ValueError('raw dependency closure exceeds reserved cap')
     # Reuse the exact measured shared registry, not an extra sample computation.
     raw=subprocess.check_output(['gh','api',f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/artifacts/{request['registry_artifact_id']}/zip"])
@@ -57,10 +60,14 @@ def prepare(root,request):
         registry=archive.read('DIAGNOSTIC_REGISTRIES.json')
     if hashlib.sha256(registry).hexdigest()!=request['registry_sha256']:raise ValueError('shared registry changed')
     registry_file=root/'DIAGNOSTIC_REGISTRIES.json';registry_file.write_bytes(registry)
+    recipe,calendar=snapshot(root/'bound-inputs',request)
+    bound_input_bytes=sum(p.stat().st_size for p in recipe.rglob('*') if p.is_file())
+    bound_input_bytes+=calendar.stat().st_size+(root/'bound-inputs'/'BUILD_INPUTS.json').stat().st_size
     plan=dict(request=request,source_stitch_sha256=sha(status_file),parts=parts,
               accepted_tickers=status['accepted_tickers'],original_universe=status['original_universe'],
               source_excluded_tickers=status['excluded_tickers'],raw_dependency_bytes=source_bytes,
-              shared_registry_bytes=len(registry),price_answer_per_ticker_limit=request['answer_budget_bytes']//status['original_universe'],
+              shared_registry_bytes=len(registry),bound_input_bytes=bound_input_bytes,
+              price_answer_per_ticker_limit=request['answer_budget_bytes']//status['original_universe'],
               full_world_acceptance='NOT_PROVEN_NONPRICE_AND_COMPLETE_QUESTION_TREE_REQUIRED',scoring_gate='CLOSED')
     file=root/'COMPACT_WORLD_BUILD_PLAN.json';write_json(file,plan)
     tag=f"compact-world-build-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}-inputs"
@@ -185,7 +192,8 @@ def merge(root,inputs_release):
     names=[r['ticker'] for r in completed+excluded]
     if len(names)!=len(set(names)) or len(names)!=plan['accepted_tickers']:
         raise ValueError('global build completion/exclusion membership differs')
-    actual_bytes=output_bytes+plan['raw_dependency_bytes']+plan['shared_registry_bytes']
+    shared_input_bytes=sum(a['size'] for a in asset_index(inputs_release).values())+plan['bound_input_bytes']
+    actual_bytes=output_bytes+plan['raw_dependency_bytes']+shared_input_bytes
     if output_bytes>request['answer_budget_bytes'] or actual_bytes>request['hard_world_cap_bytes']:
         raise ValueError('measured compact output exceeds global reserved cap')
     result=dict(status='PRICE_ANSWER_BUILD_MEASURED_NOT_FULL_WORLD',inputs_release=inputs_release,
@@ -193,7 +201,8 @@ def merge(root,inputs_release):
         completed_tickers=len(completed),build_excluded_tickers=len(excluded),
         completed_percent_original=100*len(completed)/plan['original_universe'],
         answer_and_checkpoint_bytes=output_bytes,raw_dependency_bytes=plan['raw_dependency_bytes'],
-        shared_registry_bytes=plan['shared_registry_bytes'],measured_price_dependency_bytes=actual_bytes,
+        shared_registry_bytes=plan['shared_registry_bytes'],shared_and_bound_input_bytes=shared_input_bytes,
+        measured_price_dependency_bytes=actual_bytes,
         completed=completed,excluded=excluded,shard_errors=errors,
         remaining=['all nonprice/comparator question families','complete v3 quality gate','comprehensive leak proof','historical PIT eligibility'],
         world_gate='NOT_PROVEN',scoring_gate='CLOSED')

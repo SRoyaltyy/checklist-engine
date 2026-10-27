@@ -5,6 +5,12 @@ on:
     paths: ['world_answer_cache.py', 'ci/compact_world_storage_budget.py', 'ci/COMPACT_WORLD_STORAGE_REQUEST.json', 'tests/test_world_answer_cache.py', '.github/workflows/compact_world_storage.yml']
   pull_request:
     paths: ['world_answer_cache.py', 'ci/compact_world_storage_budget.py', 'ci/COMPACT_WORLD_STORAGE_REQUEST.json', 'tests/test_world_answer_cache.py', '.github/workflows/compact_world_storage.yml']
+  workflow_dispatch:
+    inputs:
+      run_sample:
+        type: boolean
+        default: false
+        description: Explicitly rerun the old storage sample; normal pushes only verify code
 permissions:
   contents: read
 concurrency:
@@ -22,7 +28,7 @@ jobs:
       - run: python -m pip install -r requirements-world-v2.txt
       - run: python -m pytest tests/test_world_answer_cache.py -q
   sample:
-    if: github.event_name == 'push'
+    if: github.event_name == 'workflow_dispatch' && inputs.run_sample
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 120
