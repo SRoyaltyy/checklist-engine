@@ -1,0 +1,39 @@
+name: bounded-native-timeout-diagnostic
+on:
+  push:
+    branches: [codex/native18-timeout-diagnostic]
+    paths: ['ci/native_timeout_probe.py', '.github/workflows/native_timeout_probe.yml']
+  pull_request:
+    paths: ['ci/native_timeout_probe.py', '.github/workflows/native_timeout_probe.yml']
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -c "from pathlib import Path; compile(Path('ci/native_timeout_probe.py').read_text(), 'ci/native_timeout_probe.py', 'exec')"
+  probe:
+    if: github.event_name == 'push'
+    needs: syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.native_timeout_probe --directory native-timeout-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-timeout-proof
+          path: native-timeout-proof/NATIVE_TIMEOUT_PROBE.json
+          if-no-files-found: ignore
