@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import tempfile
 import time
 from urllib.parse import quote
 import urllib.error
@@ -102,10 +103,50 @@ def _read(*args):
 
 def gh_retry(*args):
     """CLI operations with quota-aware bounded retries; never retries permission errors."""
-    result=_read(*args)
     if args[:2]==("release","create") and ("--draft" in args or "--draft=true" in args):
-        _DRAFTS_SCANNED.discard(os.environ["GITHUB_REPOSITORY"])
+        return _create_draft(*args[2:])
+    if args[:2]==("release","edit"):
+        tag=args[2];options=args[3:];payload={};position=0
+        while position<len(options):
+            value=str(options[position])
+            if value in ("--draft=true","--draft=false"):
+                payload["draft"]=value.endswith("true");position+=1
+            elif value in ("--notes","--title") and position+1<len(options):
+                payload["body" if value=="--notes" else "name"]=str(options[position+1]);position+=2
+            else:break
+        if position==len(options) and payload:
+            release=release_info(tag);repository=os.environ["GITHUB_REPOSITORY"]
+            return _json_api("PATCH",f"repos/{repository}/releases/{int(release['id'])}",payload)
+    result=_read(*args)
     return result
+
+
+def _json_api(method,endpoint,payload):
+    with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",prefix=".release-request-",suffix=".json",
+                                     dir=os.environ.get("RUNNER_TEMP",os.getcwd()),delete=False) as stream:
+        json.dump(payload,stream);file=Path(stream.name)
+    try:return _read("api",endpoint,"--method",method,"--input",file)
+    finally:file.unlink()
+
+
+def _create_draft(tag,*args):
+    """Retain the creation response ID; never depend on draft visibility by tag."""
+    payload={"tag_name":tag,"draft":True};files=[];position=0
+    keys={"--target":"target_commitish","--title":"name","--notes":"body"}
+    while position<len(args):
+        value=str(args[position])
+        if value in ("--draft","--draft=true"):position+=1;continue
+        if value in keys:
+            if position+1>=len(args):raise ValueError("missing draft creation option")
+            payload[keys[value]]=str(args[position+1]);position+=2;continue
+        if value.startswith("--"):raise ValueError("unsupported draft creation option: "+value)
+        files.append(Path(value));position+=1
+    repository=os.environ["GITHUB_REPOSITORY"]
+    result=json.loads(_json_api("POST",f"repos/{repository}/releases",payload))
+    if result["tag_name"]!=tag or not result["draft"]:raise ValueError("draft creation identity differs")
+    _RELEASE_IDS[(repository,tag)]=int(result["id"]);_DRAFTS_SCANNED.discard(repository)
+    if files:publish_assets(tag,*files)
+    return json.dumps(result)
 
 
 def release_info(tag):

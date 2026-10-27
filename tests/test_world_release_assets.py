@@ -3,6 +3,7 @@ import hashlib
 import json
 import subprocess
 import io
+from pathlib import Path
 
 import pytest
 
@@ -129,18 +130,25 @@ def test_digest_reads_file_contents(transport):
     assert publisher._digest(files[0]) == "sha256:" + hashlib.sha256(files[0].read_bytes()).hexdigest()
 
 
-def test_draft_is_resolved_by_authenticated_listing_and_id_when_tag_lookup_is_404(monkeypatch):
+def test_draft_is_resolved_by_authenticated_listing_and_id_when_tag_lookup_is_404(tmp_path,monkeypatch):
     calls=[];draft={"id":456,"tag_name":"draft-tag","draft":True,"assets":[]}
     monkeypatch.setenv("GITHUB_REPOSITORY","owner/repo")
     monkeypatch.setattr(publisher,"_RELEASE_IDS",{});monkeypatch.setattr(publisher,"_DRAFTS_SCANNED",set())
     def run(*args):
         calls.append(args)
+        if "--input" in args:
+            file=Path(args[args.index("--input")+1])
+            asset={"id":8,"name":file.name,"state":"uploaded","size":file.stat().st_size,"digest":publisher._digest(file)}
+            draft["assets"].append(asset);return json.dumps(asset)
         if "/tags/" in args[1]:raise subprocess.CalledProcessError(1,args,stderr="gh: Not Found (HTTP 404)")
         if "?per_page" in args[1]:return json.dumps([draft])
         assert args[1].endswith("/releases/456");return json.dumps(draft)
     monkeypatch.setattr(publisher,"_run",run)
     assert publisher.release_info("draft-tag")["id"]==456
     assert publisher.release_info("draft-tag")["draft"]
+    file=tmp_path/"part.bin";file.write_bytes(b"verified draft data")
+    publisher.publish_assets("draft-tag",file)
+    assert draft["assets"][0]["digest"]==publisher._digest(file)
     assert sum("/tags/" in call[1] for call in calls)==1
     assert sum("?per_page" in call[1] for call in calls)==1
 
@@ -151,8 +159,8 @@ def test_missing_release_draft_scan_is_cached_and_creation_invalidates_it(monkey
     monkeypatch.setattr(publisher,"_RELEASE_IDS",{});monkeypatch.setattr(publisher,"_DRAFTS_SCANNED",set())
     def run(*args):
         calls.append(args)
-        if args[:2]==("release","create"):
-            drafts.append({"id":7,"tag_name":"new","draft":True,"assets":[]});return "created"
+        if "--method" in args and args[args.index("--method")+1]=="POST":
+            drafts.append({"id":7,"tag_name":"new","draft":True,"assets":[]});return json.dumps(drafts[-1])
         if "/tags/" in args[1]:raise subprocess.CalledProcessError(1,args,stderr="HTTP 404")
         if "?per_page" in args[1]:return json.dumps(drafts)
         return json.dumps(drafts[0])
