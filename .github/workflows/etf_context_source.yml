@@ -1,0 +1,51 @@
+name: verified-etf-native-context-source
+on:
+  push:
+    branches: [main]
+    paths: ['ci/ETF_CONTEXT_SOURCE_REQUEST.json']
+  workflow_dispatch:
+  pull_request:
+    paths: ['ci/etf_context_source.py', 'ci/ETF_CONTEXT_SOURCE_REQUEST.json', 'tests/test_etf_context_source.py', '.github/workflows/etf_context_source.yml']
+permissions:
+  contents: read
+concurrency:
+  group: etf-native-context-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_etf_context_source.py tests/test_world_context_native.py tests/test_world_price_base.py -q
+  acquire:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.etf_context_source --directory etf-context
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: etf-native-source-proof
+          path: |
+            etf-context/ETF_CONTEXT_STATUS.json
+            etf-context/ETF_CONTEXT_COVERAGE.csv
+          if-no-files-found: ignore
