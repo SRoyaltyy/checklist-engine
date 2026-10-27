@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "datasets": ["form4", "13f", "xbrl"],
   "start_year": 2018,
   "end_year": 2026,

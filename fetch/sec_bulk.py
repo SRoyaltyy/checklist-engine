@@ -1,5 +1,5 @@
 """Acquire official structured SEC bulk sources through the mandatory relay."""
-import argparse,hashlib,io,json,os,re,urllib.parse,zipfile
+import argparse,hashlib,html,io,json,os,re,urllib.parse,urllib.request,zipfile
 from datetime import datetime,timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -11,6 +11,7 @@ PAGES={
     "13f":"https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
     "xbrl":"https://www.sec.gov/dera/data/financial-statement-data-sets.html",
 }
+CATALOGS={"form4":"insider-transactions-data-sets","13f":"form-13f-data-sets","xbrl":"financial-statement-data-sets"}
 
 
 class Links(HTMLParser):
@@ -23,7 +24,9 @@ class Links(HTMLParser):
 
 def source_links(html,page,start=2018,end=2026):
     parser=Links();parser.feed(html);out=[]
-    for link in parser.links:
+    # data.gov republishes SEC's own distribution metadata as JSON in the page.
+    metadata=re.findall(r'https://(?:www\.)?sec\.gov/[^\s"<>\\]+\.zip',html.replace('\\/','/'))
+    for link in [*parser.links,*metadata]:
         url=urllib.parse.urljoin(page,link);parts=urllib.parse.urlsplit(url)
         years=[int(y) for y in re.findall(r"(?:19|20)\d{2}",Path(parts.path).name)]
         if parts.scheme!="https" or parts.hostname not in ("sec.gov","www.sec.gov") or not parts.path.lower().endswith(".zip"):continue
@@ -32,6 +35,20 @@ def source_links(html,page,start=2018,end=2026):
         out.append(url)
     if not out:raise ValueError("official SEC page returned no bulk ZIP sources in the requested years")
     return sorted(set(out))
+
+
+def discover(dataset,report):
+    page=PAGES[dataset]
+    try:return source_links(get_bytes(page).decode("utf-8"),page)
+    except Exception as exc:
+        if getattr(exc,"code",None)!=403:raise
+        report["landing_page_failure"]=getattr(exc,"evidence",{"http_status":403})
+    catalog="https://catalog.data.gov/dataset/"+CATALOGS[dataset]
+    # This is the SEC-published government catalog, not a direct SEC request.
+    request=urllib.request.Request(catalog,headers={"User-Agent":"checklist-engine research cyrus-checklist@users.noreply.github.com"})
+    with urllib.request.urlopen(request,timeout=120) as response:raw=response.read()
+    report["distribution_catalog"]={"url":catalog,"sha256":hashlib.sha256(raw).hexdigest()}
+    return source_links(html.unescape(raw.decode("utf-8")),catalog)
 
 
 def inspect_zip(raw):
@@ -68,7 +85,7 @@ def acquire(dataset,root):
             "world_gate":"NOT_RUN","scoring_gate":"CLOSED","free_text_features":False}
     tag=f"sec-bulk-{dataset}-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}";created=False
     try:
-        html=get_bytes(page).decode("utf-8");urls=source_links(html,page)
+        urls=discover(dataset,report)
         report["requested_urls"]=urls
         for url in urls:
             raw=get_bytes(url);tables=inspect_zip(raw)

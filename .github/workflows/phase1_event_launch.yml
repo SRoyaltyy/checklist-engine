@@ -1,0 +1,32 @@
+name: phase1-independent-event-sources
+on:
+  push:
+    branches: [main]
+    paths: ['ci/INDEPENDENT_EVENT_FETCH_REQUEST.json']
+  pull_request:
+    paths: ['fetch/fetch_event_history.py', 'tests/test_event_history.py', '.github/workflows/world_fetch_event_source.yml', '.github/workflows/world_fetch_earnings.yml', '.github/workflows/world_fetch_analyst.yml', '.github/workflows/phase1_event_launch.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_event_history.py tests/test_world_release_assets.py -q
+  analyst:
+    if: github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
+    uses: ./.github/workflows/world_fetch_analyst.yml
+  earnings:
+    if: github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
+    uses: ./.github/workflows/world_fetch_earnings.yml
