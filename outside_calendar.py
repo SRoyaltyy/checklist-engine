@@ -164,7 +164,7 @@ def release_schedule(dates, cancellations=None):
         rows.append(dict(announced=day if previous is None else previous, scheduled=day, status="scheduled"))
         previous = day
     for day in pd.DatetimeIndex(pd.to_datetime(cancellations if cancellations is not None else [])):
-        earlier = [row["scheduled"] for row in rows if row["scheduled"] <= day]
+        earlier = [row["scheduled"] for row in rows if row["scheduled"] < day]
         if not earlier:
             raise ValueError("cancelled release has no earlier release: " + str(day.date()))
         rows.append(dict(announced=max(earlier), scheduled=day, status="cancelled"))
