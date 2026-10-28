@@ -4,17 +4,16 @@
   "producer_commit": "49043dd375387bddad0d446c56f942f0711b28ed",
   "plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
   "audit_code_sha256": "a9d401c1c4519b731e580075488df51b9a8c80b1e1035b4f784c55d77d184a9e",
-  "inventory_snapshot_sha256": "f776a6bd6c3c351d487f3cd2f9504c95828b4c69a5e6eaae9d6b84d16d94275d",
+  "inventory_snapshot_sha256": "c6cdbaae688a1b79f97604484c8ad91fd434418efafe24b583028fd7e00ea240",
   "source_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
   "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
   "shared_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
   "original_universe": 8727,
   "source_accepted_tickers": 8316,
   "source_excluded_tickers": 411,
-  "audited_shards": 28,
+  "audited_shards": 29,
   "planned_shards": 173,
   "unaudited_shards": [
-    22,
     24,
     25,
     28,
@@ -160,11 +159,11 @@
     171,
     172
   ],
-  "completed_tickers": 1336,
+  "completed_tickers": 1386,
   "build_excluded_tickers": 2,
-  "confirmed_completed_percent_original": 15.308811733700011,
-  "payload_bytes": 3388324197,
-  "release_bytes_including_checkpoints": 3419855720,
+  "confirmed_completed_percent_original": 15.881746304572017,
+  "payload_bytes": 3517513756,
+  "release_bytes_including_checkpoints": 3550251255,
   "exclusions": [
     {
       "ticker": "EQLT",
@@ -382,6 +381,15 @@
       "excluded": 0,
       "payload_bytes": 71995573,
       "release_bytes": 72455468
+    },
+    {
+      "index": 22,
+      "release": "compact-world-build-v1-40621517496-1-022",
+      "summary_sha256": "1e5bef99924d08bc9937be24d9c07d8429c6dc1bcd2caf518b59e8f7fb69deed",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129189559,
+      "release_bytes": 130395535
     },
     {
       "index": 23,
