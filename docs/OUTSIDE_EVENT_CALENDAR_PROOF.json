@@ -19,7 +19,7 @@
   },
   "storage": {
     "rows": 1714,
-    "sha256": "6ea053110045a1b45ac490cea72ccc1e1ab963eb9a19754d75f1073039f1da6c",
+    "sha256": "c8675ab2200e70e2a9410a3b3a0c1f53796edb4ce417d31c3eea1c50f647052c",
     "encoding": "bool_bit_packed_and_int16_delta_zstd19"
   },
   "series": [
@@ -117,19 +117,19 @@
       "series": "days_to_opex",
       "status": "PASS",
       "reason": "",
-      "coverage_percent": 99.5916,
-      "rows": 1707,
+      "coverage_percent": 100.0,
+      "rows": 1714,
       "expected_sessions": 1714,
-      "missing_sessions": 7
+      "missing_sessions": 0
     },
     {
       "series": "days_since_opex",
       "status": "PASS",
       "reason": "",
-      "coverage_percent": 99.3582,
-      "rows": 1703,
+      "coverage_percent": 100.0,
+      "rows": 1714,
       "expected_sessions": 1714,
-      "missing_sessions": 11
+      "missing_sessions": 0
     },
     {
       "series": "days_to_fomc",
@@ -247,8 +247,9 @@
     "rows": 6308,
     "storage": {
       "rows": 6308,
-      "sha256": "d5bac2b37154a5c44c5606c0f7040d7de71e063c68ec38e28bd1dbec81414800",
+      "sha256": "8190c53037193dc5297a00c4bd1dd2629d84c376721e5458eeab71aca854a53f",
       "encoding": "bool_bit_packed_and_int16_delta_zstd19"
     }
-  }
+  },
+  "opex_forward": "days_to_opex uses the third-Friday rule on the session calendar past as_of. The is_opex flag is not set on a session after as_of."
 }

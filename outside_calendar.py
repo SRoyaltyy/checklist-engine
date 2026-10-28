@@ -234,8 +234,12 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of):
     frame["is_turn_of_month"] = frame["is_month_end"] | (rank <= 3)
     frame["day_of_week"] = frame["date"].dt.dayofweek.astype("int16")
     frame["day_of_month"] = frame["date"].dt.day.astype("int16")
-    frame["days_to_opex"] = _distance(rows, opex, True)
-    frame["days_since_opex"] = _distance(rows, opex, False)
+    # Third Friday is a rule, so the count may see an expiry after as_of.
+    # The flag itself stays off until that session is in the panel.
+    to_opex = pd.Series(_distance(sessions, opex, True), index=sessions)
+    since_opex = pd.Series(_distance(sessions, opex, False), index=sessions)
+    frame["days_to_opex"] = frame["date"].map(to_opex).to_numpy()
+    frame["days_since_opex"] = frame["date"].map(since_opex).to_numpy()
     frame["days_to_fomc"] = _distance(rows, meetings, True)
     frame["days_since_fomc"] = _distance(rows, meetings, False)
     frame["days_to_cpi"] = _distance(rows, cpi, True)

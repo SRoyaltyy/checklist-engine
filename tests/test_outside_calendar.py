@@ -159,10 +159,14 @@ def test_earlier_as_of_preserves_calendar_candles_already_available():
     kept = early[early.available_from <= early_as_of]
     merged = kept.merge(later, on=keys, suffixes=("", "_later"))
     assert len(merged) == len(kept)
-    for column in ("is_fomc", "is_opex", "is_month_end", "days_since_opex"):
+    for column in ("is_fomc", "is_opex", "is_month_end", "days_since_opex", "days_to_opex"):
         assert merged[column].equals(merged[column + "_later"])
-    # A forward count stays put where it was already filled. It stays blank when the
-    # next rule date was past the earlier as_of, because that build had no row for it.
-    filled = merged["days_to_opex"].notna()
-    assert filled.any()
-    assert merged.loc[filled, "days_to_opex"].equals(merged.loc[filled, "days_to_opex_later"])
+
+
+def test_days_to_opex_counts_the_next_third_friday_after_as_of():
+    sessions = pd.bdate_range("2024-01-02", periods=80)
+    panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), [], [], "2024-01-31")
+    row = panel.set_index("date").loc[pd.Timestamp("2024-01-31")]
+    assert not bool(row.is_opex)
+    assert row.days_to_opex > 0
+    assert pd.Timestamp("2024-02-16") not in set(panel.date)
