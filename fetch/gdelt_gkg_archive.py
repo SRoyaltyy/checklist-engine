@@ -31,24 +31,28 @@ def select_catalog(stream,stamps,max_bytes=180000000):
     """One bounded catalog request; keep complete byte hash and exact receipts."""
     wanted=set(stamps)
     for stamp in wanted:checked_stamp(stamp)
-    selected={};count=0;digest=hashlib.sha256();lines=0
+    selected={};count=0;digest=hashlib.sha256();lines=0;markers=0;blanks=0
     while True:
         raw=stream.readline(4097)
         if not raw:break
         count+=len(raw);lines+=1;digest.update(raw)
         if count>max_bytes or len(raw)>4096:raise ValueError('GKG catalog exceeds bounded capture')
         fields=raw.decode('ascii').split()
+        if not fields:blanks+=1;continue
+        if fields in (['http://data.gdeltproject.org/gdeltv2/'],['https://data.gdeltproject.org/gdeltv2/']):
+            markers+=1;continue
         if len(fields)!=3:raise ValueError('GKG catalog line schema differs')
         url=urllib.parse.urlsplit(fields[2]);match=FORMAT.fullmatch(url.path)
         if not match or match[1] not in wanted:continue
         if url.hostname!='data.gdeltproject.org' or url.scheme not in ('http','https') or url.query or url.fragment or url.port:
             raise ValueError('GKG catalog archive URL outside official source')
-        if not fields[0].isdigit() or not re.fullmatch('[0-9a-f]{32}',fields[1]):
+        if not fields[0].isdigit() or not re.fullmatch('[0-9a-f]{1,32}',fields[1]):
             raise ValueError('GKG catalog size/MD5 differs')
-        row=dict(stamp=match[1],bytes=int(fields[0]),md5=fields[1],url=BASE+match[1]+'.gkg.csv.zip')
+        row=dict(stamp=match[1],bytes=int(fields[0]),md5=fields[1].zfill(32),url=BASE+match[1]+'.gkg.csv.zip')
         if match[1] in selected and selected[match[1]]!=row:raise ValueError('conflicting GKG catalog archive')
         selected[match[1]]=row
-    return selected,dict(url=CATALOG,bytes=count,lines=lines,sha256=digest.hexdigest(),complete_catalog=True,
+    return selected,dict(url=CATALOG,bytes=count,lines=lines,official_root_marker_lines=markers,blank_lines=blanks,
+                         sha256=digest.hexdigest(),complete_catalog=True,
                          missing_stamps=sorted(wanted-set(selected)))
 
 

@@ -44,6 +44,25 @@ def test_conflicting_catalog_or_nonofficial_download_is_rejected():
     with pytest.raises(ValueError,match='bounded'):select_catalog(io.BytesIO(first.encode()),[STAMP],10)
 
 
+def test_official_root_marker_and_blank_lines_are_counted_and_hashed():
+    # Actual master catalog line 123679 is a bare official directory URL.
+    body=f'http://data.gdeltproject.org/gdeltv2/\n\n123 '+('a'*32)+f' http://data.gdeltproject.org/gdeltv2/{STAMP}.gkg.csv.zip\n'
+    selected,receipt=select_catalog(io.BytesIO(body.encode()),[STAMP])
+    assert selected[STAMP]['bytes']==123 and receipt['official_root_marker_lines']==1 and receipt['blank_lines']==1
+    assert receipt['sha256']==hashlib.sha256(body.encode()).hexdigest() and receipt['lines']==3
+
+
+def test_unknown_malformed_lines_are_not_silently_ignored():
+    with pytest.raises(ValueError,match='line schema'):
+        select_catalog(io.BytesIO(b'https://other.invalid/\n'),[STAMP])
+
+
+def test_unpadded_catalog_md5_has_exactly_equivalent_zero_padded_value():
+    body=f'123 abc http://data.gdeltproject.org/gdeltv2/{STAMP}.gkg.csv.zip\n'
+    selected,_=select_catalog(io.BytesIO(body.encode()),[STAMP])
+    assert selected[STAMP]['md5']=='abc'.zfill(32)
+
+
 @pytest.mark.parametrize('stamp',['2020010100000','20200101000100','20200101000001','20200230000000'])
 def test_invalid_or_nonquarterhour_batch_is_rejected(stamp):
     with pytest.raises(ValueError):checked_stamp(stamp)
