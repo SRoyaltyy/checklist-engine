@@ -1,0 +1,20 @@
+name: index-extra-source-handoff-evidence
+on:
+  push:
+    branches: [main, codex/index-extra-source-handoff]
+    paths: ['docs/INDEX_EXTRA_SOURCE_HANDOFF_*.json', 'ci/verify_index_extra_handoff.py', '.github/workflows/index_extra_source_handoff.yml']
+  pull_request:
+    paths: ['docs/INDEX_EXTRA_SOURCE_HANDOFF_*.json', 'ci/verify_index_extra_handoff.py', '.github/workflows/index_extra_source_handoff.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.verify_index_extra_handoff
