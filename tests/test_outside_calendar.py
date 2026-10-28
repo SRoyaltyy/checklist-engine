@@ -223,5 +223,5 @@ def test_a_release_is_not_counted_before_it_is_announced():
     cpi = pd.to_datetime(["2024-01-11", "2024-02-13", "2024-03-12"])
     panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, [], "2024-02-12")
     row = panel.set_index("date").loc[pd.Timestamp("2024-02-12")]
-    # 2024-02-13 has not happened, so 2024-03-12 is not announced yet.
-    assert pd.isna(row.days_to_cpi)
+    # 2024-02-13 was announced on 2024-01-11, so it is the next known release.
+    assert row.days_to_cpi == 1
