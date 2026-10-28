@@ -1,5 +1,6 @@
 {
   "block": "outside_compare_spy",
+  "release": "outside-compare-spy-v1-20261028",
   "as_of": "2026-10-27",
   "stitch_release": "accepted-price-stitch-v2-40494479693-1",
   "spy_source": "light-daily-box-v1-20261028 SPY close",
