@@ -247,7 +247,8 @@
     "rows": 6308,
     "storage": {
       "rows": 6308,
-      "sha256": "8190c53037193dc5297a00c4bd1dd2629d84c376721e5458eeab71aca854a53f",
+      "sha256": "2274116214238faf0edf8345d85c58d2f14d92c564cc6e82a71f6ef5abd9f51a",
+      "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
       "encoding": "bool_bit_packed_and_int16_delta_zstd19"
     }
   },

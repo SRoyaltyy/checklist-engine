@@ -180,3 +180,14 @@ def test_days_to_opex_counts_the_next_third_friday_after_as_of():
     assert not bool(row.is_opex)
     assert row.days_to_opex > 0
     assert pd.Timestamp("2024-02-16") not in set(panel.date)
+
+
+def test_monthly_candle_waits_for_the_next_session_when_the_first_is_closed():
+    from world_timeframes import completed_candles
+    sessions = pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-04"])
+    bars = pd.DataFrame({
+        "date": sessions[:2], "open": [1.0, 1.0], "high": [1.0, 1.0],
+        "low": [1.0, 1.0], "close": [1.0, 1.0], "volume": [1.0, 1.0],
+    })
+    candles = completed_candles(bars, "monthly", sessions)
+    assert candles.available_from.iloc[0] == pd.Timestamp("2020-02-03")
