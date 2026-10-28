@@ -1,0 +1,46 @@
+{
+  "block": "outside_breadth",
+  "as_of": "2026-10-23",
+  "stitch_release": "accepted-price-stitch-v2-40494479693-1",
+  "stitch_manifest_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "accepted_names": 8316,
+  "excluded_by_stitch": 411,
+  "universe_label": "accepted stitch-v2 names; survivors-only as labeled on that release; the manifest does not split ETF and stock",
+  "lookahead": "each session uses only that name's bars through the session; available_from is the next NYSE session",
+  "high_low_window": 252,
+  "sma_windows": [
+    20,
+    50,
+    200
+  ],
+  "names": {
+    "names_used": 8316,
+    "names_expected": 8316,
+    "names_percent": 100.0
+  },
+  "sessions": {
+    "series": "pct_above_sma20",
+    "status": "PASS",
+    "reason": "",
+    "coverage_percent": 100.0,
+    "expected_sessions": 1712,
+    "missing_sessions": 0,
+    "missing_dates": [],
+    "rows": 1712
+  },
+  "storage": {
+    "rows": 1712,
+    "sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+    "encoding": "int64_delta_and_float64_byte_stream_split_zstd19"
+  },
+  "candles": {
+    "rows": 6329,
+    "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
+    "encoding": "int64_delta_and_float64_byte_stream_split_zstd19",
+    "note": "Flows are summed inside the completed candle. New highs minus new lows and both ratios are rebuilt from those sums. Percents and the advance/decline line are the end session. available_from is the next session."
+  },
+  "excluded": [],
+  "excluded_count": 0,
+  "excluded_truncated": false,
+  "release": "outside-breadth-v1-40689026569-1"
+}
