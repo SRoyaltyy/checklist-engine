@@ -1,0 +1,206 @@
+{
+  "status": "REVISED_ADAPTER_LOCAL_FIXES_CONFIRMED_PUBLISHED_BINDINGS_STILL_FAIL",
+  "pr": 85,
+  "candidate_head": "bbd3714c8c0f9b51724c600a20b614d6d4a6d849",
+  "candidate_source_sha256": "c746cf882863e4a15e81d22a03318a9a16c4d0ea07dcd9c03cee7f9ca1d2cb28",
+  "authenticated_assets": 28,
+  "authenticated_bytes": 7422484,
+  "query_stock_days": 12364370,
+  "monthly": {
+    "rows_before": 441,
+    "rows_after": 441,
+    "last_three_source_ends": [
+      "2019-10-31",
+      "2019-11-29",
+      "2019-12-31"
+    ],
+    "raw_three_bar_mean": 0.8352165304365041,
+    "adapted_three_bar_mean": 0.8352165304365041
+  },
+  "all_volatility_grids": [
+    {
+      "timeframe": "1d",
+      "rows": 9270,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "2d",
+      "rows": 4635,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "3d",
+      "rows": 3090,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "4d",
+      "rows": 2317,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "5d",
+      "rows": 1854,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "6d",
+      "rows": 1545,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "7d",
+      "rows": 1324,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "8d",
+      "rows": 1158,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "9d",
+      "rows": 1030,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "10d",
+      "rows": 927,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "11d",
+      "rows": 842,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "12d",
+      "rows": 772,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "13d",
+      "rows": 713,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "14d",
+      "rows": 662,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "15d",
+      "rows": 618,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "16d",
+      "rows": 579,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "17d",
+      "rows": 545,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "18d",
+      "rows": 515,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "19d",
+      "rows": 487,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "20d",
+      "rows": 463,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "21d",
+      "rows": 441,
+      "moved": 0,
+      "dropped": 0
+    },
+    {
+      "timeframe": "monthly",
+      "rows": 441,
+      "moved": 131,
+      "dropped": 0
+    }
+  ],
+  "local_persisted_bindings": 418,
+  "local_native_factor_bytes": 10662815,
+  "returned_followon_bytes": 5251065,
+  "byte_accounting_problem": "measure_directory counts only top-level *.parquet; generated native/*.parquet are omitted. Source and transformed files coexist, so both must be accounted for when retained.",
+  "omitted_native_subdirectory_bytes": 10662815,
+  "published_readback": {
+    "status": "FAIL_FACTOR_RELEASE_READBACK",
+    "checked": 0,
+    "failures": 418,
+    "examples": [
+      {
+        "family": "industry_etf",
+        "symbol": "KBE",
+        "timeframe": "10d",
+        "release": "outside-market-released-v3-40667431231-1",
+        "asset": "native/industry_etf_kbe_10d.parquet",
+        "error": "literal release tag and asset name required"
+      },
+      {
+        "family": "industry_etf",
+        "symbol": "KBE",
+        "timeframe": "11d",
+        "release": "outside-market-released-v3-40667431231-1",
+        "asset": "native/industry_etf_kbe_11d.parquet",
+        "error": "literal release tag and asset name required"
+      },
+      {
+        "family": "industry_etf",
+        "symbol": "KBE",
+        "timeframe": "12d",
+        "release": "outside-market-released-v3-40667431231-1",
+        "asset": "native/industry_etf_kbe_12d.parquet",
+        "error": "literal release tag and asset name required"
+      }
+    ]
+  },
+  "publication_problem": "Bindings still name the original source releases, which do not contain the new transformed files. ci/factored_world_context.py publishes only manifest/coverage/status, not transformed native files.",
+  "candidate_publish_calls": [
+    "publish_assets(tag,file,coverage_file,status_file);gh_retry('release','edit',tag,'--draft=false')"
+  ],
+  "original_published_volatility_readback": {
+    "status": "PASS_FACTOR_RELEASE_READBACK_ONLY",
+    "bindings": 22,
+    "bytes": 1107247
+  },
+  "limitations": [
+    "Local review of immutable public source files and copied candidate code; no candidate Actions execution or publication claim.",
+    "Breadth and Venice-owned calendar not included; full world gates remain open."
+  ],
+  "world_gate": "NOT_PROVEN",
+  "full_world_storage_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
