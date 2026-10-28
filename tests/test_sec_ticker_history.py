@@ -22,3 +22,15 @@ def test_a_ticker_column_on_filings_is_not_silently_dropped():
     document["filings"]["recent"]["ticker"] = ["AIR"]
     with pytest.raises(ValueError, match="ticker field"):
         dated_ticker_rows(document)
+
+
+def test_older_filing_pages_are_inspected_without_inventing_a_ticker_history():
+    assert dated_ticker_rows(submission(), [{'filingDate':['2020-01-02']}]) == []
+    with pytest.raises(ValueError,match='older filing columns'):
+        dated_ticker_rows(submission(), [{'ticker':['AIR']}])
+
+
+@pytest.mark.parametrize('document',[None,[],{}])
+def test_invalid_root_shape_is_rejected(document):
+    with pytest.raises(ValueError,match='submissions ticker shape'):
+        dated_ticker_rows(document)
