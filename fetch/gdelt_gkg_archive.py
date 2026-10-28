@@ -162,51 +162,8 @@ def fetch_bytes(url,bound):
 
 
 def run(root,request):
-    import pandas as pd
-    from ci.release_assets import gh_retry,publish_assets
-    root.mkdir(parents=True,exist_ok=True)
-    report=dict(status='INCOMPLETE_GKG_ARCHIVE_CAPTURE',request=request,source_commit=os.environ['GITHUB_SHA'],attempts=[],parts=[],
-        historical_full_interval_gate='NOT_PROVEN; three 15-minute files are not continuous history',
-        ticker_identity_gate='NOT_PROVEN; exact demonstration aliases only',
-        point_in_time_gate='NOT_PROVEN; record batch timestamp and current Last-Modified are not historical byte-vintage proof',
-        world_gate='NOT_RUN',scoring_gate='CLOSED')
-    report_file=root/'GDELT_GKG_SOURCE_REPORT.json';files=[];blocked=False
-    try:
-        req=urllib.request.Request(CATALOG,headers={'User-Agent':'checklist-engine numeric-archive-reader'})
-        with urllib.request.urlopen(req,timeout=180) as response:
-            selected,catalog=select_catalog(response,request['stamps'],request['max_catalog_bytes'])
-        report['catalog']=catalog
-        for stamp in request['stamps']:
-            receipt=dict(stamp=stamp)
-            try:
-                if blocked:receipt['status']='NOT_ATTEMPTED_AFTER_ACCESS_OR_RATE_LIMIT';report['attempts'].append(receipt);continue
-                if stamp not in selected:raise ValueError('requested historical batch missing from official catalog')
-                source=selected[stamp];receipt.update(source)
-                raw,headers=fetch_bytes(source['url'],request['max_archive_bytes']);receipt.update(headers)
-                rows,stats=parse_archive(raw,source,request['entities'],request['max_uncompressed_bytes'])
-                frame=pd.DataFrame(rows)
-                for column in ('record_count','tone_observations','positive_records','negative_records','neutral_records','word_count','tone_missing'):
-                    frame[column]=frame[column].astype('Int64')
-                for column in ('tone_mean','tone_sum','tone_sum_squares'):frame[column]=frame[column].astype('float64')
-                frame['batch_timestamp']=pd.to_datetime(frame.batch_timestamp,format='%Y%m%d%H%M%S',utc=True).astype('datetime64[ns, UTC]')
-                file=root/(stamp+'.numeric.parquet');frame.to_parquet(file,index=False,compression='zstd')
-                receipt.update(status='NUMERIC_ARCHIVE_ROWS_RETURNED',statistics=stats)
-                files.append(file);report['parts'].append(dict(file=file.name,sha256=hashlib.sha256(file.read_bytes()).hexdigest(),rows=len(rows)))
-            except urllib.error.HTTPError as exc:
-                receipt.update(status='SOURCE_ERROR',http_status=exc.code,error=str(exc));blocked=exc.code in (401,403,429)
-            except Exception as exc:receipt.update(status='SOURCE_ERROR',error=str(exc))
-            report['attempts'].append(receipt);report_file.write_text(json.dumps(report,indent=2)+'\n')
-            print('GKG_ARCHIVE_CAPTURE',stamp,receipt['status'],flush=True);time.sleep(6)
-    except Exception as exc:report['catalog_error']=str(exc)
-    complete=len(files)==len(request['stamps'])
-    report['status']='BOUNDED_GKG_ARCHIVE_NUMERIC_CAPTURE_NOT_FULL_HISTORY' if complete else 'PARTIAL_OR_FAILED_GKG_ARCHIVE_CAPTURE'
-    report_file.write_text(json.dumps(report,indent=2)+'\n')
-    if files:
-        tag=f"gdelt-gkg-numeric-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
-        gh_retry('release','create',tag,'--draft','--title',tag,'--target',os.environ['GITHUB_SHA'],
-                 '--notes','Official GKG archive numeric-only capture. Three batch files, not continuous history/PIT/ticker approval.')
-        publish_assets(tag,report_file,*files);gh_retry('release','edit',tag,'--draft=false')
-    if not complete:raise RuntimeError('GKG archive source incomplete; failures retained, no zero filling')
+    from world_scope import NEWS_DROP_REASON
+    raise RuntimeError(NEWS_DROP_REASON)
 
 
 if __name__=='__main__':

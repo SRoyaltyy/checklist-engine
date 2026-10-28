@@ -84,7 +84,7 @@ def build(root,request,shared_release):
         reader='world_context_store.context_row_view',reader_sha256=sha('world_context_store.py'),
         row_validation='caller supplies dates from authenticated accepted stock price members; this component does not create new stock sessions',
         layout='stored native numeric values once, exact date/availability joins; no indicator recomputation, field pruning or precision reduction',
-        remaining=['stock-relative features and historical sector/industry membership','peer comparisons','other event/fundamental/news blocks',
+        remaining=['stock-relative features and historical sector/industry membership','peer comparisons','other event/fundamental blocks (news dropped by Cyrus 2026-10-28)',
                    'complete v3 questions and full leak verification','historical tradeability/size eligibility','complete numeric-value retention and total world budget'],
         world_gate='NOT_PROVEN',scoring_gate='CLOSED')
     file=root/'FACTORED_WORLD_CONTEXT_STORE.json';write_json(file,store)

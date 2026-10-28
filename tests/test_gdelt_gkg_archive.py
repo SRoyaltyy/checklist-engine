@@ -136,41 +136,9 @@ def test_alias_collision_and_empty_archive_cannot_approve_numeric_source():
     with pytest.raises(ValueError,match='not a zero news count'):parse_archive(raw,receipt,ENTITIES)
 
 
-def test_numeric_release_keeps_nullable_integer_counts_and_float64_tone_schema(tmp_path,monkeypatch):
-    import pandas as pd
+def test_dropped_capture_stops_before_network_files_or_publication(tmp_path,monkeypatch):
     from fetch import gdelt_gkg_archive as gkg
-    from ci import release_assets
-    raw,receipt=archive([record(orgs='unmatched',tone='').replace(b'unmatched',b'\xff')])
-    catalog=f"{receipt['bytes']} {receipt['md5']} http://data.gdeltproject.org/gdeltv2/{STAMP}.gkg.csv.zip\n".encode()
-    monkeypatch.setattr(gkg.urllib.request,'urlopen',lambda *a,**k:io.BytesIO(catalog))
-    monkeypatch.setattr(gkg,'fetch_bytes',lambda *args:(raw,{'http_status':200}))
-    monkeypatch.setattr(gkg.time,'sleep',lambda *args:None)
-    monkeypatch.setenv('GITHUB_SHA','commit');monkeypatch.setenv('GITHUB_RUN_ID','1');monkeypatch.setenv('GITHUB_RUN_ATTEMPT','1')
-    calls=[];monkeypatch.setattr(release_assets,'gh_retry',lambda *args:calls.append(args))
-    monkeypatch.setattr(release_assets,'publish_assets',lambda *args:calls.append(args))
-    request=dict(stamps=[STAMP],entities=ENTITIES,max_catalog_bytes=1000,max_archive_bytes=10000,max_uncompressed_bytes=10000)
-    gkg.run(tmp_path,request)
-    frame=pd.read_parquet(tmp_path/(STAMP+'.numeric.parquet'))
-    assert str(frame.record_count.dtype)=='Int64' and str(frame.tone_mean.dtype)=='float64'
-    assert str(frame.batch_timestamp.dtype)=='datetime64[ns, UTC]'
-    assert frame.loc[frame.entity_id=='probe_apple','record_count'].isna().all()
-    assert frame.tone_mean.isna().all() and calls
-
-
-def test_access_error_stops_remaining_requests_and_never_creates_zero_news_release(tmp_path,monkeypatch):
-    from fetch import gdelt_gkg_archive as gkg
-    from ci import release_assets
-    stamps=[STAMP,'20250101000000']
-    catalog=''.join(f'123 '+('a'*32)+f' http://data.gdeltproject.org/gdeltv2/{stamp}.gkg.csv.zip\n' for stamp in stamps).encode()
-    monkeypatch.setattr(gkg.urllib.request,'urlopen',lambda *a,**k:io.BytesIO(catalog))
-    calls=[]
-    def denied(url,bound):
-        calls.append(url);raise urllib.error.HTTPError(url,403,'Denied',{},None)
-    monkeypatch.setattr(gkg,'fetch_bytes',denied);monkeypatch.setattr(gkg.time,'sleep',lambda *args:None)
-    monkeypatch.setenv('GITHUB_SHA','commit')
-    monkeypatch.setattr(release_assets,'gh_retry',lambda *args:pytest.fail('failed source must not create release'))
-    request=dict(stamps=stamps,entities=ENTITIES,max_catalog_bytes=1000,max_archive_bytes=10000,max_uncompressed_bytes=10000)
-    with pytest.raises(RuntimeError,match='no zero filling'):gkg.run(tmp_path,request)
-    report=json.loads((tmp_path/'GDELT_GKG_SOURCE_REPORT.json').read_text())
-    assert len(calls)==1 and report['parts']==[]
-    assert report['attempts'][1]['status']=='NOT_ATTEMPTED_AFTER_ACCESS_OR_RATE_LIMIT'
+    monkeypatch.setattr(gkg.urllib.request,'urlopen',lambda *a,**k:pytest.fail('news network access is disabled'))
+    with pytest.raises(RuntimeError,match='dropped by Cyrus 2026-10-28'):
+        gkg.run(tmp_path,{})
+    assert list(tmp_path.iterdir())==[]
