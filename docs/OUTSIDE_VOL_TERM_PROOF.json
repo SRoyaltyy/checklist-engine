@@ -156,5 +156,19 @@
       "vvix"
     ],
     "mismatches": 0
+  },
+  "all_ratio_candles": {
+    "rows": 31540,
+    "wide_rows": 6308,
+    "rule": "each ratio equals the daily ratio on the candle end date",
+    "series": [
+      "vix_over_vix3m",
+      "vix9d_over_vix",
+      "vix9d_over_vix3m",
+      "vix3m_minus_vix",
+      "vix_minus_vix9d"
+    ],
+    "max_abs_error": 0.0,
+    "nan_mismatches": 0
   }
 }
