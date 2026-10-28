@@ -1,0 +1,58 @@
+name: factored-world-native-context
+on:
+  push:
+    branches: [codex/factored-world-context]
+    paths: ['ci/FACTORED_CONTEXT_REQUEST.json']
+  pull_request:
+    paths: ['world_fred.py', 'world_context_store.py', 'ci/shared_context_build.py', 'ci/factored_world_context.py', 'ci/FACTORED_CONTEXT_REQUEST.json', 'tests/test_world_context_store.py', 'tests/test_world_fred.py', '.github/workflows/factored_world_context.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: factored-world-native-context-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_world_fred.py tests/test_world_context_store.py tests/test_world_context_native.py tests/test_world_context_sources.py tests/test_world_release_assets.py -q
+  build:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Preserve all macro/CBOE native values with float64 precision
+        run: python -m ci.shared_context_build --directory native-shared --version 2
+      - name: Attach stored factors to every approved stock-day and measure coverage
+        env:
+          SHARED_RELEASE: shared-context-v2-${{ github.run_id }}-${{ github.run_attempt }}
+        run: python -m ci.factored_world_context --directory factored-world --shared-release "$SHARED_RELEASE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: factored-world-native-context
+          path: |
+            native-shared/SHARED_CONTEXT_STATUS.json
+            native-shared/SHARED_CONTEXT_COVERAGE.csv
+            factored-world/*.json
+            factored-world/*.csv
+          if-no-files-found: ignore

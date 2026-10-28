@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "stock_status_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "etf_release": "etf-native-context-v1-40484930003-1",
+  "etf_status_sha256": "631184c0d3893d78058d59c517ec24f3298fa32b18a5a8b2b7ce01675f394464",
+  "scope": "Publish full approved-stock-day macro/CBOE/25-ETF factor attachment, all stored columns and 22 TF, exact weighted coverage and a lossless shared-value reader. Build new macro context version 2 from published source bytes with float64 precision and exact prefix checks. No vendor/SEC requests or restart of running price-answer build."
+}
