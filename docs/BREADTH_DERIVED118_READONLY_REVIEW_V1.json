@@ -1,0 +1,70 @@
+{
+  "status": "READ_ONLY_118_REVIEW_NOT_ACCEPTANCE",
+  "pr": 118,
+  "head": "93d7393920a125e0a26b2d52cd5b17c61d315d45",
+  "code_sha256": "10492d71a5de4b7c7a1951851c10fafa9b3472235ff3945de1f85e5070590237",
+  "source_sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "actual_rebuilt_native_rows": 6310,
+  "anchor_checks": [
+    {
+      "timeframe": "2d",
+      "rows": 855,
+      "off_frozen_anchor": 855,
+      "first_wrong": [
+        {
+          "start": "2020-01-02",
+          "end": "2020-01-03"
+        }
+      ]
+    },
+    {
+      "timeframe": "5d",
+      "rows": 342,
+      "off_frozen_anchor": 342,
+      "first_wrong": [
+        {
+          "start": "2020-01-02",
+          "end": "2020-01-08"
+        }
+      ]
+    },
+    {
+      "timeframe": "10d",
+      "rows": 171,
+      "off_frozen_anchor": 171,
+      "first_wrong": [
+        {
+          "start": "2020-01-02",
+          "end": "2020-01-15"
+        }
+      ]
+    },
+    {
+      "timeframe": "21d",
+      "rows": 81,
+      "off_frozen_anchor": 81,
+      "first_wrong": [
+        {
+          "start": "2020-01-02",
+          "end": "2020-01-31"
+        }
+      ]
+    }
+  ],
+  "interior_missing_session": {
+    "input_sessions": 5,
+    "expected_bucket_sessions": 5,
+    "actual_bucket_sessions": 4,
+    "emitted_incomplete_rows": 1
+  },
+  "truncated_warmup": {
+    "date": "2020-01-02",
+    "full_history_oscillator": 89.79948607364611,
+    "truncated_history_oscillator": 0.0,
+    "full_history_summation": 4258.023001532787,
+    "truncated_history_summation": 0.0
+  },
+  "decision": "Do not promote 118 as native certification: retain original evidence, use frozen anchor, require every expected session, bind full-history warmup.",
+  "protected_world_action": false
+}
