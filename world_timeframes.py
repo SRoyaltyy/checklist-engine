@@ -43,9 +43,6 @@ def completed_candles(bars, timeframe, session_calendar=None):
                 # month complete. Later months provide its completion proof.
                 if p>=cal[-1].to_period('M'):continue
                 expected[p]=cal[cal.to_period('M')==p]
-                later=cal[cal.to_period('M')>p]
-                if len(later):
-                    avail[p]=later[0]
     else:
         k=int(timeframe[:-1])
         key=(positions//k) if cal is not None else np.arange(len(b))//k

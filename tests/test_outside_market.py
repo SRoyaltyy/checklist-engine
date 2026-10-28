@@ -147,7 +147,7 @@ def test_ibit_style_late_listing_is_not_a_hole():
     assert row["window_gap_reason"] == "LISTED_AFTER_WINDOW_START"
 
 
-def test_cent_prices_round_trip_and_subcent_prices_stay_float():
+def test_cent_prices_round_trip_and_subcent_prices_stay_float(tmp_path):
     days = pd.bdate_range("2024-01-02", periods=4)
     noisy = bars(days, [26.629999, 27.940001, 24.969999, 26.4])
     noisy["family"] = "index"
@@ -155,21 +155,17 @@ def test_cent_prices_round_trip_and_subcent_prices_stay_float():
     noisy["available_from"] = noisy["date"] + pd.offsets.Day(1)
     for column in market.VENDOR:
         noisy[column] = np.nan
-    import os
-    import tempfile
-    with tempfile.TemporaryDirectory() as directory:
-        file = os.path.join(directory, "panel.parquet")
-        meta = market.write_lossless(noisy, file)
-        assert meta["price_storage"] == "int64_cents_delta"
-        back = market.read_lossless(file, meta["price_storage"])
-        assert list(back.close.round(2)) == [26.63, 27.94, 24.97, 26.40]
-        eighth = noisy.copy()
-        eighth["close"] = [10.125, 10.125, 10.125, 10.125]
-        meta2 = market.write_lossless(eighth, os.path.join(directory, "float.parquet"))
-        assert meta2["price_storage"] == "float64_byte_stream_split"
-        back2 = market.read_lossless(os.path.join(directory, "float.parquet"), meta2["price_storage"])
-        assert back2.close.iloc[0] == 10.125
-
+    file = tmp_path / "panel.parquet"
+    meta = market.write_lossless(noisy, file)
+    assert meta["price_storage"] == "float64_byte_stream_split"
+    back = market.read_lossless(file, meta["price_storage"])
+    assert back.close.to_numpy().tobytes() == noisy.close.to_numpy().tobytes()
+    eighth = noisy.copy()
+    eighth["close"] = [10.125, 10.125, 10.125, 10.125]
+    meta2 = market.write_lossless(eighth, tmp_path / "float.parquet")
+    assert meta2["price_storage"] == "float64_byte_stream_split"
+    back2 = market.read_lossless(tmp_path / "float.parquet", meta2["price_storage"])
+    assert back2.close.iloc[0] == 10.125
 
 def test_monthly_candle_waits_for_the_next_session_when_the_first_is_closed():
     sessions = pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-04"])

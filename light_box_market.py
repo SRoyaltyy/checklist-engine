@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from market_storage import exact_int64,exact_arrow_table,assert_exact_frame
 
 RELEASE = "light-daily-box-v1-20261028"
 WINDOW_START = "2020-01-02"
@@ -99,29 +100,32 @@ def write_panel(frame, path):
     stored = frame.sort_values(["ticker", "date"]).reset_index(drop=True)
     for column in ("open", "high", "low", "close", "adj_close"):
         stored[column] = stored[column].astype(np.float64)
-    stored["volume"] = stored["volume"].astype(np.int64)
-    table = pa.Table.from_pandas(stored, preserve_index=False)
+    integers=exact_int64(stored['volume'].to_numpy())
+    stored['volume']=integers if integers is not None else stored['volume'].astype(np.float64)
+    table = exact_arrow_table(stored)
     pq.write_table(
         table, path, compression="zstd", compression_level=19, use_dictionary=["ticker"],
         column_encoding={
             "open": "BYTE_STREAM_SPLIT", "high": "BYTE_STREAM_SPLIT", "low": "BYTE_STREAM_SPLIT",
             "close": "BYTE_STREAM_SPLIT", "adj_close": "BYTE_STREAM_SPLIT",
-            "volume": "DELTA_BINARY_PACKED",
+            "volume": "DELTA_BINARY_PACKED" if integers is not None else "BYTE_STREAM_SPLIT",
         },
         data_page_version="2.0",
     )
-    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_volume_int64_delta_zstd19")
+    assert_exact_frame(frame.sort_values(['ticker','date']).reset_index(drop=True),pq.read_table(path).to_pandas())
+    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_exact_volume_zstd19",roundtrip='ALL_VALUE_BITS_EXACT')
 
 
 def build_candles(panel, boundary_sessions, as_of):
     """Completed candles. A bucket that is still open on as_of is omitted."""
-    from world_timeframes import TIMEFRAMES, completed_candles
+    from world_timeframes import TIMEFRAMES
+    from outside_market import completed_market_candles
     as_of = pd.Timestamp(as_of)
     frames = []
     for ticker, bars in panel.groupby("ticker", sort=True):
         piece = bars.loc[bars["date"] <= as_of, ["date", "open", "high", "low", "close", "volume"]].sort_values("date")
         for timeframe in TIMEFRAMES:
-            candles = completed_candles(piece, timeframe, boundary_sessions)
+            candles = completed_market_candles(piece, timeframe, boundary_sessions)
             candles = candles[candles["date"] <= as_of]
             if candles.empty:
                 continue
@@ -141,18 +145,20 @@ def write_candles(frame, path):
     stored = frame.sort_values(["ticker", "timeframe", "date"]).reset_index(drop=True)
     for column in ("open", "high", "low", "close"):
         stored[column] = stored[column].astype(np.float64)
-    stored["volume"] = stored["volume"].astype(np.int64)
-    table = pa.Table.from_pandas(stored, preserve_index=False)
+    integers=exact_int64(stored['volume'].to_numpy())
+    stored['volume']=integers if integers is not None else stored['volume'].astype(np.float64)
+    table = exact_arrow_table(stored)
     pq.write_table(
         table, path, compression="zstd", compression_level=19, use_dictionary=["ticker", "timeframe"],
         column_encoding={
             "open": "BYTE_STREAM_SPLIT", "high": "BYTE_STREAM_SPLIT", "low": "BYTE_STREAM_SPLIT",
-            "close": "BYTE_STREAM_SPLIT", "volume": "DELTA_BINARY_PACKED",
+            "close": "BYTE_STREAM_SPLIT", "volume": "DELTA_BINARY_PACKED" if integers is not None else "BYTE_STREAM_SPLIT",
         },
         data_page_version="2.0",
     )
+    assert_exact_frame(frame.sort_values(['ticker','timeframe','date']).reset_index(drop=True),pq.read_table(path).to_pandas())
     return dict(rows=len(stored), sha256=sha256_file(path), timeframes=sorted(stored.timeframe.unique()),
-                encoding="float64_byte_stream_split_volume_int64_delta_zstd19")
+                encoding="float64_byte_stream_split_exact_volume_zstd19",roundtrip='ALL_VALUE_BITS_EXACT')
 
 
 def proof_from_release(directory, out_dir, as_of=None, boundary_sessions=None):

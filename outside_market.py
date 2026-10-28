@@ -24,10 +24,10 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from world_timeframes import PRICE_COLS, TIMEFRAMES, completed_candles
+from market_storage import exact_int64,exact_arrow_table,assert_exact_frame
 
 WINDOW_START = pd.Timestamp("2020-01-02")
 COVERAGE_MIN = 0.95
-CENT_ATOL = 1e-4
 RETURN_ATOL = 5e-4
 PRIOR_RELEASE = "etf-native-context-v1-40484930003-1"
 # Free issuer lineup read 2026-10-28. These are the SPDR S&P industry funds
@@ -131,17 +131,17 @@ def _cent_residual(values):
 
 def price_storage_kind(frame):
     residual = max(_cent_residual(frame[column].to_numpy()) for column in OHLC)
-    if residual <= CENT_ATOL:
+    if all(exact_int64(frame[column].to_numpy(),100) is not None for column in OHLC):
         return "int64_cents_delta", residual
     return "float64_byte_stream_split", residual
 
 
 def _volume_storage_kind(volume):
+    original=np.asarray(volume)
+    if exact_int64(original) is not None:return "int64_delta"
     arr = volume.to_numpy(dtype=np.float64, na_value=np.nan) if hasattr(volume, "to_numpy") else np.asarray(volume, dtype=np.float64)
     if np.isnan(arr).any():
         return "float64_byte_stream_split_nulls_kept"
-    if len(arr) and np.max(np.abs(arr - np.rint(arr))) <= CENT_ATOL:
-        return "int64_delta"
     return "float64_byte_stream_split"
 
 
@@ -156,7 +156,7 @@ def write_lossless(frame, path, dictionary_columns=("ticker", "family", "source"
     encodings = {}
     if price_kind == "int64_cents_delta":
         for column in OHLC:
-            stored[column] = np.rint(stored[column].to_numpy(dtype=np.float64) * 100.0).astype(np.int64)
+            stored[column] = exact_int64(stored[column].to_numpy(),100)
             encodings[column] = "DELTA_BINARY_PACKED"
     else:
         for column in OHLC:
@@ -166,21 +166,21 @@ def write_lossless(frame, path, dictionary_columns=("ticker", "family", "source"
     for column in float_columns:
         if column in encodings:
             continue
-        if column in ("volume", "vendor_volume") and volume_kind == "int64_delta" and stored[column].notna().all():
-            stored[column] = np.rint(stored[column].to_numpy(dtype=np.float64)).astype(np.int64)
+        if column in ("volume", "vendor_volume") and exact_int64(stored[column].to_numpy()) is not None:
+            stored[column] = exact_int64(stored[column].to_numpy())
             encodings[column] = "DELTA_BINARY_PACKED"
             continue
         stored[column] = stored[column].astype(np.float64)
         encodings[column] = "BYTE_STREAM_SPLIT"
     if "volume" in stored.columns and "volume" not in encodings:
         if volume_kind == "int64_delta":
-            stored["volume"] = np.rint(stored["volume"].to_numpy(dtype=np.float64)).astype(np.int64)
+            stored["volume"] = exact_int64(stored["volume"].to_numpy())
             encodings["volume"] = "DELTA_BINARY_PACKED"
         else:
             stored["volume"] = stored["volume"].astype(np.float64)
             encodings["volume"] = "BYTE_STREAM_SPLIT"
     dictionaries = [column for column in dictionary_columns if column in stored.columns]
-    table = pa.Table.from_pandas(stored, preserve_index=False)
+    table = exact_arrow_table(stored)
     pq.write_table(
         table,
         path,
@@ -190,7 +190,8 @@ def write_lossless(frame, path, dictionary_columns=("ticker", "family", "source"
         column_encoding=encodings,
         data_page_version="2.0",
     )
-    return dict(price_storage=price_kind, volume_storage=volume_kind, cent_residual=residual, rows=len(out), sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+    assert_exact_frame(out,read_lossless(path,price_kind))
+    return dict(price_storage=price_kind, volume_storage=volume_kind, cent_residual=residual, rows=len(out), sha256=hashlib.sha256(path.read_bytes()).hexdigest(),roundtrip='ALL_VALUE_BITS_EXACT')
 
 
 def read_lossless(path, price_storage):
@@ -402,7 +403,7 @@ def build_candles(daily, boundary_sessions, as_of):
     for ticker, bars in daily.groupby("ticker", sort=True):
         piece = bars.sort_values("date").loc[:, ["date", *PRICE_COLS]]
         for timeframe in TIMEFRAMES:
-            candles = completed_candles(piece, timeframe, boundary_sessions)
+            candles = completed_market_candles(piece, timeframe, boundary_sessions)
             candles = candles[candles["date"] <= as_of]
             if candles.empty:
                 continue
@@ -414,6 +415,20 @@ def build_candles(daily, boundary_sessions, as_of):
     out = pd.concat(frames, ignore_index=True)
     assert_no_lookahead(out, as_of)
     return out
+
+
+def completed_market_candles(bars,timeframe,boundary_sessions):
+    """Use the frozen bucket anchor; local panel availability is a real session.
+
+    Do not alter the globally pinned monthly grid used by existing contexts.
+    """
+    candles=completed_candles(bars,timeframe,boundary_sessions)
+    if timeframe=='monthly' and len(candles):
+        calendar=pd.DatetimeIndex(pd.to_datetime(boundary_sessions)).as_unit('ns')
+        positions=calendar.searchsorted(pd.DatetimeIndex(candles.date),side='right')
+        if (positions>=len(calendar)).any():raise ValueError('no next session for completed market month')
+        candles['available_from']=calendar[positions].to_numpy()
+    return candles
 
 
 def prior_records(document):

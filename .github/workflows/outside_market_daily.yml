@@ -1,35 +1,33 @@
-name: outside-market-daily
-
+name: outside-market-released-measurement
 on:
-  workflow_dispatch:
-
+  push:
+    branches: [cursor/outside-market-daily-c9e9]
+    paths: ['ci/OUTSIDE_MARKET_RELEASED_REQUEST.json']
 permissions:
   contents: write
-
 concurrency:
-  group: outside-market-daily-${{ github.ref }}
+  group: outside-market-released-measurement
   cancel-in-progress: false
-
 jobs:
-  build:
+  measure:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Install the panel dependencies
-        run: python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2"
-      - name: Unit tests
-        run: python -m pytest tests/test_outside_market.py -q
-      - name: Build the daily panel and publish the draft release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python -m ci.outside_market_daily --out outside-market-out --publish
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_market_storage.py tests/test_outside_market.py tests/test_light_box_market.py tests/test_outside_market_released.py tests/test_world_context_native.py tests/test_world_context_store.py -q
+      - run: python -m ci.outside_market_released --directory released-market
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: outside-market-daily-proof
-          path: outside-market-out/OUTSIDE_MARKET_DAILY_PROOF.json
+          name: released-market-measurement-evidence
+          path: released-market/
           if-no-files-found: ignore
