@@ -1,0 +1,19 @@
+name: price-source-claim-evidence
+on:
+  push:
+    branches: [main, codex/price-source-claims]
+    paths: ['docs/PRICE_SOURCE_CLAIM_*.json', 'docs/PRICE_DERIVED_SOURCE_COVERAGE.csv', 'ci/verify_price_source_claims.py', '.github/workflows/price_source_claims.yml']
+  pull_request:
+    paths: ['docs/PRICE_SOURCE_CLAIM_*.json', 'docs/PRICE_DERIVED_SOURCE_COVERAGE.csv', 'ci/verify_price_source_claims.py', '.github/workflows/price_source_claims.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m ci.verify_price_source_claims
