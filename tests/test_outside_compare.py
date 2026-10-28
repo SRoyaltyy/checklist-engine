@@ -84,6 +84,25 @@ def test_committed_five_session_correlation_waits_for_the_next_session():
     assert filled / table.num_rows >= 0.95
 
 
+def test_committed_divergence_flags_stay_blank_until_the_window_is_known():
+    import hashlib
+    from pathlib import Path
+    import pyarrow.compute as pc
+    import pyarrow.parquet as pq
+    path = Path("docs/compare_spy_divergence.parquet")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    assert digest == "a0be3251298d763df11069c42a90b7b880ed72e1705db563c5861ecd98652c22"
+    table = pq.read_table(path)
+    assert table.num_rows == 12362658
+    early = pc.sum(pc.and_(pc.is_valid(table.column("available_from")), pc.less_equal(table.column("available_from"), table.column("date")))).as_py()
+    assert early == 0
+    for column in table.column_names:
+        if not column.startswith("divergence"):
+            continue
+        filled = pc.sum(pc.is_valid(table.column(column))).as_py() / table.num_rows
+        assert filled >= 0.95
+
+
 def test_sector_and_industry_are_named_exclusions():
     reasons = {row["comparator"]: row["reason"] for row in comp.EXCLUDED_COMPARATORS}
     assert reasons["sector_etf"] == "NO_DATED_STOCK_TO_SECTOR_MAP"

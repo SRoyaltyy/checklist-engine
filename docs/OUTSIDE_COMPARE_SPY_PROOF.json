@@ -209,5 +209,24 @@
     "committed_column_sha256": "49a4ad58dd73505bc7246612d900157d89bf4b87a6f88676b911744d0c854878",
     "committed_column_bytes": 86545375,
     "committed_encoding": "ticker dictionary, date and available_from delta, corr_5d byte-stream-split, zstd 19"
+  },
+  "divergence_blank_until_known": {
+    "file": "docs/compare_spy_divergence.parquet",
+    "sha256": "a0be3251298d763df11069c42a90b7b880ed72e1705db563c5861ecd98652c22",
+    "bytes": 9832228,
+    "rows": 12362658,
+    "available_on_or_before_source_session": 0,
+    "rule": "An unknown window is blank. A known window is 1 or 0.",
+    "non_null_pct": {
+      "divergence_flat_vs_fall_1d": 99.9327,
+      "divergence_fall_vs_flat_1d": 99.9327,
+      "divergence_flat_vs_fall_5d": 99.6637,
+      "divergence_fall_vs_flat_5d": 99.6637,
+      "divergence_flat_vs_fall_20d": 98.6548,
+      "divergence_fall_vs_flat_20d": 98.6548,
+      "divergence_flat_vs_fall_60d": 95.9645,
+      "divergence_fall_vs_flat_60d": 95.9645
+    },
+    "replaces": "docs/outside_compare_spy_divergence.parquet stored an unknown window as 0"
   }
 }
