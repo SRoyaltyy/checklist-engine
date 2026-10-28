@@ -30,6 +30,8 @@ jobs:
       - name: Unit tests
         run: python -m pytest tests/test_outside_breadth.py -q
       - name: Build breadth from the accepted stitch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: python -m ci.outside_breadth --out outside-breadth-out --publish
       - uses: actions/upload-artifact@v4
         if: always()
