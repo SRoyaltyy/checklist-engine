@@ -1,0 +1,124 @@
+{
+  "handoff_owner": "Cursor Bot",
+  "contributor_status": "EVIDENCE_ONLY_CHECKBOX_UNCLAIMED",
+  "checklist_id": "1.146",
+  "scope": "SOURCE_LOCATED_ONLY",
+  "release": "etf-native-context-v1-40484930003-1",
+  "source_head": "1434de94b6867ca4a3951d0ef1eb28453089a9c3",
+  "stock_cutoff": "2026-10-23",
+  "status_sha256": "631184c0d3893d78058d59c517ec24f3298fa32b18a5a8b2b7ce01675f394464",
+  "daily_manifest_sha256": "45a9b7e12788c7b85b2853f4ce59e8792815459781a721cd4ff2e252668fcf2d",
+  "symbols": [
+    "TLT",
+    "HYG",
+    "LQD",
+    "UUP",
+    "GLD",
+    "CPER",
+    "USO",
+    "RSP",
+    "VXX",
+    "IBIT",
+    "DIA"
+  ],
+  "assets": [
+    {
+      "ticker": "TLT",
+      "file": "etf_daily_TLT.parquet",
+      "sha256": "ba8124dd6348a9fa16ddaa6a7e8a5a3db6c358a4e9160f3cf1b96e466774eaf9",
+      "rows": 6099,
+      "first": "2002-07-30",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "HYG",
+      "file": "etf_daily_HYG.parquet",
+      "sha256": "aeb755eb989d1b31754537acf94a665c93b64c2850357f6840509dead018a34f",
+      "rows": 4917,
+      "first": "2007-04-11",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "LQD",
+      "file": "etf_daily_LQD.parquet",
+      "sha256": "904362e86c4764a06dfc7b7e8324d16612def26a6a4ad8f007129f45a388dba6",
+      "rows": 6099,
+      "first": "2002-07-30",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "UUP",
+      "file": "etf_daily_UUP.parquet",
+      "sha256": "10f1e53ed1bf8594ceddb2fc32a2a9272abcb089b31c7cd30652252895ec1680",
+      "rows": 4945,
+      "first": "2007-03-01",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "GLD",
+      "file": "etf_daily_GLD.parquet",
+      "sha256": "360f4aa6ccdd4a21bf01aeb54ba979f72d8ee5226aed1ec8c4d1bfa80126b984",
+      "rows": 5517,
+      "first": "2004-11-18",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "CPER",
+      "file": "etf_daily_CPER.parquet",
+      "sha256": "1160ea9d3c0b0ea1451ffa0043c9082e7a572655fc0bf6d9c57949989e9e65f2",
+      "rows": 3756,
+      "first": "2011-11-15",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "USO",
+      "file": "etf_daily_USO.parquet",
+      "sha256": "e12ddbb181088e003dfd20eb146ea9e6a7e5845070349b72229d8dc619a0a537",
+      "rows": 5168,
+      "first": "2006-04-10",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "RSP",
+      "file": "etf_daily_RSP.parquet",
+      "sha256": "0114bb74cc8e8bdfe172a208b2a09b062effd1f99d3d0a9327d2220a1840ef47",
+      "rows": 5909,
+      "first": "2003-05-01",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "VXX",
+      "file": "etf_daily_VXX.parquet",
+      "sha256": "18670a1ca4ff22201dee4f3965458a1c11918f5d3f17f6f0b53aa67e0da428a0",
+      "rows": 2199,
+      "first": "2018-01-25",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "IBIT",
+      "file": "etf_daily_IBIT.parquet",
+      "sha256": "0d2240f378371fc25e64fbb7dff736c672a3bead5287bce820fc529e9c8518e2",
+      "rows": 699,
+      "first": "2024-01-11",
+      "last": "2026-10-23"
+    },
+    {
+      "ticker": "DIA",
+      "file": "etf_daily_DIA.parquet",
+      "sha256": "97ee4a5d56972aa8d28805db1ec288c96eaad7e5c3cc0748dd937ec1ed5ca503",
+      "rows": 7236,
+      "first": "1998-01-20",
+      "last": "2026-10-23"
+    }
+  ],
+  "provider": "Same Yahoo chart daily-source/frozen reconciliation path as the approved phase-1 stock bars",
+  "org_source_review": "docs/EXISTING_SOURCE_AUDIT_v2.md",
+  "stock_source_reference": "docs/PHASE1_PRICE_SOURCE_INVENTORY.json",
+  "full_byte_proof": "docs/ETF_BASELINE_SOURCE_FETCHED_V1.json",
+  "DIA_reused_not_redownloaded": true,
+  "limitations": [
+    "source/fetch only; row attachment, relative features and measured world coverage remain separate",
+    "IBIT source begins at its actual 2024 listing; pre-listing prices are not fabricated",
+    "frozen reference price units are not proof of nominal historical market-cap eligibility"
+  ]
+}
