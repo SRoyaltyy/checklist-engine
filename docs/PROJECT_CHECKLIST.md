@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 15.**
+**Verified by both: 13/303. Claimed awaiting James: 16.**
 
 ## Rules
 
@@ -111,7 +111,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Candle patterns and cp_* tags
 
-- [ ] **1.31** Candle patterns and cp_* tags: source located. Items: dictionary I118–I161, all 61 TA-Lib candle patterns, and the pinned cp_* tags (cp_mid_slope_up, cp_gr_body20, cp_pctB, cp_dip_atr, cp_days_since_h20, cp_dd_vs_run, cp_redgreen_vol10, cp_hard_all, lower_highs10). Done when: Source is the phase-1 bar file. The six-stock smoke that found 61 patterns does not by itself pass this block. Evidence:
+- [x] **1.31** Candle patterns and cp_* tags: source located. Items: dictionary I118–I161, all 61 TA-Lib candle patterns, and the pinned cp_* tags (cp_mid_slope_up, cp_gr_body20, cp_pctB, cp_dip_atr, cp_days_since_h20, cp_dd_vs_run, cp_redgreen_vol10, cp_hard_all, lower_highs10). Done when: Source is the phase-1 bar file. The six-stock smoke that found 61 patterns does not by itself pass this block. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_31.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.32** Candle patterns and cp_* tags: fetched onto a checklist-engine release. Done when: All 61 patterns are columns. Dictionary patterns that were only partly specified are built. cp_* matches the §0b pin in commit 11a0117, including the warmup of at least 60 bars (blank fails the hard gate). Column count > 0. Evidence:
 - [ ] **1.33** Candle patterns and cp_* tags: joined point-in-time. Done when: Patterns and cp_* read bars ending at D−1. Green is close above open, red is close below open, doji is neither. Evidence:
 - [ ] **1.34** Candle patterns and cp_* tags: built at candle sizes 1 through 21. Done when: Patterns are evaluated on each candle size 1..21. A pattern column that exists only on the daily frame fails. Evidence:
