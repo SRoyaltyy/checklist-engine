@@ -235,8 +235,8 @@ def merge(args):
     for tag,directory,report in collect_base_reports(root,inputs,args.inputs_tag,args.build_prefix,routes):
         records.extend(report["records"]);parts.extend(report["parts"])
         for part in report["parts"]:
-            pdir=directory/part["part"]
             source=part["release"]
+            pdir=directory/source/part["part"]
             if source not in inventories:inventories[source]=asset_index(source)
             verify_base_asset_digests(part,inventories[source])
             coverage=download(source,part["part"]+".coverage.csv",pdir)
