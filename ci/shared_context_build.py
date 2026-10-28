@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tarfile
 
@@ -15,6 +16,18 @@ from ci.release_assets import publish_assets,download_asset as download,gh_retry
 from world_context_native import KEYS, combine_contexts, fred_native, index_native
 from world_fred import compile_timelines
 from world_timeframes import TIMEFRAMES
+
+
+def publish_shared(tag,files,coverage,status):
+    from ci.release_assets import describe_failure
+    try:
+        gh("release", "create", tag, "--draft", "--target", os.environ["GITHUB_SHA"], "--title", tag,
+           "--notes", "Shared ALFRED/CBOE native contexts; not stock-day or full-world coverage.")
+        publish_assets(tag,*files,coverage,status)
+        gh('release','edit',tag,'--draft=false')
+    except subprocess.CalledProcessError as exc:
+        print('SHARED_CONTEXT_PUBLICATION_FAILED',describe_failure(exc),flush=True)
+        raise
 
 INPUTS = "native-price-inputs-v1-40336250454-1"
 SOURCES = {
@@ -142,10 +155,7 @@ def main():
     report["coverage_sha256"] = sha(coverage_file)
     status = root / "SHARED_CONTEXT_STATUS.json";write_json(status, report)
     tag = f"shared-context-v2-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
-    gh("release", "create", tag, "--draft", "--target", os.environ["GITHUB_SHA"], "--title", tag,
-       "--notes", "Shared ALFRED/CBOE native contexts; not stock-day or full-world coverage.")
-    publish_assets(tag, *files, coverage_file, status)
-    gh('release','edit',tag,'--draft=false')
+    publish_shared(tag,files,coverage_file,status)
     print("SHARED_CONTEXT_COMPLETE", tag, len(coverage), flush=True)
 
 
