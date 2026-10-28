@@ -9,7 +9,9 @@ import pandas as pd
 import breadth_derived
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE = "outside-breadth-v1-40689026569-1"
+# The rebuild tag is a draft, so an anonymous download returns 404.
+# outside-breadth-stitch-v1 is public and serves the same daily bytes.
+RELEASE = "outside-breadth-stitch-v1"
 DAILY_SHA = "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0"
 COMMITTED = ROOT / "docs" / "breadth_derived_daily.parquet"
 

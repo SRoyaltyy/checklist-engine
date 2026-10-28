@@ -2,6 +2,7 @@
   "block": "breadth_derived",
   "source_daily_sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
   "source_release": "outside-breadth-v1-40689026569-1",
+  "public_release": "outside-breadth-stitch-v1",
   "sessions": 1712,
   "stock_days": 12364370,
   "fast_span": 19,

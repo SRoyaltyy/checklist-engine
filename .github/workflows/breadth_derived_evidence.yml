@@ -1,4 +1,5 @@
 name: breadth-derived-evidence
+# Recompute from the public breadth release, not the draft rebuild tag.
 on:
   push:
     branches: [cursor/breadth-derived-c9e9]
