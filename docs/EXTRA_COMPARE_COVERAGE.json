@@ -5,6 +5,7 @@
   "stitch_release": "accepted-price-stitch-v2-40494479693-1",
   "index_source": "light-daily-box-v1-20261028 close",
   "availability": "next SPY session, which is the next NYSE session",
+  "first_date_means": "source session. WORLD_COVERAGE first_date_available is the next SPY session.",
   "windows": [
     1,
     5,

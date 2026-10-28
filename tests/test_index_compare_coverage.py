@@ -4,6 +4,8 @@ import csv
 import json
 from pathlib import Path
 
+from compare_availability import visible_on
+
 ROOT = Path(__file__).resolve().parents[1]
 PROOF = ROOT / "docs" / "INDEX_COMPARE_COVERAGE.json"
 COVERAGE = ROOT / "docs" / "WORLD_COVERAGE.csv"
@@ -15,7 +17,7 @@ def rows_from_proof(proof):
         for column, record in item["columns"].items():
             timeframe = "1d" if column == "rel_strength_ratio" else column.rsplit("_", 1)[-1]
             percent = "" if record["non_null_percent"] is None else "%.4f" % record["non_null_percent"]
-            expected.append((name.lower() + "_compare", name, column, timeframe, record["status"], percent, record["first_date"] or ""))
+            expected.append((name.lower() + "_compare", name, column, timeframe, record["status"], percent, visible_on(record["first_date"] or "")))
         expected.append((name.lower() + "_compare", name, "corr_1d", "1d", "EXCLUDED", "", ""))
     return expected
 
