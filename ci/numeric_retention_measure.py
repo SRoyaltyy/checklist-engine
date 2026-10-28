@@ -14,6 +14,16 @@ REPO=Path(__file__).resolve().parents[1]
 REQUEST=Path('ci/NUMERIC_RETENTION_REQUEST.json')
 
 
+def weighted_projection(reports, universe_native_rows):
+    """Mean container bytes per native row, times the universe row count when it is supplied."""
+    rates=[row['retained_value_container_bytes']/row['source_rows'] for row in reports if row.get('source_rows')]
+    if not rates:
+        return None, None
+    mean=sum(rates)/len(rates)
+    weighted=None if not universe_native_rows else mean*universe_native_rows
+    return mean, weighted
+
+
 def sha(raw):return hashlib.sha256(raw).hexdigest()
 
 
@@ -105,9 +115,15 @@ def run(root,request):
         report=json.loads((own/'NUMERIC_RETENTION_STOCK.json').read_text());reports.append(report)
         assets.extend([own/(ticker.encode().hex()+'.all_native_values.tar.zst'),own/(ticker.encode().hex()+'.column_registry.json')])
     estimate=max((r['retained_value_container_bytes']+r['registry_bytes'] for r in reports),default=0)*8727*1.25
+    universe_native_rows=request.get('universe_native_rows')
+    mean_bytes_per_native_row,weighted=weighted_projection(reports, universe_native_rows)
     summary=dict(status='FULL_NUMERIC_RETENTION_MEASURED_SAMPLE_ONLY' if len(reports)==len(request['sample_tickers']) else 'INCOMPLETE_SAMPLE',
         source_commit=os.environ['GITHUB_SHA'],request=request,samples=reports,errors=errors,
         projected_full_universe_numeric_bytes=estimate,hard_world_cap_bytes=100000000000,
+        projection_note='projected_full_universe_numeric_bytes is max(sample container+registry)*8727*1.25. mean_bytes_per_native_row times universe_native_rows is the row-weighted figure.',
+        mean_bytes_per_native_row=mean_bytes_per_native_row,
+        universe_native_rows=universe_native_rows,
+        weighted_projection_bytes=weighted,
         numeric_scope_under_cap=bool(reports) and estimate<=100000000000,
         full_world_estimate_bytes=None,world_gate='NOT_PROVEN; add answers, raw/shared/nonprice dependencies and complete v3 coverage',
         approved_universe_run_preserved=40621517496,scoring_gate='CLOSED')
