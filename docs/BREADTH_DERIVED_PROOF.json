@@ -1,0 +1,46 @@
+{
+  "block": "breadth_derived",
+  "source_daily_sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+  "source_release": "outside-breadth-v1-40689026569-1",
+  "public_release": "outside-breadth-stitch-v1",
+  "sessions": 1712,
+  "stock_days": 12364370,
+  "fast_span": 19,
+  "slow_span": 39,
+  "ema": "recursive, adjust=False, seeded with the first net advance, alpha=2/(span+1)",
+  "excluded": {
+    "bullish_percent": "POINT_AND_FIGURE_BOX_AND_REVERSAL_NOT_REGISTERED"
+  },
+  "early_available_from": 0,
+  "weekend_available_from": 0,
+  "columns": [
+    {
+      "column": "ad_volume_line",
+      "non_null_percent": 99.9562,
+      "first_date_available": "2020-01-03",
+      "status": "MEASURED",
+      "non_null_stock_days": 12358950
+    },
+    {
+      "column": "trin",
+      "non_null_percent": 99.9562,
+      "first_date_available": "2020-01-03",
+      "status": "MEASURED",
+      "non_null_stock_days": 12358950
+    },
+    {
+      "column": "mcclellan_oscillator",
+      "non_null_percent": 99.9562,
+      "first_date_available": "2020-01-03",
+      "status": "MEASURED",
+      "non_null_stock_days": 12358950
+    },
+    {
+      "column": "mcclellan_summation",
+      "non_null_percent": 99.9562,
+      "first_date_available": "2020-01-03",
+      "status": "MEASURED",
+      "non_null_stock_days": 12358950
+    }
+  ]
+}
