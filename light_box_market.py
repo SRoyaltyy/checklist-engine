@@ -113,11 +113,61 @@ def write_panel(frame, path):
     return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_volume_int64_delta_zstd19")
 
 
-def proof_from_release(directory, out_dir, as_of=None):
+def build_candles(panel, boundary_sessions, as_of):
+    """Completed candles. A bucket that is still open on as_of is omitted."""
+    from world_timeframes import TIMEFRAMES, completed_candles
+    as_of = pd.Timestamp(as_of)
+    frames = []
+    for ticker, bars in panel.groupby("ticker", sort=True):
+        piece = bars.loc[bars["date"] <= as_of, ["date", "open", "high", "low", "close", "volume"]].sort_values("date")
+        for timeframe in TIMEFRAMES:
+            candles = completed_candles(piece, timeframe, boundary_sessions)
+            candles = candles[candles["date"] <= as_of]
+            if candles.empty:
+                continue
+            candles.insert(0, "ticker", ticker)
+            candles.insert(1, "timeframe", timeframe)
+            frames.append(candles)
+    if not frames:
+        return pd.DataFrame(columns=["ticker", "timeframe", "candle_start", "date", "available_from", "open", "high", "low", "close", "volume"])
+    out = pd.concat(frames, ignore_index=True)
+    if (out["date"] > as_of).any():
+        raise ValueError("candle after as_of")
+    return out
+
+
+def write_candles(frame, path):
+    path = Path(path)
+    stored = frame.sort_values(["ticker", "timeframe", "date"]).reset_index(drop=True)
+    for column in ("open", "high", "low", "close"):
+        stored[column] = stored[column].astype(np.float64)
+    stored["volume"] = stored["volume"].astype(np.int64)
+    table = pa.Table.from_pandas(stored, preserve_index=False)
+    pq.write_table(
+        table, path, compression="zstd", compression_level=19, use_dictionary=["ticker", "timeframe"],
+        column_encoding={
+            "open": "BYTE_STREAM_SPLIT", "high": "BYTE_STREAM_SPLIT", "low": "BYTE_STREAM_SPLIT",
+            "close": "BYTE_STREAM_SPLIT", "volume": "DELTA_BINARY_PACKED",
+        },
+        data_page_version="2.0",
+    )
+    return dict(rows=len(stored), sha256=sha256_file(path), timeframes=sorted(stored.timeframe.unique()),
+                encoding="float64_byte_stream_split_volume_int64_delta_zstd19")
+
+
+def proof_from_release(directory, out_dir, as_of=None, boundary_sessions=None):
     panel, document, rows = build_panel(directory, as_of=as_of)
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     storage = write_panel(panel, out_dir / "outside_market_daily.parquet")
+    as_of_stamp = pd.Timestamp(panel["date"].max())
+    if boundary_sessions is None:
+        import exchange_calendars as xcals
+        calendar = xcals.get_calendar("XNYS", start="1990-01-01")
+        end = str((as_of_stamp + pd.offsets.Day(40)).date())
+        boundary_sessions = pd.DatetimeIndex(calendar.sessions_in_range("2019-12-02", end)).tz_localize(None)
+    candles = build_candles(panel, boundary_sessions, as_of_stamp)
+    candle_storage = write_candles(candles, out_dir / "outside_market_candles.parquet")
     failed = [row["symbol"] for row in rows if row.get("status") != "PASS" or float(row.get("coverage", 0)) < 0.95]
     proof = dict(
         block="outside_market_daily",
@@ -134,7 +184,8 @@ def proof_from_release(directory, out_dir, as_of=None):
             for row in rows
         ],
         storage=storage,
-        lookahead="session date is that close; available_from is the next SPY session; rows after as_of are dropped",
+        candles=candle_storage,
+        lookahead="session date is that close; available_from is the next session; an unfinished candle is omitted",
         price_basis="published open/high/low/close plus adj_close and volume; nothing recomputed",
     )
     if failed:

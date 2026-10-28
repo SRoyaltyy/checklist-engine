@@ -40,6 +40,22 @@ def test_available_from_is_the_next_session_and_sha_is_checked(tmp_path):
         box.build_panel(tmp_path)
 
 
+def test_a_later_bar_does_not_change_an_earlier_candle(tmp_path):
+    dates = list(pd.bdate_range("2024-01-02", periods=8))
+    rows = [write_symbol(tmp_path, symbol, dates, list(range(10, 18))) for symbol in ("SPY", "XBI")]
+    (tmp_path / "manifest.json").write_text(json.dumps({"window_start": "2020-01-02", "source": "test", "symbols": rows}))
+    early, _, _ = box.build_panel(tmp_path, as_of=dates[4])
+    full, _, _ = box.build_panel(tmp_path, as_of=dates[-1])
+    boundary = pd.bdate_range("2024-01-02", periods=12)
+    early_candles = box.build_candles(early, boundary, dates[4])
+    full_candles = box.build_candles(full, boundary, dates[-1])
+    visible = full_candles[full_candles.available_from.notna() & (full_candles.available_from <= dates[5])]
+    left = early_candles[early_candles.available_from.notna() & (early_candles.available_from <= dates[5])]
+    merged = left.merge(visible, on=["ticker", "timeframe", "date"], suffixes=("_early", "_full"))
+    assert len(merged) == len(left) == len(visible) > 0
+    assert (merged.close_early == merged.close_full).all()
+
+
 def test_index_files_are_not_in_the_etf_panel(tmp_path):
     dates = ["2024-01-02", "2024-01-03"]
     rows = [write_symbol(tmp_path, "SPY", dates, [10, 11]), write_symbol(tmp_path, "^VIX", dates, [15, 16])]

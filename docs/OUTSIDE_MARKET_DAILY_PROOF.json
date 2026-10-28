@@ -401,6 +401,35 @@
     "sha256": "2acf73e80680df4e70d9225cc8a30d856d1c2139cbb2159ca628b9a430addf68",
     "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19"
   },
-  "lookahead": "session date is that close; available_from is the next SPY session; rows after as_of are dropped",
+  "candles": {
+    "rows": 267505,
+    "sha256": "6f09e64d1f47d083a0c524a48ee2bd78f66810d2fed252bf3227db4f640e5e38",
+    "timeframes": [
+      "10d",
+      "11d",
+      "12d",
+      "13d",
+      "14d",
+      "15d",
+      "16d",
+      "17d",
+      "18d",
+      "19d",
+      "1d",
+      "20d",
+      "21d",
+      "2d",
+      "3d",
+      "4d",
+      "5d",
+      "6d",
+      "7d",
+      "8d",
+      "9d",
+      "monthly"
+    ],
+    "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19"
+  },
+  "lookahead": "session date is that close; available_from is the next session; an unfinished candle is omitted",
   "price_basis": "published open/high/low/close plus adj_close and volume; nothing recomputed"
 }
