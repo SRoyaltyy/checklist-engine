@@ -228,5 +228,20 @@
       "divergence_fall_vs_flat_60d": 95.9645
     },
     "replaces": "docs/outside_compare_spy_divergence.parquet stored an unknown window as 0"
+  },
+  "relative_strength": {
+    "source": "local rebuild of the same formula as release outside-compare-spy-v1-20261028",
+    "rows": 12362658,
+    "column_file": "not committed; compressed columns are 401,787,973 bytes",
+    "non_null_pct": {
+      "rel_strength_ratio": 100.0,
+      "return_spread_1d": 99.9327,
+      "return_spread_5d": 99.6637,
+      "return_spread_20d": 98.6548,
+      "return_spread_60d": 95.9645,
+      "corr_20d": 98.6102,
+      "corr_60d": 95.9428
+    },
+    "below_95": []
   }
 }
