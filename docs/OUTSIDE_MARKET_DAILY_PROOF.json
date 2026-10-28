@@ -457,5 +457,14 @@
       "volume"
     ],
     "one_day_rows": 72689
+  },
+  "five_day_aggregation": {
+    "rows": 14504,
+    "open": "first session",
+    "high": "max",
+    "low": "min",
+    "close": "last session",
+    "volume": "sum",
+    "mismatches": 0
   }
 }
