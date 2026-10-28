@@ -138,6 +138,8 @@ def build(out, now=None, publish=False):
     if publish:
         run_id = os.environ.get("GITHUB_RUN_ID", "local")
         tag = "outside-breadth-v1-" + run_id + "-1"
+        proof["release"] = tag
+        proof_path.write_text(json.dumps(proof, indent=2, default=str) + "\n")
         gh_retry(
             "release", "create", tag, "--draft", "--title", tag,
             "--notes", "Breadth from stitch-v2 through " + proof["as_of"] + ". See OUTSIDE_BREADTH_PROOF.json.",
@@ -146,8 +148,6 @@ def build(out, now=None, publish=False):
             str(out / "outside_breadth_candles.parquet"),
             str(proof_path),
         )
-        proof["release"] = tag
-        proof_path.write_text(json.dumps(proof, indent=2, default=str) + "\n")
     return proof
 
 
