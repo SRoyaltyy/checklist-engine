@@ -30,6 +30,8 @@ jobs:
       - name: Unit tests
         run: python -m pytest tests/test_outside_market.py -q
       - name: Build the daily panel and publish the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: python -m ci.outside_market_daily --out outside-market-out --publish
       - uses: actions/upload-artifact@v4
         if: always()
