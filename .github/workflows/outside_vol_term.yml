@@ -1,0 +1,41 @@
+name: outside-vol-term
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - outside_vol.py
+      - ci/outside_vol_term.py
+      - tests/test_outside_vol.py
+      - .github/workflows/outside_vol_term.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: outside-vol-term-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the panel dependencies
+        run: python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2"
+      - name: Unit tests
+        run: python -m pytest tests/test_outside_vol.py -q
+      - name: Build the term-structure panel
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m ci.outside_vol_term --out outside-vol-out --publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: outside-vol-term-proof
+          path: outside-vol-out/OUTSIDE_VOL_TERM_PROOF.json
+          if-no-files-found: ignore
