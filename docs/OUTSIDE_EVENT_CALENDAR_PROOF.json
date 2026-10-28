@@ -275,5 +275,10 @@
     "one_day_candles_match_daily_flags": true,
     "one_day_rows": 1714,
     "one_day_available_from": "the next NYSE session after the flag date"
+  },
+  "five_day_flags": {
+    "rows": 342,
+    "rule": "each flag and day count equals the end session, not a count across the candle",
+    "mismatches": 0
   }
 }
