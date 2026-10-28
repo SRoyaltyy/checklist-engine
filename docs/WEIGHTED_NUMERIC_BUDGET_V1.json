@@ -39,9 +39,15 @@
   "answer_store": {
     "release": "compact-world-build-v1-40621517496-1-039",
     "format": "REGISTERED_ANSWER_BITPLANES_V1",
-    "compression_level": 9,
-    "sample_bytes": {"FEUS": 1883306, "FNF": 3125351, "FRSX": 2691463, "GRI": 1848288},
-    "note": "Yes/no answers in a finished world-build part are already bit-packed. These four names are 1.8 to 3.1 MB. That store is not the 560 GB numeric-intermediate projection."
+    "names": ["FEUS", "FNF", "FRSX", "GRI", "GVUS"],
+    "excluded_in_part": 0,
+    "roundtrip": "ALL_CELLS_EXACT_WITH_MISSING_DISTINCT",
+    "bytes_per_stock_year": {"FEUS": 381514, "FNF": 490094, "FRSX": 408025, "GRI": 334481, "GVUS": 361092},
+    "mean_bytes_per_stock_year": 395041,
+    "accepted_query_rows": 12364370,
+    "accepted_stock_years": 49064.96,
+    "projected_answer_gb_if_the_rate_held": 19.38,
+    "note": "Five names in one finished part. The projection is not a full-universe proof. It is separate from the 560 GB numeric-intermediate figure."
   },
   "world_build_observed": {
     "run": 40621517496,
