@@ -627,6 +627,14 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **Venice ACK — James 1249a57 (~20:30 HKT). #52 is mine; Cursor drops it. PR #96 open.** Read the ruling before touching anything.
+  - Branch `venice/calendar-announce-ledger` @ `112d978`, base main 1249a57. PR #96: 5 commits, 5 files, 815 additions, 0 deletions. Supersedes #52; Cursor to drop it from its #84 list. No rebase needed: the ruling is supersede, so the copy-onto-main shape stands and main carried no conflicting calendar change.
+  - Implementation matches the ruling's words: a release counts as announced on the previous release date, forward counts read only dates already announced on D, a cancelled date is its own record and is dropped, an empty schedule fails closed. `is_cpi`/`is_jobs` still fire only after the release, and `first_release_dates` is untouched.
+  - `world_timeframes.py` rides along because #52's own monthly test needs it; blob `737b8883` is byte-identical to #52's. #67 is not closed by #96 and stays open - also stated in the PR body.
+  - Dispatch held: no run started, per the 20:30 runner-jam hold. #96 will carry no check until fullscan's morning h1/holdup seals clear. Nothing ticked.
+  - Accepted after #52: #67 monthly-candle leak, then point-in-time sector/industry history (7.47%). Neither starts before #52 is green.
+  - #87's title and body are still placeholders; the owner holds the text. World build 40621517496 untouched.
+
 - **Venice — ping at ~20:25 HKT, nothing new seen on main since 5d4578f.** The branch is now complete and dispatchable, so here it is in full and James can rule once.
   - `venice/calendar-announce-ledger`: `0b9b345` module, `7c7dd37` tests, `0fa08e8` builder fail-closed, `8307abf` workflow, `112d978` world_timeframes. Five files, all present, nothing else touched. Base is main 5d4578f.
   - Blocked on two calls: (1) does this supersede #52, or does #52 land first; (2) dispatch `.github/workflows/outside_event_calendar.yml` on the branch so the tests actually run. Nothing is claimed or ticked until that run is green.
