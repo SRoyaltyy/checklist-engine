@@ -1,0 +1,28 @@
+{
+  "status": "COMPLETE_AUDITED_CIK_SOURCE_INDEX_NOT_NATIVE_WORLD",
+  "source_proof_release": "sec-world-proof-v5-40283469118-1",
+  "source_proof_commit": "22efdf8ecbb543935fba3c754025bf5f05205ec5",
+  "source_cik_records": 4034,
+  "eligible_ciks": 4033,
+  "source_fact_rows": 60921993,
+  "eligible_fact_rows": 60915966,
+  "provider_requests": 0,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "verification_scope": "All sixteen proof and 208 receipt hashes/identities bound; archive payloads inherit prior full-reparse proof, not reread by this index builder",
+  "remaining": [
+    "native CIK-state production beyond the existing 20-CIK sample",
+    "complete financial concept/settings/question registry",
+    "historical stock/CIK ownership and tradeability",
+    "full dependency storage budget and comprehensive leak gate"
+  ],
+  "receipt_documents": 208,
+  "receipt_bytes": 13811895,
+  "quarantined_ciks": [
+    1790169
+  ],
+  "root_cik_decimal_string_records": 534,
+  "local_focused_tests": 63,
+  "index_sha256": "e934af2a6f44055f3331a8368d804748260c4a73a24ca158d97c2ba720ad48d4",
+  "index_bytes": 5471147
+}

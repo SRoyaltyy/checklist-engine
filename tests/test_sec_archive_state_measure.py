@@ -13,8 +13,8 @@ from world_sec_facts import compile_fact_timeline
 from world_timeframes import TIMEFRAMES
 
 
-def fixture_archive():
-    payload=dict(cik=1750,facts={'us-gaap':{'Assets':{'units':{'USD':[
+def fixture_archive(root_cik=1750):
+    payload=dict(cik=root_cik,facts={'us-gaap':{'Assets':{'units':{'USD':[
         dict(val=0.,end='2019-12-31',filed='2020-01-10',accn='0000001750-20-000001',form='10-K'),
         dict(val=1.0000000001,end='2019-12-31',filed='2020-02-10',accn='0000001750-20-000002',form='10-K/A')]}}}})
     facts=numeric_facts(1750,payload)
@@ -35,6 +35,13 @@ def test_existing_raw_and_numeric_members_are_reverified_without_provider_access
     assert len(result)==1 and result[0][0]==1750
     pd.testing.assert_frame_equal(result[0][1],expected,check_exact=True)
     with pytest.raises(ValueError,match='quarantined'):verified_facts(archive,manifest,{1750})
+
+
+def test_zero_padded_raw_root_cik_matches_the_same_numeric_company():
+    archive,manifest,expected=fixture_archive('0000001750')
+    result=verified_facts(archive,manifest,set())
+    assert result[0][0]==1750
+    pd.testing.assert_frame_equal(result[0][1],expected,check_exact=True)
 
 
 @pytest.mark.parametrize('corruption',['archive','member','duplicate','size','missing'])

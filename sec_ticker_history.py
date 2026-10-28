@@ -5,6 +5,14 @@ parallel undated lists, plus formerNames with from/to dates. Those former
 names are legal names, not tickers. Filing rows have no ticker column.
 A current ticker is not written onto 2020.
 """
+import re
+
+
+def canonical_cik(value):
+    """SEC publishes equivalent integer and zero-padded decimal-string CIKs."""
+    if isinstance(value,bool) or not re.fullmatch(r'[0-9]{1,10}',str(value)) or not 0<int(value)<=9999999999:
+        raise ValueError('canonical numeric CIK required')
+    return int(value)
 
 
 def dated_ticker_rows(submission, filing_pages=()):

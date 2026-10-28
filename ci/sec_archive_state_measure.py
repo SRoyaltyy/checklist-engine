@@ -18,6 +18,7 @@ from ci.release_assets import download_asset,gh_retry,publish_assets
 from world_context_native import KEYS,native_intervals
 from world_sec_facts import FactSelection,compile_fact_timeline,fact_values_at
 from world_timeframes import TIMEFRAMES
+from sec_ticker_history import canonical_cik
 
 
 def digest(raw):return hashlib.sha256(raw).hexdigest()
@@ -60,7 +61,7 @@ def verified_facts(archive,manifest,quarantined):
         original=f'CIK{cik:010d}.companyfacts.json.gz'
         if original not in bodies:raise ValueError('original companyfacts missing')
         payload=json.loads(gzip.decompress(bodies[original]))
-        if payload.get('cik')!=cik:raise ValueError('raw root CIK differs')
+        if canonical_cik(payload.get('cik'))!=cik:raise ValueError('raw root CIK differs')
         frame=pd.read_parquet(io.BytesIO(raw))
         if frame.empty or not frame.cik.eq(cik).all():raise ValueError('numeric CIK differs or empty')
         # Reparse independently with the already audited source parser.
