@@ -1,0 +1,410 @@
+{
+  "block": "outside_compare_index",
+  "as_of": "2026-10-27",
+  "stitch_release": "accepted-price-stitch-v2-40494479693-1",
+  "index_source": "light-daily-box-v1-20261028 close",
+  "availability": "next SPY session, which is the next NYSE session",
+  "windows": [
+    1,
+    5,
+    20,
+    60
+  ],
+  "correlation_windows": [
+    5,
+    20,
+    60
+  ],
+  "correlation_1d": "NOT_A_COLUMN",
+  "afcg_versus_spy": "MATCH",
+  "afcg_versus_spy_rows": 1407,
+  "afcg_corr_5d_max_abs_spy_minus_qqq": 1.0625016431158518,
+  "fill_rates_match_because": "QQQ, IWM, and DIA each have a close on every SPY session in this window, so the blank cells are the warmup shared with SPY. The values themselves differ.",
+  "full_frames": "NOT_STORED",
+  "comparators": {
+    "QQQ": {
+      "rows": 12362658,
+      "names": 8315,
+      "self_excluded": [
+        "QQQ"
+      ],
+      "missing_bars": 0,
+      "errors": 0,
+      "early_available_from": 0,
+      "weekend_available_from": 0,
+      "missing_available_from": 0,
+      "columns": {
+        "rel_strength_ratio": {
+          "non_null": 12362658,
+          "non_null_percent": 100.0,
+          "first_date": "2020-01-02",
+          "status": "MEASURED"
+        },
+        "return_spread_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "return_spread_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "return_spread_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "return_spread_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_5d": {
+          "non_null": 12295951,
+          "non_null_percent": 99.4604,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "corr_20d": {
+          "non_null": 12190843,
+          "non_null_percent": 98.6102,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "corr_60d": {
+          "non_null": 11861077,
+          "non_null_percent": 95.9428,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_break_5d": {
+          "non_null": 11663041,
+          "non_null_percent": 94.3409,
+          "first_date": "2020-04-06",
+          "status": "EXCLUDED"
+        },
+        "corr_break_20d": {
+          "non_null": 11682570,
+          "non_null_percent": 94.4989,
+          "first_date": "2020-04-28",
+          "status": "EXCLUDED"
+        },
+        "corr_break_60d": {
+          "non_null": 11360941,
+          "non_null_percent": 91.8972,
+          "first_date": "2020-06-24",
+          "status": "EXCLUDED"
+        }
+      }
+    },
+    "IWM": {
+      "rows": 12362658,
+      "names": 8315,
+      "self_excluded": [
+        "IWM"
+      ],
+      "missing_bars": 0,
+      "errors": 0,
+      "early_available_from": 0,
+      "weekend_available_from": 0,
+      "missing_available_from": 0,
+      "columns": {
+        "rel_strength_ratio": {
+          "non_null": 12362658,
+          "non_null_percent": 100.0,
+          "first_date": "2020-01-02",
+          "status": "MEASURED"
+        },
+        "return_spread_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "return_spread_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "return_spread_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "return_spread_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_5d": {
+          "non_null": 12295951,
+          "non_null_percent": 99.4604,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "corr_20d": {
+          "non_null": 12190843,
+          "non_null_percent": 98.6102,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "corr_60d": {
+          "non_null": 11861077,
+          "non_null_percent": 95.9428,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_break_5d": {
+          "non_null": 11663041,
+          "non_null_percent": 94.3409,
+          "first_date": "2020-04-06",
+          "status": "EXCLUDED"
+        },
+        "corr_break_20d": {
+          "non_null": 11682570,
+          "non_null_percent": 94.4989,
+          "first_date": "2020-04-28",
+          "status": "EXCLUDED"
+        },
+        "corr_break_60d": {
+          "non_null": 11360941,
+          "non_null_percent": 91.8972,
+          "first_date": "2020-06-24",
+          "status": "EXCLUDED"
+        }
+      }
+    },
+    "DIA": {
+      "rows": 12362658,
+      "names": 8315,
+      "self_excluded": [
+        "DIA"
+      ],
+      "missing_bars": 0,
+      "errors": 0,
+      "early_available_from": 0,
+      "weekend_available_from": 0,
+      "missing_available_from": 0,
+      "columns": {
+        "rel_strength_ratio": {
+          "non_null": 12362658,
+          "non_null_percent": 100.0,
+          "first_date": "2020-01-02",
+          "status": "MEASURED"
+        },
+        "return_spread_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "return_spread_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "return_spread_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "return_spread_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_flat_vs_fall_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_1d": {
+          "non_null": 12354343,
+          "non_null_percent": 99.9327,
+          "first_date": "2020-01-03",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_5d": {
+          "non_null": 12321083,
+          "non_null_percent": 99.6637,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_20d": {
+          "non_null": 12196358,
+          "non_null_percent": 98.6548,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "divergence_fall_vs_flat_60d": {
+          "non_null": 11863758,
+          "non_null_percent": 95.9645,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_5d": {
+          "non_null": 12295951,
+          "non_null_percent": 99.4604,
+          "first_date": "2020-01-09",
+          "status": "MEASURED"
+        },
+        "corr_20d": {
+          "non_null": 12190843,
+          "non_null_percent": 98.6102,
+          "first_date": "2020-01-31",
+          "status": "MEASURED"
+        },
+        "corr_60d": {
+          "non_null": 11861077,
+          "non_null_percent": 95.9428,
+          "first_date": "2020-03-30",
+          "status": "MEASURED"
+        },
+        "corr_break_5d": {
+          "non_null": 11663041,
+          "non_null_percent": 94.3409,
+          "first_date": "2020-04-06",
+          "status": "EXCLUDED"
+        },
+        "corr_break_20d": {
+          "non_null": 11682570,
+          "non_null_percent": 94.4989,
+          "first_date": "2020-04-28",
+          "status": "EXCLUDED"
+        },
+        "corr_break_60d": {
+          "non_null": 11360941,
+          "non_null_percent": 91.8972,
+          "first_date": "2020-06-24",
+          "status": "EXCLUDED"
+        }
+      }
+    }
+  }
+}
