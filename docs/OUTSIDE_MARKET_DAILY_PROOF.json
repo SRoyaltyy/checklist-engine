@@ -398,8 +398,9 @@
   ],
   "storage": {
     "rows": 72689,
-    "sha256": "2acf73e80680df4e70d9225cc8a30d856d1c2139cbb2159ca628b9a430addf68",
-    "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19"
+    "sha256": "43ef8ef165a38b102e5558a18c46f9729acef30bffe6794dc2005337718f4907",
+    "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19",
+    "last_session_available_from": "2026-10-27 closes are visible on 2026-10-28"
   },
   "candles": {
     "rows": 267505,
