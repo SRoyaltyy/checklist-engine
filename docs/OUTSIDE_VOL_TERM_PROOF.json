@@ -145,5 +145,16 @@
       "vvix"
     ],
     "mismatches": 0
+  },
+  "all_level_candles": {
+    "rows": 25108,
+    "close": "end session level",
+    "series": [
+      "vix",
+      "vix9d",
+      "vix3m",
+      "vvix"
+    ],
+    "mismatches": 0
   }
 }
