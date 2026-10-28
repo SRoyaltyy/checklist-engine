@@ -99,6 +99,10 @@ def test_breadth_candle_uses_only_a_completed_bucket():
     assert list(five.date) == [sessions[4], sessions[9]]
     assert int(five.advance.iloc[0]) == 5
     assert int(five.ad_line.iloc[0]) == 4
+    # The net and the ratios describe the whole bucket, not the last session inside it.
+    assert int(five.new_highs_minus_new_lows.iloc[0]) == 5
+    assert five.ad_ratio.iloc[0] == np.inf
+    assert five.up_down_volume_ratio.iloc[0] == np.inf
 
 
 def test_name_gate_and_round_trip():

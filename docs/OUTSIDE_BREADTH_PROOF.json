@@ -6,7 +6,7 @@
   "accepted_names": 8316,
   "excluded_by_stitch": 411,
   "universe_label": "accepted stitch-v2 names; survivors-only as labeled on that release; the manifest does not split ETF and stock",
-  "lookahead": "each session uses only that name's bars through the session; available_from is the next NYSE session",
+  "lookahead": "each session uses only that name's bars through the session; available_from is the next NYSE session Candle counts are the bucket sum, not the last session.",
   "high_low_window": 252,
   "sma_windows": [
     20,
@@ -35,5 +35,11 @@
   },
   "excluded": [],
   "excluded_count": 0,
-  "excluded_truncated": false
+  "excluded_truncated": false,
+  "candles": {
+    "rows": 6329,
+    "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
+    "encoding": "int64_delta_and_float64_byte_stream_split_zstd19",
+    "note": "Flows are summed inside the completed candle. New highs minus new lows and both ratios are rebuilt from those sums. Percents and the advance/decline line are the end session. available_from is the next session."
+  }
 }

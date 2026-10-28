@@ -195,7 +195,12 @@ def assert_breadth(summary, stocks_used, stocks_expected):
 
 
 def breadth_candles(panel, boundary_sessions):
-    """Completed buckets of the market-wide series. Flows are summed. Levels use the last session."""
+    """Completed buckets of the market-wide series. Flows are summed. Levels use the last session.
+
+    New highs minus new lows, the advance/decline ratio, and the up/down volume
+    ratio are rebuilt from the summed counts. Copying the last session would
+    drop the other sessions in the bucket.
+    """
     from world_timeframes import TIMEFRAMES
     sessions = pd.DatetimeIndex(pd.to_datetime(boundary_sessions)).sort_values().unique()
     frame = panel.sort_values("date").reset_index(drop=True)
@@ -204,7 +209,8 @@ def breadth_candles(panel, boundary_sessions):
     if (positions < 0).any():
         raise ValueError("breadth date is outside the session calendar")
     flows = ["advance", "decline", "unchanged", "new_high", "new_low", "ad_net", "up_volume", "down_volume"]
-    levels = ["pct_above_sma20", "pct_above_sma50", "pct_above_sma200", "ad_line", "ad_ratio", "up_down_volume_ratio", "new_highs_minus_new_lows"]
+    # Percents and the cumulative line are the end session. Counts and ratios are rebuilt from the bucket.
+    levels = ["pct_above_sma20", "pct_above_sma50", "pct_above_sma200", "ad_line"]
     frames = []
     for timeframe in TIMEFRAMES:
         if timeframe == "monthly":
@@ -237,6 +243,9 @@ def breadth_candles(panel, boundary_sessions):
             last = part.iloc[-1]
             for column in levels:
                 row[column] = last[column]
+            row["new_highs_minus_new_lows"] = row["new_high"] - row["new_low"]
+            row["ad_ratio"] = divide([row["advance"]], [row["decline"]])[0]
+            row["up_down_volume_ratio"] = divide([row["up_volume"]], [row["down_volume"]])[0]
             row["available_from"] = sessions[sessions > end][0] if (sessions > end).any() else pd.NaT
             frames.append(row)
     return pd.DataFrame(frames)
@@ -244,7 +253,8 @@ def breadth_candles(panel, boundary_sessions):
 
 def write_lossless(frame, path):
     path = Path(path)
-    stored = frame.sort_values("date").reset_index(drop=True)
+    sort_on = [column for column in ("timeframe", "date") if column in frame.columns]
+    stored = frame.sort_values(sort_on).reset_index(drop=True)
     encodings = {}
     for column in COUNT_COLUMNS:
         if column in stored.columns and stored[column].notna().all():

@@ -20,6 +20,7 @@ from outside_breadth import (
     STITCH_RELEASE,
     aggregate,
     assert_breadth,
+    breadth_candles,
     coverage_row,
     require_sha256,
     stock_contributions,
@@ -108,6 +109,8 @@ def build(out, now=None, publish=False):
     summary = coverage_row(panel, sessions, as_of)
     names = assert_breadth(summary, used, int(manifest["accepted_tickers"]))
     meta = write_lossless(panel, out / "outside_breadth_daily.parquet")
+    candles = breadth_candles(panel, sessions)
+    candle_meta = write_lossless(candles, out / "outside_breadth_candles.parquet")
     proof = dict(
         block="outside_breadth",
         as_of=str(as_of.date()),
@@ -122,6 +125,10 @@ def build(out, now=None, publish=False):
         names=names,
         sessions=summary,
         storage=meta,
+        candles={
+            **candle_meta,
+            "note": "Flows are summed inside the completed candle. New highs minus new lows and both ratios are rebuilt from those sums. Percents and the advance/decline line are the end session. available_from is the next session.",
+        },
         excluded=excluded[:200],
         excluded_count=len(excluded),
         excluded_truncated=len(excluded) > 200,
@@ -136,6 +143,7 @@ def build(out, now=None, publish=False):
             "--notes", "Breadth from stitch-v2 through " + proof["as_of"] + ". See OUTSIDE_BREADTH_PROOF.json.",
             "--target", os.environ.get("GITHUB_SHA", "HEAD"),
             str(out / "outside_breadth_daily.parquet"),
+            str(out / "outside_breadth_candles.parquet"),
             str(proof_path),
         )
         proof["release"] = tag
