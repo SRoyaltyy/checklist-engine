@@ -1,0 +1,177 @@
+{
+  "block": "outside_vol_term",
+  "release": "light-daily-box-v1-20261028",
+  "source": "yfinance 1.7.0 (Yahoo), auto_adjust=False; columns date,open,high,low,close,adj_close,volume; reference calendar = SPY trading days; IBIT coverage measured from its listing date; VIX-family indexes have no volume (0)",
+  "window_start": "2020-01-02",
+  "as_of": "2026-10-27",
+  "vix_note": "Published Yahoo ^VIX close from this release. It has no ALFRED vintage column. available_from is the next SPY session.",
+  "off_spy_calendar": {
+    "^VIX": [
+      "2026-05-25",
+      "2026-09-07"
+    ],
+    "^VIX9D": [],
+    "^VIX3M": [],
+    "^VVIX": []
+  },
+  "summary": {
+    "series_passed": 9,
+    "excluded": []
+  },
+  "series": [
+    {
+      "series": "vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vvix",
+      "status": "PASS",
+      "reason": "SOURCE_FILE_HAS_NO_BAR",
+      "coverage_percent": 99.5916,
+      "rows": 1707,
+      "expected_sessions": 1714,
+      "missing_sessions": 7,
+      "missing_dates": [
+        "2020-06-11",
+        "2021-01-22",
+        "2021-02-17",
+        "2021-05-05",
+        "2021-05-11",
+        "2021-05-20",
+        "2021-05-25"
+      ],
+      "note": "The session row is kept and vvix is null. VIX, VIX9D, VIX3M, and the five ratios do not use VVIX, so they stay filled on these dates."
+    },
+    {
+      "series": "vix_over_vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d_over_vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d_over_vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix3m_minus_vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix_minus_vix9d",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    }
+  ],
+  "storage": {
+    "rows": 1714,
+    "sha256": "f797bd9b2d3107f4e7afddb423f413fd6a115658f2d12a34b77aa7a294ffd1de",
+    "encoding": "float64_byte_stream_split_zstd19",
+    "last_session_available_from": "2026-10-27 levels and ratios are visible on 2026-10-28"
+  },
+  "candles": {
+    "rows": 25108,
+    "sha256": "90762bdf9d3380b14178faf9f0f78cd5e8dbb1ff3607958435c2995d05b06b61",
+    "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
+    "encoding": "float64_byte_stream_split_zstd19"
+  },
+  "ratio_candles": {
+    "rows": 31540,
+    "sha256": "4f78779827d7fee8f78b0e5d9ee69fa0f88a3b4601dd10204a18e019ede97d9e",
+    "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
+    "encoding": "float64_byte_stream_split_zstd19"
+  },
+  "lookahead": "ratios use same-session closes; available_from is the next SPY session",
+  "identity_check": {
+    "ratios_equal_the_level_arithmetic": true,
+    "one_day_ratio_candles_match_daily": true,
+    "one_day_level_closes_match_daily": true,
+    "max_abs_error": 0.0,
+    "vvix_one_day_candle_rows": 1707,
+    "note": "The seven null VVIX sessions stay on the daily panel and are not given a level candle."
+  },
+  "five_day_levels": {
+    "rows": 1361,
+    "close": "end session level",
+    "series": [
+      "vix",
+      "vix9d",
+      "vix3m",
+      "vvix"
+    ],
+    "mismatches": 0
+  },
+  "all_level_candles": {
+    "rows": 25108,
+    "close": "end session level",
+    "series": [
+      "vix",
+      "vix9d",
+      "vix3m",
+      "vvix"
+    ],
+    "mismatches": 0
+  },
+  "all_ratio_candles": {
+    "rows": 31540,
+    "wide_rows": 6308,
+    "rule": "each ratio equals the daily ratio on the candle end date",
+    "series": [
+      "vix_over_vix3m",
+      "vix9d_over_vix",
+      "vix9d_over_vix3m",
+      "vix3m_minus_vix",
+      "vix_minus_vix9d"
+    ],
+    "max_abs_error": 0.0,
+    "nan_mismatches": 0
+  }
+}

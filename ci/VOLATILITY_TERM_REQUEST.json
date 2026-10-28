@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "run_owner": "GPT/Codex",
+  "authority": "James/Cyrus 2f873c959e6e194292f2af1569134d79f1e6ac63 (#79), clarified by #80",
+  "shared_release": "shared-context-v2-40636949344-1",
+  "shared_status_sha256": "4e13e4c9d3380b23d217156c83e7d2ee472dafd226b1626e128c06d9c65da643",
+  "inputs_release": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "stock_status_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "cboe_release": "phase1-gap-cboe-v1-40307220071-1",
+  "cboe_archive_sha256": "7f5e6cc98ffa0ae632f8b22454d4641cf4402d94f5b7bfbcf115cc3c81904710",
+  "cuts": ["2023-01-03", "2025-01-02"],
+  "scope": "Five existing CBOE term ratios/spreads on all 22 native grids, original four-level source reconstruction, two independent raw-data cutoffs, exact stored readback and approved stock-day weighted coverage. Preserve explicit unavailable intervals, ALFRED VIXCLS and original CBOE source values. No new source/type/question, live provider request, world/scoring acceptance or action on protected world 40621517496."
+}
