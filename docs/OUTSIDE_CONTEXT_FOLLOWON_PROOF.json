@@ -1,0 +1,476 @@
+{
+  "status": "OUTSIDE_FOLLOWON_PANELS_VALIDATED_NOT_ATTACHED_TO_STOCK_DAYS",
+  "world_build_40621517496": "not restarted",
+  "stock_day_coverage": "not measured; the approved stock-day file was not downloaded",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "industry_etf": {
+    "release": "outside-market-released-v3-40667431231-1",
+    "asset": "outside_market_candles_v3.parquet",
+    "sha256": "810a581b08e1b421a35a32f441d1ea0116fa22ac2f5cac804f737eba1041bbae",
+    "symbols": [
+      "KBE",
+      "KCE",
+      "KIE",
+      "KRE",
+      "XAR",
+      "XBI",
+      "XES",
+      "XHB",
+      "XHE",
+      "XHS",
+      "XME",
+      "XOP",
+      "XPH",
+      "XRT",
+      "XSD",
+      "XSW",
+      "XTL",
+      "XTN"
+    ],
+    "timeframes": [
+      "10d",
+      "11d",
+      "12d",
+      "13d",
+      "14d",
+      "15d",
+      "16d",
+      "17d",
+      "18d",
+      "19d",
+      "1d",
+      "20d",
+      "21d",
+      "2d",
+      "3d",
+      "4d",
+      "5d",
+      "6d",
+      "7d",
+      "8d",
+      "9d",
+      "monthly"
+    ],
+    "native_frames": 396,
+    "native_rows": 113706,
+    "skipped_names": "the 25 index, sector, and cross-asset ETFs already attached by etf-native-context",
+    "weekend_available_from": 0
+  },
+  "volatility_term": {
+    "release": "volatility-term-native-v1-40667837889-1",
+    "timeframes": {
+      "1d": {
+        "asset": "volatility_term_1d.parquet",
+        "sha256": "b84f3d3aa2e5198209cb59ba750ce38fbcd25176347df365bf424ccbf9a42c6e",
+        "native_rows": 9270,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "2d": {
+        "asset": "volatility_term_2d.parquet",
+        "sha256": "88276ade22c4f217a4353831f51e9bb76405220c6418e850806048008ef93acb",
+        "native_rows": 4635,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "3d": {
+        "asset": "volatility_term_3d.parquet",
+        "sha256": "3ee0ad596ee78e041ee1788f5d726262fec16c836f98d48457cb620c41fc79d5",
+        "native_rows": 3090,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "4d": {
+        "asset": "volatility_term_4d.parquet",
+        "sha256": "8fc77c2dcd4146ae5879abc8ea3fc6e5ebc9b28bf2f499d7ef2b13e4c102491a",
+        "native_rows": 2317,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "5d": {
+        "asset": "volatility_term_5d.parquet",
+        "sha256": "31610b77a9cd484aa840c57772145dc2bd0d56c2c489a93aa97abb14cef15f52",
+        "native_rows": 1854,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "6d": {
+        "asset": "volatility_term_6d.parquet",
+        "sha256": "129c630464f85c7c15eee76a7897bd572cc07b74ea479b8ef55d0fcc14eb6e17",
+        "native_rows": 1545,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "7d": {
+        "asset": "volatility_term_7d.parquet",
+        "sha256": "8d45c3f239b3835f6de92e73d7c6a26812f46993794d4e39e6bb5f102a163df4",
+        "native_rows": 1324,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "8d": {
+        "asset": "volatility_term_8d.parquet",
+        "sha256": "a73c176b8b6faf5e2c7abfdf637738366b13510d5f44b52ad7d12f4d8cf7dbd2",
+        "native_rows": 1158,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "9d": {
+        "asset": "volatility_term_9d.parquet",
+        "sha256": "4bc85fc55778b5a92a87bffba17914739cecb77c211bec13b2d965a4e796c6df",
+        "native_rows": 1030,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "10d": {
+        "asset": "volatility_term_10d.parquet",
+        "sha256": "902a8ba53f3c626afbd1428208e0604982a2d089d692e61d9cf141a4fa090690",
+        "native_rows": 927,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "11d": {
+        "asset": "volatility_term_11d.parquet",
+        "sha256": "009e673544b23f49de6486bf977b1075adbe8026d23611836ab15ed41541fa06",
+        "native_rows": 842,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "12d": {
+        "asset": "volatility_term_12d.parquet",
+        "sha256": "e2d90fe0a4db0137e36f308f1c35c7a3ede46b6c0cac127178f76d06362fa382",
+        "native_rows": 772,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "13d": {
+        "asset": "volatility_term_13d.parquet",
+        "sha256": "b9cf7da24e8086025b591a08775e61e30573814f1c8f1b2efd322adf9335dfa0",
+        "native_rows": 713,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "14d": {
+        "asset": "volatility_term_14d.parquet",
+        "sha256": "4579b574224ea0f98266eac1f39c3fbeae33edd65ebd5d13767f53f5045e4420",
+        "native_rows": 662,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "15d": {
+        "asset": "volatility_term_15d.parquet",
+        "sha256": "ae4d6d337eb2312b44942be329895a044878fad4a62080db003bf40a76f9720a",
+        "native_rows": 618,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "16d": {
+        "asset": "volatility_term_16d.parquet",
+        "sha256": "a35511e2acc54ba724316e19f06fc3897a62b3b87c53b2f0e54277820aeeffd6",
+        "native_rows": 579,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "17d": {
+        "asset": "volatility_term_17d.parquet",
+        "sha256": "fc7d3c0bce6d70d1946da3a4bc24d77b4df1cef9ddc3f5888099fb2f2411b2ce",
+        "native_rows": 545,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "18d": {
+        "asset": "volatility_term_18d.parquet",
+        "sha256": "59b0173440663491481747992b2ce548694e8b58efc7cc4a8d1c39d59a849e87",
+        "native_rows": 515,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "19d": {
+        "asset": "volatility_term_19d.parquet",
+        "sha256": "efb9b0376495ba959a207e5c1b8e2924de96409b413b3445de12caece55a2fb0",
+        "native_rows": 487,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "20d": {
+        "asset": "volatility_term_20d.parquet",
+        "sha256": "e842e48d8b448481fcfa2f9272cef5ec6da156a623bb57cee7eba8fe79aaada7",
+        "native_rows": 463,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "21d": {
+        "asset": "volatility_term_21d.parquet",
+        "sha256": "1a22b37e609aabf2a16ad60a434331ce4ac6494eda5cff372cafd808e2104353",
+        "native_rows": 441,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 0,
+        "availability_dropped": 0
+      },
+      "monthly": {
+        "asset": "volatility_term_monthly.parquet",
+        "sha256": "206a35343c932c832e6da907d513278645bf7053c7eaa7230057ea0ca9fb53bb",
+        "native_rows": 338,
+        "columns": [
+          "vol_vix_over_vix3m",
+          "vol_vix9d_over_vix",
+          "vol_vix9d_over_vix3m",
+          "vol_vix3m_minus_vix",
+          "vol_vix_minus_vix9d"
+        ],
+        "availability_moved": 28,
+        "availability_dropped": 103
+      }
+    },
+    "native_rows": 34125,
+    "availability_moved_forward": 28,
+    "availability_dropped": 103,
+    "availability_rule": "Only the monthly file dated some months on a weekend. A weekend on or after the first SPY session moves forward to the next SPY session when that session is at most four days later. It never moves earlier. A weekend before the first SPY session in this release is dropped. Daily and multi-day files were not moved."
+  },
+  "breadth": {
+    "source": "PR #54 panel carried on PR #62",
+    "asset": "outside_breadth_candles.parquet",
+    "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
+    "native_rows": 6329,
+    "timeframes": [
+      "1d",
+      "2d",
+      "3d",
+      "4d",
+      "5d",
+      "6d",
+      "7d",
+      "8d",
+      "9d",
+      "10d",
+      "11d",
+      "12d",
+      "13d",
+      "14d",
+      "15d",
+      "16d",
+      "17d",
+      "18d",
+      "19d",
+      "20d",
+      "21d",
+      "monthly"
+    ],
+    "columns": [
+      "breadth_advance",
+      "breadth_decline",
+      "breadth_unchanged",
+      "breadth_new_high",
+      "breadth_new_low",
+      "breadth_ad_net",
+      "breadth_up_volume",
+      "breadth_down_volume",
+      "breadth_pct_above_sma20",
+      "breadth_pct_above_sma50",
+      "breadth_pct_above_sma200",
+      "breadth_ad_line",
+      "breadth_new_highs_minus_new_lows",
+      "breadth_ad_ratio",
+      "breadth_up_down_volume_ratio"
+    ],
+    "weekend_available_from": 0
+  },
+  "calendar": {
+    "source": "PR #52 panel carried on PR #62",
+    "asset": "outside_event_calendar_candles.parquet",
+    "sha256": "2274116214238faf0edf8345d85c58d2f14d92c564cc6e82a71f6ef5abd9f51a",
+    "native_rows": 6308,
+    "timeframes": [
+      "1d",
+      "2d",
+      "3d",
+      "4d",
+      "5d",
+      "6d",
+      "7d",
+      "8d",
+      "9d",
+      "10d",
+      "11d",
+      "12d",
+      "13d",
+      "14d",
+      "15d",
+      "16d",
+      "17d",
+      "18d",
+      "19d",
+      "20d",
+      "21d",
+      "monthly"
+    ],
+    "columns": [
+      "calendar_is_fomc",
+      "calendar_is_fomc_notation",
+      "calendar_is_cpi",
+      "calendar_is_jobs",
+      "calendar_is_opex",
+      "calendar_is_month_start",
+      "calendar_is_month_end",
+      "calendar_is_turn_of_month",
+      "calendar_day_of_week",
+      "calendar_day_of_month",
+      "calendar_days_to_opex",
+      "calendar_days_since_opex",
+      "calendar_days_to_fomc",
+      "calendar_days_since_fomc",
+      "calendar_days_to_cpi",
+      "calendar_days_since_cpi",
+      "calendar_days_to_jobs",
+      "calendar_days_since_jobs"
+    ],
+    "weekend_available_from": 0
+  }
+}
