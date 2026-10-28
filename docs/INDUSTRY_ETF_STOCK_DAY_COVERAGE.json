@@ -1,0 +1,183 @@
+{
+  "family": "industry_etf",
+  "symbols": [
+    "KBE",
+    "KRE",
+    "KCE",
+    "KIE",
+    "XAR",
+    "XTN",
+    "XBI",
+    "XPH",
+    "XHE",
+    "XHS",
+    "XOP",
+    "XES",
+    "XME",
+    "XRT",
+    "XHB",
+    "XSD",
+    "XSW",
+    "XTL"
+  ],
+  "already_in_etf_native_context": [
+    "CPER",
+    "DIA",
+    "GLD",
+    "HYG",
+    "IBIT",
+    "IWM",
+    "LQD",
+    "QQQ",
+    "RSP",
+    "SPY",
+    "TLT",
+    "USO",
+    "UUP",
+    "VXX",
+    "XLB",
+    "XLC",
+    "XLE",
+    "XLF",
+    "XLI",
+    "XLK",
+    "XLP",
+    "XLRE",
+    "XLU",
+    "XLV",
+    "XLY"
+  ],
+  "source": "PR #49 docs/outside_market_candles.parquet",
+  "query_stock_days": 12364370,
+  "factor_rows": 1980,
+  "below_95": 0,
+  "one_day_close_min_pct": 99.95616436583505,
+  "one_day_close": [
+    {
+      "column": "etf_kbe_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_kre_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_kce_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_kie_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xar_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xtn_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xbi_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xph_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xhe_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xhs_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xop_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xes_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xme_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xrt_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xhb_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xsd_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xsw_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "column": "etf_xtl_close__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    }
+  ]
+}
