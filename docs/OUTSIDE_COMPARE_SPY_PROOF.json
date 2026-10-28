@@ -77,5 +77,20 @@
     "gap_each_session": 1,
     "gap_reason": "SPY is in the accepted names and is excluded as the comparator",
     "covered_percent": 99.9862
+  },
+  "spot_check": {
+    "archive": "accepted stitch part base_0000",
+    "names": [
+      "AFCG",
+      "AFMC",
+      "ALXO",
+      "AVMC",
+      "BANX",
+      "BBEU",
+      "BH",
+      "BHE"
+    ],
+    "compared": "1-day return spread and close ratio versus SPY close from light-daily-box-v1-20261028",
+    "max_abs_error": 0.0
   }
 }
