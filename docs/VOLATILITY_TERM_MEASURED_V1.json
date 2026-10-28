@@ -1,0 +1,550 @@
+{
+  "status": "CBOE_NATIVE_TERM_FACTORS_MEASURED_NOT_FULL_WORLD",
+  "producer": "78dfd666e41e325aa4e81dd38d93088f460c9c92",
+  "request": {
+    "version": 1,
+    "run_owner": "GPT/Codex",
+    "authority": "James/Cyrus 2f873c959e6e194292f2af1569134d79f1e6ac63 (#79), clarified by #80",
+    "shared_release": "shared-context-v2-40636949344-1",
+    "shared_status_sha256": "4e13e4c9d3380b23d217156c83e7d2ee472dafd226b1626e128c06d9c65da643",
+    "inputs_release": "native-price-inputs-v1-40336250454-1",
+    "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+    "stock_release": "accepted-price-stitch-v2-40494479693-1",
+    "stock_status_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+    "cboe_release": "phase1-gap-cboe-v1-40307220071-1",
+    "cboe_archive_sha256": "7f5e6cc98ffa0ae632f8b22454d4641cf4402d94f5b7bfbcf115cc3c81904710",
+    "cuts": [
+      "2023-01-03",
+      "2025-01-02"
+    ],
+    "scope": "Five existing CBOE term ratios/spreads on all 22 native grids, original four-level source reconstruction, two independent raw-data cutoffs, exact stored readback and approved stock-day weighted coverage. Preserve explicit unavailable intervals, ALFRED VIXCLS and original CBOE source values. No new source/type/question, live provider request, world/scoring acceptance or action on protected world 40621517496."
+  },
+  "source_members": [
+    {
+      "series": "VIX",
+      "member": "cboe/VIX.parquet",
+      "sha256": "9599af8baa788513a765e3d7bc8104eb4b9bfd43c14e55fb0196a03ad8949949"
+    },
+    {
+      "series": "VIX9D",
+      "member": "cboe/VIX9D.parquet",
+      "sha256": "be284932b1917122f05f39d85b2aa46f1bb4d1ec01406b83289f48b41a44b4aa"
+    },
+    {
+      "series": "VIX3M",
+      "member": "cboe/VIX3M.parquet",
+      "sha256": "6e6118212d46f5cf01b7680f29544c781b1b1d706ba17998efb86c28d9906a12"
+    },
+    {
+      "series": "VVIX",
+      "member": "cboe/VVIX.parquet",
+      "sha256": "616402e7ea5f4010e3687a6385254c80da886450d135a80970ef8a5550f55114"
+    }
+  ],
+  "native_source_rebuild_checks": [
+    {
+      "timeframe": "1d",
+      "native_rows": 9270,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "2d",
+      "native_rows": 4635,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "3d",
+      "native_rows": 3090,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "4d",
+      "native_rows": 2317,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "5d",
+      "native_rows": 1854,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "6d",
+      "native_rows": 1545,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "7d",
+      "native_rows": 1324,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "8d",
+      "native_rows": 1158,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "9d",
+      "native_rows": 1030,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "10d",
+      "native_rows": 927,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "11d",
+      "native_rows": 842,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "12d",
+      "native_rows": 772,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "13d",
+      "native_rows": 713,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "14d",
+      "native_rows": 662,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "15d",
+      "native_rows": 618,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "16d",
+      "native_rows": 579,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "17d",
+      "native_rows": 545,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "18d",
+      "native_rows": 515,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "19d",
+      "native_rows": 487,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "20d",
+      "native_rows": 463,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "21d",
+      "native_rows": 441,
+      "source_columns": 23,
+      "mismatches": 0
+    },
+    {
+      "timeframe": "monthly",
+      "native_rows": 441,
+      "source_columns": 23,
+      "mismatches": 0
+    }
+  ],
+  "prefix_checks": [
+    {
+      "cut": "2023-01-03",
+      "timeframe": "1d",
+      "native_rows": 8315,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "2d",
+      "native_rows": 4157,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "3d",
+      "native_rows": 2771,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "4d",
+      "native_rows": 2078,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "5d",
+      "native_rows": 1663,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "6d",
+      "native_rows": 1385,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "7d",
+      "native_rows": 1187,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "8d",
+      "native_rows": 1039,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "9d",
+      "native_rows": 923,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "10d",
+      "native_rows": 831,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "11d",
+      "native_rows": 755,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "12d",
+      "native_rows": 692,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "13d",
+      "native_rows": 639,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "14d",
+      "native_rows": 593,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "15d",
+      "native_rows": 554,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "16d",
+      "native_rows": 519,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "17d",
+      "native_rows": 489,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "18d",
+      "native_rows": 461,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "19d",
+      "native_rows": 437,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "20d",
+      "native_rows": 415,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "21d",
+      "native_rows": 395,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "monthly",
+      "native_rows": 396,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "1d",
+      "native_rows": 8817,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "2d",
+      "native_rows": 4408,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "3d",
+      "native_rows": 2939,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "4d",
+      "native_rows": 2204,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "5d",
+      "native_rows": 1763,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "6d",
+      "native_rows": 1469,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "7d",
+      "native_rows": 1259,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "8d",
+      "native_rows": 1102,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "9d",
+      "native_rows": 979,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "10d",
+      "native_rows": 881,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "11d",
+      "native_rows": 801,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "12d",
+      "native_rows": 734,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "13d",
+      "native_rows": 678,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "14d",
+      "native_rows": 629,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "15d",
+      "native_rows": 587,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "16d",
+      "native_rows": 551,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "17d",
+      "native_rows": 518,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "18d",
+      "native_rows": 489,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "19d",
+      "native_rows": 464,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "20d",
+      "native_rows": 440,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "21d",
+      "native_rows": 419,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "monthly",
+      "native_rows": 420,
+      "source_columns": 23,
+      "ratio_columns": 5,
+      "mismatches": 0
+    }
+  ],
+  "factors": 22,
+  "factor_bytes": 1107247,
+  "column_timeframe_rows": 110,
+  "zero_observation_rows": 0,
+  "query_stock_days": 12364370,
+  "manifest_sha256": "aa2788e7a19d6d586c36949cd04ccf99652a99bf2c58edb24f876dac6903ae26",
+  "coverage_sha256": "8ca51dcb83be2099dab6d02f896419a7fd3c1040babe4f78b26ee37b19cb4acd",
+  "source_status_sha256": "4e13e4c9d3380b23d217156c83e7d2ee472dafd226b1626e128c06d9c65da643",
+  "source_policy": "Consistent CBOE numerator/denominator. Existing ALFRED VIXCLS levels and all original CBOE factors remain independently retained.",
+  "provider_requests": 0,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "protected_world_run_untouched": 40621517496,
+  "remaining": [
+    "integration with all other Tier1 factors",
+    "full existing-question quality and comprehensive world leak proof",
+    "historical eligibility and full dependency budget"
+  ]
+}

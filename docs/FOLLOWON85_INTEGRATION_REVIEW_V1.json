@@ -1,0 +1,50 @@
+{
+  "status": "REPRODUCED_FOLLOWON_INTEGRATION_BLOCKERS_NOT_A_CODE_FIX",
+  "pr": 85,
+  "head": "5a3a117e141319652d6322210fe034dab9ac4741",
+  "monthly_original_rows": 441,
+  "monthly_adapted_rows": 338,
+  "availability_moved": 28,
+  "availability_dropped": 103,
+  "dropped_pre2020_rows": 103,
+  "dropped_pre2020_rows_with_observed_values": 35,
+  "dropped_pre2020_observed_numeric_cells": 163,
+  "january2020_three_native_bar_dates_original": [
+    "2019-10-31",
+    "2019-11-29",
+    "2019-12-31"
+  ],
+  "january2020_three_native_bar_dates_adapted": [
+    "2019-09-30",
+    "2019-10-31",
+    "2019-12-31"
+  ],
+  "january2020_three_bar_mean_vix_over_vix3m_original": 0.8352165304365041,
+  "january2020_three_bar_mean_vix_over_vix3m_adapted": 0.8654042054140194,
+  "industry_binding": {
+    "asset": "outside_market_candles_v3.parquet",
+    "declared_native_rows": 1714,
+    "actual_asset_rows": 267883,
+    "declared_columns": [
+      "etf_kbe_open",
+      "etf_kbe_high",
+      "etf_kbe_low",
+      "etf_kbe_close",
+      "etf_kbe_volume"
+    ],
+    "actual_columns": [
+      "ticker",
+      "timeframe",
+      "candle_start",
+      "date",
+      "available_from",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume"
+    ],
+    "generic_native_validation_error": "native context keys missing"
+  },
+  "scope": "Read-only reproduction on authenticated real release assets. Calendar belongs to Venice; no edits or runs in other agents lanes. Preserve all native history and declare/persist the actual transformed factor layout before acceptance."
+}
