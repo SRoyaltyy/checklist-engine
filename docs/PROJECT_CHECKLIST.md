@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 12.**
+**Verified by both: 13/303. Claimed awaiting James: 13.**
 
 ## Rules
 
@@ -87,7 +87,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Volume indicators
 
-- [ ] **1.16** Volume indicators: source located. Items: dictionary I079–I096 (OBV, accumulation/distribution, Chaikin money flow, MFI, RVOL, and the rest of section 3). Done when: Source is the phase-1 volume column. The coverage row names it. Evidence:
+- [x] **1.16** Volume indicators: source located. Items: dictionary I079–I096 (OBV, accumulation/distribution, Chaikin money flow, MFI, RVOL, and the rest of section 3). Done when: Source is the phase-1 volume column. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_16.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.17** Volume indicators: fetched onto a checklist-engine release. Done when: Raw OBV and accumulation/distribution are stored, plus the percentile form where the dictionary asks for both. RVOL windows are explicit columns. Column count > 0. Evidence:
 - [ ] **1.18** Volume indicators: joined point-in-time. Done when: Volume indicators use bars < D, including volume. Evidence:
 - [ ] **1.19** Volume indicators: built at candle sizes 1 through 21. Done when: Each volume item exists at candle sizes 1..21 from that candle's volume. Evidence:
