@@ -49,6 +49,22 @@
     "projected_weighted_gb_if_the_cut_held": 452.19,
     "note": "All 22 timeframes, decoded from the published XOR container and re-encoded. The default encoder stays XOR. Still above 100 GB. The retention workflow was not launched."
   },
+  "further_lossless_trials_mnts_1d": {
+    "rows": 1711,
+    "columns": 1044,
+    "raw_bytes": 14290272,
+    "plain_byte_planes_zstd19": 7259411,
+    "plain_byte_planes_zstd22": 7258185,
+    "time_xor_then_byte_planes_zstd19": 7314324,
+    "column_major_zstd19": 7455205,
+    "row_major_zstd19": 8425273,
+    "per_column_best_of_raw_or_time_xor_zstd9": 8281993,
+    "xor_wins_of_1044": 474,
+    "shared_zstd_dictionary_16kib_level19": 7736819,
+    "float32_exact_columns": 169,
+    "exact_integer_columns": 125,
+    "note": "Checked on the decoded 1d matrix. A shared dictionary, a higher zstd level, other byte orders, and per-column time XOR do not beat plain byte planes. float32 and integer packing cover too few columns to reach 100 GB. The default encoder stays XOR. No retention run was launched."
+  },
   "answer_store": {
     "parts": [
       "compact-world-build-v1-40621517496-1-035",
