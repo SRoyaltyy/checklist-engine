@@ -1,0 +1,32 @@
+{
+  "selected": {
+    "20200101000000": {
+      "stamp": "20200101000000",
+      "bytes": 5288568,
+      "md5": "cfa2331d641aca029fea28bebb462ed4",
+      "url": "https://data.gdeltproject.org/gdeltv2/20200101000000.gkg.csv.zip"
+    },
+    "20250101000000": {
+      "stamp": "20250101000000",
+      "bytes": 4728104,
+      "md5": "df894016112af38493280b70c1e480ff",
+      "url": "https://data.gdeltproject.org/gdeltv2/20250101000000.gkg.csv.zip"
+    },
+    "20261023000000": {
+      "stamp": "20261023000000",
+      "bytes": 5371010,
+      "md5": "0423870f4b1b8f9ad625626b77a69cc7",
+      "url": "https://data.gdeltproject.org/gdeltv2/20261023000000.gkg.csv.zip"
+    }
+  },
+  "catalog": {
+    "url": "https://data.gdeltproject.org/gdeltv2/masterfilelist.txt",
+    "bytes": 128957634,
+    "lines": 1207743,
+    "official_root_marker_lines": 61,
+    "blank_lines": 0,
+    "sha256": "89e4a668ef8aa75886cfeb8553ad8580d96a301afc5ee224e4d5712f9cfc61a8",
+    "complete_catalog": true,
+    "missing_stamps": []
+  }
+}
