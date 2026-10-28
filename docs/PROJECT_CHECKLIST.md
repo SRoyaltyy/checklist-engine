@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 21/303. Claimed awaiting James: 18.**
+**Verified by both: 21/303. Claimed awaiting James: 19.**
 
 ## Rules
 
@@ -321,7 +321,7 @@ Note (2026-10-26 ~15:33 HKT, do not tick): VIX9D, VIX3M, and VVIX from the CBOE 
 
 Note (2026-10-26 ~15:33 HKT, do not tick): TLT, HYG, LQD, UUP, GLD, CPER, USO, RSP, VXX, IBIT, and DIA, on the same price path as the stock bars. DIA may reuse the file from 1.136–1.140. Nothing here is ticked.
 
-- [ ] **1.146** Extra ETFs: source located. Items: TLT, HYG, LQD, UUP, GLD, CPER, USO, RSP, VXX, IBIT, DIA. Done when: The free daily source is the same path as the stock bars. Evidence names it. Evidence:
+- [x] **1.146** Extra ETFs: source located. Items: TLT, HYG, LQD, UUP, GLD, CPER, USO, RSP, VXX, IBIT, DIA. Done when: The free daily source is the same path as the stock bars. Evidence names it. Evidence: [source handoff](INDEX_EXTRA_SOURCE_HANDOFF_1_146.json), [independent readback](INDEX_EXTRA_SOURCE_READBACK_V2.json) and actual [Actions40707195289](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40707195289). All11 names use the frozen daily archive plus the same Yahoo-chart extension/provider path as the stock bars, in `etf-native-context-v1-40484930003-1`. Source and original-reference bindings are unchanged and independently reverified. IBIT starts at its actual2024-01-11 listing; no prelisting values are fabricated. GPT ✓ 2026-10-28 HKT; awaiting James. Source only; no full2020-window IBIT coverage or stock-versus-ETF acceptance.
 - [ ] **1.147** Extra ETFs: downloaded onto a checklist-engine release. Done when: The release holds each of those ETFs through the same last date as the stock bars, checksummed. DIA is not downloaded a second time when 1.137 already holds it. Evidence:
 - [ ] **1.148** Extra ETFs: point-in-time and leak check. Done when: Features use bars ending at D−1. Withholding day-D prices does not change the columns. Evidence:
 - [ ] **1.149** Extra ETFs: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for every ticker in the list. A missing ticker fails. Evidence:
