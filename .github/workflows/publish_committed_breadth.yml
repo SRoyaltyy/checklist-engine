@@ -1,0 +1,38 @@
+name: publish-committed-breadth
+
+on:
+  push:
+    branches: [cursor/outside-breadth-c9e9]
+    paths: ['.github/workflows/publish_committed_breadth.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-committed-breadth
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload the already built breadth files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="outside-breadth-stitch-v1"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "release already exists"
+            exit 1
+          fi
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes "Committed breadth files from the accepted stitch. This job does not rebuild them." \
+            docs/outside_breadth_daily.parquet \
+            docs/outside_breadth_candles.parquet \
+            docs/OUTSIDE_BREADTH_PROOF.json
