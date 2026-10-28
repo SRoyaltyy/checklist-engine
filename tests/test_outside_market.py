@@ -171,6 +171,16 @@ def test_cent_prices_round_trip_and_subcent_prices_stay_float():
         assert back2.close.iloc[0] == 10.125
 
 
+def test_monthly_candle_waits_for_the_next_session_when_the_first_is_closed():
+    sessions = pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-04"])
+    frame = bars(sessions[:2], np.array([10.0, 11.0]))
+    frame["volume"] = 1
+    candles = market.build_candles(frame, sessions, sessions[1])
+    monthly = candles[candles.timeframe == "monthly"]
+    assert len(monthly) == 1
+    assert monthly.available_from.iloc[0] == pd.Timestamp("2020-02-03")
+
+
 def test_candles_do_not_change_when_the_future_is_removed():
     days = pd.bdate_range("2024-01-02", periods=30)
     full = bars(days, np.arange(30) + 50.0)

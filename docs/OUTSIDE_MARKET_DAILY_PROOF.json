@@ -403,7 +403,8 @@
   },
   "candles": {
     "rows": 267505,
-    "sha256": "6f09e64d1f47d083a0c524a48ee2bd78f66810d2fed252bf3227db4f640e5e38",
+    "sha256": "f388ec47f449430855aba07c37b851fa600eec3679643cd13bbb933b3fd529b6",
+    "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
     "timeframes": [
       "10d",
       "11d",
