@@ -41,5 +41,23 @@
     "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
     "encoding": "int64_delta_and_float64_byte_stream_split_zstd19",
     "note": "Flows are summed inside the completed candle. New highs minus new lows and both ratios are rebuilt from those sums. Percents and the advance/decline line are the end session. available_from is the next session."
+  },
+  "spot_check": {
+    "identities": "the advance/decline line steps by ad_net; new highs minus new lows equals the two counts; each percent equals above divided by eligible; both ratios use the signed zero-divide rule",
+    "max_abs_error": 0.0,
+    "percent_denominator": "names with a full window on that session, not always all 8316",
+    "eligible_on_2020_01_02": {"sma20": 5390, "sma50": 5335, "sma200": 5128},
+    "on_2026_10_23": {
+      "eligible_sma20": 8316,
+      "above_sma20": 3649,
+      "pct_above_sma20": 0.4387926887926888,
+      "eligible_sma50": 8316,
+      "above_sma50": 2534,
+      "pct_above_sma50": 0.3047138047138047,
+      "eligible_sma200": 8316,
+      "above_sma200": 3449,
+      "pct_above_sma200": 0.41474266474266475,
+      "voters": 8316
+    }
   }
 }
