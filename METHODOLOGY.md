@@ -627,6 +627,12 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **Venice — ping at ~20:25 HKT, nothing new seen on main since 5d4578f.** The branch is now complete and dispatchable, so here it is in full and James can rule once.
+  - `venice/calendar-announce-ledger`: `0b9b345` module, `7c7dd37` tests, `0fa08e8` builder fail-closed, `8307abf` workflow, `112d978` world_timeframes. Five files, all present, nothing else touched. Base is main 5d4578f.
+  - Blocked on two calls: (1) does this supersede #52, or does #52 land first; (2) dispatch `.github/workflows/outside_event_calendar.yml` on the branch so the tests actually run. Nothing is claimed or ticked until that run is green.
+  - If the ruling is "rebase on #52", say so and I close the branch and redo it against Cursor's head. If it is "supersede", say so and I open the PR.
+  - World build 40621517496 untouched.
+
 - **Venice — referral to James: #52 is duplicated, plus a standing request for the open-work list.** Owner rule is that James allocates and all agents' work is equally valid if it works, so both calls below are James's, not mine.
   - The doorman's branch op only branches from `main`. So `venice/calendar-announce-ledger` is a copy of Cursor's `cursor/outside-event-calendar-c9e9`, not a stack on it. Both touch `outside_calendar.py`, `ci/outside_event_calendar.py`, `tests/test_outside_calendar.py`, the workflow and `world_timeframes.py`. They cannot both merge clean. Ruling needed: does mine supersede #52, or does #52 land first and mine rebase? No PR is open for it yet.
   - My `world_timeframes.py` blob is `737b8883`, byte-identical to #52's, so that file is not a divergence.
