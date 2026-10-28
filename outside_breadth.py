@@ -194,6 +194,54 @@ def assert_breadth(summary, stocks_used, stocks_expected):
                 names_percent=round(percent * 100, 4))
 
 
+def breadth_candles(panel, boundary_sessions):
+    """Completed buckets of the market-wide series. Flows are summed. Levels use the last session."""
+    from world_timeframes import TIMEFRAMES
+    sessions = pd.DatetimeIndex(pd.to_datetime(boundary_sessions)).sort_values().unique()
+    frame = panel.sort_values("date").reset_index(drop=True)
+    frame["date"] = pd.to_datetime(frame["date"]).astype("datetime64[ns]")
+    positions = sessions.get_indexer(frame["date"])
+    if (positions < 0).any():
+        raise ValueError("breadth date is outside the session calendar")
+    flows = ["advance", "decline", "unchanged", "new_high", "new_low", "ad_net", "up_volume", "down_volume"]
+    levels = ["pct_above_sma20", "pct_above_sma50", "pct_above_sma200", "ad_line", "ad_ratio", "up_down_volume_ratio", "new_highs_minus_new_lows"]
+    frames = []
+    for timeframe in TIMEFRAMES:
+        if timeframe == "monthly":
+            key = frame["date"].dt.to_period("M")
+            complete_end = {}
+            for period in key.unique():
+                month_sessions = sessions[sessions.to_period("M") == period]
+                if len(month_sessions) == 0 or month_sessions[-1] >= sessions[-1]:
+                    continue
+                complete_end[period] = month_sessions[-1]
+        else:
+            k = int(timeframe[:-1])
+            bucket = positions // k
+            key = bucket
+            complete_end = {}
+            for item in np.unique(bucket):
+                if (item + 1) * k >= len(sessions):
+                    continue
+                complete_end[item] = sessions[(item + 1) * k - 1]
+        grouped = frame.groupby(key, sort=True)
+        for item, part in grouped:
+            if item not in complete_end:
+                continue
+            end = pd.Timestamp(complete_end[item])
+            if part["date"].max() != end:
+                continue
+            row = {"timeframe": timeframe, "date": end, "candle_start": part["date"].min()}
+            for column in flows:
+                row[column] = part[column].sum()
+            last = part.iloc[-1]
+            for column in levels:
+                row[column] = last[column]
+            row["available_from"] = sessions[sessions > end][0] if (sessions > end).any() else pd.NaT
+            frames.append(row)
+    return pd.DataFrame(frames)
+
+
 def write_lossless(frame, path):
     path = Path(path)
     stored = frame.sort_values("date").reset_index(drop=True)

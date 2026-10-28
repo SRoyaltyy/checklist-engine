@@ -83,6 +83,24 @@ def test_percent_is_blank_when_nobody_is_eligible_and_zero_denominator_is_infini
     assert later.ad_ratio == np.inf
 
 
+def test_breadth_candle_uses_only_a_completed_bucket():
+    sessions = pd.bdate_range("2024-01-02", periods=12)
+    panel = pd.DataFrame({
+        "date": sessions[:10],
+        "advance": 1, "decline": 0, "unchanged": 0, "new_high": 1, "new_low": 0,
+        "ad_net": 1, "up_volume": 5.0, "down_volume": 0.0,
+        "pct_above_sma20": 0.5, "pct_above_sma50": 0.4, "pct_above_sma200": 0.3,
+        "ad_line": range(10), "ad_ratio": 1.0, "up_down_volume_ratio": np.inf,
+        "new_highs_minus_new_lows": 1,
+    })
+    candles = breadth.breadth_candles(panel, sessions)
+    five = candles[candles.timeframe == "5d"]
+    # First bucket is sessions 0-4. The second starts at 5 and ends at 9. Both are complete.
+    assert list(five.date) == [sessions[4], sessions[9]]
+    assert int(five.advance.iloc[0]) == 5
+    assert int(five.ad_line.iloc[0]) == 4
+
+
 def test_name_gate_and_round_trip():
     summary = dict(status="PASS")
     assert breadth.assert_breadth(summary, 96, 100)["names_percent"] == 96

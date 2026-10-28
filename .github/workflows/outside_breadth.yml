@@ -2,12 +2,6 @@ name: outside-breadth
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - outside_breadth.py
-      - ci/outside_breadth.py
-      - tests/test_outside_breadth.py
-      - .github/workflows/outside_breadth.yml
 
 permissions:
   contents: write
