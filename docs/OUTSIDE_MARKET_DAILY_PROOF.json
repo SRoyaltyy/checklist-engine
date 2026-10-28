@@ -466,5 +466,11 @@
     "close": "last session",
     "volume": "sum",
     "mismatches": 0
+  },
+  "all_timeframe_close": {
+    "rows": 267505,
+    "rule": "close equals the session the candle ends on",
+    "max_abs_error": 0.0,
+    "nan_mismatches": 0
   }
 }
