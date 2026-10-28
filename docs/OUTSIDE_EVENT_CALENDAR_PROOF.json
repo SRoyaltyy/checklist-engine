@@ -1,0 +1,290 @@
+{
+  "block": "outside_event_calendar",
+  "as_of": "2026-10-27",
+  "fomc_sources": [
+    "https://www.federalreserve.gov/monetarypolicy/fomchistorical2020.htm",
+    "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  ],
+  "cpi_source": "first ALFRED vintage of CPIAUCSL in fred-structured-v3-40266650669-1",
+  "jobs_source": "first ALFRED vintage of UNRATE in fred-structured-v3-40266650669-1",
+  "opex_rule": "third Friday, or the previous NYSE session when that Friday is closed",
+  "turn_of_month_rule": "the last session of the month or one of the first three sessions",
+  "lookahead": "flags use the published calendar or the vintage date; no price column is read; a release after as_of is not flagged Candle rows repeat the end session and are not resampled.",
+  "fomc_rows": 133,
+  "cpi_releases": 440,
+  "jobs_releases": 440,
+  "summary": {
+    "series_passed": 18,
+    "excluded": []
+  },
+  "storage": {
+    "rows": 1714,
+    "sha256": "c8675ab2200e70e2a9410a3b3a0c1f53796edb4ce417d31c3eea1c50f647052c",
+    "encoding": "bool_bit_packed_and_int16_delta_zstd19"
+  },
+  "series": [
+    {
+      "series": "is_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_fomc_notation",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_month_start",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_month_end",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_turn_of_month",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "day_of_week",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "day_of_month",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_to_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_since_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_to_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_since_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.0082,
+      "rows": 1697,
+      "expected_sessions": 1714,
+      "missing_sessions": 17
+    },
+    {
+      "series": "days_to_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.4749,
+      "rows": 1705,
+      "expected_sessions": 1714,
+      "missing_sessions": 9
+    },
+    {
+      "series": "days_since_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.5333,
+      "rows": 1706,
+      "expected_sessions": 1714,
+      "missing_sessions": 8
+    },
+    {
+      "series": "days_to_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.0082,
+      "rows": 1697,
+      "expected_sessions": 1714,
+      "missing_sessions": 17
+    },
+    {
+      "series": "days_since_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.6499,
+      "rows": 1708,
+      "expected_sessions": 1714,
+      "missing_sessions": 6
+    }
+  ],
+  "counts": {
+    "is_fomc": 109,
+    "is_fomc_notation": 5,
+    "is_cpi": 81,
+    "is_jobs": 81,
+    "is_month_end": 82,
+    "is_opex": 82
+  },
+  "candles": {
+    "note": "Each candle row repeats the calendar facts of its end session. The flags are not counted, averaged, or otherwise combined across the sessions inside the candle. They are calendar facts, not resampled prices. available_from is the next session after the candle completes, so a candle that contains day D is not visible on D.",
+    "timeframes": [
+      "1d",
+      "2d",
+      "3d",
+      "4d",
+      "5d",
+      "6d",
+      "7d",
+      "8d",
+      "9d",
+      "10d",
+      "11d",
+      "12d",
+      "13d",
+      "14d",
+      "15d",
+      "16d",
+      "17d",
+      "18d",
+      "19d",
+      "20d",
+      "21d",
+      "monthly"
+    ],
+    "rows_by_timeframe": {
+      "1d": 1714,
+      "2d": 856,
+      "3d": 571,
+      "4d": 427,
+      "5d": 342,
+      "6d": 285,
+      "7d": 244,
+      "8d": 213,
+      "9d": 189,
+      "10d": 170,
+      "11d": 155,
+      "12d": 142,
+      "13d": 131,
+      "14d": 121,
+      "15d": 113,
+      "16d": 106,
+      "17d": 100,
+      "18d": 94,
+      "19d": 89,
+      "20d": 84,
+      "21d": 81,
+      "monthly": 81
+    },
+    "rows": 6308,
+    "storage": {
+      "rows": 6308,
+      "sha256": "2274116214238faf0edf8345d85c58d2f14d92c564cc6e82a71f6ef5abd9f51a",
+      "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
+      "encoding": "bool_bit_packed_and_int16_delta_zstd19"
+    }
+  },
+  "opex_forward": "days_to_opex uses the third-Friday rule on the session calendar past as_of. The is_opex flag is not set on a session after as_of.",
+  "fomc_forward": "days_to_fomc counts meetings on the published Fed calendar even after as_of. is_fomc and days_since_fomc use only meetings that have occurred.",
+  "spot_check": {
+    "fed_pages": [
+      "fomc historical 2020",
+      "fomccalendars.htm"
+    ],
+    "session_meetings_in_window_flagged": 108,
+    "unflagged_session_meetings": 0,
+    "sunday_meeting_2020_03_15_flagged_on": "2020-03-16",
+    "notation_dates_match": true,
+    "stored_notation": 5,
+    "opex_matches_third_friday_rule": true,
+    "opex_count": 82,
+    "month_end_matches_last_session": true,
+    "cpi_flags": 81,
+    "jobs_flags": 81,
+    "last_session": "2026-10-27",
+    "last_session_is_fomc": true,
+    "last_session_days_to_fomc": 0,
+    "daily_available_from": "the session date; these facts are known before the cash open",
+    "one_day_candles_match_daily_flags": true,
+    "one_day_rows": 1714,
+    "one_day_available_from": "the next NYSE session after the flag date"
+  },
+  "five_day_flags": {
+    "rows": 342,
+    "rule": "each flag and day count equals the end session, not a count across the candle",
+    "mismatches": 0
+  },
+  "all_timeframe_flags": {
+    "rows": 6308,
+    "rule": "every candle repeats the end session flags and day counts",
+    "mismatches": 0
+  }
+}
