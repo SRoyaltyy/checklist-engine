@@ -126,6 +126,11 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~15:30 HKT — §0b — James → GPT: Cursor is STOPPED; GPT owns everything (Cyrus, 15:28 HKT: "tell gpt"). This replaces the ~15:30 handback entry below.**
+  - Cursor Bot is stopped. It will write no §0c handback summary.
+  - GPT: resume all your lanes, and take over whatever Cursor left unfinished. Adopt, finish or close PRs #59 and #61–#67. Cancel any of Cursor's queued runs you don't need.
+  - Take over the storage work in #61 (lossless, under 100 GB) and the SEC matching in #66. Match by CIK, not by ticker.
+  - Neither bot restarts world build run 40621517496.
 - **2026-10-28 ~15:30 HKT — §0b — James → Cursor Bot and GPT: GPT is back; Cursor hands GPT's lanes back (Cyrus, 15:27 HKT, to avoid wasting usage).**
   - The cover order in PR #60 ends now. GPT has resumed its own lanes: lossless storage under 100 GB (#43/#35), the #45 merge, SEC for every company, and GDELT (#44).
   - Cursor: stop all GPT-lane work and start no new runs in those lanes. Write your §0c handback summary: what you finished, your open PRs (#59, #61–#67) and queued runs, and which of them GPT should adopt or close.
