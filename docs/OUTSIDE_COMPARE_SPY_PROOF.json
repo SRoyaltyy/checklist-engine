@@ -41,7 +41,10 @@
       "sample_archive": "sec_world_shard_000_attempt_1_part_000.tar",
       "submissions_read": 20,
       "facts_read": 20,
-      "sic_fields": ["sic", "sicDescription"],
+      "sic_fields": [
+        "sic",
+        "sicDescription"
+      ],
       "filings_with_sic_column": 0,
       "facts_with_sic_column": 0,
       "decision": "NOT_USED_CURRENT_SIC_WOULD_REWRITE_2020"
@@ -141,5 +144,60 @@
     "available_from_not_next_session": 0,
     "divergence_sidecar_rows": 12362658,
     "divergence_sidecar_available_from_not_next_session": 0
+  },
+  "five_session_correlation": {
+    "built_locally": true,
+    "published_release": "not published; the previous release outside-compare-spy-v1-20261028 does not contain corr_5d",
+    "output_file": "compare_spy.parquet",
+    "output_sha256": "e46d4cf92653a0903de7f2dc94478344565efb507192d140d291f34898920a12",
+    "output_bytes": 1011431730,
+    "names_used": 8315,
+    "rows": 12362658,
+    "as_of": "2026-10-27",
+    "correlation_windows": [
+      5,
+      20,
+      60
+    ],
+    "correlation_1d": "NOT_A_COLUMN; one paired daily return has no correlation",
+    "row_non_null_pct": {
+      "corr_5d": 99.4604,
+      "corr_20d": 98.6102,
+      "corr_60d": 95.9428,
+      "corr_break_5d": 94.3409,
+      "corr_break_20d": 94.4989,
+      "corr_break_60d": 91.8972,
+      "divergence_flat_vs_fall_1d": 99.9327,
+      "divergence_flat_vs_fall_60d": 95.9645
+    },
+    "excluded_below_95": [
+      {
+        "column": "corr_break_5d",
+        "non_null_pct": 94.3409,
+        "reason": "A break needs five paired returns and then 60 earlier correlations. That warmup covers 94.3409 percent of comparison rows."
+      },
+      {
+        "column": "corr_break_20d",
+        "non_null_pct": 94.4989,
+        "reason": "A break needs 20 paired returns and then 60 earlier correlations. That warmup covers 94.4989 percent of comparison rows."
+      },
+      {
+        "column": "corr_break_60d",
+        "non_null_pct": 91.8972,
+        "reason": "A break needs 60 paired returns and then 60 earlier correlations. That warmup covers 91.8972 percent of comparison rows."
+      }
+    ],
+    "divergence_unknown": "blank until both returns exist; a known window is 1 or 0",
+    "spot_check": {
+      "ticker": "AFCG",
+      "rows": 1407,
+      "columns": [
+        "corr_5d",
+        "corr_break_5d",
+        "return_spread_5d",
+        "divergence_flat_vs_fall_1d"
+      ],
+      "max_abs_error": 0.0
+    }
   }
 }
