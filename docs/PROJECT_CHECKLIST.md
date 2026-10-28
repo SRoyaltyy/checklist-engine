@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 10.**
+**Verified by both: 13/303. Claimed awaiting James: 11.**
 
 ## Rules
 
@@ -71,7 +71,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Moving averages and trend
 
-- [ ] **1.06** Moving averages and trend: source located. Items: dictionary I001–I023, plus TradingView trend items on the same formulas (ALMA, ADX, Aroon, Ichimoku, supertrend, Kagi, and the rest of that family in docs/TV_COVERAGE.csv). Done when: Source is the phase-1 bar file. No second vendor. The coverage row names the bar asset. Evidence:
+- [x] **1.06** Moving averages and trend: source located. Items: dictionary I001–I023, plus TradingView trend items on the same formulas (ALMA, ADX, Aroon, Ichimoku, supertrend, Kagi, and the rest of that family in docs/TV_COVERAGE.csv). Done when: Source is the phase-1 bar file. No second vendor. The coverage row names the bar asset. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_06.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.07** Moving averages and trend: fetched onto a checklist-engine release. Done when: The world build stores each named length as its own columns (registered defaults plus the other lengths in the variable grid). The shard manifest shows a column count > 0 for this family. Evidence:
 - [ ] **1.08** Moving averages and trend: joined point-in-time. Done when: Every average uses bars < D. A test compares one SMA on a cutoff date with a hand calculation that drops the day-D bar. Evidence:
 - [ ] **1.09** Moving averages and trend: built at candle sizes 1 through 21. Done when: Each average exists as item__tf for every candle size 1..21. A daily SMA labelled weekly fails. That is the old facets.py _weekly failure. Evidence:
