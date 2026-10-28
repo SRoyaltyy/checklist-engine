@@ -1,0 +1,110 @@
+{
+  "block": "outside_vol_term",
+  "release": "light-daily-box-v1-20261028",
+  "source": "yfinance 1.7.0 (Yahoo), auto_adjust=False; columns date,open,high,low,close,adj_close,volume; reference calendar = SPY trading days; IBIT coverage measured from its listing date; VIX-family indexes have no volume (0)",
+  "window_start": "2020-01-02",
+  "as_of": "2026-10-27",
+  "vix_note": "Published Yahoo ^VIX close from this release. It has no ALFRED vintage column. available_from is the next SPY session.",
+  "off_spy_calendar": {
+    "^VIX": [
+      "2026-05-25",
+      "2026-09-07"
+    ],
+    "^VIX9D": [],
+    "^VIX3M": [],
+    "^VVIX": []
+  },
+  "summary": {
+    "series_passed": 9,
+    "excluded": []
+  },
+  "series": [
+    {
+      "series": "vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vvix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.5916,
+      "rows": 1707,
+      "expected_sessions": 1714,
+      "missing_sessions": 7
+    },
+    {
+      "series": "vix_over_vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d_over_vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix9d_over_vix3m",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix3m_minus_vix",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "vix_minus_vix9d",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    }
+  ],
+  "storage": {
+    "rows": 1714,
+    "sha256": "4f5b8a4df746b781626a0d885a962d635a645472895aeb1efa437bf4e2488916",
+    "encoding": "float64_byte_stream_split_zstd19"
+  },
+  "lookahead": "ratios use same-session closes; available_from is the next SPY session"
+}

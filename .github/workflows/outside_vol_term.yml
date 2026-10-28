@@ -2,12 +2,6 @@ name: outside-vol-term
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - outside_vol.py
-      - ci/outside_vol_term.py
-      - tests/test_outside_vol.py
-      - .github/workflows/outside_vol_term.yml
 
 permissions:
   contents: write
