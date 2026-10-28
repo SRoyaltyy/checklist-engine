@@ -1,0 +1,15 @@
+{
+  "session": "2026-10-28",
+  "available_from": "2026-10-29",
+  "source": "https://cdn.cboe.com/api/global/us_indices/daily_prices/{series}_History.csv",
+  "prior_rows_changed": 0,
+  "appended": [
+    "VIX9D,10/28/2026,16.710000,17.230000,14.960000,15.600000",
+    "VIX3M,10/28/2026,19.500000,19.700000,18.920000,19.220000",
+    "VVIX,10/28/2026,96.610000"
+  ],
+  "vix": "CBOE VIX_History.csv still ends 10/27/2026,17.520000. The 2026-10-28 term ratios are not computed.",
+  "vvix_ohlc": "The VVIX history publishes the close only. Open, high, and low are blank, not zero.",
+  "sha256": "9d3e751d106af498678afc0a84bf9ea27790294cf9a41a954eeae57db79d0ad8",
+  "published_shared_release_unchanged": "shared-context-v2-40636949344-1"
+}
