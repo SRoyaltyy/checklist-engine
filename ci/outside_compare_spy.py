@@ -12,7 +12,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 
-from outside_compare import EXCLUDED_COMPARATORS, MAP_SEARCH, WINDOWS, compare_one
+from outside_compare import CORR_WINDOWS, EXCLUDED_COMPARATORS, MAP_SEARCH, WINDOWS, compare_one
 
 STITCH_RELEASE = "accepted-price-stitch-v2-40494479693-1"
 STITCH_MANIFEST = "ACCEPTED_PRICE_STITCH.json"
@@ -148,6 +148,8 @@ def build(out, spy_path, chunk_size=400, flags_only=False):
         map_search=MAP_SEARCH,
         excluded_names=[row for row in excluded if "ticker" in row],
         windows=[1, 5, 20, 60],
+        correlation_windows=list(CORR_WINDOWS),
+        correlation_1d="NOT_A_COLUMN; one paired daily return has no correlation",
         flat_return=0.01,
         comparator_fall=0.02,
         lookahead="windows end on the session; available_from is the next SPY session",

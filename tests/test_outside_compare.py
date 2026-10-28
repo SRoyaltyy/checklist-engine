@@ -38,6 +38,19 @@ def test_falling_name_and_flat_comparator_is_the_other_divergence():
     assert int(out.divergence_flat_vs_fall_1d.iloc[1]) == 0
 
 
+def test_five_session_correlation_uses_five_paired_daily_returns():
+    name_close = [10, 11, 10, 12, 11, 13, 12, 14]
+    other_close = [10, 10, 11, 11, 12, 10, 11, 13]
+    out = comp.compare_one(frame(name_close), frame(other_close))
+    assert "corr_1d" not in out.columns and "corr_break_1d" not in out.columns
+    name_ret = pd.Series(name_close).pct_change()
+    other_ret = pd.Series(other_close).pct_change()
+    expected = name_ret.rolling(5, min_periods=5).corr(other_ret)
+    assert out.corr_5d.iloc[:5].isna().all()
+    assert np.isclose(out.corr_5d.iloc[5], expected.iloc[5])
+    assert np.isnan(out.corr_break_5d.iloc[5])
+
+
 def test_zero_variance_correlation_stays_blank():
     name = frame([10.0] * 30)
     other = frame([float(i + 1) for i in range(30)])

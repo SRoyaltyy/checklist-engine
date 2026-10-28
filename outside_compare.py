@@ -13,7 +13,8 @@ import pandas as pd
 WINDOWS = (1, 5, 20, 60)
 FLAT = 0.01
 FALL = 0.02
-CORR_WINDOWS = (20, 60)
+# One paired daily return cannot make a correlation, so there is no 1-session column.
+CORR_WINDOWS = (5, 20, 60)
 BREAK_BASELINE = 60
 # Fullscan Finviz exports name Ticker, Sector, and Industry. The first file is
 # 2026-04-26 and the last is 2026-10-27 (63 dated files, plus finviz_latest.csv).
