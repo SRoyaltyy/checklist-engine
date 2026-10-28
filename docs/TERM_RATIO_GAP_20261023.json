@@ -1,0 +1,24 @@
+{
+  "sessions": [
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27"
+  ],
+  "formulas": {
+    "vix9d_vix_term_ratio": "VIX9D close / VIX close",
+    "vix3m_vix_term_ratio": "VIX3M close / VIX close",
+    "vol_vix_over_vix3m": "VIX close / VIX3M close",
+    "vol_vix9d_over_vix": "VIX9D close / VIX close",
+    "vol_vix9d_over_vix3m": "VIX9D close / VIX3M close",
+    "vol_vix3m_minus_vix": "VIX3M close - VIX close",
+    "vol_vix_minus_vix9d": "VIX close - VIX9D close"
+  },
+  "checked_against_release_row": {
+    "source_day": "2026-10-22",
+    "vix_close": 19.03,
+    "vix3m_close": 20.12,
+    "vol_vix_over_vix3m": 0.9458250497017893
+  },
+  "not_computed": "2026-10-28 has VIX9D and VIX3M but the CBOE VIX history still ends 2026-10-27",
+  "sha256": "bb861d8ea69cc017080ddc91a3c6520cf18b0e92f10b473e1884037d2ee720ec"
+}
