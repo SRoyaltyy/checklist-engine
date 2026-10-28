@@ -1,0 +1,14 @@
+{
+  "source_release": "outside-event-calendar-v1",
+  "source_sha256": "c8675ab2200e70e2a9410a3b3a0c1f53796edb4ce417d31c3eea1c50f647052c",
+  "cpi_missing_months": [
+    "2025-11"
+  ],
+  "jobs_missing_months": [
+    "2025-10"
+  ],
+  "cpi_flags": 81,
+  "jobs_flags": 81,
+  "months_checked": "2020-01 through 2026-10",
+  "not_invented": "No date was filled in for the missing months."
+}
