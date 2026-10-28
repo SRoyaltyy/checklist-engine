@@ -11,5 +11,8 @@
     "2025-01-02"
   ],
   "scope": "Inherited Tier1 43-ETF panel only. Preserve frozen native OHLCV on every overlapping date; retain every light-daily source quantity separately as vendor_* and adj_close, with later/absent sessions and industry series remaining light-daily. Canonical source overlap must be bit-exact; retain all nine known volume capture differences and leave historical first-publication/vintage timing unproven. Same frozen calendar anchor and all-field prefix checks. No live provider/Stooq fetch, new data type/question, world/scoring acceptance or protected world restart.",
-  "supersedes_measurement_run": 40663234466
+  "supersedes_measurement_run": 40663234466,
+  "run_owner": "GPT/Codex",
+  "authority": "James/Cyrus 2f873c959e6e194292f2af1569134d79f1e6ac63 (#79); ownership clarified by #80",
+  "replaces_terminal_cancelled_run": 40665977536
 }
