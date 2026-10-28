@@ -50,5 +50,23 @@
   ],
   "flat_return": 0.01,
   "comparator_fall": 0.02,
-  "lookahead": "windows end on the session; available_from is the next SPY session"
+  "lookahead": "windows end on the session; available_from is the next SPY session",
+  "divergence": {
+    "file": "docs/outside_compare_spy_divergence.parquet",
+    "rows": 12362658,
+    "sha256": "ad86f54835a4c2d7a1a4c66dcb735029cd1db7f9c06a5ad4cf14ebdf8d522d34",
+    "encoding": "bool_bit_packed_ticker_dictionary_zstd19",
+    "flat_vs_fall": "absolute stock return at most 1 percent and SPY return at most -2 percent",
+    "fall_vs_flat": "stock return at most -2 percent and absolute SPY return at most 1 percent",
+    "rates_percent": {
+      "divergence_flat_vs_fall_1d": 0.8045,
+      "divergence_fall_vs_flat_1d": 9.3194,
+      "divergence_flat_vs_fall_5d": 2.4811,
+      "divergence_fall_vs_flat_5d": 9.3087,
+      "divergence_flat_vs_fall_20d": 2.0461,
+      "divergence_fall_vs_flat_20d": 6.5307,
+      "divergence_flat_vs_fall_60d": 1.2752,
+      "divergence_fall_vs_flat_60d": 2.3924
+    }
+  }
 }

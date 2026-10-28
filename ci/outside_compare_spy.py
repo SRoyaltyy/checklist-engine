@@ -12,7 +12,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 
-from outside_compare import EXCLUDED_COMPARATORS, MAP_SEARCH, compare_one
+from outside_compare import EXCLUDED_COMPARATORS, MAP_SEARCH, WINDOWS, compare_one
 
 STITCH_RELEASE = "accepted-price-stitch-v2-40494479693-1"
 STITCH_MANIFEST = "ACCEPTED_PRICE_STITCH.json"
@@ -41,7 +41,15 @@ def download(url, path):
     return target
 
 
-def build(out, spy_path, chunk_size=400):
+def divergence_columns():
+    columns = []
+    for window in WINDOWS:
+        columns.append("divergence_flat_vs_fall_%dd" % window)
+        columns.append("divergence_fall_vs_flat_%dd" % window)
+    return columns
+
+
+def build(out, spy_path, chunk_size=400, flags_only=False):
     out = Path(out)
     part_dir = out / "parts"
     part_dir.mkdir(parents=True, exist_ok=True)
@@ -71,9 +79,18 @@ def build(out, spy_path, chunk_size=400):
             return
         frame = pd.concat(batch, ignore_index=True)
         table = pa.Table.from_pandas(frame, preserve_index=False)
+        if flags_only:
+            frame = frame.loc[:, ["ticker", "date", "available_from", *divergence_columns()]].copy()
+            for column in divergence_columns():
+                frame[column] = frame[column].astype(bool)
+            table = pa.Table.from_pandas(frame, preserve_index=False)
         if writer is None:
             schema = table.schema
-            writer = pq.ParquetWriter(part_dir / "compare_spy.parquet", schema, compression="zstd", compression_level=19)
+            output_name = "compare_spy_divergence.parquet" if flags_only else "compare_spy.parquet"
+            writer = pq.ParquetWriter(
+                part_dir / output_name, schema, compression="zstd", compression_level=19,
+                use_dictionary=["ticker"] if flags_only else False,
+            )
         writer.write_table(table.cast(schema))
         rows += len(frame)
         part_rows.append(len(frame))
@@ -125,7 +142,8 @@ def build(out, spy_path, chunk_size=400):
         names_expected=names_expected,
         names_percent=round(100 * used / names_expected, 4),
         rows=rows,
-        output_sha256=sha256_file(part_dir / "compare_spy.parquet"),
+        output_file="compare_spy_divergence.parquet" if flags_only else "compare_spy.parquet",
+        output_sha256=sha256_file(part_dir / ("compare_spy_divergence.parquet" if flags_only else "compare_spy.parquet")),
         excluded_comparators=EXCLUDED_COMPARATORS,
         map_search=MAP_SEARCH,
         excluded_names=[row for row in excluded if "ticker" in row],
@@ -145,8 +163,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", required=True)
     parser.add_argument("--spy", required=True)
+    parser.add_argument("--flags-only", action="store_true")
     args = parser.parse_args()
-    build(args.out, args.spy)
+    build(args.out, args.spy, flags_only=args.flags_only)
 
 
 if __name__ == "__main__":

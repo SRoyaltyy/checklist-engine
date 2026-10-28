@@ -92,6 +92,9 @@ def compare_one(name, comparator, as_of=None):
         flag = np.zeros(len(frame), dtype=np.int8)
         flag[known] = ((np.abs(stock[known]) <= FLAT) & (other[known] <= -FALL)).astype(np.int8)
         out[f"divergence_flat_vs_fall_{window}d"] = flag
+        opposite = np.zeros(len(frame), dtype=np.int8)
+        opposite[known] = ((stock[known] <= -FALL) & (np.abs(other[known]) <= FLAT)).astype(np.int8)
+        out[f"divergence_fall_vs_flat_{window}d"] = opposite
     daily_name = pd.Series(_return(name_px, 1))
     daily_comp = pd.Series(_return(comp_px, 1))
     for window in CORR_WINDOWS:
