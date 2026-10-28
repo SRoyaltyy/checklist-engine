@@ -1,0 +1,33 @@
+{
+  "status": "EXACT_RECONSTRUCTION_PASS_AND_COMPRESSED_RETENTION_CAP_FAIL_NOT_FULL_WORLD",
+  "run": 40657531639,
+  "producer": "e5898a46a255507f5dea63fb864b599ea6541fd6",
+  "linux_focused_tests": 118,
+  "recompute_report_sha256": "50d8bdbf3435f15f9cb6b15f02c2b0c1b7f1b677af7642ea70e2eedd2a3fcf10",
+  "reencode_report_sha256": "bc686f27b0aee59c4170d9db86d0045c52e0cd3111750d421d899abb6e88716e",
+  "exact_stock_cells": 51008796,
+  "exact_etf_cells": 342280,
+  "stock_timeframe_checks": 66,
+  "etf_timeframe_checks": 22,
+  "all_values_and_dates_exact": true,
+  "independent_verification": "Downloaded/hash-checked both public reports; verified original source/container bindings, all22 frame row counts/1044 columns, 10 candidate trials per frame and minimum selection, recalculated weighted numeric estimate. Full array decode/reconstruction was performed by the authenticated runner, not repeated locally.",
+  "retention_only_numeric_payload_projection_bytes": 450623012150.45734,
+  "retention_only_under100GB": false,
+  "amended_known_price_shared_scope_projection_components": {
+    "diagnostic_answers_max_sample_times_8727_times_1_25": 34162801470.0,
+    "approved_price_raw_archives_actual_plan_bytes": 3805496392,
+    "shared_outcome_registry_conservative_sample_bytes": 13752319,
+    "bound_inputs_plan_bytes": 3566159,
+    "published_44_shared_native_factors_bytes": 50443476,
+    "all_25_etf_daily_sources_once_bytes": 4089440
+  },
+  "amended_known_price_shared_scope_projection_bytes": 38040149256.0,
+  "projection_limit": "Original 8727-count conservative answer extrapolation plus actual approved 8316-source plan, published shared blocks and 25 ETF raw inputs; three sample answer rates, not a measured complete universe. Registry/bound inputs may overlap conservatively. Excludes other Tier1 factor/comparison integrations, remaining Tier2 sources/native states, full existing-question answers/quality/leak/identity proof. Not a full-world budget.",
+  "source_plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+  "policy": "Raw inputs retained once plus pinned exact recomputation, explicitly authorized by James/Cyrus 9f390e2; no deletion of historical numeric evidence.",
+  "full_world_estimate_bytes": null,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "next_priority": "Tier1 deterministic ETF/VIX/breadth/comparison integration; no new types/questions; no news",
+  "approved_world_run_untouched": 40621517496
+}

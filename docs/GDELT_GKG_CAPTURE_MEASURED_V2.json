@@ -1,0 +1,161 @@
+{
+  "status": "BOUNDED_GKG_ARCHIVE_NUMERIC_CAPTURE_NOT_FULL_HISTORY",
+  "request": {
+    "version": 2,
+    "stamps": [
+      "20200101000000",
+      "20250101000000",
+      "20261023000000"
+    ],
+    "entities": [
+      {
+        "entity_id": "probe_apple_org",
+        "aliases": [
+          "Apple Inc",
+          "Apple Inc.",
+          "Apple Incorporated"
+        ]
+      },
+      {
+        "entity_id": "probe_microsoft_org",
+        "aliases": [
+          "Microsoft",
+          "Microsoft Corporation"
+        ]
+      },
+      {
+        "entity_id": "probe_nvidia_org",
+        "aliases": [
+          "Nvidia",
+          "Nvidia Corporation"
+        ]
+      },
+      {
+        "entity_id": "probe_tesla_org",
+        "aliases": [
+          "Tesla Inc",
+          "Tesla Inc.",
+          "Tesla Motors"
+        ]
+      },
+      {
+        "entity_id": "probe_general_electric_org",
+        "aliases": [
+          "General Electric",
+          "General Electric Company"
+        ]
+      }
+    ],
+    "max_catalog_bytes": 180000000,
+    "max_archive_bytes": 64000000,
+    "max_uncompressed_bytes": 512000000,
+    "scope": "One official English master catalog plus three catalog-selected historical GKG 2.1 files. Numeric counts and document-level tone only; no article text, URLs, quotes, current-company remapping or claim of continuous historical/PIT coverage. Not a retry of the rate-limited DOC API; stop on access/rate errors."
+  },
+  "source_commit": "07196ef485e9539e42ca3908fa1f279afa95d9e1",
+  "attempts": [
+    {
+      "stamp": "20200101000000",
+      "bytes": 5288568,
+      "md5": "cfa2331d641aca029fea28bebb462ed4",
+      "url": "https://data.gdeltproject.org/gdeltv2/20200101000000.gkg.csv.zip",
+      "http_status": 200,
+      "last_modified": "Tue, 31 Dec 2019 23:50:20 GMT",
+      "etag": "\"cfa2331d641aca029fea28bebb462ed4\"",
+      "observed_at": "2026-10-28T05:36:40.822195+00:00",
+      "status": "NUMERIC_ARCHIVE_ROWS_RETURNED",
+      "statistics": {
+        "raw_rows": 1253,
+        "web_records": 1253,
+        "untranslated_record_marker": 1253,
+        "quarantine": {},
+        "member_sha256": "e7257eedab06516dfa53a0211a6520c37b3471ed92495a9df1cf3379bf7587b8",
+        "archive_sha256": "c9dffa4dee44e2a9b06a4315e3d5d58e0b2f1ddb4988a2e37f07380f1bbf2279",
+        "member_bytes": 16540964,
+        "source_collection": "WEB_ONLY",
+        "count_unit": "unique GKG records within this file; not globally deduplicated articles",
+        "free_text_persisted": false,
+        "complete_file_parse": true
+      }
+    },
+    {
+      "stamp": "20250101000000",
+      "bytes": 4728104,
+      "md5": "df894016112af38493280b70c1e480ff",
+      "url": "https://data.gdeltproject.org/gdeltv2/20250101000000.gkg.csv.zip",
+      "http_status": 200,
+      "last_modified": "Tue, 31 Dec 2024 23:48:35 GMT",
+      "etag": "\"df894016112af38493280b70c1e480ff\"",
+      "observed_at": "2026-10-28T05:36:47.391833+00:00",
+      "status": "NUMERIC_ARCHIVE_ROWS_RETURNED",
+      "statistics": {
+        "raw_rows": 1059,
+        "web_records": 1059,
+        "untranslated_record_marker": 1059,
+        "quarantine": {},
+        "member_sha256": "fec225bd359d46e8b21b961b961aa4b83a60b88dcc2e474a23f1789cb6c4cfa8",
+        "archive_sha256": "67ee43458847ce6a4a0f37c418b1b75287840d8888230e47af844bd3a0dd77e3",
+        "member_bytes": 14803596,
+        "source_collection": "WEB_ONLY",
+        "count_unit": "unique GKG records within this file; not globally deduplicated articles",
+        "free_text_persisted": false,
+        "complete_file_parse": true
+      }
+    },
+    {
+      "stamp": "20261023000000",
+      "bytes": 5371010,
+      "md5": "0423870f4b1b8f9ad625626b77a69cc7",
+      "url": "https://data.gdeltproject.org/gdeltv2/20261023000000.gkg.csv.zip",
+      "http_status": 200,
+      "last_modified": "Thu, 22 Oct 2026 23:49:25 GMT",
+      "etag": "\"0423870f4b1b8f9ad625626b77a69cc7\"",
+      "observed_at": "2026-10-28T05:36:53.792577+00:00",
+      "status": "NUMERIC_ARCHIVE_ROWS_RETURNED",
+      "statistics": {
+        "raw_rows": 1230,
+        "web_records": 1230,
+        "untranslated_record_marker": 1230,
+        "quarantine": {},
+        "member_sha256": "e1c126565a53a1315d26242b9056066382ce3d359980b80a51408c8f0595d1bc",
+        "archive_sha256": "094f987eac32ad385fc3f6494e8b118aa79cbc5126448daa21e9e70b84accb68",
+        "member_bytes": 16504005,
+        "source_collection": "WEB_ONLY",
+        "count_unit": "unique GKG records within this file; not globally deduplicated articles",
+        "free_text_persisted": false,
+        "complete_file_parse": true
+      }
+    }
+  ],
+  "parts": [
+    {
+      "file": "20200101000000.numeric.parquet",
+      "sha256": "afb43caf6bd4b209a72ce994b2271ed7297e9cd78edaefd9fd3045af7c1983f5",
+      "rows": 6
+    },
+    {
+      "file": "20250101000000.numeric.parquet",
+      "sha256": "080678eebf38ba901c2bcf4c211ac70ec13948d2ceeae7086d543e6c9b1b8a3a",
+      "rows": 6
+    },
+    {
+      "file": "20261023000000.numeric.parquet",
+      "sha256": "031dc083715a421e55893e714eddfdcc1ed59a125d7037bc4d7f782a36b8ae76",
+      "rows": 6
+    }
+  ],
+  "historical_full_interval_gate": "NOT_PROVEN; three 15-minute files are not continuous history",
+  "ticker_identity_gate": "NOT_PROVEN; exact demonstration aliases only",
+  "point_in_time_gate": "NOT_PROVEN; record batch timestamp and current Last-Modified are not historical byte-vintage proof",
+  "world_gate": "NOT_RUN",
+  "scoring_gate": "CLOSED",
+  "catalog": {
+    "url": "https://data.gdeltproject.org/gdeltv2/masterfilelist.txt",
+    "bytes": 128958272,
+    "lines": 1207749,
+    "official_root_marker_lines": 61,
+    "blank_lines": 0,
+    "sha256": "69a28709e71709aa4be829e6d71e942e52385de18853d47168d1a59099870325",
+    "complete_catalog": true,
+    "missing_stamps": []
+  }
+}

@@ -1,47 +1,12 @@
-name: world_fetch_gdelt
+# Cyrus 2026-10-28: all news is permanently excluded from active scope.
+name: dropped-news-world_fetch_gdelt
 on:
-  push:
-    branches: [main]
-    paths: ['ci/GDELT_SOURCE_PROBE_REQUEST.json']
   workflow_dispatch:
-  pull_request:
-    paths: ['fetch/gdelt_source_probe.py', 'tests/test_gdelt_source_probe.py', 'ci/GDELT_SOURCE_PROBE_REQUEST.json', '.github/workflows/world_fetch_gdelt.yml']
 permissions:
   contents: read
-concurrency:
-  group: gdelt-numeric-source-${{ github.event_name }}
-  cancel-in-progress: false
 jobs:
-  verify:
+  dropped:
+    if: ${{ false }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m pytest tests/test_gdelt_source_probe.py tests/test_world_release_assets.py -q
-  probe:
-    if: github.event_name != 'pull_request'
-    needs: verify
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      GH_TOKEN: ${{ github.token }}
-      PYTHONUNBUFFERED: '1'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m fetch.gdelt_source_probe --directory gdelt-probe
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: gdelt-numeric-source-proof
-          path: gdelt-probe/GDELT_SOURCE_PROBE.json
-          if-no-files-found: ignore
+      - run: echo 'Dropped by Cyrus 2026-10-28; no acquisition or publication'

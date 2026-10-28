@@ -1,0 +1,137 @@
+{
+  "status": "VERIFIED_NATIVE_ROW_DENOMINATOR_NOT_WORLD",
+  "source_reports": 16,
+  "source_report_bytes": 12857477,
+  "source_index_sha256": "f2f61accb0451a579a8d9670c16272f9df9ebcde1168a5678a581e90a7af3c0b",
+  "source_index": {
+    "0": {
+      "release": "native-price-base-v1-40360947486-1-000",
+      "asset": "BASE_COMPLETE.json",
+      "size": 821452,
+      "sha256": "2e26fe9d4336b91ba67371b6cdca6f41bce92726675f61b5bad21f87a4fd7eb8"
+    },
+    "1": {
+      "release": "native-price-base-v1-40360947486-1-001",
+      "asset": "BASE_COMPLETE.json",
+      "size": 806846,
+      "sha256": "2e18943fc9b80b804e523c6d24d2f11fb4decaa1719e19f651588fe4d6066498"
+    },
+    "2": {
+      "release": "native-price-base-v1-40360947486-1-002",
+      "asset": "BASE_COMPLETE.json",
+      "size": 788542,
+      "sha256": "8c809a27a443393670bfbee078d21ea256947ad7941ffa36e90bc7f022253876"
+    },
+    "3": {
+      "release": "native-price-base-v1-40360947486-1-003",
+      "asset": "BASE_COMPLETE.json",
+      "size": 802233,
+      "sha256": "4965bbf5bbb5b656f93a9ece2ebbdbd267b182519f0a501c9d3de97572a8103e"
+    },
+    "4": {
+      "release": "native-price-base-v1-40360947486-1-004",
+      "asset": "BASE_COMPLETE.json",
+      "size": 805261,
+      "sha256": "33e18e92548529184bd5e529ca266255d83a2ea185265e6ca003c917235a368b"
+    },
+    "5": {
+      "release": "native-price-base-v1-40360947486-1-005",
+      "asset": "BASE_COMPLETE.json",
+      "size": 811373,
+      "sha256": "a3fed72bd08af9a13bf8bc1847d1ba0060ff0d8e2dc200db35b246af7ff0d8ec"
+    },
+    "6": {
+      "release": "native-price-base-v1-40360947486-1-006",
+      "asset": "BASE_COMPLETE.json",
+      "size": 801881,
+      "sha256": "b276d80c06b208d7376cf2526c5a3d8ab35bd29bbc2cb2fa575f9dd7ac0e1ef8"
+    },
+    "7": {
+      "release": "native-price-base-v1-40360947486-1-007",
+      "asset": "BASE_COMPLETE.json",
+      "size": 797070,
+      "sha256": "d3d93f691d6c4416e9b5503c4f30526bbbe8716b8f282df61e9e5e7512a744f3"
+    },
+    "8": {
+      "release": "native-price-base-v1-40360947486-1-008",
+      "asset": "BASE_COMPLETE.json",
+      "size": 803741,
+      "sha256": "32634eaf4048833cab2f2f75b92c7b46465657da11e1dcbce068f56f990485d4"
+    },
+    "9": {
+      "release": "native-price-base-v1-40360947486-1-009",
+      "asset": "BASE_COMPLETE.json",
+      "size": 797234,
+      "sha256": "3571dabc95d6bf1382ed47659aa8dc82f06ef59d0cee9b9bec962fd4ab455117"
+    },
+    "10": {
+      "release": "native-price-base-v1-40360947486-1-010",
+      "asset": "BASE_COMPLETE.json",
+      "size": 805435,
+      "sha256": "d8a2992c68bc23b44b5d859450eb94a9c9f38aa8d5b011c8626035f182ac12b6"
+    },
+    "11": {
+      "release": "native-price-base-v1-40360947486-1-011",
+      "asset": "BASE_COMPLETE.json",
+      "size": 808367,
+      "sha256": "dc57a0d5deb3784050fd2b68090affbb9ab063e48116c7ba0300890d3b8b6b65"
+    },
+    "12": {
+      "release": "native-price-base-v1-40360947486-1-012",
+      "asset": "BASE_COMPLETE.json",
+      "size": 799196,
+      "sha256": "52f380032114f786e0b16ef489cbf6837b1d418636b2ad122c1450690a28c4dc"
+    },
+    "13": {
+      "release": "native-price-base-v1-40494316284-1-013",
+      "asset": "BASE_COMPLETE.json",
+      "size": 802953,
+      "sha256": "e263abae4f9680cd833a4b1436fbc0b8681ffa3ea3d22a4286a8b4edb0751827"
+    },
+    "14": {
+      "release": "native-price-base-v1-40494316284-1-014",
+      "asset": "BASE_COMPLETE.json",
+      "size": 797318,
+      "sha256": "53957e7e53d9951e9e2d69f8fe2dbc011293f1e3a57ec19538d739f60c9a1c6f"
+    },
+    "15": {
+      "release": "native-price-base-v1-40494316284-1-015",
+      "asset": "BASE_COMPLETE.json",
+      "size": 808575,
+      "sha256": "6fe76d580e261009f88a537f3bcc6593f6a70651c894d96285015360fb9fae2e"
+    }
+  },
+  "plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+  "source_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "prepared_tickers": 8447,
+  "accepted_tickers": 8316,
+  "query_stock_days": 12364370,
+  "native_rows_by_timeframe": {
+    "1d": 31104142,
+    "2d": 15550226,
+    "3d": 10365472,
+    "4d": 7769091,
+    "5d": 6217790,
+    "6d": 5180857,
+    "7d": 4437844,
+    "8d": 3878513,
+    "9d": 3452674,
+    "10d": 3106973,
+    "11d": 2818182,
+    "12d": 2584372,
+    "13d": 2388514,
+    "14d": 2217037,
+    "15d": 2070019,
+    "16d": 1937362,
+    "17d": 1823670,
+    "18d": 1724410,
+    "19d": 1626104,
+    "20d": 1547445,
+    "21d": 1474077,
+    "monthly": 1474244
+  },
+  "all_native_rows": 114749018,
+  "source_daily_rows_including_first_bar": 31112458,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
