@@ -442,5 +442,11 @@
       "full_window_percent": 40.8985,
       "note": "Bars before the listing are absent, not zero. The series is kept from the listing date. It does not cover 95 percent of 2020-01-02 through the last session."
     }
-  ]
+  ],
+  "spot_check": {
+    "source": "light-daily-box-v1-20261028 raw close",
+    "symbols": 43,
+    "rows_compared": 72689,
+    "max_abs_error": 0.0
+  }
 }
