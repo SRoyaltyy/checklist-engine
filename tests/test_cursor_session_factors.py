@@ -54,6 +54,26 @@ def test_directory_coverage_skips_etfs_already_attached():
     assert all(row["sha256"] for row in bindings)
 
 
+def test_ratio_candles_take_candle_start_from_the_vix_level():
+    ratios = pd.DataFrame({
+        "series": ["vix_over_vix3m", "vix_over_vix3m"],
+        "timeframe": ["1d", "1d"],
+        "date": pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        "close": [1.1, 1.2],
+        "available_from": pd.to_datetime(["2024-01-03", "2024-01-04"]),
+    })
+    levels = pd.DataFrame({
+        "series": ["vix", "vix"],
+        "timeframe": ["1d", "1d"],
+        "date": pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        "candle_start": pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        "available_from": pd.to_datetime(["2024-01-03", "2024-01-04"]),
+    })
+    wide = factors.ratio_candles_to_factor(ratios, levels)
+    columns = validate_factor(factors.to_native_factor(wide, "vol_"))
+    assert columns == ["vol_vix_over_vix3m"]
+
+
 def test_committed_panels_keep_the_eighteen_industry_etfs():
     from pathlib import Path
     directory = Path("cursor_factors")
@@ -67,3 +87,13 @@ def test_committed_panels_keep_the_eighteen_industry_etfs():
     calendar = pd.read_parquet(directory / "outside_event_calendar_candles.parquet")
     flags = validate_factor(factors.to_native_factor(calendar[calendar.timeframe == "1d"], "calendar_"))
     assert "calendar_is_fomc" in flags and "calendar_is_opex" in flags
+    vol = pd.read_parquet(directory / "outside_vol_ratio_factors.parquet")
+    one_day = vol[vol.timeframe == "1d"]
+    vol_columns = validate_factor(factors.to_native_factor(one_day, "vol_"))
+    assert vol_columns == [
+        "vol_vix3m_minus_vix",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix_minus_vix9d",
+        "vol_vix_over_vix3m",
+    ]

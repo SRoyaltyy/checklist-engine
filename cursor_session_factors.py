@@ -4,9 +4,12 @@ The value on a candle becomes visible at available_from, which is the next
 session after the candle ends. Bool flags are stored as 0/1 integers so the
 existing numeric factor check can read them. No column is dropped.
 
-VIX, VIX9D, VIX3M, VVIX, and the released term ratios stay in the macro/CBOE
-factor. The 25 index, sector, and cross-asset ETFs stay in etf-native-context.
-This module adds breadth, the event-calendar flags, and the 18 industry ETFs.
+VIX, VIX9D, VIX3M, and VVIX levels stay in the macro/CBOE factor, as do
+vix9d_vix_term_ratio and vix3m_vix_term_ratio. This module also adds the five
+Cursor ratio series on the candle grid, under the vol_ prefix, so those names
+do not collide. The 25 index, sector, and cross-asset ETFs stay in
+etf-native-context. Breadth, the event-calendar flags, and the 18 industry
+ETFs are added too.
 """
 from __future__ import annotations
 
@@ -53,6 +56,23 @@ ATTACHED_ETFS = frozenset(
 )
 
 
+def ratio_candles_to_factor(ratios, level_candles):
+    """Wide ratio panel. candle_start comes from the VIX level candle with the same end date."""
+    keys = level_candles.loc[level_candles["series"] == "vix", ["timeframe", "date", "candle_start", "available_from"]]
+    merged = ratios.merge(keys, on=["timeframe", "date"], how="left", suffixes=("", "_level"))
+    if merged["candle_start"].isna().any():
+        raise ValueError("ratio candle has no VIX candle start")
+    if not merged["available_from"].equals(merged["available_from_level"]):
+        raise ValueError("ratio availability differs from the level candle")
+    wide = merged.pivot(
+        index=["timeframe", "candle_start", "date", "available_from"],
+        columns="series",
+        values="close",
+    ).reset_index()
+    wide.columns.name = None
+    return wide
+
+
 def cover_session_directory(directory, weights):
     """Read Cursor candle panels, if present, and measure them on the stock-day weights."""
     directory = Path(directory)
@@ -77,6 +97,11 @@ def cover_session_directory(directory, weights):
             bars_for_ticker = piece.drop(columns=["ticker"])
             for timeframe, bars in bars_for_ticker.groupby("timeframe"):
                 rows.extend(weighted_coverage(to_native_factor(bars, prefix), weights, timeframe, "industry_etf"))
+    vol = directory / "outside_vol_ratio_factors.parquet"
+    if vol.exists():
+        frame = pd.read_parquet(vol)
+        for timeframe, piece in frame.groupby("timeframe"):
+            rows.extend(weighted_coverage(to_native_factor(piece, "vol_"), weights, timeframe, "vol"))
     return rows
 
 
@@ -126,6 +151,12 @@ def session_factor_report(directory, weights):
             bars_for_ticker = piece.drop(columns=["ticker"])
             for timeframe, bars in bars_for_ticker.groupby("timeframe"):
                 bindings.append(_binding(market, digest, "industry_etf", timeframe, to_native_factor(bars, prefix), "PR #49", symbol=str(ticker)))
+    vol = directory / "outside_vol_ratio_factors.parquet"
+    if vol.exists():
+        digest = _file_sha256(vol)
+        frame = pd.read_parquet(vol)
+        for timeframe, piece in frame.groupby("timeframe"):
+            bindings.append(_binding(vol, digest, "vol", timeframe, to_native_factor(piece, "vol_"), "PR #50"))
     nbytes = sum(path.stat().st_size for path in directory.glob("*.parquet")) if rows else 0
     return rows, bindings, nbytes
 
