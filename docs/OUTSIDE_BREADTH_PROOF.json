@@ -75,5 +75,21 @@
       "up_down_volume_ratio"
     ],
     "one_day_rows": 1712
+  },
+  "multi_day_aggregation": {
+    "timeframes": "2d through 21d and monthly",
+    "flow_columns": "summed",
+    "end_session_columns": [
+      "pct_above_sma20",
+      "pct_above_sma50",
+      "pct_above_sma200",
+      "ad_line"
+    ],
+    "rebuilt_from_sums": [
+      "new_highs_minus_new_lows",
+      "ad_ratio",
+      "up_down_volume_ratio"
+    ],
+    "mismatches": 0
   }
 }
