@@ -125,3 +125,44 @@ def test_bool_round_trip_keeps_a_blank_forward_count():
         assert meta["rows"] == 3
         assert list(back.is_fomc) == [False, True, False]
         assert np.isnan(back.days_to_cpi.iloc[2])
+
+
+def test_candle_flags_copy_the_end_session_and_are_not_combined():
+    sessions = pd.bdate_range("2024-01-02", periods=45)
+    as_of = sessions[29]
+    # Sessions 2 and 3 sit inside the first 5-session block. The block ends at session 4.
+    fomc = pd.DataFrame({"date": [sessions[2], sessions[3]], "kind": ["meeting", "meeting"]})
+    panel = cal.build_calendar(sessions, fomc, [], [], as_of)
+    candles = cal.carry_onto_candles(panel, sessions, as_of)
+    assert {"1d", "5d", "10d", "20d", "21d", "monthly"} <= set(candles.timeframe)
+    assert not {"open", "high", "low", "close", "volume"} & set(candles.columns)
+    daily = panel.set_index("date")
+    one = candles[candles.timeframe == "1d"].set_index("date")
+    assert one.index.isin(daily.index).all()
+    assert one["is_fomc"].equals(daily.loc[one.index, "is_fomc"])
+    assert one["days_to_opex"].equals(daily.loc[one.index, "days_to_opex"])
+    assert (one.available_from > one.index).all()
+    five = candles[candles.timeframe == "5d"].sort_values("date").iloc[0]
+    assert pd.Timestamp(five.date) == sessions[4]
+    assert bool(daily.loc[sessions[2], "is_fomc"])
+    assert not bool(five.is_fomc)
+    assert "not resampled prices" in cal.CANDLE_NOTE
+
+
+def test_earlier_as_of_preserves_calendar_candles_already_available():
+    sessions = pd.bdate_range("2024-01-02", periods=50)
+    fomc = pd.DataFrame({"date": [sessions[10]], "kind": ["meeting"]})
+    early_as_of = sessions[20]
+    early = cal.carry_onto_candles(cal.build_calendar(sessions, fomc, [], [], early_as_of), sessions, early_as_of)
+    later = cal.carry_onto_candles(cal.build_calendar(sessions, fomc, [], [], sessions[40]), sessions, sessions[40])
+    keys = ["timeframe", "date"]
+    kept = early[early.available_from <= early_as_of]
+    merged = kept.merge(later, on=keys, suffixes=("", "_later"))
+    assert len(merged) == len(kept)
+    for column in ("is_fomc", "is_opex", "is_month_end", "days_since_opex"):
+        assert merged[column].equals(merged[column + "_later"])
+    # A forward count stays put where it was already filled. It stays blank when the
+    # next rule date was past the earlier as_of, because that build had no row for it.
+    filled = merged["days_to_opex"].notna()
+    assert filled.any()
+    assert merged.loc[filled, "days_to_opex"].equals(merged.loc[filled, "days_to_opex_later"])

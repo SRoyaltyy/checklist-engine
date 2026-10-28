@@ -24,6 +24,8 @@ from outside_calendar import (
     FRED_RELEASE,
     assert_calendar_coverage,
     build_calendar,
+    candle_summary,
+    carry_onto_candles,
     coverage_table,
     first_release_dates,
     parse_fomc_calendars,
@@ -81,6 +83,8 @@ def build(out, now=None, publish=False):
     rows = coverage_table(panel)
     summary = assert_calendar_coverage(rows)
     meta = write_lossless(panel, out / "outside_event_calendar.parquet")
+    candles = carry_onto_candles(panel, sessions, as_of)
+    candle_meta = write_lossless(candles, out / "outside_event_calendar_candles.parquet")
     proof = dict(
         block="outside_event_calendar",
         as_of=str(as_of.date()),
@@ -95,6 +99,7 @@ def build(out, now=None, publish=False):
         jobs_releases=int(len(jobs)),
         summary=summary,
         storage=meta,
+        candles={**candle_summary(candles), "storage": candle_meta},
         series=rows,
         counts={
             column: int(panel[column].sum()) for column in (
@@ -112,6 +117,7 @@ def build(out, now=None, publish=False):
             "--notes", "Event calendar flags through " + proof["as_of"] + ". See OUTSIDE_EVENT_CALENDAR_PROOF.json.",
             "--target", os.environ.get("GITHUB_SHA", "HEAD"),
             str(out / "outside_event_calendar.parquet"),
+            str(out / "outside_event_calendar_candles.parquet"),
             str(proof_path),
         )
         proof["release"] = tag

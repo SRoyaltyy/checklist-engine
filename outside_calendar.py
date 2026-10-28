@@ -4,7 +4,8 @@ FOMC days come from the Federal Reserve's public calendar. CPI and jobs-report
 days are the first ALFRED vintage of CPIAUCSL and UNRATE, which is the morning
 release. Month-end, turn-of-month, and monthly options expiry are rules on the
 NYSE session calendar. A row on day D does not read prices. A release dated
-after D is not flagged on D.
+after D is not flagged on D. Candle rows repeat the end session's facts.
+They are not a count or an average of the sessions inside the candle.
 """
 
 from __future__ import annotations
@@ -34,6 +35,12 @@ MONTHS = {
 FLAG_COLUMNS = (
     "is_fomc", "is_fomc_notation", "is_cpi", "is_jobs", "is_month_start",
     "is_month_end", "is_turn_of_month", "is_opex",
+)
+CANDLE_NOTE = (
+    "Each candle row repeats the calendar facts of its end session. "
+    "The flags are not counted, averaged, or otherwise combined across the sessions inside the candle. "
+    "They are calendar facts, not resampled prices. "
+    "available_from is the next session after the candle completes, so a candle that contains day D is not visible on D."
 )
 
 
@@ -242,6 +249,63 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of):
     return frame
 
 
+def carry_onto_candles(daily, sessions, as_of):
+    """Put the daily facts on each completed candle. The value is the end session's value."""
+    from world_timeframes import PRICE_COLS, TIMEFRAMES, completed_candles
+
+    as_of = pd.Timestamp(as_of)
+    sessions = pd.DatetimeIndex(pd.to_datetime(sessions)).tz_localize(None)
+    sessions = sessions.sort_values().unique()
+    facts = daily.copy()
+    facts["date"] = pd.to_datetime(facts["date"]).astype("datetime64[ns]")
+    facts = facts.loc[facts["date"] <= as_of].sort_values("date").reset_index(drop=True)
+    fact_columns = [column for column in facts.columns if column not in ("date", "available_from")]
+    bars = pd.DataFrame({
+        "date": facts["date"].to_numpy(),
+        "open": np.ones(len(facts)),
+        "high": np.ones(len(facts)),
+        "low": np.ones(len(facts)),
+        "close": np.ones(len(facts)),
+        "volume": np.zeros(len(facts)),
+    })
+    lookup = facts.set_index("date")
+    frames = []
+    for timeframe in TIMEFRAMES:
+        candles = completed_candles(bars, timeframe, sessions)
+        candles = candles.loc[candles["date"] <= as_of]
+        if candles.empty:
+            continue
+        piece = candles.loc[:, ["candle_start", "date", "available_from"]].copy()
+        piece.insert(0, "timeframe", timeframe)
+        aligned = lookup.reindex(pd.DatetimeIndex(piece["date"]))
+        if not pd.DatetimeIndex(piece["date"]).isin(lookup.index).all():
+            raise ValueError("candle end date has no calendar row: " + timeframe)
+        for column in fact_columns:
+            piece[column] = aligned[column].to_numpy()
+        frames.append(piece)
+    if not frames:
+        raise ValueError("no completed calendar candles")
+    out = pd.concat(frames, ignore_index=True)
+    if set(PRICE_COLS) & set(out.columns):
+        raise ValueError("calendar candles stored a price")
+    if (pd.to_datetime(out["available_from"]) <= pd.to_datetime(out["date"])).any():
+        raise ValueError("calendar candle is visible on its end session")
+    return out
+
+
+def candle_summary(candles):
+    from world_timeframes import TIMEFRAMES
+
+    counts = candles.groupby("timeframe", sort=False).size()
+    ordered = [timeframe for timeframe in TIMEFRAMES if timeframe in counts.index]
+    return dict(
+        note=CANDLE_NOTE,
+        timeframes=ordered,
+        rows_by_timeframe={timeframe: int(counts[timeframe]) for timeframe in ordered},
+        rows=int(len(candles)),
+    )
+
+
 def coverage_table(frame):
     rows = []
     for column in list(FLAG_COLUMNS) + [
@@ -272,16 +336,18 @@ def assert_calendar_coverage(rows):
 def write_lossless(frame, path):
     """Bool flags are parquet bit-packed. Day counts are delta-encoded."""
     path = Path(path)
-    stored = frame.sort_values("date").reset_index(drop=True)
+    sort_on = [column for column in ("timeframe", "date") if column in frame.columns]
+    stored = frame.sort_values(sort_on).reset_index(drop=True)
     counts = [column for column in stored.columns if column.startswith("days_") or column.startswith("day_")]
     for column in counts:
         if stored[column].notna().all():
             stored[column] = stored[column].astype("int16")
     encodings = {column: "DELTA_BINARY_PACKED" for column in counts if stored[column].notna().all()}
+    dictionaries = ["timeframe"] if "timeframe" in stored.columns else False
     table = pa.Table.from_pandas(stored, preserve_index=False)
     pq.write_table(
         table, path, compression="zstd", compression_level=19,
-        use_dictionary=False, column_encoding=encodings or None, data_page_version="2.0",
+        use_dictionary=dictionaries, column_encoding=encodings or None, data_page_version="2.0",
     )
     return dict(rows=len(stored), sha256=sha256_file(path),
                 encoding="bool_bit_packed_and_int16_delta_zstd19")
