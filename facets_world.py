@@ -826,18 +826,8 @@ def load_f13(tickers):
 
 # ---------------- Block O loader: GDELT mention counts (I200) ----------------
 def load_gdelt(tickers):
-    """Per-ticker GDELT daily mention counts from fetch/fetch_gdelt.py (release
-    data-ext-2020-26-v1 asset gdelt_counts_2020_26.parquet): ticker, date, n.
-    Query = exact ticker symbol; short-symbol noise bias is uniform and noted
-    in the meta."""
-    p = os.path.join(os.environ.get('CHECKLIST_DATA_DIR', '.'), 'data-ext', 'gdelt_counts_2020_26.parquet')
-    if not os.path.exists(p):
-        return None
-    df = pd.read_parquet(p)
-    if df.empty or 'ticker' not in df: return None
-    df = df[df.ticker.isin(tickers)]
-    df['date'] = date_ns(df['date'])
-    return df.sort_values('date').reset_index(drop=True)
+    """Dropped by Cyrus 2026-10-28: never read archived news as live input."""
+    return None
 
 
 # ---------------- Block L loader: analyst actions (I197) ----------------
@@ -1298,6 +1288,8 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
     is a frozen Peers object; cluster returns are consumed shifted one bar.
     `mkt` is the market-wide daily frame (VIX etc.); joined strict < D.
     `an` is the ticker's analyst-action day-count frame (strict < D)."""
+    if gd is not None:
+        raise ValueError('News inputs dropped by Cyrus 2026-10-28; no news enters world rows')
     d=normalize_dates(d);etf=normalize_dates(etf);breadth=normalize_dates(breadth);mkt=normalize_dates(mkt)
     df = pd.DataFrame({'ticker': tk, 'date': d.date.to_numpy()})
     if len(d) >= 30:
@@ -1322,9 +1314,6 @@ def ticker_frame(tk, d, funcs, etf, breadth, edf_tk, ext=None, peers=None, mkt=N
             df[c] = v
     if xb is not None:
         for c, v in xbrl_columns(df['date'].to_numpy(), xb).items():
-            df[c] = v
-    if gd is not None:
-        for c, v in gd_columns(df['date'].to_numpy(), gd).items():
             df[c] = v
     if f13 is not None:
         for c, v in f13_columns(df['date'].to_numpy(), f13).items():
@@ -1519,7 +1508,7 @@ def main():
                        'xb_cols': xb_cols,
                        'xb_notes': 'I192 XBRL via SEC frames API; keyed filed < D (restatement-safe); CY-frame coverage sparser for fiscal-offset filers',
                        'gd_cols': gd_cols,
-                       'gd_notes': 'I200 GDELT 2.0 timelinevol mention counts; exact-symbol query (short-symbol noise uniform); strict < D; 0 = covered-but-silent, NaN = no data yet',
+                       'gd_notes': 'I200 dropped by Cyrus 2026-10-28; no news inputs used',
                        'f13_cols': f13_cols,
                        'f13_notes': 'I199 13F-HR(/A) via EDGAR FTS by CUSIP (OpenFIGI map); f13_n lower-bounds mega-cap filers (page cap); keyed file_date < D',
                        'fred_cols': fred_cols,

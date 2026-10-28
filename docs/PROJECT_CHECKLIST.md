@@ -207,13 +207,13 @@ Note (2026-10-26 ~15:33 HKT, do not tick): The 2025–26 dates and surprise sour
 
 ### GDELT news counts and tone
 
-Note (2026-10-26 ~15:33 HKT, do not tick): The tone score is allowed as a numeric field. Do not read article text. Boxes 1.86–1.90 stay unticked.
+**Superseding scope decision — 2026-10-28 ~16:30/16:40 HKT:** all news is excluded. Items 1.86–1.90 are **dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live**. The earlier numeric-tone permission is withdrawn. Existing evidence is historical only; these are dropped requirements, not completed boxes or James sign-offs.
 
-- [ ] **1.86** GDELT news counts and tone: source located. Items: I200. Done when: Source is GDELT 2.0 public events and GKG. Check fullscan and theme-radar first. Store counts and tone only. Free text is excluded. Evidence:
-- [ ] **1.87** GDELT news counts and tone: fetched onto a checklist-engine release. Done when: The release holds daily article counts and tone by ticker for 2020–2026, checksummed. Evidence:
-- [ ] **1.88** GDELT news counts and tone: joined point-in-time. Done when: A story counts on D only when its GDELT timestamp is before the open. Evidence:
-- [ ] **1.89** GDELT news counts and tone: built at candle sizes 1 through 21. Done when: Count and tone are aggregated at candle sizes 1..21. Evidence:
-- [ ] **1.90** GDELT news counts and tone: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled. A column that required reading article text is EXCLUDED_FREE_TEXT with that reason. Evidence:
+- [ ] **1.86** GDELT news counts and tone: source located. Items: I200. Done when: Source is GDELT 2.0 public events and GKG. Check fullscan and theme-radar first. Store counts and tone only. Free text is excluded. Evidence: **Dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live.**
+- [ ] **1.87** GDELT news counts and tone: fetched onto a checklist-engine release. Done when: The release holds daily article counts and tone by ticker for 2020–2026, checksummed. Evidence: **Dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live.**
+- [ ] **1.88** GDELT news counts and tone: joined point-in-time. Done when: A story counts on D only when its GDELT timestamp is before the open. Evidence: **Dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live.**
+- [ ] **1.89** GDELT news counts and tone: built at candle sizes 1 through 21. Done when: Count and tone are aggregated at candle sizes 1..21. Evidence: **Dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live.**
+- [ ] **1.90** GDELT news counts and tone: column count and fill rate measured. Done when: WORLD_COVERAGE non-null percent and first date are filled. A column that required reading article text is EXCLUDED_FREE_TEXT with that reason. Evidence: **Dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live.**
 
 ### FRED and ALFRED macro
 
