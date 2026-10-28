@@ -1,0 +1,15 @@
+{
+  "source_release": "outside-event-calendar-v1",
+  "source_sha256": "c8675ab2200e70e2a9410a3b3a0c1f53796edb4ce417d31c3eea1c50f647052c",
+  "fed_page": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+  "fed_label": "October 27-28",
+  "published_flags_through_file_end": 109,
+  "published_flags_not_on_the_fed_list": [],
+  "fed_sessions_missing_from_the_file": [
+    "2026-10-28"
+  ],
+  "reason_missing": "The published file ends on 2026-10-27, the first day of a two-day meeting.",
+  "available_from": "2026-10-28",
+  "available_from_reason": "The meeting was already on the Federal Reserve calendar, so the second day is known before the open. This does not fix days_to_fomc for a meeting that had not been announced yet.",
+  "sha256": "087af12334f1d76aa080f5f8f2eca5e612bf1f0c85f8071a42c73d090836f342"
+}
