@@ -1,0 +1,12 @@
+{
+  "source_release": "outside-event-calendar-v1",
+  "source_sha256": "c8675ab2200e70e2a9410a3b3a0c1f53796edb4ce417d31c3eea1c50f647052c",
+  "rule": "A session is month-end only when it is the last NYSE session of that calendar month. The last row of the file is not enough.",
+  "rows": 1714,
+  "month_end_rows": 81,
+  "published_flags": 82,
+  "only_difference": "2026-10-27",
+  "october_2026_last_session": "2026-10-30",
+  "october_2026_last_session_in_this_file": false,
+  "sha256": "52c146cc1e1afd5a0449d8808a6da05a6e318efb86628fe9b73b36e4080da2e9"
+}
