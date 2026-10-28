@@ -2,6 +2,9 @@ name: outside-breadth
 
 on:
   workflow_dispatch:
+  push:
+    branches: [cursor/outside-breadth-c9e9]
+    paths: ['.github/workflows/outside_breadth.yml']
 
 permissions:
   contents: write
