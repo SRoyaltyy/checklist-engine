@@ -15,9 +15,39 @@ FLAT = 0.01
 FALL = 0.02
 CORR_WINDOWS = (20, 60)
 BREAK_BASELINE = 60
+# Fullscan Finviz exports name Ticker, Sector, and Industry. The first file is
+# 2026-04-26 and the last is 2026-10-27 (63 dated files, plus finviz_latest.csv).
+# A snapshot is usable only on later sessions. That tail is 128 of the 1,714
+# NYSE sessions from 2020-01-02 through 2026-10-27, which is 7.4679%. Theme-radar
+# sector files are aggregates, not a stock map, and start on 2026-10-21.
+# fullscan industry_etf.py maps a current industry name to an ETF and has no date.
+# The April 2026 label is not written onto 2020.
+MAP_SEARCH = {
+    "sources_checked": [
+        "SRoyaltyy/fullscan data/exports/finviz_YYYY-MM-DD.csv",
+        "SRoyaltyy/theme-radar data/finviz_extras/groups/*_sector.csv",
+        "SRoyaltyy/fullscan src/industry_etf.py",
+    ],
+    "fullscan_snapshot_files": 63,
+    "fullscan_first_file_date": "2026-04-26",
+    "fullscan_last_file_date": "2026-10-27",
+    "sessions_2020_01_02_through_2026_10_27": 1714,
+    "sessions_on_or_after_first_usable_snapshot": 128,
+    "first_usable_session": "2026-04-27",
+    "coverage_percent": 7.4679,
+    "decision": "EXCLUDED",
+}
 EXCLUDED_COMPARATORS = (
-    {"comparator": "sector_etf", "reason": "NO_DATED_STOCK_TO_SECTOR_MAP"},
-    {"comparator": "industry_etf", "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP"},
+    {
+        "comparator": "sector_etf",
+        "reason": "NO_DATED_STOCK_TO_SECTOR_MAP",
+        "coverage_percent": MAP_SEARCH["coverage_percent"],
+    },
+    {
+        "comparator": "industry_etf",
+        "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP",
+        "coverage_percent": MAP_SEARCH["coverage_percent"],
+    },
 )
 
 

@@ -12,13 +12,30 @@
   "excluded_comparators": [
     {
       "comparator": "sector_etf",
-      "reason": "NO_DATED_STOCK_TO_SECTOR_MAP"
+      "reason": "NO_DATED_STOCK_TO_SECTOR_MAP",
+      "coverage_percent": 7.4679
     },
     {
       "comparator": "industry_etf",
-      "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP"
+      "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP",
+      "coverage_percent": 7.4679
     }
   ],
+  "map_search": {
+    "sources_checked": [
+      "SRoyaltyy/fullscan data/exports/finviz_YYYY-MM-DD.csv",
+      "SRoyaltyy/theme-radar data/finviz_extras/groups/*_sector.csv",
+      "SRoyaltyy/fullscan src/industry_etf.py"
+    ],
+    "fullscan_snapshot_files": 63,
+    "fullscan_first_file_date": "2026-04-26",
+    "fullscan_last_file_date": "2026-10-27",
+    "sessions_2020_01_02_through_2026_10_27": 1714,
+    "sessions_on_or_after_first_usable_snapshot": 128,
+    "first_usable_session": "2026-04-27",
+    "coverage_percent": 7.4679,
+    "decision": "EXCLUDED"
+  },
   "excluded_names": [
     {
       "ticker": "SPY",

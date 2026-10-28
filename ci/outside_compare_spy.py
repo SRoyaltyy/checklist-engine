@@ -12,7 +12,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 
-from outside_compare import EXCLUDED_COMPARATORS, compare_one
+from outside_compare import EXCLUDED_COMPARATORS, MAP_SEARCH, compare_one
 
 STITCH_RELEASE = "accepted-price-stitch-v2-40494479693-1"
 STITCH_MANIFEST = "ACCEPTED_PRICE_STITCH.json"
@@ -127,6 +127,7 @@ def build(out, spy_path, chunk_size=400):
         rows=rows,
         output_sha256=sha256_file(part_dir / "compare_spy.parquet"),
         excluded_comparators=EXCLUDED_COMPARATORS,
+        map_search=MAP_SEARCH,
         excluded_names=[row for row in excluded if "ticker" in row],
         windows=[1, 5, 20, 60],
         flat_return=0.01,

@@ -46,3 +46,7 @@ def test_sector_and_industry_are_named_exclusions():
     reasons = {row["comparator"]: row["reason"] for row in comp.EXCLUDED_COMPARATORS}
     assert reasons["sector_etf"] == "NO_DATED_STOCK_TO_SECTOR_MAP"
     assert "INDUSTRY" in reasons["industry_etf"]
+    assert comp.MAP_SEARCH["decision"] == "EXCLUDED"
+    assert comp.MAP_SEARCH["coverage_percent"] < 95
+    assert comp.MAP_SEARCH["sessions_on_or_after_first_usable_snapshot"] == 128
+    assert comp.MAP_SEARCH["sessions_2020_01_02_through_2026_10_27"] == 1714
