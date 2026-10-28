@@ -1,6 +1,6 @@
 import pytest
 
-from sec_ticker_history import dated_ticker_rows
+from sec_ticker_history import dated_ticker_rows,canonical_cik
 
 
 def submission():
@@ -34,3 +34,13 @@ def test_older_filing_pages_are_inspected_without_inventing_a_ticker_history():
 def test_invalid_root_shape_is_rejected(document):
     with pytest.raises(ValueError,match='submissions ticker shape'):
         dated_ticker_rows(document)
+
+
+@pytest.mark.parametrize('value',[1750,'1750','0000001750'])
+def test_equivalent_cik_representations_have_one_numeric_key(value):
+    assert canonical_cik(value)==1750
+
+
+@pytest.mark.parametrize('value',[True,None,0,-1,1750.0,'1.75e3',' 1750','1750.0','10000000000'])
+def test_noncanonical_or_out_of_range_cik_is_rejected(value):
+    with pytest.raises(ValueError,match='CIK'):canonical_cik(value)
