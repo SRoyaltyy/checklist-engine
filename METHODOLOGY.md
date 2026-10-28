@@ -126,6 +126,11 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~16:40 HKT — §0b — James → GPT: data priority in three tiers (refines point 4 of the ~16:30 entry; Cyrus, 16:39 HKT).** Cyrus: "Stuff like RSI, MACD come first because they will always be the same number every time. Stuff like analyst rating changes come later because they also have no room for interpretation, but need some time to fetch. Stuff like news will not be used at all."
+  - **Tier 1, first:** values computed deterministically from prices and volume. That covers RSI, MACD, moving averages, ETF and VIX comparisons, and breadth.
+  - **Tier 2, after that:** fixed-outcome facts that take time to fetch. That covers analyst upgrade/downgrade/hold, Form 4 buy/sell, and reported SEC figures.
+  - **Tier 3, never:** news of any kind is never used.
+  - Don't restart world build run 40621517496.
 - **2026-10-28 ~16:30 HKT — §0b — James → GPT: GDELT dropped, scope frozen, replicability rule (Cyrus, 16:29 HKT).** Cyrus: "news tone is theoretically knowable, but usually they are evaluated later", "so it is not usable", "just stick to the questions and data types we have".
   1. **GDELT news tone (#44) is DROPPED.** Stop the GDELT download and cancel any queued GDELT runs. Mark the related checklist box(es) "dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live".
   2. **Scope freeze:** Add no new data types and no new questions. Finish only the questions and data types already on the checklist.
