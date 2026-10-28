@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 10.**
+**Verified by both: 13/303. Claimed awaiting James: 16.**
 
 ## Rules
 
@@ -71,7 +71,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Moving averages and trend
 
-- [ ] **1.06** Moving averages and trend: source located. Items: dictionary I001–I023, plus TradingView trend items on the same formulas (ALMA, ADX, Aroon, Ichimoku, supertrend, Kagi, and the rest of that family in docs/TV_COVERAGE.csv). Done when: Source is the phase-1 bar file. No second vendor. The coverage row names the bar asset. Evidence:
+- [x] **1.06** Moving averages and trend: source located. Items: dictionary I001–I023, plus TradingView trend items on the same formulas (ALMA, ADX, Aroon, Ichimoku, supertrend, Kagi, and the rest of that family in docs/TV_COVERAGE.csv). Done when: Source is the phase-1 bar file. No second vendor. The coverage row names the bar asset. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_06.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.07** Moving averages and trend: fetched onto a checklist-engine release. Done when: The world build stores each named length as its own columns (registered defaults plus the other lengths in the variable grid). The shard manifest shows a column count > 0 for this family. Evidence:
 - [ ] **1.08** Moving averages and trend: joined point-in-time. Done when: Every average uses bars < D. A test compares one SMA on a cutoff date with a hand calculation that drops the day-D bar. Evidence:
 - [ ] **1.09** Moving averages and trend: built at candle sizes 1 through 21. Done when: Each average exists as item__tf for every candle size 1..21. A daily SMA labelled weekly fails. That is the old facets.py _weekly failure. Evidence:
@@ -79,7 +79,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Momentum and oscillators
 
-- [ ] **1.11** Momentum and oscillators: source located. Items: dictionary I024–I078 (RSI, MACD including signal and histogram, Stochastic, CMO, Awesome Oscillator, and the rest of section 2). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence:
+- [x] **1.11** Momentum and oscillators: source located. Items: dictionary I024–I078 (RSI, MACD including signal and histogram, Stochastic, CMO, Awesome Oscillator, and the rest of section 2). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_11.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.12** Momentum and oscillators: fetched onto a checklist-engine release. Done when: Each oscillator's lengths are columns: RSI period, MACD fast/slow/signal, Stochastic 14/3/3 where that is the named setting, plus the other registered settings. A TA-Lib default does not replace a named setting that differs. Column count > 0. Evidence:
 - [ ] **1.13** Momentum and oscillators: joined point-in-time. Done when: Values use bars < D. MACD signal and histogram are both present. Evidence:
 - [ ] **1.14** Momentum and oscillators: built at candle sizes 1 through 21. Done when: Each oscillator is built from that candle's OHLC at sizes 1..21, not copied from the daily series. Evidence:
@@ -87,7 +87,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Volume indicators
 
-- [ ] **1.16** Volume indicators: source located. Items: dictionary I079–I096 (OBV, accumulation/distribution, Chaikin money flow, MFI, RVOL, and the rest of section 3). Done when: Source is the phase-1 volume column. The coverage row names it. Evidence:
+- [x] **1.16** Volume indicators: source located. Items: dictionary I079–I096 (OBV, accumulation/distribution, Chaikin money flow, MFI, RVOL, and the rest of section 3). Done when: Source is the phase-1 volume column. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_16.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.17** Volume indicators: fetched onto a checklist-engine release. Done when: Raw OBV and accumulation/distribution are stored, plus the percentile form where the dictionary asks for both. RVOL windows are explicit columns. Column count > 0. Evidence:
 - [ ] **1.18** Volume indicators: joined point-in-time. Done when: Volume indicators use bars < D, including volume. Evidence:
 - [ ] **1.19** Volume indicators: built at candle sizes 1 through 21. Done when: Each volume item exists at candle sizes 1..21 from that candle's volume. Evidence:
@@ -95,7 +95,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Volatility and bands
 
-- [ ] **1.21** Volatility and bands: source located. Items: dictionary I097–I105 (ATR, Bollinger, Keltner, bandwidth, and the rest of section 4). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence:
+- [x] **1.21** Volatility and bands: source located. Items: dictionary I097–I105 (ATR, Bollinger, Keltner, bandwidth, and the rest of section 4). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_21.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.22** Volatility and bands: fetched onto a checklist-engine release. Done when: Bollinger(N, k) uses population standard deviation (ddof=0); defaults N=20, k=2, and percent-B is blank when upper equals lower. ATR(N) is Wilder, seed is the SMA of the first N true ranges, default 14. Keltner matches the dictionary. Column count > 0. Evidence:
 - [ ] **1.23** Volatility and bands: joined point-in-time. Done when: Bands use bars < D. A unit test locks cp_pctB and cp_dip_atr to the §0b pin in commit 11a0117. Evidence:
 - [ ] **1.24** Volatility and bands: built at candle sizes 1 through 21. Done when: Each band item exists at candle sizes 1..21. Evidence:
@@ -103,7 +103,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Price structure, extremes, and positional tools
 
-- [ ] **1.26** Price structure, extremes, and positional tools: source located. Items: dictionary I106–I117 and swing tools C03–C08 (window high/low, strict fractal pivot, Fibonacci, pivots, pitchfork, distance to high or low). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence:
+- [x] **1.26** Price structure, extremes, and positional tools: source located. Items: dictionary I106–I117 and swing tools C03–C08 (window high/low, strict fractal pivot, Fibonacci, pivots, pitchfork, distance to high or low). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_26.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.27** Price structure, extremes, and positional tools: fetched onto a checklist-engine release. Done when: Pivot confirmation is one strict left/right confirmed by D−1. Divergence uses the last K confirmed pivots, K in {2, 3}, against the oscillator on those same bars. Column count > 0. Evidence:
 - [ ] **1.28** Price structure, extremes, and positional tools: joined point-in-time. Done when: Highs, lows, and pivots are computed only on bars < D. A pivot that needs the day-D bar is not confirmed. Evidence:
 - [ ] **1.29** Price structure, extremes, and positional tools: built at candle sizes 1 through 21. Done when: Each structure item exists at candle sizes 1..21. Evidence:
@@ -111,7 +111,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Candle patterns and cp_* tags
 
-- [ ] **1.31** Candle patterns and cp_* tags: source located. Items: dictionary I118–I161, all 61 TA-Lib candle patterns, and the pinned cp_* tags (cp_mid_slope_up, cp_gr_body20, cp_pctB, cp_dip_atr, cp_days_since_h20, cp_dd_vs_run, cp_redgreen_vol10, cp_hard_all, lower_highs10). Done when: Source is the phase-1 bar file. The six-stock smoke that found 61 patterns does not by itself pass this block. Evidence:
+- [x] **1.31** Candle patterns and cp_* tags: source located. Items: dictionary I118–I161, all 61 TA-Lib candle patterns, and the pinned cp_* tags (cp_mid_slope_up, cp_gr_body20, cp_pctB, cp_dip_atr, cp_days_since_h20, cp_dd_vs_run, cp_redgreen_vol10, cp_hard_all, lower_highs10). Done when: Source is the phase-1 bar file. The six-stock smoke that found 61 patterns does not by itself pass this block. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_31.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.32** Candle patterns and cp_* tags: fetched onto a checklist-engine release. Done when: All 61 patterns are columns. Dictionary patterns that were only partly specified are built. cp_* matches the §0b pin in commit 11a0117, including the warmup of at least 60 bars (blank fails the hard gate). Column count > 0. Evidence:
 - [ ] **1.33** Candle patterns and cp_* tags: joined point-in-time. Done when: Patterns and cp_* read bars ending at D−1. Green is close above open, red is close below open, doji is neither. Evidence:
 - [ ] **1.34** Candle patterns and cp_* tags: built at candle sizes 1 through 21. Done when: Patterns are evaluated on each candle size 1..21. A pattern column that exists only on the daily frame fails. Evidence:

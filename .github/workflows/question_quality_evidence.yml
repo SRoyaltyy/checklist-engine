@@ -1,0 +1,17 @@
+name: question-quality-evidence-contract
+on:
+  # James/Cyrus acc6979: preserve runner capacity for the active full price build.
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'pytest>=8,<10'
+      - run: python -m pytest tests/test_question_quality.py -q

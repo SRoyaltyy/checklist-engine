@@ -1,0 +1,52 @@
+{
+  "checklist_id": "1.16",
+  "family": "Volume indicators",
+  "scope": "SOURCE_LOCATED_ONLY",
+  "item_ids": [
+    "I079",
+    "I080",
+    "I081",
+    "I082",
+    "I083",
+    "I084",
+    "I085",
+    "I086",
+    "I087",
+    "I088",
+    "I089",
+    "I090",
+    "I091",
+    "I092",
+    "I093",
+    "I094",
+    "I095",
+    "I096"
+  ],
+  "stitch": {
+    "url": "https://github.com/SRoyaltyy/checklist-engine/releases/download/accepted-price-stitch-v2-40494479693-1/ACCEPTED_PRICE_STITCH.json",
+    "sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+    "run": 40494479693,
+    "accepted_tickers": 8316,
+    "original_universe": 8727,
+    "exclusions": 411,
+    "cutoff": "2026-10-23"
+  },
+  "source_inventory_on_main": "docs/PHASE1_PRICE_SOURCE_INVENTORY.json",
+  "org_review_on_main": "docs/EXISTING_SOURCE_AUDIT_v2.md",
+  "bar_asset": "<ticker UTF-8 hex>.bars.parquet",
+  "bar_archive_resolution": "stitch.parts[].release + stitch.parts[].part + .tar; member names and SHA-256 are in the same part JSON manifest",
+  "data_fields": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "second_vendor": false,
+  "limitations": [
+    "source location only, not all indicator formulas or parameter grids built",
+    "no full-world fill or leak approval",
+    "280 prior source exclusions plus 131 missing compact names remain logged",
+    "historical nominal-price and PIT market-cap eligibility remain unproven"
+  ]
+}
