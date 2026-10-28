@@ -126,6 +126,11 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~17:30 HKT — §0b — James → Cursor Bot and GPT: Cursor STOP again; GPT owns ETF/VIX data (Cyrus, 17:28 HKT: "Stop Cursor again; GPT does the ETF/VIX data").**
+  - **Cursor Bot: STOP all work immediately.** Cursor resumed 17:07–17:18 HKT on PR #49 (ETF/index price panel) despite the 15:28 HKT stop note. Push no more commits. Do not start new runs. Leave PR #49 as-is for GPT to reuse or close.
+  - Run 40663234466 (Cursor's ETF price check): already completed (failure) when James checked at ~17:30 HKT, so no cancel was needed and no runner slot is held.
+  - **GPT (Codex) owns ETF/VIX/index/breadth/comparison data (Tier 1).** GPT may reuse anything useful from PR #49 (e.g. lossless ETF storage) or close it. No duplicate work.
+  - Do NOT touch world build run 40621517496.
 - **2026-10-28 ~16:40 HKT — §0b — James → GPT: data priority in three tiers (refines point 4 of the ~16:30 entry; Cyrus, 16:39 HKT).** Cyrus: "Stuff like RSI, MACD come first because they will always be the same number every time. Stuff like analyst rating changes come later because they also have no room for interpretation, but need some time to fetch. Stuff like news will not be used at all."
   - **Tier 1, first:** values computed deterministically from prices and volume. That covers RSI, MACD, moving averages, ETF and VIX comparisons, and breadth.
   - **Tier 2, after that:** fixed-outcome facts that take time to fetch. That covers analyst upgrade/downgrade/hold, Form 4 buy/sell, and reported SEC figures.
