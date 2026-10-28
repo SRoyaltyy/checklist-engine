@@ -105,11 +105,8 @@ def write_panel(frame, path):
     table = exact_arrow_table(stored)
     pq.write_table(
         table, path, compression="zstd", compression_level=19, use_dictionary=["ticker"],
-        column_encoding={
-            "open": "BYTE_STREAM_SPLIT", "high": "BYTE_STREAM_SPLIT", "low": "BYTE_STREAM_SPLIT",
-            "close": "BYTE_STREAM_SPLIT", "adj_close": "BYTE_STREAM_SPLIT",
-            "volume": "DELTA_BINARY_PACKED" if integers is not None else "BYTE_STREAM_SPLIT",
-        },
+        column_encoding={column:("DELTA_BINARY_PACKED" if stored[column].dtype.kind in 'iu' else "BYTE_STREAM_SPLIT")
+                         for column in stored if stored[column].dtype.kind in 'fiu'},
         data_page_version="2.0",
     )
     assert_exact_frame(frame.sort_values(['ticker','date']).reset_index(drop=True),pq.read_table(path).to_pandas())
