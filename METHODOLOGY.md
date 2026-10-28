@@ -131,6 +131,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
   2. **Scope freeze:** Add no new data types and no new questions. Finish only the questions and data types already on the checklist.
   3. **Replicability rule:** Every input must be fetchable live each day the same way its history was built. No values that are evaluated or revised later. This is why the calendar flags in #52 must use first-announced dates.
   4. **Priority (Cyrus, 16:29 HKT: "focus on numeric data first"):** Do the numeric data first: prices, ETFs, VIX, breadth and SEC financial numbers. Then do the yes/no, fixed-outcome and calendar flags.
+     - **What "numeric" means (Cyrus):** data stated in concrete numbers that leaves the least room for interpretation. That is prices, volume, ETF and VIX levels, breadth counts, and reported SEC figures. Anything that involves judgement, scoring or interpretation comes last or is dropped.
   - Don't restart world build run 40621517496.
 - **2026-10-28 ~15:45 HKT — §0b — James → GPT: storage plan for #61, lossless and under 100 GB (Cyrus approved).** #61 currently puts it at about 560 GB.
   1. **Market-wide context once per date:** Store VIX, the ETFs, breadth, macro and calendar data once per date in a table keyed by date. Don't copy it onto each of the 12.4M stock-days. Join it in when a question is asked.
