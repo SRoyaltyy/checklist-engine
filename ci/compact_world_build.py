@@ -68,6 +68,7 @@ def prepare(root,request):
               source_excluded_tickers=status['excluded_tickers'],raw_dependency_bytes=source_bytes,
               shared_registry_bytes=len(registry),bound_input_bytes=bound_input_bytes,
               price_answer_per_ticker_limit=request['answer_budget_bytes']//status['original_universe'],
+              per_ticker_budget_policy='DIAGNOSTIC_AVERAGE_ONLY_NEVER_EXCLUDE_FOR_SIZE',
               full_world_acceptance='NOT_PROVEN_NONPRICE_AND_COMPLETE_QUESTION_TREE_REQUIRED',scoring_gate='CLOSED')
     file=root/'COMPACT_WORLD_BUILD_PLAN.json';write_json(file,plan)
     tag=f"compact-world-build-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}-inputs"
@@ -137,8 +138,9 @@ def build(root,inputs_release,index):
                 reason='REGISTERED_SCHEMA_MISMATCH';raise ValueError('stock schema differs from shared registered question tree')
             measured=json.loads((own/'COMPACT_STORAGE_WORKER.json').read_text());row=measured['samples'][0]
             payload=own/(ticker.encode().hex()+'.diagnostic_answers.tar.zst')
-            if payload.stat().st_size+4096>plan['price_answer_per_ticker_limit']:
-                reason='ANSWER_STORAGE_BUDGET';raise ValueError('stock answer exceeds its share of global 60 GB price budget')
+            row['over_average_price_budget']=payload.stat().st_size+4096>plan['price_answer_per_ticker_limit']
+            if row['over_average_price_budget']:
+                print('COMPACT_WORLD_STOCK_ABOVE_AVERAGE_BUDGET_RETAINED',ticker,payload.stat().st_size,flush=True)
             if not created:
                 gh_retry('release','create',tag,'--draft','--title',tag,'--target',os.environ['GITHUB_SHA'],
                     '--notes','Immutable compact answer checkpoints; excluded stocks logged; not full-world/PIT approval.');created=True
@@ -194,8 +196,10 @@ def merge(root,inputs_release):
         raise ValueError('global build completion/exclusion membership differs')
     shared_input_bytes=sum(a['size'] for a in asset_index(inputs_release).values())+plan['bound_input_bytes']
     actual_bytes=output_bytes+plan['raw_dependency_bytes']+shared_input_bytes
-    if output_bytes>request['answer_budget_bytes'] or actual_bytes>request['hard_world_cap_bytes']:
-        raise ValueError('measured compact output exceeds global reserved cap')
+    within_budget=output_bytes<=request['answer_budget_bytes'] and actual_bytes<=request['hard_world_cap_bytes']
+    legacy_size_exclusions=[row['ticker'] for row in excluded if row.get('reason')=='ANSWER_STORAGE_BUDGET']
+    storage_gate=('FAIL_LEGACY_SIZE_EXCLUSIONS_REQUIRE_RECOVERY' if legacy_size_exclusions else
+                  'PASS_PRICE_RESERVATION_ONLY_NOT_WORLD' if within_budget else 'FAIL_RETAIN_VALUES_IMPROVE_LOSSLESS_ENCODING')
     result=dict(status='PRICE_ANSWER_BUILD_MEASURED_NOT_FULL_WORLD',inputs_release=inputs_release,
         original_universe=plan['original_universe'],source_excluded_tickers=plan['source_excluded_tickers'],
         completed_tickers=len(completed),build_excluded_tickers=len(excluded),
@@ -203,14 +207,22 @@ def merge(root,inputs_release):
         answer_and_checkpoint_bytes=output_bytes,raw_dependency_bytes=plan['raw_dependency_bytes'],
         shared_registry_bytes=plan['shared_registry_bytes'],shared_and_bound_input_bytes=shared_input_bytes,
         measured_price_dependency_bytes=actual_bytes,
+        price_reservation_bytes=request['answer_budget_bytes'],hard_world_cap_bytes=request['hard_world_cap_bytes'],
+        storage_gate=storage_gate,legacy_size_exclusions_requiring_recovery=legacy_size_exclusions,
+        price_answer_coverage_gate='AT_LEAST_95_PERCENT' if 100*len(completed)/plan['original_universe']>=95 else 'BELOW_95_PERCENT_REQUIRES_ADDON',
+        above_average_budget_stocks=sum(bool(row.get('over_average_price_budget')) for row in completed),
+        size_exclusion_policy='NO_STOCK_OR_COLUMN_EXCLUDED_TO_MEET_STORAGE_CAP',
         completed=completed,excluded=excluded,shard_errors=errors,
-        remaining=['all nonprice/comparator question families','complete v3 quality gate','comprehensive leak proof','historical PIT eligibility'],
+        remaining=['all nonprice/comparator question families','complete v3 quality gate','comprehensive leak proof','historical PIT eligibility',
+                   'lossless numeric/intermediate-value retention and complete world dependency budget'],
         world_gate='NOT_PROVEN',scoring_gate='CLOSED')
     file=root/'COMPACT_WORLD_BUILD_MEASURED.json';write_json(file,result)
     tag=f"compact-world-build-measured-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
     gh_retry('release','create',tag,'--draft','--title',tag,'--target',os.environ['GITHUB_SHA'])
     publish_assets(tag,file);gh_retry('release','edit',tag,'--draft=false')
     print('COMPACT_WORLD_MEASURED',len(completed),len(excluded),actual_bytes,flush=True)
+    if not within_budget or legacy_size_exclusions:
+        raise ValueError('storage acceptance failed; full evidence published and all completed values retained; size exclusions require add-on recovery')
 
 
 if __name__=='__main__':
