@@ -1,0 +1,89 @@
+{
+  "status": "INDEPENDENT_ETF_AND_CBOE_COMPONENT_REVIEW_NOT_FULL_WORLD",
+  "market_run": 40667431231,
+  "volatility_run": 40667837889,
+  "market_rows": 72689,
+  "market_symbols": 43,
+  "market_native_rows": 267883,
+  "market_all_symbol_timeframe_pairs": 946,
+  "market_prefix_checks": 2,
+  "preserved_volume_capture_differences": [
+    {
+      "ticker": "GLD",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 10097500.0,
+      "vendor": 10120200.0
+    },
+    {
+      "ticker": "IBIT",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 23077600.0,
+      "vendor": 23406600.0
+    },
+    {
+      "ticker": "IWM",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 20768600.0,
+      "vendor": 20785700.0
+    },
+    {
+      "ticker": "QQQ",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 30138000.0,
+      "vendor": 30224700.0
+    },
+    {
+      "ticker": "SPY",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 33377700.0,
+      "vendor": 33423200.0
+    },
+    {
+      "ticker": "TLT",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 35120900.0,
+      "vendor": 35149600.0
+    },
+    {
+      "ticker": "USO",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 6374300.0,
+      "vendor": 6413900.0
+    },
+    {
+      "ticker": "VXX",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 16157700.0,
+      "vendor": 16171200.0
+    },
+    {
+      "ticker": "XLE",
+      "date": "2026-10-23",
+      "column": "volume",
+      "canonical": 38643600.0,
+      "vendor": 38656200.0
+    }
+  ],
+  "canonical_native_overlap_bit_mismatches": 0,
+  "volatility_factors": 22,
+  "volatility_factor_bytes": 1107247,
+  "volatility_column_timeframe_rows": 110,
+  "volatility_source_rebuilds": 22,
+  "volatility_raw_prefix_checks": 44,
+  "exact_recomputed_stock_day_weight_rows": 110,
+  "query_stock_days": 12364370,
+  "volatility_min_stock_day_coverage_percent": 100.0,
+  "verification_scope": "All public assets hashed/read; all ETF capture differences and actual grids checked; all CBOE factor hashes/schemas/readers and weighted coverage recomputed locally. Original full source/cutoff rebuilds are authenticated runner results, not repeated locally.",
+  "full_world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "historical_volume_vintage_gate": "NOT_PROVEN",
+  "protected_world_run_untouched": 40621517496
+}

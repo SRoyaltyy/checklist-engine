@@ -1,0 +1,36 @@
+{
+  "status": "READ_ONLY_CALENDAR96_REVIEW_NOT_A_VENICE_CODE_CHANGE",
+  "pr": 96,
+  "head": "112d978fb44f9cb361179be60402672ee44b8396",
+  "evidence_scope": "Synthetic calendar fixtures isolate algorithm/provenance requirements; not a production rebuild or statement that a particular real BLS date was announced late.",
+  "month_end": {
+    "date": "2024-02-15",
+    "early_cutoff_flag": true,
+    "later_cutoff_flag": false,
+    "turn_of_month_early": true,
+    "turn_of_month_later": false,
+    "reason": "Truncated row group labels the last observed session as month-end instead of using the known complete session calendar"
+  },
+  "ignored_announcement": {
+    "event_date": "2024-03-05",
+    "provided_announcement": "2024-03-04",
+    "query_date": "2024-02-20",
+    "days_to_event_before_announcement": 10.0,
+    "reason": "build_calendar uses the final meeting list and does not filter supplied announcement metadata per query date"
+  },
+  "generated_schedule": [
+    {
+      "announced": "2024-01-12",
+      "scheduled": "2024-01-12",
+      "status": "scheduled"
+    },
+    {
+      "announced": "2024-01-12",
+      "scheduled": "2024-02-13",
+      "status": "scheduled"
+    }
+  ],
+  "provenance_gap": "release_schedule infers announcement dates from the previous actual release; the producer authenticates actual ALFRED dates, not archived announcement/cancellation ledgers. This does not prove historical first announcement.",
+  "owner": "Venice under #94; do not modify their branch or launch duplicate runs",
+  "world_gate": "NOT_PROVEN"
+}
