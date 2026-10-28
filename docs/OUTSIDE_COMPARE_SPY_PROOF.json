@@ -1,0 +1,36 @@
+{
+  "block": "outside_compare_spy",
+  "as_of": "2026-10-27",
+  "stitch_release": "accepted-price-stitch-v2-40494479693-1",
+  "spy_source": "light-daily-box-v1-20261028 SPY close",
+  "names_used": 8315,
+  "names_expected": 8316,
+  "names_percent": 99.988,
+  "rows": 12362658,
+  "output_sha256": "e03526878dc54f5cf2b0acdef4429cdfa29c2f072ba734b13b78d3ae76de747d",
+  "excluded_comparators": [
+    {
+      "comparator": "sector_etf",
+      "reason": "NO_DATED_STOCK_TO_SECTOR_MAP"
+    },
+    {
+      "comparator": "industry_etf",
+      "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP"
+    }
+  ],
+  "excluded_names": [
+    {
+      "ticker": "SPY",
+      "reason": "SELF_COMPARATOR"
+    }
+  ],
+  "windows": [
+    1,
+    5,
+    20,
+    60
+  ],
+  "flat_return": 0.01,
+  "comparator_fall": 0.02,
+  "lookahead": "windows end on the session; available_from is the next SPY session"
+}
