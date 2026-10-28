@@ -1,0 +1,95 @@
+{
+  "block": "outside_breadth",
+  "as_of": "2026-10-23",
+  "stitch_release": "accepted-price-stitch-v2-40494479693-1",
+  "stitch_manifest_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "accepted_names": 8316,
+  "excluded_by_stitch": 411,
+  "universe_label": "accepted stitch-v2 names; survivors-only as labeled on that release; the manifest does not split ETF and stock",
+  "lookahead": "each session uses only that name's bars through the session; available_from is the next NYSE session Candle counts are the bucket sum, not the last session.",
+  "high_low_window": 252,
+  "sma_windows": [
+    20,
+    50,
+    200
+  ],
+  "names": {
+    "names_used": 8316,
+    "names_expected": 8316,
+    "names_percent": 100.0
+  },
+  "sessions": {
+    "series": "pct_above_sma20",
+    "status": "PASS",
+    "reason": "",
+    "coverage_percent": 100.0,
+    "expected_sessions": 1712,
+    "missing_sessions": 0,
+    "missing_dates": [],
+    "rows": 1712
+  },
+  "storage": {
+    "rows": 1712,
+    "sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+    "encoding": "int64_delta_and_float64_byte_stream_split_zstd19"
+  },
+  "excluded": [],
+  "excluded_count": 0,
+  "excluded_truncated": false,
+  "candles": {
+    "rows": 6329,
+    "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
+    "encoding": "int64_delta_and_float64_byte_stream_split_zstd19",
+    "note": "Flows are summed inside the completed candle. New highs minus new lows and both ratios are rebuilt from those sums. Percents and the advance/decline line are the end session. available_from is the next session."
+  },
+  "spot_check": {
+    "identities": "the advance/decline line steps by ad_net; new highs minus new lows equals the two counts; each percent equals above divided by eligible; both ratios use the signed zero-divide rule",
+    "max_abs_error": 0.0,
+    "percent_denominator": "names with a full window on that session, not always all 8316",
+    "eligible_on_2020_01_02": {
+      "sma20": 5390,
+      "sma50": 5335,
+      "sma200": 5128
+    },
+    "on_2026_10_23": {
+      "eligible_sma20": 8316,
+      "above_sma20": 3649,
+      "pct_above_sma20": 0.4387926887926888,
+      "eligible_sma50": 8316,
+      "above_sma50": 2534,
+      "pct_above_sma50": 0.3047138047138047,
+      "eligible_sma200": 8316,
+      "above_sma200": 3449,
+      "pct_above_sma200": 0.41474266474266475,
+      "voters": 8316
+    },
+    "one_day_candles_match_daily": true,
+    "one_day_columns": [
+      "pct_above_sma20",
+      "pct_above_sma50",
+      "pct_above_sma200",
+      "ad_line",
+      "new_highs_minus_new_lows",
+      "ad_net",
+      "ad_ratio",
+      "up_down_volume_ratio"
+    ],
+    "one_day_rows": 1712
+  },
+  "multi_day_aggregation": {
+    "timeframes": "2d through 21d and monthly",
+    "flow_columns": "summed",
+    "end_session_columns": [
+      "pct_above_sma20",
+      "pct_above_sma50",
+      "pct_above_sma200",
+      "ad_line"
+    ],
+    "rebuilt_from_sums": [
+      "new_highs_minus_new_lows",
+      "ad_ratio",
+      "up_down_volume_ratio"
+    ],
+    "mismatches": 0
+  }
+}
