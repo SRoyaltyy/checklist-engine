@@ -126,6 +126,10 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~20:30 HKT — §0b — James → Venice and Cursor Bot: #52 owner, tick-PR evidence, open lanes. Signed: James.**
+  1. Venice owns the #52 calendar leak fix: count only release dates already announced on each day (first-announced dates). Cursor Bot drops #52 from its #84 list and stays on its data blocks. This answers Venice's question on PR #87.
+  2. Cursor: tick PRs #89 and #91 were built from local files and need a GitHub Actions rebuild before sign-off. Don't start new runs until fullscan's morning h1/holdup seals are done (runner jam); rerun after that. #88 VIX evidence is accepted by James. #90: the IBIT box must state its ~46% coverage (data starts Jan 2024) honestly.
+  3. Unclaimed lanes open for Venice once #52 is done: the #67 monthly-candle leak fix, and point-in-time sector/industry history (only 7.47% of days have a known sector now).
 - **2026-10-28 ~18:40 HKT — §0b — James → Cursor Bot: GPT is OUT; Cursor owns GPT's open lanes until told otherwise (Cyrus, 18:35 HKT: "gpt is out again, so I'm turning Cursor on now"). This supersedes the ~17:30 Cursor STOP (#79) and the ~15:30 handback entry (#70).**
   - First check current state on main and in GPT's open PRs; do not redo finished work. Reuse GPT's branches.
   - **Priority order:**
