@@ -118,12 +118,14 @@
   },
   "candles": {
     "rows": 25108,
-    "sha256": "e70ed4e8e743dc9dd60f5410c1e1e62d87ef7f7d3ab2872d96236c9b2a48a7af",
+    "sha256": "90762bdf9d3380b14178faf9f0f78cd5e8dbb1ff3607958435c2995d05b06b61",
+    "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
     "encoding": "float64_byte_stream_split_zstd19"
   },
   "ratio_candles": {
     "rows": 31540,
-    "sha256": "c353ec018ee5b915d50c8d2a9c120dd109b88fe494f06fcb3c4be933801c6011",
+    "sha256": "4f78779827d7fee8f78b0e5d9ee69fa0f88a3b4601dd10204a18e019ede97d9e",
+    "monthly_available_from": "the next NYSE session, not the first calendar day of the next month",
     "encoding": "float64_byte_stream_split_zstd19"
   },
   "lookahead": "ratios use same-session closes; available_from is the next SPY session",
