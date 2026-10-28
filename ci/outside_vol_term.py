@@ -9,6 +9,7 @@ import argparse
 import io
 import json
 import os
+import subprocess
 import tarfile
 import urllib.request
 from pathlib import Path
@@ -163,15 +164,20 @@ def build(out, now=None, publish=False):
     if publish:
         run_id = os.environ.get("GITHUB_RUN_ID", "local")
         tag = "outside-vol-term-v1-" + run_id + "-1"
-        gh_retry(
-            "release", "create", tag, "--draft", "--title", tag,
-            "--notes", "VIX term structure through " + proof["as_of"] + ". Lossless. See OUTSIDE_VOL_TERM_PROOF.json.",
-            "--target", os.environ.get("GITHUB_SHA", "HEAD"),
-            str(out / "outside_vol_daily.parquet"),
-            str(out / "outside_vol_candles.parquet"),
-            str(out / "outside_vol_ratio_candles.parquet"),
-            str(proof_path),
-        )
+        try:
+            gh_retry(
+                "release", "create", tag, "--draft", "--title", tag,
+                "--notes", "VIX term structure through " + proof["as_of"] + ". Lossless. See OUTSIDE_VOL_TERM_PROOF.json.",
+                "--target", os.environ.get("GITHUB_SHA", "HEAD"),
+                str(out / "outside_vol_daily.parquet"),
+                str(out / "outside_vol_candles.parquet"),
+                str(out / "outside_vol_ratio_candles.parquet"),
+                str(proof_path),
+            )
+        except subprocess.CalledProcessError as exc:
+            body = " ".join(str(exc.output or "").split())[:300]
+            err = " ".join(str(exc.stderr or "").split())[:300]
+            raise RuntimeError("release publish failed exit=" + str(exc.returncode) + " body=" + body + " stderr=" + err) from None
         proof["release"] = tag
         proof_path.write_text(json.dumps(proof, indent=2, default=str) + "\n")
     return proof
