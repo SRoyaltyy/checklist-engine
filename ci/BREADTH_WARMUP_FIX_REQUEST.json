@@ -1,5 +1,6 @@
 {
   "version": 3,
+  "measurement_revision": 2,
   "parent_release": "outside-breadth-native-v2-40718683563-1",
   "parent_report_sha256": "4ac2ae18034c0fcc34f1c739cc718f832b4647ba86c46bd2dbfaab868d45187a",
   "parent_daily_sha256": "f322b9bf2b2af928fb5fd6f222904c3d2a35511da8e227fa9aad0e310d5dd8f5",

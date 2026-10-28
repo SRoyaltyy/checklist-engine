@@ -122,7 +122,7 @@ def run(root,request):
                 parent_raw_prefix_checks=parent_report['raw_prefix_checks'],availability_prefix_checks=checks,
                 daily_availability_changes=daily_changes,native_availability_changes=native_changes,changed_known_numeric_cells=0,legacy_overlap=overlap,
                 source_counters_retained=dict(release=tag,asset=daily_file.name,sha256=sha(daily_file)),
-                native_factor_bytes=sum((root[row['asset']]).stat().st_size for row in bindings),data_asset_bytes=sum(file.stat().st_size for file in outputs if file.suffix=='.parquet'),
+                native_factor_bytes=sum((root/row['asset']).stat().st_size for row in bindings),data_asset_bytes=sum(file.stat().st_size for file in outputs if file.suffix=='.parquet'),
                 coverage_rows=len(coverage),minimum_non_null_stock_day_pct=min(row['non_null_pct'] for row in coverage),factor_manifest_sha256=sha(manifest),
                 runtime={name:importlib.metadata.version(name) for name in ('numpy','pandas','pyarrow','exchange_calendars')},
                 world_gate='NOT_PROVEN',full_world_storage_gate='NOT_PROVEN',scoring_gate='CLOSED')
