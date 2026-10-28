@@ -8,7 +8,14 @@
   "files": 274,
   "file_sha256_mismatches": 0,
   "first_last_and_row_count_mismatches": 0,
-  "excluded_no_file": ["CYCN", "LBRDA", "PSKY", "QNCX", "UUU", "VTAK"],
+  "excluded_no_file": [
+    "CYCN",
+    "LBRDA",
+    "PSKY",
+    "QNCX",
+    "UUU",
+    "VTAK"
+  ],
   "excluded_present_in_archive": 0,
   "stale_before_2026-10-23": 19,
   "prior_exclusion_counts": {
@@ -36,9 +43,919 @@
   "world_build": {
     "run": 40621517496,
     "head": "49043dd375387bddad0d446c56f942f0711b28ed",
-    "jobs": {"success": 25, "in_progress": 19, "queued": 131, "failed": 0},
+    "jobs": {
+      "success": 25,
+      "in_progress": 19,
+      "queued": 131,
+      "failed": 0
+    },
     "action": "not restarted"
   },
   "actions_jobs_launched": 0,
-  "nominal_and_point_in_time": "NOT_PROVEN"
+  "nominal_and_point_in_time": "NOT_PROVEN",
+  "session_window": {
+    "calendar": "XNYS",
+    "start": "2020-01-02",
+    "end": "2026-10-23",
+    "sessions": 1712,
+    "note": "Same end session as accepted-price-stitch-v2. Bars after 2026-10-23 are not counted in this window."
+  },
+  "coverage_rule": "Internal coverage is bars on NYSE sessions from the first bar through the last bar inside the window. Below 95 percent is EXCLUDE with the bars kept in the archive. A late start or an early stop is logged and kept when that span is dense.",
+  "coverage_counts": {
+    "files": 274,
+    "pass": 192,
+    "exclude_holes": 82,
+    "covers_window": 1,
+    "listed_after_window_start": 175,
+    "ended_before_window_end": 16
+  },
+  "excluded_holes": [
+    {
+      "ticker": "ACLO",
+      "internal_percent": 71.1618,
+      "full_window_percent": 20.035,
+      "first": "2024-11-20",
+      "last": "2026-10-23",
+      "bars_in_window": 343,
+      "span_sessions": 482
+    },
+    {
+      "ticker": "ALDF",
+      "internal_percent": 70.9607,
+      "full_window_percent": 18.9836,
+      "first": "2024-12-16",
+      "last": "2026-10-14",
+      "bars_in_window": 325,
+      "span_sessions": 458
+    },
+    {
+      "ticker": "BBB",
+      "internal_percent": 90.3819,
+      "full_window_percent": 37.3248,
+      "first": "2023-12-29",
+      "last": "2026-10-23",
+      "bars_in_window": 639,
+      "span_sessions": 707
+    },
+    {
+      "ticker": "BEAG",
+      "internal_percent": 94.6004,
+      "full_window_percent": 25.5841,
+      "first": "2024-12-18",
+      "last": "2026-10-23",
+      "bars_in_window": 438,
+      "span_sessions": 463
+    },
+    {
+      "ticker": "BEEX",
+      "internal_percent": 78.8337,
+      "full_window_percent": 21.3201,
+      "first": "2024-12-18",
+      "last": "2026-10-23",
+      "bars_in_window": 365,
+      "span_sessions": 463
+    },
+    {
+      "ticker": "BOXA",
+      "internal_percent": 73.5358,
+      "full_window_percent": 19.8014,
+      "first": "2024-12-20",
+      "last": "2026-10-23",
+      "bars_in_window": 339,
+      "span_sessions": 461
+    },
+    {
+      "ticker": "BUFI",
+      "internal_percent": 90.7923,
+      "full_window_percent": 24.7664,
+      "first": "2024-12-12",
+      "last": "2026-10-23",
+      "bars_in_window": 424,
+      "span_sessions": 467
+    },
+    {
+      "ticker": "BUYO",
+      "internal_percent": 45.2055,
+      "full_window_percent": 13.493,
+      "first": "2024-10-10",
+      "last": "2026-10-23",
+      "bars_in_window": 231,
+      "span_sessions": 511
+    },
+    {
+      "ticker": "CAPN",
+      "internal_percent": 59.2,
+      "full_window_percent": 17.2897,
+      "first": "2024-10-25",
+      "last": "2026-10-23",
+      "bars_in_window": 296,
+      "span_sessions": 500
+    },
+    {
+      "ticker": "CHAR",
+      "internal_percent": 51.782,
+      "full_window_percent": 14.4276,
+      "first": "2024-11-27",
+      "last": "2026-10-23",
+      "bars_in_window": 247,
+      "span_sessions": 477
+    },
+    {
+      "ticker": "COCH",
+      "internal_percent": 90.0508,
+      "full_window_percent": 72.4299,
+      "first": "2021-05-03",
+      "last": "2026-10-23",
+      "bars_in_window": 1240,
+      "span_sessions": 1377
+    },
+    {
+      "ticker": "CORO",
+      "internal_percent": 78.2979,
+      "full_window_percent": 21.4953,
+      "first": "2024-12-09",
+      "last": "2026-10-23",
+      "bars_in_window": 368,
+      "span_sessions": 470
+    },
+    {
+      "ticker": "CPNQ",
+      "internal_percent": 89.1489,
+      "full_window_percent": 24.4743,
+      "first": "2024-12-04",
+      "last": "2026-10-20",
+      "bars_in_window": 419,
+      "span_sessions": 470
+    },
+    {
+      "ticker": "CPSD",
+      "internal_percent": 92.389,
+      "full_window_percent": 25.5257,
+      "first": "2024-12-04",
+      "last": "2026-10-23",
+      "bars_in_window": 437,
+      "span_sessions": 473
+    },
+    {
+      "ticker": "CPSN",
+      "internal_percent": 74.898,
+      "full_window_percent": 21.4369,
+      "first": "2024-11-08",
+      "last": "2026-10-23",
+      "bars_in_window": 367,
+      "span_sessions": 490
+    },
+    {
+      "ticker": "DECM",
+      "internal_percent": 83.8428,
+      "full_window_percent": 22.4299,
+      "first": "2024-12-26",
+      "last": "2026-10-23",
+      "bars_in_window": 384,
+      "span_sessions": 458
+    },
+    {
+      "ticker": "DVQQ",
+      "internal_percent": 70.6263,
+      "full_window_percent": 19.1005,
+      "first": "2024-12-18",
+      "last": "2026-10-23",
+      "bars_in_window": 327,
+      "span_sessions": 463
+    },
+    {
+      "ticker": "DVSP",
+      "internal_percent": 54.1126,
+      "full_window_percent": 14.6028,
+      "first": "2024-12-18",
+      "last": "2026-10-22",
+      "bars_in_window": 250,
+      "span_sessions": 462
+    },
+    {
+      "ticker": "DYNC",
+      "internal_percent": 92.9638,
+      "full_window_percent": 25.4673,
+      "first": "2024-12-10",
+      "last": "2026-10-23",
+      "bars_in_window": 436,
+      "span_sessions": 469
+    },
+    {
+      "ticker": "EFFE",
+      "internal_percent": 14.8148,
+      "full_window_percent": 0.7009,
+      "first": "2026-07-01",
+      "last": "2026-10-23",
+      "bars_in_window": 12,
+      "span_sessions": 81
+    },
+    {
+      "ticker": "EFFI",
+      "internal_percent": 46.9136,
+      "full_window_percent": 2.2196,
+      "first": "2026-07-01",
+      "last": "2026-10-23",
+      "bars_in_window": 38,
+      "span_sessions": 81
+    },
+    {
+      "ticker": "FACT",
+      "internal_percent": 78.8079,
+      "full_window_percent": 20.8528,
+      "first": "2025-01-02",
+      "last": "2026-10-22",
+      "bars_in_window": 357,
+      "span_sessions": 453
+    },
+    {
+      "ticker": "FARX",
+      "internal_percent": 79.0393,
+      "full_window_percent": 21.1449,
+      "first": "2024-12-26",
+      "last": "2026-10-23",
+      "bars_in_window": 362,
+      "span_sessions": 458
+    },
+    {
+      "ticker": "FEAC",
+      "internal_percent": 93.9457,
+      "full_window_percent": 26.285,
+      "first": "2024-11-25",
+      "last": "2026-10-23",
+      "bars_in_window": 450,
+      "span_sessions": 479
+    },
+    {
+      "ticker": "FFDI",
+      "internal_percent": 94.1545,
+      "full_window_percent": 26.3435,
+      "first": "2024-11-22",
+      "last": "2026-10-22",
+      "bars_in_window": 451,
+      "span_sessions": 479
+    },
+    {
+      "ticker": "FFEM",
+      "internal_percent": 85.0,
+      "full_window_percent": 23.8318,
+      "first": "2024-11-22",
+      "last": "2026-10-23",
+      "bars_in_window": 408,
+      "span_sessions": 480
+    },
+    {
+      "ticker": "FFGX",
+      "internal_percent": 93.5417,
+      "full_window_percent": 26.2266,
+      "first": "2024-11-22",
+      "last": "2026-10-23",
+      "bars_in_window": 449,
+      "span_sessions": 480
+    },
+    {
+      "ticker": "FHDG",
+      "internal_percent": 89.648,
+      "full_window_percent": 25.2921,
+      "first": "2024-11-19",
+      "last": "2026-10-23",
+      "bars_in_window": 433,
+      "span_sessions": 483
+    },
+    {
+      "ticker": "FMCE",
+      "internal_percent": 31.1983,
+      "full_window_percent": 8.8201,
+      "first": "2024-11-18",
+      "last": "2026-10-23",
+      "bars_in_window": 151,
+      "span_sessions": 484
+    },
+    {
+      "ticker": "FOWF",
+      "internal_percent": 76.6234,
+      "full_window_percent": 20.6776,
+      "first": "2024-12-19",
+      "last": "2026-10-23",
+      "bars_in_window": 354,
+      "span_sessions": 462
+    },
+    {
+      "ticker": "FPAS",
+      "internal_percent": 63.3603,
+      "full_window_percent": 18.2827,
+      "first": "2024-11-04",
+      "last": "2026-10-23",
+      "bars_in_window": 313,
+      "span_sessions": 494
+    },
+    {
+      "ticker": "FVN",
+      "internal_percent": 51.8293,
+      "full_window_percent": 14.8949,
+      "first": "2024-11-06",
+      "last": "2026-10-23",
+      "bars_in_window": 255,
+      "span_sessions": 492
+    },
+    {
+      "ticker": "GCTK",
+      "internal_percent": 94.267,
+      "full_window_percent": 67.2313,
+      "first": "2021-12-13",
+      "last": "2026-10-23",
+      "bars_in_window": 1151,
+      "span_sessions": 1221
+    },
+    {
+      "ticker": "HFSP",
+      "internal_percent": 25.0,
+      "full_window_percent": 0.1752,
+      "first": "2026-09-17",
+      "last": "2026-10-02",
+      "bars_in_window": 3,
+      "span_sessions": 12
+    },
+    {
+      "ticker": "HYBX",
+      "internal_percent": 87.3444,
+      "full_window_percent": 24.5911,
+      "first": "2024-11-20",
+      "last": "2026-10-23",
+      "bars_in_window": 421,
+      "span_sessions": 482
+    },
+    {
+      "ticker": "IGCB",
+      "internal_percent": 33.1942,
+      "full_window_percent": 9.2874,
+      "first": "2024-11-25",
+      "last": "2026-10-23",
+      "bars_in_window": 159,
+      "span_sessions": 479
+    },
+    {
+      "ticker": "ITDJ",
+      "internal_percent": 89.916,
+      "full_window_percent": 25.0,
+      "first": "2024-11-29",
+      "last": "2026-10-23",
+      "bars_in_window": 428,
+      "span_sessions": 476
+    },
+    {
+      "ticker": "JHCP",
+      "internal_percent": 72.1133,
+      "full_window_percent": 19.3341,
+      "first": "2024-12-24",
+      "last": "2026-10-23",
+      "bars_in_window": 331,
+      "span_sessions": 459
+    },
+    {
+      "ticker": "JHCR",
+      "internal_percent": 65.3012,
+      "full_window_percent": 15.8294,
+      "first": "2025-03-03",
+      "last": "2026-10-23",
+      "bars_in_window": 271,
+      "span_sessions": 415
+    },
+    {
+      "ticker": "JIII",
+      "internal_percent": 94.3983,
+      "full_window_percent": 26.5771,
+      "first": "2024-11-20",
+      "last": "2026-10-23",
+      "bars_in_window": 455,
+      "span_sessions": 482
+    },
+    {
+      "ticker": "KLMN",
+      "internal_percent": 46.9136,
+      "full_window_percent": 2.2196,
+      "first": "2026-07-01",
+      "last": "2026-10-23",
+      "bars_in_window": 38,
+      "span_sessions": 81
+    },
+    {
+      "ticker": "KNOV",
+      "internal_percent": 87.247,
+      "full_window_percent": 25.1752,
+      "first": "2024-11-04",
+      "last": "2026-10-23",
+      "bars_in_window": 431,
+      "span_sessions": 494
+    },
+    {
+      "ticker": "LDRC",
+      "internal_percent": 91.5638,
+      "full_window_percent": 25.993,
+      "first": "2024-11-14",
+      "last": "2026-10-23",
+      "bars_in_window": 445,
+      "span_sessions": 486
+    },
+    {
+      "ticker": "LDRH",
+      "internal_percent": 85.0,
+      "full_window_percent": 23.8318,
+      "first": "2024-11-22",
+      "last": "2026-10-23",
+      "bars_in_window": 408,
+      "span_sessions": 480
+    },
+    {
+      "ticker": "LFSC",
+      "internal_percent": 91.3131,
+      "full_window_percent": 26.4019,
+      "first": "2024-11-01",
+      "last": "2026-10-23",
+      "bars_in_window": 452,
+      "span_sessions": 495
+    },
+    {
+      "ticker": "LPBB",
+      "internal_percent": 73.3051,
+      "full_window_percent": 20.2103,
+      "first": "2024-12-03",
+      "last": "2026-10-21",
+      "bars_in_window": 346,
+      "span_sessions": 472
+    },
+    {
+      "ticker": "MCDS",
+      "internal_percent": 20.1794,
+      "full_window_percent": 5.257,
+      "first": "2025-01-15",
+      "last": "2026-10-23",
+      "bars_in_window": 90,
+      "span_sessions": 446
+    },
+    {
+      "ticker": "MILK",
+      "internal_percent": 85.7143,
+      "full_window_percent": 23.1308,
+      "first": "2024-12-19",
+      "last": "2026-10-23",
+      "bars_in_window": 396,
+      "span_sessions": 462
+    },
+    {
+      "ticker": "MUSE",
+      "internal_percent": 35.8025,
+      "full_window_percent": 1.6939,
+      "first": "2026-07-01",
+      "last": "2026-10-23",
+      "bars_in_window": 29,
+      "span_sessions": 81
+    },
+    {
+      "ticker": "MUSQ",
+      "internal_percent": 73.665,
+      "full_window_percent": 35.4556,
+      "first": "2023-07-11",
+      "last": "2026-10-20",
+      "bars_in_window": 607,
+      "span_sessions": 824
+    },
+    {
+      "ticker": "NBGX",
+      "internal_percent": 39.6061,
+      "full_window_percent": 10.5724,
+      "first": "2024-12-27",
+      "last": "2026-10-23",
+      "bars_in_window": 181,
+      "span_sessions": 457
+    },
+    {
+      "ticker": "NBTR",
+      "internal_percent": 65.0,
+      "full_window_percent": 3.0374,
+      "first": "2026-07-01",
+      "last": "2026-10-22",
+      "bars_in_window": 52,
+      "span_sessions": 80
+    },
+    {
+      "ticker": "NCEW",
+      "internal_percent": 89.6104,
+      "full_window_percent": 24.1822,
+      "first": "2024-12-18",
+      "last": "2026-10-22",
+      "bars_in_window": 414,
+      "span_sessions": 462
+    },
+    {
+      "ticker": "NDAA",
+      "internal_percent": 50.9921,
+      "full_window_percent": 15.0117,
+      "first": "2024-10-21",
+      "last": "2026-10-23",
+      "bars_in_window": 257,
+      "span_sessions": 504
+    },
+    {
+      "ticker": "NNOV",
+      "internal_percent": 91.7004,
+      "full_window_percent": 26.4603,
+      "first": "2024-11-04",
+      "last": "2026-10-23",
+      "bars_in_window": 453,
+      "span_sessions": 494
+    },
+    {
+      "ticker": "NOVM",
+      "internal_percent": 77.3859,
+      "full_window_percent": 21.7874,
+      "first": "2024-11-19",
+      "last": "2026-10-22",
+      "bars_in_window": 373,
+      "span_sessions": 482
+    },
+    {
+      "ticker": "NTWO",
+      "internal_percent": 53.7281,
+      "full_window_percent": 14.3107,
+      "first": "2024-12-30",
+      "last": "2026-10-23",
+      "bars_in_window": 245,
+      "span_sessions": 456
+    },
+    {
+      "ticker": "NVBU",
+      "internal_percent": 88.4615,
+      "full_window_percent": 25.5257,
+      "first": "2024-11-04",
+      "last": "2026-10-23",
+      "bars_in_window": 437,
+      "span_sessions": 494
+    },
+    {
+      "ticker": "OACC",
+      "internal_percent": 73.6957,
+      "full_window_percent": 19.8014,
+      "first": "2024-12-23",
+      "last": "2026-10-23",
+      "bars_in_window": 339,
+      "span_sessions": 460
+    },
+    {
+      "ticker": "OCTM",
+      "internal_percent": 79.1252,
+      "full_window_percent": 23.2477,
+      "first": "2024-10-22",
+      "last": "2026-10-23",
+      "bars_in_window": 398,
+      "span_sessions": 503
+    },
+    {
+      "ticker": "PCLO",
+      "internal_percent": 79.4492,
+      "full_window_percent": 21.9042,
+      "first": "2024-12-05",
+      "last": "2026-10-23",
+      "bars_in_window": 375,
+      "span_sessions": 472
+    },
+    {
+      "ticker": "PMIO",
+      "internal_percent": 79.0017,
+      "full_window_percent": 26.8107,
+      "first": "2024-07-02",
+      "last": "2026-10-23",
+      "bars_in_window": 459,
+      "span_sessions": 581
+    },
+    {
+      "ticker": "POLE",
+      "internal_percent": 84.1365,
+      "full_window_percent": 24.4743,
+      "first": "2024-10-29",
+      "last": "2026-10-23",
+      "bars_in_window": 419,
+      "span_sessions": 498
+    },
+    {
+      "ticker": "QNXT",
+      "internal_percent": 94.1884,
+      "full_window_percent": 27.4533,
+      "first": "2024-10-28",
+      "last": "2026-10-23",
+      "bars_in_window": 470,
+      "span_sessions": 499
+    },
+    {
+      "ticker": "QQLV",
+      "internal_percent": 75.7962,
+      "full_window_percent": 20.8528,
+      "first": "2024-12-06",
+      "last": "2026-10-23",
+      "bars_in_window": 357,
+      "span_sessions": 471
+    },
+    {
+      "ticker": "QTPI",
+      "internal_percent": 81.5217,
+      "full_window_percent": 21.9042,
+      "first": "2024-12-23",
+      "last": "2026-10-23",
+      "bars_in_window": 375,
+      "span_sessions": 460
+    },
+    {
+      "ticker": "RDAC",
+      "internal_percent": 74.0506,
+      "full_window_percent": 20.5023,
+      "first": "2024-12-03",
+      "last": "2026-10-23",
+      "bars_in_window": 351,
+      "span_sessions": 474
+    },
+    {
+      "ticker": "RGEF",
+      "internal_percent": 85.9438,
+      "full_window_percent": 25.0,
+      "first": "2024-10-29",
+      "last": "2026-10-23",
+      "bars_in_window": 428,
+      "span_sessions": 498
+    },
+    {
+      "ticker": "ROPE",
+      "internal_percent": 62.039,
+      "full_window_percent": 16.7056,
+      "first": "2024-12-20",
+      "last": "2026-10-23",
+      "bars_in_window": 286,
+      "span_sessions": 461
+    },
+    {
+      "ticker": "RSDE",
+      "internal_percent": 90.8297,
+      "full_window_percent": 24.2991,
+      "first": "2024-12-26",
+      "last": "2026-10-23",
+      "bars_in_window": 416,
+      "span_sessions": 458
+    },
+    {
+      "ticker": "SCDS",
+      "internal_percent": 64.7059,
+      "full_window_percent": 3.8551,
+      "first": "2026-06-01",
+      "last": "2026-10-23",
+      "bars_in_window": 66,
+      "span_sessions": 102
+    },
+    {
+      "ticker": "SLDR",
+      "internal_percent": 70.8098,
+      "full_window_percent": 21.9626,
+      "first": "2024-09-12",
+      "last": "2026-10-23",
+      "bars_in_window": 376,
+      "span_sessions": 531
+    },
+    {
+      "ticker": "SLNZ",
+      "internal_percent": 91.2682,
+      "full_window_percent": 25.6425,
+      "first": "2024-11-20",
+      "last": "2026-10-22",
+      "bars_in_window": 439,
+      "span_sessions": 481
+    },
+    {
+      "ticker": "TAVI",
+      "internal_percent": 58.0435,
+      "full_window_percent": 15.5958,
+      "first": "2024-12-23",
+      "last": "2026-10-23",
+      "bars_in_window": 267,
+      "span_sessions": 460
+    },
+    {
+      "ticker": "TAX",
+      "internal_percent": 50.8696,
+      "full_window_percent": 13.6682,
+      "first": "2024-12-19",
+      "last": "2026-10-21",
+      "bars_in_window": 234,
+      "span_sessions": 460
+    },
+    {
+      "ticker": "TDEC",
+      "internal_percent": 65.7895,
+      "full_window_percent": 17.5234,
+      "first": "2024-12-27",
+      "last": "2026-10-22",
+      "bars_in_window": 300,
+      "span_sessions": 456
+    },
+    {
+      "ticker": "TRSY",
+      "internal_percent": 80.3571,
+      "full_window_percent": 23.6565,
+      "first": "2024-10-21",
+      "last": "2026-10-23",
+      "bars_in_window": 405,
+      "span_sessions": 504
+    },
+    {
+      "ticker": "USAF",
+      "internal_percent": 93.5417,
+      "full_window_percent": 26.2266,
+      "first": "2024-11-22",
+      "last": "2026-10-23",
+      "bars_in_window": 449,
+      "span_sessions": 480
+    },
+    {
+      "ticker": "UXOC",
+      "internal_percent": 90.239,
+      "full_window_percent": 26.4603,
+      "first": "2024-10-23",
+      "last": "2026-10-23",
+      "bars_in_window": 453,
+      "span_sessions": 502
+    },
+    {
+      "ticker": "WCME",
+      "internal_percent": 90.1768,
+      "full_window_percent": 26.8107,
+      "first": "2024-10-14",
+      "last": "2026-10-23",
+      "bars_in_window": 459,
+      "span_sessions": 509
+    },
+    {
+      "ticker": "WXET",
+      "internal_percent": 79.6943,
+      "full_window_percent": 21.3201,
+      "first": "2024-12-26",
+      "last": "2026-10-23",
+      "bars_in_window": 365,
+      "span_sessions": 458
+    },
+    {
+      "ticker": "YHNA",
+      "internal_percent": 45.1943,
+      "full_window_percent": 12.9089,
+      "first": "2024-11-11",
+      "last": "2026-10-23",
+      "bars_in_window": 221,
+      "span_sessions": 489
+    }
+  ],
+  "ended_before_window_end": [
+    {
+      "ticker": "ACVA",
+      "internal_percent": 100.0,
+      "full_window_percent": 81.6589,
+      "first": "2021-03-24",
+      "last": "2026-10-15",
+      "bars_in_window": 1398,
+      "span_sessions": 1398
+    },
+    {
+      "ticker": "IAE",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.5327,
+      "first": "2020-01-02",
+      "last": "2026-10-13",
+      "bars_in_window": 1704,
+      "span_sessions": 1704
+    },
+    {
+      "ticker": "ATKR",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.7079,
+      "first": "2020-01-02",
+      "last": "2026-10-16",
+      "bars_in_window": 1707,
+      "span_sessions": 1707
+    },
+    {
+      "ticker": "QBIG",
+      "internal_percent": 99.5745,
+      "full_window_percent": 27.3364,
+      "first": "2024-12-06",
+      "last": "2026-10-22",
+      "bars_in_window": 468,
+      "span_sessions": 470
+    },
+    {
+      "ticker": "LPSN",
+      "internal_percent": 100.0,
+      "full_window_percent": 97.9556,
+      "first": "2020-01-02",
+      "last": "2026-09-03",
+      "bars_in_window": 1677,
+      "span_sessions": 1677
+    },
+    {
+      "ticker": "PERF",
+      "internal_percent": 100.0,
+      "full_window_percent": 58.236,
+      "first": "2022-11-01",
+      "last": "2026-10-22",
+      "bars_in_window": 997,
+      "span_sessions": 997
+    },
+    {
+      "ticker": "ACA",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.9416,
+      "first": "2020-01-02",
+      "last": "2026-10-22",
+      "bars_in_window": 1711,
+      "span_sessions": 1711
+    },
+    {
+      "ticker": "BTF",
+      "internal_percent": 100.0,
+      "full_window_percent": 73.1308,
+      "first": "2021-10-25",
+      "last": "2026-10-20",
+      "bars_in_window": 1252,
+      "span_sessions": 1252
+    },
+    {
+      "ticker": "IHD",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.5327,
+      "first": "2020-01-02",
+      "last": "2026-10-13",
+      "bars_in_window": 1704,
+      "span_sessions": 1704
+    },
+    {
+      "ticker": "WBD",
+      "internal_percent": 100.0,
+      "full_window_percent": 66.0047,
+      "first": "2022-04-04",
+      "last": "2026-10-05",
+      "bars_in_window": 1130,
+      "span_sessions": 1130
+    },
+    {
+      "ticker": "SLP",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.1822,
+      "first": "2020-01-02",
+      "last": "2026-10-05",
+      "bars_in_window": 1698,
+      "span_sessions": 1698
+    },
+    {
+      "ticker": "QRVO",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.1238,
+      "first": "2020-01-02",
+      "last": "2026-10-02",
+      "bars_in_window": 1697,
+      "span_sessions": 1697
+    },
+    {
+      "ticker": "CCO",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.5911,
+      "first": "2020-01-02",
+      "last": "2026-10-14",
+      "bars_in_window": 1705,
+      "span_sessions": 1705
+    },
+    {
+      "ticker": "BZH",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.7664,
+      "first": "2020-01-02",
+      "last": "2026-10-19",
+      "bars_in_window": 1708,
+      "span_sessions": 1708
+    },
+    {
+      "ticker": "AZTR",
+      "internal_percent": 99.1607,
+      "full_window_percent": 48.3061,
+      "first": "2023-06-16",
+      "last": "2026-10-13",
+      "bars_in_window": 827,
+      "span_sessions": 834
+    },
+    {
+      "ticker": "BLFS",
+      "internal_percent": 100.0,
+      "full_window_percent": 99.1822,
+      "first": "2020-01-02",
+      "last": "2026-10-05",
+      "bars_in_window": 1698,
+      "span_sessions": 1698
+    }
+  ],
+  "covers_window": [
+    "SXTC"
+  ]
 }
