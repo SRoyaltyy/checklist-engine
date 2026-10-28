@@ -49,11 +49,21 @@
     {
       "series": "vvix",
       "status": "PASS",
-      "reason": "",
+      "reason": "SOURCE_FILE_HAS_NO_BAR",
       "coverage_percent": 99.5916,
       "rows": 1707,
       "expected_sessions": 1714,
-      "missing_sessions": 7
+      "missing_sessions": 7,
+      "missing_dates": [
+        "2020-06-11",
+        "2021-01-22",
+        "2021-02-17",
+        "2021-05-05",
+        "2021-05-11",
+        "2021-05-20",
+        "2021-05-25"
+      ],
+      "note": "The session row is kept and vvix is null. VIX, VIX9D, VIX3M, and the five ratios do not use VVIX, so they stay filled on these dates."
     },
     {
       "series": "vix_over_vix3m",
