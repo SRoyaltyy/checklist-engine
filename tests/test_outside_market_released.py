@@ -33,3 +33,27 @@ def test_overlap_checks_each_ohlcv_field_not_only_close(tmp_path,monkeypatch):
     checks=source.overlap_proof(panel,dict(records=[dict(ticker='SPY',file=file.name,sha256='unused')]),dict(native_release='tag'),tmp_path)
     assert checks[0]['fields']['close']['bit_mismatches']==0
     assert checks[0]['fields']['open']['bit_mismatches']==1
+
+
+def test_source_precedence_keeps_native_history_and_every_later_capture_value(tmp_path,monkeypatch):
+    prior=pd.DataFrame(dict(date=pd.date_range('2020-01-02',periods=2),open=[1.,2.],high=[2.,3.],
+        low=[0.,1.],close=[1.,2.],volume=[100.,200.]))
+    file=tmp_path/'prior.parquet';prior.to_parquet(file,index=False)
+    panel=prior.copy();panel['ticker']='SPY';panel.loc[0,'volume']=120.;panel.loc[0,'open']=np.nextafter(1.,np.inf)
+    later=panel.iloc[[-1]].copy();later['date']=pd.Timestamp('2020-01-04');later['volume']=999.
+    panel=pd.concat([panel,later],ignore_index=True);canonical=panel.copy()
+    for column in ('open','high','low','close','volume'):canonical['vendor_'+column]=panel[column].copy()
+    monkeypatch.setattr(source,'NAMED_ETFS',('SPY',));monkeypatch.setattr(source,'checked_download',lambda *a:file)
+    checks=source.overlap_proof(panel,dict(records=[dict(ticker='SPY',file=file.name,sha256='unused')]),dict(native_release='tag'),tmp_path,canonical)
+    assert sum(m['bit_mismatches'] for m in checks[0]['fields'].values())==2
+    assert all(m['bit_mismatches']==0 for m in checks[0]['canonical_fields'].values())
+    assert canonical.volume.tolist()==[100.,200.,999.]
+    assert canonical.vendor_volume.tolist()==[120.,200.,999.]
+    assert canonical.vendor_open.to_numpy().tobytes()==panel.open.to_numpy().tobytes()
+    assert panel.volume.tolist()==[120.,200.,999.]
+    from light_box_market import write_panel
+    canonical['adj_close']=canonical.close*.9
+    output=tmp_path/'both-captures.parquet';write_panel(canonical,output)
+    restored=pd.read_parquet(output)
+    assert restored.vendor_volume.tolist()==[120.,200.,999.]
+    assert restored.vendor_open.to_numpy().tobytes()==canonical.vendor_open.to_numpy().tobytes()
