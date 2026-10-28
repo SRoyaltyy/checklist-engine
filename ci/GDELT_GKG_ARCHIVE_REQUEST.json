@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "stamps": ["20200101000000", "20250101000000", "20261023000000"],
   "entities": [
     {"entity_id": "probe_apple_org", "aliases": ["Apple Inc", "Apple Inc.", "Apple Incorporated"]},
