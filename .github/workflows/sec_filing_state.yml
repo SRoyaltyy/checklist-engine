@@ -1,0 +1,20 @@
+name: offline-sec-filing-state
+on:
+  push:
+    branches: [main, codex/sec-filing-state]
+    paths: ['world_sec_facts.py', 'tests/test_world_sec_facts.py', '.github/workflows/sec_filing_state.yml']
+  pull_request:
+    paths: ['world_sec_facts.py', 'tests/test_world_sec_facts.py', '.github/workflows/sec_filing_state.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'numpy>=1.26,<3' 'pandas>=2.2,<3' 'pytest>=8,<10' pyarrow
+      - run: python -m pytest tests/test_world_sec_facts.py tests/test_sec_world.py -q
