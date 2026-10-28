@@ -64,6 +64,28 @@ def test_full_producer_binds_all_factor_files_and_exact_stock_day_coverage(tmp_p
     assert manifest['world_gate']=='NOT_PROVEN' and calls
 
 
+def test_followon_attaches_calendar_flags(tmp_path,monkeypatch):
+    request,files,calls=inputs_fixture(tmp_path/'sources',monkeypatch)
+    directory=tmp_path/'outside';directory.mkdir()
+    calendar=pd.DataFrame({
+        'timeframe':['1d','1d'],
+        'candle_start':pd.to_datetime(['2020-01-02','2020-01-03']),
+        'date':pd.to_datetime(['2020-01-02','2020-01-03']),
+        'available_from':pd.to_datetime(['2020-01-03','2020-01-06']),
+        'is_fomc':[True,False],
+    })
+    calendar.to_parquet(directory/'outside_event_calendar_candles.parquet',index=False)
+    request['outside_followon']=str(directory)
+    out=tmp_path/'out';pipeline.build(out,request,'shared')
+    manifest=json.loads((out/'FACTORED_WORLD_CONTEXT_STORE.json').read_text())
+    families={row['family'] for row in manifest['factors']}
+    assert 'calendar' in families and 'macro_cboe' in families and 'etf' in families
+    calendar_rows=[row for row in manifest['factors'] if row['family']=='calendar']
+    assert calendar_rows and calendar_rows[0]['columns']==['calendar_is_fomc']
+    assert len(manifest['factors'])==45
+    assert calls
+
+
 def test_changed_stock_proof_rejects_before_publication(tmp_path,monkeypatch):
     request,files,calls=inputs_fixture(tmp_path/'sources',monkeypatch)
     request['stock_status_sha256']='0'*64
