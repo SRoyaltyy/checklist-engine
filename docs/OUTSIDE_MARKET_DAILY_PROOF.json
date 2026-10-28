@@ -430,6 +430,17 @@
     ],
     "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19"
   },
-  "lookahead": "session date is that close; available_from is the next session; an unfinished candle is omitted",
-  "price_basis": "published open/high/low/close plus adj_close and volume; nothing recomputed"
+  "lookahead": "session date is that close; available_from is the next session; an unfinished candle is omitted A listing after 2020-01-02 is kept from its first session and logged against the full window.",
+  "price_basis": "published open/high/low/close plus adj_close and volume; nothing recomputed",
+  "window_gaps": [
+    {
+      "symbol": "IBIT",
+      "reason": "LISTED_AFTER_WINDOW_START",
+      "first": "2024-01-11",
+      "rows": 701,
+      "full_window_sessions": 1714,
+      "full_window_percent": 40.8985,
+      "note": "Bars before the listing are absent, not zero. The series is kept from the listing date. It does not cover 95 percent of 2020-01-02 through the last session."
+    }
+  ]
 }

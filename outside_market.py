@@ -370,13 +370,19 @@ def coverage_row(frame, sessions, as_of, ticker):
     percent = float(present.mean()) if len(expected) else 0.0
     status = "PASS" if percent >= COVERAGE_MIN else "EXCLUDED"
     reason = "" if status == "PASS" else "COVERAGE_BELOW_95"
+    full_present = window.isin(dates)
+    full_percent = float(full_present.mean()) if len(window) else 0.0
     listed = [str(day.date()) for day in missing[:30]]
     return dict(
         ticker=ticker, family=family_of(ticker), status=status, reason=reason,
-        coverage_percent=round(percent * 100, 4), rows=int(len(frame)),
+        coverage_percent=round(percent * 100, 4),
+        full_window_percent=round(full_percent * 100, 4),
+        full_window_sessions=int(len(window)),
+        rows=int(len(frame)),
         first=str(pd.Timestamp(first).date()), last=str(pd.Timestamp(dates.max()).date()),
         expected_sessions=int(len(expected)), missing_sessions=int(len(missing)),
         missing_dates=listed, missing_dates_truncated=int(len(missing) > 30),
+        window_gap_reason="LISTED_AFTER_WINDOW_START" if first > window[0] else "",
     )
 
 

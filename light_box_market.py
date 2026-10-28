@@ -186,6 +186,16 @@ def proof_from_release(directory, out_dir, as_of=None, boundary_sessions=None):
         storage=storage,
         candles=candle_storage,
         lookahead="session date is that close; available_from is the next session; an unfinished candle is omitted",
+        window_gaps=[
+            dict(symbol=symbol, reason="LISTED_AFTER_WINDOW_START",
+                 first=str(pd.Timestamp(group["date"].min()).date()),
+                 rows=int(len(group)),
+                 full_window_sessions=int(len(panel.loc[panel.ticker == "SPY"])),
+                 full_window_percent=round(100 * len(group) / max(len(panel.loc[panel.ticker == "SPY"]), 1), 4),
+                 note="Bars before the listing are absent, not zero. The series is kept from the listing date. It does not cover 95 percent of 2020-01-02 through the last session.")
+            for symbol, group in panel.groupby("ticker")
+            if pd.Timestamp(group["date"].min()) > pd.Timestamp("2020-01-02")
+        ],
         price_basis="published open/high/low/close plus adj_close and volume; nothing recomputed",
     )
     if failed:

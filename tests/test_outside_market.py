@@ -142,6 +142,9 @@ def test_ibit_style_late_listing_is_not_a_hole():
     assert row["status"] == "PASS"
     assert row["expected_sessions"] == 15
     assert row["missing_sessions"] == 0
+    assert row["full_window_sessions"] == 40
+    assert row["full_window_percent"] == 37.5
+    assert row["window_gap_reason"] == "LISTED_AFTER_WINDOW_START"
 
 
 def test_cent_prices_round_trip_and_subcent_prices_stay_float():
