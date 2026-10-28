@@ -1,7 +1,7 @@
-name: outside-market-released-measurement
+name: codex-tier1-etf-released-measurement
 on:
   push:
-    branches: [cursor/outside-market-daily-c9e9]
+    branches: [codex/tier1-etf-data]
     paths: ['ci/OUTSIDE_MARKET_RELEASED_REQUEST.json']
 permissions:
   contents: write
