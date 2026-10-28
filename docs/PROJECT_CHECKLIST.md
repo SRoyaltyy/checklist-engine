@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 13.**
+**Verified by both: 13/303. Claimed awaiting James: 14.**
 
 ## Rules
 
@@ -95,7 +95,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Volatility and bands
 
-- [ ] **1.21** Volatility and bands: source located. Items: dictionary I097–I105 (ATR, Bollinger, Keltner, bandwidth, and the rest of section 4). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence:
+- [x] **1.21** Volatility and bands: source located. Items: dictionary I097–I105 (ATR, Bollinger, Keltner, bandwidth, and the rest of section 4). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_21.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.22** Volatility and bands: fetched onto a checklist-engine release. Done when: Bollinger(N, k) uses population standard deviation (ddof=0); defaults N=20, k=2, and percent-B is blank when upper equals lower. ATR(N) is Wilder, seed is the SMA of the first N true ranges, default 14. Keltner matches the dictionary. Column count > 0. Evidence:
 - [ ] **1.23** Volatility and bands: joined point-in-time. Done when: Bands use bars < D. A unit test locks cp_pctB and cp_dip_atr to the §0b pin in commit 11a0117. Evidence:
 - [ ] **1.24** Volatility and bands: built at candle sizes 1 through 21. Done when: Each band item exists at candle sizes 1..21. Evidence:
