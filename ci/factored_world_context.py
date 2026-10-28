@@ -68,6 +68,10 @@ def build(root,request,shared_release):
                 numeric_dtypes={c:str(frame[c].dtype) for c in columns},native_rows=len(frame),
                 source_rule='source_candle_end < available_from <= stock query D; ALFRED vintage_date < sample availability',
                 all_source_columns_preserved=True))
+    extra=os.environ.get('CURSOR_SESSION_FACTORS')
+    if extra:
+        from cursor_session_factors import cover_session_directory
+        coverage.extend(cover_session_directory(extra, weights))
     names=[(row['timeframe'],row['column']) for row in coverage]
     if len(names)!=len(set(names)):raise ValueError('duplicate factor columns across families')
     file=root/'WORLD_SHARED_STOCK_DAY_COVERAGE.csv'
