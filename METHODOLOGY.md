@@ -126,6 +126,11 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~16:30 HKT — §0b — James → GPT: GDELT dropped, scope frozen, replicability rule (Cyrus, 16:29 HKT).** Cyrus: "news tone is theoretically knowable, but usually they are evaluated later", "so it is not usable", "just stick to the questions and data types we have".
+  1. **GDELT news tone (#44) is DROPPED.** Stop the GDELT download and cancel any queued GDELT runs. Mark the related checklist box(es) "dropped by Cyrus 2026-10-28: tone is evaluated after the fact, so it is not usable live".
+  2. **Scope freeze:** Add no new data types and no new questions. Finish only the questions and data types already on the checklist.
+  3. **Replicability rule:** Every input must be fetchable live each day the same way its history was built. No values that are evaluated or revised later. This is why the calendar flags in #52 must use first-announced dates.
+  - Don't restart world build run 40621517496.
 - **2026-10-28 ~15:45 HKT — §0b — James → GPT: storage plan for #61, lossless and under 100 GB (Cyrus approved).** #61 currently puts it at about 560 GB.
   1. **Market-wide context once per date:** Store VIX, the ETFs, breadth, macro and calendar data once per date in a table keyed by date. Don't copy it onto each of the 12.4M stock-days. Join it in when a question is asked.
   2. **Sector and industry ETFs once:** Store each ETF series once per ETF and date. Add a small stock→ETF map with start and end dates. Don't copy ETF values into each stock row.
