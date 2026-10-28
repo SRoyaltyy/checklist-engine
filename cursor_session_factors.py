@@ -3,11 +3,13 @@
 Industry ETF candles and the five VIX term ratios come from the published
 releases. Breadth and the event calendar come from their own candle panels.
 Each value stays stored once. A row is visible only when
-source_candle_end < available_from <= the stock session. Monthly rows whose
-availability falls on a weekend are rejected.
+source_candle_end < available_from <= the stock session. A weekend before the
+first known session moves to the next weekday. A later weekend with no session
+within four days is rejected.
 """
 from __future__ import annotations
 
+import datetime
 import hashlib
 from pathlib import Path
 
@@ -74,9 +76,10 @@ def volatility_native(frame, sessions=None):
 
     Monthly rows in the published file sometimes use the first calendar day.
     A date that is not a session moves forward to the next session when that
-    session is at most four days later. It never moves earlier. A weekend that
-    has no nearby session is dropped, because this stock window has no session
-    that would have seen it first.
+    session is at most four days later. It never moves earlier. A weekend before
+    the first known session moves to the next weekday, still before that
+    session, so an older observed bar is not deleted. A weekend that cannot
+    move without landing on or after the first session is dropped.
     """
     columns = [column for column in frame.columns if column not in KEYS]
     if columns != list(VOL_COLUMNS):
@@ -108,6 +111,11 @@ def _snap_availability(frame, sessions):
     for index, position in enumerate(positions):
         current = pd.Timestamp(values[index])
         if current < first:
+            if current.dayofweek >= 5:
+                nxt = pd.Timestamp(current.to_pydatetime() + datetime.timedelta(days=7 - int(current.dayofweek)))
+                if nxt < first and nxt > pd.Timestamp(ends.iloc[index]):
+                    values[index] = nxt.to_datetime64()
+                    moved += 1
             continue
         if position < len(session_values) and session_values[position] == values[index]:
             continue
@@ -179,9 +187,26 @@ def _binding(path, digest, family, timeframe, native, source, symbol=None):
     return row
 
 
-def _cover_native(native, weights, timeframe, family, path, digest, source, symbol=None):
+def _persist_native(directory, native, filename):
+    folder = Path(directory) / "native"
+    folder.mkdir(exist_ok=True)
+    path = folder / filename
+    native.to_parquet(path, index=False)
+    stored = pd.read_parquet(path)
+    columns = validate_factor(stored)
+    if len(stored) != len(native) or columns != validate_factor(native):
+        raise ValueError("persisted native frame does not match the binding")
+    return path, _file_sha256(path)
+
+
+def _cover_native(native, weights, timeframe, family, source_path, source_digest, source, symbol=None):
+    filename = family + "_" + ((str(symbol).lower() + "_") if symbol else "") + str(timeframe) + ".parquet"
+    path, digest = _persist_native(Path(source_path).parent, native, filename)
     rows = weighted_coverage(native, weights, timeframe, family)
     binding = _binding(path, digest, family, timeframe, native, source, symbol)
+    binding["asset"] = "native/" + path.name
+    binding["source_asset"] = Path(source_path).name
+    binding["source_sha256"] = source_digest
     return rows, binding
 
 

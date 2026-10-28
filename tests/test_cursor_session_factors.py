@@ -70,10 +70,27 @@ def test_monthly_weekend_moves_forward_to_the_next_session_only():
     })
     sessions = pd.to_datetime(["2024-02-01", "2024-02-05"])
     native = factors.volatility_native(frame, sessions)
-    assert list(native.available_from) == [pd.Timestamp("2024-02-05")]
-    assert native.attrs["availability_moved"] == 1
-    assert native.attrs["availability_dropped"] == 1
-    assert native.available_from.iloc[0] > native.source_candle_end.iloc[0]
+    assert list(native.available_from) == [pd.Timestamp("1990-04-02"), pd.Timestamp("2024-02-05")]
+    assert native.attrs["availability_moved"] == 2
+    assert native.attrs["availability_dropped"] == 0
+    assert list(native.vol_vix_over_vix3m) == [1.0, 1.1]
+    assert (native.available_from > native.source_candle_end).all()
+
+
+def test_pre_calendar_month_stays_in_the_later_three_bar_window():
+    frame = pd.DataFrame({
+        "candle_start": pd.to_datetime(["2019-09-01", "2019-10-01", "2019-11-01", "2019-12-01"]),
+        "source_candle_end": pd.to_datetime(["2019-09-30", "2019-10-31", "2019-11-29", "2019-12-31"]),
+        "available_from": pd.to_datetime(["2019-10-01", "2019-11-01", "2019-12-01", "2020-01-01"]),
+        **{column: [0.9, 0.8, 0.7, 1.0] for column in factors.VOL_COLUMNS},
+    })
+    sessions = pd.to_datetime(["2020-01-02", "2020-01-03"])
+    native = factors.volatility_native(frame, sessions)
+    november = native.loc[native.source_candle_end == pd.Timestamp("2019-11-29")]
+    assert list(november.available_from) == [pd.Timestamp("2019-12-02")]
+    recent = native.loc[native.source_candle_end >= pd.Timestamp("2019-10-31"), "vol_vix_over_vix3m"]
+    assert round(float(recent.mean()), 10) == round((0.8 + 0.7 + 1.0) / 3, 10)
+    assert native.attrs["availability_dropped"] == 0
 
 
 def test_volatility_file_keeps_the_published_five_columns():
@@ -89,6 +106,24 @@ def test_volatility_file_keeps_the_published_five_columns():
     })
     native = factors.volatility_native(frame)
     assert validate_factor(native) == list(factors.VOL_COLUMNS)
+
+
+def test_industry_binding_points_at_the_transformed_frame(tmp_path):
+    panel = _industry_panel([
+        _candle("SPY", "1d", "2024-01-02", "2024-01-02", "2024-01-03", 10.0),
+    ])
+    panel.to_parquet(tmp_path / "outside_market_candles_v3.parquet", index=False)
+    weights = pd.DataFrame({"date": ["2024-01-03"], "stock_days": [2]})
+    rows, bindings, _nbytes = factors.measure_directory(tmp_path, weights)
+    bound = next(row for row in bindings if row["symbol"] == "KBE" and row["timeframe"] == "1d")
+    stored = pd.read_parquet(tmp_path / bound["asset"])
+    assert len(stored) == bound["native_rows"] == 2
+    assert validate_factor(stored) == bound["columns"]
+    assert "etf_kbe_close" in bound["columns"]
+    assert "ticker" not in stored.columns
+    assert bound["source_asset"] == "outside_market_candles_v3.parquet"
+    assert len(pd.read_parquet(tmp_path / bound["source_asset"])) != bound["native_rows"]
+    assert rows
 
 
 def test_followon_directory_rejects_a_repeated_column(tmp_path):
