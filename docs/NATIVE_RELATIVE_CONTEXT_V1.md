@@ -31,7 +31,9 @@ column on all grids (132 comparisons). The resulting public report binds
 code, inputs, runtime, values and date hashes. Native matrices are temporary
 references; raw inputs and code are the recomputation dependencies.
 
-The proof is pending until an actual Actions run and public readback succeed.
+The 39 local API/statistics/reader/controller tests pass. Push run40790389592
+and PR test run40790401871 are queued at119c08e. The proof is pending until
+an actual Actions run and public readback succeed.
 This is a three-stock component sample; it establishes no full-universe
 coverage, historical eligibility, complete question state or 100GB world
 budget. No checklist box or full-world/scoring gate is closed here.
