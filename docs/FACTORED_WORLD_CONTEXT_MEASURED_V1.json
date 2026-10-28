@@ -1,0 +1,16 @@
+{
+  "status": "STORED_NATIVE_CONTEXTS_ATTACHED_TO_APPROVED_STOCK_DAY_DENOMINATOR_NOT_FULL_WORLD",
+  "source_commit": "3c34201a5df8f009aef593b357fe9b6348e5d018",
+  "accepted_stocks": 8316,
+  "original_universe": 8727,
+  "query_stock_days": 12364370,
+  "context_column_timeframe_rows": 9900,
+  "native_factor_bytes": 50443476,
+  "manifest_sha256": "3785d419adffcb8642e56eb11cec5c2f5484bcb405b92fb324c4ca96a8f63891",
+  "coverage_sha256": "286f071d25ef233aeeb1a08aad67cc536c2d812e4573eb3e2327e195377ce5d0",
+  "stock_day_weights_sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+  "zero_observation_rows": 85,
+  "stock_day_attachment": "all approved stock days measured exactly by date multiplicities",
+  "full_world_gate": "NOT_PROVEN; declared remaining blocks/quality/PIT/retention gates remain",
+  "scoring_gate": "CLOSED"
+}
