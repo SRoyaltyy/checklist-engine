@@ -1,7 +1,7 @@
 from copy import deepcopy
 import numpy as np
 import pytest
-from world_numeric_codec import encode_numeric,decode_numeric
+from world_numeric_codec import encode_numeric,decode_numeric,PREDICTOR_CHOICES
 
 
 def source(rows):
@@ -16,19 +16,21 @@ def source(rows):
     return values,columns,provenance
 
 
+@pytest.mark.parametrize('predictors',PREDICTOR_CHOICES)
 @pytest.mark.parametrize('rows',[0,1,2,7,8,257])
-def test_every_float64_bit_roundtrips_including_nan_payloads_and_signed_zero(rows):
+def test_every_float64_bit_roundtrips_including_nan_payloads_and_signed_zero(rows,predictors):
     values,columns,provenance=source(rows)
-    payload,metadata=encode_numeric(values,columns,provenance)
+    payload,metadata=encode_numeric(values,columns,provenance,predictors=predictors)
     restored=decode_numeric(payload,metadata,columns,provenance)
     assert restored.tobytes()==values.tobytes()
     assert metadata['raw_bytes']==values.nbytes
 
 
-def test_noncontiguous_values_and_big_endian_inputs_keep_exact_bits():
+@pytest.mark.parametrize('predictors',PREDICTOR_CHOICES)
+def test_noncontiguous_values_and_big_endian_inputs_keep_exact_bits(predictors):
     values,columns,provenance=source(31)
     for matrix in (values[::-1],values.astype('>f8')):
-        payload,metadata=encode_numeric(matrix,columns,provenance)
+        payload,metadata=encode_numeric(matrix,columns,provenance,predictors=predictors)
         restored=decode_numeric(payload,metadata,columns,provenance)
         assert restored.tobytes()==matrix.astype('<f8').tobytes()
 
@@ -45,7 +47,7 @@ def test_codec_never_implicitly_reduces_precision_or_coerces_integers(dtype):
 def test_changed_shape_schema_or_decode_size_fails_before_allocation(field,value):
     values,columns,provenance=source(7);payload,metadata=encode_numeric(values,columns,provenance)
     metadata[field]=value
-    with pytest.raises(ValueError,match='shape/schema/provenance or decode bound'):
+    with pytest.raises(ValueError,match='shape/schema/provenance or decode bound|unknown numeric predictors'):
         decode_numeric(payload,metadata,columns,provenance)
 
 
@@ -72,6 +74,32 @@ def test_claiming_plain_planes_for_an_xor_payload_fails_the_bit_check():
     metadata['predictors']=[]
     with pytest.raises(ValueError,match='decoded numeric bit pattern differs'):
         decode_numeric(payload,metadata,columns,provenance)
+
+
+@pytest.mark.parametrize('missing',[None,'',False])
+def test_missing_or_implicit_predictor_modes_do_not_inherit_plain_encoding(missing):
+    values,columns,provenance=source(12);payload,metadata=encode_numeric(values,columns,provenance,predictors=())
+    metadata['predictors']=missing
+    with pytest.raises(ValueError,match='explicit numeric predictor'):decode_numeric(payload,metadata,columns,provenance)
+
+
+def test_delta_format_is_distinct_and_uint64_wraparound_is_exact():
+    bits=np.array([[0],[2**64-1],[1],[2**63],[0]],dtype=np.uint64)
+    columns=['bits'];provenance=source(1)[2]
+    payload,metadata=encode_numeric(bits.view(np.float64),columns,provenance,predictors=('DELTA2_TIME','ZIGZAG'))
+    assert metadata['format']=='NATIVE_FLOAT64_DELTA_BYTEPLANES_V2'
+    assert decode_numeric(payload,metadata,columns,provenance).view(np.uint64).tolist()==bits.tolist()
+    metadata['format']='NATIVE_FLOAT64_XOR_BYTEPLANES_V1'
+    with pytest.raises(ValueError,match='shape/schema'):decode_numeric(payload,metadata,columns,provenance)
+
+
+@pytest.mark.parametrize('predictors',PREDICTOR_CHOICES)
+def test_unstructured_uint64_patterns_roundtrip_without_float_arithmetic(predictors):
+    rng=np.random.default_rng(317)
+    bits=rng.integers(0,2**64-1,size=(47,19),dtype=np.uint64)
+    columns=[f'field{i}' for i in range(19)];provenance=source(1)[2]
+    payload,meta=encode_numeric(bits.view(np.float64),columns,provenance,predictors=predictors)
+    assert decode_numeric(payload,meta,columns,provenance).view(np.uint64).tobytes()==bits.tobytes()
 
 
 def test_repeated_columns_and_time_runs_compress_without_formula_recomputation():
