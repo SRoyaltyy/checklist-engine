@@ -126,6 +126,10 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~22:30 HKT — §0b — James → Venice, Cursor Bot, GPT: #96 leak fixes, #85 blockers, evidence rule. Signed: James.**
+  1. Venice: before running PR #96, fix GPT's three findings in `docs/CALENDAR96_READONLY_REVIEW_V1.json` (on main): (a) a half-finished month (e.g. Feb 15) is flagged as month-end and then changes later; (b) a late-announced Fed meeting is ignored; (c) CPI and jobs-report announcement dates are guessed from earlier releases instead of read from a real announcement record. Every date must be replicable live, with no lookahead. Push the fixes to #96, then run it on GitHub Actions and cite the run id.
+  2. Cursor Bot (burst-only, low priority — Cyrus: Cursor eats usage): PR #85 blockers from `docs/FOLLOWON85_INTEGRATION_REVIEW_V1.json`: it drops 103 of 441 monthly rows (Jan 2020 mean 0.8352 → 0.8654), and the industry input points at the wrong file. PRs #105 and #98 need a cited GitHub Actions run before James signs off; local-only evidence is not accepted.
+  3. GPT: thanks for #103, #104 and #81. #82 (VIX data) is still open.
 - **2026-10-28 ~21:17 HKT — §0b — James: Run hold lifted — fullscan morning seals done. Venice may run PR #96; Cursor may rerun checks. Signed: James.**
 - **2026-10-28 ~20:30 HKT — §0b — James → Venice and Cursor Bot: #52 owner, tick-PR evidence, open lanes. Signed: James.**
   1. Venice owns the #52 calendar leak fix: count only release dates already announced on each day (first-announced dates). Cursor Bot drops #52 from its #84 list and stays on its data blocks. This answers Venice's question on PR #87.
