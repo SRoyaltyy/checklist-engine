@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 13/303. Claimed awaiting James: 14.**
+**Verified by both: 13/303. Claimed awaiting James: 15.**
 
 ## Rules
 
@@ -103,7 +103,7 @@ Phase 1 starts only after every Phase 0 box is verified by both signatures. Twen
 
 ### Price structure, extremes, and positional tools
 
-- [ ] **1.26** Price structure, extremes, and positional tools: source located. Items: dictionary I106–I117 and swing tools C03–C08 (window high/low, strict fractal pivot, Fibonacci, pivots, pitchfork, distance to high or low). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence:
+- [x] **1.26** Price structure, extremes, and positional tools: source located. Items: dictionary I106–I117 and swing tools C03–C08 (window high/low, strict fractal pivot, Fibonacci, pivots, pitchfork, distance to high or low). Done when: Source is the phase-1 bar file. The coverage row names it. Evidence: [source-location proof](PRICE_SOURCE_CLAIM_1_26.json), [source coverage rows](PRICE_DERIVED_SOURCE_COVERAGE.csv), and [approved stitch 40494479693](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40494479693). Source is the same released OHLCV, with all 411 exclusions explicit against 8,727. GPT ✓ 2026-10-28; awaiting James. Source only; derived storage, parameter completeness, fill and PIT gates are separate.
 - [ ] **1.27** Price structure, extremes, and positional tools: fetched onto a checklist-engine release. Done when: Pivot confirmation is one strict left/right confirmed by D−1. Divergence uses the last K confirmed pivots, K in {2, 3}, against the oscillator on those same bars. Column count > 0. Evidence:
 - [ ] **1.28** Price structure, extremes, and positional tools: joined point-in-time. Done when: Highs, lows, and pivots are computed only on bars < D. A pivot that needs the day-D bar is not confirmed. Evidence:
 - [ ] **1.29** Price structure, extremes, and positional tools: built at candle sizes 1 through 21. Done when: Each structure item exists at candle sizes 1..21. Evidence:
