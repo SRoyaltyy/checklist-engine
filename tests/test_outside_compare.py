@@ -67,6 +67,23 @@ def test_as_of_drops_later_rows():
     assert list(out.date.dt.strftime("%Y-%m-%d")) == ["2024-01-02", "2024-01-03"]
 
 
+def test_committed_five_session_correlation_waits_for_the_next_session():
+    import hashlib
+    from pathlib import Path
+    import pyarrow.compute as pc
+    import pyarrow.parquet as pq
+    path = Path("docs/compare_spy_corr5.parquet")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    assert digest == "49a4ad58dd73505bc7246612d900157d89bf4b87a6f88676b911744d0c854878"
+    table = pq.read_table(path)
+    assert table.num_rows == 12362658
+    assert table.column_names == ["ticker", "date", "available_from", "corr_5d"]
+    early = pc.sum(pc.and_(pc.is_valid(table.column("available_from")), pc.less_equal(table.column("available_from"), table.column("date")))).as_py()
+    assert early == 0
+    filled = pc.sum(pc.is_valid(table.column("corr_5d"))).as_py()
+    assert filled / table.num_rows >= 0.95
+
+
 def test_sector_and_industry_are_named_exclusions():
     reasons = {row["comparator"]: row["reason"] for row in comp.EXCLUDED_COMPARATORS}
     assert reasons["sector_etf"] == "NO_DATED_STOCK_TO_SECTOR_MAP"
