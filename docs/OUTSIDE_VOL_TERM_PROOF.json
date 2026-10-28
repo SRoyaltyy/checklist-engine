@@ -134,5 +134,16 @@
     "max_abs_error": 0.0,
     "vvix_one_day_candle_rows": 1707,
     "note": "The seven null VVIX sessions stay on the daily panel and are not given a level candle."
+  },
+  "five_day_levels": {
+    "rows": 1361,
+    "close": "end session level",
+    "series": [
+      "vix",
+      "vix9d",
+      "vix3m",
+      "vvix"
+    ],
+    "mismatches": 0
   }
 }
