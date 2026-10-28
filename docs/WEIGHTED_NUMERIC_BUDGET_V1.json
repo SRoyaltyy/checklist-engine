@@ -37,17 +37,22 @@
     "note": "Still above 100 GB. Integer and boolean columns are 34 of 1,044 on the 1d matrix, so packing them does not move the total."
   },
   "answer_store": {
-    "release": "compact-world-build-v1-40621517496-1-039",
+    "parts": [
+      "compact-world-build-v1-40621517496-1-035",
+      "compact-world-build-v1-40621517496-1-037",
+      "compact-world-build-v1-40621517496-1-039"
+    ],
     "format": "REGISTERED_ANSWER_BITPLANES_V1",
-    "names": ["FEUS", "FNF", "FRSX", "GRI", "GVUS"],
-    "excluded_in_part": 0,
+    "names": 21,
+    "excluded": 0,
     "roundtrip": "ALL_CELLS_EXACT_WITH_MISSING_DISTINCT",
-    "bytes_per_stock_year": {"FEUS": 381514, "FNF": 490094, "FRSX": 408025, "GRI": 334481, "GVUS": 361092},
-    "mean_bytes_per_stock_year": 395041,
+    "query_stock_years": 122.62,
+    "answer_bytes": 51048132,
+    "bytes_per_stock_year": 416301,
     "accepted_query_rows": 12364370,
     "accepted_stock_years": 49064.96,
-    "projected_answer_gb_if_the_rate_held": 19.38,
-    "note": "Five names in one finished part. The projection is not a full-universe proof. It is separate from the 560 GB numeric-intermediate figure."
+    "projected_answer_gb_if_the_rate_held": 20.43,
+    "note": "Twenty-one names in three finished parts. Not a full-universe proof. Separate from the 560 GB numeric-intermediate figure."
   },
   "world_build_observed": {
     "run": 40621517496,
