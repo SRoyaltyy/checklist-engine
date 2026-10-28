@@ -127,6 +127,8 @@
     "max_abs_error": 0.0,
     "available_from": "next NYSE session after the row date",
     "available_from_rows": 12362658,
-    "available_from_not_next_session": 0
+    "available_from_not_next_session": 0,
+    "divergence_sidecar_rows": 12362658,
+    "divergence_sidecar_available_from_not_next_session": 0
   }
 }
