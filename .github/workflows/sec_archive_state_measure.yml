@@ -1,0 +1,50 @@
+name: archived-sec-native-sample
+on:
+  push:
+    branches: [codex/sec-archive-state-measure]
+    paths: ['ci/SEC_ARCHIVE_STATE_REQUEST.json']
+  pull_request:
+    paths: ['ci/sec_archive_state_measure.py', 'tests/test_sec_archive_state_measure.py', 'ci/SEC_ARCHIVE_STATE_REQUEST.json', '.github/workflows/sec_archive_state_measure.yml']
+permissions:
+  contents: read
+concurrency:
+  group: archived-sec-native-sample-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'numpy>=1.26,<3' 'pandas>=2.2,<3' 'pytest>=8,<10' pyarrow
+      - run: python -m pytest tests/test_world_sec_facts.py tests/test_sec_world.py tests/test_sec_archive_state_measure.py -q
+  measure:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'numpy>=1.26,<3' 'pandas>=2.2,<3' pyarrow
+      - run: python -m ci.sec_archive_state_measure --directory sec-native-sample
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-native-sample-evidence
+          path: |
+            sec-native-sample/SEC_ARCHIVE_STATE_MEASURED.json
+            sec-native-sample/SEC_NATIVE_SAMPLE_COVERAGE.csv
+          if-no-files-found: ignore

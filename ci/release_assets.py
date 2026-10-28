@@ -44,7 +44,17 @@ def _run(*args):
 
 def describe_failure(exc):
     if isinstance(exc, subprocess.CalledProcessError):
-        return f"{exc}; stderr: {str(exc.stderr or '').strip()}"
+        details=''
+        try:
+            response=json.loads(exc.stdout or '')
+            if isinstance(response,dict) and isinstance(response.get('message'),str):
+                public={'message':response['message'][:1000]}
+                if isinstance(response.get('errors'),list):
+                    public['errors']=[{key:str(row[key])[:300] for key in ('resource','field','code','message') if key in row}
+                                      for row in response['errors'][:5] if isinstance(row,dict)]
+                details='; GitHub response: '+json.dumps(public,ensure_ascii=True)
+        except (ValueError,TypeError):pass
+        return f"{exc}; stderr: {str(exc.stderr or '').strip()}"+details
     return str(exc)
 
 

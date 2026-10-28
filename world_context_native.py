@@ -152,6 +152,9 @@ def attach_context(query_dates, native, timeframe, columns=None):
     selected = [c for c in native if c not in KEYS] if columns is None else list(columns)
     if not set(selected) <= (set(native) - set(KEYS)):
         raise ValueError("requested context columns missing or not features")
+    native=native.copy()
+    for key in KEYS:
+        native[key]=pd.to_datetime(native[key]).astype('datetime64[ns]')
     if native.empty:
         result = pd.DataFrame({"date": pd.to_datetime(query_dates).astype("datetime64[ns]")})
         for column in selected:

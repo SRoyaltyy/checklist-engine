@@ -1,0 +1,12 @@
+# Cyrus 2026-10-28: all news is permanently excluded from active scope.
+name: dropped-news-gdelt_gkg_archive
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dropped:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Dropped by Cyrus 2026-10-28; no acquisition or publication'

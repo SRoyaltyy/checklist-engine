@@ -58,11 +58,48 @@ ci/question_quality.py accepts the full active-item catalog, generated tree CSV
 parts, per-question answer-count tallies, a provenance-bound sample manifest, and
 optional item/facet exemptions. It writes QUESTION_QUALITY.csv and facet counts.
 
+The gate also requires `--variables VARIABLE_GRID.json` and `--sample-rows
+SAMPLE_STOCK_DAYS.csv`. The variable registry is declared independently of the
+generated rows: one record per item/facet/derivative with `item_id`, `facet`,
+`derivative`, `lookbacks` (positive integer list), `thresholds` (canonical string
+list), and `directions` (string list containing an opposite pair). Lists are
+unique and every applicable cell has at least three lookbacks and thresholds.
+The generator must expand the complete registered ranges, not infer them from
+whatever questions happened to be produced. For every integer candle size 1–21,
+the gate requires the full Cartesian product of each declared window, threshold
+and direction. Three separate marginal counts cannot prove that product. A
+registered fourth setting cannot disappear just because three others remain.
+Duplicate parameter combinations cannot inflate depth, even under different IDs.
+
 The sample contains at least 200 deterministic stocks and years 2020,2021,2022.
 The manifest binds the tallies to the exact tree digest and input manifest.
+It now also contains `tallies_sha256`, `sample_rows_sha256` and
+`variable_grid_sha256`. File digests use `ci.question_quality.tree_digest` (raw
+bytes concatenated in sorted path order); the variable digest uses
+`variable_digest` (the supplied JSON list serialized with sorted object keys and
+compact separators). The stock-day CSV contains `ticker,date`; canonical ISO
+dates, unique stock-day keys, ticker membership, year membership and actual row
+count must agree with the sample manifest. Input provenance must be a 64-digit
+SHA-256. These checks bind evidence; the source producer must still independently
+verify that the sample rows and input manifest came from the released world.
+
+Tally `answer_counts` keys are canonical JSON encodings of the declared scalar
+outcomes: numeric 0 is the key `"0"`, boolean true is `"true"`, and a string
+outcome includes its JSON quotes. Counts are nonnegative integers, never coerced
+booleans or fractions. Unknown outcomes, duplicate JSON keys, orphan tallies,
+catalog/block mismatches and malformed fixed answer sets fail. Null remains
+missing, not a declared answer. Legacy sample summaries without bound files and
+a declared variable registry fail rather than inheriting a historical PASS.
 Constant questions and >99%-blank questions fail. A structural count alone can
 never produce PASS. The answer evaluator and full-tree leak verifier must cover
 the same IDs and formulas before this gate is treated as complete.
+The gate does not itself execute arbitrary formula prose or authenticate upstream
+source files. Its regression fixtures are synthetic test inputs, not a real
+200-stock quality measurement. Full generated coverage, real sample tallies and
+full-world leak proof remain pending; this change supplies no P3b completion claim.
+The summary records the exact gate-code, sample-manifest, stock-day, tree,
+tally and variable-registry fingerprints alongside its explicit PASS/FAIL status,
+including on an empty-catalog failure.
 
 All generation/empirical evaluation on real inputs runs on GitHub runners.
 Persist tree parts and tally checkpoints; merge counts instead of materializing

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "sources": [
+    {"run": 40360947486, "head": "40b5158cd23ac8de607e9450874ca7cfc24747bc", "shards": [0,1,2,3,4,5,6,7,8,9,10,11,12]},
+    {"run": 40494316284, "head": "e8d1c9fe7b7f7111e8126de05f002ead27affbea", "shards": [13,14,15]}
+  ],
+  "request": "Merge completed raw source parts only after fixing release-aware cache paths. No rebuild or vendor calls. This add-on does not change approved stitch-v2 or the running compact world build 40621517496."
+}

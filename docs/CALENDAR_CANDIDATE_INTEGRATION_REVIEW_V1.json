@@ -1,0 +1,36 @@
+{
+  "status": "CANDIDATE_P4_AND_INTEGRATION_FAILURES_REPRODUCED",
+  "candidate_pr": 52,
+  "candidate_commit": "8a1cb05820d3172c74a8ccd66e24e55ed72cb407",
+  "cut": "2024-02-15",
+  "findings": [
+    {
+      "check": "INDEPENDENT_CUTOFF",
+      "column": "days_to_cpi",
+      "mismatches": 5,
+      "timeframe": "16d",
+      "source_date": "2024-02-14",
+      "early_value": null,
+      "full_value": 19.0
+    },
+    {
+      "check": "INDEPENDENT_CUTOFF",
+      "column": "days_to_jobs",
+      "mismatches": 27,
+      "timeframe": "16d",
+      "source_date": "2024-02-14",
+      "early_value": null,
+      "full_value": 17.0
+    },
+    {
+      "check": "MONTHLY_CONTEXT_KEY_COMPATIBILITY",
+      "baseline_close": 1.0,
+      "candidate_close": null,
+      "bounds_available_from": "2020-02-01",
+      "candidate_candle_available_from": "2020-02-03"
+    }
+  ],
+  "scope": "Small offline synthetic integration checks, not live data or full quality acceptance",
+  "actions_runs_launched": 0,
+  "world_build_untouched": 40621517496
+}

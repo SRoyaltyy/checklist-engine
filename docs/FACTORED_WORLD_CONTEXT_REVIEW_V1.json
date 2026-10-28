@@ -1,0 +1,444 @@
+{
+  "status": "INDEPENDENT_METADATA_COVERAGE_REVIEW_NOT_WORLD",
+  "context": {
+    "release": "factored-world-context-v1-40636949344-1",
+    "source_commit": "3c34201a5df8f009aef593b357fe9b6348e5d018",
+    "factors": 44,
+    "native_bytes": 50443476,
+    "coverage_rows": 9900,
+    "query_stock_days": 12364370,
+    "zero_observation_rows": 85,
+    "zero_observation_columns": [
+      {
+        "family": "macro_cboe",
+        "timeframe": "13d",
+        "column": "fred_bamlh0a0hym2_change60__13d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "13d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__13d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "14d",
+        "column": "fred_bamlh0a0hym2_change60__14d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "14d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__14d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "15d",
+        "column": "fred_bamlh0a0hym2_change60__15d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "15d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__15d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "16d",
+        "column": "fred_bamlh0a0hym2_change60__16d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "16d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__16d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "17d",
+        "column": "fred_bamlh0a0hym2_change60__17d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "17d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__17d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "18d",
+        "column": "fred_bamlh0a0hym2_change60__18d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "18d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__18d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "19d",
+        "column": "fred_bamlh0a0hym2_change60__19d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "19d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__19d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "20d",
+        "column": "fred_bamlh0a0hym2_change60__20d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "20d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__20d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "21d",
+        "column": "fred_bamlh0a0hym2_change60__21d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "21d",
+        "column": "fred_bamlh0a0hym2_first_release_change60__21d"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "monthly",
+        "column": "fred_bamlh0a0hym2_change60__monthly"
+      },
+      {
+        "family": "macro_cboe",
+        "timeframe": "monthly",
+        "column": "fred_bamlh0a0hym2_first_release_change60__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "4d",
+        "column": "etf_ibit_d200__4d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "5d",
+        "column": "etf_ibit_d200__5d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "6d",
+        "column": "etf_ibit_d200__6d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "7d",
+        "column": "etf_ibit_d200__7d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "8d",
+        "column": "etf_ibit_d200__8d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "9d",
+        "column": "etf_ibit_d200__9d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "10d",
+        "column": "etf_ibit_d200__10d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "11d",
+        "column": "etf_ibit_d200__11d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "11d",
+        "column": "etf_vxx_d200__11d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "11d",
+        "column": "etf_xlc_d200__11d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "12d",
+        "column": "etf_ibit_d200__12d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "12d",
+        "column": "etf_vxx_d200__12d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "12d",
+        "column": "etf_xlc_d200__12d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "13d",
+        "column": "etf_ibit_d200__13d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "13d",
+        "column": "etf_vxx_d200__13d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "13d",
+        "column": "etf_xlc_d200__13d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "14d",
+        "column": "etf_ibit_d50__14d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "14d",
+        "column": "etf_ibit_d200__14d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "14d",
+        "column": "etf_vxx_d200__14d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "14d",
+        "column": "etf_xlc_d200__14d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "14d",
+        "column": "etf_xlre_d200__14d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "15d",
+        "column": "etf_ibit_d50__15d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "15d",
+        "column": "etf_ibit_d200__15d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "15d",
+        "column": "etf_vxx_d200__15d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "15d",
+        "column": "etf_xlc_d200__15d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "15d",
+        "column": "etf_xlre_d200__15d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "16d",
+        "column": "etf_ibit_d50__16d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "16d",
+        "column": "etf_ibit_d200__16d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "16d",
+        "column": "etf_vxx_d200__16d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "16d",
+        "column": "etf_xlc_d200__16d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "16d",
+        "column": "etf_xlre_d200__16d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "17d",
+        "column": "etf_ibit_d50__17d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "17d",
+        "column": "etf_ibit_d200__17d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "17d",
+        "column": "etf_vxx_d200__17d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "17d",
+        "column": "etf_xlc_d200__17d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "17d",
+        "column": "etf_xlre_d200__17d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "18d",
+        "column": "etf_ibit_d50__18d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "18d",
+        "column": "etf_ibit_d200__18d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "18d",
+        "column": "etf_vxx_d200__18d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "18d",
+        "column": "etf_xlc_d200__18d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "18d",
+        "column": "etf_xlre_d200__18d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_cper_d200__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_ibit_d50__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_ibit_d200__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_vxx_d200__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_xlc_d200__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "19d",
+        "column": "etf_xlre_d200__19d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_cper_d200__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_ibit_d50__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_ibit_d200__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_vxx_d200__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_xlc_d200__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "20d",
+        "column": "etf_xlre_d200__20d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_cper_d200__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_ibit_d50__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_ibit_d200__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_vxx_d200__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_xlc_d200__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "21d",
+        "column": "etf_xlre_d200__21d"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_cper_d200__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_ibit_d50__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_ibit_d200__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_vxx_d200__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_xlc_d200__monthly"
+      },
+      {
+        "family": "etf",
+        "timeframe": "monthly",
+        "column": "etf_xlre_d200__monthly"
+      }
+    ],
+    "zero_rows_not_marked_wired": true,
+    "exact_macro_prefix_checks": 44
+  },
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "actions_runs_launched": 0
+}

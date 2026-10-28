@@ -1,0 +1,32 @@
+{
+  "status": "INDEPENDENT_GKG_NUMERIC_SAMPLE_REVIEW_NOT_HISTORY",
+  "gdelt": {
+    "release": "gdelt-gkg-numeric-v1-40636047431-1",
+    "parts": [
+      {
+        "file": "20200101000000.numeric.parquet",
+        "rows": 6,
+        "corpus_records": 1253
+      },
+      {
+        "file": "20250101000000.numeric.parquet",
+        "rows": 6,
+        "corpus_records": 1059
+      },
+      {
+        "file": "20261023000000.numeric.parquet",
+        "rows": 6,
+        "corpus_records": 1230
+      }
+    ],
+    "total_numeric_rows": 18,
+    "full_history_gate": "NOT_PROVEN"
+  },
+  "entity_membership_exact": true,
+  "batch_timestamps_exact": true,
+  "unknown_mean_preserved": true,
+  "source_report_sha256": "7a7d7998fc78bd68feb11b020cd32075ab5363895b93175477dabf03b5de53ee",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "actions_runs_launched": 0
+}
