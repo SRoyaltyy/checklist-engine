@@ -1,7 +1,7 @@
 name: native-price-verified-stitch
 on:
   pull_request:
-    paths: ['ci/native_price_stitch.py', 'ci/NATIVE_PRICE_STITCH_REQUEST.json', 'tests/test_world_native_stitch.py', '.github/workflows/native_price_stitch.yml']
+    paths: ['ci/native_price_stitch.py', 'ci/native_price_routes.py', 'ci/NATIVE_PRICE_STITCH_REQUEST.json', 'tests/test_world_native_stitch.py', '.github/workflows/native_price_stitch.yml']
   workflow_run:
     workflows: [compact-price-failed-shard-recovery]
     types: [completed]

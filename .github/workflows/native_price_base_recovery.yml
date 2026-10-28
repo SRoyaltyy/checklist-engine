@@ -1,10 +1,11 @@
 name: compact-price-failed-shard-recovery
 on:
   push:
-    branches: [codex/native-price-base-recovery]
-    paths: ['ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json']
+    branches: [main, codex/native-price-base-recovery, codex/native-final-source-routes]
+    paths: ['ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json', 'ci/NATIVE_PRICE_STITCH_REQUEST.json']
+  workflow_dispatch:
   pull_request:
-    paths: ['ci/native_price_base.py', 'ci/native_price_base_recovery.py', 'tests/test_world_price_base.py', '.github/workflows/native_price_base_recovery.yml']
+    paths: ['ci/native_price_base.py', 'ci/native_price_base_recovery.py', 'ci/native_price_routes.py', 'ci/NATIVE_PRICE_BASE_RECOVERY_REQUEST.json', 'ci/NATIVE_PRICE_STITCH_REQUEST.json', 'tests/test_world_price_base.py', 'tests/test_world_native_stitch.py', '.github/workflows/native_price_base_recovery.yml']
   workflow_run:
     workflows: [native-price-failed-shard-recovery]
     branches: [main, codex/native-price-failed-shards]
@@ -22,7 +23,9 @@ env:
   OMP_NUM_THREADS: '1'
 jobs:
   verify:
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.id == 40450227376 && github.event.workflow_run.head_sha == '343b4fcddd04eee36aaba2dc4feba9cef05cdfdc' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.repository.full_name == github.repository)
+    # Old source matrices contain superseded failed shards. The planner checks
+    # all 64 selected jobs, so any of the three final runs may finish last.
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.repository.full_name == github.repository && ((github.event.workflow_run.id == 40453879193 && github.event.workflow_run.head_sha == 'f4b8deb39ee631042d3a1f1aea80231aa9f62ae9') || (github.event.workflow_run.id == 40450227376 && github.event.workflow_run.head_sha == '343b4fcddd04eee36aaba2dc4feba9cef05cdfdc') || (github.event.workflow_run.id == 40480988662 && github.event.workflow_run.head_sha == 'c069d8c91e75f3595ff3d76c991a21bdc03ae357')))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -31,7 +34,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-world-v2.txt
-      - run: python -m pytest tests/test_world_price_base.py tests/test_world_native_recovery.py tests/test_world_release_assets.py -q
+      - run: python -m pytest tests/test_world_price_base.py tests/test_world_native_stitch.py tests/test_world_native_recovery.py tests/test_world_release_assets.py -q
   plan:
     if: github.event_name != 'pull_request'
     needs: verify

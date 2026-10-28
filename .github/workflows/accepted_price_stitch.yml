@@ -1,0 +1,49 @@
+name: accepted-price-checkpoint-stitch
+on:
+  push:
+    branches: [main, codex/native-final-source-routes]
+    paths: ['ci/ACCEPTED_PRICE_STITCH_REQUEST.json', 'ci/accepted_price_stitch.py', '.github/workflows/accepted_price_stitch.yml']
+  pull_request:
+    paths: ['ci/ACCEPTED_PRICE_STITCH_REQUEST.json', 'ci/accepted_price_stitch.py', 'tests/test_accepted_price_stitch.py', '.github/workflows/accepted_price_stitch.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: accepted-price-checkpoint-stitch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_accepted_price_stitch.py tests/test_world_price_base.py tests/test_world_release_assets.py -q
+  stitch:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.accepted_price_stitch --directory accepted-stitch
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: accepted-price-stitch
+          path: |
+            accepted-stitch/ACCEPTED*.json
+            accepted-stitch/ACCEPTED*.csv
+          if-no-files-found: ignore
