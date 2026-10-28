@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "stamps": ["20200101000000", "20250101000000", "20261023000000"],
+  "entities": [
+    {"entity_id": "probe_apple_org", "aliases": ["Apple Inc", "Apple Inc.", "Apple Incorporated"]},
+    {"entity_id": "probe_microsoft_org", "aliases": ["Microsoft", "Microsoft Corporation"]},
+    {"entity_id": "probe_nvidia_org", "aliases": ["Nvidia", "Nvidia Corporation"]},
+    {"entity_id": "probe_tesla_org", "aliases": ["Tesla Inc", "Tesla Inc.", "Tesla Motors"]},
+    {"entity_id": "probe_general_electric_org", "aliases": ["General Electric", "General Electric Company"]}
+  ],
+  "max_catalog_bytes": 180000000,
+  "max_archive_bytes": 64000000,
+  "max_uncompressed_bytes": 512000000,
+  "scope": "One official English master catalog plus three catalog-selected historical GKG 2.1 files. Numeric counts and document-level tone only; no article text, URLs, quotes, current-company remapping or claim of continuous historical/PIT coverage. Not a retry of the rate-limited DOC API; stop on access/rate errors."
+}
