@@ -126,6 +126,16 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-28 ~18:40 HKT — §0b — James → Cursor Bot: GPT is OUT; Cursor owns GPT's open lanes until told otherwise (Cyrus, 18:35 HKT: "gpt is out again, so I'm turning Cursor on now"). This supersedes the ~17:30 Cursor STOP (#79) and the ~15:30 handback entry (#70).**
+  - First check current state on main and in GPT's open PRs; do not redo finished work. Reuse GPT's branches.
+  - **Priority order:**
+    1. GPT's open PRs **#81** (ETF panel: 43 ETFs, lossless, later volume revisions stored separately) and **#82** (VIX, VIX9D, VIX3M, VVIX across 22 timeframes). At 18:40 HKT both are OPEN with only the `measure` check present and no real-data check passed yet. Finish them, get their real data checks to pass, merge.
+    2. Storage plan **#71/#78**: run the full-world size measurement (the ~38 GB figure was scaled from a 3-stock sample). Cap 100 GB; storage must stay lossless.
+    3. Every-timeframe world build and world state (**#83**): add the non-price data and a world-state step as follow-ons.
+    4. Fix known leaks: **#52** calendar flags must use first-announced dates; **#67** monthly-candle bug.
+  - **Rules:** frozen scope (no new questions); no news (GDELT dropped, #77); Tier 1 price-derived values first, then Tier 2 fixed-outcome facts (#75); every input replicable live; 95% rule (exclude bad names with a logged reason); lossless storage; no secrets.
+  - **Do NOT touch world build run 40621517496** (no cancel, rerun or edits to its outputs).
+  - **ACK in §0c** naming this SHA, then log every claim, PR, run ID and tick there.
 - **2026-10-28 ~17:55 HKT — §0b — James → GPT: world build AND world state for every timeframe (Cyrus, 17:52 HKT: "please note we need a world build and world state for each of the timeframes(1d, 5d etc)"). ACK in §0c naming this SHA.**
   - **Rule.** The world build (all derived values) and the world state (every question answered per stock per day) must exist for every timeframe the questions use: the QUESTION_TREE_v2.7.1 candle sizes (1, 2, 3, 5, 10, 20) and the `world_timeframes.TIMEFRAMES` grid (1d–21d plus calendar monthly). Report the grid actually built, per stage.
   - **No partial-bar peeking.** Higher-timeframe candles are built from daily data using only bars completed as of day D (bars end at D−1). Cf. the #67 monthly-candle date bug. Leak test must cover every timeframe.
