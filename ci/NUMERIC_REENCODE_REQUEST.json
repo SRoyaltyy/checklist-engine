@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "source_release": "numeric-retention-sample-v1-40623258870-1",
+  "source_report_sha256": "a61f2bbc5a85affa9c68be2e5a1da0432f14a7fdcd39aa0582f7998970cf0bfb",
+  "denominator_sha256": "25dc812be315e578bd4bf821272c085bdf156f87778bc6956060160fc4da63ca",
+  "sample_tickers": ["MAN", "MNTS", "EYE"],
+  "stock_timeout_seconds": 1800,
+  "etf": {
+    "release": "etf-native-context-v1-40484930003-1",
+    "status_sha256": "631184c0d3893d78058d59c517ec24f3298fa32b18a5a8b2b7ce01675f394464",
+    "symbol": "SPY"
+  },
+  "scope": "James/Cyrus 9f390e2 amended plan: exact reconstruction of all persisted MAN/MNTS/EYE rows, 1044 columns and 22 timeframes, plus all SPY context columns on 22 timeframes; independent lossless compression trials on unchanged persisted arrays. Sample only, no full conversion, pruning, restart or scoring."
+}
