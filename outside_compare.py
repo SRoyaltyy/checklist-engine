@@ -104,11 +104,11 @@ def compare_one(name, comparator, as_of=None):
         known = np.isfinite(stock) & np.isfinite(other)
         spread[known] = stock[known] - other[known]
         out[f"return_spread_{window}d"] = spread
-        flag = np.zeros(len(frame), dtype=np.int8)
-        flag[known] = ((np.abs(stock[known]) <= FLAT) & (other[known] <= -FALL)).astype(np.int8)
+        flag = np.full(len(frame), np.nan)
+        flag[known] = ((np.abs(stock[known]) <= FLAT) & (other[known] <= -FALL)).astype(np.float64)
         out[f"divergence_flat_vs_fall_{window}d"] = flag
-        opposite = np.zeros(len(frame), dtype=np.int8)
-        opposite[known] = ((stock[known] <= -FALL) & (np.abs(other[known]) <= FLAT)).astype(np.int8)
+        opposite = np.full(len(frame), np.nan)
+        opposite[known] = ((stock[known] <= -FALL) & (np.abs(other[known]) <= FLAT)).astype(np.float64)
         out[f"divergence_fall_vs_flat_{window}d"] = opposite
     daily_name = pd.Series(_return(name_px, 1))
     daily_comp = pd.Series(_return(comp_px, 1))

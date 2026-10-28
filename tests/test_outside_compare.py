@@ -24,6 +24,7 @@ def test_flat_name_and_falling_comparator_is_divergence():
     name = frame([10, 10, 10])
     other = frame([10, 9.4, 9.4])
     out = comp.compare_one(name, other)
+    assert np.isnan(out.divergence_flat_vs_fall_1d.iloc[0])
     assert int(out.divergence_flat_vs_fall_1d.iloc[1]) == 1
     assert int(out.divergence_flat_vs_fall_1d.iloc[2]) == 0
     assert int(out.divergence_fall_vs_flat_1d.iloc[1]) == 0
@@ -33,6 +34,7 @@ def test_falling_name_and_flat_comparator_is_the_other_divergence():
     name = frame([10, 9.4, 9.4])
     other = frame([10, 10, 10])
     out = comp.compare_one(name, other)
+    assert np.isnan(out.divergence_fall_vs_flat_1d.iloc[0])
     assert int(out.divergence_fall_vs_flat_1d.iloc[1]) == 1
     assert int(out.divergence_fall_vs_flat_1d.iloc[2]) == 0
     assert int(out.divergence_flat_vs_fall_1d.iloc[1]) == 0
