@@ -90,7 +90,40 @@
       "BH",
       "BHE"
     ],
-    "compared": "1-day return spread and close ratio versus SPY close from light-daily-box-v1-20261028",
+    "spy_close": "light-daily-box-v1-20261028 raw close, not adjusted close",
+    "recomputed_with": "outside_compare.compare_one",
+    "columns": [
+      "rel_strength_ratio",
+      "return_spread_1d",
+      "return_spread_5d",
+      "return_spread_20d",
+      "return_spread_60d",
+      "divergence_flat_vs_fall_1d",
+      "divergence_flat_vs_fall_5d",
+      "divergence_flat_vs_fall_20d",
+      "divergence_flat_vs_fall_60d",
+      "divergence_fall_vs_flat_1d",
+      "divergence_fall_vs_flat_5d",
+      "divergence_fall_vs_flat_20d",
+      "divergence_fall_vs_flat_60d",
+      "corr_20d",
+      "corr_break_20d",
+      "corr_60d",
+      "corr_break_60d"
+    ],
+    "finite_value_rows": {
+      "rel_strength_ratio": 12276,
+      "return_spread_1d": 12268,
+      "return_spread_5d": 12236,
+      "return_spread_20d": 12116,
+      "return_spread_60d": 11796,
+      "corr_20d": 12116,
+      "corr_break_20d": 11636,
+      "corr_60d": 11796,
+      "corr_break_60d": 11316
+    },
+    "flag_cells_checked": 98208,
+    "nan_mismatches": 0,
     "max_abs_error": 0.0
   }
 }
