@@ -103,8 +103,69 @@ def coverage(panel):
     return rows
 
 
+def read_ohlc(directory, row):
+    path = Path(directory) / row["file"]
+    if sha256_file(path) != row["sha256"]:
+        raise ValueError("sha256 differs: " + row["file"])
+    frame = pd.read_parquet(path)
+    frame = frame.loc[:, ["date", "open", "high", "low", "close", "volume"]].copy()
+    frame["date"] = pd.to_datetime(frame["date"]).astype("datetime64[ns]")
+    return frame.sort_values("date").reset_index(drop=True)
+
+
+def level_candles(directory, boundary_sessions, as_of):
+    from world_timeframes import TIMEFRAMES, completed_candles
+    document = load_manifest(directory)
+    as_of = pd.Timestamp(as_of)
+    frames = []
+    for row in index_rows(document):
+        bars = read_ohlc(directory, row)
+        session_index = pd.DatetimeIndex(pd.to_datetime(boundary_sessions))
+        bars = bars[bars["date"].isin(session_index) & (bars["date"] <= as_of)]
+        for timeframe in TIMEFRAMES:
+            candles = completed_candles(bars, timeframe, boundary_sessions)
+            candles = candles[candles["date"] <= as_of]
+            if candles.empty:
+                continue
+            candles.insert(0, "series", NAMES[row["symbol"]])
+            candles.insert(1, "timeframe", timeframe)
+            frames.append(candles)
+    if not frames:
+        return pd.DataFrame()
+    return pd.concat(frames, ignore_index=True)
+
+
+def ratio_candles(candles):
+    pairs = (
+        ("vix_over_vix3m", "vix", "vix3m", True),
+        ("vix9d_over_vix", "vix9d", "vix", True),
+        ("vix9d_over_vix3m", "vix9d", "vix3m", True),
+        ("vix3m_minus_vix", "vix3m", "vix", False),
+        ("vix_minus_vix9d", "vix", "vix9d", False),
+    )
+    pieces = []
+    for timeframe, group in candles.groupby("timeframe", sort=True):
+        by_series = {series: frame.set_index("date") for series, frame in group.groupby("series")}
+        for name, left, right, is_ratio in pairs:
+            if left not in by_series or right not in by_series:
+                continue
+            merged = by_series[left][["close", "available_from"]].join(
+                by_series[right][["close", "available_from"]], lsuffix="_l", rsuffix="_r", how="inner")
+            value = divide(merged["close_l"], merged["close_r"]) if is_ratio else (merged["close_l"] - merged["close_r"]).to_numpy()
+            stamps = merged[["available_from_l", "available_from_r"]]
+            pieces.append(pd.DataFrame({
+                "series": name, "timeframe": timeframe, "date": merged.index,
+                "close": np.asarray(value, dtype=np.float64),
+                "available_from": stamps.max(axis=1).where(stamps.notna().all(axis=1)).to_numpy(),
+            }))
+    if not pieces:
+        return pd.DataFrame(columns=["series", "timeframe", "date", "close", "available_from"])
+    return pd.concat(pieces, ignore_index=True)
+
+
 def write_panel(frame, path):
-    stored = frame.sort_values("date").reset_index(drop=True)
+    sort_on = [column for column in ("series", "timeframe", "date") if column in frame.columns]
+    stored = frame.sort_values(sort_on).reset_index(drop=True)
     encodings = {}
     for column in stored.columns:
         if stored[column].dtype == np.float64:
@@ -120,6 +181,15 @@ def proof_from_release(directory, out_dir, as_of=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     storage = write_panel(panel, out_dir / "outside_vol_daily.parquet")
+    as_of_stamp = pd.Timestamp(panel["date"].max())
+    import exchange_calendars as xcals
+    calendar = xcals.get_calendar("XNYS", start="1990-01-01")
+    end = str((as_of_stamp + pd.offsets.Day(40)).date())
+    boundary = pd.DatetimeIndex(calendar.sessions_in_range("2019-12-02", end)).tz_localize(None)
+    candles = level_candles(directory, boundary, as_of_stamp)
+    ratios = ratio_candles(candles)
+    candle_storage = write_panel(candles, out_dir / "outside_vol_candles.parquet")
+    ratio_storage = write_panel(ratios, out_dir / "outside_vol_ratio_candles.parquet")
     rows = coverage(panel)
     failed = [row["series"] for row in rows if row["status"] != "PASS"]
     proof = dict(
@@ -133,6 +203,8 @@ def proof_from_release(directory, out_dir, as_of=None):
         summary=dict(series_passed=len(rows) - len(failed), excluded=[row for row in rows if row["status"] != "PASS"]),
         series=rows,
         storage=storage,
+        candles=candle_storage,
+        ratio_candles=ratio_storage,
         lookahead="ratios use same-session closes; available_from is the next SPY session",
     )
     if failed:
