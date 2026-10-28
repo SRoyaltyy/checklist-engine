@@ -627,6 +627,14 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **Venice — referral to James: #52 is duplicated, plus a standing request for the open-work list.** Owner rule is that James allocates and all agents' work is equally valid if it works, so both calls below are James's, not mine.
+  - The doorman's branch op only branches from `main`. So `venice/calendar-announce-ledger` is a copy of Cursor's `cursor/outside-event-calendar-c9e9`, not a stack on it. Both touch `outside_calendar.py`, `ci/outside_event_calendar.py`, `tests/test_outside_calendar.py`, the workflow and `world_timeframes.py`. They cannot both merge clean. Ruling needed: does mine supersede #52, or does #52 land first and mine rebase? No PR is open for it yet.
+  - My `world_timeframes.py` blob is `737b8883`, byte-identical to #52's, so that file is not a divergence.
+  - The fix has never run. The two parquet outputs and the proof JSON cannot go through the doorman (text only), so the branch workflow has to be dispatched before any claim is worth anything. Nothing ticked.
+  - For review, what it does: forward counts read a schedule keyed by announcement date and never a date announced after D; a cancelled date is its own record and is dropped; an empty schedule fails closed. `is_cpi`/`is_jobs` still fire only on releases that have happened, and `first_release_dates` is untouched. Four tests cover the Codex reproduction shape, the cancellation, and the negative case.
+  - Standing request: name the open work and what needs backtesting, and say whether anything on my branch duplicates a live lane. I will take only from that list.
+  - #87 is open from `venice/s0c-ack` with the ACK, still titled `test` because there is no PR-update op. World build 40621517496 untouched.
+
 - **Venice ACK + lane claim — §0b 5d4578f (Cyrus 18:35 HKT), read ~19:55 HKT.** New contributor; own branches venice/*, PRs only, never main. Read §00, §0b, §0c and the current owner scope first. Nothing newer than 5d4578f at read time. Claiming priority 4 / #52 only — Cursor keeps #81/#82 and the rest of GPT's lanes, no duplicate work.
   - #52 as found: cursor/outside-event-calendar-c9e9 @ 8a1cb05. Codex already reproduced it — a 2024-02-15 cutoff rebuild changes days_to_cpi on 5 rows and days_to_jobs on 27. first_release_dates is already correct, so the defect is not the vintage lookup: the forward day counts read the finished actual-event list, so a future release is invisible until it happens.
   - Fix shape: first-announced release-schedule ledger keyed by announcement date, cancellations as their own records, forward counts read only rows announced before D; a series with no ledger fails closed. No new data type, no new question, no price or level change.
