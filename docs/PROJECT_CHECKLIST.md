@@ -2,7 +2,7 @@
 
 Master progress list for Codex and Kimi. The rules live in METHODOLOGY.md on main: §00, P1–P5, P3b, and §0b, including the entries of 2026-10-25 23:35, 2026-10-25 23:40, 2026-10-26 00:30, and the dual sign-off of 2026-10-26 10:40. This file is the box list. Tick a box in the same commit as the work.
 
-**Verified by both: 17/303. Claimed awaiting James: 19.**
+**Verified by both: 17/303. Claimed awaiting James: 20.**
 
 ## Rules
 
@@ -332,7 +332,7 @@ Note (2026-10-26 ~15:33 HKT, do not tick): TLT, HYG, LQD, UUP, GLD, CPER, USO, R
 Note (2026-10-26 ~15:33 HKT, do not tick): New highs minus new lows, percent above the 20-day average, percent above the 200-day average, and up volume versus down volume. New highs minus new lows already named in 1.37 is the same series, not a second download. Percent above SMA50 stays in 1.36–1.40. Nothing here is ticked.
 
 - [x] **1.151** Extra breadth: source located. Done when: The series are built from the phase-1 universe bars. The note says whether new highs minus new lows is the 1.37 column. Evidence: Same accepted-price-stitch-v2 OHLCV and actual [rebuild40689026569](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40689026569),8,316 names/no new exclusions; [runner proof](BREADTH_ACTIONS_REBUILD_PROOF_V1.json) binds stitch manifest9f97db99…a3f6fe. `pct_above_sma20`, `pct_above_sma200` and up/down volume are in the same public daily file. `new_highs_minus_new_lows` is exactly the1.37 column, not another fetch. [Independent source/readback](BREADTH_RELEASE_READBACK_V1.json). GPT ✓ 2026-10-28 HKT; awaiting James. Source only; world/PIT/native acceptance is separate.
-- [ ] **1.152** Extra breadth: downloaded onto a checklist-engine release. Done when: The release holds percent above the 20-day average, percent above the 200-day average, and up volume versus down volume, checksummed, beside the 1.37 breadth file. Evidence:
+- [x] **1.152** Extra breadth: downloaded onto a checklist-engine release. Done when: The release holds percent above the 20-day average, percent above the 200-day average, and up volume versus down volume, checksummed, beside the 1.37 breadth file. Evidence: Same public [outside-breadth-stitch-v1](https://github.com/SRoyaltyy/checklist-engine/releases/tag/outside-breadth-stitch-v1) daily file / SHA256 `22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0` as1.37. All three required series and the underlying counts/volumes are present. [Exact actual runner proof](BREADTH_ACTIONS_REBUILD_PROOF_V1.json) from [Actions40689026569](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40689026569) matches the public data hashes; [independent readback](BREADTH_RELEASE_READBACK_V1.json) verifies every daily SMA20/SMA200 and up/down-volume ratio with exact float64 bits, including missing/zero/infinite conventions. GPT ✓ 2026-10-28 HKT; awaiting James. Download only; native/PIT/full-world gates remain open.
 - [ ] **1.153** Extra breadth: point-in-time and leak check. Done when: Day D uses the universe and the bars as of D−1. Survivors-only is written on the column. Evidence:
 - [ ] **1.154** Extra breadth: coverage measured. Done when: WORLD_COVERAGE non-null percent and first date are filled for the three added series and for new highs minus new lows. Evidence:
 - [ ] **1.155** Extra breadth: multi-timeframe features. Done when: Each added series exists at 1d, 5d, 10d, and 20d/monthly, and at candle sizes 1 through 21. Evidence:
