@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+  "compact_source": "native-price-base-v1-40360947486-1-000",
+  "compact_part": "base_0000",
+  "sample_tickers": ["MAN", "MNTS", "EYE"],
+  "corrected_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+  "corrected_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "scope": "Price/codec preflight only; no full-world or complete-question budget approval and no full-universe build"
+}

@@ -1,0 +1,96 @@
+{
+  "status": "PRICE_STORAGE_SAMPLE_ONLY_WORLD_BUDGET_INCOMPLETE",
+  "request": {
+    "version": 1,
+    "inputs_tag": "native-price-inputs-v1-40336250454-1",
+    "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+    "compact_source": "native-price-base-v1-40360947486-1-000",
+    "compact_part": "base_0000",
+    "sample_tickers": [
+      "MAN",
+      "MNTS",
+      "EYE"
+    ],
+    "corrected_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+    "corrected_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+    "scope": "Price/codec preflight only; no full-world or complete-question budget approval and no full-universe build"
+  },
+  "measurement": {
+    "samples": [
+      {
+        "ticker": "MAN",
+        "input_rows": 9271,
+        "query_rows": 1712,
+        "query_stock_years": 6.7936507936507935,
+        "raw_daily_bytes": 304486,
+        "diagnostic_questions": 68904,
+        "constant_questions": 2754,
+        "empty_questions": 1739,
+        "packed_uncompressed_bytes": 29490912,
+        "answer_container_bytes": 3131688,
+        "answer_container_sha256": "d985bb55d50db2a03d04891bc7742cdc6f889aadc02d94dcce7a913955ad508c",
+        "bytes_per_stock_year": 505791.9672897196,
+        "seconds": 158.372154742,
+        "roundtrip": "ALL_CELLS_EXACT_WITH_MISSING_DISTINCT"
+      },
+      {
+        "ticker": "MNTS",
+        "input_rows": 1712,
+        "query_rows": 1712,
+        "query_stock_years": 6.7936507936507935,
+        "raw_daily_bytes": 59457,
+        "diagnostic_questions": 68904,
+        "constant_questions": 16094,
+        "empty_questions": 10535,
+        "packed_uncompressed_bytes": 29490912,
+        "answer_container_bytes": 2352911,
+        "answer_container_sha256": "1cee26e198b279a14c448d389497d8e305a9b85e7ef28c55079711c5c8e74bd4",
+        "bytes_per_stock_year": 355091.55140186916,
+        "seconds": 326.31258394,
+        "roundtrip": "ALL_CELLS_EXACT_WITH_MISSING_DISTINCT"
+      },
+      {
+        "ticker": "EYE",
+        "input_rows": 2259,
+        "query_rows": 1712,
+        "query_stock_years": 6.7936507936507935,
+        "raw_daily_bytes": 93341,
+        "diagnostic_questions": 68904,
+        "constant_questions": 5955,
+        "empty_questions": 7619,
+        "packed_uncompressed_bytes": 29490912,
+        "answer_container_bytes": 2940786,
+        "answer_container_sha256": "991cd05c75973f528fd85a53e8854ea5dfed26151b6d9b06d40f54a23549a67d",
+        "bytes_per_stock_year": 446612.1518691589,
+        "seconds": 232.05693503099997,
+        "roundtrip": "ALL_CELLS_EXACT_WITH_MISSING_DISTINCT"
+      }
+    ],
+    "shared_registry_bytes": 13752319,
+    "peak_rss_bytes": 1339871232
+  },
+  "source_commit": "86ed4394b6f90d2f916bd685ba9470376366c7f0",
+  "price_scope_projected_bytes": 36295454541.5,
+  "price_scope_projected_gb": 36.2954545415,
+  "projected_existing_shard_seconds": 57273.139269800005,
+  "hard_world_cap_bytes": 100000000000,
+  "full_world_estimate_bytes": null,
+  "full_world_cap_gate": "NOT_PROVEN; all nonprice runtime dependencies, actual complete question tree and PIT eligibility remain unmeasured",
+  "eligibility": "UNFILTERED_CONSERVATIVE_SAMPLE; all-true mask is not historical tradeability approval",
+  "persisted": [
+    "raw daily OHLCV once",
+    "shared registered outcome dictionaries",
+    "packed diagnostic fixed-outcome chunks"
+  ],
+  "recomputed": [
+    "all 22 native candle grids",
+    "all 1044 numeric features per timeframe",
+    "diagnostic rolling comparisons"
+  ],
+  "dropped_semantic_items": [],
+  "comparison_families": "REQUIRED; not dropped; complete comparator storage is outside this price-only probe",
+  "constant_empty_policy": "Measured and logged; retained in probe, no silent question pruning",
+  "limitation": "Three deterministic entities from one source part. Diagnostic questions are not the completed v3 tree. Global cache coordination and every nonprice dependency still require measurement.",
+  "full_world_gate": "NOT_RUN",
+  "scoring_gate": "CLOSED"
+}

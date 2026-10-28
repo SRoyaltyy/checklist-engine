@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "accepted_price_release": "accepted-price-stitch-v2-40494479693-1",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+  "corrected_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+  "corrected_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "registry_artifact_id": 12728032354,
+  "registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+  "stock_timeout_seconds": 900,
+  "shard_budget_seconds": 17100,
+  "answer_budget_bytes": 60000000000,
+  "raw_source_budget_bytes": 20000000000,
+  "hard_world_cap_bytes": 100000000000,
+  "max_parallel": 20,
+  "authority": "James/Cyrus speed directive ca56c456716dec5c583b193fdc2775522a590377: launch full-universe compact build, exclude and log errors/hangs, no additional preflight",
+  "scope": "Full accepted-universe price-answer build stage; 68,904 registered diagnostic fixed outcomes across 22 timeframes. Nonprice/comparison and complete-v3 question coverage remain required subsequent stages; no full-world acceptance or scoring claim."
+}
