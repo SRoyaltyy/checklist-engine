@@ -225,3 +225,12 @@ def test_a_release_is_not_counted_before_it_is_announced():
     row = panel.set_index("date").loc[pd.Timestamp("2024-02-12")]
     # 2024-02-13 was announced on 2024-01-11, so it is the next known release.
     assert row.days_to_cpi == 1
+
+
+def test_a_cancellation_announced_after_the_cutoff_does_not_drop_the_date():
+    sessions = pd.bdate_range("2024-01-02", periods=80)
+    cpi = pd.to_datetime(["2024-01-11", "2024-02-13", "2024-03-12"])
+    cancelled = pd.to_datetime(["2024-03-12"])
+    # Announced on 2024-02-13, so at a 2024-02-12 cutoff it is not known yet.
+    panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, [], "2024-02-12", cpi_cancellations=cancelled)
+    assert panel.set_index("date").loc[pd.Timestamp("2024-02-12"), "days_to_cpi"] == 1
