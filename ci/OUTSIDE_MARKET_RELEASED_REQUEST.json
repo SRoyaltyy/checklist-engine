@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "release": "light-daily-box-v1-20261028",
+  "manifest_sha256": "12a3fcb32c9c25ac24c838b1e9fca7e0a226964a77159bfee36b69428c8a95bc",
+  "native_release": "etf-native-context-v1-40484930003-1",
+  "native_manifest_sha256": "45a9b7e12788c7b85b2853f4ce59e8792815459781a721cd4ff2e252668fcf2d",
+  "inputs_release": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "cuts": ["2023-01-03", "2025-01-02"],
+  "scope": "Inherited Tier1 43-ETF panel only; authenticate already published raw sources, preserve all value bits, compare all overlapping native OHLCV, extend the frozen session-calendar prefix without changing its anchor, and prove all completed native rows at two independent cutoffs. No live provider/Stooq fetch, new type/question, full-world acceptance or restart of protected world 40621517496."
+}
