@@ -1,0 +1,753 @@
+{
+  "status": "FULL_NUMERIC_RETENTION_MEASURED_SAMPLE_ONLY",
+  "source_commit": "0bbae2c37c19513cbdaf3ca91d1e675379f74ea2",
+  "request": {
+    "version": 1,
+    "inputs_tag": "native-price-inputs-v1-40336250454-1",
+    "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+    "compact_source": "native-price-base-v1-40360947486-1-000",
+    "compact_part": "base_0000",
+    "sample_tickers": [
+      "MAN",
+      "MNTS",
+      "EYE"
+    ],
+    "corrected_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+    "corrected_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+    "stock_timeout_seconds": 900,
+    "scope": "Parallel numeric-retention measurement required by amended lossless-only storage instruction. Preserve every computed native float64 value and all 22 timeframes, including pre-2020 native history. This never gates, restarts or replaces the approved running universe build 40621517496; no full corrected indicator build is authorized by this sample."
+  },
+  "samples": [
+    {
+      "ticker": "MAN",
+      "source_rows": 9271,
+      "raw_numeric_and_date_bytes": 286146080,
+      "retained_value_container_bytes": 178920377,
+      "registry_bytes": 571094,
+      "bytes_per_query_stock_year": 26420473.53504673,
+      "before_parquet_bytes": 237056770,
+      "before_bytes_per_query_stock_year": 34893870.35046729,
+      "compression_ratio": 1.5992928519259715,
+      "container_sha256": "6b8129495870742f42a4227e0b40b43f3bb756ff39bd9f93192d71821163b011",
+      "source_sha256": "016d25f3e57b5d42d0badfb26df01140f9eba136323dba9fad2eec5213b97a0a",
+      "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+      "timeframes": [
+        {
+          "timeframe": "1d",
+          "native_rows": 9270,
+          "columns": 1044,
+          "raw_bytes": 77423040,
+          "numeric_payload_bytes": 49091281,
+          "first_date": "1990-01-02",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "2d",
+          "native_rows": 4635,
+          "columns": 1044,
+          "raw_bytes": 38711520,
+          "numeric_payload_bytes": 24622689,
+          "first_date": "1990-01-03",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "3d",
+          "native_rows": 3090,
+          "columns": 1044,
+          "raw_bytes": 25807680,
+          "numeric_payload_bytes": 16422664,
+          "first_date": "1990-01-04",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "4d",
+          "native_rows": 2317,
+          "columns": 1044,
+          "raw_bytes": 19351584,
+          "numeric_payload_bytes": 12249609,
+          "first_date": "1990-01-05",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "5d",
+          "native_rows": 1854,
+          "columns": 1044,
+          "raw_bytes": 15484608,
+          "numeric_payload_bytes": 9762013,
+          "first_date": "1990-01-08",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "6d",
+          "native_rows": 1545,
+          "columns": 1044,
+          "raw_bytes": 12903840,
+          "numeric_payload_bytes": 8108977,
+          "first_date": "1990-01-09",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "7d",
+          "native_rows": 1324,
+          "columns": 1044,
+          "raw_bytes": 11058048,
+          "numeric_payload_bytes": 6918155,
+          "first_date": "1990-01-10",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "8d",
+          "native_rows": 1158,
+          "columns": 1044,
+          "raw_bytes": 9671616,
+          "numeric_payload_bytes": 6026256,
+          "first_date": "1990-01-11",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "9d",
+          "native_rows": 1030,
+          "columns": 1044,
+          "raw_bytes": 8602560,
+          "numeric_payload_bytes": 5339222,
+          "first_date": "1990-01-12",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "10d",
+          "native_rows": 927,
+          "columns": 1044,
+          "raw_bytes": 7742304,
+          "numeric_payload_bytes": 4786040,
+          "first_date": "1990-01-15",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "11d",
+          "native_rows": 842,
+          "columns": 1044,
+          "raw_bytes": 7032384,
+          "numeric_payload_bytes": 4325571,
+          "first_date": "1990-01-16",
+          "last_date": "2026-10-12",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "12d",
+          "native_rows": 772,
+          "columns": 1044,
+          "raw_bytes": 6447744,
+          "numeric_payload_bytes": 3944540,
+          "first_date": "1990-01-17",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "13d",
+          "native_rows": 713,
+          "columns": 1044,
+          "raw_bytes": 5954976,
+          "numeric_payload_bytes": 3623329,
+          "first_date": "1990-01-18",
+          "last_date": "2026-10-21",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "14d",
+          "native_rows": 662,
+          "columns": 1044,
+          "raw_bytes": 5529024,
+          "numeric_payload_bytes": 3348025,
+          "first_date": "1990-01-19",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "15d",
+          "native_rows": 618,
+          "columns": 1044,
+          "raw_bytes": 5161536,
+          "numeric_payload_bytes": 3110985,
+          "first_date": "1990-01-22",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "16d",
+          "native_rows": 579,
+          "columns": 1044,
+          "raw_bytes": 4835808,
+          "numeric_payload_bytes": 2897050,
+          "first_date": "1990-01-23",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "17d",
+          "native_rows": 545,
+          "columns": 1044,
+          "raw_bytes": 4551840,
+          "numeric_payload_bytes": 2713770,
+          "first_date": "1990-01-24",
+          "last_date": "2026-10-15",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "18d",
+          "native_rows": 515,
+          "columns": 1044,
+          "raw_bytes": 4301280,
+          "numeric_payload_bytes": 2550656,
+          "first_date": "1990-01-25",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "19d",
+          "native_rows": 487,
+          "columns": 1044,
+          "raw_bytes": 4067424,
+          "numeric_payload_bytes": 2397444,
+          "first_date": "1990-01-26",
+          "last_date": "2026-09-29",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "20d",
+          "native_rows": 463,
+          "columns": 1044,
+          "raw_bytes": 3866976,
+          "numeric_payload_bytes": 2262880,
+          "first_date": "1990-01-29",
+          "last_date": "2026-10-08",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "21d",
+          "native_rows": 441,
+          "columns": 1044,
+          "raw_bytes": 3683232,
+          "numeric_payload_bytes": 2143617,
+          "first_date": "1990-01-30",
+          "last_date": "2026-10-09",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "monthly",
+          "native_rows": 441,
+          "columns": 1044,
+          "raw_bytes": 3683232,
+          "numeric_payload_bytes": 2145491,
+          "first_date": "1990-01-31",
+          "last_date": "2026-09-30",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        }
+      ],
+      "seconds": 107.851149783,
+      "peak_rss_bytes": 934690816,
+      "scope": "ALL_1044_COLUMNS_ALL_22_TIMEFRAMES_FULL_NATIVE_HISTORY; no row/column/value pruning, no downcasting",
+      "world_gate": "NOT_PROVEN",
+      "scoring_gate": "CLOSED"
+    },
+    {
+      "ticker": "MNTS",
+      "source_rows": 1712,
+      "raw_numeric_and_date_bytes": 52734880,
+      "retained_value_container_bytes": 29072127,
+      "registry_bytes": 571094,
+      "bytes_per_query_stock_year": 4363371.315420561,
+      "before_parquet_bytes": 48192618,
+      "before_bytes_per_query_stock_year": 7093773.210280374,
+      "compression_ratio": 1.8139326372645523,
+      "container_sha256": "a230f9e97a35f5ec615172e3c6064b47ac2afb74f23cf0c8d4f6b676dbea72d3",
+      "source_sha256": "5cf165b06d347ceabfd4e77df95558aefafa5b4c3b06f1a27f37277491a86005",
+      "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+      "timeframes": [
+        {
+          "timeframe": "1d",
+          "native_rows": 1711,
+          "columns": 1044,
+          "raw_bytes": 14290272,
+          "numeric_payload_bytes": 8912992,
+          "first_date": "2020-01-02",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "2d",
+          "native_rows": 855,
+          "columns": 1044,
+          "raw_bytes": 7140960,
+          "numeric_payload_bytes": 4378018,
+          "first_date": "2020-01-06",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "3d",
+          "native_rows": 570,
+          "columns": 1044,
+          "raw_bytes": 4760640,
+          "numeric_payload_bytes": 2841403,
+          "first_date": "2020-01-07",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "4d",
+          "native_rows": 427,
+          "columns": 1044,
+          "raw_bytes": 3566304,
+          "numeric_payload_bytes": 2066574,
+          "first_date": "2020-01-08",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "5d",
+          "native_rows": 342,
+          "columns": 1044,
+          "raw_bytes": 2856384,
+          "numeric_payload_bytes": 1599763,
+          "first_date": "2020-01-09",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "6d",
+          "native_rows": 285,
+          "columns": 1044,
+          "raw_bytes": 2380320,
+          "numeric_payload_bytes": 1284950,
+          "first_date": "2020-01-10",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "7d",
+          "native_rows": 244,
+          "columns": 1044,
+          "raw_bytes": 2037888,
+          "numeric_payload_bytes": 1059406,
+          "first_date": "2020-01-13",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "8d",
+          "native_rows": 213,
+          "columns": 1044,
+          "raw_bytes": 1778976,
+          "numeric_payload_bytes": 891421,
+          "first_date": "2020-01-14",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "9d",
+          "native_rows": 190,
+          "columns": 1044,
+          "raw_bytes": 1586880,
+          "numeric_payload_bytes": 773566,
+          "first_date": "2020-01-15",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "10d",
+          "native_rows": 171,
+          "columns": 1044,
+          "raw_bytes": 1428192,
+          "numeric_payload_bytes": 677335,
+          "first_date": "2020-01-16",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "11d",
+          "native_rows": 154,
+          "columns": 1044,
+          "raw_bytes": 1286208,
+          "numeric_payload_bytes": 593310,
+          "first_date": "2020-01-30",
+          "last_date": "2026-10-12",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "12d",
+          "native_rows": 142,
+          "columns": 1044,
+          "raw_bytes": 1185984,
+          "numeric_payload_bytes": 534842,
+          "first_date": "2020-01-21",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "13d",
+          "native_rows": 131,
+          "columns": 1044,
+          "raw_bytes": 1094112,
+          "numeric_payload_bytes": 481037,
+          "first_date": "2020-01-30",
+          "last_date": "2026-10-21",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "14d",
+          "native_rows": 122,
+          "columns": 1044,
+          "raw_bytes": 1018944,
+          "numeric_payload_bytes": 439729,
+          "first_date": "2020-01-23",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "15d",
+          "native_rows": 114,
+          "columns": 1044,
+          "raw_bytes": 952128,
+          "numeric_payload_bytes": 401500,
+          "first_date": "2020-01-24",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "16d",
+          "native_rows": 106,
+          "columns": 1044,
+          "raw_bytes": 885312,
+          "numeric_payload_bytes": 365049,
+          "first_date": "2020-02-06",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "17d",
+          "native_rows": 100,
+          "columns": 1044,
+          "raw_bytes": 835200,
+          "numeric_payload_bytes": 338021,
+          "first_date": "2020-02-04",
+          "last_date": "2026-10-15",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "18d",
+          "native_rows": 95,
+          "columns": 1044,
+          "raw_bytes": 793440,
+          "numeric_payload_bytes": 317021,
+          "first_date": "2020-01-29",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "19d",
+          "native_rows": 89,
+          "columns": 1044,
+          "raw_bytes": 743328,
+          "numeric_payload_bytes": 290913,
+          "first_date": "2020-02-03",
+          "last_date": "2026-09-29",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "20d",
+          "native_rows": 85,
+          "columns": 1044,
+          "raw_bytes": 709920,
+          "numeric_payload_bytes": 272495,
+          "first_date": "2020-01-31",
+          "last_date": "2026-10-08",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "21d",
+          "native_rows": 81,
+          "columns": 1044,
+          "raw_bytes": 676512,
+          "numeric_payload_bytes": 256970,
+          "first_date": "2020-02-03",
+          "last_date": "2026-10-09",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "monthly",
+          "native_rows": 81,
+          "columns": 1044,
+          "raw_bytes": 676512,
+          "numeric_payload_bytes": 256531,
+          "first_date": "2020-01-31",
+          "last_date": "2026-09-30",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        }
+      ],
+      "seconds": 18.69197761800001,
+      "peak_rss_bytes": 377298944,
+      "scope": "ALL_1044_COLUMNS_ALL_22_TIMEFRAMES_FULL_NATIVE_HISTORY; no row/column/value pruning, no downcasting",
+      "world_gate": "NOT_PROVEN",
+      "scoring_gate": "CLOSED"
+    },
+    {
+      "ticker": "EYE",
+      "source_rows": 2259,
+      "raw_numeric_and_date_bytes": 69580280,
+      "retained_value_container_bytes": 40005933,
+      "registry_bytes": 571094,
+      "bytes_per_query_stock_year": 5972786.684579439,
+      "before_parquet_bytes": 63487546,
+      "before_bytes_per_query_stock_year": 9345129.43457944,
+      "compression_ratio": 1.7392490258882352,
+      "container_sha256": "6d873fbee4b0973648af5e77b317afe6758f5aa4aab384a3f31cc8eceaf5d4d6",
+      "source_sha256": "fb04c5856ec1337f661caef500ff3ca7c3a1d3a4ea42530fad854b99360aec99",
+      "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+      "timeframes": [
+        {
+          "timeframe": "1d",
+          "native_rows": 2258,
+          "columns": 1044,
+          "raw_bytes": 18858816,
+          "numeric_payload_bytes": 11945165,
+          "first_date": "2017-10-27",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "2d",
+          "native_rows": 1129,
+          "columns": 1044,
+          "raw_bytes": 9429408,
+          "numeric_payload_bytes": 5892569,
+          "first_date": "2017-10-30",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "3d",
+          "native_rows": 752,
+          "columns": 1044,
+          "raw_bytes": 6280704,
+          "numeric_payload_bytes": 3851078,
+          "first_date": "2017-11-02",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "4d",
+          "native_rows": 564,
+          "columns": 1044,
+          "raw_bytes": 4710528,
+          "numeric_payload_bytes": 2829174,
+          "first_date": "2017-11-01",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "5d",
+          "native_rows": 451,
+          "columns": 1044,
+          "raw_bytes": 3766752,
+          "numeric_payload_bytes": 2204745,
+          "first_date": "2017-11-07",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "6d",
+          "native_rows": 376,
+          "columns": 1044,
+          "raw_bytes": 3140352,
+          "numeric_payload_bytes": 1797097,
+          "first_date": "2017-11-07",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "7d",
+          "native_rows": 322,
+          "columns": 1044,
+          "raw_bytes": 2689344,
+          "numeric_payload_bytes": 1498471,
+          "first_date": "2017-11-08",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "8d",
+          "native_rows": 281,
+          "columns": 1044,
+          "raw_bytes": 2346912,
+          "numeric_payload_bytes": 1274697,
+          "first_date": "2017-11-13",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "9d",
+          "native_rows": 250,
+          "columns": 1044,
+          "raw_bytes": 2088000,
+          "numeric_payload_bytes": 1101931,
+          "first_date": "2017-11-20",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "10d",
+          "native_rows": 225,
+          "columns": 1044,
+          "raw_bytes": 1879200,
+          "numeric_payload_bytes": 965093,
+          "first_date": "2017-11-21",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "11d",
+          "native_rows": 204,
+          "columns": 1044,
+          "raw_bytes": 1703808,
+          "numeric_payload_bytes": 853510,
+          "first_date": "2017-11-20",
+          "last_date": "2026-10-12",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "12d",
+          "native_rows": 187,
+          "columns": 1044,
+          "raw_bytes": 1561824,
+          "numeric_payload_bytes": 766861,
+          "first_date": "2017-11-24",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "13d",
+          "native_rows": 173,
+          "columns": 1044,
+          "raw_bytes": 1444896,
+          "numeric_payload_bytes": 695994,
+          "first_date": "2017-11-27",
+          "last_date": "2026-10-21",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "14d",
+          "native_rows": 161,
+          "columns": 1044,
+          "raw_bytes": 1344672,
+          "numeric_payload_bytes": 636514,
+          "first_date": "2017-11-17",
+          "last_date": "2026-10-20",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "15d",
+          "native_rows": 150,
+          "columns": 1044,
+          "raw_bytes": 1252800,
+          "numeric_payload_bytes": 582049,
+          "first_date": "2017-11-29",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "16d",
+          "native_rows": 140,
+          "columns": 1044,
+          "raw_bytes": 1169280,
+          "numeric_payload_bytes": 533313,
+          "first_date": "2017-12-06",
+          "last_date": "2026-10-14",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "17d",
+          "native_rows": 132,
+          "columns": 1044,
+          "raw_bytes": 1102464,
+          "numeric_payload_bytes": 495359,
+          "first_date": "2017-12-04",
+          "last_date": "2026-10-15",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "18d",
+          "native_rows": 125,
+          "columns": 1044,
+          "raw_bytes": 1044000,
+          "numeric_payload_bytes": 461949,
+          "first_date": "2017-12-04",
+          "last_date": "2026-10-22",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "19d",
+          "native_rows": 117,
+          "columns": 1044,
+          "raw_bytes": 977184,
+          "numeric_payload_bytes": 423137,
+          "first_date": "2017-12-19",
+          "last_date": "2026-09-29",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "20d",
+          "native_rows": 112,
+          "columns": 1044,
+          "raw_bytes": 935424,
+          "numeric_payload_bytes": 400003,
+          "first_date": "2017-12-06",
+          "last_date": "2026-10-08",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "21d",
+          "native_rows": 107,
+          "columns": 1044,
+          "raw_bytes": 893664,
+          "numeric_payload_bytes": 376892,
+          "first_date": "2017-11-29",
+          "last_date": "2026-10-09",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        },
+        {
+          "timeframe": "monthly",
+          "native_rows": 107,
+          "columns": 1044,
+          "raw_bytes": 893664,
+          "numeric_payload_bytes": 376681,
+          "first_date": "2017-11-30",
+          "last_date": "2026-09-30",
+          "roundtrip": "ALL_FLOAT64_BITS_EXACT"
+        }
+      ],
+      "seconds": 24.884133461999994,
+      "peak_rss_bytes": 425955328,
+      "scope": "ALL_1044_COLUMNS_ALL_22_TIMEFRAMES_FULL_NATIVE_HISTORY; no row/column/value pruning, no downcasting",
+      "world_gate": "NOT_PROVEN",
+      "scoring_gate": "CLOSED"
+    }
+  ],
+  "errors": [],
+  "projected_full_universe_numeric_bytes": 1958027584271.25,
+  "hard_world_cap_bytes": 100000000000,
+  "numeric_scope_under_cap": false,
+  "full_world_estimate_bytes": null,
+  "world_gate": "NOT_PROVEN; add answers, raw/shared/nonprice dependencies and complete v3 coverage",
+  "approved_universe_run_preserved": 40621517496,
+  "scoring_gate": "CLOSED"
+}
