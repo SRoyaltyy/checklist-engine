@@ -41,7 +41,7 @@ def test_codec_never_implicitly_reduces_precision_or_coerces_integers(dtype):
 
 
 @pytest.mark.parametrize('field,value',[('rows',-1),('columns',2),('raw_bytes',2**40),('schema_sha256','wrong'),
-                                        ('predictors',[]),('dtype','<f4')])
+                                        ('predictors',['NOT_A_PREDICTOR']),('dtype','<f4')])
 def test_changed_shape_schema_or_decode_size_fails_before_allocation(field,value):
     values,columns,provenance=source(7);payload,metadata=encode_numeric(values,columns,provenance)
     metadata[field]=value
@@ -56,6 +56,22 @@ def test_corrupted_payload_and_wrong_source_cannot_decode():
     changed=dict(provenance,recipe_fingerprint='d'*64)
     with pytest.raises(ValueError,match='provenance'):
         decode_numeric(payload,metadata,columns,changed)
+
+
+def test_plain_byte_planes_roundtrip_every_special_bit():
+    values,columns,provenance=source(30)
+    payload,metadata=encode_numeric(values,columns,provenance,predictors=())
+    assert metadata['predictors']==[]
+    restored=decode_numeric(payload,metadata,columns,provenance)
+    assert restored.tobytes()==np.ascontiguousarray(values,dtype='<f8').tobytes()
+
+
+def test_claiming_plain_planes_for_an_xor_payload_fails_the_bit_check():
+    values,columns,provenance=source(12)
+    payload,metadata=encode_numeric(values,columns,provenance)
+    metadata['predictors']=[]
+    with pytest.raises(ValueError,match='decoded numeric bit pattern differs'):
+        decode_numeric(payload,metadata,columns,provenance)
 
 
 def test_repeated_columns_and_time_runs_compress_without_formula_recomputation():
