@@ -1,7 +1,45 @@
 {
-  "status": "OUTSIDE_FOLLOWON_PANELS_VALIDATED_NOT_ATTACHED_TO_STOCK_DAYS",
+  "status": "OUTSIDE_FOLLOWON_MEASURED_ON_APPROVED_STOCK_DAYS_NOT_FULL_WORLD",
   "world_build_40621517496": "not restarted",
-  "stock_day_coverage": "not measured; the approved stock-day file was not downloaded",
+  "stock_day_coverage": {
+    "release": "accepted-price-stitch-v2-40494479693-1",
+    "asset": "ACCEPTED_PRICE_STOCK_DAYS.csv",
+    "sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+    "bytes": 29121,
+    "sessions": 1712,
+    "first_date": "2020-01-02",
+    "last_date": "2026-10-23",
+    "query_stock_days": 12364370,
+    "coverage_rows": 2816,
+    "bindings": 462,
+    "panel_bytes": 5833288,
+    "families": {
+      "industry_etf": {
+        "rows": 1980,
+        "min_non_null_pct": 98.901634,
+        "max_non_null_pct": 99.956164
+      },
+      "volatility_term": {
+        "rows": 110,
+        "min_non_null_pct": 100.0,
+        "max_non_null_pct": 100.0
+      },
+      "breadth": {
+        "rows": 330,
+        "min_non_null_pct": 99.077786,
+        "max_non_null_pct": 99.956164
+      },
+      "calendar": {
+        "rows": 396,
+        "min_non_null_pct": 97.409605,
+        "max_non_null_pct": 99.956164
+      }
+    },
+    "below_95": [],
+    "exclusion": "none; every measured column is at or above 95 percent of the 12,364,370 approved stock days",
+    "short_of_100_reason": "A candle is hidden until the next session, so early 2020 stock days miss a candle that has not finished, and the newest unfinished candle is hidden after 2026-10-23. calendar_days_to_jobs__20d is the low column at 97.41 percent: the 20-day candle ending 2026-10-06 has no later jobs flag in the panel, so that distance is empty from 2026-10-07.",
+    "coverage_file": "docs/OUTSIDE_FOLLOWON_STOCK_DAY_COVERAGE.csv"
+  },
   "world_gate": "NOT_PROVEN",
   "scoring_gate": "CLOSED",
   "industry_etf": {
