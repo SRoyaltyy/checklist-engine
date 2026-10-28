@@ -1,0 +1,47 @@
+{
+  "block": "lossless_numeric_retention_weighted_budget",
+  "references": ["PR #43", "PR #35", "numeric-retention-sample-v1-40623258870-1"],
+  "does_not_touch_run": 40621517496,
+  "prior_projection": {
+    "formula": "max(container_bytes + registry_bytes) * 8727 * 1.25",
+    "bytes": 1958027584271,
+    "note": "Uses the largest sample, MAN, as if every name had MAN's full history. MAN has 9,271 native rows. MNTS has 1,712."
+  },
+  "bytes_per_native_row": [
+    {"ticker": "MAN", "native_rows": 9271, "container_bytes": 178920377, "bytes_per_native_row": 19298.93},
+    {"ticker": "MNTS", "native_rows": 1712, "container_bytes": 29072127, "bytes_per_native_row": 16981.38},
+    {"ticker": "EYE", "native_rows": 2259, "container_bytes": 40005933, "bytes_per_native_row": 17709.58}
+  ],
+  "mean_bytes_per_native_row": 17996.63,
+  "accepted_stitch": {
+    "release": "accepted-price-stitch-v2-40494479693-1",
+    "accepted_names": 8316,
+    "native_1d_rows": 31104142,
+    "query_rows": 12364370
+  },
+  "weighted_projection_bytes": 559769184224,
+  "weighted_projection_gb": 559.77,
+  "registry_once_bytes": 571094,
+  "registry_per_accepted_name_gb": 4.75,
+  "cap_bytes": 100000000000,
+  "under_cap": false,
+  "codec_trial": {
+    "sample": "MNTS",
+    "timeframes": ["1d", "5d", "21d", "monthly"],
+    "change": "byte planes with zstd 19, without the time and adjacent-column XOR",
+    "old_payload_bytes": 11026256,
+    "plain_payload_bytes": 8954391,
+    "smaller_by": 0.188,
+    "bit_exact_on_decoded_matrix": true,
+    "projected_weighted_gb_if_the_cut_held": 454.56,
+    "note": "Still above 100 GB. Integer and boolean columns are 34 of 1,044 on the 1d matrix, so packing them does not move the total."
+  },
+  "world_build_observed": {
+    "run": 40621517496,
+    "success": 22,
+    "in_progress": 19,
+    "queued": 134,
+    "failed": 0,
+    "action": "monitored only"
+  }
+}
