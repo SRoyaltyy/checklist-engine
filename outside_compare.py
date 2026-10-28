@@ -22,11 +22,15 @@ BREAK_BASELINE = 60
 # sector files are aggregates, not a stock map, and start on 2026-10-21.
 # fullscan industry_etf.py maps a current industry name to an ETF and has no date.
 # The April 2026 label is not written onto 2020.
+# Archived SEC submissions on sec-world-v4 carry one current sic per company.
+# The sample part has no SIC on each filing and no SIC column in the facts file.
+# That current SIC is not written onto 2020.
 MAP_SEARCH = {
     "sources_checked": [
         "SRoyaltyy/fullscan data/exports/finviz_YYYY-MM-DD.csv",
         "SRoyaltyy/theme-radar data/finviz_extras/groups/*_sector.csv",
         "SRoyaltyy/fullscan src/industry_etf.py",
+        "sec-world-v4-40267486206-1 sec_world_shard_000_attempt_1_part_000.tar",
     ],
     "fullscan_snapshot_files": 63,
     "fullscan_first_file_date": "2026-04-26",
@@ -36,6 +40,16 @@ MAP_SEARCH = {
     "first_usable_session": "2026-04-27",
     "coverage_percent": 7.4679,
     "decision": "EXCLUDED",
+    "sec_submissions": {
+        "release": "sec-world-v4-40267486206-1",
+        "sample_archive": "sec_world_shard_000_attempt_1_part_000.tar",
+        "submissions_read": 20,
+        "facts_read": 20,
+        "sic_fields": ["sic", "sicDescription"],
+        "filings_with_sic_column": 0,
+        "facts_with_sic_column": 0,
+        "decision": "NOT_USED_CURRENT_SIC_WOULD_REWRITE_2020",
+    },
 }
 EXCLUDED_COMPARATORS = (
     {

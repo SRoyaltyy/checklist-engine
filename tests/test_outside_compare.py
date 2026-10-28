@@ -60,3 +60,7 @@ def test_sector_and_industry_are_named_exclusions():
     assert comp.MAP_SEARCH["coverage_percent"] < 95
     assert comp.MAP_SEARCH["sessions_on_or_after_first_usable_snapshot"] == 128
     assert comp.MAP_SEARCH["sessions_2020_01_02_through_2026_10_27"] == 1714
+    sec = comp.MAP_SEARCH["sec_submissions"]
+    assert sec["submissions_read"] == 20 and sec["filings_with_sic_column"] == 0
+    assert sec["facts_with_sic_column"] == 0
+    assert sec["decision"] == "NOT_USED_CURRENT_SIC_WOULD_REWRITE_2020"
