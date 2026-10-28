@@ -1,0 +1,293 @@
+{
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "query_stock_days": 12364370,
+  "factor_rows": 726,
+  "zero_observation_rows": 0,
+  "breadth_source": "PR #54 docs/outside_breadth_candles.parquet",
+  "calendar_source": "PR #52 docs/outside_event_calendar_candles.parquet",
+  "vix_term": "already in shared-context-v2-40636949344-1 as cboe_vix9d, cboe_vix3m, cboe_vvix and the two term ratios",
+  "etf_25": "already attached by PR #45 from etf-native-context-v1-40484930003-1",
+  "join": "source_candle_end < available_from <= stock query date",
+  "sample": [
+    {
+      "family": "breadth",
+      "timeframe": "1d",
+      "column": "breadth_pct_above_sma20__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "1d",
+      "column": "breadth_ad_line__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "1d",
+      "column": "breadth_new_highs_minus_new_lows__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "20d",
+      "column": "breadth_pct_above_sma20__20d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "20d",
+      "column": "breadth_ad_line__20d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "20d",
+      "column": "breadth_new_highs_minus_new_lows__20d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "5d",
+      "column": "breadth_pct_above_sma20__5d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "5d",
+      "column": "breadth_ad_line__5d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "5d",
+      "column": "breadth_new_highs_minus_new_lows__5d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "monthly",
+      "column": "breadth_pct_above_sma20__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "monthly",
+      "column": "breadth_ad_line__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "breadth",
+      "timeframe": "monthly",
+      "column": "breadth_new_highs_minus_new_lows__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "1d",
+      "column": "calendar_is_fomc__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "1d",
+      "column": "calendar_is_cpi__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "1d",
+      "column": "calendar_is_opex__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "1d",
+      "column": "calendar_days_to_opex__1d",
+      "non_null_pct": 99.95616436583505,
+      "non_null_stock_days": 12358950,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "20d",
+      "column": "calendar_is_fomc__20d",
+      "non_null_pct": 98.28395623877319,
+      "non_null_stock_days": 12152192,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-28",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "20d",
+      "column": "calendar_is_cpi__20d",
+      "non_null_pct": 98.28395623877319,
+      "non_null_stock_days": 12152192,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-28",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "20d",
+      "column": "calendar_is_opex__20d",
+      "non_null_pct": 98.28395623877319,
+      "non_null_stock_days": 12152192,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-28",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "20d",
+      "column": "calendar_days_to_opex__20d",
+      "non_null_pct": 98.28395623877319,
+      "non_null_stock_days": 12152192,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-28",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "5d",
+      "column": "calendar_is_fomc__5d",
+      "non_null_pct": 99.60524474760946,
+      "non_null_stock_days": 12315561,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-15",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "5d",
+      "column": "calendar_is_cpi__5d",
+      "non_null_pct": 99.60524474760946,
+      "non_null_stock_days": 12315561,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-15",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "5d",
+      "column": "calendar_is_opex__5d",
+      "non_null_pct": 99.60524474760946,
+      "non_null_stock_days": 12315561,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-15",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "5d",
+      "column": "calendar_days_to_opex__5d",
+      "non_null_pct": 99.60524474760946,
+      "non_null_stock_days": 12315561,
+      "query_stock_days": 12364370,
+      "first_date": "2020-01-15",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "monthly",
+      "column": "calendar_is_fomc__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "monthly",
+      "column": "calendar_is_cpi__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "monthly",
+      "column": "calendar_is_opex__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    },
+    {
+      "family": "calendar",
+      "timeframe": "monthly",
+      "column": "calendar_days_to_opex__monthly",
+      "non_null_pct": 99.07778560492771,
+      "non_null_stock_days": 12250344,
+      "query_stock_days": 12364370,
+      "first_date": "2020-02-03",
+      "last_date": "2026-10-23"
+    }
+  ]
+}

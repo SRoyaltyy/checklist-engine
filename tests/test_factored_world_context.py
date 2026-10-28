@@ -64,6 +64,38 @@ def test_full_producer_binds_all_factor_files_and_exact_stock_day_coverage(tmp_p
     assert manifest['world_gate']=='NOT_PROVEN' and calls
 
 
+def test_request_binds_committed_session_factors_and_skips_spy(tmp_path,monkeypatch):
+    request,files,calls=inputs_fixture(tmp_path/'sources',monkeypatch)
+    directory=tmp_path/'cursor_factors';directory.mkdir()
+    calendar=pd.DataFrame({
+        'timeframe':['1d','1d'],
+        'candle_start':pd.to_datetime(['2020-01-02','2020-01-03']),
+        'date':pd.to_datetime(['2020-01-02','2020-01-03']),
+        'available_from':pd.to_datetime(['2020-01-03','2020-01-06']),
+        'is_fomc':[True,False],
+    })
+    market=pd.DataFrame({
+        'ticker':['SPY','SPY','XBI','XBI'],
+        'timeframe':['1d','1d','1d','1d'],
+        'candle_start':pd.to_datetime(['2020-01-02','2020-01-03']*2),
+        'date':pd.to_datetime(['2020-01-02','2020-01-03']*2),
+        'available_from':pd.to_datetime(['2020-01-03','2020-01-06']*2),
+        'close':[10.0,11.0,4.0,5.0],
+    })
+    calendar.to_parquet(directory/'outside_event_calendar_candles.parquet',index=False)
+    market.to_parquet(directory/'outside_market_candles.parquet',index=False)
+    request['cursor_session_factors']=str(directory)
+    out=tmp_path/'out';pipeline.build(out,request,'shared')
+    manifest=json.loads((out/'FACTORED_WORLD_CONTEXT_STORE.json').read_text())
+    families={row['family'] for row in manifest['factors']}
+    industry=[row for row in manifest['factors'] if row['family']=='industry_etf']
+    assert {'macro_cboe','etf','calendar','industry_etf'}<=families
+    assert industry and industry[0]['symbol']=='XBI'
+    assert not any(column.startswith('etf_spy_') for row in industry for column in row['columns'])
+    assert any(column=='etf_xbi_close' for row in industry for column in row['columns'])
+    assert len(manifest['factors'])==46
+
+
 def test_changed_stock_proof_rejects_before_publication(tmp_path,monkeypatch):
     request,files,calls=inputs_fixture(tmp_path/'sources',monkeypatch)
     request['stock_status_sha256']='0'*64
