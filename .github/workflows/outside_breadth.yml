@@ -1,0 +1,39 @@
+name: outside-breadth
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - outside_breadth.py
+      - ci/outside_breadth.py
+      - tests/test_outside_breadth.py
+      - .github/workflows/outside_breadth.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: outside-breadth-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the breadth dependencies
+        run: python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2"
+      - name: Unit tests
+        run: python -m pytest tests/test_outside_breadth.py -q
+      - name: Build breadth from the accepted stitch
+        run: python -m ci.outside_breadth --out outside-breadth-out --publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: outside-breadth-proof
+          path: outside-breadth-out/OUTSIDE_BREADTH_PROOF.json
+          if-no-files-found: ignore
