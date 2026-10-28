@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+import exchange_calendars as xc
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,3 +23,14 @@ def test_october_27_is_not_month_end():
     assert PROOF["only_difference"] == "2026-10-27"
     assert PROOF["october_2026_last_session"] == "2026-10-30"
     assert int((frame.available_from < frame.date).sum()) == 0
+
+
+def test_every_row_matches_the_last_nyse_session_of_its_month():
+    frame = pd.read_parquet(ROOT / "docs" / "calendar_month_end.parquet")
+    frame["date"] = pd.to_datetime(frame["date"])
+    sessions = pd.DatetimeIndex(xc.get_calendar("XNYS").sessions_in_range("2020-01-02", "2026-10-30"))
+    last = {}
+    for day in sessions:
+        last[(day.year, day.month)] = day
+    expected = frame["date"].map(lambda day: day == last[(day.year, day.month)])
+    assert expected.tolist() == frame.is_month_end.tolist()
