@@ -1,6 +1,10 @@
 {
   "block": "lossless_numeric_retention_weighted_budget",
-  "references": ["PR #43", "PR #35", "numeric-retention-sample-v1-40623258870-1"],
+  "references": [
+    "PR #43",
+    "PR #35",
+    "numeric-retention-sample-v1-40623258870-1"
+  ],
   "does_not_touch_run": 40621517496,
   "prior_projection": {
     "formula": "max(container_bytes + registry_bytes) * 8727 * 1.25",
@@ -8,9 +12,24 @@
     "note": "Uses the largest sample, MAN, as if every name had MAN's full history. MAN has 9,271 native rows. MNTS has 1,712."
   },
   "bytes_per_native_row": [
-    {"ticker": "MAN", "native_rows": 9271, "container_bytes": 178920377, "bytes_per_native_row": 19298.93},
-    {"ticker": "MNTS", "native_rows": 1712, "container_bytes": 29072127, "bytes_per_native_row": 16981.38},
-    {"ticker": "EYE", "native_rows": 2259, "container_bytes": 40005933, "bytes_per_native_row": 17709.58}
+    {
+      "ticker": "MAN",
+      "native_rows": 9271,
+      "container_bytes": 178920377,
+      "bytes_per_native_row": 19298.93
+    },
+    {
+      "ticker": "MNTS",
+      "native_rows": 1712,
+      "container_bytes": 29072127,
+      "bytes_per_native_row": 16981.38
+    },
+    {
+      "ticker": "EYE",
+      "native_rows": 2259,
+      "container_bytes": 40005933,
+      "bytes_per_native_row": 17709.58
+    }
   ],
   "mean_bytes_per_native_row": 17996.63,
   "accepted_stitch": {
@@ -27,7 +46,12 @@
   "under_cap": false,
   "codec_trial": {
     "sample": "MNTS",
-    "timeframes": ["1d", "5d", "21d", "monthly"],
+    "timeframes": [
+      "1d",
+      "5d",
+      "21d",
+      "monthly"
+    ],
     "change": "byte planes with zstd 19, without the time and adjacent-column XOR",
     "old_payload_bytes": 11026256,
     "plain_payload_bytes": 8954391,
@@ -90,5 +114,30 @@
     "queued": 134,
     "failed": 0,
     "action": "monitored only"
+  },
+  "answer_store_published_shards": {
+    "run": 40621517496,
+    "published_shards": 29,
+    "completed_names": 1386,
+    "excluded": [
+      {
+        "ticker": "EQLT",
+        "reason": "STOCK_TIMEOUT",
+        "part": 17
+      },
+      {
+        "ticker": "WKSP",
+        "reason": "STOCK_TIMEOUT",
+        "part": 23
+      }
+    ],
+    "answer_bytes": 3517513756,
+    "answer_gb": 3.518,
+    "query_stock_years": 8158.56,
+    "bytes_per_stock_year": 431144,
+    "accepted_query_rows": 12364370,
+    "accepted_stock_years": 49064.96,
+    "projected_answer_gb_if_the_rate_held": 21.15,
+    "note": "Measured from the 29 published shard summaries, not the earlier 21-name sample. This is the bit-packed answer store. It is not the 560 GB numeric-intermediate figure. The run was not restarted."
   }
 }
