@@ -447,6 +447,15 @@
     "source": "light-daily-box-v1-20261028 raw close",
     "symbols": 43,
     "rows_compared": 72689,
-    "max_abs_error": 0.0
+    "max_abs_error": 0.0,
+    "one_day_candles_match_daily": true,
+    "one_day_columns": [
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume"
+    ],
+    "one_day_rows": 72689
   }
 }
