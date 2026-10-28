@@ -280,5 +280,10 @@
     "rows": 342,
     "rule": "each flag and day count equals the end session, not a count across the candle",
     "mismatches": 0
+  },
+  "all_timeframe_flags": {
+    "rows": 6308,
+    "rule": "every candle repeats the end session flags and day counts",
+    "mismatches": 0
   }
 }
