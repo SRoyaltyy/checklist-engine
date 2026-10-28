@@ -36,6 +36,19 @@
     "projected_weighted_gb_if_the_cut_held": 454.56,
     "note": "Still above 100 GB. Integer and boolean columns are 34 of 1,044 on the 1d matrix, so packing them does not move the total."
   },
+  "plain_planes_all_timeframes": {
+    "sample": "MNTS",
+    "encoder": "encode_numeric predictors=() at commit 8be7d04",
+    "timeframes": 22,
+    "xor_payload_bytes": 29032846,
+    "plain_payload_bytes": 23453318,
+    "smaller_by": 0.1922,
+    "bit_exact": true,
+    "one_day_plain_payload_bytes": 7259411,
+    "projected_weighted_bytes_if_the_cut_held": 452192826160,
+    "projected_weighted_gb_if_the_cut_held": 452.19,
+    "note": "All 22 timeframes, decoded from the published XOR container and re-encoded. The default encoder stays XOR. Still above 100 GB. The retention workflow was not launched."
+  },
   "answer_store": {
     "parts": [
       "compact-world-build-v1-40621517496-1-035",
