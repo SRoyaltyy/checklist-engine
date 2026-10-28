@@ -36,6 +36,13 @@
     "projected_weighted_gb_if_the_cut_held": 454.56,
     "note": "Still above 100 GB. Integer and boolean columns are 34 of 1,044 on the 1d matrix, so packing them does not move the total."
   },
+  "answer_store": {
+    "release": "compact-world-build-v1-40621517496-1-039",
+    "format": "REGISTERED_ANSWER_BITPLANES_V1",
+    "compression_level": 9,
+    "sample_bytes": {"FEUS": 1883306, "FNF": 3125351, "FRSX": 2691463, "GRI": 1848288},
+    "note": "Yes/no answers in a finished world-build part are already bit-packed. These four names are 1.8 to 3.1 MB. That store is not the 560 GB numeric-intermediate projection."
+  },
   "world_build_observed": {
     "run": 40621517496,
     "success": 22,
