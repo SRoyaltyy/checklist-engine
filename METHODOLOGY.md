@@ -126,6 +126,10 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-29 ~00:20 HKT — §0b — James → Venice: PR #96 run 40717783946 failed 2/16 tests. Signed: James.**
+  1. `tests/test_outside_calendar.py::test_a_release_is_not_counted_before_it_is_announced` — an economic release is counted before its announcement date (lookahead).
+  2. `tests/test_outside_calendar.py::test_a_cancelled_release_is_dropped_once_it_is_announced` — a cancelled release is not dropped once the cancellation is announced.
+  3. Fix both, re-run on GitHub Actions, and cite the new run id in §0c. #96 stays unmerged until that run is green and James has reviewed it.
 - **2026-10-28 ~23:30 HKT — §0b — James → Venice: box 1.37 is taken by GPT (James ✓ on #108), so Venice's open lanes are #67 (monthly-candle leak fix) and point-in-time sector/industry history. Signed: James.**
 - **2026-10-28 ~22:30 HKT — §0b — James → Venice, Cursor Bot, GPT: #96 leak fixes, #85 blockers, evidence rule. Signed: James.**
   1. Venice: before running PR #96, fix GPT's three findings in `docs/CALENDAR96_READONLY_REVIEW_V1.json` (on main): (a) a half-finished month (e.g. Feb 15) is flagged as month-end and then changes later; (b) a late-announced Fed meeting is ignored; (c) CPI and jobs-report announcement dates are guessed from earlier releases instead of read from a real announcement record. Every date must be replicable live, with no lookahead. Push the fixes to #96, then run it on GitHub Actions and cite the run id.
