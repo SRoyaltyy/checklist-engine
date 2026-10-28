@@ -127,13 +127,40 @@ def stock_contributions(frame):
 
 
 def divide(numerator, denominator):
-    num = np.asarray(numerator, dtype=np.float64)
-    den = np.asarray(denominator, dtype=np.float64)
+    num = pd.Series(numerator).to_numpy(dtype=np.float64,na_value=np.nan)
+    den = pd.Series(denominator).to_numpy(dtype=np.float64,na_value=np.nan)
     out = np.full(num.shape, np.nan)
     finite = np.isfinite(num) & np.isfinite(den)
     out[finite & (den == 0) & (num > 0)] = np.inf
     out[finite & (den == 0) & (num < 0)] = -np.inf
     out[finite & (den != 0)] = num[finite & (den != 0)] / den[finite & (den != 0)]
+    return out
+
+
+def available_breadth(panel):
+    """Expose unknown market history as missing, never a false observed zero.
+
+    Raw observed counters remain in the immutable parent dataset. Cumulative
+    A/D retains its explicit zero origin; it is a level, not an observed change
+    on the initial source day. I179 requires more than100 eligible SMA names.
+    """
+    out=panel.copy()
+    for window in SMA_WINDOWS:
+        out[f'pct_above_sma{window}']=out[f'pct_above_sma{window}'].where(out[f'eligible_sma{window}']>100)
+    high_low=out.eligible_52w>0
+    movement=(out.advance+out.decline+out.unchanged)>0
+    for column,known in [('new_high',high_low),('new_low',high_low),
+                         *((c,movement) for c in ('advance','decline','unchanged','ad_net','up_volume','down_volume'))]:
+        before=out[column]
+        values=before.to_numpy(dtype='float64')
+        # The actual market counts are bounded by the approved universe.
+        # Reject an inexact integer-to-float conversion rather than round it.
+        if before.dtype.kind in 'iu' and before.tolist()!=values.tolist():
+            raise ValueError('availability mask would lose an integer count')
+        out[column]=pd.Series(values,index=out.index).where(known)
+    out['new_highs_minus_new_lows']=out.new_high-out.new_low
+    out['ad_ratio']=divide(out.advance,out.decline)
+    out['up_down_volume_ratio']=divide(out.up_volume,out.down_volume)
     return out
 
 
@@ -260,7 +287,7 @@ def breadth_candles(panel, boundary_sessions):
                 continue
             row = {"timeframe": timeframe, "date": end, "candle_start": part["date"].min()}
             for column in flows:
-                row[column] = part[column].sum()
+                row[column] = part[column].sum(min_count=len(part))
             last = part.iloc[-1]
             for column in levels:
                 row[column] = last[column]
@@ -278,26 +305,29 @@ def write_lossless(frame, path):
     sort_on = [column for column in ("timeframe", "date") if column in frame.columns]
     stored = frame.sort_values(sort_on).reset_index(drop=True)
     encodings = {}
-    for column in COUNT_COLUMNS:
-        if column in stored.columns and stored[column].notna().all():
+    for column in (*COUNT_COLUMNS,"new_highs_minus_new_lows","ad_net","ad_line"):
+        if column in stored.columns:
             if column.endswith("volume"):
                 stored[column] = stored[column].astype(np.float64)
                 encodings[column] = "BYTE_STREAM_SPLIT"
             else:
-                integers = exact_int64(stored[column])
+                observed=stored[column].dropna()
+                if observed.dtype.kind in 'iu':
+                    observed=observed.to_numpy(dtype='uint64' if observed.dtype.kind=='u' else 'int64')
+                integers = exact_int64(observed)
                 if integers is None:
                     raise ValueError("nonintegral or out-of-range breadth count: " + column)
-                stored[column] = integers
-                encodings[column] = "DELTA_BINARY_PACKED"
+                if stored[column].notna().all():
+                    stored[column] = integers
+                    encodings[column] = "DELTA_BINARY_PACKED"
+                elif stored[column].dtype.kind in 'iu':
+                    encodings[column] = "DELTA_BINARY_PACKED"
+                else:
+                    stored[column]=stored[column].astype('float64')
+                    encodings[column] = "BYTE_STREAM_SPLIT"
     for column in ("pct_above_sma20", "pct_above_sma50", "pct_above_sma200", "ad_ratio", "up_down_volume_ratio"):
         stored[column] = stored[column].astype(np.float64)
         encodings[column] = "BYTE_STREAM_SPLIT"
-    for column in ("new_highs_minus_new_lows", "ad_net", "ad_line"):
-        integers = exact_int64(stored[column])
-        if integers is None:
-            raise ValueError("nonintegral or out-of-range breadth count: " + column)
-        stored[column] = integers
-        encodings[column] = "DELTA_BINARY_PACKED"
     table = exact_arrow_table(stored)
     pq.write_table(
         table, path, compression="zstd", compression_level=19,

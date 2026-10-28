@@ -143,3 +143,36 @@ def test_legacy_overlap_retains_the_original_values_and_accounts_for_partial_v1(
     old_native = pd.concat([old_native,opening],ignore_index=True)
     result = legacy_overlap(full,native,sessions,old,old_native)
     assert result['partial_v1_native_rows']==1 and result['v1_ad_line_offset']==offset
+
+
+def test_no_eligible_history_is_unknown_not_an_observed_zero_and_flows_require_every_day(tmp_path):
+    from outside_breadth import available_breadth
+    sessions,votes=sample()
+    raw=aggregate(votes,sessions,sessions[-2],retain_history=True)
+    visible=available_breadth(raw)
+    assert raw.new_high.eq(0).all() and raw.eligible_52w.eq(0).all()
+    assert visible.new_high.isna().all() and visible.new_low.isna().all()
+    assert visible.new_highs_minus_new_lows.isna().all()
+    assert pd.isna(visible.ad_net.iloc[0]) and visible.ad_line.iloc[0]==0
+    assert visible.ad_net.iloc[1]==raw.ad_net.iloc[1]
+    native=breadth_candles(visible,sessions)
+    first=native.loc[native.timeframe=='5d'].iloc[0]
+    assert pd.isna(first.ad_net) and pd.isna(first.new_high)
+    second=native.loc[native.timeframe=='5d'].iloc[1]
+    assert second.ad_net==raw.ad_net.iloc[5:10].sum()
+    write_lossless(native,tmp_path/'unknown.parquet')
+    back=pd.read_parquet(tmp_path/'unknown.parquet')
+    assert pd.isna(back.loc[back.timeframe=='5d','ad_net'].iloc[0])
+
+
+def test_registered_sma_breadth_requires_more_than100_eligible_names():
+    from outside_breadth import available_breadth
+    sessions,votes=sample()
+    raw=aggregate(votes,sessions,sessions[2],retain_history=True)
+    for window in (20,50,200):
+        raw[f'eligible_sma{window}']=[0,100,101]
+        raw[f'pct_above_sma{window}']=[np.nan,.2,.3]
+    visible=available_breadth(raw)
+    for window in (20,50,200):
+        assert visible[f'pct_above_sma{window}'].iloc[:2].isna().all()
+        assert visible[f'pct_above_sma{window}'].iloc[2]==.3

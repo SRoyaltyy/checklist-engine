@@ -1,7 +1,26 @@
 # Complete native breadth history, version 2
 
-Status: implementation and local checks; actual all-name measurement pending.
+Status: actual full-name V2 measurement passed; V3 availability correction pending.
 No additional checklist box is completed by this document.
+
+Actual run40718683563 passed46 Linux tests, all8316 source names and44 raw
+cutoff checks. It published9271 daily rows (7559 before2020),34229 native rows,
+all22 factor files /3,759,569 bytes,330 weighted coverage rows and a successful
+public-factor readback. V1 daily/complete-native values reconstruct exactly
+with the285,222 pre2020 A/D offset. All28 public assets /6,883,267 bytes were
+independently downloaded and authenticated.
+
+Independent readback also found an availability defect before promotion:
+251 initial sessions have zero eligible52-week histories, but observed-hit
+counters are zero. One initial session has no previous-close movement votes.
+These counters are not usable known market outcomes. V3 retains the original
+V2 counter file and its raw-source proof, exposes those unknown fields as
+missing, and requires every daily flow value inside a native bucket. It also
+enforces I179's more-than100 eligible SMA names. Known values, all interval
+keys and all data within the2020–2026 measured window must remain unchanged.
+The correction reads only the completed public V2 release; it does not repeat
+the full raw-source build. It gets its own immutable V3 release and public
+readback after fresh51-test/cutoff verification.
 
 The verified V1 files remain immutable. Their aggregate starts on 2020-01-02
 inside the calendar's anchored integer buckets, producing twenty partial
