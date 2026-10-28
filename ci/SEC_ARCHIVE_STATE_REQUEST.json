@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "scope": "BOUNDED_ARCHIVED_CIK_SAMPLE_NOT_FULL_WORLD",
+  "source_tag": "sec-world-v4-40267486206-1",
+  "source_manifest": "sec_world_shard_000_attempt_1_part_000.json",
+  "source_manifest_sha256": "f7f03c464cd367cc19b0d5a6ce290ff8d8f1c2399adc2fca5c9ef5563de9b38a",
+  "source_archive": "sec_world_shard_000_attempt_1_part_000.tar",
+  "source_archive_sha256": "51826ab6521cdd7445b2382b431f5ec96b939768e302160586002349b0afdfc6",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "quarantined_ciks": [1790169],
+  "cuts": ["2022-01-03", "2024-01-02", "2026-01-02"]
+}
