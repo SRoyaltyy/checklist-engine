@@ -1,7 +1,7 @@
-name: volatility-term-released-measurement
+name: codex-tier1-cboe-term-measurement
 on:
   push:
-    branches: [cursor/outside-vol-term-c9e9]
+    branches: [codex/tier1-vix-data]
     paths: ['ci/VOLATILITY_TERM_REQUEST.json']
 permissions:
   contents: write
