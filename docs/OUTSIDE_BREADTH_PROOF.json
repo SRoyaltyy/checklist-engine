@@ -46,7 +46,11 @@
     "identities": "the advance/decline line steps by ad_net; new highs minus new lows equals the two counts; each percent equals above divided by eligible; both ratios use the signed zero-divide rule",
     "max_abs_error": 0.0,
     "percent_denominator": "names with a full window on that session, not always all 8316",
-    "eligible_on_2020_01_02": {"sma20": 5390, "sma50": 5335, "sma200": 5128},
+    "eligible_on_2020_01_02": {
+      "sma20": 5390,
+      "sma50": 5335,
+      "sma200": 5128
+    },
     "on_2026_10_23": {
       "eligible_sma20": 8316,
       "above_sma20": 3649,
@@ -58,6 +62,18 @@
       "above_sma200": 3449,
       "pct_above_sma200": 0.41474266474266475,
       "voters": 8316
-    }
+    },
+    "one_day_candles_match_daily": true,
+    "one_day_columns": [
+      "pct_above_sma20",
+      "pct_above_sma50",
+      "pct_above_sma200",
+      "ad_line",
+      "new_highs_minus_new_lows",
+      "ad_net",
+      "ad_ratio",
+      "up_down_volume_ratio"
+    ],
+    "one_day_rows": 1712
   }
 }
