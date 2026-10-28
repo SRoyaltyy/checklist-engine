@@ -68,10 +68,10 @@ def build(root,request,shared_release):
                 numeric_dtypes={c:str(frame[c].dtype) for c in columns},native_rows=len(frame),
                 source_rule='source_candle_end < available_from <= stock query D; ALFRED vintage_date < sample availability',
                 all_source_columns_preserved=True))
-    extra=os.environ.get('CURSOR_SESSION_FACTORS')
+    extra=request.get('cursor_session_factors') or os.environ.get('CURSOR_SESSION_FACTORS')
     if extra:
-        from cursor_session_factors import cover_session_directory
-        coverage.extend(cover_session_directory(extra, weights))
+        from cursor_session_factors import attach_session_factors
+        coverage,bindings,factor_bytes=attach_session_factors(coverage,bindings,factor_bytes,weights,extra)
     names=[(row['timeframe'],row['column']) for row in coverage]
     if len(names)!=len(set(names)):raise ValueError('duplicate factor columns across families')
     file=root/'WORLD_SHARED_STOCK_DAY_COVERAGE.csv'
@@ -88,7 +88,7 @@ def build(root,request,shared_release):
         reader='world_context_store.context_row_view',reader_sha256=sha('world_context_store.py'),
         row_validation='caller supplies dates from authenticated accepted stock price members; this component does not create new stock sessions',
         layout='stored native numeric values once, exact date/availability joins; no indicator recomputation, field pruning or precision reduction',
-        remaining=['stock-relative features and historical sector/industry membership','peer comparisons','other event/fundamental/news blocks',
+        remaining=['stock-relative features and historical sector/industry membership','peer comparisons','fundamental and news blocks beyond the committed calendar flags',
                    'complete v3 questions and full leak verification','historical tradeability/size eligibility','complete numeric-value retention and total world budget'],
         world_gate='NOT_PROVEN',scoring_gate='CLOSED')
     file=root/'FACTORED_WORLD_CONTEXT_STORE.json';write_json(file,store)

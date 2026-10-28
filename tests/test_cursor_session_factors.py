@@ -44,7 +44,26 @@ def test_directory_coverage_skips_etfs_already_attached():
         calendar.to_parquet(os.path.join(directory, "outside_event_calendar_candles.parquet"))
         market.to_parquet(os.path.join(directory, "outside_market_candles.parquet"))
         rows = factors.cover_session_directory(directory, weights)
+        report_rows, bindings, nbytes = factors.session_factor_report(directory, weights)
     names = {row["column"] for row in rows}
     assert "calendar_is_fomc__1d" in names
     assert "etf_xbi_close__1d" in names
     assert not any(name.startswith("etf_spy_") for name in names)
+    assert nbytes > 0 and len(report_rows) == len(rows)
+    assert {row["family"] for row in bindings} == {"calendar", "industry_etf"}
+    assert all(row["sha256"] for row in bindings)
+
+
+def test_committed_panels_keep_the_eighteen_industry_etfs():
+    from pathlib import Path
+    directory = Path("cursor_factors")
+    market = pd.read_parquet(directory / "outside_market_candles.parquet", columns=["ticker"])
+    tickers = set(market.ticker.unique()) - factors.ATTACHED_ETFS
+    assert tickers == set("KBE KRE KCE KIE XAR XTN XBI XPH XHE XHS XOP XES XME XRT XHB XSD XSW XTL".split())
+    breadth = pd.read_parquet(directory / "outside_breadth_candles.parquet")
+    one_day = breadth[breadth.timeframe == "1d"]
+    columns = validate_factor(factors.to_native_factor(one_day, "breadth_"))
+    assert "breadth_new_highs_minus_new_lows" in columns
+    calendar = pd.read_parquet(directory / "outside_event_calendar_candles.parquet")
+    flags = validate_factor(factors.to_native_factor(calendar[calendar.timeframe == "1d"], "calendar_"))
+    assert "calendar_is_fomc" in flags and "calendar_is_opex" in flags
