@@ -1,0 +1,44 @@
+{
+  "release": "stooq-us-daily-20261028",
+  "order_commit": "ecde34d3e49e33873215cc0fc08fb121b7feb854",
+  "main_commit": "5f36a37b19b3d2deb3dfbb0afdaa7ae7775bb2eb",
+  "archive": "stooq_gapfill_274.tar.xz",
+  "archive_sha256": "3aceaa6f2f1abb267a973d6625bb8c6431dbc8656e4312d807529c0748b2145f",
+  "release_sha256sums": "all four listed files matched",
+  "files": 274,
+  "file_sha256_mismatches": 0,
+  "first_last_and_row_count_mismatches": 0,
+  "excluded_no_file": ["CYCN", "LBRDA", "PSKY", "QNCX", "UUU", "VTAK"],
+  "excluded_present_in_archive": 0,
+  "stale_before_2026-10-23": 19,
+  "prior_exclusion_counts": {
+    "FROZEN_OVERLAP_LT_60": 242,
+    "UNRESOLVED_PRICE_BRIDGE": 14,
+    "STALE_LAST_PRICE_SESSION|UNRESOLVED_PRICE_BRIDGE": 10,
+    "STALE_LAST_PRICE_SESSION": 5,
+    "STALE_LAST_PRICE_SESSION|UNRESOLVED_HALT|UNRESOLVED_PRICE_BRIDGE": 1,
+    "UNVERIFIABLE_HISTORICAL_VOLUME_BASIS": 1,
+    "QUARANTINED_SEC_IDENTITY": 1
+  },
+  "named_gaps": {
+    "QUARANTINED_SEC_IDENTITY": "ZSTK",
+    "UNVERIFIABLE_HISTORICAL_VOLUME_BASIS": "IBCA",
+    "STALE_LAST_PRICE_SESSION|UNRESOLVED_HALT|UNRESOLVED_PRICE_BRIDGE": "AZTR"
+  },
+  "crosscheck_published_in_release": {
+    "sample": 200,
+    "daily_return_match_within_0p5pp_rows_pct": 99.26,
+    "level_match_within_0p5pct_rows_pct": 73.43,
+    "comparison": "daily returns, not price levels; Stooq is adjusted for splits and dividends"
+  },
+  "usage": "GAP_FILL_AND_RETURN_CROSSCHECK_ONLY_NOT_ACCEPTED_BASE",
+  "does_not_replace": "accepted-price-stitch base, including the 8,447-name add-on",
+  "world_build": {
+    "run": 40621517496,
+    "head": "49043dd375387bddad0d446c56f942f0711b28ed",
+    "jobs": {"success": 25, "in_progress": 19, "queued": 131, "failed": 0},
+    "action": "not restarted"
+  },
+  "actions_jobs_launched": 0,
+  "nominal_and_point_in_time": "NOT_PROVEN"
+}
