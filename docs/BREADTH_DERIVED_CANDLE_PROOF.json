@@ -1,0 +1,197 @@
+{
+  "block": "breadth_derived_candles",
+  "source_daily_sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+  "public_release": "outside-breadth-stitch-v1",
+  "stock_day_sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "stock_days": 12364370,
+  "candle_rows": 6310,
+  "candle_sha256": "1f87f753301af68d640a8fc45d9f46fe993cb993bfca03c0bbd432a493174db1",
+  "rule": "TRIN is rebuilt from the summed advance, decline, up volume, and down volume. The volume line, McClellan oscillator, and summation are the last session in the bucket. Spans stay 19 and 39 daily sessions. A bucket with no later session is omitted.",
+  "fast_span": 19,
+  "slow_span": 39,
+  "excluded": {
+    "bullish_percent": "POINT_AND_FIGURE_BOX_AND_REVERSAL_NOT_REGISTERED"
+  },
+  "early_available_from": 0,
+  "weekend_available_from": 0,
+  "omitted_daily_session": "2026-10-23",
+  "timeframes": [
+    {
+      "rows": 1711,
+      "non_null_stock_days": 12358950,
+      "non_null_percent": 99.9562,
+      "first_date_available": "2020-01-03",
+      "status": "MEASURED",
+      "timeframe": "1d"
+    },
+    {
+      "rows": 855,
+      "non_null_stock_days": 12353530,
+      "non_null_percent": 99.9123,
+      "first_date_available": "2020-01-06",
+      "status": "MEASURED",
+      "timeframe": "2d"
+    },
+    {
+      "rows": 570,
+      "non_null_stock_days": 12348108,
+      "non_null_percent": 99.8685,
+      "first_date_available": "2020-01-07",
+      "status": "MEASURED",
+      "timeframe": "3d"
+    },
+    {
+      "rows": 427,
+      "non_null_stock_days": 12342686,
+      "non_null_percent": 99.8246,
+      "first_date_available": "2020-01-08",
+      "status": "MEASURED",
+      "timeframe": "4d"
+    },
+    {
+      "rows": 342,
+      "non_null_stock_days": 12337263,
+      "non_null_percent": 99.7808,
+      "first_date_available": "2020-01-09",
+      "status": "MEASURED",
+      "timeframe": "5d"
+    },
+    {
+      "rows": 285,
+      "non_null_stock_days": 12331840,
+      "non_null_percent": 99.7369,
+      "first_date_available": "2020-01-10",
+      "status": "MEASURED",
+      "timeframe": "6d"
+    },
+    {
+      "rows": 244,
+      "non_null_stock_days": 12326415,
+      "non_null_percent": 99.693,
+      "first_date_available": "2020-01-13",
+      "status": "MEASURED",
+      "timeframe": "7d"
+    },
+    {
+      "rows": 213,
+      "non_null_stock_days": 12320988,
+      "non_null_percent": 99.6491,
+      "first_date_available": "2020-01-14",
+      "status": "MEASURED",
+      "timeframe": "8d"
+    },
+    {
+      "rows": 190,
+      "non_null_stock_days": 12315561,
+      "non_null_percent": 99.6052,
+      "first_date_available": "2020-01-15",
+      "status": "MEASURED",
+      "timeframe": "9d"
+    },
+    {
+      "rows": 171,
+      "non_null_stock_days": 12310134,
+      "non_null_percent": 99.5614,
+      "first_date_available": "2020-01-16",
+      "status": "MEASURED",
+      "timeframe": "10d"
+    },
+    {
+      "rows": 155,
+      "non_null_stock_days": 12304705,
+      "non_null_percent": 99.5174,
+      "first_date_available": "2020-01-17",
+      "status": "MEASURED",
+      "timeframe": "11d"
+    },
+    {
+      "rows": 142,
+      "non_null_stock_days": 12299272,
+      "non_null_percent": 99.4735,
+      "first_date_available": "2020-01-21",
+      "status": "MEASURED",
+      "timeframe": "12d"
+    },
+    {
+      "rows": 131,
+      "non_null_stock_days": 12293838,
+      "non_null_percent": 99.4296,
+      "first_date_available": "2020-01-22",
+      "status": "MEASURED",
+      "timeframe": "13d"
+    },
+    {
+      "rows": 122,
+      "non_null_stock_days": 12288402,
+      "non_null_percent": 99.3856,
+      "first_date_available": "2020-01-23",
+      "status": "MEASURED",
+      "timeframe": "14d"
+    },
+    {
+      "rows": 114,
+      "non_null_stock_days": 12282966,
+      "non_null_percent": 99.3416,
+      "first_date_available": "2020-01-24",
+      "status": "MEASURED",
+      "timeframe": "15d"
+    },
+    {
+      "rows": 106,
+      "non_null_stock_days": 12277530,
+      "non_null_percent": 99.2977,
+      "first_date_available": "2020-01-27",
+      "status": "MEASURED",
+      "timeframe": "16d"
+    },
+    {
+      "rows": 100,
+      "non_null_stock_days": 12272094,
+      "non_null_percent": 99.2537,
+      "first_date_available": "2020-01-28",
+      "status": "MEASURED",
+      "timeframe": "17d"
+    },
+    {
+      "rows": 95,
+      "non_null_stock_days": 12266658,
+      "non_null_percent": 99.2097,
+      "first_date_available": "2020-01-29",
+      "status": "MEASURED",
+      "timeframe": "18d"
+    },
+    {
+      "rows": 90,
+      "non_null_stock_days": 12261221,
+      "non_null_percent": 99.1658,
+      "first_date_available": "2020-01-30",
+      "status": "MEASURED",
+      "timeframe": "19d"
+    },
+    {
+      "rows": 85,
+      "non_null_stock_days": 12255784,
+      "non_null_percent": 99.1218,
+      "first_date_available": "2020-01-31",
+      "status": "MEASURED",
+      "timeframe": "20d"
+    },
+    {
+      "rows": 81,
+      "non_null_stock_days": 12250344,
+      "non_null_percent": 99.0778,
+      "first_date_available": "2020-02-03",
+      "status": "MEASURED",
+      "timeframe": "21d"
+    },
+    {
+      "rows": 81,
+      "non_null_stock_days": 12250344,
+      "non_null_percent": 99.0778,
+      "first_date_available": "2020-02-03",
+      "status": "MEASURED",
+      "timeframe": "monthly"
+    }
+  ]
+}

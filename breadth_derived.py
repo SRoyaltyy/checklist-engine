@@ -66,3 +66,72 @@ def derive(frame):
     if pd.to_datetime(out["available_from"]).dt.dayofweek.ge(5).any():
         raise ValueError("derived breadth is visible on a weekend")
     return out
+
+
+def derive_candles(panel, sessions):
+    """Completed buckets of the derived series.
+
+    TRIN is rebuilt from the summed advance, decline, up volume, and down
+    volume. The volume line, McClellan oscillator, and McClellan summation are
+    the last session in the bucket. The 19 and 39 spans stay daily sessions.
+    A bucket with no later session on the calendar is omitted.
+    """
+    from world_timeframes import TIMEFRAMES
+
+    daily = derive(panel)
+    ordered = panel.sort_values("date").reset_index(drop=True)
+    flows = ordered[["date", "advance", "decline", "up_volume", "down_volume"]].copy()
+    flows["date"] = pd.to_datetime(flows["date"])
+    frame = daily.merge(flows, on="date", how="left")
+    calendar = pd.DatetimeIndex(pd.to_datetime(sessions)).sort_values().unique()
+    frame["date"] = pd.to_datetime(frame["date"]).astype("datetime64[ns]")
+    positions = calendar.get_indexer(frame["date"])
+    if (positions < 0).any():
+        raise ValueError("breadth date is outside the session calendar")
+    rows = []
+    for timeframe in TIMEFRAMES:
+        if timeframe == "monthly":
+            key = frame["date"].dt.to_period("M")
+            complete_end = {}
+            for period in key.unique():
+                month_sessions = calendar[calendar.to_period("M") == period]
+                if len(month_sessions) == 0 or month_sessions[-1] >= calendar[-1]:
+                    continue
+                complete_end[period] = month_sessions[-1]
+        else:
+            size = int(timeframe[:-1])
+            key = positions // size
+            complete_end = {}
+            for item in np.unique(key):
+                if (item + 1) * size >= len(calendar):
+                    continue
+                complete_end[item] = calendar[(item + 1) * size - 1]
+        for item, part in frame.groupby(key, sort=True):
+            if item not in complete_end:
+                continue
+            end = pd.Timestamp(complete_end[item])
+            if pd.Timestamp(part["date"].max()) != end:
+                continue
+            advance = float(part["advance"].sum())
+            decline = float(part["decline"].sum())
+            up = float(part["up_volume"].sum())
+            down = float(part["down_volume"].sum())
+            last = part.iloc[-1]
+            rows.append({
+                "timeframe": timeframe,
+                "candle_start": pd.Timestamp(part["date"].min()),
+                "date": end,
+                "available_from": pd.Timestamp(calendar[calendar > end][0]),
+                "ad_volume_line": float(last["ad_volume_line"]),
+                "trin": float(_divide([advance * down], [decline * up])[0]),
+                "mcclellan_oscillator": float(last["mcclellan_oscillator"]),
+                "mcclellan_summation": float(last["mcclellan_summation"]),
+            })
+    out = pd.DataFrame(rows)
+    if out.empty:
+        return out
+    if (out["available_from"] <= out["date"]).any():
+        raise ValueError("derived candle is visible on its source session")
+    if out["available_from"].dt.dayofweek.ge(5).any():
+        raise ValueError("derived candle is visible on a weekend")
+    return out
