@@ -1,0 +1,194 @@
+{
+  "status": "VERIFIED_BREADTH_SOURCE_AND_PUBLIC_DOWNLOAD_ONLY",
+  "actions_run": 40689026569,
+  "actions_producer": "d3a98001ee7c83f1826de6924f00b0ef753735f2",
+  "actions_job": 122818764694,
+  "actual_actions_tests": 7,
+  "actions_artifact_id": 12815669384,
+  "actions_artifact_zip_sha256": "1ca223911f2dbe81f5dfb6c6c5024a624ede1723c1c1e381d92ce98450c4d0dd",
+  "actions_proof_sha256": "33b4313e385dbe3cb797c0dc9b42582c9c7654d46a0f83642aeaed930fe355b1",
+  "published_release": "outside-breadth-stitch-v1",
+  "public_assets": [
+    {
+      "name": "outside_breadth_daily.parquet",
+      "bytes": 143426,
+      "sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0"
+    },
+    {
+      "name": "outside_breadth_candles.parquet",
+      "bytes": 463781,
+      "sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972"
+    },
+    {
+      "name": "OUTSIDE_BREADTH_PROOF.json",
+      "bytes": 3117,
+      "sha256": "815cef50057dfc245f804d5653236ac6a02057ae57bd54330d138649c221317a"
+    }
+  ],
+  "producer_named_release": "outside-breadth-v1-40689026569-1",
+  "producer_named_release_public_readback": "404; successful producer creates a draft and never finalizes it; not used as the public release evidence",
+  "dataset": {
+    "daily_rows": 1712,
+    "native_rows": 6329,
+    "first_date": "2020-01-02",
+    "last_date": "2026-10-23",
+    "accepted_names": 8316,
+    "excluded_during_rebuild": 0,
+    "sma_denominator_first": {
+      "20": 5390,
+      "50": 5335,
+      "200": 5128
+    },
+    "sma_denominator_last": {
+      "20": 8316,
+      "50": 8316,
+      "200": 8316
+    }
+  },
+  "source_inventory": {
+    "fullscan_release_count": 0,
+    "theme_radar_release_count": 0,
+    "old_asset": "data-2020-24-v1/breadth_2020_24.parquet",
+    "old_asset_sha256": "c3656fbc6af5aa9fc5b5e07765e39ed5f76ff1538ca27f524eb1deb85dab74e8",
+    "old_rows": 1258,
+    "old_first": "2020-01-02",
+    "old_last": "2024-12-31",
+    "old_last_value": 0.2482394366197183,
+    "recomputed_sma50_same_day": 0.246993746993747,
+    "identical_series": false
+  },
+  "arithmetic_readback": "All 1712 daily rows and 6329 native rows: SMA20/50/200 fractions, A/D line and ratios, NH-NL and up/down volume formulas verified with exact float64 bits; native stored flow sums and end levels match daily inputs.",
+  "frozen_calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "partial_native_buckets": [
+    {
+      "timeframe": "10d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-18"
+    },
+    {
+      "timeframe": "11d",
+      "date": "2020-01-14",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-30"
+    },
+    {
+      "timeframe": "12d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-16"
+    },
+    {
+      "timeframe": "13d",
+      "date": "2020-01-10",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-23"
+    },
+    {
+      "timeframe": "14d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-12"
+    },
+    {
+      "timeframe": "15d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-11"
+    },
+    {
+      "timeframe": "16d",
+      "date": "2020-01-14",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-20"
+    },
+    {
+      "timeframe": "17d",
+      "date": "2020-01-09",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-16"
+    },
+    {
+      "timeframe": "18d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-06"
+    },
+    {
+      "timeframe": "19d",
+      "date": "2020-01-06",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-09"
+    },
+    {
+      "timeframe": "20d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-04"
+    },
+    {
+      "timeframe": "21d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-03"
+    },
+    {
+      "timeframe": "2d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-31"
+    },
+    {
+      "timeframe": "3d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-30"
+    },
+    {
+      "timeframe": "4d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-27"
+    },
+    {
+      "timeframe": "5d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-26"
+    },
+    {
+      "timeframe": "6d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-24"
+    },
+    {
+      "timeframe": "7d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-23"
+    },
+    {
+      "timeframe": "8d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-20"
+    },
+    {
+      "timeframe": "9d",
+      "date": "2020-01-02",
+      "actual_start": "2020-01-02",
+      "required_start": "2019-12-19"
+    }
+  ],
+  "remaining_native_problem": "First buckets on some integer grids start at 2020-01-02 inside an earlier anchored bucket; they are partial and cannot count toward no-partial-bar acceptance. Pre2020 aggregate warmup is not retained.",
+  "claimed_checklist_boxes": [
+    "1.36",
+    "1.37",
+    "1.151",
+    "1.152"
+  ],
+  "claims_scope": "Existing-source location and publicly downloaded files only; no native/PIT/coverage/full-world acceptance.",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
