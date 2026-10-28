@@ -2,12 +2,6 @@ name: outside-market-daily
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - outside_market.py
-      - ci/outside_market_daily.py
-      - tests/test_outside_market.py
-      - .github/workflows/outside_market_daily.yml
 
 permissions:
   contents: write

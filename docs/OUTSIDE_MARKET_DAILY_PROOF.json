@@ -1,0 +1,406 @@
+{
+  "block": "outside_market_daily",
+  "release": "light-daily-box-v1-20261028",
+  "source": "yfinance 1.7.0 (Yahoo), auto_adjust=False; columns date,open,high,low,close,adj_close,volume; reference calendar = SPY trading days; IBIT coverage measured from its listing date; VIX-family indexes have no volume (0)",
+  "window_start": "2020-01-02",
+  "as_of": "2026-10-27",
+  "symbols_requested": 43,
+  "symbols_passed": 43,
+  "excluded": [],
+  "manifest_coverage": [
+    {
+      "symbol": "SPY",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "7613de2e40c550a9015e7a76a05475648c7dba94631193ee1cc408b777889abe"
+    },
+    {
+      "symbol": "QQQ",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "f624e3c4a02cafb1deb2b87188628d354a05c13320df2caa88c1229c5cef51fb"
+    },
+    {
+      "symbol": "IWM",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "1d1b1e4df46d9264812e9d91a3d32fad2a0e7b33ce8358d066b1dad563242eb7"
+    },
+    {
+      "symbol": "DIA",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "8e8372e4e7a1839573d1c88f96ca251ed971c8397ab712b3d93ef7169dd57d2b"
+    },
+    {
+      "symbol": "RSP",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "3294b9948c1ccc8558da6742171c739ddc1db5e263bb31a86c94036fe70278fd"
+    },
+    {
+      "symbol": "XLB",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "ff7403278bc631d6afbf79ac6bbe5d5678ffff00aa8bbe426b78b0cb83819470"
+    },
+    {
+      "symbol": "XLC",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "0ea0a3913791658e9ce8c736eb5b66de9eede03bc7854c7eb27dbf7198f0f542"
+    },
+    {
+      "symbol": "XLE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "b065080b40dfdc147552815a5148568ec818b6ba98dedfae8a5e20624134d358"
+    },
+    {
+      "symbol": "XLF",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "4866f085e7b0b0c9e3a4be322f57dab98b2ee6e2d878fa30b7002d56a1399a02"
+    },
+    {
+      "symbol": "XLI",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "6cc6582f86459eafa698d2093045c2869dfee10b2b1a0763a1d0b435f8e25524"
+    },
+    {
+      "symbol": "XLK",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "3a63b5340272d3f67db81706a153a6a696bb4c20edb48c77d07f7f18f84b710e"
+    },
+    {
+      "symbol": "XLP",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "b1f7324f304e56bd55c79e48b359a52802310667a3c810634d993fc18eda453c"
+    },
+    {
+      "symbol": "XLRE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "9a7cdc6da7655334e109a77380bf12f0f70267e319eecadd50328992c4bb9e62"
+    },
+    {
+      "symbol": "XLU",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "6ad3b0bcfbc76b6d74556f72df5c8d93e03e5f22170d982c26078f2d8b60bbbf"
+    },
+    {
+      "symbol": "XLV",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "0957786dafa656e4d9c98480be39e74cb569bddab7dbdeb19a082d3710560891"
+    },
+    {
+      "symbol": "XLY",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "05667203da9a616f5391d7e3ec42eba9a28a3ecc8da1bf8acfd8b31fa5644b40"
+    },
+    {
+      "symbol": "KBE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "7855b99ba2a8566488d902b2ae1165335f5516e9a9d01a31d5403c8f35adfd0a"
+    },
+    {
+      "symbol": "KRE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "d4b9d8f6b62687321f6346d3b5b3f859955924c24749807f203f2b16e4a12c6f"
+    },
+    {
+      "symbol": "KCE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "362f6b9dc667a5e5dab62834133668e2dd3e64194128209ce93d83b9695407d6"
+    },
+    {
+      "symbol": "KIE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "ba20741639f0dae00534282ff742a5d435fd8616e780e034aff45a71e368fa7b"
+    },
+    {
+      "symbol": "XAR",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "3e16664a53fad26bb1e4ef272fd44dd6314682a959778474e4e2a726f07946b8"
+    },
+    {
+      "symbol": "XTN",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "4f458f634d247c9949d9f5a47cacd5750d42ed4bc17291f89155a7a99491d970"
+    },
+    {
+      "symbol": "XBI",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "fd75efb6acdc772d3f1ffd08fc8d9f26284c190922b9b8846aafd579caf44fbb"
+    },
+    {
+      "symbol": "XPH",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "e55eb19efffb5cc17eab6105c2bc67e57dd04f9bd7ba8fce1902d32dadc06998"
+    },
+    {
+      "symbol": "XHE",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "75d5c1b69ccdb2290d745e310f70b0040b9012534db2db3f8d0224d079ef3aa2"
+    },
+    {
+      "symbol": "XHS",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "ff8bdefe260d8dedc4d063c6a2e4f6545ec7ac3f5024b1d4cf3c716ff0207545"
+    },
+    {
+      "symbol": "XOP",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "62946e562f9e949bf8e40ded00d821cfe455cc56ef492ab38cdbfce1974990ca"
+    },
+    {
+      "symbol": "XES",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "2c7009044f881e00e850892bed03095374ef8f6a4922dc574c80da7ce82897ff"
+    },
+    {
+      "symbol": "XME",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "8a06b29ce7163db1e3c7ffd1425414b6fb194915b560fa66f0dee2b1e680fa07"
+    },
+    {
+      "symbol": "XRT",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "96c4fb72de14b7c41d7f4d17a689c87b70c49612cfe9f453de42eb2e22e2d790"
+    },
+    {
+      "symbol": "XHB",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "fb5569b2e22b0a273b663adaf493b36b811cf6cec603c66044b585401c18e05d"
+    },
+    {
+      "symbol": "XSD",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "a3e58238399f9ffc4e4cf740952c731fb660879c450d66115de25b05fffc170e"
+    },
+    {
+      "symbol": "XSW",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "f5f06168fc73bd8bd44af214ae91644cce2522487f50d9c19877533049c410b0"
+    },
+    {
+      "symbol": "XTL",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "e8326d2377a9dd60dd6a4f8cb94d034eb5e0d0e9a75361f59ad84db99bcec508"
+    },
+    {
+      "symbol": "TLT",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "4d378924796487278cb2a1f695c79b656d35b279ee5fa45213cf2e2e53ed0e2b"
+    },
+    {
+      "symbol": "HYG",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "8b50a849bf56df07c175cede9ff9ef1fd8705e0aa01c1307202f6b62b0e89254"
+    },
+    {
+      "symbol": "LQD",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "43b983813d4cc5f0b32ce1f6677da4b0370be2a2ed404e97808f7f908de167fc"
+    },
+    {
+      "symbol": "UUP",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "bbeca3e0a0d8e7d0d072d4228b4add1936cc335107464982851843120f67ef9e"
+    },
+    {
+      "symbol": "GLD",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "b72ad0b085540ca1fb10bf81513f1ad2c916599578a36e053fe87c3b53665f2a"
+    },
+    {
+      "symbol": "CPER",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "280852b3a8f28591e3b87b4fafcff12fb9219872777a0f0a63efa19935392761"
+    },
+    {
+      "symbol": "USO",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "534896950e7da2a7172059f45b46837f486fae5052064eac6af0fb537e6749d5"
+    },
+    {
+      "symbol": "VXX",
+      "rows": 1714,
+      "first": "2020-01-02",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "860ddb8e07e5e2d69f17fbdcddce5d1023fa438b2a2577ec0830eaf2ce956e6d"
+    },
+    {
+      "symbol": "IBIT",
+      "rows": 701,
+      "first": "2024-01-11",
+      "last": "2026-10-27",
+      "coverage": 1.0,
+      "status": "PASS",
+      "sha256": "b3a6714b427e1dbc2bdd9dc19a90a4efeb3b20f4d38d2156f6a82dd291035ed2"
+    }
+  ],
+  "storage": {
+    "rows": 72689,
+    "sha256": "2acf73e80680df4e70d9225cc8a30d856d1c2139cbb2159ca628b9a430addf68",
+    "encoding": "float64_byte_stream_split_volume_int64_delta_zstd19"
+  },
+  "lookahead": "session date is that close; available_from is the next SPY session; rows after as_of are dropped",
+  "price_basis": "published open/high/low/close plus adj_close and volume; nothing recomputed"
+}
