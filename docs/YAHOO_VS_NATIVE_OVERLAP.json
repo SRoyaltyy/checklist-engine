@@ -1,0 +1,209 @@
+{
+  "native_release": "etf-native-context-v1-40484930003-1",
+  "yahoo_release": "light-daily-box-v1-20261028",
+  "overlap_rule": "same session date, native close versus Yahoo close and Yahoo adj_close",
+  "symbols": [
+    {
+      "symbol": "SPY",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 26,
+      "adj_close_max_rel": 0.09073886289573814
+    },
+    {
+      "symbol": "QQQ",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.038340999537054735
+    },
+    {
+      "symbol": "IWM",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 29,
+      "adj_close_max_rel": 0.07907897255180946
+    },
+    {
+      "symbol": "DIA",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 6,
+      "adj_close_max_rel": 0.11397416932132055
+    },
+    {
+      "symbol": "RSP",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.10986251087945681
+    },
+    {
+      "symbol": "XLB",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.12542373229318995
+    },
+    {
+      "symbol": "XLC",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.06464499308107714
+    },
+    {
+      "symbol": "XLE",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.23896253197821155
+    },
+    {
+      "symbol": "XLF",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.11681715386844331
+    },
+    {
+      "symbol": "XLI",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.09932375783050072
+    },
+    {
+      "symbol": "XLK",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.053649271476898935
+    },
+    {
+      "symbol": "XLP",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.16323733235930782
+    },
+    {
+      "symbol": "XLRE",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.20228726025449495
+    },
+    {
+      "symbol": "XLU",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.18797165812094724
+    },
+    {
+      "symbol": "XLV",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.10358969094297096
+    },
+    {
+      "symbol": "XLY",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 25,
+      "adj_close_max_rel": 0.055967200762800894
+    },
+    {
+      "symbol": "TLT",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 17,
+      "adj_close_max_rel": 0.18580741142123958
+    },
+    {
+      "symbol": "HYG",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 17,
+      "adj_close_max_rel": 0.30489477117083574
+    },
+    {
+      "symbol": "LQD",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 17,
+      "adj_close_max_rel": 0.2190080645189773
+    },
+    {
+      "symbol": "UUP",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 211,
+      "adj_close_max_rel": 0.1378992548703536
+    },
+    {
+      "symbol": "GLD",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 1712,
+      "adj_close_max_rel": 0.0
+    },
+    {
+      "symbol": "CPER",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 1712,
+      "adj_close_max_rel": 0.0
+    },
+    {
+      "symbol": "USO",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 1712,
+      "adj_close_max_rel": 0.0
+    },
+    {
+      "symbol": "VXX",
+      "overlap": 1712,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 1712,
+      "adj_close_max_rel": 0.0
+    },
+    {
+      "symbol": "IBIT",
+      "overlap": 699,
+      "raw_close_mismatch_above_1e4": 0,
+      "raw_close_max_rel": 0.0,
+      "adj_close_within_1bp": 699,
+      "adj_close_max_rel": 0.0
+    }
+  ],
+  "raw_close_mismatches": 0,
+  "symbols_compared": 25
+}

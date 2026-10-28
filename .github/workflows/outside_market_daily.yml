@@ -1,0 +1,33 @@
+name: codex-tier1-etf-released-measurement
+on:
+  push:
+    branches: [codex/tier1-etf-data]
+    paths: ['ci/OUTSIDE_MARKET_RELEASED_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: outside-market-released-measurement
+  cancel-in-progress: false
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_market_storage.py tests/test_outside_market.py tests/test_light_box_market.py tests/test_outside_market_released.py tests/test_world_context_native.py tests/test_world_context_store.py -q
+      - run: python -m ci.outside_market_released --directory released-market
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: released-market-measurement-evidence
+          path: released-market/
+          if-no-files-found: ignore

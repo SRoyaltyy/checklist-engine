@@ -1,0 +1,155 @@
+{
+  "status": "ACTUAL_CAPTURE_DIFFERENCES_NOT_SOURCE_ACCEPTANCE",
+  "run": 40663234466,
+  "producer": "345f25958237e0067bc38ec7a90be0f5737dde5e",
+  "report_sha256": "3eae778f6800e91d9077820421b2634fb01dae089cb58f2e2222873fe1acfdd1",
+  "linux_tests": 80,
+  "failed_reason": "Nine volume differences in the later light-daily capture; all overlapping OHLC prices match bit-exactly",
+  "differences": [
+    {
+      "ticker": "GLD",
+      "date": "2026-10-23",
+      "native_volume": 10097500.0,
+      "light_volume": 10120200.0
+    },
+    {
+      "ticker": "IBIT",
+      "date": "2026-10-23",
+      "native_volume": 23077600.0,
+      "light_volume": 23406600.0
+    },
+    {
+      "ticker": "IWM",
+      "date": "2026-10-23",
+      "native_volume": 20768600.0,
+      "light_volume": 20785700.0
+    },
+    {
+      "ticker": "QQQ",
+      "date": "2026-10-23",
+      "native_volume": 30138000.0,
+      "light_volume": 30224700.0
+    },
+    {
+      "ticker": "SPY",
+      "date": "2026-10-23",
+      "native_volume": 33377700.0,
+      "light_volume": 33423200.0
+    },
+    {
+      "ticker": "TLT",
+      "date": "2026-10-23",
+      "native_volume": 35120900.0,
+      "light_volume": 35149600.0
+    },
+    {
+      "ticker": "USO",
+      "date": "2026-10-23",
+      "native_volume": 6374300.0,
+      "light_volume": 6413900.0
+    },
+    {
+      "ticker": "VXX",
+      "date": "2026-10-23",
+      "native_volume": 16157700.0,
+      "light_volume": 16171200.0
+    },
+    {
+      "ticker": "XLE",
+      "date": "2026-10-23",
+      "native_volume": 38643600.0,
+      "light_volume": 38656200.0
+    }
+  ],
+  "prefix_checks": [
+    {
+      "cut": "2023-01-03",
+      "native_rows": 116508,
+      "columns": [
+        "ticker",
+        "timeframe",
+        "candle_start",
+        "date",
+        "available_from",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "timeframes": [
+        "10d",
+        "11d",
+        "12d",
+        "13d",
+        "14d",
+        "15d",
+        "16d",
+        "17d",
+        "18d",
+        "19d",
+        "1d",
+        "20d",
+        "21d",
+        "2d",
+        "3d",
+        "4d",
+        "5d",
+        "6d",
+        "7d",
+        "8d",
+        "9d",
+        "monthly"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "native_rows": 195385,
+      "columns": [
+        "ticker",
+        "timeframe",
+        "candle_start",
+        "date",
+        "available_from",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "timeframes": [
+        "10d",
+        "11d",
+        "12d",
+        "13d",
+        "14d",
+        "15d",
+        "16d",
+        "17d",
+        "18d",
+        "19d",
+        "1d",
+        "20d",
+        "21d",
+        "2d",
+        "3d",
+        "4d",
+        "5d",
+        "6d",
+        "7d",
+        "8d",
+        "9d",
+        "monthly"
+      ],
+      "mismatches": 0
+    }
+  ],
+  "frozen_calendar_anchor": "1990-01-02",
+  "post_listing_missing_sessions": 0,
+  "v3_policy": "Preserve frozen native OHLCV wherever available; retain every light-daily OHLCV value separately as vendor_* and adj_close. Later or absent native sessions and the 18 industry ETFs use light-daily values. Compare the canonical view back to all native source fields exactly.",
+  "historical_volume_vintage_gate": "NOT_PROVEN; differences between captures do not establish first-publication or settlement timing",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "protected_world_run_untouched": 40621517496
+}
