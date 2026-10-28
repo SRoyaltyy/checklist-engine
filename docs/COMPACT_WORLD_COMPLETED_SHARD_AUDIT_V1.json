@@ -4,14 +4,14 @@
   "producer_commit": "49043dd375387bddad0d446c56f942f0711b28ed",
   "plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
   "audit_code_sha256": "a9d401c1c4519b731e580075488df51b9a8c80b1e1035b4f784c55d77d184a9e",
-  "inventory_snapshot_sha256": "ad37b5310c5bb6efd10327557baddeae29b5e2a32516f216d201840ee4f33c0f",
+  "inventory_snapshot_sha256": "f776a6bd6c3c351d487f3cd2f9504c95828b4c69a5e6eaae9d6b84d16d94275d",
   "source_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
   "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
   "shared_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
   "original_universe": 8727,
   "source_accepted_tickers": 8316,
   "source_excluded_tickers": 411,
-  "audited_shards": 26,
+  "audited_shards": 28,
   "planned_shards": 173,
   "unaudited_shards": [
     22,
@@ -23,10 +23,8 @@
     31,
     33,
     34,
-    35,
     36,
     37,
-    38,
     39,
     40,
     41,
@@ -162,11 +160,11 @@
     171,
     172
   ],
-  "completed_tickers": 1236,
+  "completed_tickers": 1336,
   "build_excluded_tickers": 2,
-  "confirmed_completed_percent_original": 14.162942591955998,
-  "payload_bytes": 3131869384,
-  "release_bytes_including_checkpoints": 3160991393,
+  "confirmed_completed_percent_original": 15.308811733700011,
+  "payload_bytes": 3388324197,
+  "release_bytes_including_checkpoints": 3419855720,
   "exclusions": [
     {
       "ticker": "EQLT",
@@ -420,6 +418,24 @@
       "excluded": 0,
       "payload_bytes": 42119430,
       "release_bytes": 42301279
+    },
+    {
+      "index": 35,
+      "release": "compact-world-build-v1-40621517496-1-035",
+      "summary_sha256": "9e097daa417a4b79f8dd53b06bc393d8aed939a35aa4409b434558333154c20f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125292576,
+      "release_bytes": 126497411
+    },
+    {
+      "index": 38,
+      "release": "compact-world-build-v1-40621517496-1-038",
+      "summary_sha256": "895aab076322924e8ed0830caf36533a7c6d33527b6eae909a9797da526c0a33",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131162237,
+      "release_bytes": 132366916
     }
   ],
   "world_gate": "NOT_PROVEN",
