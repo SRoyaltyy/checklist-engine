@@ -1,0 +1,38 @@
+name: publish-committed-calendar
+
+on:
+  push:
+    branches: [cursor/outside-event-calendar-c9e9]
+    paths: ['.github/workflows/publish_committed_calendar.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-committed-calendar
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload the already built calendar files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="outside-event-calendar-v1"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "release already exists"
+            exit 1
+          fi
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes "Committed event-calendar files. This job does not rebuild them." \
+            docs/outside_event_calendar.parquet \
+            docs/outside_event_calendar_candles.parquet \
+            docs/OUTSIDE_EVENT_CALENDAR_PROOF.json
