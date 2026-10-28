@@ -1,0 +1,594 @@
+{
+  "format": "FACTORED_NATIVE_WORLD_CONTEXT_V1",
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "stock_status_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "stock_day_weight_asset": "ACCEPTED_PRICE_STOCK_DAYS.csv",
+  "stock_day_weight_sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "calendar_release": "native-price-inputs-v1-40336250454-1",
+  "calendar_asset": "market_sessions.parquet",
+  "original_universe": 8727,
+  "accepted_stocks": 8316,
+  "excluded_stocks": 411,
+  "query_stock_days": 12364370,
+  "source_commit": "78dfd666e41e325aa4e81dd38d93088f460c9c92",
+  "factors": [
+    {
+      "family": "volatility_term",
+      "timeframe": "1d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_1d.parquet",
+      "sha256": "b84f3d3aa2e5198209cb59ba750ce38fbcd25176347df365bf424ccbf9a42c6e",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 9270,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_1d.parquet",
+      "source_sha256": "edabb52352daf8e60310181ca5aa32bbb12867c5d1091eed2755a2f97e5e81c8",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "2d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_2d.parquet",
+      "sha256": "88276ade22c4f217a4353831f51e9bb76405220c6418e850806048008ef93acb",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 4635,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_2d.parquet",
+      "source_sha256": "2a89f5397b344af78dd6228d51767fb9b2635a04957813233b12261b8b515c6a",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "3d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_3d.parquet",
+      "sha256": "3ee0ad596ee78e041ee1788f5d726262fec16c836f98d48457cb620c41fc79d5",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 3090,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_3d.parquet",
+      "source_sha256": "3a572f4ade0471f312a286cd57543c9e74d2a07187647dd692636a58704f0208",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "4d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_4d.parquet",
+      "sha256": "8fc77c2dcd4146ae5879abc8ea3fc6e5ebc9b28bf2f499d7ef2b13e4c102491a",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 2317,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_4d.parquet",
+      "source_sha256": "f22636b552b8556cc8f242e1c3ebd589fe99a813fb5cedab04f46dcb5f80ab0d",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "5d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_5d.parquet",
+      "sha256": "31610b77a9cd484aa840c57772145dc2bd0d56c2c489a93aa97abb14cef15f52",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 1854,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_5d.parquet",
+      "source_sha256": "2a476a2cfa256f4f737bf4b27bdf08db3d2e568b03c067b9393fc42acf4fde91",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "6d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_6d.parquet",
+      "sha256": "129c630464f85c7c15eee76a7897bd572cc07b74ea479b8ef55d0fcc14eb6e17",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 1545,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_6d.parquet",
+      "source_sha256": "9f7774d9610340a1445f48d71d4731e695f9eac95ce464e1b1544d209e151fe7",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "7d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_7d.parquet",
+      "sha256": "8d45c3f239b3835f6de92e73d7c6a26812f46993794d4e39e6bb5f102a163df4",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 1324,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_7d.parquet",
+      "source_sha256": "9372c4bcdf94fb1550aa0a92b0be53b743bb8676efa1681e6f6f55ee00db1c1c",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "8d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_8d.parquet",
+      "sha256": "a73c176b8b6faf5e2c7abfdf637738366b13510d5f44b52ad7d12f4d8cf7dbd2",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 1158,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_8d.parquet",
+      "source_sha256": "10dc7a9031880967fa70e8eb0e4965a9f305a5773d21db714f0b8586476032c7",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "9d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_9d.parquet",
+      "sha256": "4bc85fc55778b5a92a87bffba17914739cecb77c211bec13b2d965a4e796c6df",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 1030,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_9d.parquet",
+      "source_sha256": "13a15047586b34db543d8a72df98d0ab13443e7a4acf06b4575f1802a8ae9be9",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "10d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_10d.parquet",
+      "sha256": "902a8ba53f3c626afbd1428208e0604982a2d089d692e61d9cf141a4fa090690",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 927,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_10d.parquet",
+      "source_sha256": "483fab58421f33f1935d8500439fa8091c42fd67936131447f2e776620a039a5",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "11d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_11d.parquet",
+      "sha256": "009e673544b23f49de6486bf977b1075adbe8026d23611836ab15ed41541fa06",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 842,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_11d.parquet",
+      "source_sha256": "9edbea1196dd5f8ceaeeba899412d19f56208afaad820dd37c3c4d7c4340957d",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "12d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_12d.parquet",
+      "sha256": "e2d90fe0a4db0137e36f308f1c35c7a3ede46b6c0cac127178f76d06362fa382",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 772,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_12d.parquet",
+      "source_sha256": "13e2593474e109cf231206a02f9c62020ff9c77bef795857029fa3e497a461ff",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "13d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_13d.parquet",
+      "sha256": "b9cf7da24e8086025b591a08775e61e30573814f1c8f1b2efd322adf9335dfa0",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 713,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_13d.parquet",
+      "source_sha256": "56b0ccd1515eaa68278fa348a859db7eb25c46d6c78c7fc1476e922330f72d60",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "14d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_14d.parquet",
+      "sha256": "4579b574224ea0f98266eac1f39c3fbeae33edd65ebd5d13767f53f5045e4420",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 662,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_14d.parquet",
+      "source_sha256": "356c29bcf772ce35a7332bcfd81ff6b102f91e4cce7c0332ffbd0da1573171f6",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "15d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_15d.parquet",
+      "sha256": "ae4d6d337eb2312b44942be329895a044878fad4a62080db003bf40a76f9720a",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 618,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_15d.parquet",
+      "source_sha256": "eb2eea7117523abac8b74592cb7f5a736a90b0b94f81fe7bed1271244b505c7e",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "16d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_16d.parquet",
+      "sha256": "a35511e2acc54ba724316e19f06fc3897a62b3b87c53b2f0e54277820aeeffd6",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 579,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_16d.parquet",
+      "source_sha256": "02675b07ebdd9ee0770d7b1de849f31fa38c391fec6bd2059422805075551dc9",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "17d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_17d.parquet",
+      "sha256": "fc7d3c0bce6d70d1946da3a4bc24d77b4df1cef9ddc3f5888099fb2f2411b2ce",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 545,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_17d.parquet",
+      "source_sha256": "dba38debc9b81615648f6a5999d0eb4fc3163088bc11e25e84358a95c25c457c",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "18d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_18d.parquet",
+      "sha256": "59b0173440663491481747992b2ce548694e8b58efc7cc4a8d1c39d59a849e87",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 515,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_18d.parquet",
+      "source_sha256": "e1490c4f04f48bb6f64836f255140d16acf1c552feb2128c71771d34e4388474",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "19d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_19d.parquet",
+      "sha256": "efb9b0376495ba959a207e5c1b8e2924de96409b413b3445de12caece55a2fb0",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 487,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_19d.parquet",
+      "source_sha256": "cb75a35da02f928e0d4193816ab607a107b93c7b62282c7a3666911827b786c7",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "20d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_20d.parquet",
+      "sha256": "e842e48d8b448481fcfa2f9272cef5ec6da156a623bb57cee7eba8fe79aaada7",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 463,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_20d.parquet",
+      "source_sha256": "5588c033fb348cc5e02138b6aede082e23d86af3961768e18adbc1f097c7b276",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "21d",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_21d.parquet",
+      "sha256": "1a22b37e609aabf2a16ad60a434331ce4ac6494eda5cff372cafd808e2104353",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 441,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_21d.parquet",
+      "source_sha256": "3ca42ffd895991921419f302b87b26db9aaf79c14db1a08e446b82431ce7b41e",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    },
+    {
+      "family": "volatility_term",
+      "timeframe": "monthly",
+      "release": "volatility-term-native-v1-40667837889-1",
+      "asset": "volatility_term_monthly.parquet",
+      "sha256": "206a35343c932c832e6da907d513278645bf7053c7eaa7230057ea0ca9fb53bb",
+      "columns": [
+        "vol_vix_over_vix3m",
+        "vol_vix9d_over_vix",
+        "vol_vix9d_over_vix3m",
+        "vol_vix3m_minus_vix",
+        "vol_vix_minus_vix9d"
+      ],
+      "numeric_dtypes": {
+        "vol_vix_over_vix3m": "float64",
+        "vol_vix9d_over_vix": "float64",
+        "vol_vix9d_over_vix3m": "float64",
+        "vol_vix3m_minus_vix": "float64",
+        "vol_vix_minus_vix9d": "float64"
+      },
+      "native_rows": 441,
+      "source_release": "shared-context-v2-40636949344-1",
+      "source_asset": "shared_context_monthly.parquet",
+      "source_sha256": "30add875a8c57d1b352061333d878711ada3708f410a38cae5a5af28d34bcae9",
+      "source_rule": "Ratios of matching completed CBOE candle closes; explicit missing interval rows preserved; source availability unchanged"
+    }
+  ],
+  "reader": "world_context_store.context_row_view",
+  "reader_sha256": "06c35fa2816c9faebbc96733f2e2255b58b2baa031cfb2df21fb6de65f1c0e45",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "scope": "Five existing volatility comparisons only; no new data type or question"
+}
