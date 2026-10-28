@@ -198,6 +198,16 @@
         "divergence_flat_vs_fall_1d"
       ],
       "max_abs_error": 0.0
-    }
+    },
+    "committed_column_file": "docs/compare_spy_corr5.parquet",
+    "committed_columns": [
+      "ticker",
+      "date",
+      "available_from",
+      "corr_5d"
+    ],
+    "committed_column_sha256": "49a4ad58dd73505bc7246612d900157d89bf4b87a6f88676b911744d0c854878",
+    "committed_column_bytes": 86545375,
+    "committed_encoding": "ticker dictionary, date and available_from delta, corr_5d byte-stream-split, zstd 19"
   }
 }
