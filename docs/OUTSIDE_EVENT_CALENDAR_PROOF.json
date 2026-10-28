@@ -1,0 +1,197 @@
+{
+  "block": "outside_event_calendar",
+  "as_of": "2026-10-27",
+  "fomc_sources": [
+    "https://www.federalreserve.gov/monetarypolicy/fomchistorical2020.htm",
+    "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  ],
+  "cpi_source": "first ALFRED vintage of CPIAUCSL in fred-structured-v3-40266650669-1",
+  "jobs_source": "first ALFRED vintage of UNRATE in fred-structured-v3-40266650669-1",
+  "opex_rule": "third Friday, or the previous NYSE session when that Friday is closed",
+  "turn_of_month_rule": "the last session of the month or one of the first three sessions",
+  "lookahead": "flags use the published calendar or the vintage date; no price column is read; a release after as_of is not flagged",
+  "fomc_rows": 133,
+  "cpi_releases": 440,
+  "jobs_releases": 440,
+  "summary": {
+    "series_passed": 18,
+    "excluded": []
+  },
+  "storage": {
+    "rows": 1714,
+    "sha256": "6ea053110045a1b45ac490cea72ccc1e1ab963eb9a19754d75f1073039f1da6c",
+    "encoding": "bool_bit_packed_and_int16_delta_zstd19"
+  },
+  "series": [
+    {
+      "series": "is_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_fomc_notation",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_month_start",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_month_end",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_turn_of_month",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "is_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "day_of_week",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "day_of_month",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_to_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.5916,
+      "rows": 1707,
+      "expected_sessions": 1714,
+      "missing_sessions": 7
+    },
+    {
+      "series": "days_since_opex",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.3582,
+      "rows": 1703,
+      "expected_sessions": 1714,
+      "missing_sessions": 11
+    },
+    {
+      "series": "days_to_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 100.0,
+      "rows": 1714,
+      "expected_sessions": 1714,
+      "missing_sessions": 0
+    },
+    {
+      "series": "days_since_fomc",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.0082,
+      "rows": 1697,
+      "expected_sessions": 1714,
+      "missing_sessions": 17
+    },
+    {
+      "series": "days_to_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.4749,
+      "rows": 1705,
+      "expected_sessions": 1714,
+      "missing_sessions": 9
+    },
+    {
+      "series": "days_since_cpi",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.5333,
+      "rows": 1706,
+      "expected_sessions": 1714,
+      "missing_sessions": 8
+    },
+    {
+      "series": "days_to_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.0082,
+      "rows": 1697,
+      "expected_sessions": 1714,
+      "missing_sessions": 17
+    },
+    {
+      "series": "days_since_jobs",
+      "status": "PASS",
+      "reason": "",
+      "coverage_percent": 99.6499,
+      "rows": 1708,
+      "expected_sessions": 1714,
+      "missing_sessions": 6
+    }
+  ],
+  "counts": {
+    "is_fomc": 109,
+    "is_fomc_notation": 5,
+    "is_cpi": 81,
+    "is_jobs": 81,
+    "is_month_end": 82,
+    "is_opex": 82
+  }
+}

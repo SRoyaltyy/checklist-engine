@@ -2,12 +2,6 @@ name: outside-event-calendar
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - outside_calendar.py
-      - ci/outside_event_calendar.py
-      - tests/test_outside_calendar.py
-      - .github/workflows/outside_event_calendar.yml
 
 permissions:
   contents: write
