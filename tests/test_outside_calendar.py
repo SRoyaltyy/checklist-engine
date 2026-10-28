@@ -163,6 +163,16 @@ def test_earlier_as_of_preserves_calendar_candles_already_available():
         assert merged[column].equals(merged[column + "_later"])
 
 
+def test_days_to_fomc_counts_a_published_meeting_after_as_of():
+    sessions = pd.bdate_range("2024-01-02", periods=80)
+    fomc = pd.DataFrame({"date": [pd.Timestamp("2024-03-20")], "kind": ["meeting"]})
+    panel = cal.build_calendar(sessions, fomc, [], [], "2024-01-31")
+    row = panel.set_index("date").loc[pd.Timestamp("2024-01-31")]
+    assert not bool(row.is_fomc)
+    assert row.days_to_fomc > 0
+    assert pd.isna(row.days_since_fomc)
+
+
 def test_days_to_opex_counts_the_next_third_friday_after_as_of():
     sessions = pd.bdate_range("2024-01-02", periods=80)
     panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), [], [], "2024-01-31")

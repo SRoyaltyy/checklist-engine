@@ -251,5 +251,6 @@
       "encoding": "bool_bit_packed_and_int16_delta_zstd19"
     }
   },
-  "opex_forward": "days_to_opex uses the third-Friday rule on the session calendar past as_of. The is_opex flag is not set on a session after as_of."
+  "opex_forward": "days_to_opex uses the third-Friday rule on the session calendar past as_of. The is_opex flag is not set on a session after as_of.",
+  "fomc_forward": "days_to_fomc counts meetings on the published Fed calendar even after as_of. is_fomc and days_since_fomc use only meetings that have occurred."
 }

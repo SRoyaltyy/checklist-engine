@@ -209,12 +209,14 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of):
     as_of = pd.Timestamp(as_of)
     fomc = fomc.copy()
     fomc["date"] = pd.to_datetime(fomc["date"])
-    meetings = session_or_next(fomc.loc[fomc.kind == "meeting", "date"], sessions)
+    published_meetings = session_or_next(fomc.loc[fomc.kind == "meeting", "date"], sessions)
     notations = session_or_next(fomc.loc[fomc.kind == "notation", "date"], sessions)
     cpi = session_or_next(pd.to_datetime(cpi_dates), sessions)
     jobs = session_or_next(pd.to_datetime(jobs_dates), sessions)
-    # A release after as_of has not happened. Do not flag it and do not count toward it.
-    meetings = meetings[meetings <= as_of]
+    # The Fed page lists meetings before they happen. Count toward those.
+    # The flag and the days-since count stay on meetings that have already occurred.
+    # CPI and jobs dates come from a vintage, so a release after as_of is omitted.
+    meetings = published_meetings[published_meetings <= as_of]
     notations = notations[notations <= as_of]
     cpi = cpi[cpi <= as_of]
     jobs = jobs[jobs <= as_of]
@@ -240,8 +242,10 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of):
     since_opex = pd.Series(_distance(sessions, opex, False), index=sessions)
     frame["days_to_opex"] = frame["date"].map(to_opex).to_numpy()
     frame["days_since_opex"] = frame["date"].map(since_opex).to_numpy()
-    frame["days_to_fomc"] = _distance(rows, meetings, True)
-    frame["days_since_fomc"] = _distance(rows, meetings, False)
+    to_fomc = pd.Series(_distance(sessions, published_meetings, True), index=sessions)
+    since_fomc = pd.Series(_distance(sessions, meetings, False), index=sessions)
+    frame["days_to_fomc"] = frame["date"].map(to_fomc).to_numpy()
+    frame["days_since_fomc"] = frame["date"].map(since_fomc).to_numpy()
     frame["days_to_cpi"] = _distance(rows, cpi, True)
     frame["days_since_cpi"] = _distance(rows, cpi, False)
     frame["days_to_jobs"] = _distance(rows, jobs, True)
