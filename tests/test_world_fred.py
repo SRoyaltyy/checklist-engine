@@ -27,6 +27,16 @@ def test_future_observation_period_is_not_visible_early():
     assert compile_timelines(frame)=={}
 
 
+def test_macro_values_retain_float64_precision_without_overflow_or_rounding():
+    frame=pd.DataFrame(dict(series=['PRECISE']*2,obs_date=pd.to_datetime(['2020-01-01']*2),
+        vintage_date=pd.to_datetime(['2020-01-02','2020-01-03']),value=[1.0000000001,1e39]))
+    out=columns(pd.to_datetime(['2020-01-02','2020-01-03','2020-01-06']),compile_timelines(frame))
+    assert out['fred_precise'][1]==1.0000000001 and out['fred_precise'][1]!=1.
+    assert out['fred_precise'][2]==1e39 and np.isfinite(out['fred_precise'][2])
+    assert out['fred_precise_first_release'][2]==1.0000000001
+    assert all(values.dtype==np.float64 for values in out.values())
+
+
 def test_macro_change_window_counts_native_candles(monkeypatch):
     import world_timeframes as tf
     monkeypatch.setattr(tf,'TIMEFRAMES',('2d',))

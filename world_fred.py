@@ -32,8 +32,8 @@ def columns(dates,timelines):
     for sid,right in timelines.items():
         prefix='fred_'+sid.lower()
         joined=pd.merge_asof(query,right,left_on='date',right_on='vintage_date',direction='backward',allow_exact_matches=False)
-        out[prefix]=joined.value.to_numpy(np.float32)
-        out[prefix+'_first_release']=joined.first_release.to_numpy(np.float32)
-        out[prefix+'_odays']=(joined.date-joined.obs_date).dt.days.to_numpy(np.float32)
-        out[prefix+'_vintage_days']=(joined.date-joined.vintage_date).dt.days.to_numpy(np.float32)
+        out[prefix]=joined.value.to_numpy(np.float64)
+        out[prefix+'_first_release']=joined.first_release.to_numpy(np.float64)
+        out[prefix+'_odays']=(joined.date-joined.obs_date).dt.days.to_numpy(np.float64)
+        out[prefix+'_vintage_days']=(joined.date-joined.vintage_date).dt.days.to_numpy(np.float64)
     return out

@@ -10,6 +10,15 @@ import pytest
 from ci import release_assets as publisher
 
 
+def test_release_failure_includes_bounded_api_reason_without_unrelated_response_fields():
+    error=subprocess.CalledProcessError(1,['gh','api','release'],stderr='HTTP 422',
+        output=json.dumps(dict(message='Validation Failed',errors=[dict(resource='Release',field='target_commitish',code='invalid')],
+                               unrelated='must-not-be-logged')))
+    reason=publisher.describe_failure(error)
+    assert 'Validation Failed' in reason and 'target_commitish' in reason and 'HTTP 422' in reason
+    assert 'must-not-be-logged' not in reason
+
+
 @pytest.fixture
 def transport(tmp_path, monkeypatch):
     files = [tmp_path / name for name in ("part.tar", "part.csv", "part.json")]

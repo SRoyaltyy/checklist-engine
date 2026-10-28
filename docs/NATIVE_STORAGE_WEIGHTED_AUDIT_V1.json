@@ -1,0 +1,166 @@
+{
+  "status": "INDEPENDENT_DENOMINATOR_AND_RATE_AUDIT_NOT_CAP_APPROVAL",
+  "references": [
+    "PR #43",
+    "PR #61"
+  ],
+  "measured_report_sha256": "a61f2bbc5a85affa9c68be2e5a1da0432f14a7fdcd39aa0582f7998970cf0bfb",
+  "denominator_report_sha256": "2cd155d068bad1ff6de518f94921f6677da3c0abdc763c568be39666a7514b2d",
+  "verified_accepted_names": 8316,
+  "verified_native_1d_rows": 31104142,
+  "verified_source_daily_rows_including_first": 31112458,
+  "verified_all_native_rows": 114749018,
+  "mean_sample_container_bytes_per_source_daily_row": 17996.629542618044,
+  "cursor_style_one_day_weighted_projection_bytes": 559769720814.9867,
+  "source_daily_weighted_projection_bytes": 559919380786.2631,
+  "weighting_note": "Sample source_rows includes the first source daily bar; native 1d rows excludes it. Both projections remain far above cap. Three sample rates are not a representative full-universe measurement.",
+  "per_timeframe_payload_estimates": [
+    {
+      "timeframe": "1d",
+      "universe_native_rows": 31104142,
+      "sample_mean_payload_bytes_per_native_row": 5265.032599516731,
+      "projected_numeric_payload_bytes": 163764321609.99756
+    },
+    {
+      "timeframe": "2d",
+      "universe_native_rows": 15550226,
+      "sample_mean_payload_bytes_per_native_row": 5217.369688468728,
+      "projected_numeric_payload_bytes": 81131277781.23831
+    },
+    {
+      "timeframe": "3d",
+      "universe_native_rows": 10365472,
+      "sample_mean_payload_bytes_per_native_row": 5140.269966363096,
+      "projected_numeric_payload_bytes": 53281324408.77761
+    },
+    {
+      "timeframe": "4d",
+      "universe_native_rows": 7769091,
+      "sample_mean_payload_bytes_per_native_row": 5047.619341544581,
+      "projected_numeric_payload_bytes": 39215413997.81993
+    },
+    {
+      "timeframe": "5d",
+      "universe_native_rows": 6217790,
+      "sample_mean_payload_bytes_per_native_row": 4943.872871861219,
+      "projected_numeric_payload_bytes": 30739963303.92997
+    },
+    {
+      "timeframe": "6d",
+      "universe_native_rows": 5180857,
+      "sample_mean_payload_bytes_per_native_row": 4845.546197229803,
+      "projected_numeric_payload_bytes": 25104081934.7414
+    },
+    {
+      "timeframe": "7d",
+      "universe_native_rows": 4437844,
+      "sample_mean_payload_bytes_per_native_row": 4740.219037667501,
+      "projected_numeric_payload_bytes": 21036352614.998493
+    },
+    {
+      "timeframe": "8d",
+      "universe_native_rows": 3878513,
+      "sample_mean_payload_bytes_per_native_row": 4641.794699662417,
+      "projected_numeric_payload_bytes": 18003261085.97178
+    },
+    {
+      "timeframe": "9d",
+      "universe_native_rows": 3452674,
+      "sample_mean_payload_bytes_per_native_row": 4554.278226537217,
+      "projected_numeric_payload_bytes": 15724438021.531158
+    },
+    {
+      "timeframe": "10d",
+      "universe_native_rows": 3106973,
+      "sample_mean_payload_bytes_per_native_row": 4471.086603455781,
+      "projected_numeric_payload_bytes": 13891545357.59882
+    },
+    {
+      "timeframe": "11d",
+      "universe_native_rows": 2818182,
+      "sample_mean_payload_bytes_per_native_row": 4391.264202132303,
+      "projected_numeric_payload_bytes": 12375381731.693617
+    },
+    {
+      "timeframe": "12d",
+      "universe_native_rows": 2584372,
+      "sample_mean_payload_bytes_per_native_row": 4325.62056411135,
+      "projected_numeric_payload_bytes": 11179012668.513578
+    },
+    {
+      "timeframe": "13d",
+      "universe_native_rows": 2388514,
+      "sample_mean_payload_bytes_per_native_row": 4258.9775757595635,
+      "projected_numeric_payload_bytes": 10172627565.387777
+    },
+    {
+      "timeframe": "14d",
+      "universe_native_rows": 2217037,
+      "sample_mean_payload_bytes_per_native_row": 4205.092916067702,
+      "projected_numeric_payload_bytes": 9322846583.359991
+    },
+    {
+      "timeframe": "15d",
+      "universe_native_rows": 2070019,
+      "sample_mean_payload_bytes_per_native_row": 4145.404267302561,
+      "projected_numeric_payload_bytes": 8581065595.997379
+    },
+    {
+      "timeframe": "16d",
+      "universe_native_rows": 1937362,
+      "sample_mean_payload_bytes_per_native_row": 4085.592549737984,
+      "projected_numeric_payload_bytes": 7915271753.34548
+    },
+    {
+      "timeframe": "17d",
+      "universe_native_rows": 1823670,
+      "sample_mean_payload_bytes_per_native_row": 4037.441397460847,
+      "projected_numeric_payload_bytes": 7362960753.307423
+    },
+    {
+      "timeframe": "18d",
+      "universe_native_rows": 1724410,
+      "sample_mean_payload_bytes_per_native_row": 3995.128418327372,
+      "projected_numeric_payload_bytes": 6889239395.847903
+    },
+    {
+      "timeframe": "19d",
+      "universe_native_rows": 1626104,
+      "sample_mean_payload_bytes_per_native_row": 3936.0413018976105,
+      "projected_numeric_payload_bytes": 6400412505.180912
+    },
+    {
+      "timeframe": "20d",
+      "universe_native_rows": 1547445,
+      "sample_mean_payload_bytes_per_native_row": 3888.2362307233907,
+      "projected_numeric_payload_bytes": 6016831714.051757
+    },
+    {
+      "timeframe": "21d",
+      "universe_native_rows": 1474077,
+      "sample_mean_payload_bytes_per_native_row": 3851.877933266303,
+      "projected_numeric_payload_bytes": 5677964668.235393
+    },
+    {
+      "timeframe": "monthly",
+      "universe_native_rows": 1474244,
+      "sample_mean_payload_bytes_per_native_row": 3850.830505734081,
+      "projected_numeric_payload_bytes": 5677063768.095434
+    }
+  ],
+  "per_timeframe_total_numeric_payload_estimate_bytes": 559462658819.6217,
+  "per_timeframe_estimate_excludes": [
+    "date/container/metadata overhead",
+    "answer stores",
+    "raw/shared/nonprice dependencies",
+    "additional question intermediates"
+  ],
+  "native_numeric_cells": 119797974792,
+  "native_float64_raw_bytes": 958383798336,
+  "maximum_mean_bits_per_native_cell_if_entire_100GB_were_numeric": 6.677909216654164,
+  "hard_world_cap_bytes": 100000000000,
+  "numeric_estimate_under_cap": false,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "actions_runs_launched": 0
+}

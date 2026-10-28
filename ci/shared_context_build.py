@@ -5,16 +5,29 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tarfile
 
 import pandas as pd
 
-from ci.native_price_blocks import download, gh, measure_availability, sha, write_json
-from ci.release_assets import publish_assets
+from ci.native_price_blocks import measure_availability, sha, write_json
+from ci.release_assets import publish_assets,download_asset as download,gh_retry as gh
 from world_context_native import KEYS, combine_contexts, fred_native, index_native
 from world_fred import compile_timelines
 from world_timeframes import TIMEFRAMES
+
+
+def publish_shared(tag,files,coverage,status):
+    from ci.release_assets import describe_failure
+    try:
+        gh("release", "create", tag, "--draft", "--target", os.environ["GITHUB_SHA"], "--title", tag,
+           "--notes", "Shared ALFRED/CBOE native contexts; not stock-day or full-world coverage.")
+        publish_assets(tag,*files,coverage,status)
+        gh('release','edit',tag,'--draft=false')
+    except subprocess.CalledProcessError as exc:
+        print('SHARED_CONTEXT_PUBLICATION_FAILED',describe_failure(exc),flush=True)
+        raise
 
 INPUTS = "native-price-inputs-v1-40336250454-1"
 SOURCES = {
@@ -67,7 +80,7 @@ def prefix_check(full, calendar, fred, indices, required, cut):
     for tf in TIMEFRAMES:
         expected = full[tf][full[tf].available_from <= cut].reset_index(drop=True)
         actual = rebuilt[tf].reindex(columns=expected.columns)
-        pd.testing.assert_frame_equal(expected, actual, check_dtype=False, rtol=1e-5, atol=1e-6)
+        pd.testing.assert_frame_equal(expected, actual, check_dtype=True, check_exact=True)
         checks.append({"cut": str(cut.date()), "timeframe": tf, "rows": len(expected),
                        "columns": len(expected.columns) - len(KEYS), "mismatches": 0})
     return checks
@@ -75,6 +88,7 @@ def prefix_check(full, calendar, fred, indices, required, cut):
 
 def main():
     parser = argparse.ArgumentParser();parser.add_argument("--directory", required=True)
+    parser.add_argument('--version',type=int,choices=(2,),default=2)
     args = parser.parse_args();root = Path(args.directory);root.mkdir(parents=True, exist_ok=True)
     inputs = json.loads(download(INPUTS, "BUILD_INPUTS.json", root).read_text())
     file = download(INPUTS, "market_sessions.parquet", root)
@@ -129,6 +143,7 @@ def main():
         parts.append({"file": file.name, "sha256": sha(file), "timeframe": tf,
                       "native_rows": len(frame), "feature_columns": len(selected)})
     report = {"status": "SHARED_MACRO_CBOE_NATIVE_BLOCKS_NOT_WORLD", "source_commit": os.environ["GITHUB_SHA"],
+              "format_version":args.version,"numeric_precision":"float64; no unproven precision reduction",
               "calendar_inputs": INPUTS, "calendar_sha256": inputs["calendar_sha256"],
               "code_sha256": {name: sha(name) for name in ("world_context_native.py", "world_fred.py", "ci/shared_context_build.py")},
               "timeframes": list(TIMEFRAMES), "fred_series": sorted(required), "cboe_series": sorted(indices),
@@ -139,10 +154,8 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=list(coverage[0]));writer.writeheader();writer.writerows(coverage)
     report["coverage_sha256"] = sha(coverage_file)
     status = root / "SHARED_CONTEXT_STATUS.json";write_json(status, report)
-    tag = f"shared-context-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
-    gh("release", "create", tag, "--target", os.environ["GITHUB_SHA"], "--title", tag,
-       "--notes", "Shared ALFRED/CBOE native contexts; not stock-day or full-world coverage.")
-    publish_assets(tag, *files, coverage_file, status)
+    tag = f"shared-context-v2-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
+    publish_shared(tag,files,coverage_file,status)
     print("SHARED_CONTEXT_COMPLETE", tag, len(coverage), flush=True)
 
 
