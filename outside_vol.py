@@ -19,6 +19,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from world_timeframes import TIMEFRAMES, completed_candles
+from market_storage import exact_arrow_table,assert_exact_frame
+from outside_market import completed_market_candles
 
 WINDOW_START = pd.Timestamp("2020-01-02")
 COVERAGE_MIN = 0.95
@@ -250,7 +252,7 @@ def level_candles(levels, sessions, as_of):
         bars = bars.dropna(subset=["close"])
         bars["volume"] = np.nan
         for timeframe in TIMEFRAMES:
-            candles = completed_candles(bars, timeframe, sessions)
+            candles = completed_market_candles(bars, timeframe, sessions)
             candles = candles[candles["date"] <= as_of].drop(columns=["volume"])
             if candles.empty:
                 continue
@@ -308,9 +310,10 @@ def write_lossless(frame, path, dictionary_columns):
             stored[column] = stored[column].astype(np.float64)
             encodings[column] = "BYTE_STREAM_SPLIT"
     dictionaries = [column for column in dictionary_columns if column in stored.columns]
-    table = pa.Table.from_pandas(stored, preserve_index=False)
+    table = exact_arrow_table(stored)
     pq.write_table(
         table, path, compression="zstd", compression_level=19,
         use_dictionary=dictionaries, column_encoding=encodings, data_page_version="2.0",
     )
-    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_zstd19")
+    assert_exact_frame(frame.sort_values(sort_on).reset_index(drop=True),pq.read_table(path).to_pandas())
+    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_zstd19",roundtrip='ALL_VALUE_BITS_EXACT')

@@ -16,6 +16,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from outside_vol import divide
+from market_storage import exact_arrow_table,assert_exact_frame
+from outside_market import completed_market_candles
 
 RELEASE = "light-daily-box-v1-20261028"
 WINDOW_START = "2020-01-02"
@@ -123,7 +125,7 @@ def level_candles(directory, boundary_sessions, as_of):
         session_index = pd.DatetimeIndex(pd.to_datetime(boundary_sessions))
         bars = bars[bars["date"].isin(session_index) & (bars["date"] <= as_of)]
         for timeframe in TIMEFRAMES:
-            candles = completed_candles(bars, timeframe, boundary_sessions)
+            candles = completed_market_candles(bars, timeframe, boundary_sessions)
             candles = candles[candles["date"] <= as_of]
             if candles.empty:
                 continue
@@ -170,10 +172,11 @@ def write_panel(frame, path):
     for column in stored.columns:
         if stored[column].dtype == np.float64:
             encodings[column] = "BYTE_STREAM_SPLIT"
-    table = pa.Table.from_pandas(stored, preserve_index=False)
+    table = exact_arrow_table(stored)
     pq.write_table(table, path, compression="zstd", compression_level=19, use_dictionary=False,
                    column_encoding=encodings, data_page_version="2.0")
-    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_zstd19")
+    assert_exact_frame(frame.sort_values(sort_on).reset_index(drop=True),pq.read_table(path).to_pandas())
+    return dict(rows=len(stored), sha256=sha256_file(path), encoding="float64_byte_stream_split_zstd19",roundtrip='ALL_VALUE_BITS_EXACT')
 
 
 def proof_from_release(directory, out_dir, as_of=None):

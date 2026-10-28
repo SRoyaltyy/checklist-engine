@@ -120,27 +120,24 @@ def test_candle_ratio_does_not_use_a_later_bucket():
     assert np.allclose(merged.close_early, merged.close_full, equal_nan=True)
 
 
-def test_float_panel_round_trips_infinity():
-    import os
-    import tempfile
+def test_float_panel_round_trips_infinity(tmp_path):
     frame = pd.DataFrame({
         "date": days("2024-01-02", 2),
         "vix_over_vix3m": [0.5, np.inf],
     })
-    with tempfile.TemporaryDirectory() as directory:
-        path = os.path.join(directory, "vol.parquet")
-        meta = vol.write_lossless(frame, path, dictionary_columns=())
-        back = pd.read_parquet(path)
-        assert meta["rows"] == 2
-        assert back.vix_over_vix3m.iloc[1] == np.inf
+    path = tmp_path / "vol.parquet"
+    meta = vol.write_lossless(frame, path, dictionary_columns=())
+    back = pd.read_parquet(path)
+    assert meta["rows"] == 2
+    assert back.vix_over_vix3m.iloc[1] == np.inf
 
 
 def test_monthly_level_waits_for_the_next_session_when_the_first_is_closed():
-    from world_timeframes import completed_candles
+    from outside_market import completed_market_candles
     sessions = pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-04"])
     bars = pd.DataFrame({
         "date": sessions[:2], "open": [10.0, 11.0], "high": [10.0, 11.0],
         "low": [10.0, 11.0], "close": [10.0, 11.0], "volume": [1.0, 1.0],
     })
-    candles = completed_candles(bars, "monthly", sessions)
+    candles = completed_market_candles(bars, "monthly", sessions)
     assert candles.available_from.iloc[0] == pd.Timestamp("2020-02-03")
