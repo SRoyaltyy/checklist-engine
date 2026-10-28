@@ -126,5 +126,13 @@
     "sha256": "c353ec018ee5b915d50c8d2a9c120dd109b88fe494f06fcb3c4be933801c6011",
     "encoding": "float64_byte_stream_split_zstd19"
   },
-  "lookahead": "ratios use same-session closes; available_from is the next SPY session"
+  "lookahead": "ratios use same-session closes; available_from is the next SPY session",
+  "identity_check": {
+    "ratios_equal_the_level_arithmetic": true,
+    "one_day_ratio_candles_match_daily": true,
+    "one_day_level_closes_match_daily": true,
+    "max_abs_error": 0.0,
+    "vvix_one_day_candle_rows": 1707,
+    "note": "The seven null VVIX sessions stay on the daily panel and are not given a level candle."
+  }
 }
