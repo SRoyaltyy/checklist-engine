@@ -1,0 +1,24 @@
+{
+  "source": "sec_world_shard_000_attempt_1_part_000.tar already on disk",
+  "submissions_files": 20,
+  "companyfacts_files": 20,
+  "cik_1790169_present": false,
+  "ticker_field": "tickers, a current undated list parallel to exchanges",
+  "multi_ticker_ciks": 4,
+  "former_names_with_from_to": 11,
+  "former_names_are": "legal names, not tickers",
+  "filing_recent_columns_include_ticker": false,
+  "older_filing_pages_in_this_tar": false,
+  "dated_ticker_rows": 0,
+  "decision": "NOT_A_HISTORICAL_TICKER_MAP",
+  "not_written_onto": "2020",
+  "examples": [
+    {"cik": "1750", "name": "AAR CORP", "tickers": ["AIR"]},
+    {"cik": "8063", "name": "ASTRONICS CORP", "tickers": ["ATRO", "ATROB"]},
+    {"cik": "16875", "name": "CANADIAN PACIFIC KANSAS CITY LTD/CN", "tickers": ["CP"], "former_name_example": "CANADIAN PACIFIC RAILWAY LTD/CN from 2002-08-07 to 2023-04-05"}
+  ],
+  "actions_jobs_launched": 0,
+  "world_build_40621517496": "not restarted",
+  "full_universe_cik_coverage": "NOT_EXTENDED",
+  "world_gate": "NOT_PROVEN"
+}
