@@ -1,0 +1,18 @@
+{
+  "release": "outside-market-released-v3-40667431231-1",
+  "asset": "outside_market_candles_v3.parquet",
+  "sha256": "810a581b08e1b421a35a32f441d1ea0116fa22ac2f5cac804f737eba1041bbae",
+  "rows": 267883,
+  "tickers": 43,
+  "nulls": {
+    "open": 0,
+    "high": 0,
+    "low": 0,
+    "close": 0,
+    "volume": 0
+  },
+  "stock_day_fill": "open, high, low, and volume share every candle row with close, so the stock-day fill equals the close row for that ticker and timeframe",
+  "volume": "captured print; historical_volume_vintage_gate is NOT_PROVEN; nine tickers differ from the earlier native file on 2026-10-23",
+  "close_rows_copied": 946,
+  "added_rows": 3784
+}
