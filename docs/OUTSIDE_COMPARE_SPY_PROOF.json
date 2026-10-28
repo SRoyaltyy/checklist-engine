@@ -68,5 +68,14 @@
       "divergence_flat_vs_fall_60d": 1.2752,
       "divergence_fall_vs_flat_60d": 2.3924
     }
+  },
+  "stock_day_coverage": {
+    "stock_release": "accepted-price-stitch-v2-40494479693-1",
+    "query_stock_days": 12364370,
+    "compare_rows": 12362658,
+    "gap_rows": 1712,
+    "gap_each_session": 1,
+    "gap_reason": "SPY is in the accepted names and is excluded as the comparator",
+    "covered_percent": 99.9862
   }
 }
