@@ -1,0 +1,14 @@
+{
+  "block": "volatility_monthly_snap",
+  "source_rows": 441,
+  "kept_rows": 441,
+  "availability_moved": 131,
+  "availability_dropped": 0,
+  "november_2019_source_end": "2019-11-29",
+  "november_2019_available_from": "2019-12-02",
+  "three_bar_source_ends": ["2019-10-31", "2019-11-29", "2019-12-31"],
+  "three_bar_mean_vol_vix_over_vix3m": 0.8352165304365041,
+  "sessions": "SPY daily dates from light-daily-box-v1-20261028",
+  "input_release": "volatility-term-native-v1-40667837889-1",
+  "input_file": "volatility_term_monthly.parquet"
+}
