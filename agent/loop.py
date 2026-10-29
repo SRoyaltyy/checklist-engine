@@ -162,6 +162,8 @@ def main():
         request = urllib.request.Request(API, data=body.encode(), headers={"Authorization": "Bearer " + KEY, "Content-Type": "application/json"})
         with urllib.request.urlopen(request, timeout=180) as response:
             payload = json.load(response)
+            usage = payload.get("usage") or {}
+            journal(item["id"] + " tokens in " + str(usage.get("prompt_tokens", "?")) + " out " + str(usage.get("completion_tokens", "?")))
         message = payload["choices"][0]["message"]
         calls = message.get("tool_calls") or []
         messages.append({"role": "assistant", "content": message.get("content") or "", "tool_calls": calls})
