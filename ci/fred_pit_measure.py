@@ -115,13 +115,18 @@ def independent_row_projection(native, dates, timeframe):
     return out
 
 
-def check_native(full, source, calendar, cuts):
+def check_native(full, source, calendar, cuts, progress_path=None):
     series = tuple(sorted(source.series.unique()))
     query = calendar[calendar >= pd.Timestamp('2020-01-01')]
     availability = pd.DatetimeIndex(sorted({d for frame in full.values() for d in frame.available_from})).as_unit('ns')
     levels = online_levels(source, availability, series)
     timelines = compile_timelines(source)
     checks, projections, prefixes = [], [], []
+    def progress():
+        if progress_path is not None:
+            progress_path.write_text(json.dumps(dict(status='INCOMPLETE_FRED_PIT_PROOF', native_checks=checks,
+                row_projection_checks=projections, raw_prefix_checks=prefixes, online_cutoff_oracle=levels.attrs),
+                indent=2)+'\n', encoding='utf-8')
     for tf in TIMEFRAMES:
         frame = full[tf]
         if not (frame.source_candle_end < frame.available_from).all(): raise ValueError('published macro candle boundary invalid')
@@ -136,6 +141,7 @@ def check_native(full, source, calendar, cuts):
         values = np.ascontiguousarray(rows.iloc[:, 2:].to_numpy(dtype='<f8'))
         projections.append(dict(timeframe=tf, query_sessions=len(query), numeric_cells=int(values.size),
                                 numeric_bits_sha256=sha(values.tobytes()), mismatches=0))
+        progress()
     for cut in cuts:
         # Fresh compiler invocation receives an actually truncated raw table
         # and calendar. The original anchor and all earlier vintages remain.
@@ -144,9 +150,16 @@ def check_native(full, source, calendar, cuts):
         cal = calendar[calendar <= cut]
         for tf in TIMEFRAMES:
             expected = full[tf].loc[full[tf].available_from <= cut].reset_index(drop=True)
-            rebuilt = fred_native(cal, tf, timelines, required_series=series)
+            # A raw vintage may not yet exist for a registered series. Keep
+            # every expected column as unknown; never require a future vintage
+            # or drop the series from the historical comparison.
+            missing = sorted(set(series)-set(timelines))
+            rebuilt = fred_native(cal, tf, timelines, required_series=set(series)&set(timelines))
+            rebuilt = rebuilt.reindex(columns=expected.columns)
             assert_exact_frame(expected, rebuilt)
-            prefixes.append(dict(cut=str(cut.date()), timeframe=tf, **matrix_receipt(rebuilt), mismatches=0))
+            prefixes.append(dict(cut=str(cut.date()), timeframe=tf, **matrix_receipt(rebuilt),
+                                 unavailable_series=missing, all_columns_preserved=True, mismatches=0))
+        progress()
         print('FRED_RAW_CUTOFF_PASS', str(cut.date()), len(raw), flush=True)
     return checks, projections, prefixes, dict(levels.attrs)
 
@@ -192,7 +205,7 @@ def measure(root, request):
     wanted = [calendar[calendar.year == year][0] for year in range(2020, 2027)]+[calendar[-1]]
     if cuts != wanted: raise ValueError('formal FRED cuts must cover every year boundary and final session')
     started = time.perf_counter()
-    checks, projections, prefixes, oracle = check_native(full, source, calendar, cuts)
+    checks, projections, prefixes, oracle = check_native(full, source, calendar, cuts, root/'FRED_PIT_PROGRESS.json')
     code = ('ci/fred_pit_measure.py', 'world_fred.py', 'world_dates.py', 'world_context_native.py',
             'world_context_store.py', 'world_timeframes.py', 'ci/shared_context_build.py', 'market_storage.py',
             'ci/relative_native_measure.py', 'ci/release_assets.py', 'ci/verify_etf_daily_source.py', 'requirements-world-v2.txt')
@@ -200,6 +213,8 @@ def measure(root, request):
                 runtime=dict(python=platform.python_version(), machine=platform.machine(),
                              packages={n: importlib.metadata.version(n) for n in ('numpy','pandas','pyarrow','TA-Lib','exchange_calendars')}),
                 seconds=time.perf_counter()-started, source_rows=len(source), series=request['series'], timeframes=list(TIMEFRAMES),
+                source_columns=list(source.columns),
+                source_first_vintages={str(sid):str(pd.Timestamp(frame.vintage_date.min()).date()) for sid,frame in source.groupby('series')},
                 native_checks=checks, row_projection_checks=projections, raw_prefix_checks=prefixes, online_cutoff_oracle=oracle,
                 native_numeric_cells=sum(r['numeric_cells'] for r in checks),
                 row_projection_numeric_cells=sum(r['numeric_cells'] for r in projections),
@@ -211,7 +226,14 @@ def measure(root, request):
 
 
 def run(root, request):
-    report = measure(root, request)
+    try:
+        report = measure(root, request)
+    except Exception as exc:
+        root.mkdir(parents=True, exist_ok=True)
+        (root/'FRED_PIT_FAILURE_V1.json').write_text(json.dumps(dict(status='FAILED_FRED_PIT_PROOF',
+            source_commit=os.environ.get('GITHUB_SHA'), request=request, error_type=type(exc).__name__,
+            error=str(exc)[:4000]), indent=2)+'\n', encoding='utf-8')
+        raise
     file = root/'FRED_PIT_MEASURED_V1.json'
     file.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     tag = f"fred-native-pit-proof-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"

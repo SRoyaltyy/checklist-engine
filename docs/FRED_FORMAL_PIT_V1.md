@@ -11,6 +11,15 @@ The precommitted request is `ci/FRED_PIT_REQUEST.json`; implementation is
 `ci/fred_pit_measure.py`. The actual GitHub result is pending. No checkbox
 is claimed before reviewing its measured public evidence.
 
+Initial40860076559 atbd091d1 passed25 Linux tests but the harness required a
+BAMLH0A0HYM2 timeline before that series had a source vintage. The historical
+cutoff correctly had none, so the run failed without accepting a result.
+Version2 preserves all168 expected columns while treating any not-yet-available
+timeline as explicit NaN. It still requires exact equality to every released
+prefix; no series, field or cutoff is excluded from the comparison. Synthetic
+coverage includes a series first appearing after an earlier cutoff. Progress
+and failure JSON are retained on the runner if a subsequent check fails.
+
 ## Exact definitions
 
 For an availability cutoff A, only source records with `vintage_date < A`

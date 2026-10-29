@@ -20,7 +20,7 @@ def source():
 
 
 def test_online_oracle_excludes_exact_vintage_and_future_obs_and_keeps_first_release():
-    dates = pd.to_datetime(['2020-02-01','2020-03-01','2020-03-02','2020-03-11','2020-04-02','2020-04-11'])
+    dates = pd.to_datetime(['2020-02-01','2020-03-01','2020-03-02','2020-03-11','2020-04-02','2020-04-11']).as_unit('ns')
     actual = online_levels(source(), dates, ('TEST',))
     np.testing.assert_equal(actual.fred_test.to_numpy(), [np.nan,1,2,3,3,3])
     np.testing.assert_equal(actual.fred_test_first_release.to_numpy(), [np.nan,1,2,2,2,2])
@@ -45,12 +45,15 @@ def test_every_native_field_projection_and_fresh_prefix_is_exact_on_all22_grids(
     calendar = pd.bdate_range('2019-11-01','2020-06-12')
     raw = pd.DataFrame(dict(series='TEST', obs_date=calendar-pd.Timedelta(days=5),
                             vintage_date=calendar, value=100+np.sin(np.arange(len(calendar)))))
+    late = raw.loc[raw.vintage_date >= '2020-04-01'].copy(); late['series'] = 'LATE'
+    raw = pd.concat([raw, late], ignore_index=True)
     timelines = compile_timelines(raw)
     full = {tf: fred_native(calendar, tf, timelines, required_series=('TEST',)) for tf in TIMEFRAMES}
     checks, projections, prefixes, oracle = check_native(full, raw, calendar,
         [pd.Timestamp('2020-01-02'), pd.Timestamp('2020-04-01')])
     assert len(checks) == len(projections) == 22 and len(prefixes) == 44
-    assert all(len(c['columns']) == 8 for c in checks)
+    assert all(len(c['columns']) == 16 for c in checks)
+    assert all(c['all_columns_preserved'] and c['unavailable_series'] == ['LATE'] for c in prefixes)
     assert oracle['future_rows_consumed'] == 0
 
 
