@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "parent_proof": {
+    "release": "numeric-recompute-v1-40657531639-1",
+    "asset": "NUMERIC_RECOMPUTE_MEASURED.json",
+    "sha256": "50d8bdbf3435f15f9cb6b15f02c2b0c1b7f1b677af7642ea70e2eedd2a3fcf10"
+  },
+  "stocks": [
+    {
+      "ticker": "MAN",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "4d414e.bars.parquet",
+      "bytes": 304486,
+      "sha256": "016d25f3e57b5d42d0badfb26df01140f9eba136323dba9fad2eec5213b97a0a"
+    },
+    {
+      "ticker": "MNTS",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "4d4e5453.bars.parquet",
+      "bytes": 59457,
+      "sha256": "5cf165b06d347ceabfd4e77df95558aefafa5b4c3b06f1a27f37277491a86005"
+    },
+    {
+      "ticker": "EYE",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "455945.bars.parquet",
+      "bytes": 93341,
+      "sha256": "fb04c5856ec1337f661caef500ff3ca7c3a1d3a4ea42530fad854b99360aec99"
+    }
+  ],
+  "benchmark": {
+    "release": "numeric-recompute-v1-40657531639-1",
+    "asset": "etf_daily_SPY.parquet",
+    "bytes": 264535,
+    "sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d"
+  },
+  "calendar": {
+    "release": "native-price-inputs-v1-40336250454-1",
+    "asset": "market_sessions.parquet",
+    "sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074"
+  },
+  "cutoffs": [
+    "2023-01-03",
+    "2025-01-02"
+  ],
+  "settings": [
+    {
+      "name": "short",
+      "kind": "native",
+      "parameters": {
+        "anchor": "week"
+      }
+    },
+    {
+      "name": "default",
+      "kind": "native",
+      "parameters": {
+        "anchor": "month"
+      }
+    },
+    {
+      "name": "long",
+      "kind": "native",
+      "parameters": {
+        "anchor": "quarter"
+      }
+    }
+  ],
+  "columns": [
+    "I074_short_p",
+    "I074_short_r1",
+    "I074_short_s1",
+    "I074_short_r2",
+    "I074_short_s2",
+    "I074_default_p",
+    "I074_default_r1",
+    "I074_default_s1",
+    "I074_default_r2",
+    "I074_default_s2",
+    "I074_long_p",
+    "I074_long_r1",
+    "I074_long_s1",
+    "I074_long_r2",
+    "I074_long_s2"
+  ],
+  "scope": "Original3 stocks plus SPY; all existing I074 calendar anchor settings on22 actual native grids, exact persistence/reconstruction and two raw/calendar cutoff rebuilds. Separate raw/calendar adapter, no old published values or protected run changed; no full-world/PIT/quality/budget/scoring acceptance."
+}
