@@ -46,8 +46,9 @@ def numeric_receipt(frame,columns,expected=None):
     dates=frame.available_from.to_numpy(dtype='datetime64[ns]').view('<i8')
     result=dict(rows=len(frame),columns=len(columns),numeric_cells=int(values.size),
                 raw_sha256=sha(values.tobytes()),dates_sha256=sha(dates.tobytes()))
-    if expected is not None and any(result[key]!=expected[key] for key in ('rows','columns','raw_sha256','dates_sha256')):
-        raise ValueError('Renko candidate differs from persisted legacy numeric/date bits')
+    different={} if expected is None else {key:dict(expected=expected[key],actual=result[key])
+                                            for key in ('rows','columns','raw_sha256','dates_sha256') if result[key]!=expected[key]}
+    if different:raise ValueError('Renko candidate differs from persisted legacy numeric/date bits: '+json.dumps(different,sort_keys=True))
     return dict(result,mismatches=0)
 
 
@@ -79,7 +80,15 @@ def numeric_worker(root,recipe):
         frame=wt.candle_features(wt.completed_candles(bars,tf,session_calendar=calendar),funcs,timeframe=tf)
         columns=registry[tf]['columns']
         if len(columns)!=1044:raise ValueError('Renko proof requires every1044 registered numeric columns')
-        receipt=numeric_receipt(frame,columns,expected.get(tf));receipt['timeframe']=tf
+        try:receipt=numeric_receipt(frame,columns,expected.get(tf))
+        except ValueError:
+            observed=numeric_receipt(frame,columns)
+            mismatch=dict(ticker=config['ticker'],mode=config['mode'],timeframe=tf,actual=observed,expected=expected.get(tf),
+                          module_paths={name:module.__file__ for name,module in sys.modules.items()
+                                        if name.startswith(('world_','facets_world')) and getattr(module,'__file__',None)})
+            (root/'MISMATCH.json').write_text(json.dumps(mismatch,indent=2)+'\n',encoding='utf-8')
+            raise
+        receipt['timeframe']=tf
         if config['ticker']=='EQLT':
             if not np.isfinite(frame[['tv_renko_dir','tv_renko_n']].to_numpy(dtype='float64')).all():
                 raise ValueError('guarded EQLT Renko became unavailable')
@@ -130,7 +139,9 @@ def run(root,request):
         outcome=limited_process([sys.executable,'-m','ci.renko_zero_step_proof','--directory',str(own.resolve()),
                                  '--worker','--recipe',str(recipe.resolve())],own,request['worker_timeout_seconds'])
         if outcome['reason']:
-            errors.append(dict(ticker=ticker,mode=mode,**outcome));return None
+            mismatch=own/'MISMATCH.json'
+            errors.append(dict(ticker=ticker,mode=mode,**outcome,
+                               mismatch=json.loads(mismatch.read_text(encoding='utf-8')) if mismatch.exists() else None));return None
         result=json.loads((own/'NUMERIC_PROOF.json').read_text(encoding='utf-8'))
         if (result['ticker']!=ticker or result['mode']!=mode or result['raw_source_sha256']!=config['source_sha256']):
             raise ValueError('Renko worker receipt binding differs')
@@ -139,6 +150,7 @@ def run(root,request):
         ticker=binding['ticker']
         if binding['sha256']!=references[ticker]['raw_source_sha256']:raise ValueError('Renko stock sample changed from parent')
         bars=fetch(binding,root/'sources')
+        process(ticker,bars,original,'original_reference',references[ticker]['checks'])
         process(ticker,bars,candidate,'candidate_legacy_comparison',references[ticker]['checks'])
     spy=fetch(request['benchmark'],root/'sources')
     if request['benchmark']['sha256']!=parent['etf']['raw_source_sha256']:raise ValueError('Renko benchmark sample changed')
@@ -175,15 +187,16 @@ def run(root,request):
                 assets.extend([payload,own/'DIAGNOSTIC_REGISTRIES.json'])
     recipe_file=root/'RENKO_RECIPE_V1.json';recipe_file.write_text(json.dumps(recipe_metadata,indent=2)+'\n',encoding='utf-8')
     override=root/'facets_world_renko_zero_step_v1.py';override.write_bytes(new_files['facets_world.py'])
-    complete=(not errors and len(results)==6 and target_result is not None and answer_result is not None
+    complete=(not errors and len(results)==9 and target_result is not None and answer_result is not None
               and {(r['ticker'],r['mode']) for r in results}=={
+                  ('MAN','original_reference'),('MNTS','original_reference'),('EYE','original_reference'),
                   ('MAN','candidate_legacy_comparison'),('MNTS','candidate_legacy_comparison'),('EYE','candidate_legacy_comparison'),
                   ('SPY','original_reference'),('SPY','candidate_legacy_comparison'),('EQLT','guarded_target')})
     report=dict(status='RENKO_GUARD_SAMPLE_EXACT_WITH_NEW_TARGET_ONLY' if complete else 'INCOMPLETE_RENKO_GUARD_PROOF',
                 source_commit=os.environ['GITHUB_SHA'],request=request,base_fingerprint=BASE_FINGERPRINT,candidate_fingerprint=fingerprint(new_files),
                 changed_recipe_files=[n for n in old_files if old_files[n]!=new_files[n]],runtime=runtime,python=sys.version,
                 results=results,errors=errors,guarded_answer_result=answer_result,
-                original_reference_numeric_cells=sum(c['numeric_cells'] for r in results if r['ticker'] in references for c in r['checks']),
+                original_reference_numeric_cells=sum(c['numeric_cells'] for r in results if r['ticker'] in references and r['mode']=='candidate_legacy_comparison' for c in r['checks']),
                 authority='James/Cyrus exact-recompute sample plan; new version for a previously nonterminating input, no published-value replacement.',
                 active_runs_untouched=[40621517496,40792865480,40795819366],full_universe_conversion_gate='NOT_RUN',
                 full_world_gate='NOT_PROVEN',full_dependency_budget_gate='NOT_PROVEN',scoring_gate='CLOSED',

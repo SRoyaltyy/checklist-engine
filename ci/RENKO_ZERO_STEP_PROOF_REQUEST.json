@@ -33,7 +33,8 @@
     "bytes": 264535,
     "sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d"
   },
-  "version": 1,
+  "version": 2,
+  "revision_reason": "First proof40802810949 retained three strict stock hash mismatches and exact SPY equality; compare original stock recipe against the same immutable receipts and retain actual differing fields/module paths. No recipe, input, arithmetic, precision or equality waiver.",
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
   "base_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
