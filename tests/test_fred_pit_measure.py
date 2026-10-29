@@ -29,6 +29,17 @@ def test_online_oracle_excludes_exact_vintage_and_future_obs_and_keeps_first_rel
     expected = pd.DataFrame(columns(dates, compile_timelines(source())), index=dates)
     assert_exact_frame(actual, expected)
     assert actual.attrs['future_rows_consumed'] == 0
+    assert actual.attrs['real_time_interval_mismatches'] == 0
+    assert actual.attrs['real_time_interval_witnesses'] == 5
+
+
+def test_independent_ledger_withdraws_a_missing_revision_instead_of_carrying_stale_value():
+    raw = source().iloc[:2].copy()
+    withdrawal = raw.iloc[[1]].copy(); withdrawal['vintage_date'] = pd.Timestamp('2020-03-10'); withdrawal['value'] = np.nan
+    raw = pd.concat([raw, withdrawal], ignore_index=True)
+    out = online_levels(raw, pd.to_datetime(['2020-03-10','2020-03-11']), ('TEST',))
+    np.testing.assert_equal(out.fred_test.to_numpy(), [2.,1.])
+    assert out.attrs['missing_revision_rows'] == 1
 
 
 def test_future_value_perturbations_cannot_change_any_earlier_oracle_cutoff():

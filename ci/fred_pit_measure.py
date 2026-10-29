@@ -5,6 +5,7 @@ source/recipe/value is replaced and no question or probability run is launched.
 """
 import argparse
 import hashlib
+import heapq
 import importlib.metadata
 import io
 from itertools import groupby
@@ -13,6 +14,7 @@ import os
 import platform
 from pathlib import Path
 import time
+from bisect import bisect_left
 
 import numpy as np
 import pandas as pd
@@ -48,37 +50,58 @@ def online_levels(source, dates, series):
                for r in ordered.itertuples()]
     groups = iter(groupby(records, key=lambda r: (r[0], r[1])))
     pending = next(groups, None)
-    state, first = {}, {}
+    versions, first, heaps, last_vintage, revision_dates = {}, {}, {}, {}, {}
+    for vintage, sid, observation, _ in records:
+        if observation <= vintage:
+            revision_dates.setdefault((sid, observation), set()).add(vintage)
+    revision_dates = {key: sorted(values) for key, values in revision_dates.items()}
     fields = [f'fred_{sid.lower()}{tail}' for sid in series for tail in ('', '_first_release', '_odays', '_vintage_days')]
     output = {name: np.full(len(dates), np.nan, dtype='float64') for name in fields}
-    consumed = ignored = 0
+    consumed = ignored = missing = witnesses = 0
     for i, date in enumerate(dates):
         while pending is not None and pending[0][0] < date.value:
             (vintage, sid), changes = pending
             for _, _, observation, value in changes:
                 consumed += 1
-                if observation > vintage or np.isnan(value):
+                if observation > vintage:
                     ignored += 1
                     continue
-                first.setdefault((sid, observation), value)
-                if sid not in state or observation >= state[sid][0]:
-                    state[sid] = (observation, value, vintage)
-            # The producer emits the latest-known observation at every vintage
-            # of that series, including a vintage revising only an older obs.
-            if sid in state: state[sid] = (*state[sid][:2], vintage)
+                versions[(sid, observation)] = (vintage, value)
+                if np.isnan(value):
+                    missing += 1
+                else:
+                    first.setdefault((sid, observation), (value, vintage))
+                    heapq.heappush(heaps.setdefault(sid, []), -observation)
+            last_vintage[sid] = vintage
             pending = next(groups, None)
         for sid in series:
-            if sid not in state: continue
-            observation, value, vintage = state[sid]
-            if not observation <= vintage < date.value: raise ValueError('oracle information boundary violated')
+            heap = heaps.get(sid, [])
+            while heap and np.isnan(versions[(sid, -heap[0])][1]): heapq.heappop(heap)
+            if not heap: continue
+            observation = -heap[0]
+            revision, value = versions[(sid, observation)]
+            vintage = last_vintage[sid]
+            first_value, first_vintage = first[(sid, observation)]
+            boundaries = revision_dates[(sid, observation)]
+            position = bisect_left(boundaries, date.value)-1
+            next_revision = boundaries[position+1] if position+1 < len(boundaries) else None
+            if (position < 0 or boundaries[position] != revision
+                    or not observation <= revision < date.value
+                    or not first_vintage <= revision <= vintage < date.value
+                    or (next_revision is not None and next_revision < date.value)):
+                raise ValueError('oracle real-time revision interval does not contain the cutoff morning')
+            witnesses += 1
             prefix = 'fred_'+sid.lower()
             output[prefix][i] = value
-            output[prefix+'_first_release'][i] = first[(sid, observation)]
+            output[prefix+'_first_release'][i] = first_value
             output[prefix+'_odays'][i] = (date.value-observation)//DAY_NS
             output[prefix+'_vintage_days'][i] = (date.value-vintage)//DAY_NS
     result = pd.DataFrame(output, index=dates)
-    result.attrs = dict(cutoffs=len(dates), consumed_source_rows=consumed, ignored_unavailable_rows=ignored,
-                        future_rows_consumed=0, exact_vintage_day_excluded=True)
+    result.attrs = dict(cutoffs=len(dates), consumed_source_rows=consumed, future_observation_rows_ignored=ignored,
+                        missing_revision_rows=missing, real_time_interval_witnesses=witnesses,
+                        real_time_interval_mismatches=0, future_rows_consumed=0, exact_vintage_day_excluded=True,
+                        interval_rule='selected revision vintage < cutoff morning <= next revision vintage (if any); observation <= selected vintage < cutoff',
+                        missing_policy='A missing revision withdraws that observation from the independent active-version ledger; no stale-value carry.')
     return result
 
 

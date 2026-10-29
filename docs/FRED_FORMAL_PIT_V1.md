@@ -20,6 +20,17 @@ prefix; no series, field or cutoff is excluded from the comparison. Synthetic
 coverage includes a series first appearing after an earlier cutoff. Progress
 and failure JSON are retained on the runner if a subsequent check fails.
 
+Request2 actual40860927415 passed25 Linux tests1.69s,5,750,304 native cells,
+6,327,552 reader-projection cells and176 fresh-prefix checks, all exact.
+The public report SHA256 is
+`3baf11951ad5b2ef0410f63e4aafdb7e95c545bb45a9238b697b77c6aa1c4742`.
+Before claiming the checklist's explicit real-time-period requirement,
+request3 additionally uses a complete per-observation active-version ledger
+and records the revision-interval witness for every known oracle value.
+A missing revision withdraws its observation in this independent ledger;
+it cannot silently retain that observation's prior value. Any difference
+from the existing producer fails the proof. Production code is unchanged.
+
 ## Exact definitions
 
 For an availability cutoff A, only source records with `vintage_date < A`
