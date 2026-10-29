@@ -122,8 +122,8 @@ def parse_hist_csv(raw):
         return ''
 
     df = df.rename(columns={
-        pick('call volume', 'calls'): 'calls',
-        pick('put volume', 'puts'): 'puts',
+        pick('call volume', 'calls', 'call'): 'calls',
+        pick('put volume', 'puts', 'put'): 'puts',
         pick('total volume', 'total'): 'total_n',
         pick('p/c ratio', 'p/c'): 'ratio',
     })
@@ -172,9 +172,10 @@ def probe():
             print(f'daily {pat}: HTTP {st}, {len(raw)} bytes')
             if raw:
                 print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:6]))
-    ts, wb = wayback_latest(HIST_CSV['totalpc-www'], UAS[0][1])
-    if wb:
-        print('wayback totalpc head: ' + ' | '.join(wb.decode('utf-8', 'ignore').splitlines()[:3]))
+    for ds in ('2026-10-28', '2020-03-16'):
+        st, raw = get(DAILY_JSON.format(date=ds), UAS[0][1])
+        pj = parse_daily_json(raw) if raw else None
+        print(f'daily-json {ds}: HTTP {st}, parsed={pj}')
 
 
 def parse_daily_json(raw):
