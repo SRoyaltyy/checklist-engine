@@ -223,13 +223,13 @@ I191,WIRED,halt_days|halt_gap|halt_rsn|halt_n20|halt_n60,event/block columns
 I192,PENDING,,
 I193,PENDING,,
 I194,PENDING,,
-I195,BLOCKED_SECRET,,"FRED/ALFRED vintages need FRED_API_KEY; fetch code wired, env key missing"
+I195,PROVEN,,"FRED/ALFRED point-in-time proof merged in PR #157 (2026-10-29); FRED_API_KEY wired"
 I196,WIRED,div_amt|div_days|div_n12,event/block columns
 I197,PENDING,,
 I198,PENDING,,
 I199,PENDING,,
 I200,PENDING,,
-I201,PENDING,,
+I201,DROPPED,,"CBOE put/call dropped by Cyrus 2026-10-29: CBOE blocks box+runners, free history ends 2019, not live-replicable"
 I202,PENDING,,single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested
 I203,PENDING,,
 I204,PENDING,,Registered derived item; full-world measured source/field binding not yet supplied. Never infer WIRED from recipe registration.

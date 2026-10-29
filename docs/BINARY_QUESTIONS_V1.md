@@ -91,3 +91,9 @@ full generated v3 CSV, exact drawable bindings, real200-stock2020–22 measureme
 and full P4 proof remain unfinished. Kimi owns gallery YES/NO/NOT_EVALUABLE
 readouts beside each measurement. Untested definitions/drawings stay disabled.
 No scoring result or checklist completion is claimed by this contract.
+
+## BINARY_LADDERS_V1 (2026-10-30 ~00:15 HKT, James)
+`docs/BINARY_LADDERS_V1.csv` = strict YES/NO threshold ladders for the 130 items that had 1 setting in `docs/UNDERREPRESENTED_ITEMS_V1.csv`; 10–11 questions per item (1,322 total; MAs have 11). Each row: feature + comparator + explicit threshold, YES condition, NOT_EVALUABLE condition (excluded, never NO), purple viewport drawing (no circles), PIT rule (D-1 completed candle; D open = execution only). Templates by group: MAs (distance ladder, slope, multi-timeframe, count-above); candle patterns (6 timeframes, 20-bar occurrence counts, trend context); all others (252-bar percentile ladder, 5/20-bar change, 5d vs 1d side-by-side, 60-bar z-score). GPT reviews definitions per item and computes answers; Kimi adds readouts.
+
+### Batch 2 (2026-10-30 ~00:30 HKT)
++1,358 questions for the 126 items at 2–8 settings (≥10 each; ids `Ixxx-Lnn`), using each item's dictionary settings (short/default/long or N lists) as rungs. Families: zone oscillators (item-specific oversold/overbought per setting, midline, 5-bar change, cross-up), zero-line oscillators (zero line per setting, rising, signal cross, zero cross), trailing stops (side per setting, ATR cushion 0.5/1/2/3, flip), bands (%B >1/<0 per setting, 0.2/0.5/0.8, squeeze, expansion), RS vs ETF (N=10/20/60, -5/5/10% relative return, RS 60-bar high, outperform-day count). Others: per-setting median and 5-bar change, percentile ladder, 5d vs 1d. **Total V1: 2,680 questions, 256 items.**
