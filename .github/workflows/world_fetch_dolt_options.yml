@@ -1,0 +1,40 @@
+name: world_fetch_dolt_options
+# DoltHub post-no-preference/options REAL coverage + PIT hunt
+# (§0b 2026-10-30 00:10 HKT). Prior runs measured samples only; this one pulls
+# per-month row/symbol/weekend stats for volatility_history + option_chain
+# 2020-01..now, matches coverage against our universe parquet, and runs PIT
+# probes (weekend labels, publish lag, AS OF revision comparison vs a commit
+# ~8 months back). Result JSON -> release data-ext-2020-26-v1.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Fetch universe parquet from data-2020-24-v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: bash ci/world_fetch.sh "$RUNNER_TEMP/world_in"
+      - name: DoltHub options coverage + PIT hunt
+        run: |
+          python3 fetch/fetch_dolt_options_hunt.py \
+            --universe "$RUNNER_TEMP/world_in/universe_2020_survivors_le2024.parquet" \
+            --out "$RUNNER_TEMP/dolt_options_hunt_v1.json"
+      - name: Upload result JSON
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 ci/release_assets.py upload data-ext-2020-26-v1 \
+          "$RUNNER_TEMP/dolt_options_hunt_v1.json"
