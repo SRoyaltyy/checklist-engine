@@ -6,6 +6,8 @@ release. Month-end, turn-of-month, and monthly options expiry are rules on the
 NYSE session calendar. A row on day D does not read prices. A release dated
 after D is not flagged on D. Candle rows repeat the end session's facts.
 They are not a count or an average of the sessions inside the candle.
+
+Scheduled events come from a dated announcement ledger, not from the previous release. A release is announced on the publication date of the annual schedule that names it, an unscheduled Fed meeting is announced on the day it is called, and a cancellation is its own record with its own announcement date. Forward counts filter per row, so each row reads only what was public on that row's date.
 """
 
 from __future__ import annotations
