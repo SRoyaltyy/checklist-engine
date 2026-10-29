@@ -8,8 +8,9 @@ all22 factor files and the existing producer math are authenticated before
 any check. No new vendor request, source replacement or value rewrite occurs.
 
 The precommitted request is `ci/FRED_PIT_REQUEST.json`; implementation is
-`ci/fred_pit_measure.py`. The actual GitHub result is pending. No checkbox
-is claimed before reviewing its measured public evidence.
+`ci/fred_pit_measure.py`. Request3's successful measured proof and independent
+public numeric readback support the contributor claim for1.185 below. James's
+independent sign-off is still required.
 
 Initial40860076559 atbd091d1 passed25 Linux tests but the harness required a
 BAMLH0A0HYM2 timeline before that series had a source vintage. The historical
@@ -91,3 +92,36 @@ installation is performed. This verifies the existing FRED source/factor and
 reader surface, not full v3 question/history leakage, price look-ahead,
 historical tradeability/$100M eligibility, the full world/storage gate or any
 scoring result. Those gates remain open.
+
+## Measured request3 proof and readback
+
+Actual40888606066 at`e2b1cc5e5f0231683b6897c883a5ed02c6f717da` passed26 Linux
+tests2.01s. All21 existing series and168 fields per native factor passed:
+5,750,304 native numeric cells,6,327,552 daily reader-projection cells,
+9,428 distinct online availability cutoffs and176 fresh raw/calendar prefixes.
+The active-version ledger produced111,560 valid real-time-interval witnesses,
+with0 mismatches and0 future records consumed. It ignored33 observations
+newer than their own vintage; the real source had0 missing-value revisions.
+The missing-revision withdrawal behavior is covered by the synthetic test.
+
+The196.06s proof authenticated1,266,776 raw source rows. The public1,306,236B
+`FRED_PIT_MEASURED_V1.json` has SHA256
+`51965c5ec0c4efe61fa06d78a3263fd5d27149381fd59c5b8764ba0187351aa6`.
+The1,387B request has SHA256
+`d66d23992af6778c82958f8c9dc1fa66eb3e2de9e20558ecacec8f9c71b996e1`.
+Both are in release`fred-native-pit-proof-v1-40888606066-1`.
+
+`FRED_PIT_PUBLIC_READBACK_V1.json` records independent public-byte/Git checks
+for both assets and all12 code pins. It reopens all22 released source-factor
+files(12,647,661B), verifies every5,750,304 FRED numeric/date cell bit, all
+6,327,552 daily projections and41,847,120 released earlier-prefix cells against
+the176 raw-rebuild receipts, with0 discrepancies. It also coalesces repeated
+native dates, verifies identical base fields and confirms all111,560 known
+interval witnesses. Raw ledger recomputation remains the GitHub proof; this
+local pass reads stored artifact values rather than producing world data.
+
+The eight required16:35 series are all included. Box1.185 is claimed for this
+macro source/factor/reader surface only, awaiting James. Existing176 coverage
+rows and their original measured denominator remain unchanged. Full v3/history
+question leakage, other blocks, historical eligibility and world/storage/scoring
+prerequisites remain unproved. No published source or numeric value was rewritten.

@@ -12,7 +12,7 @@ chart defaults40850036315 (88 frames/176 cuts,5,339,568 numeric cells) and
 I074 calendar pivots40856073326 (88 frames/176 cuts,2,053,680 cells, including
 an independent scalar formula oracle). These sample components do not supply
 full-universe WORLD_COVERAGE rows. Their exact readback reports are checked in.
-The current owner-signed checklist is46/303,0 pending; the historical counters
+The current owner-signed checklist is46/303,1 pending(1.185 formal FRED proof); the historical counters
 and smoke reports below describe earlier states. Full world/v3/P3b, complete
 leak/PIT/tradeability, full dependency budget and scoring remain unproved.
 
