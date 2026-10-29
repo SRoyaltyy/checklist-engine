@@ -1,0 +1,273 @@
+{
+  "status": "PASS_PUBLIC_BREADTH_V3_COMPONENT_READBACK_NOT_WORLD",
+  "run": 40789973576,
+  "producer": "445e044ba733d56676f5742f8280170506f900b4",
+  "release": "outside-breadth-native-v3-40789973576-1",
+  "assets": 28,
+  "total_published_bytes": 6918925,
+  "native_factor_bytes": 3779577,
+  "daily_rows": 9271,
+  "native_rows": 34229,
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "daily_availability_changes": {
+    "new_high": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "new_low": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "advance": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "decline": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "unchanged": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "up_volume": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "down_volume": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "new_highs_minus_new_lows": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "ad_net": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    }
+  },
+  "native_availability_changes": {
+    "advance": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "decline": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "unchanged": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "new_high": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "new_low": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "ad_net": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "up_volume": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "down_volume": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "new_highs_minus_new_lows": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "ad_ratio": {
+      "newly_unavailable": 21,
+      "last_date": "1990-01-31"
+    },
+    "up_down_volume_ratio": {
+      "newly_unavailable": 21,
+      "last_date": "1990-01-31"
+    }
+  },
+  "changed_known_numeric_cells": 0,
+  "changed_interval_keys": 0,
+  "query_stock_days": 12364370,
+  "coverage_rows": 330,
+  "minimum_non_null_stock_day_pct": 100,
+  "all_factor_numeric_fields_survivors_labelled": true,
+  "raw_cutoff_checks": 44,
+  "availability_cutoff_checks": 44,
+  "public_asset_pins": [
+    {
+      "name": "breadth_10d.parquet",
+      "bytes": 112594,
+      "sha256": "84478c20d82faafbbb37ab0fd7443b90b65fe8477b6838d93aaf6fd18b6def8b"
+    },
+    {
+      "name": "breadth_11d.parquet",
+      "bytes": 104107,
+      "sha256": "ff529d4542ba8477a9e727aa687f609d1e55447966f0c8fa44288cb7f67cee5f"
+    },
+    {
+      "name": "breadth_12d.parquet",
+      "bytes": 97235,
+      "sha256": "65570b70c3eedfd996eba782021ca74e41263c542f47472b6091c8215402e160"
+    },
+    {
+      "name": "breadth_13d.parquet",
+      "bytes": 91492,
+      "sha256": "b0c7135aa50ba3d751cf6191a352d564b1a981a5da0649bae3f3e5cad441956f"
+    },
+    {
+      "name": "breadth_14d.parquet",
+      "bytes": 86316,
+      "sha256": "946d288ede87f57718efa068e13355fad8c908b38658c9ef18f2b3072230c778"
+    },
+    {
+      "name": "breadth_15d.parquet",
+      "bytes": 82041,
+      "sha256": "931a08dc8d93fde2efdf8723e8685eecf23978074c963a2ce024c64d2f54768e"
+    },
+    {
+      "name": "breadth_16d.parquet",
+      "bytes": 78255,
+      "sha256": "d13e39363cc92b1569f51a827ae76b2ded6f3447f7a2d5d24998ca2f4da4cc27"
+    },
+    {
+      "name": "breadth_17d.parquet",
+      "bytes": 74734,
+      "sha256": "243abe4b1222d01decd0b4e60fa0c92c3c2f4b4233534f6e11531888de0daaab"
+    },
+    {
+      "name": "breadth_18d.parquet",
+      "bytes": 71489,
+      "sha256": "ea6dbd95cb96b1626cce52a0cd61d880ccf4f784ca5526dd141e5bad5ec97f44"
+    },
+    {
+      "name": "breadth_19d.parquet",
+      "bytes": 67908,
+      "sha256": "2762a38fa678e1545e50e7b25abb2ff02573daf9c4254eb114759399e205123e"
+    },
+    {
+      "name": "breadth_1d.parquet",
+      "bytes": 885542,
+      "sha256": "e62130ee264646b92dd2680123b31a17e31dac1a50f63f45c10871d33da9d54a"
+    },
+    {
+      "name": "breadth_20d.parquet",
+      "bytes": 65492,
+      "sha256": "70af4c1ffe09b9bae7ee5cd16182485bd4c7a90060195585942a9db2786a37fe"
+    },
+    {
+      "name": "breadth_21d.parquet",
+      "bytes": 63435,
+      "sha256": "205874cab906bdc52332f881d9e9a96f8176c2458c08dcceb561e81e26caa9f7"
+    },
+    {
+      "name": "breadth_2d.parquet",
+      "bytes": 469752,
+      "sha256": "062f2734f9990b13e45b46a915626dd1eb84e252a9810ebf22d3170641d34e01"
+    },
+    {
+      "name": "breadth_3d.parquet",
+      "bytes": 323733,
+      "sha256": "b99b1b718cdbf6736fb4be516afdc6f780ea569ad43ebbae27564c3b90eb96ba"
+    },
+    {
+      "name": "breadth_4d.parquet",
+      "bytes": 250769,
+      "sha256": "9ab012abdbdd3be30b348ce28928cc670b67454c41b9d92e00c0d24a41af6c3c"
+    },
+    {
+      "name": "breadth_5d.parquet",
+      "bytes": 203696,
+      "sha256": "603db6d15d2707901a8120df02346b7760bcd884523c2a48a7d850530139ddaa"
+    },
+    {
+      "name": "breadth_6d.parquet",
+      "bytes": 174089,
+      "sha256": "753c5a2a6f14de4e133b52261689e854857f727966bd5d7d09623a3e21010ddb"
+    },
+    {
+      "name": "breadth_7d.parquet",
+      "bytes": 153168,
+      "sha256": "128c7c81dceaed681fb759c5b370c3647dec6a719743c62076f56686bf95bdc3"
+    },
+    {
+      "name": "breadth_8d.parquet",
+      "bytes": 136835,
+      "sha256": "2f3235aca926510750ad9c583dc438d7fae29515cb5f3b48b678c4f5fa72d54e"
+    },
+    {
+      "name": "breadth_9d.parquet",
+      "bytes": 123529,
+      "sha256": "d75f60e31027361dc4c0e1edfa2455ecc9e357891f61cb921c985c2f9c68e1dc"
+    },
+    {
+      "name": "breadth_daily_full_history_v3.parquet",
+      "bytes": 648610,
+      "sha256": "ad31fc2a64d6f549a32474e20a1b33a85e9c1c74c9cacfb68848cb53a8a48ea1"
+    },
+    {
+      "name": "BREADTH_FACTOR_STORE_V3.json",
+      "bytes": 32184,
+      "sha256": "3aac641b2a1ef44ba4b565ef8aa35426d8bd2b4bc925b53a90f8a5e4dd526ac7"
+    },
+    {
+      "name": "breadth_monthly.parquet",
+      "bytes": 63366,
+      "sha256": "fba189e9f338a6fc2a729714a8235d1e11415e9f2c03556121518ed0aa29ba23"
+    },
+    {
+      "name": "breadth_native_full_history_v3.parquet",
+      "bytes": 2320498,
+      "sha256": "0e0cfd3afac0c5040ab0cbb1355b13a46998493759956c49dd76687c9d40ca02"
+    },
+    {
+      "name": "BREADTH_PUBLISHED_FACTOR_READBACK_V3.json",
+      "bytes": 7989,
+      "sha256": "6b7918d323845d5e371a1d050f1909200bf49fdfba85125fbb7385dfc8d566b7"
+    },
+    {
+      "name": "BREADTH_STOCK_DAY_COVERAGE_V3.csv",
+      "bytes": 94888,
+      "sha256": "0ef49a446d42533cb12b37d189f173019deb07460d0971251fa801717a51620b"
+    },
+    {
+      "name": "BREADTH_WARMUP_MEASURED_V3.json",
+      "bytes": 35179,
+      "sha256": "6e97a9cc6fde325134120dc305733ce1a12204f3fc49d442fdf8eb2f815bf297"
+    }
+  ],
+  "full_world_gate": "NOT_PROVEN",
+  "full_dependency_budget_gate": "NOT_PROVEN",
+  "historical_tradeability_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "measurement_revision": 2,
+  "parent_release": "outside-breadth-native-v2-40718683563-1",
+  "parent_report_sha256": "4ac2ae18034c0fcc34f1c739cc718f832b4647ba86c46bd2dbfaab868d45187a",
+  "parent_daily_sha256": "f322b9bf2b2af928fb5fd6f222904c3d2a35511da8e227fa9aad0e310d5dd8f5",
+  "parent_native_sha256": "da7222c4eda152927b7a94517a47ab7d7f1148494df3267b863ad79a44575039",
+  "calendar_release": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "cutoffs": ["2023-01-03", "2025-01-02"],
+  "scope": "Correct unknown initial history from the completed full8316-name V2 proof; preserve every parent counter by immutable binding, all complete intervals and every known value. No raw rebuild, new source/type/question, protected-world action, full-world/scoring approval."
+}

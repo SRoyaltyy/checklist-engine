@@ -1,0 +1,1619 @@
+{
+  "status": "FULL_HISTORY_BREADTH_WITH_EXPLICIT_UNKNOWN_WARMUP_NOT_WORLD",
+  "source_commit": "445e044ba733d56676f5742f8280170506f900b4",
+  "request": {
+    "version": 3,
+    "measurement_revision": 2,
+    "parent_release": "outside-breadth-native-v2-40718683563-1",
+    "parent_report_sha256": "4ac2ae18034c0fcc34f1c739cc718f832b4647ba86c46bd2dbfaab868d45187a",
+    "parent_daily_sha256": "f322b9bf2b2af928fb5fd6f222904c3d2a35511da8e227fa9aad0e310d5dd8f5",
+    "parent_native_sha256": "da7222c4eda152927b7a94517a47ab7d7f1148494df3267b863ad79a44575039",
+    "calendar_release": "native-price-inputs-v1-40336250454-1",
+    "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+    "cutoffs": [
+      "2023-01-03",
+      "2025-01-02"
+    ],
+    "scope": "Correct unknown initial history from the completed full8316-name V2 proof; preserve every parent counter by immutable binding, all complete intervals and every known value. No raw rebuild, new source/type/question, protected-world action, full-world/scoring approval."
+  },
+  "parent_raw_run": 40718683563,
+  "parent_report_sha256": "4ac2ae18034c0fcc34f1c739cc718f832b4647ba86c46bd2dbfaab868d45187a",
+  "accepted_names": 8316,
+  "new_exclusions": [],
+  "daily_rows": 9271,
+  "native_rows": 34229,
+  "pre2020_daily_rows": 7559,
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "partial_native_buckets": 0,
+  "parent_raw_prefix_checks": [
+    {
+      "cut": "2023-01-03",
+      "timeframe": "1d",
+      "native_rows": 8315,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "2d",
+      "native_rows": 4157,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "3d",
+      "native_rows": 2771,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "4d",
+      "native_rows": 2078,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "5d",
+      "native_rows": 1663,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "6d",
+      "native_rows": 1385,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "7d",
+      "native_rows": 1187,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "8d",
+      "native_rows": 1039,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "9d",
+      "native_rows": 923,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "10d",
+      "native_rows": 831,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "11d",
+      "native_rows": 755,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "12d",
+      "native_rows": 692,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "13d",
+      "native_rows": 639,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "14d",
+      "native_rows": 593,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "15d",
+      "native_rows": 554,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "16d",
+      "native_rows": 519,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "17d",
+      "native_rows": 489,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "18d",
+      "native_rows": 461,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "19d",
+      "native_rows": 437,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "20d",
+      "native_rows": 415,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "21d",
+      "native_rows": 395,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "monthly",
+      "native_rows": 396,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "1d",
+      "native_rows": 8817,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "2d",
+      "native_rows": 4408,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "3d",
+      "native_rows": 2939,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "4d",
+      "native_rows": 2204,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "5d",
+      "native_rows": 1763,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "6d",
+      "native_rows": 1469,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "7d",
+      "native_rows": 1259,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "8d",
+      "native_rows": 1102,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "9d",
+      "native_rows": 979,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "10d",
+      "native_rows": 881,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "11d",
+      "native_rows": 801,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "12d",
+      "native_rows": 734,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "13d",
+      "native_rows": 678,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "14d",
+      "native_rows": 629,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "15d",
+      "native_rows": 587,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "16d",
+      "native_rows": 551,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "17d",
+      "native_rows": 518,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "18d",
+      "native_rows": 489,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "19d",
+      "native_rows": 464,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "20d",
+      "native_rows": 440,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "21d",
+      "native_rows": 419,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "monthly",
+      "native_rows": 420,
+      "columns": [
+        "timeframe",
+        "date",
+        "candle_start",
+        "advance",
+        "decline",
+        "unchanged",
+        "new_high",
+        "new_low",
+        "ad_net",
+        "up_volume",
+        "down_volume",
+        "pct_above_sma20",
+        "pct_above_sma50",
+        "pct_above_sma200",
+        "ad_line",
+        "new_highs_minus_new_lows",
+        "ad_ratio",
+        "up_down_volume_ratio",
+        "available_from"
+      ],
+      "mismatches": 0
+    }
+  ],
+  "availability_prefix_checks": [
+    {
+      "cut": "2023-01-03",
+      "timeframe": "1d",
+      "native_rows": 8315,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "2d",
+      "native_rows": 4157,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "3d",
+      "native_rows": 2771,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "4d",
+      "native_rows": 2078,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "5d",
+      "native_rows": 1663,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "6d",
+      "native_rows": 1385,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "7d",
+      "native_rows": 1187,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "8d",
+      "native_rows": 1039,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "9d",
+      "native_rows": 923,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "10d",
+      "native_rows": 831,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "11d",
+      "native_rows": 755,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "12d",
+      "native_rows": 692,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "13d",
+      "native_rows": 639,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "14d",
+      "native_rows": 593,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "15d",
+      "native_rows": 554,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "16d",
+      "native_rows": 519,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "17d",
+      "native_rows": 489,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "18d",
+      "native_rows": 461,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "19d",
+      "native_rows": 437,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "20d",
+      "native_rows": 415,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "21d",
+      "native_rows": 395,
+      "mismatches": 0
+    },
+    {
+      "cut": "2023-01-03",
+      "timeframe": "monthly",
+      "native_rows": 396,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "1d",
+      "native_rows": 8817,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "2d",
+      "native_rows": 4408,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "3d",
+      "native_rows": 2939,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "4d",
+      "native_rows": 2204,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "5d",
+      "native_rows": 1763,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "6d",
+      "native_rows": 1469,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "7d",
+      "native_rows": 1259,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "8d",
+      "native_rows": 1102,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "9d",
+      "native_rows": 979,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "10d",
+      "native_rows": 881,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "11d",
+      "native_rows": 801,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "12d",
+      "native_rows": 734,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "13d",
+      "native_rows": 678,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "14d",
+      "native_rows": 629,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "15d",
+      "native_rows": 587,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "16d",
+      "native_rows": 551,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "17d",
+      "native_rows": 518,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "18d",
+      "native_rows": 489,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "19d",
+      "native_rows": 464,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "20d",
+      "native_rows": 440,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "21d",
+      "native_rows": 419,
+      "mismatches": 0
+    },
+    {
+      "cut": "2025-01-02",
+      "timeframe": "monthly",
+      "native_rows": 420,
+      "mismatches": 0
+    }
+  ],
+  "daily_availability_changes": {
+    "new_high": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "new_low": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "advance": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "decline": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "unchanged": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "up_volume": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "down_volume": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    },
+    "new_highs_minus_new_lows": {
+      "newly_unavailable": 251,
+      "last_date": "1990-12-27"
+    },
+    "ad_net": {
+      "newly_unavailable": 1,
+      "last_date": "1990-01-02"
+    }
+  },
+  "native_availability_changes": {
+    "advance": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "decline": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "unchanged": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "new_high": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "new_low": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "ad_net": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "up_volume": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "down_volume": {
+      "newly_unavailable": 22,
+      "last_date": "1990-01-31"
+    },
+    "new_highs_minus_new_lows": {
+      "newly_unavailable": 934,
+      "last_date": "1991-01-18"
+    },
+    "ad_ratio": {
+      "newly_unavailable": 21,
+      "last_date": "1990-01-31"
+    },
+    "up_down_volume_ratio": {
+      "newly_unavailable": 21,
+      "last_date": "1990-01-31"
+    }
+  },
+  "changed_known_numeric_cells": 0,
+  "legacy_overlap": {
+    "daily_rows": 1712,
+    "complete_native_rows": 6309,
+    "partial_v1_native_rows": 20,
+    "v1_ad_line_offset": 285222,
+    "original_values": "Every V1 daily field and complete native field reconstructed exactly; original immutable V1 files remain referenced.",
+    "line_origin": "V2 cumulative A/D starts at the frozen calendar origin. V1 starts at 2020-01-02. Subtract the retained pre2020 net total to reconstruct every V1 post2020 line value."
+  },
+  "source_counters_retained": {
+    "release": "outside-breadth-native-v2-40718683563-1",
+    "asset": "breadth_daily_full_history_v2.parquet",
+    "sha256": "f322b9bf2b2af928fb5fd6f222904c3d2a35511da8e227fa9aad0e310d5dd8f5"
+  },
+  "native_factor_bytes": 3779577,
+  "data_asset_bytes": 6748685,
+  "coverage_rows": 330,
+  "minimum_non_null_stock_day_pct": 100.0,
+  "factor_manifest_sha256": "3aac641b2a1ef44ba4b565ef8aa35426d8bd2b4bc925b53a90f8a5e4dd526ac7",
+  "runtime": {
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "pyarrow": "26.0.0",
+    "exchange_calendars": "4.13.2"
+  },
+  "world_gate": "NOT_PROVEN",
+  "full_world_storage_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
