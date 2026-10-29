@@ -1,0 +1,32 @@
+name: world_fetch_cboe
+# One-shot CBOE market-wide put/call fetch (block I201).
+# cdn.cboe.com daily market-statistics CSV (no key) -> mkt_pc_2020_26.parquet
+# -> release data-ext-2020-26-v1. Day-D put/call publishes after D's close,
+# so the consumer joins strict < D (same convention as mkt_wide VIX).
+# Official counts, never revised.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kimi/world-snapshot
+      - name: Install deps
+        run: python3 -m pip install -q pandas pyarrow
+      - name: Probe CBOE endpoint
+        run: python3 fetch/fetch_cboe.py probe
+      - name: Fetch CBOE put/call 2020-01-01..today
+        run: python3 fetch/fetch_cboe.py fetch --out "$RUNNER_TEMP/mkt_pc_2020_26.parquet"
+      - name: Upload to data-ext-2020-26-v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 ci/release_assets.py upload data-ext-2020-26-v1 "$RUNNER_TEMP/mkt_pc_2020_26.parquet"
