@@ -812,6 +812,8 @@ def load_xbrl(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df.columns:
+        return None                      # placeholder/empty asset -> block absent
     df = df[df.ticker.isin(tickers)]
     df['filed'] = pd.to_datetime(df['filed'])
     return df.sort_values('filed').reset_index(drop=True)
@@ -826,6 +828,8 @@ def load_f13(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df.columns:
+        return None                      # fetch produced zero hits (0-col empty frame) -> block M absent
     df = df[df.ticker.isin(tickers)]
     return df.reset_index(drop=True)
 
@@ -840,6 +844,8 @@ def load_gdelt(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df.columns:
+        return None                      # placeholder/empty asset -> block absent
     df = df[df.ticker.isin(tickers)]
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
@@ -855,6 +861,8 @@ def load_analyst(tickers):
     if not os.path.exists(p):
         return None
     df = pd.read_parquet(p)
+    if df.empty or 'ticker' not in df.columns:
+        return None                      # placeholder/empty asset -> block absent
     df = df[df.ticker.isin(tickers)]
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values('date').reset_index(drop=True)
