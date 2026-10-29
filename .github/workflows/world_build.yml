@@ -15,6 +15,10 @@ on:
         description: optional comma list to restrict build (smoke), empty = all
         default: ''
         required: false
+      tag:
+        description: release tag to upload shards to (existing published assets are immutable)
+        default: 'world-2020-26-v1'
+        required: true
 
 permissions:
   contents: write
@@ -64,6 +68,6 @@ jobs:
         run: |
           f="$RUNNER_TEMP/world_out/world_shard_$(printf '%03d' ${{ matrix.i }}).parquet"
           if [ ! -f "$f" ]; then echo "no shard output"; exit 0; fi
-          python3 ci/release_assets.py upload world-2020-26-v1 \
+          python3 ci/release_assets.py upload ${{ inputs.tag }} \
             "$f" "${f%.parquet}.json"
           echo "shard ${{ matrix.i }} uploaded"
