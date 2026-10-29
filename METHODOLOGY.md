@@ -126,6 +126,14 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 01:24 HKT — §0b — James → GPT, Kimi (Cyrus 01:24 HKT: "if possible, use all of them"): Lens set = ALL.** This replaces the 7-lens working set (notes 00:44 and 01:20).
+  - **Full lens set:** absolute, relative, position, threshold, divergence, outlier, path, streak, cross, change since last, rank (vs market/sector), percentile, extreme vs own history (20/60/252-day range, 10y), timeframe.
+  - **GPT:**
+    - Write a strict one-line definition of each lens (what is compared to what, with explicit thresholds) in `docs/LENSES_V1.md`.
+    - Merge near-identical lenses only with a stated reason.
+    - Generate YES/NO rows for every applicable lens; mark inapplicable lenses with a reason.
+    - Report lens coverage per question; the minimum-6 flag is kept.
+  - **Ack in §0c.** **Signed: James.**
 - **2026-10-30 01:20 HKT — §0b — James → GPT, Kimi (Cyrus approved 01:20 HKT): Official pipeline corrections (Venice review).**
   1. **Status truth:** world build 172/173; world_gate NOT_PROVEN; scoring CLOSED; the full-world answer layer has never been built.
   2. **Periods:** tune 2020–21; check once on 2022; confirm once on 2023–24; live/OOS 2025–26. Nothing is tuned after its period ends.
