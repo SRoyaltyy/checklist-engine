@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "base_producer": "49043dd375387bddad0d446c56f942f0711b28ed",
+  "timeout_producer": "1bf19fb21b2f270e54746e9e09709c27e940bbe5",
+  "failed_index": 172,
+  "draft_release_id": 427402982,
+  "draft_tag": "compact-world-build-v1-40621517496-1-172",
+  "draft_inventory_sha256": "9505774ce96e9914c08fc2fb7dfdda57a69d8fcc08026e70b3ca22bcbdc5616f",
+  "checkpoint_sha256": "4954ede1ac52c8a7cbda23e0895fe134e5d3bd05043554fb4ff49bcd2a3c2dba",
+  "candidate_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "base_plan": {
+    "release": "compact-world-build-v1-40621517496-1-inputs",
+    "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+    "sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a"
+  },
+  "base_measurement": {
+    "release": "compact-world-build-measured-v1-40621517496-1",
+    "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
+    "sha256": "52255343578528d21af05f3cf4a9f97c376ff6798ced857e54e5c408f63bf734"
+  },
+  "timeout_measurement": {
+    "release": "price-timeout-addon-measured-v1-40792865480-1",
+    "asset": "PRICE_TIMEOUT_ADDON_MEASURED_V1.json",
+    "sha256": "0d2d01e997fc49b9a21829aa2985257dcdf48756084e1a1283b3e6a024e5ffc3"
+  },
+  "guard_proof": {
+    "release": "renko-zero-step-proof-v1-40834508707-1",
+    "asset": "RENKO_ZERO_STEP_PROOF_V1.json",
+    "sha256": "ea0cd8e3dc49d4fc2f6769dcd505ba09b85df31857dcaa325ceaf92967e6bbb3"
+  },
+  "raw_addon": {
+    "release": "price-raw-addon-measured-v1-40795819366-1",
+    "asset": "PRICE_RAW_ADDON_MEASURED_V1.json",
+    "sha256": "0fcdbcb1f25b79c5e00eacddb8866785eca05532569f4946ad98aef6d5d7e22d"
+  },
+  "full_raw_source": {
+    "release": "native-price-base-coverage-v1-40622482865-1",
+    "asset": "NATIVE_PRICE_BASE_STATUS_V1.json",
+    "sha256": "77c2cd6e15256a98802f610f6f2fd9cc02f28f2439a5313edd3c05536bd95d38"
+  },
+  "compute_sha256": {
+    "ci/compact_world_build.py": "3c5e28b9b9791b553a579b1105820915530dda83a19a58a4bef7b5e76810c58c",
+    "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+    "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac",
+    "ci/renko_recipe.py": "ac92c585d05092806dd3fba76a1a2e69dcf84d0f82d22ba6bf4bcb8ce85721a2"
+  },
+  "scope": "Append-only terminal recovery: authenticate/copy24 durable draft payloads without source edits, reuse1 verified EQLT result, compute only30 unpublished names with separate guarded recipe. Compose8447 raw names/12560808 stock-days only after every binding passes. No original run/release mutation, full world/question/PIT/cap/scoring or portable exact recomputation claim."
+}
