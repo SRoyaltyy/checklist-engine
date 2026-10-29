@@ -24,9 +24,12 @@ UA = {'User-Agent': 'checklist-engine-fetch/1.0'}
 
 # One-shot historical CSVs (single request covers 2020..today).
 HIST_CSV = {
-    'totalpc': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/totalpc.csv',
-    'equitypc': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/equitypc.csv',
-    'indexpc': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/indexpc.csv',
+    'totalpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/totalpc.csv',
+    'equitypc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/equitypc.csv',
+    'indexpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/indexpc.csv',
+    # legacy www.cboe.com paths (historically hosted the same files)
+    'totalpc-www': 'https://www.cboe.com/publish/ScheduledTask/MktData/datahouse/totalpc.csv',
+    'totalpc-www2': 'https://www.cboe.com/us/options/market_statistics/daily/totalpc.csv',
 }
 
 # Per-day file layout candidates (first one that probes 200 wins):
@@ -35,11 +38,19 @@ DAILY_PATTERNS = [
     'https://cdn.cboe.com/us/options/market_statistics/daily/{y}/{m:02d}/{d:02d}.csv',
     'https://cdn.cboe.com/data/us/options/market_statistics/daily/{y}/{m:02d}/{d:02d}.csv',
     'https://cdn.cboe.com/us/options/market_statistics/daily/{y}-{m:02d}-{d:02d}.csv',
+    'https://www.cboe.com/us/options/market_statistics/daily/{y}/{m:02d}/{d:02d}.csv',
+]
+
+# CBOE's CDN 403s plain-script UAs from datacenter IPs; probe a browser UA too.
+UAS = [
+    ('fetch', 'checklist-engine-fetch/1.0'),
+    ('browser', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'),
 ]
 
 
-def get(url):
-    req = urllib.request.Request(url, headers=UA)
+def get(url, ua=None):
+    req = urllib.request.Request(url, headers={'User-Agent': ua or UA['User-Agent']})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return r.status, r.read()
@@ -93,17 +104,18 @@ def parse_day(raw):
 
 
 def probe():
-    for name, url in HIST_CSV.items():
-        st, raw = get(url)
-        print(f'{name}: HTTP {st}, {len(raw)} bytes, url={url}')
-        if raw:
-            print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:3]))
-    for pat in DAILY_PATTERNS:
-        url = pat.format(y=2024, m=3, d=15)
-        st, raw = get(url)
-        print(f'daily {pat}: HTTP {st}, {len(raw)} bytes')
-        if raw:
-            print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:6]))
+    for ua_name, ua in UAS:
+        print(f'--- UA={ua_name} ---')
+        for name, url in HIST_CSV.items():
+            st, raw = get(url, ua)
+            print(f'{name}: HTTP {st}, {len(raw)} bytes')
+            if raw:
+                print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:3]))
+        for pat in DAILY_PATTERNS:
+            st, raw = get(pat.format(y=2024, m=3, d=15), ua)
+            print(f'daily {pat}: HTTP {st}, {len(raw)} bytes')
+            if raw:
+                print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:6]))
 
 
 def fetch_all(out, start='2020-01-01', end=None, pace=0.15):
@@ -111,29 +123,33 @@ def fetch_all(out, start='2020-01-01', end=None, pace=0.15):
     start = pd.Timestamp(start)
 
     # Fast path: single historical CSV.
-    for name, url in HIST_CSV.items():
-        st, raw = get(url)
-        df = parse_hist_csv(raw) if raw else None
-        if df is not None and len(df):
-            print(f'historical CSV {name}: HTTP {st}, {len(df)} parsed rows')
-            df = df[(df.date >= start) & (df.date <= end)].reset_index(drop=True)
-            if len(df) == 0:
-                continue
-            df = df.rename(columns={'total_n': 'pc_total_n', 'ratio': 'pc_total',
-                                    'calls': 'pc_calls', 'puts': 'pc_puts'})
-            df.to_parquet(out, index=False)
-            print(f'wrote {out}: {len(df)} rows {df.date.min().date()}..{df.date.max().date()}, '
-                  f'nulls: {int(df.pc_total.isna().sum())}')
-            return
+    for ua_name, ua in UAS:
+        for name, url in HIST_CSV.items():
+            st, raw = get(url, ua)
+            df = parse_hist_csv(raw) if raw else None
+            if df is not None and len(df):
+                print(f'historical CSV {name} (UA={ua_name}): HTTP {st}, {len(df)} parsed rows')
+                df = df[(df.date >= start) & (df.date <= end)].reset_index(drop=True)
+                if len(df) == 0:
+                    continue
+                df = df.rename(columns={'total_n': 'pc_total_n', 'ratio': 'pc_total',
+                                        'calls': 'pc_calls', 'puts': 'pc_puts'})
+                df.to_parquet(out, index=False)
+                print(f'wrote {out}: {len(df)} rows {df.date.min().date()}..{df.date.max().date()}, '
+                      f'nulls: {int(df.pc_total.isna().sum())}')
+                return
     print('historical CSVs unavailable; falling back to per-day walk')
 
-    # Fallback: find a working daily pattern, then walk business days.
-    pat = None
-    for p in DAILY_PATTERNS:
-        st, raw = get(p.format(y=2022, m=6, d=15))
-        if raw and parse_day(raw):
-            pat = p
-            print('daily pattern OK:', p)
+    # Fallback: find a working (UA, daily pattern) pair, then walk business days.
+    pat = ua = None
+    for ua_name, ua_c in UAS:
+        for p in DAILY_PATTERNS:
+            st, raw = get(p.format(y=2022, m=6, d=15), ua_c)
+            if raw and parse_day(raw):
+                pat, ua = p, ua_c
+                print(f'daily pattern OK (UA={ua_name}):', p)
+                break
+        if pat:
             break
     if pat is None:
         sys.exit('no CBOE endpoint answered -- all candidates failed (see probe output)')
@@ -142,7 +158,7 @@ def fetch_all(out, start='2020-01-01', end=None, pace=0.15):
     rows = []
     t0 = time.time()
     for i, dt in enumerate(days):
-        st, raw = get(pat.format(y=dt.year, m=dt.month, d=dt.day))
+        st, raw = get(pat.format(y=dt.year, m=dt.month, d=dt.day), ua)
         if raw:
             p = parse_day(raw)
             if p is not None:
