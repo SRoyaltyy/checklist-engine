@@ -1,5 +1,21 @@
 # World-state evidence — provisional
 
+Latest continuation,29 October2026: the accepted raw-price composition now has
+8,447 unique names and12,560,808 stock-days. Terminal recovery40838035854
+closed all55 omissions without changing the protected original run. Its
+68,904 diagnostic IDs are1,044 numeric fields ×3 facets ×22 grids; they do not
+satisfy the full question framework/history or full world-state prerequisite.
+See `TERMINAL_PRICE_RECOVERY_V1.md` and its bound public composition report.
+
+Separate native components now have measured original-sample proofs:
+chart defaults40850036315 (88 frames/176 cuts,5,339,568 numeric cells) and
+I074 calendar pivots40856073326 (88 frames/176 cuts,2,053,680 cells, including
+an independent scalar formula oracle). These sample components do not supply
+full-universe WORLD_COVERAGE rows. Their exact readback reports are checked in.
+The current owner-signed checklist is46/303,0 pending; the historical counters
+and smoke reports below describe earlier states. Full world/v3/P3b, complete
+leak/PIT/tradeability, full dependency budget and scoring remain unproved.
+
 The full world-state gate is FAIL. No Step A rerun, shortlist, combine or final probability result is ready.
 
 Build source: [d8fa592](https://github.com/SRoyaltyy/checklist-engine/commit/d8fa592779e229bfdf779914aac2f7537d6d81f8). Runner: [40209615520](https://github.com/SRoyaltyy/checklist-engine/actions/runs/40209615520).

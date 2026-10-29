@@ -45,7 +45,21 @@ cell, including unknowns, independently of the production aggregation. Local che
 quarter boundaries, incomplete anchors, missing periods, source identity and
 every native grid. No local dependency installation or world computation.
 
-Actual GitHub measurement is pending. This proof does not establish full
-universe coverage, v3/history quality, comprehensive leakage/PIT eligibility,
-portable exactness, the full dependency budget or scoring. No checkbox is
-claimed.
+Actual run40856073326 at4f6d8c9 passed53 Linux tests6.90s and all88 native
+frames, with176 raw/calendar cutoff rebuilds. All2,053,680 numeric cells were
+checked against the independent scalar oracle and exact persisted regeneration;
+1,194,285 were known, and6,840,295 bytes of temporary native references were
+written. Every mismatch count is0. Each sample retains34,228 native grid rows,
+including pre2020/pre-IPO history; this is not a2020–26 universe fill rate.
+MAN/MNTS/EYE/SPY calculation times were12.17/11.22/11.34/12.11 seconds.
+
+The public299,701B `CALENDAR_PIVOT_MEASURED_V1.json` has SHA256
+`a0959e6a40ca31bf9c6db89fcf4b980f0905f3cf55ecbc38277a821394a484a8`.
+`CALENDAR_PIVOT_PUBLIC_READBACK_V1.json` authenticates the public bytes, all17
+code/registry hashes, original source pins and every reported schema, grid,
+scalar, persistence and cutoff receipt. Native reference files were temporary
+runner files, not independently downloaded numeric bodies in this readback.
+
+Full-universe integration, measured WORLD_COVERAGE, v3/history quality,
+comprehensive leakage/PIT eligibility, portable exactness, the full dependency
+budget and scoring remain unproved. No checkbox is claimed.
