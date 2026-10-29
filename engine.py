@@ -6,7 +6,7 @@ from datapaths import D
 import sys as _s; _s.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'integrity')); import mcap_fix as MF
 import sys, os, time, json, argparse, numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import facets, facets_ext, facets_cal, facets_v26, facets_v27, facets_events
+import facets, facets_ext, facets_cal, facets_v26, facets_v27, facets_events, facets_worldq
 from facets import REG, indicators
 import facets_v271 as H71
 from params import P, DEFAULTS, CROSS, set_params
@@ -32,7 +32,25 @@ def load_context():
         px = u.pivot_table(index='date', columns='ticker', values='close'); m = px.rolling(50).mean()
         breadth = ((px > m).sum(1) / m.notna().sum(1)).where(m.notna().sum(1) > 100); breadth.to_frame('breadth').to_parquet(br)
     return dict(spy=spy, vix=vix, shares=sh, regsho=rs, breadth=breadth, sessions=spy.index.values,
-                halts_by=_load_halts(), si_by=_load_si(), earn_by=_load_earnings())
+                halts_by=_load_halts(), si_by=_load_si(), earn_by=_load_earnings(),
+                world_by=_load_world())
+
+def _load_world():
+    """groups 035+ world-snapshot columns (facets_worldq). OPTIONAL: no shards -> {} and every
+    world question answers -1 (n_a). Shards are read from WORLD_DIR (default /workspace/world);
+    world_build.yml downloads release world-2020-26-v1 there before step_a runs."""
+    import glob
+    d = os.environ.get('WORLD_DIR', '/workspace/world')
+    fs = sorted(glob.glob(os.path.join(d, 'world_shard_*.parquet')))
+    if not fs:
+        print('world shards: none found under', d, '(world questions will answer n_a)', flush=True)
+        return {}
+    df = pd.concat([pd.read_parquet(f) for f in fs], ignore_index=True)
+    df['date'] = pd.to_datetime(df['date'])
+    keep = ['date'] + [c for c in df.columns if c != 'date']
+    df = df[keep].sort_values(['ticker', 'date'])
+    print('world shards:', len(df), 'rows,', len(keep) - 1, 'cols', flush=True)
+    return {k: g.reset_index(drop=True) for k, g in df.groupby('ticker')}
 
 # ---- event sources for groups 034+ (facets_events). Every load is OPTIONAL: a missing file yields an
 # empty dict and every event column answers -1 (n_a), so runs without the data are unaffected.
@@ -139,7 +157,28 @@ def make_I(d, tk, C):
     I['regsho'] = np.isin(dates, C['regsho_by'].get(tk, np.array([], 'datetime64[ns]'))).astype(float)
     I['regsho'][dates < np.datetime64('2020-01-02')] = np.nan
     _events_I(I, tk, C, dates)
+    _world_i(I, tk, C, dates)
     return I
+
+def _world_i(I, tk, C, dates):
+    """groups 035+ world columns (facets_worldq). I['w_<col>'][t] = world row of the NEXT session after
+    dates[t]; that row holds only data strictly before its own date, so bar t sees bars <= dates[t] — the
+    facet contract. Engine shifts one bar, so the stored answer for day D uses data <= D-1. No data ->
+    columns simply absent (facets answer -1)."""
+    wf = (C.get('world_by') or {}).get(tk)
+    if wf is None or not len(wf):
+        return
+    wdates = wf['date'].values
+    pos = np.searchsorted(wdates, dates, side='right')   # first world row dated > dates[t]
+    valid = pos < len(wdates)
+    pi = np.clip(pos, 0, len(wdates) - 1)
+    sub = wf.iloc[pi]
+    for col in wf.columns:
+        if col == 'date':
+            continue
+        arr = sub[col].to_numpy(dtype=float).copy()
+        arr[~valid] = np.nan
+        I['w_' + col] = arr
 
 def _ev_cnt_last(dates, ev):
     """events (datetime64 sorted) -> (per-bar counts, per-bar last-event index or -1). An event dated e belongs to
