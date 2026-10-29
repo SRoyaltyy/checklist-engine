@@ -15,6 +15,10 @@ on:
         description: number of shard legs present on the release (1-8)
         default: '8'
         required: true
+      tag:
+        description: release tag to measure shards from
+        default: 'world-2020-26-v1'
+        required: true
 
 permissions:
   contents: write
@@ -36,7 +40,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/world_shards"
           cd "$RUNNER_TEMP/world_shards"
-          gh release download world-2020-26-v1 -p 'world_shard_*.parquet' --skip-existing
+          gh release download ${{ inputs.tag }} -p 'world_shard_*.parquet' --skip-existing
           ls -la world_shard_*.parquet | head
       - name: Measure + build WORLD_COVERAGE.csv
         run: |
@@ -56,7 +60,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "no coverage changes"
           else
-            git commit -m "world coverage: measured non-null % from world-2020-26-v1 shards [skip ci]"
+            git commit -m "world coverage: measured non-null % from ${{ inputs.tag }} shards [skip ci]"
             git pull --rebase origin kimi/world-snapshot
             git push origin kimi/world-snapshot
           fi
