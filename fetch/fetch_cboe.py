@@ -23,14 +23,17 @@ import pandas as pd
 UA = {'User-Agent': 'checklist-engine-fetch/1.0'}
 
 # One-shot historical CSVs (single request covers 2020..today).
+# CORRECT directory is volume_and_call_put_ratios (proven by James's runner probe,
+# run 40911427670, branch james/cboe-runner-test @ ce0b2773: HTTP 200, 135,696
+# bytes for equitypc.csv, UA and no-UA). The volume_and_open_interest path 403s.
 HIST_CSV = {
-    'totalpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/totalpc.csv',
-    'equitypc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/equitypc.csv',
-    'indexpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_open_interest/indexpc.csv',
-    # legacy www.cboe.com paths (historically hosted the same files)
-    'totalpc-www': 'https://www.cboe.com/publish/ScheduledTask/MktData/datahouse/totalpc.csv',
-    'totalpc-www2': 'https://www.cboe.com/us/options/market_statistics/daily/totalpc.csv',
+    'totalpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/totalpc.csv',
+    'equitypc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv',
+    'indexpc-cdn': 'https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/indexpc.csv',
 }
+
+# Per-day JSON ratios (secondary source + CSV cross-check): TOTAL/INDEX/EQUITY P/C.
+DAILY_JSON = 'https://cdn.cboe.com/data/us/options/market_statistics/daily/{date}_daily_options'
 
 # Per-day file layout candidates (first one that probes 200 wins):
 #   {y}/{m:02d}/{d:02d}.csv  with Expiration,Calls,Puts,Total,P/C Ratio rows.
@@ -174,31 +177,109 @@ def probe():
         print('wayback totalpc head: ' + ' | '.join(wb.decode('utf-8', 'ignore').splitlines()[:3]))
 
 
+def parse_daily_json(raw):
+    """Per-day CBOE JSON -> {name_lower: value_float}; None on failure."""
+    try:
+        j = json.loads(raw.decode('utf-8', 'ignore'))
+        out = {}
+        for r in j.get('ratios', []):
+            try:
+                out[str(r['name']).lower()] = float(str(r['value']).replace(',', ''))
+            except Exception:
+                pass
+        return out or None
+    except Exception:
+        return None
+
+
+def crosscheck_and_fill(df, start, end, ua, pace=0.15):
+    """Spot-check the CSV against the daily JSON and backfill any missing days.
+
+    Checks every ~120th day against TOTAL/INDEX/EQUITY PUT/CALL RATIO where the
+    CSV has matching columns, then walks business days to fill gaps.
+    Returns (mismatches, filled_rows).
+    """
+    cols = {c.lower(): c for c in df.columns}
+    total_c = cols.get('pc_total')
+    mismatches, checked = [], 0
+    step = max(1, len(df) // 25)
+    for i in range(0, len(df), step):
+        row = df.iloc[i]
+        st, raw = get(DAILY_JSON.format(date=str(row['date'])[:10]), ua)
+        pj = parse_daily_json(raw) if raw else None
+        if not pj or total_c is None:
+            continue
+        jv = pj.get('total put/call ratio')
+        cv = row[total_c]
+        if jv is None or pd.isna(cv):
+            continue
+        checked += 1
+        if abs(float(cv) - jv) > 0.005:
+            mismatches.append((str(row['date'])[:10], float(cv), jv))
+    print(f'JSON cross-check: {checked} days compared, {len(mismatches)} mismatches', flush=True)
+
+    have = set(df.date.astype(str).str[:10])
+    filled = 0
+    for dt in pd.bdate_range(start, end):
+        ds = str(dt.date())
+        if ds in have:
+            continue
+        st, raw = get(DAILY_JSON.format(date=ds), ua)
+        pj = parse_daily_json(raw) if raw else None
+        if pj:
+            rec = {'date': pd.Timestamp(ds),
+                   'pc_calls': np.nan, 'pc_puts': np.nan, 'pc_total_n': np.nan,
+                   'pc_total': pj.get('total put/call ratio'),
+                   'pc_equity': pj.get('equity put/call ratio'),
+                   'pc_index': pj.get('index put/call ratio')}
+            df = pd.concat([df, pd.DataFrame([rec])], ignore_index=True)
+            filled += 1
+        time.sleep(pace)
+    if filled:
+        df = df.sort_values('date').reset_index(drop=True)
+    return mismatches, filled, df
+
+
 def fetch_all(out, start='2020-01-01', end=None, pace=0.15):
     end = pd.Timestamp(end or pd.Timestamp.today().date())
     start = pd.Timestamp(start)
 
-    # Fast path: single historical CSV. Direct first, Wayback mirror second.
+    # Fast path: three historical CSVs (total/equity/index), one request each.
+    # Direct first, Wayback mirror second. Merge equity/index ratios onto total.
+    base = None
     for ua_name, ua in UAS:
+        frames = {}
         for name, url in HIST_CSV.items():
             st, raw = get(url, ua)
             via = f'direct HTTP {st}'
-            if not raw and name.startswith('totalpc'):
+            if not raw:
                 ts, wb = wayback_latest(url, ua)
                 if wb:
                     raw, via = wb, f'wayback {ts}'
-            df = parse_hist_csv(raw) if raw else None
-            if df is not None and len(df):
-                print(f'historical CSV {name} ({via}): {len(df)} parsed rows')
-                df = df[(df.date >= start) & (df.date <= end)].reset_index(drop=True)
-                if len(df) == 0:
-                    continue
-                df = df.rename(columns={'total_n': 'pc_total_n', 'ratio': 'pc_total',
-                                        'calls': 'pc_calls', 'puts': 'pc_puts'})
-                df.to_parquet(out, index=False)
-                print(f'wrote {out}: {len(df)} rows {df.date.min().date()}..{df.date.max().date()}, '
-                      f'nulls: {int(df.pc_total.isna().sum())}')
-                return
+            df0 = parse_hist_csv(raw) if raw else None
+            if df0 is not None and len(df0):
+                print(f'historical CSV {name} ({via}): {len(df0)} parsed rows')
+                frames[name.split('-')[0]] = df0
+        if 'totalpc' in frames:
+            base = frames['totalpc'].rename(
+                columns={'total_n': 'pc_total_n', 'ratio': 'pc_total',
+                         'calls': 'pc_calls', 'puts': 'pc_puts'})
+            for short, col in (('equitypc', 'pc_equity'), ('indexpc', 'pc_index')):
+                if short in frames:
+                    base = base.merge(
+                        frames[short][['date', 'ratio']].rename(columns={'ratio': col}),
+                        on='date', how='left')
+            break
+    if base is not None and len(base):
+        base = base[(base.date >= start) & (base.date <= end)].reset_index(drop=True)
+        mismatches, filled, base = crosscheck_and_fill(base, start, end, ua, pace)
+        base.to_parquet(out, index=False)
+        print(f'wrote {out}: {len(base)} rows {base.date.min().date()}..{base.date.max().date()}, '
+              f'nulls: {int(base.pc_total.isna().sum())}, json_filled={filled}, '
+              f'json_mismatches={len(mismatches)}')
+        for m in mismatches[:10]:
+            print('  MISMATCH', m)
+        return
     print('historical CSVs unavailable; falling back to per-day walk')
 
     # Fallback: find a working (UA, daily pattern) pair, then walk business days.
