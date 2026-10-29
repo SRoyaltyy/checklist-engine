@@ -31,9 +31,12 @@ column on all grids (132 comparisons). The resulting public report binds
 code, inputs, runtime, values and date hashes. Native matrices are temporary
 references; raw inputs and code are the recomputation dependencies.
 
-The 39 local API/statistics/reader/controller tests pass. Push run40790389592
-and PR test run40790401871 are queued at119c08e. The proof is pending until
-an actual Actions run and public readback succeed.
+The 39 API/statistics/reader/controller tests pass locally and on actual Linux
+PR run40790401871 (8.79 seconds). After integrating verified breadth main2921fa6,
+all78 combined native-comparison/breadth/statistics/reader/storage/readback tests
+pass locally (41.64 seconds). Producer code remains unchanged from119c08e.
+Push sample run40790389592 is still queued; its actual input proof and public
+readback remain pending.
 This is a three-stock component sample; it establishes no full-universe
 coverage, historical eligibility, complete question state or 100GB world
 budget. No checklist box or full-world/scoring gate is closed here.
