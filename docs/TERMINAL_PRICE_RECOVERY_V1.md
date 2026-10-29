@@ -50,3 +50,34 @@ changed/dropped/duplicate/orphan source cases, preservation of existing
 payloads, exact30-name scheduling, adapter restoration on worker failure,
 and full-union/stock-day failure cases. No local dependencies were installed
 and no real world recomputation ran locally. Actual pipeline evidence follows.
+
+## Actual result
+
+Run40838035854 at9823616 passed69 Linux verification tests, preparation,
+all ten build jobs and finalization. All55 omissions were recovered:24 exact
+draft copies, one existing EQLT result, and30 newly calculated names. No
+exclusions/errors remain in this recovery. The original protected draft was
+re-read after completion: its48-asset inventory is identical to the captured
+source inventory, still draft and still targeting49043dd.
+
+Independent readback authenticated every101 newly published asset169,484,028B,
+including all30 new payloads84,029,802B, the24 retained copies and the full
+published composition. It also rechecked the existing EQLT payload. Every
+one of the8,447 names and12,560,808 query stock-days reconciles exactly against
+the original8261 report, raw131 add-on and full raw source inventory. The
+composition explicitly preserves8,416 original-recipe names and31 guarded
+recipe names; existing published bits are unchanged.
+
+The full8,014,723B index remains on the immutable measured release. Its
+binding is in `COMPOSED_PRICE_DIAGNOSTIC_BINDING_V1.json`; the55-name result
+and independent readback are retained alongside this document. Original8261
+payload bodies are not independently reread by this audit, and no full native
+semantic regeneration or comprehensive PIT proof is claimed.
+
+The actual registry is1,044 numeric fields ×3 diagnostic facets ×22 grids,
+yielding68,904 IDs. It includes all61 TA-Lib patterns but none of the nine
+pinned `cp_*`/`lower_highs10` fields. These counts cannot stand in for the
+complete v3 framework, variable grid or history lever. Those missing pinned
+calculations, measured full-world coverage, quality/PIT/tradeability, portable
+exact reconstruction and full dependency closure remain open. No box is ticked
+from this price-only recovery.

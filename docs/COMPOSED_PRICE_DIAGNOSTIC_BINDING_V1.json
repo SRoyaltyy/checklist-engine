@@ -1,0 +1,21 @@
+{
+  "format": "PUBLIC_PRICE_DIAGNOSTIC_ROW_INDEX_BINDING_V1",
+  "release": "terminal-price-recovery-measured-v1-40838035854-1",
+  "asset": "COMPOSED_PRICE_DIAGNOSTIC_V1.json",
+  "bytes": 8014723,
+  "sha256": "26c45decf8c6b723829494c4d415659970928cc032cd32946d7a22fad9e547c3",
+  "run": 40838035854,
+  "producer": "9823616e4f2344f6bca015180a3402df5f2e508b",
+  "completed_tickers": 8447,
+  "query_stock_days": 12560808,
+  "original_universe": 8727,
+  "source_excluded_names": 280,
+  "content": "Complete immutable8447-name payload index with per-name recipe versions. This file is its binding, not duplicate row contents.",
+  "full_world_gate": "NOT_PROVEN",
+  "full_question_gate": "NOT_PROVEN",
+  "historical_tradeability_gate": "NOT_PROVEN",
+  "comprehensive_leak_gate": "NOT_PROVEN",
+  "portable_exact_recomputation_gate": "NOT_PROVEN",
+  "full_dependency_budget_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
