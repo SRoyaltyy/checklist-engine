@@ -1,0 +1,1373 @@
+{
+  "status": "PARTIAL_COMPLETED_PRICE_METADATA_AUDIT_NOT_WORLD",
+  "inputs_release": "compact-world-build-v1-40621517496-1-inputs",
+  "producer_commit": "49043dd375387bddad0d446c56f942f0711b28ed",
+  "plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+  "audit_code_sha256": "aa5239fe743956175b755fa37c5cac42d1759c7f35f7180219b1372659f4a506",
+  "inventory_snapshot_sha256": "93ea5f2b5f07c602e9eed693284151f4639e7e619391084fbb5a245ca36ea19e",
+  "source_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "shared_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+  "original_universe": 8727,
+  "source_accepted_tickers": 8316,
+  "source_excluded_tickers": 411,
+  "audited_shards": 142,
+  "planned_shards": 173,
+  "unaudited_shards": [
+    138,
+    139,
+    140,
+    143,
+    145,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172
+  ],
+  "completed_tickers": 6810,
+  "build_excluded_tickers": 5,
+  "confirmed_completed_percent_original": 78.03368855276727,
+  "payload_bytes": 17325032411,
+  "release_bytes_including_checkpoints": 17485940947,
+  "exclusions": [
+    {
+      "ticker": "EQLT",
+      "reason": "STOCK_TIMEOUT",
+      "error": "",
+      "index": 17
+    },
+    {
+      "ticker": "WKSP",
+      "reason": "STOCK_TIMEOUT",
+      "error": "",
+      "index": 23
+    },
+    {
+      "ticker": "ABVC",
+      "reason": "STOCK_TIMEOUT",
+      "error": "",
+      "index": 97
+    },
+    {
+      "ticker": "NXTS",
+      "reason": "STOCK_TIMEOUT",
+      "error": "",
+      "index": 126
+    },
+    {
+      "ticker": "SU",
+      "reason": "STOCK_TIMEOUT",
+      "error": "",
+      "index": 128
+    }
+  ],
+  "legacy_size_exclusions_requiring_recovery": [],
+  "price_coverage_gate": "PENDING_UNFINISHED_SHARDS",
+  "storage_policy": "NO_SIZE_EXCLUSIONS_IN_AUDITED_SHARDS",
+  "price_budget_gate": "NOT_MEASURED_FULL_DEPENDENCY_CLOSURE_REQUIRED",
+  "payload_verification": "RELEASE_SIZE_SHA256_AND_WORKER_ROUNDTRIP_ASSERTION_NOT_INDEPENDENT_PAYLOAD_DECODE",
+  "shards": [
+    {
+      "index": 0,
+      "release": "compact-world-build-v1-40621517496-1-000",
+      "summary_sha256": "0aa5e8a9b47fa7d7932b2c66857adce120f7fcee0658babe734092d9e613fa60",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 139763518,
+      "release_bytes": 140969681
+    },
+    {
+      "index": 1,
+      "release": "compact-world-build-v1-40621517496-1-001",
+      "summary_sha256": "d18bd8fc8888de4812e9e59ce207329efc9e348bd63de41524950136a5eba5ea",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124768350,
+      "release_bytes": 125973723
+    },
+    {
+      "index": 2,
+      "release": "compact-world-build-v1-40621517496-1-002",
+      "summary_sha256": "cd05277d2b1352846084517a92d86d1eab2c27ffb7f95ec2726faaa2901f8374",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 115034502,
+      "release_bytes": 116240460
+    },
+    {
+      "index": 3,
+      "release": "compact-world-build-v1-40621517496-1-003",
+      "summary_sha256": "b6ab5ccb1c40533400061811ef9187f78c40ae7582a1d5799b21c4642a821091",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124057642,
+      "release_bytes": 125262490
+    },
+    {
+      "index": 4,
+      "release": "compact-world-build-v1-40621517496-1-004",
+      "summary_sha256": "fc570ce51266ecc20b5613f826fd9d4bfdee18589fdb002eedad1876ac7adb23",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124112149,
+      "release_bytes": 125317723
+    },
+    {
+      "index": 5,
+      "release": "compact-world-build-v1-40621517496-1-005",
+      "summary_sha256": "fa3b83f2cae6901127a3ee4712ed61671a2bfa87eb636c4b2047c0d1abc4c5ed",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 122884849,
+      "release_bytes": 124090784
+    },
+    {
+      "index": 6,
+      "release": "compact-world-build-v1-40621517496-1-006",
+      "summary_sha256": "f771046d73198189b6eecf47bacddac7b86342b8ed45fcd0a7d114c7b5dc5154",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126761459,
+      "release_bytes": 127967189
+    },
+    {
+      "index": 7,
+      "release": "compact-world-build-v1-40621517496-1-007",
+      "summary_sha256": "b04b9f250fef52971e9e6b06217220e22dbf6171e5dac9d7fdf20db521b94c92",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 123169083,
+      "release_bytes": 124375726
+    },
+    {
+      "index": 8,
+      "release": "compact-world-build-v1-40621517496-1-008",
+      "summary_sha256": "2c7f4cffb93731d6b0bd007d6407adf5024a9d68f27a603564a5e2ee551f7262",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132477197,
+      "release_bytes": 133682053
+    },
+    {
+      "index": 9,
+      "release": "compact-world-build-v1-40621517496-1-009",
+      "summary_sha256": "f007ee2f061d06383543faca21ef482906678c2add21b598ec26a53cb11314df",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131392786,
+      "release_bytes": 132597307
+    },
+    {
+      "index": 10,
+      "release": "compact-world-build-v1-40621517496-1-010",
+      "summary_sha256": "1a536647bec4e815efb9141e0e29862c38b47660f08548eef2e707456b85322b",
+      "completed": 40,
+      "excluded": 0,
+      "payload_bytes": 101452602,
+      "release_bytes": 102242908
+    },
+    {
+      "index": 11,
+      "release": "compact-world-build-v1-40621517496-1-011",
+      "summary_sha256": "8d84160ca4fd9a01b6250fc119ef76beb95010aea4426a72d4a3d12dc5216b3c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132580141,
+      "release_bytes": 133786844
+    },
+    {
+      "index": 12,
+      "release": "compact-world-build-v1-40621517496-1-012",
+      "summary_sha256": "2d961015895aee7304500325310992c3bd9f6357f8d2983a93d1d90777c531a4",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 109997937,
+      "release_bytes": 111203895
+    },
+    {
+      "index": 13,
+      "release": "compact-world-build-v1-40621517496-1-013",
+      "summary_sha256": "12081bd0001f94c2379032d636369dcb24dc3605dbc553495ec2ab1e4b5c87e8",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125385081,
+      "release_bytes": 126592006
+    },
+    {
+      "index": 14,
+      "release": "compact-world-build-v1-40621517496-1-014",
+      "summary_sha256": "238d43e4b5a60788b6fd7cab7a0ea2a83fb2f283aa1b28ffdb3aca3e8c4c7bfd",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130016279,
+      "release_bytes": 131222122
+    },
+    {
+      "index": 15,
+      "release": "compact-world-build-v1-40621517496-1-015",
+      "summary_sha256": "d9c59efd1f3d9ac06a486ff758a8f3b1106c9862a7d30e6b11508e6b7078f212",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132538550,
+      "release_bytes": 133745279
+    },
+    {
+      "index": 16,
+      "release": "compact-world-build-v1-40621517496-1-016",
+      "summary_sha256": "5ae73ec012fc51c325657cafecdd256af9244f115dd9a0d53af6567bb5522d93",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128627129,
+      "release_bytes": 129833322
+    },
+    {
+      "index": 17,
+      "release": "compact-world-build-v1-40621517496-1-017",
+      "summary_sha256": "75fa4d8f2d1a8703a1b6ca798d82d88c5d65794319d7e381b8d984d2229db09c",
+      "completed": 49,
+      "excluded": 1,
+      "payload_bytes": 123276677,
+      "release_bytes": 124449012
+    },
+    {
+      "index": 18,
+      "release": "compact-world-build-v1-40621517496-1-018",
+      "summary_sha256": "245cf5827b03dad1fa3f4b2e77ed177f14718d1d1d24c05c6a01a5e831635f8c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128409450,
+      "release_bytes": 129616002
+    },
+    {
+      "index": 19,
+      "release": "compact-world-build-v1-40621517496-1-019",
+      "summary_sha256": "dbbfcd97e9a5828f94e21fbf2ab13372c2f85e10673080c701211bb460ed73fe",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125437576,
+      "release_bytes": 126643579
+    },
+    {
+      "index": 20,
+      "release": "compact-world-build-v1-40621517496-1-020",
+      "summary_sha256": "92db8b478f08d4956745e52e2c5b2f8f899c2cd0f68f4493c17c9c2462e40ade",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133971131,
+      "release_bytes": 135175532
+    },
+    {
+      "index": 21,
+      "release": "compact-world-build-v1-40621517496-1-021",
+      "summary_sha256": "fc1fb7db7815344fabba1c2b36a3d0059c83de362b855000a4129b3ed73c2c6b",
+      "completed": 30,
+      "excluded": 0,
+      "payload_bytes": 71995573,
+      "release_bytes": 72455468
+    },
+    {
+      "index": 22,
+      "release": "compact-world-build-v1-40621517496-1-022",
+      "summary_sha256": "1e5bef99924d08bc9937be24d9c07d8429c6dc1bcd2caf518b59e8f7fb69deed",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129189559,
+      "release_bytes": 130395535
+    },
+    {
+      "index": 23,
+      "release": "compact-world-build-v1-40621517496-1-023",
+      "summary_sha256": "0d3c39dae772163d46ec4f7d4bc1603a84f39452d472ba7a60fdaa47c41a140e",
+      "completed": 49,
+      "excluded": 1,
+      "payload_bytes": 130924729,
+      "release_bytes": 132120858
+    },
+    {
+      "index": 24,
+      "release": "compact-world-build-v1-40621517496-1-024",
+      "summary_sha256": "6a13941dcbd579730e9f2497c3a23fc55c1c2c4a7974e694d3d73202883a42b8",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 118488272,
+      "release_bytes": 119694877
+    },
+    {
+      "index": 25,
+      "release": "compact-world-build-v1-40621517496-1-025",
+      "summary_sha256": "8aed312a7f0a98f4197d306079df37e95dc3169b2ff78522bb4778e35bbf5eda",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132400825,
+      "release_bytes": 133605411
+    },
+    {
+      "index": 26,
+      "release": "compact-world-build-v1-40621517496-1-026",
+      "summary_sha256": "ce5ffe95c625728fa8aee74e38741e31fdfdd22c410357157ddda0d262813662",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124315492,
+      "release_bytes": 125521344
+    },
+    {
+      "index": 27,
+      "release": "compact-world-build-v1-40621517496-1-027",
+      "summary_sha256": "1d3888074524d8c996c58707ee3edd6bf6f9a179466932b4aecfef9bffe6b187",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126400072,
+      "release_bytes": 127604807
+    },
+    {
+      "index": 28,
+      "release": "compact-world-build-v1-40621517496-1-028",
+      "summary_sha256": "24434b7cb7dcce5135c769e5788eb8312ba8cbd941405a00298906c79caaef8a",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 123180796,
+      "release_bytes": 124386041
+    },
+    {
+      "index": 29,
+      "release": "compact-world-build-v1-40621517496-1-029",
+      "summary_sha256": "f8d0d9b8b3dbffb2079c2396d89b9294a458dccc608ba5a3694a2f851fd4d21a",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128782176,
+      "release_bytes": 129988098
+    },
+    {
+      "index": 30,
+      "release": "compact-world-build-v1-40621517496-1-030",
+      "summary_sha256": "7f65772c8f9304b22da79eeb7580b354c21b1eab00ab5273f09f05914d8abbdb",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133975323,
+      "release_bytes": 135180311
+    },
+    {
+      "index": 31,
+      "release": "compact-world-build-v1-40621517496-1-031",
+      "summary_sha256": "d90ecf6611a5f9ce900223f28c56b57a12adefce1210aa5dcd6155f55f8e4824",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 134124594,
+      "release_bytes": 135331548
+    },
+    {
+      "index": 32,
+      "release": "compact-world-build-v1-40621517496-1-032",
+      "summary_sha256": "394208f2bed040324f4314cde16aac1ff9df96f25465370a071bcf618e29219c",
+      "completed": 18,
+      "excluded": 0,
+      "payload_bytes": 42119430,
+      "release_bytes": 42301279
+    },
+    {
+      "index": 33,
+      "release": "compact-world-build-v1-40621517496-1-033",
+      "summary_sha256": "f2845d7d9031e2d279b59356f273d07187c96b710fd3c58b8ca8d5569fd778f1",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132709119,
+      "release_bytes": 133913943
+    },
+    {
+      "index": 34,
+      "release": "compact-world-build-v1-40621517496-1-034",
+      "summary_sha256": "c09a701fd08df9af0203c49d8c06a174a56d9752db77ab9257c7e57183c80849",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124318847,
+      "release_bytes": 125524768
+    },
+    {
+      "index": 35,
+      "release": "compact-world-build-v1-40621517496-1-035",
+      "summary_sha256": "9e097daa417a4b79f8dd53b06bc393d8aed939a35aa4409b434558333154c20f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125292576,
+      "release_bytes": 126497411
+    },
+    {
+      "index": 36,
+      "release": "compact-world-build-v1-40621517496-1-036",
+      "summary_sha256": "81e0bc3697a23ab972d358f7636bacadff2dcbabf0c29132742eb68ea55382dd",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126253255,
+      "release_bytes": 127459862
+    },
+    {
+      "index": 37,
+      "release": "compact-world-build-v1-40621517496-1-037",
+      "summary_sha256": "dd3fea70f7b3f3849ac895821e52614a69025c077ef738642c24f04db234e6f6",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124594935,
+      "release_bytes": 125800636
+    },
+    {
+      "index": 38,
+      "release": "compact-world-build-v1-40621517496-1-038",
+      "summary_sha256": "895aab076322924e8ed0830caf36533a7c6d33527b6eae909a9797da526c0a33",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131162237,
+      "release_bytes": 132366916
+    },
+    {
+      "index": 39,
+      "release": "compact-world-build-v1-40621517496-1-039",
+      "summary_sha256": "2969e9226b962af34ab2ac78cc0ab3567c5d0565532d152442e2da6bee902a12",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129643055,
+      "release_bytes": 130848314
+    },
+    {
+      "index": 40,
+      "release": "compact-world-build-v1-40621517496-1-040",
+      "summary_sha256": "132ceede988583255ae6fd095dcac4747c6cd4460d61359cc649ca429b38c88c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131613618,
+      "release_bytes": 132820328
+    },
+    {
+      "index": 41,
+      "release": "compact-world-build-v1-40621517496-1-041",
+      "summary_sha256": "2144cada06862d357703bcd14f5a3d56aeda800ab0884b856feab92c40dad395",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133047976,
+      "release_bytes": 134252665
+    },
+    {
+      "index": 42,
+      "release": "compact-world-build-v1-40621517496-1-042",
+      "summary_sha256": "a4fa291775cf2da5d6e0408b88bd69201dcfb78a597c0f11a564593a7ae0e400",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 120318536,
+      "release_bytes": 121524198
+    },
+    {
+      "index": 43,
+      "release": "compact-world-build-v1-40621517496-1-043",
+      "summary_sha256": "2f3d3b4cb3d29ddd6fe5d8cdb9d8542e400d01d75ec4052108f05f90fbbb950f",
+      "completed": 27,
+      "excluded": 0,
+      "payload_bytes": 66950083,
+      "release_bytes": 67329367
+    },
+    {
+      "index": 44,
+      "release": "compact-world-build-v1-40621517496-1-044",
+      "summary_sha256": "122a81a5f8ea59967021f5a742fc0d9c977394f3937eab96a71066991794e560",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133679813,
+      "release_bytes": 134885162
+    },
+    {
+      "index": 45,
+      "release": "compact-world-build-v1-40621517496-1-045",
+      "summary_sha256": "453c6c1ec9640acc709a279ef49b1c71ffe8cc09da6d27e99a58673e69840c82",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133041390,
+      "release_bytes": 134248963
+    },
+    {
+      "index": 46,
+      "release": "compact-world-build-v1-40621517496-1-046",
+      "summary_sha256": "05155130837c42c6f1fd6a06eed13ec132502506b8aa0d0a3d3476c24b856d22",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125350300,
+      "release_bytes": 126554940
+    },
+    {
+      "index": 47,
+      "release": "compact-world-build-v1-40621517496-1-047",
+      "summary_sha256": "3f24404e48c1ac9e8f4d35aaed2359b8df7fc83dc638108040c7362a41c5db81",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129116618,
+      "release_bytes": 130323637
+    },
+    {
+      "index": 48,
+      "release": "compact-world-build-v1-40621517496-1-048",
+      "summary_sha256": "d27385055d2193a7df1f3fa8dde41b3a8b3c0cf54f714066a588f80a493ad393",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129941395,
+      "release_bytes": 131147529
+    },
+    {
+      "index": 49,
+      "release": "compact-world-build-v1-40621517496-1-049",
+      "summary_sha256": "7f09443a9a3120d08cac756cae2db50381c74b16d83abf3304a4bba5135d4389",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133357980,
+      "release_bytes": 134564367
+    },
+    {
+      "index": 50,
+      "release": "compact-world-build-v1-40621517496-1-050",
+      "summary_sha256": "be76ea2c4b983451c19889e80b8f467074da1da54e994d112b6b86bd336fd858",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124996710,
+      "release_bytes": 126202572
+    },
+    {
+      "index": 51,
+      "release": "compact-world-build-v1-40621517496-1-051",
+      "summary_sha256": "9becdbe15ca91683b5182b06a660099095433114392576ec537556f395ed0d22",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 127766339,
+      "release_bytes": 128971651
+    },
+    {
+      "index": 52,
+      "release": "compact-world-build-v1-40621517496-1-052",
+      "summary_sha256": "6f897cbc8e56eda011cc7c7baca3de3b5ad49132e0e146206d160fc23e01359b",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121867131,
+      "release_bytes": 123073669
+    },
+    {
+      "index": 53,
+      "release": "compact-world-build-v1-40621517496-1-053",
+      "summary_sha256": "87a43f9c3a35b508bb4e14c5ab376ae5bd74de01d3eefae34a484164acc70d2c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 137336281,
+      "release_bytes": 138541989
+    },
+    {
+      "index": 54,
+      "release": "compact-world-build-v1-40621517496-1-054",
+      "summary_sha256": "083cd8a8219346383935c8447610923dbf4f3a2ba10e457d61dd51981e3538d5",
+      "completed": 29,
+      "excluded": 0,
+      "payload_bytes": 70780781,
+      "release_bytes": 71212987
+    },
+    {
+      "index": 55,
+      "release": "compact-world-build-v1-40621517496-1-055",
+      "summary_sha256": "414ccbee8a0d9d9329f228c22664a6c99a994833c36bcf39d2d8b01d3ced5e00",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132965449,
+      "release_bytes": 134169989
+    },
+    {
+      "index": 56,
+      "release": "compact-world-build-v1-40621517496-1-056",
+      "summary_sha256": "5576648a8b2a3aada92dba3d7cd439c232f7a658d01be3ad7a22c0d72c1c5eb7",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 136892844,
+      "release_bytes": 138099781
+    },
+    {
+      "index": 57,
+      "release": "compact-world-build-v1-40621517496-1-057",
+      "summary_sha256": "4eb972c224f2d60f964e357e9f68e2221cca785436b3c01c46a888e1729ff81d",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 122668446,
+      "release_bytes": 123874258
+    },
+    {
+      "index": 58,
+      "release": "compact-world-build-v1-40621517496-1-058",
+      "summary_sha256": "9f4f5c2969d65fbc8767d1773d27934ed70ce6f0e7775be6cd713174bcba49de",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 113478416,
+      "release_bytes": 114685457
+    },
+    {
+      "index": 59,
+      "release": "compact-world-build-v1-40621517496-1-059",
+      "summary_sha256": "8fe491cb73ae07f96d601470193c768e2522b8a23d7542c4f2ce0eecf1545917",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 136699728,
+      "release_bytes": 137906353
+    },
+    {
+      "index": 60,
+      "release": "compact-world-build-v1-40621517496-1-060",
+      "summary_sha256": "8789b6fa2b85e6c2c8a82cce441228d6417fd691ff8425554be83c6db71e57f6",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130482267,
+      "release_bytes": 131688504
+    },
+    {
+      "index": 61,
+      "release": "compact-world-build-v1-40621517496-1-061",
+      "summary_sha256": "c7e44384a1f1dcf76c544bb857553e81de4adc11bb2e258e260ef4efdaf696b4",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 123732984,
+      "release_bytes": 124939936
+    },
+    {
+      "index": 62,
+      "release": "compact-world-build-v1-40621517496-1-062",
+      "summary_sha256": "93e00c9d720f78bc9605ddbeeb935b93fd9c25524ec771b6c26246b49701fe96",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 119148105,
+      "release_bytes": 120353972
+    },
+    {
+      "index": 63,
+      "release": "compact-world-build-v1-40621517496-1-063",
+      "summary_sha256": "494a3e18ce5f2f63f31bc6172c12f7ac8cdd23f34262e59ef51f92bc978d8f3c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130448531,
+      "release_bytes": 131653942
+    },
+    {
+      "index": 64,
+      "release": "compact-world-build-v1-40621517496-1-064",
+      "summary_sha256": "d481a1d4338c07e06355057e3478408f0f2919b287d81a1669e8d458e3210b03",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128408879,
+      "release_bytes": 129614842
+    },
+    {
+      "index": 65,
+      "release": "compact-world-build-v1-40621517496-1-065",
+      "summary_sha256": "8b8e5a7d346856e41f8b3654e5aaf113eae88f2243e720639ed1189a6e3b783e",
+      "completed": 33,
+      "excluded": 0,
+      "payload_bytes": 86386294,
+      "release_bytes": 86936355
+    },
+    {
+      "index": 66,
+      "release": "compact-world-build-v1-40621517496-1-066",
+      "summary_sha256": "14fe2b3b4d058a50cb4c9992027b224bea5450e26b034eb5632d0f0ea852c38b",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124182989,
+      "release_bytes": 125388259
+    },
+    {
+      "index": 67,
+      "release": "compact-world-build-v1-40621517496-1-067",
+      "summary_sha256": "2823032c86983d4b6c8ceb138c644d825741d16a710e19e1e7b131b9e9a91074",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 113600707,
+      "release_bytes": 114806091
+    },
+    {
+      "index": 68,
+      "release": "compact-world-build-v1-40621517496-1-068",
+      "summary_sha256": "2c6392ffe7bb8b28a6a6efd7448d7fe549c337eb0340464ccc58e4c51fb31ce3",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 122643700,
+      "release_bytes": 123850021
+    },
+    {
+      "index": 69,
+      "release": "compact-world-build-v1-40621517496-1-069",
+      "summary_sha256": "792fcd14688c2999f4ad878190327fc37b8ea56749d9823291f366e84fd168ba",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131757809,
+      "release_bytes": 132964300
+    },
+    {
+      "index": 70,
+      "release": "compact-world-build-v1-40621517496-1-070",
+      "summary_sha256": "f380fbc6ced063557337fc264458f76eea0e84586b258b74efafcf0bbb541737",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 118160678,
+      "release_bytes": 119365686
+    },
+    {
+      "index": 71,
+      "release": "compact-world-build-v1-40621517496-1-071",
+      "summary_sha256": "9a3300deb82cc9642405399670bd72f5cc78b1e8095a0e3d7c42aef3294e1324",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128797091,
+      "release_bytes": 130004040
+    },
+    {
+      "index": 72,
+      "release": "compact-world-build-v1-40621517496-1-072",
+      "summary_sha256": "0aef5657717efba4accefe2956b4ef5caaf994ba6555df9cda84d520df03e13b",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130660287,
+      "release_bytes": 131866351
+    },
+    {
+      "index": 73,
+      "release": "compact-world-build-v1-40621517496-1-073",
+      "summary_sha256": "e1a897ce169984c15b61b79bec289ffb67bc7ee1e30bdd72e25ab3daab42911f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 120307807,
+      "release_bytes": 121514888
+    },
+    {
+      "index": 74,
+      "release": "compact-world-build-v1-40621517496-1-074",
+      "summary_sha256": "f2409815f6b962cc71277f51fc8a98503458b26d659520b60e8141cb91995476",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129319015,
+      "release_bytes": 130525201
+    },
+    {
+      "index": 75,
+      "release": "compact-world-build-v1-40621517496-1-075",
+      "summary_sha256": "ab318c03bb7a3e9f1f7f2ee58e0717795c96096907823a779476704d376d5ff2",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130286429,
+      "release_bytes": 131492776
+    },
+    {
+      "index": 76,
+      "release": "compact-world-build-v1-40621517496-1-076",
+      "summary_sha256": "11b94883f7fc7b88e5d91dc7ae9c9e6779cf8888542d5aca38f29b85c69a1139",
+      "completed": 27,
+      "excluded": 0,
+      "payload_bytes": 72366959,
+      "release_bytes": 72745708
+    },
+    {
+      "index": 77,
+      "release": "compact-world-build-v1-40621517496-1-077",
+      "summary_sha256": "3c28f5e33bd5c314c894acff66bf9278b0dd8ec8c17275affc9a528a7e387836",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124125322,
+      "release_bytes": 125330429
+    },
+    {
+      "index": 78,
+      "release": "compact-world-build-v1-40621517496-1-078",
+      "summary_sha256": "e6b6df6d39d092a3ad64531e1765fae83561dd4bac9647e57bb94774987b126d",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124944628,
+      "release_bytes": 126151340
+    },
+    {
+      "index": 79,
+      "release": "compact-world-build-v1-40621517496-1-079",
+      "summary_sha256": "5d40df512e7f367568ac8742c0e38dec719a35c61d193168d28b248a5add8271",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 123401956,
+      "release_bytes": 124606032
+    },
+    {
+      "index": 80,
+      "release": "compact-world-build-v1-40621517496-1-080",
+      "summary_sha256": "6abe306ceb6be5ec83c16b5f74511edc3afc1b027df38bbcb30b5d23eba7a8c6",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121004645,
+      "release_bytes": 122210395
+    },
+    {
+      "index": 81,
+      "release": "compact-world-build-v1-40621517496-1-081",
+      "summary_sha256": "b8d888cc167f110baf5b2920557298ca944ab93ab57251bb330d7500a27752d3",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130170311,
+      "release_bytes": 131374597
+    },
+    {
+      "index": 82,
+      "release": "compact-world-build-v1-40621517496-1-082",
+      "summary_sha256": "0474b53b8b6a2f22ff9e9f74ead3e62c00e6bea61f468cdbaaae0fcc9b13830f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 115272435,
+      "release_bytes": 116478066
+    },
+    {
+      "index": 83,
+      "release": "compact-world-build-v1-40621517496-1-083",
+      "summary_sha256": "509e7e7f02139425c9a813f42a52487573acd67e6416ce6e3a841e35904315b7",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 127504562,
+      "release_bytes": 128710752
+    },
+    {
+      "index": 84,
+      "release": "compact-world-build-v1-40621517496-1-084",
+      "summary_sha256": "98b051d662bcba1d90ef547e1431a2873ff8e644bf4854f57e1af8a6fcca06f2",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121048472,
+      "release_bytes": 122254592
+    },
+    {
+      "index": 85,
+      "release": "compact-world-build-v1-40621517496-1-085",
+      "summary_sha256": "52fd1ced0cfae24228cda21b277d8c253aedd5d34002df98e3e50d3521fb217e",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129260506,
+      "release_bytes": 130466023
+    },
+    {
+      "index": 86,
+      "release": "compact-world-build-v1-40621517496-1-086",
+      "summary_sha256": "f0ad8bafff32a1ac951d95e82ee3982127152715303f4225a3956b826249b135",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124720905,
+      "release_bytes": 125926476
+    },
+    {
+      "index": 87,
+      "release": "compact-world-build-v1-40621517496-1-087",
+      "summary_sha256": "501b0dae74e8cc70411ee472dfc5a2e2d47de6865833ee940dc2d850bb37a822",
+      "completed": 24,
+      "excluded": 0,
+      "payload_bytes": 58746377,
+      "release_bytes": 59051340
+    },
+    {
+      "index": 88,
+      "release": "compact-world-build-v1-40621517496-1-088",
+      "summary_sha256": "9f715bc291426f2db406a967e30914ab5297e9c280cb1bf914c4d5f10c1a0f78",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128579597,
+      "release_bytes": 129785947
+    },
+    {
+      "index": 89,
+      "release": "compact-world-build-v1-40621517496-1-089",
+      "summary_sha256": "11f966e1fb9a151631160e4fface04b605553f8f106f8715c24b5d4f0516c32a",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130585499,
+      "release_bytes": 131792277
+    },
+    {
+      "index": 90,
+      "release": "compact-world-build-v1-40621517496-1-090",
+      "summary_sha256": "41713bd595026452f8cc3bcd7a0616c08759233e6280052b885d71f1584a3d81",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124612474,
+      "release_bytes": 125818085
+    },
+    {
+      "index": 91,
+      "release": "compact-world-build-v1-40621517496-1-091",
+      "summary_sha256": "4cae713ff2cf31c943b9aa49b29eb1e577a6ff7e166d812bae52f108cd8ab4b6",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126138991,
+      "release_bytes": 127344839
+    },
+    {
+      "index": 92,
+      "release": "compact-world-build-v1-40621517496-1-092",
+      "summary_sha256": "b4587b8e3f8c070271da7e71f209a803f24372bc98a955bb12549bdf2c3cd590",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125661418,
+      "release_bytes": 126865789
+    },
+    {
+      "index": 93,
+      "release": "compact-world-build-v1-40621517496-1-093",
+      "summary_sha256": "63118b373549f9d241583e1bc5276e7a37f38ee4881003c53426296a4a4369df",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 131282241,
+      "release_bytes": 132488183
+    },
+    {
+      "index": 94,
+      "release": "compact-world-build-v1-40621517496-1-094",
+      "summary_sha256": "7595ae6a72f233b3fa89f823719409fd57cb68c8345437bb25373ce61691f20e",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 120295112,
+      "release_bytes": 121500674
+    },
+    {
+      "index": 95,
+      "release": "compact-world-build-v1-40621517496-1-095",
+      "summary_sha256": "5ddbd2b4364011ae564e1dd0a5626ab1f41dd04381173e342754faa55e7ae409",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 134269809,
+      "release_bytes": 135476025
+    },
+    {
+      "index": 96,
+      "release": "compact-world-build-v1-40621517496-1-096",
+      "summary_sha256": "93b29da890fea4eb31226bcae42ddb3c69133cfbeb75386a528bd535713f900b",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 118841440,
+      "release_bytes": 120047221
+    },
+    {
+      "index": 97,
+      "release": "compact-world-build-v1-40621517496-1-097",
+      "summary_sha256": "5af422b15f262bbccf314b14f5a8b968af51d2249f6cc42e8891aeeb4ccd38d6",
+      "completed": 49,
+      "excluded": 1,
+      "payload_bytes": 127837195,
+      "release_bytes": 129032426
+    },
+    {
+      "index": 98,
+      "release": "compact-world-build-v1-40621517496-1-098",
+      "summary_sha256": "4530f0363ed32dc5a20cd4178c5444f0b861245f185ab04c64b14216e16463f9",
+      "completed": 28,
+      "excluded": 0,
+      "payload_bytes": 70602794,
+      "release_bytes": 71008242
+    },
+    {
+      "index": 99,
+      "release": "compact-world-build-v1-40621517496-1-099",
+      "summary_sha256": "37268e352e9175c10eaa2294766e9507455752a1d66f8e357141697c72aad2b3",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 132755630,
+      "release_bytes": 133960722
+    },
+    {
+      "index": 100,
+      "release": "compact-world-build-v1-40621517496-1-100",
+      "summary_sha256": "658d9152bf90d25487ce07d9c69f5ea7f5f355b21ade9ba33d7cd9fc5dff8c84",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 134417556,
+      "release_bytes": 135624289
+    },
+    {
+      "index": 101,
+      "release": "compact-world-build-v1-40621517496-1-101",
+      "summary_sha256": "c48336fb802cb1b3564082a57610bc1cbe09a63d92d78141489744d1a5361a77",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 120740317,
+      "release_bytes": 121947057
+    },
+    {
+      "index": 102,
+      "release": "compact-world-build-v1-40621517496-1-102",
+      "summary_sha256": "f1431ee2f4f6bf1a55f6f524be4814f7d4ecadb02fa97bd6d265eac426bc0940",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 117953995,
+      "release_bytes": 119160855
+    },
+    {
+      "index": 103,
+      "release": "compact-world-build-v1-40621517496-1-103",
+      "summary_sha256": "cb9f0cfcefd3b2aab7251ff13a9aaa6b9cd66c35751e5993f13796d279024547",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 125037611,
+      "release_bytes": 126244288
+    },
+    {
+      "index": 104,
+      "release": "compact-world-build-v1-40621517496-1-104",
+      "summary_sha256": "9c25ca495d3c8e2ead1429e183e335468a84d47ce9a39b7e8bc5e6d829c6c951",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124884380,
+      "release_bytes": 126090208
+    },
+    {
+      "index": 105,
+      "release": "compact-world-build-v1-40621517496-1-105",
+      "summary_sha256": "c500416e6e3781a364dfa46f134992fe10568d4a8cd56434b518e875bc454dc9",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121917938,
+      "release_bytes": 123123481
+    },
+    {
+      "index": 106,
+      "release": "compact-world-build-v1-40621517496-1-106",
+      "summary_sha256": "1951728ad5f318c7cd11bd822455c989df8a77fcd9e578b9b236771825e05350",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124236833,
+      "release_bytes": 125441892
+    },
+    {
+      "index": 107,
+      "release": "compact-world-build-v1-40621517496-1-107",
+      "summary_sha256": "43db3c5b815d79e475d29bb415ad620ddb003f42dd400558f40753d9e96121fc",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121518879,
+      "release_bytes": 122722048
+    },
+    {
+      "index": 108,
+      "release": "compact-world-build-v1-40621517496-1-108",
+      "summary_sha256": "24c320f6f01100f599cddc9dcaad7d7b2c5850112488e69184b01c3fb3e18c82",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 136524520,
+      "release_bytes": 137730070
+    },
+    {
+      "index": 109,
+      "release": "compact-world-build-v1-40621517496-1-109",
+      "summary_sha256": "bf3e28c70da3a2562d9b719ae0040520f4aad435b55a01a17c19a3da0dcfba65",
+      "completed": 24,
+      "excluded": 0,
+      "payload_bytes": 58810315,
+      "release_bytes": 59115323
+    },
+    {
+      "index": 110,
+      "release": "compact-world-build-v1-40621517496-1-110",
+      "summary_sha256": "90436f39baddb6c4bbf156363f6027061f6d73131530b61088318dbd15a13f8f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 128178484,
+      "release_bytes": 129386372
+    },
+    {
+      "index": 111,
+      "release": "compact-world-build-v1-40621517496-1-111",
+      "summary_sha256": "9a4498e7a7cf53ab0ac039b41cdbd870a11ccd0a72395f99d33c8437c702ba9a",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130711744,
+      "release_bytes": 131918241
+    },
+    {
+      "index": 112,
+      "release": "compact-world-build-v1-40621517496-1-112",
+      "summary_sha256": "6b8963d7a52f7d8606c8f28d6f63c49f59739080ea0538c33d95361ca7604a2e",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126279656,
+      "release_bytes": 127485706
+    },
+    {
+      "index": 113,
+      "release": "compact-world-build-v1-40621517496-1-113",
+      "summary_sha256": "276205e955be6c790ca7b9209fe236f32a74c1f2f758e177c5b684fa27077263",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 123552737,
+      "release_bytes": 124759465
+    },
+    {
+      "index": 114,
+      "release": "compact-world-build-v1-40621517496-1-114",
+      "summary_sha256": "cb0f3f373fe6bd8bc0302b2190a4f1de29617daf6c5f8712a164ac54531d23ca",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129904558,
+      "release_bytes": 131110458
+    },
+    {
+      "index": 115,
+      "release": "compact-world-build-v1-40621517496-1-115",
+      "summary_sha256": "85e260d3650b18dfa664d9f014e7aa15a97298338d5121e34b7fb3e227fa578f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 134515506,
+      "release_bytes": 135721754
+    },
+    {
+      "index": 116,
+      "release": "compact-world-build-v1-40621517496-1-116",
+      "summary_sha256": "813eef3580b5beb7416350589a14bc18305aa152086f96194c9d4d9ee870bc56",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 133722672,
+      "release_bytes": 134927955
+    },
+    {
+      "index": 117,
+      "release": "compact-world-build-v1-40621517496-1-117",
+      "summary_sha256": "f03ec6fa0fd8df90f73692fbc583d6e42b3508319074a5d6350997b27370be66",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124743884,
+      "release_bytes": 125950955
+    },
+    {
+      "index": 118,
+      "release": "compact-world-build-v1-40621517496-1-118",
+      "summary_sha256": "eea6b8b68d0c134adac0399083d879cfd8bc77550b3f0b68f3d090d06535f104",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130691369,
+      "release_bytes": 131897877
+    },
+    {
+      "index": 119,
+      "release": "compact-world-build-v1-40621517496-1-119",
+      "summary_sha256": "e99b73953ba965c27bf9e097b3e0c8ea63f7548f2ee96f9d1be331af30804c87",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130904889,
+      "release_bytes": 132110668
+    },
+    {
+      "index": 120,
+      "release": "compact-world-build-v1-40621517496-1-120",
+      "summary_sha256": "de9c43c6d0438bf45734f301fe6714157709f8f652e27fbbf7c9ce0889834a91",
+      "completed": 29,
+      "excluded": 0,
+      "payload_bytes": 76127340,
+      "release_bytes": 76559597
+    },
+    {
+      "index": 121,
+      "release": "compact-world-build-v1-40621517496-1-121",
+      "summary_sha256": "e2fe3a51be5b409eb4f4e39d251fa9949a7c5f86d83137097817cf539c2a12f9",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 135688297,
+      "release_bytes": 136895488
+    },
+    {
+      "index": 122,
+      "release": "compact-world-build-v1-40621517496-1-122",
+      "summary_sha256": "a3b44a084ea70a7a7951a14021c1e566d9aec64d04a61b4953dd79c76c0c6f96",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 122428650,
+      "release_bytes": 123633920
+    },
+    {
+      "index": 123,
+      "release": "compact-world-build-v1-40621517496-1-123",
+      "summary_sha256": "db39530f95706ac4a911fb5d6d9579b25ada66ae31747a7c675993bd5a043e02",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130491337,
+      "release_bytes": 131698101
+    },
+    {
+      "index": 124,
+      "release": "compact-world-build-v1-40621517496-1-124",
+      "summary_sha256": "82d2657f35fb387b021f414600e8aaee0e94b45fc050a61bda4fa7c97e3cd9c1",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 121454869,
+      "release_bytes": 122661445
+    },
+    {
+      "index": 125,
+      "release": "compact-world-build-v1-40621517496-1-125",
+      "summary_sha256": "218a95850966dba75d491fb5ee30b616fdf6350a81de8cf5674ea587718a85c3",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 135545190,
+      "release_bytes": 136751872
+    },
+    {
+      "index": 126,
+      "release": "compact-world-build-v1-40621517496-1-126",
+      "summary_sha256": "52ed847a3e984bb9ba7f45fce7c3fbe3f16b2f6f37e41726d41315a5caef760b",
+      "completed": 49,
+      "excluded": 1,
+      "payload_bytes": 117456064,
+      "release_bytes": 118638675
+    },
+    {
+      "index": 127,
+      "release": "compact-world-build-v1-40621517496-1-127",
+      "summary_sha256": "0f86d29dad6066ac1b276cc387acb9471da4bf5654231b8cfa2dc4778507649d",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129765881,
+      "release_bytes": 130971981
+    },
+    {
+      "index": 128,
+      "release": "compact-world-build-v1-40621517496-1-128",
+      "summary_sha256": "c6b0c7a4fff98fc0b2eb25c447ae068200aa7da56d17d29d0b9672f4333b64a6",
+      "completed": 49,
+      "excluded": 1,
+      "payload_bytes": 122093950,
+      "release_bytes": 123282862
+    },
+    {
+      "index": 129,
+      "release": "compact-world-build-v1-40621517496-1-129",
+      "summary_sha256": "9989f14dce039fef901f1d6887d80bd9c463e3927eef949110e3004668803fe9",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 136197462,
+      "release_bytes": 137405036
+    },
+    {
+      "index": 130,
+      "release": "compact-world-build-v1-40621517496-1-130",
+      "summary_sha256": "6df084cc534c985d19afad73cf74e62b0c7669a728190584656d4acbc38175a7",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 141263033,
+      "release_bytes": 142468141
+    },
+    {
+      "index": 131,
+      "release": "compact-world-build-v1-40621517496-1-131",
+      "summary_sha256": "e2b3d8055ff4aa4d320b59f0c17deb15e3d5e3e69f588d9062d943d632a2243e",
+      "completed": 31,
+      "excluded": 0,
+      "payload_bytes": 79470575,
+      "release_bytes": 79959389
+    },
+    {
+      "index": 132,
+      "release": "compact-world-build-v1-40621517496-1-132",
+      "summary_sha256": "6c238ae40079cf19330ede02afb6772b8c1eed8aaa7cdfa554cb3bb0b32eb47c",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 110722580,
+      "release_bytes": 111928682
+    },
+    {
+      "index": 133,
+      "release": "compact-world-build-v1-40621517496-1-133",
+      "summary_sha256": "6008de6c3bdb0cb43a50f66b34af15ec07f7fee4f88df6644e375328fda9f291",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 135754904,
+      "release_bytes": 136960796
+    },
+    {
+      "index": 134,
+      "release": "compact-world-build-v1-40621517496-1-134",
+      "summary_sha256": "93c34e0991bcfd1bc4b479f889810a29f5ae4d7a75c8cb60a30cb7849ad67f3b",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 127664267,
+      "release_bytes": 128871642
+    },
+    {
+      "index": 135,
+      "release": "compact-world-build-v1-40621517496-1-135",
+      "summary_sha256": "5a3b78a273a33b214f541ddb587fdc5a1d917bab4c9586f8d6cc257326b8eb8f",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129738138,
+      "release_bytes": 130945388
+    },
+    {
+      "index": 136,
+      "release": "compact-world-build-v1-40621517496-1-136",
+      "summary_sha256": "3ec3d40b7169a12beaacec96598ec810ba9e9304c7b92602c49cf7bbb82b23ee",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 126064966,
+      "release_bytes": 127272385
+    },
+    {
+      "index": 137,
+      "release": "compact-world-build-v1-40621517496-1-137",
+      "summary_sha256": "b6b5bc21e61d4a29ef3a66ff0fb6d17faede46d7a62a7732688da1873d94fc2a",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 130011803,
+      "release_bytes": 131216209
+    },
+    {
+      "index": 141,
+      "release": "compact-world-build-v1-40621517496-1-141",
+      "summary_sha256": "aa953cb610fa39383d05331e4b64f432f19485a3f16e858d9a6cd85c88d790db",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 124923447,
+      "release_bytes": 126128971
+    },
+    {
+      "index": 142,
+      "release": "compact-world-build-v1-40621517496-1-142",
+      "summary_sha256": "5de72ebc8865ab5f58c1e5decaefaa8f72774ea9ddb8252d5e208bee533a10b1",
+      "completed": 25,
+      "excluded": 0,
+      "payload_bytes": 63742243,
+      "release_bytes": 64071144
+    },
+    {
+      "index": 144,
+      "release": "compact-world-build-v1-40621517496-1-144",
+      "summary_sha256": "5746c78c7e7241c1513422165607dddb6916d4671f3e054f0bf1f168b9777da0",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 129324975,
+      "release_bytes": 130530523
+    },
+    {
+      "index": 146,
+      "release": "compact-world-build-v1-40621517496-1-146",
+      "summary_sha256": "a60f346ab3cdae48ea1c9e98e264c7ae0e157eb88353024f664b925be0df6655",
+      "completed": 50,
+      "excluded": 0,
+      "payload_bytes": 119646960,
+      "release_bytes": 120853468
+    }
+  ],
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
