@@ -1,0 +1,76 @@
+{
+  "new_items": [
+    "I227",
+    "I228"
+  ],
+  "existing_derived_items_repaired": [
+    "I204",
+    "I205",
+    "I206",
+    "I207",
+    "I208",
+    "I209",
+    "I210",
+    "I211",
+    "I212",
+    "I213",
+    "I214",
+    "I215",
+    "I216",
+    "I217",
+    "I218",
+    "I219",
+    "I220",
+    "I221",
+    "I222",
+    "I223",
+    "I224",
+    "I225",
+    "I226"
+  ],
+  "added_pending_coverage_rows": 550,
+  "receipts": [
+    {
+      "file": "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv",
+      "added_rows": 2,
+      "old_bytes_sha256": "202ee3b392828a5c268078217f58369a98348c9e01bfd335beefc96c048fdcc3",
+      "new_bytes_sha256": "ecfd00620db6e6134238dbcf6b068b70b15adae3ed9f37c9048dd677399a1a4c",
+      "all_prior_bytes_preserved": true,
+      "old_git_blob_sha256": "202ee3b392828a5c268078217f58369a98348c9e01bfd335beefc96c048fdcc3",
+      "new_git_blob_sha256": "ecfd00620db6e6134238dbcf6b068b70b15adae3ed9f37c9048dd677399a1a4c",
+      "all_prior_git_bytes_preserved": true
+    },
+    {
+      "file": "dictionary/DATA_SOURCES.csv",
+      "added_rows": 25,
+      "old_bytes_sha256": "667202d6b9928051f80c2dac831b96b9b30891ccb38599687b745c648854c7bb",
+      "new_bytes_sha256": "5c5d70dd8696b8e46b0efdf2993a8cafa6a43b6306aa148b83ab65e9d517621c",
+      "all_prior_bytes_preserved": true,
+      "old_git_blob_sha256": "667202d6b9928051f80c2dac831b96b9b30891ccb38599687b745c648854c7bb",
+      "new_git_blob_sha256": "5c5d70dd8696b8e46b0efdf2993a8cafa6a43b6306aa148b83ab65e9d517621c",
+      "all_prior_git_bytes_preserved": true
+    },
+    {
+      "file": "dictionary/world_coverage_map.csv",
+      "added_rows": 25,
+      "old_bytes_sha256": "4b6b4c8c17ab9934ac92e863e2de93548033790f414f5b8b5dc01c6d6983c148",
+      "new_bytes_sha256": "eaf4586a48bfd91c8b3e9056ae49aa8e79d78591f80d614f8bca82e63fbe414a",
+      "all_prior_bytes_preserved": true,
+      "old_git_blob_sha256": "9c3c2eb0fd1fd55d69f7fff9717f07a994ccd501a9f643568acbe1f285314824",
+      "new_git_blob_sha256": "cbe6f6b1ec7b7972a31566a9a0f682f60d302ac56c4d660281cfc856eb1c4981",
+      "all_prior_git_bytes_preserved": true
+    },
+    {
+      "file": "docs/WORLD_COVERAGE.csv",
+      "added_rows": 550,
+      "old_bytes_sha256": "537980a3b6ac9e11f2ffe35b1b7f83763db5f524fe18355b8d029dd131d934da",
+      "new_bytes_sha256": "b99a89703acc1220f10ae6d56bc6a879d0896bec08ad8986f136e67b3a451412",
+      "all_prior_bytes_preserved": true,
+      "old_git_blob_sha256": "537980a3b6ac9e11f2ffe35b1b7f83763db5f524fe18355b8d029dd131d934da",
+      "new_git_blob_sha256": "b99a89703acc1220f10ae6d56bc6a879d0896bec08ad8986f136e67b3a451412",
+      "all_prior_git_bytes_preserved": true
+    }
+  ],
+  "status": "APPEND_ONLY_REGISTRATION_NOT_WORLD_COVERAGE",
+  "base_commit": "be82a2c445dfbfee7716b5817edecde2e9cfe635"
+}

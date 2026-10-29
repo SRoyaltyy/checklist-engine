@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "authority": "METHODOLOGY James158/0439ef96e263eb12a44eddf370a1a46a645dc607; READY order159/15e3bae29c7d8837949360b18019698e267cf3ff",
+  "status": "REGISTERED_DEFINITIONS_AND_REFERENCE_PRIMITIVES_NOT_FULL_UNIVERSE_MEASUREMENT",
+  "defaults": {"N": 20, "Y": "1d", "K": 5},
+  "grid": {
+    "N": [10, 20, 60],
+    "Y": ["1d", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "10d", "11d", "12d", "13d", "14d", "15d", "16d", "17d", "18d", "19d", "20d", "21d", "monthly"],
+    "K": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  },
+  "fixed_similarity_rule": {"quantity": "Pearson correlation of independently min-max normalized close vectors", "operator": ">", "threshold": 0.90},
+  "target_window": "Last N consecutive genuine native grid intervals at Y, inclusive of the latest interval with source end < S and availability <= S. Missing intervals remain in the window and invalidate it; never choose an older complete window instead.",
+  "normalization": "For each vector separately, z_i=(close_i-min(close))/(max(close)-min(close)), oldest to newest. All N closes finite and positive; constant range or any unknown gives unknown. Doji included by close; colour/body/wick/pivot rules do not enter the calculation. All tied extrema map to the same0/1; no unique anchor bar is chosen.",
+  "arithmetic": "Binary64 reference in world_chart_shape.py, math.fsum means and centered products; clamp only final rho outside[-1,1]. Strict >0.90, no epsilon, tolerance, rounding, time warping, resampling/interpolation or offset optimization.",
+  "candidate_pool": "Every distinct (ticker,Y,candle_start,candle_end) window of the authenticated approved universe and entire available source history, ending < S with availability <= S and explicit historical eligibility at its availability. No shortlist, similarity preselection or hidden history cap. Exclude the identical target window only; other overlapping windows remain and must be disclosed. Unknown source/eligibility cannot be treated as ineligible or silently removed from a full-pool claim.",
+  "candidate_identity": ["ticker", "Y", "candle_start", "candle_end"],
+  "candidate_pit": "Target eligibility is as of S; candidate eligibility is as of its native availability. Apply standing tradeable/>=$100M policy with raw nominal prices and shares known then; do not infer it from adjusted shape prices or current classifications. Universe/source membership is versioned; survivor scope remains explicit.",
+  "outcome": "R_K=close(candidate_end + K actual market sessions)/close(candidate_end)-1. K is daily trading sessions for every Y, including monthly. Both exact endpoint prices finite and positive and endpoint date < S. No setup-day input, no future close, no jumping a missing price, no extrapolation.",
+  "ranking": "All strict matches sorted by rho descending, candidate end descending, ticker UTF-8 ascending, candidate start ascending. Top5 from this complete order, independent of K. Exact identities unique; all other overlaps kept and labelled. No approximate search may exclude an unverified candidate.",
+  "items": [
+    {
+      "id": "I227",
+      "item": "Historical close-shape matches and known K-session outcomes",
+      "outputs": [
+        {"name": "match_count", "axes": ["N", "Y"], "units": "integer windows", "definition": "Count all strict >0.90 matches after a complete eligible-pool scan. Known zero only when the valid complete scan found none.", "viewport_draw": "Recolour exactly the N target native candles purple; show count, full pool scope and exact window dates."},
+        {"name": "matured_count", "axes": ["N", "Y", "K"], "units": "integer windows", "definition": "Count matching windows whose exact K-session outcome endpoint and prices are known before S.", "viewport_draw": "Label the known-return denominator and K on the shape pane; display outcome endpoint dates for shown matches."},
+        {"name": "up_pct", "axes": ["N", "Y", "K"], "units": "percent0..100", "definition": "100*count(R_K>0)/matured_count. Zero return is not up. Unknown when matured_count=0.", "viewport_draw": "Show up numerator/known denominator and percentage; mark each displayed match's K-endpoint on its historical mini-chart only when known."},
+        {"name": "median_return", "axes": ["N", "Y", "K"], "units": "fractional close return", "definition": "Exact median of known R_K, midpoint of the two central observations when even. Unknown when matured_count=0; no approximate quantile.", "viewport_draw": "Show the median as a labelled historical statistic beside the matched mini-charts and K endpoints."},
+        {"name": "top5_geometry", "axes": ["N", "Y"], "units": "normalized0..1 lines and labelled dates", "definition": "First up to5 matches in the exact ranking, whether or not a particular K outcome has matured. Geometry/receipt, not an extra scored scalar question.", "viewport_draw": "Current normalized close line purple plus top5 matched lines aligned at relative candle positions0..N-1; label literal tickers, start/end, rho and overlap. Current N candles remain purple. Unknown K outcomes have no return label."}
+      ]
+    },
+    {
+      "id": "I228",
+      "item": "Identical-window normalized close comparison to literal benchmark or PIT peer",
+      "benchmark_roles": ["SPY", "sector ETF", "theme peer"],
+      "outputs": [
+        {"name": "shape_correlation", "axes": ["N", "Y", "literal comparator"], "units": "Pearson rho[-1,1]", "definition": "Same normalized-close correlation on exactly identical N candle interval keys. Role chosen with membership known before S; one literal comparator for the entire window, no splicing, averaging or current-map backfill. Self-comparison excluded.", "viewport_draw": "Recolour target N candles purple; overlay target and comparator's own-window0..1 close lines on the same absolute candle dates. Label ticker/ETF/peer identities, membership-as-of date, N/Y, rho and cutoff S."}
+      ]
+    }
+  ],
+  "aliases_and_counts": "match_count/top5 do not depend on K. I228 has no K axis. Normalized-close Pearson and raw-close Pearson are mathematically one positive-affine-invariant formula, not separate questions. Counts of grid records are not unique question counts. Full v3 facets/registered thresholds/history and empirical quality are still required.",
+  "unavailable": "Target window unknown => all shape answers unknown, not zero. Unauthenticated/incomplete pool or unknown required eligibility => no full-universe answer. With complete known pool, no matches => match_count=0 and matured_count=0; up_pct/median blank. Missing peer membership or mismatched intervals => I228 unknown. No current-map or SPY fallback for sector/theme roles.",
+  "scope": "Raw inventory/history definitions and reference arithmetic only. No full search implementation, complete universe measurement, renderer validation, v3/P3b, PIT eligibility, storage-cap or scoring acceptance. Historical up percentages are descriptive matched-window features, not net-profit probabilities or independent observations. Kimi owns rendering."
+}
