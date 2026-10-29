@@ -1,0 +1,79 @@
+name: codex-price-timeout-addon
+on:
+  push:
+    branches: [codex/price-timeout-addon]
+    paths: ['ci/PRICE_TIMEOUT_ADDON_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: codex-price-timeout-addon
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      inputs_release: ${{ steps.plan.outputs.inputs_release }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_price_timeout_addon.py tests/test_compact_world_build.py tests/test_world_answer_cache.py tests/test_completed_price_shard_audit.py -q
+      - id: plan
+        run: python -m ci.price_timeout_addon prepare --directory timeout-plan
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-timeout-addon-plan
+          path: timeout-plan/COMPACT_WORLD_BUILD_PLAN.json
+          if-no-files-found: ignore
+  recover:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        index: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.price_timeout_addon recover --directory timeout-recovery --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --index '${{ matrix.index }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-timeout-addon-${{ matrix.index }}
+          path: timeout-recovery/COMPACT_WORLD_SHARD.json
+          if-no-files-found: ignore
+  finalize:
+    needs: [prepare,recover]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.price_timeout_addon finalize --directory timeout-measured --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-timeout-addon-measured
+          path: timeout-measured/PRICE_TIMEOUT_ADDON_MEASURED_V1.json
+          if-no-files-found: ignore
