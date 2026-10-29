@@ -39,5 +39,7 @@ remain open. Neither a planning receipt nor successful incremental jobs close
 those gates. Protected40621517496 is never changed, resumed or restarted.
 
 The46 local planner/finalizer/base-build/cache/audit tests pass. Actual
-production verification is pending. No local dependency installation or new
-vendor request was used.
+run40795819366 is queued atd254570. Installed package/Python/architecture
+versions are captured during preparation and must match every worker.
+Production verification remains pending. No local dependency installation or
+new vendor request was used.
