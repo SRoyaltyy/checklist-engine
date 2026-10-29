@@ -1,0 +1,16 @@
+name: cboe-runner-test
+on:
+  push:
+    branches: [james/cboe-runner-test]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: probe CBOE
+        run: |
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+          for u in https://cdn.cboe.com/data/us/options/market_statistics/daily/2026-10-28_daily_options https://cdn.cboe.com/data/us/options/market_statistics/daily/2020-03-16_daily_options https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/equitypc.csv; do
+            echo "UA  $(curl -s -o /tmp/o -w '%{http_code} %{size_download}' -A "$UA" $u) $u"; head -c 150 /tmp/o; echo
+            echo "noUA $(curl -s -o /dev/null -w '%{http_code}' $u) $u"
+          done
