@@ -2,8 +2,8 @@
 
 30 October2026 scope update: James/Cyrus9e545e9 permits FIRST_SLICE_PRICE_ONLY
 without waiting for the full-world gate below, through per-item DEFINE→CHART→
-DERIVE YES/NO→MINE gates. I201 is owner-dropped;22 coverage rows are explicitly
-excluded, not newly measured. Current catalog has4,752 PENDING dictionary/TF
+DERIVE YES/NO→MINE gates. James2d1664b reinstates I201 as DATA_READY; it remains
+required, and no full-universe join is inferred. Current catalog has4,774 PENDING dictionary/TF
 rows. See `FIRST_SLICE_INPUT_INSPECTION_V1.md`: all eight named world-v2 input
 shards actually end in2024 and lack raw stock OHLCV/TA-Lib output columns.
 The price-source binding and held-out2025–26 extension require explicit runner

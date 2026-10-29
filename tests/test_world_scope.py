@@ -1,5 +1,5 @@
 import pytest
-from world_scope import NEWS_DROP_REASON,PUT_CALL_DROP_REASON
+from world_scope import NEWS_DROP_REASON
 
 
 def test_news_probe_stops_before_network_or_files(tmp_path,monkeypatch):
@@ -36,24 +36,23 @@ def test_owner_exclusion_cannot_hide_an_unrelated_missing_item(monkeypatch):
     assert any('unauthorized scope exemption' in f for f in failures)
 
 
-def test_putcall_drop_survives_missing_or_blocked_source_without_dropping_vix():
+def test_reinstated_putcall_and_vix_remain_required_when_outputs_are_missing():
     from ci.world_v2_coverage import build
     measured=dict(rows=1,date_min='2020-01-01',date_max='2026-10-23',columns={})
-    rows,failures=build(measured,source_evidence={'I201':dict(status='BLOCKED',reason='HTTP 403')})
-    dropped=[r for r in rows if r['namespace']=='dictionary' and r['item_id']=='I201']
-    assert len(dropped)==22
-    assert all(r['status']=='DROPPED_BY_OWNER' and r['reason']==PUT_CALL_DROP_REASON and
-               r['snapshot_columns']=='' and r['source_evidence']=='{}' for r in dropped)
-    assert not any(f.startswith('dictionary:I201__') for f in failures)
+    rows,failures=build(measured)
+    options=[r for r in rows if r['namespace']=='dictionary' and r['item_id']=='I201']
+    assert len(options)==22
+    assert all(r['status']=='PENDING' for r in options)
+    assert len([f for f in failures if f.startswith('dictionary:I201__')])==22
     vix=[r for r in rows if r['namespace']=='dictionary' and r['item_id']=='I178']
     assert len(vix)==22 and all(r['status']!='DROPPED_BY_OWNER' for r in vix)
     assert any(f.startswith('dictionary:I178__') for f in failures)
 
 
-def test_putcall_reason_cannot_exempt_a_tradingview_item(monkeypatch):
+def test_news_exemption_cannot_be_reused_for_a_tradingview_options_item(monkeypatch):
     from ci import world_v2_coverage as coverage
     monkeypatch.setattr(coverage,'mappings',lambda:({},{}))
     monkeypatch.setattr(coverage,'read_csv',lambda path:[] if path.name=='DATA_SOURCES.csv' else
-                        [dict(item_id='I201',item='Unrelated TV item',status='DROPPED_BY_OWNER',reason=PUT_CALL_DROP_REASON)])
+                        [dict(item_id='I201',item='Unrelated TV item',status='DROPPED_BY_OWNER',reason=NEWS_DROP_REASON)])
     _,failures=coverage.build(dict(rows=1,date_max='2026-10-23',columns={}))
     assert any('unauthorized scope exemption' in f for f in failures)

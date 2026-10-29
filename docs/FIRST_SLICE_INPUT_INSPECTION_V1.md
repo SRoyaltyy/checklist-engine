@@ -55,13 +55,16 @@ missing rules and drawings must be verified against each dictionary definition.
 DEFINE→CHART→DERIVE YES/NO→MINE remains sequential per item. Neither this input
 audit nor a raw field count advances an unreviewed item through those gates.
 
-## I201 scope correction
+## Current canonical and options scope
 
-The coverage builder now recognizes the explicit owner exclusions I200 andI201.
-I201's22 dictionary/timeframe rows and source status become DROPPED_BY_OWNER,
-with the9e545e9 authority/reason. James's map values I201=DROPPED and I195=PROVEN
-are retained. I178 VIX and other measured volatility data stay in scope.
-`I201_OWNER_DROP_V1.json` binds the two changed CSVs to their original Git blobs;
-all other records retain identical bytes. No unavailable source is relabelled as
-downloaded, no inventory identity is deleted and no checklist data-completion
-tick is claimed.
+James/Cyrus `b59efaa` makes v2.7.2.2 the canonical question/cutoff list;
+BINARY_LADDERS_V1 is an add-on. BINARY_MASTER_V1 must convert the canonical list
+first, then merge the add-on and deduplicate by computed meaning.
+
+`2d1664b` reinstates I201 as DATA_READY after successful CBOE probes. The earlier
+drop is superseded. Options and money-flow sources are TIER-1 under `0de43b6`.
+I201 and I178 stay required; missing joined outputs still fail world coverage.
+Scope regressions verify that the news exclusion cannot hide those requirements.
+No completed full-universe/PIT join is inferred from DATA_READY alone. The new
+daily JSON source includes OI; its next-open availability requires the actual
+session calendar, and CSV/JSON-era discontinuities must remain explicit.
