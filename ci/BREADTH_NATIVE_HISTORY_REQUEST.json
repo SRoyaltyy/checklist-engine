@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "stock_status_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
+  "calendar_release": "native-price-inputs-v1-40336250454-1",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "weights_sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+  "legacy_release": "outside-breadth-stitch-v1",
+  "legacy_daily_sha256": "22dfcd51f88d898a7bc156efa9d79677c769d207604f3a68aec065623d65b2c0",
+  "legacy_native_sha256": "c866feae0faa5600c1fd912246be29bfdaf495aa05d27ddfa869e9e828f1b972",
+  "cutoffs": ["2023-01-03", "2025-01-02"],
+  "scope": "Full approved-name breadth history and every completed native grid only; all original raw inputs remain hash bound. No new data type/question, no provider requests, no protected-world restart, no full-world/scoring approval."
+}

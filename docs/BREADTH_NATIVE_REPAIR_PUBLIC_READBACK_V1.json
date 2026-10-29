@@ -1,0 +1,13 @@
+{
+  "daily_rows": 1712,
+  "complete_native_rows": 6309,
+  "partial_v1_native_rows": 20,
+  "v1_ad_line_offset": 0,
+  "original_values": "Every V1 daily field and complete native field reconstructed exactly; original immutable V1 files remain referenced.",
+  "line_origin": "V2 cumulative A/D starts at the frozen calendar origin. V1 starts at 2020-01-02. Subtract the retained pre2020 net total to reconstruct every V1 post2020 line value.",
+  "status": "ACTUAL_PUBLIC_V1_COMPLETE_ROWS_PRESERVED_AND20_PARTIALS_REJECTED",
+  "native_rows": 6309,
+  "scope": "Real published V1 daily panel only; missing pre2020 history cannot be restored from this file. Full raw production is still required.",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

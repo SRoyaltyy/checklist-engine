@@ -1,0 +1,36 @@
+name: codex-breadth-warmup-availability
+on:
+  push:
+    branches: [codex/breadth-native-history]
+    paths: ['ci/BREADTH_WARMUP_FIX_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: codex-breadth-warmup-availability
+  cancel-in-progress: false
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_outside_breadth.py tests/test_breadth_native_history.py tests/test_breadth_availability_proof.py tests/test_market_storage.py tests/test_world_context_store.py tests/test_audit_factor_assets.py -q
+      - run: python -m ci.breadth_warmup_fix --directory breadth-warmup
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: breadth-warmup-evidence
+          path: |
+            breadth-warmup/*.json
+            breadth-warmup/*.csv
+            breadth-warmup/*.parquet
+          if-no-files-found: ignore
