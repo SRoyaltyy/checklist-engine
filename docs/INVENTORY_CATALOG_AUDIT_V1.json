@@ -1,0 +1,11 @@
+{
+  "status": "CATALOG_COMPLETE_NOT_WORLD_COVERAGE",
+  "inventory_items": 258,
+  "source_items": 258,
+  "mapping_items": 258,
+  "required_inventory_timeframe_rows": 5676,
+  "pending_inventory_timeframe_rows": 4774,
+  "legacy_pending_rows_without_reason": 3278,
+  "full_world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

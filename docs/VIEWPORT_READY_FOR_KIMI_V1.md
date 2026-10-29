@@ -9,6 +9,12 @@ Disambiguation rule: METHODOLOGY §0b (~18:24 HKT / #155, ACK #156).
 Drawable-only rule: §0b (~18:52 HKT / #158).
 
 This file is the **first picker set** for the single-stock TradingView-style display.
+GPT grid update: `docs/CHART_SHAPE_SPEC_V1.md` and
+`dictionary/CHART_SHAPE_REGISTRY_V1.json` now define N=10/20/60,
+Y=every1d–21d/monthly, K=every1–21 daily market sessions(default20/1d/5).
+This resolves the unspecified-grid blocker below. The gallery placeholder
+remains disabled until a tested renderer binding and authenticated complete
+match/peer payload exist; no fabricated matches or current-map peers.
 Kimi stubs the checklist against `status=READY` rows only. Rows with
 `status=DO_NOT_DRAW` must not appear as selectable, or must show as disabled with
 the blocker text. No guessing.

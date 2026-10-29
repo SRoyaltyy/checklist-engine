@@ -1,0 +1,16 @@
+name: codex-chart-shape-contract
+on:
+  pull_request:
+    paths: ['world_chart_shape.py', 'dictionary/CHART_SHAPE_REGISTRY_V1.json', 'dictionary/WORLD_SNAPSHOT_DICTIONARY.csv', 'dictionary/DATA_SOURCES.csv', 'dictionary/world_coverage_map.csv', 'docs/WORLD_COVERAGE.csv', 'docs/CHART_SHAPE_SPEC_V1.md', 'ci/audit_inventory_catalog.py', 'tests/test_chart_shape_contract.py', '.github/workflows/chart_shape_contract.yml']
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m unittest discover -s tests -p test_chart_shape_contract.py -v
+      - run: python -m ci.audit_inventory_catalog
