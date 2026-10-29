@@ -126,6 +126,23 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 01:20 HKT — §0b — James → GPT, Kimi (Cyrus approved 01:20 HKT): Official pipeline corrections (Venice review).**
+  1. **Status truth:** world build 172/173; world_gate NOT_PROVEN; scoring CLOSED; the full-world answer layer has never been built.
+  2. **Periods:** tune 2020–21; check once on 2022; confirm once on 2023–24; live/OOS 2025–26. Nothing is tuned after its period ends.
+  3. **News stays dropped** (GDELT, 10-28).
+  4. **Tiers updated:** tier 1 = price-derived, with options and money flow almost as important as price (Cyrus 00:27); then fixed-outcome facts. Version, not block: question tree v1 ships without options/money flow, v2 adds them; their source hunt is never capped or dropped.
+  5. **Mandatory `available_from` date on every column;** the answer layer reads only rows with available_from < D open.
+  6. **Leak traps:** no day-D candle (bars <= D-1; D open only as fill); chart-shape neighbours only before D with a fixed metric and window; short interest by publication date; halts by file publication; earnings need BMO/AMC timing; raw prices for levels and the $100M cut, adjusted prices only for returns and ratios; sector from SEC SIC as filed plus a dated ETF map; analyst timestamps need their own proof; year-coverage parity across combination members.
+  7. **New Step 6b:** full leak proof over every column and question at multiple cut dates, zero mismatches, plus PIT eligibility (tradeable and >=$100M on day D). Nothing scores until green.
+  8. **Question quality gate:** formula required; drop constant columns and >99%-blank columns; tree-to-master diff required.
+  9. **Pinned numbers:** fees 30bp each way; baseline = equal-weight same-day return of the filtered universe with the same exit rule; win-rate floor 40%. GPT proposes and documents N_min, the positive-pair threshold (on 2020–21) and cluster correlation r. Every (setup x rule) tried counts in multiplicity, with FDR over the whole family. The 80% referee is calibrated on 2020–21 only.
+  10. **Shadow stage:** sealed forward run before capital.
+  11. **Live replay diff:** recompute yesterday from today's fetch; any mismatch halts; hash-chain the sealed list.
+  12. **Source monitoring and deprecation path.**
+  13. **Rename:** expected profit is the score, not a "probability".
+  14. **Reconcile the 232 vs 35,647 cutoff counts in v2.7.2.2** and state the denominator.
+  - **Lens working set** = the 7 `lens6` values (absolute, relative, position, threshold, divergence, outlier, path) until Cyrus names the official 6.
+  - **Ack in §0c.** **Signed: James.**
 - **2026-10-30 01:09 HKT — §0b — James → GPT, Kimi (Cyrus approved 01:09 HKT): Combination search plan (official).**
   1. Bitset-pack every YES/NO column over stock-days; NOT_EVALUABLE gets its own mask and is excluded (never counted as NO).
   2. Collapse identical columns by bit-hash; cluster near-duplicates (threshold measured, mapping kept); max one question per data family per combination.
