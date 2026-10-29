@@ -1,0 +1,23 @@
+{
+  "base_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
+  "base_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "files": {
+    "facets_world.py": "c73904cb7181b47ea51c4f52a20652ced9d6eba2899819c9863519291ac7d71a",
+    "world_timeframes.py": "a1790bd7eaf7ba747d0dfb3bbea782f58a7977df71f1033e5f3a75eea2973d95",
+    "world_bar_statistics.py": "dc654206d62de9b2408eeeff74a6322f414fd7d25586595b912661c5bbc685e8",
+    "world_food_statistics.py": "3862f59b8ce53b9214abfa45b8c23dca8255228ea21729388cc1b34ed1c95339",
+    "world_indicator_settings.py": "8447cf994ed29639be5460b3bc2aaad94e2a833a68dcf2f3d835c87bec7de9db",
+    "world_indicator_extra.py": "51f6bc48a9c25903dd49bec8e0c2576c5d24b27a046d3879e062a86894f07d6f",
+    "world_moving_averages.py": "706ffd9b971a65a579c211c46592ea361181e7b871039398881050c1d5948ae5",
+    "world_dates.py": "f66f406e41e842fe1cba0e657e882b9044088de07ae432b53ec9329597b36a51",
+    "price_reconcile.py": "65915021c30c0fd45e6d5efee50a0b454d0348860b72bba82cf4d4b9fa84d13f",
+    "requirements-world-v2.txt": "211be8f375608a84b8cc6ab9bbdab289bfe3f4efa0b9e28f3bf81ce589f48b71",
+    "dictionary/INDICATOR_SETTINGS.json": "015aae37cd549ab6297407b501534d2143a02c70c0b482ac330c6b9b570ad610",
+    "dictionary/BAR_STATISTICS_REGISTRY.json": "1c52c90944af50d180c32fbbac40c92f71f4dd0d65e8f5c5a04d69985a058b7a",
+    "ci/native_price_blocks.py": "a0d300de7092e50da8ac547f5671541f05e37ea2249b7bdaf68a081bb4b2d780"
+  },
+  "changed_files": [
+    "facets_world.py"
+  ]
+}
