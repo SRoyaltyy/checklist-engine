@@ -1,0 +1,541 @@
+{
+  "status": "INCOMPLETE_RENKO_GUARD_PROOF",
+  "source_commit": "44d83ad7787cae5f18c04f4a569f6bc2adb1ebf1",
+  "request": {
+    "parent_proof": {
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "NUMERIC_RECOMPUTE_MEASURED.json",
+      "sha256": "50d8bdbf3435f15f9cb6b15f02c2b0c1b7f1b677af7642ea70e2eedd2a3fcf10"
+    },
+    "stocks": [
+      {
+        "ticker": "MAN",
+        "release": "numeric-recompute-v1-40657531639-1",
+        "asset": "4d414e.bars.parquet",
+        "bytes": 304486,
+        "sha256": "016d25f3e57b5d42d0badfb26df01140f9eba136323dba9fad2eec5213b97a0a"
+      },
+      {
+        "ticker": "MNTS",
+        "release": "numeric-recompute-v1-40657531639-1",
+        "asset": "4d4e5453.bars.parquet",
+        "bytes": 59457,
+        "sha256": "5cf165b06d347ceabfd4e77df95558aefafa5b4c3b06f1a27f37277491a86005"
+      },
+      {
+        "ticker": "EYE",
+        "release": "numeric-recompute-v1-40657531639-1",
+        "asset": "455945.bars.parquet",
+        "bytes": 93341,
+        "sha256": "fb04c5856ec1337f661caef500ff3ca7c3a1d3a4ea42530fad854b99360aec99"
+      }
+    ],
+    "benchmark": {
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "etf_daily_SPY.parquet",
+      "bytes": 264535,
+      "sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d"
+    },
+    "version": 1,
+    "inputs_tag": "native-price-inputs-v1-40336250454-1",
+    "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+    "base_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+    "candidate_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+    "registry": {
+      "release": "numeric-retention-sample-v1-40623258870-1",
+      "asset": "4d414e.column_registry.json",
+      "sha256": "57aa7cf0957eccd43b6c2137471905a2089130420b9fbaa70c03936c0ef139b8"
+    },
+    "target": {
+      "archive": {
+        "release": "native-price-base-v1-40360947486-1-001",
+        "asset": "base_0006.tar",
+        "sha256": "fbc3b91ecb46e8545a3ef3c0d494c1a820a956c8f7706107d753938001e51c5d"
+      },
+      "member": "45514c54.bars.parquet",
+      "member_sha256": "dbd611516c31830e5104975d2369fa90e4d42a3c8f632eb9cecbb3f713c295ad"
+    },
+    "worker_timeout_seconds": 900,
+    "diagnostic_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+    "answer_code_sha256": {
+      "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+      "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac"
+    },
+    "scope": "Isolated new recipe: exact original three stocks plus SPY on all1044 numeric columns and22 native grids, then one previously nonterminating EQLT target and original68904-question diagnostic. Not full-universe conversion, full world, complete framework, PIT acceptance or storage-cap proof. Protected/live requests unchanged."
+  },
+  "base_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "candidate_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "changed_recipe_files": [
+    "facets_world.py"
+  ],
+  "runtime": {
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "pyarrow": "26.0.0",
+    "TA-Lib": "0.8.2"
+  },
+  "python": "3.12.15 (main, Oct  1 2026, 02:35:59) [GCC 13.3.0]",
+  "results": [
+    {
+      "ticker": "SPY",
+      "mode": "original_reference",
+      "raw_source_sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d",
+      "checks": [
+        {
+          "rows": 8491,
+          "columns": 1044,
+          "numeric_cells": 8864604,
+          "raw_sha256": "684ac4758139e78e637fe7b0f4f4eac46fb5448b377d86b7d805ccae3959dfdf",
+          "dates_sha256": "ae95e512ef7ca1e779f84893a3d40f024f1995a681ab4ce7c33741ab6b865910",
+          "mismatches": 0,
+          "timeframe": "1d"
+        },
+        {
+          "rows": 4245,
+          "columns": 1044,
+          "numeric_cells": 4431780,
+          "raw_sha256": "4a6153e488ae3001c0f6e7ab49ef05379511d7cceb361884314d47b9bfbdf189",
+          "dates_sha256": "0fcd9d9ccdd87a24b16ff4365e732d27a15bb8080ca0f907a37e2565fe126208",
+          "mismatches": 0,
+          "timeframe": "2d"
+        },
+        {
+          "rows": 2830,
+          "columns": 1044,
+          "numeric_cells": 2954520,
+          "raw_sha256": "834ad2ee03b07e0f410ed75c13e3bc26719b62e3b978a6bf70243b72a636ce9b",
+          "dates_sha256": "e2b2ef0ce964675e44568dc3a2c342c27b4fe54f7b905b2474adbc5fa26ee3a0",
+          "mismatches": 0,
+          "timeframe": "3d"
+        },
+        {
+          "rows": 2122,
+          "columns": 1044,
+          "numeric_cells": 2215368,
+          "raw_sha256": "5e0003a02c7f73ac2ff523cdf48fc5f0f0d6fb630a4c69c925fa81fdd26131ab",
+          "dates_sha256": "5940adafffe2d951991c39666bc1d86dc4f51093084312f6d767481171505ada",
+          "mismatches": 0,
+          "timeframe": "4d"
+        },
+        {
+          "rows": 1698,
+          "columns": 1044,
+          "numeric_cells": 1772712,
+          "raw_sha256": "74b74fdb6e7bba1a8caf0094480e8b13d928dc3c0f883bc5d6a6fa28f636ec19",
+          "dates_sha256": "860fa08fb904ee4be81ff9f007b27f68c542aee24b9aefecb32a7fdd0a432d21",
+          "mismatches": 0,
+          "timeframe": "5d"
+        },
+        {
+          "rows": 1415,
+          "columns": 1044,
+          "numeric_cells": 1477260,
+          "raw_sha256": "c9d688822d5b16a0eaf7cf9e63a10803ad9f806d61463ea6c350d3b65b3b1052",
+          "dates_sha256": "42462a69118b9314603821b47a6bf6ac27fd6fd1f8ef7750dc0687bae536bb01",
+          "mismatches": 0,
+          "timeframe": "6d"
+        },
+        {
+          "rows": 1212,
+          "columns": 1044,
+          "numeric_cells": 1265328,
+          "raw_sha256": "7b43536d217e238c3769214e2da64b5ffa528be4929f05fa0e745612047459b4",
+          "dates_sha256": "f96677492e5953feb55318be3833a4990f5f97cdaa468b6a8da3826dbddc3638",
+          "mismatches": 0,
+          "timeframe": "7d"
+        },
+        {
+          "rows": 1060,
+          "columns": 1044,
+          "numeric_cells": 1106640,
+          "raw_sha256": "6cb9ae58e1fdf47611c1ebcebdec36ab18d6d9ec255c8837455d8be1c86c2dfa",
+          "dates_sha256": "fb2d7251010e7c0a5f57b4b0ba33c1b52b89965490c042e566bcb4c44420bff6",
+          "mismatches": 0,
+          "timeframe": "8d"
+        },
+        {
+          "rows": 943,
+          "columns": 1044,
+          "numeric_cells": 984492,
+          "raw_sha256": "f508a5f080284eaf188abf43d51caf01a9682cc96a80de2b5810c2a21893f825",
+          "dates_sha256": "2811ad1a01ccc7f38010ab08992013b5e72e5da76bc8b1be3ef1b8157c270153",
+          "mismatches": 0,
+          "timeframe": "9d"
+        },
+        {
+          "rows": 849,
+          "columns": 1044,
+          "numeric_cells": 886356,
+          "raw_sha256": "3655a55094b46e1862a3668bd2b7ef894e82b3e2a494f1c37d2e5c4094bf82bd",
+          "dates_sha256": "dea4c1e5d305451106d9ff4b9c1a045dcbf5f1d72722ebc22445f6ae3e3bb991",
+          "mismatches": 0,
+          "timeframe": "10d"
+        },
+        {
+          "rows": 771,
+          "columns": 1044,
+          "numeric_cells": 804924,
+          "raw_sha256": "277b645c4d74257a2d18c98dd525468a542cbfc949fbdcb50cc754255f3c70bb",
+          "dates_sha256": "712acd91619c672006ee5c1fc08ebf2a2b89b3b9bf30eecb4ff4310c6d5045de",
+          "mismatches": 0,
+          "timeframe": "11d"
+        },
+        {
+          "rows": 707,
+          "columns": 1044,
+          "numeric_cells": 738108,
+          "raw_sha256": "e3def99e33bb2fb587f503bb983a62a39706b3e19b71b18e52d621ec9a753691",
+          "dates_sha256": "daa7d4026a461f0a2e1d1ffaf9fa87edec1dbeee70955366077bff41bfd16045",
+          "mismatches": 0,
+          "timeframe": "12d"
+        },
+        {
+          "rows": 653,
+          "columns": 1044,
+          "numeric_cells": 681732,
+          "raw_sha256": "529a52ab49526a2479b66db79e8ab57459207f7509cc0871ab9701b21db24dc4",
+          "dates_sha256": "ba3351fa8b1b137a1fc3c7706c81bcf418b19e027be4292d38ebb6e7df3d56ae",
+          "mismatches": 0,
+          "timeframe": "13d"
+        },
+        {
+          "rows": 606,
+          "columns": 1044,
+          "numeric_cells": 632664,
+          "raw_sha256": "e115fac4a94fc5305006a7e7e7161be8007109c982a0ffdf86810cb2f1533ea6",
+          "dates_sha256": "7abc34986d01fe55e918f4192692c00879215ea1d46fcc5f1ca32d870c3e2717",
+          "mismatches": 0,
+          "timeframe": "14d"
+        },
+        {
+          "rows": 566,
+          "columns": 1044,
+          "numeric_cells": 590904,
+          "raw_sha256": "e088c07b19110fda2d0817cadaaca688da7a44496d012c630ed95b8078234348",
+          "dates_sha256": "fcd73ed4f2cb9b8622e20880abe71ea3b8b8c0564d596fe5d14794eaeeebd30d",
+          "mismatches": 0,
+          "timeframe": "15d"
+        },
+        {
+          "rows": 530,
+          "columns": 1044,
+          "numeric_cells": 553320,
+          "raw_sha256": "37cd41dda186ce56881eb64a5192490fe15d6209d6f3f0eb0584652e3baf0e10",
+          "dates_sha256": "ea3745081dcb9350710005c65fb13d049d56b9a320ff404ceaef869f15d372c0",
+          "mismatches": 0,
+          "timeframe": "16d"
+        },
+        {
+          "rows": 499,
+          "columns": 1044,
+          "numeric_cells": 520956,
+          "raw_sha256": "5cf5f39d7474c78d081993235afbb0b39113bb991ff2e701f9a24edf3c88c125",
+          "dates_sha256": "cc13111137296e9c5b98fa6196fdbde566d2190954caf4395dfe06bf8a4b34b2",
+          "mismatches": 0,
+          "timeframe": "17d"
+        },
+        {
+          "rows": 471,
+          "columns": 1044,
+          "numeric_cells": 491724,
+          "raw_sha256": "dd0ee5308ddf962e3c3c79413a750546325cf620412fdb405c7b55226a12f950",
+          "dates_sha256": "cd02ad3be5aabbe95f791a5a6c8d91517cd886785153fb3860ab8a5d45d1e7f2",
+          "mismatches": 0,
+          "timeframe": "18d"
+        },
+        {
+          "rows": 446,
+          "columns": 1044,
+          "numeric_cells": 465624,
+          "raw_sha256": "a0e2d1aaa4e7472577c77081925e5a2b94879359a5699e7dd0d21f2193a97b02",
+          "dates_sha256": "de64147b96780a433f544164c9e5b86ce64bd4cbd87323b3802d187d1566215f",
+          "mismatches": 0,
+          "timeframe": "19d"
+        },
+        {
+          "rows": 424,
+          "columns": 1044,
+          "numeric_cells": 442656,
+          "raw_sha256": "7189b7be59e10ed9a2640d1f0fc011c7bd2d972d7d983d289fefdd51da974e86",
+          "dates_sha256": "f25e5ee4aad4141498d6cd4b4bd454a67f6c77eebacb25c1e291d7f7e5052f0b",
+          "mismatches": 0,
+          "timeframe": "20d"
+        },
+        {
+          "rows": 403,
+          "columns": 1044,
+          "numeric_cells": 420732,
+          "raw_sha256": "96712c6a828347e9e4a92990f928b0c818aac7e5c55c147b9e10fef1155fd617",
+          "dates_sha256": "2c9c5517900628dd8e42fccafafb0ecd87c451bcaffe363ec66a67482b768d25",
+          "mismatches": 0,
+          "timeframe": "21d"
+        },
+        {
+          "rows": 404,
+          "columns": 1044,
+          "numeric_cells": 421776,
+          "raw_sha256": "6a683e44751c5aa94b209a9473b0573141a43ca9c43b631bfc144b46d6a55420",
+          "dates_sha256": "75ffd23e1bf4cd0af15c2684b949c424bb4d37a235fc96c486a6125257b650db",
+          "mismatches": 0,
+          "timeframe": "monthly"
+        }
+      ],
+      "seconds": 28.152341651999905,
+      "peak_rss_bytes": 500494336
+    },
+    {
+      "ticker": "SPY",
+      "mode": "candidate_legacy_comparison",
+      "raw_source_sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d",
+      "checks": [
+        {
+          "rows": 8491,
+          "columns": 1044,
+          "numeric_cells": 8864604,
+          "raw_sha256": "684ac4758139e78e637fe7b0f4f4eac46fb5448b377d86b7d805ccae3959dfdf",
+          "dates_sha256": "ae95e512ef7ca1e779f84893a3d40f024f1995a681ab4ce7c33741ab6b865910",
+          "mismatches": 0,
+          "timeframe": "1d"
+        },
+        {
+          "rows": 4245,
+          "columns": 1044,
+          "numeric_cells": 4431780,
+          "raw_sha256": "4a6153e488ae3001c0f6e7ab49ef05379511d7cceb361884314d47b9bfbdf189",
+          "dates_sha256": "0fcd9d9ccdd87a24b16ff4365e732d27a15bb8080ca0f907a37e2565fe126208",
+          "mismatches": 0,
+          "timeframe": "2d"
+        },
+        {
+          "rows": 2830,
+          "columns": 1044,
+          "numeric_cells": 2954520,
+          "raw_sha256": "834ad2ee03b07e0f410ed75c13e3bc26719b62e3b978a6bf70243b72a636ce9b",
+          "dates_sha256": "e2b2ef0ce964675e44568dc3a2c342c27b4fe54f7b905b2474adbc5fa26ee3a0",
+          "mismatches": 0,
+          "timeframe": "3d"
+        },
+        {
+          "rows": 2122,
+          "columns": 1044,
+          "numeric_cells": 2215368,
+          "raw_sha256": "5e0003a02c7f73ac2ff523cdf48fc5f0f0d6fb630a4c69c925fa81fdd26131ab",
+          "dates_sha256": "5940adafffe2d951991c39666bc1d86dc4f51093084312f6d767481171505ada",
+          "mismatches": 0,
+          "timeframe": "4d"
+        },
+        {
+          "rows": 1698,
+          "columns": 1044,
+          "numeric_cells": 1772712,
+          "raw_sha256": "74b74fdb6e7bba1a8caf0094480e8b13d928dc3c0f883bc5d6a6fa28f636ec19",
+          "dates_sha256": "860fa08fb904ee4be81ff9f007b27f68c542aee24b9aefecb32a7fdd0a432d21",
+          "mismatches": 0,
+          "timeframe": "5d"
+        },
+        {
+          "rows": 1415,
+          "columns": 1044,
+          "numeric_cells": 1477260,
+          "raw_sha256": "c9d688822d5b16a0eaf7cf9e63a10803ad9f806d61463ea6c350d3b65b3b1052",
+          "dates_sha256": "42462a69118b9314603821b47a6bf6ac27fd6fd1f8ef7750dc0687bae536bb01",
+          "mismatches": 0,
+          "timeframe": "6d"
+        },
+        {
+          "rows": 1212,
+          "columns": 1044,
+          "numeric_cells": 1265328,
+          "raw_sha256": "7b43536d217e238c3769214e2da64b5ffa528be4929f05fa0e745612047459b4",
+          "dates_sha256": "f96677492e5953feb55318be3833a4990f5f97cdaa468b6a8da3826dbddc3638",
+          "mismatches": 0,
+          "timeframe": "7d"
+        },
+        {
+          "rows": 1060,
+          "columns": 1044,
+          "numeric_cells": 1106640,
+          "raw_sha256": "6cb9ae58e1fdf47611c1ebcebdec36ab18d6d9ec255c8837455d8be1c86c2dfa",
+          "dates_sha256": "fb2d7251010e7c0a5f57b4b0ba33c1b52b89965490c042e566bcb4c44420bff6",
+          "mismatches": 0,
+          "timeframe": "8d"
+        },
+        {
+          "rows": 943,
+          "columns": 1044,
+          "numeric_cells": 984492,
+          "raw_sha256": "f508a5f080284eaf188abf43d51caf01a9682cc96a80de2b5810c2a21893f825",
+          "dates_sha256": "2811ad1a01ccc7f38010ab08992013b5e72e5da76bc8b1be3ef1b8157c270153",
+          "mismatches": 0,
+          "timeframe": "9d"
+        },
+        {
+          "rows": 849,
+          "columns": 1044,
+          "numeric_cells": 886356,
+          "raw_sha256": "3655a55094b46e1862a3668bd2b7ef894e82b3e2a494f1c37d2e5c4094bf82bd",
+          "dates_sha256": "dea4c1e5d305451106d9ff4b9c1a045dcbf5f1d72722ebc22445f6ae3e3bb991",
+          "mismatches": 0,
+          "timeframe": "10d"
+        },
+        {
+          "rows": 771,
+          "columns": 1044,
+          "numeric_cells": 804924,
+          "raw_sha256": "277b645c4d74257a2d18c98dd525468a542cbfc949fbdcb50cc754255f3c70bb",
+          "dates_sha256": "712acd91619c672006ee5c1fc08ebf2a2b89b3b9bf30eecb4ff4310c6d5045de",
+          "mismatches": 0,
+          "timeframe": "11d"
+        },
+        {
+          "rows": 707,
+          "columns": 1044,
+          "numeric_cells": 738108,
+          "raw_sha256": "e3def99e33bb2fb587f503bb983a62a39706b3e19b71b18e52d621ec9a753691",
+          "dates_sha256": "daa7d4026a461f0a2e1d1ffaf9fa87edec1dbeee70955366077bff41bfd16045",
+          "mismatches": 0,
+          "timeframe": "12d"
+        },
+        {
+          "rows": 653,
+          "columns": 1044,
+          "numeric_cells": 681732,
+          "raw_sha256": "529a52ab49526a2479b66db79e8ab57459207f7509cc0871ab9701b21db24dc4",
+          "dates_sha256": "ba3351fa8b1b137a1fc3c7706c81bcf418b19e027be4292d38ebb6e7df3d56ae",
+          "mismatches": 0,
+          "timeframe": "13d"
+        },
+        {
+          "rows": 606,
+          "columns": 1044,
+          "numeric_cells": 632664,
+          "raw_sha256": "e115fac4a94fc5305006a7e7e7161be8007109c982a0ffdf86810cb2f1533ea6",
+          "dates_sha256": "7abc34986d01fe55e918f4192692c00879215ea1d46fcc5f1ca32d870c3e2717",
+          "mismatches": 0,
+          "timeframe": "14d"
+        },
+        {
+          "rows": 566,
+          "columns": 1044,
+          "numeric_cells": 590904,
+          "raw_sha256": "e088c07b19110fda2d0817cadaaca688da7a44496d012c630ed95b8078234348",
+          "dates_sha256": "fcd73ed4f2cb9b8622e20880abe71ea3b8b8c0564d596fe5d14794eaeeebd30d",
+          "mismatches": 0,
+          "timeframe": "15d"
+        },
+        {
+          "rows": 530,
+          "columns": 1044,
+          "numeric_cells": 553320,
+          "raw_sha256": "37cd41dda186ce56881eb64a5192490fe15d6209d6f3f0eb0584652e3baf0e10",
+          "dates_sha256": "ea3745081dcb9350710005c65fb13d049d56b9a320ff404ceaef869f15d372c0",
+          "mismatches": 0,
+          "timeframe": "16d"
+        },
+        {
+          "rows": 499,
+          "columns": 1044,
+          "numeric_cells": 520956,
+          "raw_sha256": "5cf5f39d7474c78d081993235afbb0b39113bb991ff2e701f9a24edf3c88c125",
+          "dates_sha256": "cc13111137296e9c5b98fa6196fdbde566d2190954caf4395dfe06bf8a4b34b2",
+          "mismatches": 0,
+          "timeframe": "17d"
+        },
+        {
+          "rows": 471,
+          "columns": 1044,
+          "numeric_cells": 491724,
+          "raw_sha256": "dd0ee5308ddf962e3c3c79413a750546325cf620412fdb405c7b55226a12f950",
+          "dates_sha256": "cd02ad3be5aabbe95f791a5a6c8d91517cd886785153fb3860ab8a5d45d1e7f2",
+          "mismatches": 0,
+          "timeframe": "18d"
+        },
+        {
+          "rows": 446,
+          "columns": 1044,
+          "numeric_cells": 465624,
+          "raw_sha256": "a0e2d1aaa4e7472577c77081925e5a2b94879359a5699e7dd0d21f2193a97b02",
+          "dates_sha256": "de64147b96780a433f544164c9e5b86ce64bd4cbd87323b3802d187d1566215f",
+          "mismatches": 0,
+          "timeframe": "19d"
+        },
+        {
+          "rows": 424,
+          "columns": 1044,
+          "numeric_cells": 442656,
+          "raw_sha256": "7189b7be59e10ed9a2640d1f0fc011c7bd2d972d7d983d289fefdd51da974e86",
+          "dates_sha256": "f25e5ee4aad4141498d6cd4b4bd454a67f6c77eebacb25c1e291d7f7e5052f0b",
+          "mismatches": 0,
+          "timeframe": "20d"
+        },
+        {
+          "rows": 403,
+          "columns": 1044,
+          "numeric_cells": 420732,
+          "raw_sha256": "96712c6a828347e9e4a92990f928b0c818aac7e5c55c147b9e10fef1155fd617",
+          "dates_sha256": "2c9c5517900628dd8e42fccafafb0ecd87c451bcaffe363ec66a67482b768d25",
+          "mismatches": 0,
+          "timeframe": "21d"
+        },
+        {
+          "rows": 404,
+          "columns": 1044,
+          "numeric_cells": 421776,
+          "raw_sha256": "6a683e44751c5aa94b209a9473b0573141a43ca9c43b631bfc144b46d6a55420",
+          "dates_sha256": "75ffd23e1bf4cd0af15c2684b949c424bb4d37a235fc96c486a6125257b650db",
+          "mismatches": 0,
+          "timeframe": "monthly"
+        }
+      ],
+      "seconds": 28.04130615300005,
+      "peak_rss_bytes": 500158464
+    }
+  ],
+  "errors": [
+    {
+      "ticker": "MAN",
+      "mode": "candidate_legacy_comparison",
+      "returncode": 1,
+      "reason": "STOCK_PROCESS_ERROR",
+      "log_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 205, in <module>\n    if args.worker:numeric_worker(args.directory.resolve(),args.recipe.resolve())\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 82, in numeric_worker\n    receipt=numeric_receipt(frame,columns,expected.get(tf));receipt['timeframe']=tf\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 50, in numeric_receipt\n    raise ValueError('Renko candidate differs from persisted legacy numeric/date bits')\nValueError: Renko candidate differs from persisted legacy numeric/date bits\n"
+    },
+    {
+      "ticker": "MNTS",
+      "mode": "candidate_legacy_comparison",
+      "returncode": 1,
+      "reason": "STOCK_PROCESS_ERROR",
+      "log_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 205, in <module>\n    if args.worker:numeric_worker(args.directory.resolve(),args.recipe.resolve())\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 82, in numeric_worker\n    receipt=numeric_receipt(frame,columns,expected.get(tf));receipt['timeframe']=tf\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 50, in numeric_receipt\n    raise ValueError('Renko candidate differs from persisted legacy numeric/date bits')\nValueError: Renko candidate differs from persisted legacy numeric/date bits\n"
+    },
+    {
+      "ticker": "EYE",
+      "mode": "candidate_legacy_comparison",
+      "returncode": 1,
+      "reason": "STOCK_PROCESS_ERROR",
+      "log_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 205, in <module>\n    if args.worker:numeric_worker(args.directory.resolve(),args.recipe.resolve())\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 82, in numeric_worker\n    receipt=numeric_receipt(frame,columns,expected.get(tf));receipt['timeframe']=tf\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/renko_zero_step_proof.py\", line 50, in numeric_receipt\n    raise ValueError('Renko candidate differs from persisted legacy numeric/date bits')\nValueError: Renko candidate differs from persisted legacy numeric/date bits\n"
+    }
+  ],
+  "guarded_answer_result": null,
+  "original_reference_numeric_cells": 0,
+  "authority": "James/Cyrus exact-recompute sample plan; new version for a previously nonterminating input, no published-value replacement.",
+  "active_runs_untouched": [
+    40621517496,
+    40792865480,
+    40795819366
+  ],
+  "full_universe_conversion_gate": "NOT_RUN",
+  "full_world_gate": "NOT_PROVEN",
+  "full_dependency_budget_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "retained_assets": [
+    {
+      "asset": "RENKO_RECIPE_V1.json",
+      "bytes": 1603,
+      "sha256": "0ee2a570466fbf32a5414b4ff542f14b78fb90c9248e04710197838c6ee054e2"
+    },
+    {
+      "asset": "facets_world_renko_zero_step_v1.py",
+      "bytes": 82702,
+      "sha256": "c73904cb7181b47ea51c4f52a20652ced9d6eba2899819c9863519291ac7d71a"
+    }
+  ]
+}
