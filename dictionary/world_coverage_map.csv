@@ -229,7 +229,7 @@ I197,PENDING,,
 I198,PENDING,,
 I199,PENDING,,
 I200,PENDING,,
-I201,DROPPED,,"CBOE put/call dropped by Cyrus 2026-10-29: CBOE blocks box+runners, free history ends 2019, not live-replicable"
+I201,DATA_READY,,"REINSTATED 2026-10-30 (Cyrus): CBOE cdn.cboe.com reachable from box + GitHub runner. CSV era <=2019-10-04 (Cboe Options Exchange only) + daily JSON 2019-10-07..present (all Cboe exchanges, SPX+SPXW): DEFINITION BREAK 2019-10-07; post-2022 0DTE distorts total/index/SPX; equity-only preferred. PIT: day D usable at D+1 open. data/cboe_putcall/, scripts/fetch_cboe_putcall.py"
 I202,PENDING,,single-stock options IV: box-only partial (DoltHub M/W/F to Oct 2024); room decision requested
 I203,PENDING,,
 I204,PENDING,,Registered derived item; full-world measured source/field binding not yet supplied. Never infer WIRED from recipe registration.
