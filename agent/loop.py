@@ -95,7 +95,7 @@ TOOLS = [
 
 def execute(name, args):
     if name == "read_file":
-        return open(args["path"]).read()[:6000]
+        return open(args["path"]).read()[:2500]
     if name == "edit_file":
         text = open(args["path"]).read()
         hits = text.count(args["find"])
