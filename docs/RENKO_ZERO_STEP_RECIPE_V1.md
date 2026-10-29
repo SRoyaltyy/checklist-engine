@@ -40,3 +40,19 @@ this one new recipe/sample; it does not replace any published values, recover
 the full universe, prove full world/question/PIT coverage, or satisfy the
 100GB dependency-closure gate. Scoring remains closed. No new run of the
 protected world build or existing add-on is requested.
+
+Actual proof40834508707 at `c803c62` passed. Both old and candidate recipes
+matched all51,008,796 historical stock numeric cells/date bits; SPY matched
+32,724,180 cells per recipe. EQLT completed12,260,736 numeric cells in6.05s,
+then the packed diagnostic in101.17s. Independent public readback authenticated
+all six assets15,396,634B and every bitplane/code/provenance binding in all550
+answer chunks:117,963,648 cells, including18,019,282 missing. The4,234 constant
+and4,973 empty questions remain explicit; this diagnostic does not pass P3b.
+See `RENKO_ZERO_STEP_PROOF_V1.json` and `RENKO_ZERO_STEP_PUBLIC_READBACK_V1.json`.
+
+The earlier40802810949 stock hash mismatches remain unresolved and archived
+in `RENKO_ZERO_STEP_INCOMPLETE_PROOF_V1.json`. The second run compared both
+recipes against those same historical receipts and passed without a recipe,
+input, arithmetic, precision or equality change. This establishes exact
+reproduction on that runner; cross-runtime/portable exact recomputation remains
+unproven. Existing published numeric results are never replaced on this basis.
