@@ -1,0 +1,63 @@
+{
+  "parent_proof": {
+    "release": "numeric-recompute-v1-40657531639-1",
+    "asset": "NUMERIC_RECOMPUTE_MEASURED.json",
+    "sha256": "50d8bdbf3435f15f9cb6b15f02c2b0c1b7f1b677af7642ea70e2eedd2a3fcf10"
+  },
+  "stocks": [
+    {
+      "ticker": "MAN",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "4d414e.bars.parquet",
+      "bytes": 304486,
+      "sha256": "016d25f3e57b5d42d0badfb26df01140f9eba136323dba9fad2eec5213b97a0a"
+    },
+    {
+      "ticker": "MNTS",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "4d4e5453.bars.parquet",
+      "bytes": 59457,
+      "sha256": "5cf165b06d347ceabfd4e77df95558aefafa5b4c3b06f1a27f37277491a86005"
+    },
+    {
+      "ticker": "EYE",
+      "release": "numeric-recompute-v1-40657531639-1",
+      "asset": "455945.bars.parquet",
+      "bytes": 93341,
+      "sha256": "fb04c5856ec1337f661caef500ff3ca7c3a1d3a4ea42530fad854b99360aec99"
+    }
+  ],
+  "benchmark": {
+    "release": "numeric-recompute-v1-40657531639-1",
+    "asset": "etf_daily_SPY.parquet",
+    "bytes": 264535,
+    "sha256": "385c1776a58a512ac67c7b4d7aea49bf11e775b0b03acaa150f9ed3d0a5b047d"
+  },
+  "version": 2,
+  "revision_reason": "First proof40802810949 retained three strict stock hash mismatches and exact SPY equality; compare original stock recipe against the same immutable receipts and retain actual differing fields/module paths. No recipe, input, arithmetic, precision or equality waiver.",
+  "inputs_tag": "native-price-inputs-v1-40336250454-1",
+  "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
+  "base_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "candidate_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "registry": {
+    "release": "numeric-retention-sample-v1-40623258870-1",
+    "asset": "4d414e.column_registry.json",
+    "sha256": "57aa7cf0957eccd43b6c2137471905a2089130420b9fbaa70c03936c0ef139b8"
+  },
+  "target": {
+    "archive": {
+      "release": "native-price-base-v1-40360947486-1-001",
+      "asset": "base_0006.tar",
+      "sha256": "fbc3b91ecb46e8545a3ef3c0d494c1a820a956c8f7706107d753938001e51c5d"
+    },
+    "member": "45514c54.bars.parquet",
+    "member_sha256": "dbd611516c31830e5104975d2369fa90e4d42a3c8f632eb9cecbb3f713c295ad"
+  },
+  "worker_timeout_seconds": 900,
+  "diagnostic_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+  "answer_code_sha256": {
+    "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+    "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac"
+  },
+  "scope": "Isolated new recipe: exact original three stocks plus SPY on all1044 numeric columns and22 native grids, then one previously nonterminating EQLT target and original68904-question diagnostic. Not full-universe conversion, full world, complete framework, PIT acceptance or storage-cap proof. Protected/live requests unchanged."
+}
