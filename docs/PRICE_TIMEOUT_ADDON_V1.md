@@ -39,3 +39,19 @@ step; see `RENKO_TIMEOUT_DIAGNOSIS_V1.md`. ABVC/NXTS remain active and SU queued
 at the latest check. Implementation1bf19fb is unchanged; no recovered result
 is accepted. The remaining handles are not restarted. A math correction needs
 a separate immutable recipe and exact legacy-domain validation.
+# Terminal result and successor
+
+Actual run40792865480 at1bf19fb is terminal. Preparation passed46 Linux
+tests0.62s; the five per-stock jobs retained explicit timeout ledgers. The
+finalizer correctly failed with0 recovered,5 STOCK_TIMEOUT,0 metadata errors.
+All five trace tails remain in the frozen Renko loop340–344. The public report
+SHA256`0d2d01e997fc49b9a21829aa2985257dcdf48756084e1a1283b3e6a024e5ffc3`
+is retained in `PRICE_TIMEOUT_ADDON_MEASURED_V1.json`. No payload was accepted.
+
+This older longer-timeout request is retained for provenance and is not
+relaunched. The separate guarded recipe passed actual40834508707 and public
+readback. Successor147/run40838035854 reuses that EQLT result, preserves24
+durable draft payloads from the protected final shard, and computes only30
+unpublished names under the separate version. Source protected run/draft,
+old requests and published results are unchanged. No full-world/PIT/quality/
+budget/scoring gate or checkbox is claimed by this historical implementation.
