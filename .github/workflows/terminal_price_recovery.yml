@@ -1,0 +1,92 @@
+name: codex-terminal-price-recovery
+on:
+  push:
+    branches: [codex/terminal-price-recovery]
+    paths: ['ci/TERMINAL_PRICE_RECOVERY_REQUEST.json']
+  pull_request:
+    paths: ['ci/terminal_price_recovery.py', 'tests/test_terminal_price_recovery.py', '.github/workflows/terminal_price_recovery.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: codex-terminal-price-recovery-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m pytest tests/test_terminal_price_recovery.py tests/test_price_raw_addon.py tests/test_compact_world_build.py tests/test_world_answer_cache.py tests/test_completed_price_shard_audit.py -q
+  prepare:
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      inputs_release: ${{ steps.plan.outputs.inputs_release }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - id: plan
+        run: python -m ci.terminal_price_recovery prepare --directory terminal-plan
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: terminal-price-recovery-plan
+          path: terminal-plan/*.json
+          if-no-files-found: ignore
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        index: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.terminal_price_recovery build --directory terminal-build --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --index '${{ matrix.index }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: terminal-price-recovery-${{ matrix.index }}
+          path: terminal-build/COMPACT_WORLD_SHARD.json
+          if-no-files-found: ignore
+  finalize:
+    needs: [prepare,build]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.terminal_price_recovery finalize --directory terminal-measured --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: terminal-price-recovery-measured
+          path: terminal-measured/*.json
+          if-no-files-found: ignore
