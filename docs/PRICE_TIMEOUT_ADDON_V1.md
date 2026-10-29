@@ -31,6 +31,11 @@ gate closes merely because these five jobs finish.
 Local planning against the actual pinned audit and plan selects exactly the
 five targets and preserves the numeric recipe. All46 planner/adapter/finalizer,
 base-build/cache/audit tests pass locally and on actual Linux prepare job
-123182085759 in0.62s. Run40792865480 prepared and published its authenticated
-five-target plan; recover(0), EQLT, is active, with four recovery jobs queued.
-Implementation1bf19fb is unchanged; no recovered result is yet accepted.
+123182085759 in0.62s. Run40792865480 published its authenticated five-target
+plan. EQLT and WKSP are now terminal with0 recovered and1 explicit timeout
+each after1800 seconds; both ledgers and traces were independently downloaded
+and hash checked. EQLT's actual raw input proves a nonadvancing Renko float
+step; see `RENKO_TIMEOUT_DIAGNOSIS_V1.md`. ABVC/NXTS remain active and SU queued
+at the latest check. Implementation1bf19fb is unchanged; no recovered result
+is accepted. The remaining handles are not restarted. A math correction needs
+a separate immutable recipe and exact legacy-domain validation.
