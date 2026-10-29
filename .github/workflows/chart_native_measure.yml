@@ -4,7 +4,7 @@ on:
     branches: [codex/native-chart-tags]
     paths: ['ci/CHART_NATIVE_REQUEST.json']
   pull_request:
-    paths: ['world_chart_picture.py', 'ci/chart_native_measure.py', 'tests/test_world_chart_picture.py', '.github/workflows/chart_native_measure.yml']
+    paths: ['world_chart_picture.py', 'ci/chart_native_measure.py', 'ci/CHART_NATIVE_REQUEST.json', 'tests/test_world_chart_picture.py', 'tests/test_chart_native_measure.py', '.github/workflows/chart_native_measure.yml']
 permissions:
   contents: write
 concurrency:
