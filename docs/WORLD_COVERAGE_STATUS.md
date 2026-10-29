@@ -1,5 +1,14 @@
 # World-state evidence — provisional
 
+30 October2026 scope update: James/Cyrus9e545e9 permits FIRST_SLICE_PRICE_ONLY
+without waiting for the full-world gate below, through per-item DEFINE→CHART→
+DERIVE YES/NO→MINE gates. James2d1664b reinstates I201 as DATA_READY; it remains
+required, and no full-universe join is inferred. Current catalog has4,774 PENDING dictionary/TF
+rows. See `FIRST_SLICE_INPUT_INSPECTION_V1.md`: all eight named world-v2 input
+shards actually end in2024 and lack raw stock OHLCV/TA-Lib output columns.
+The price-source binding and held-out2025–26 extension require explicit runner
+verification; no first-slice answer or mining completion is claimed here.
+
 Latest continuation,29 October2026: the accepted raw-price composition now has
 8,447 unique names and12,560,808 stock-days. Terminal recovery40838035854
 closed all55 omissions without changing the protected original run. Its

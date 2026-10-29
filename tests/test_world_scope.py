@@ -34,3 +34,25 @@ def test_owner_exclusion_cannot_hide_an_unrelated_missing_item(monkeypatch):
     monkeypatch.setattr(coverage,'read_csv',lambda path:[dict(id='I999',item='Other')] if path.name=='DATA_SOURCES.csv' else [])
     _,failures=coverage.build(dict(rows=1,date_max='2026-10-23',columns={}))
     assert any('unauthorized scope exemption' in f for f in failures)
+
+
+def test_reinstated_putcall_and_vix_remain_required_when_outputs_are_missing():
+    from ci.world_v2_coverage import build
+    measured=dict(rows=1,date_min='2020-01-01',date_max='2026-10-23',columns={})
+    rows,failures=build(measured)
+    options=[r for r in rows if r['namespace']=='dictionary' and r['item_id']=='I201']
+    assert len(options)==22
+    assert all(r['status']=='PENDING' for r in options)
+    assert len([f for f in failures if f.startswith('dictionary:I201__')])==22
+    vix=[r for r in rows if r['namespace']=='dictionary' and r['item_id']=='I178']
+    assert len(vix)==22 and all(r['status']!='DROPPED_BY_OWNER' for r in vix)
+    assert any(f.startswith('dictionary:I178__') for f in failures)
+
+
+def test_news_exemption_cannot_be_reused_for_a_tradingview_options_item(monkeypatch):
+    from ci import world_v2_coverage as coverage
+    monkeypatch.setattr(coverage,'mappings',lambda:({},{}))
+    monkeypatch.setattr(coverage,'read_csv',lambda path:[] if path.name=='DATA_SOURCES.csv' else
+                        [dict(item_id='I201',item='Unrelated TV item',status='DROPPED_BY_OWNER',reason=NEWS_DROP_REASON)])
+    _,failures=coverage.build(dict(rows=1,date_max='2026-10-23',columns={}))
+    assert any('unauthorized scope exemption' in f for f in failures)
