@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "base_inputs_release": "compact-world-build-v1-40621517496-1-inputs",
+  "base_plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+  "base_stock_release": "accepted-price-stitch-v2-40494479693-1",
+  "base_weights_sha256": "6961605c52041be1c437b425bc8c6251e65ee6c63270d185ea507605fe597114",
+  "source_release": "native-price-base-coverage-v1-40622482865-1",
+  "source_status_sha256": "77c2cd6e15256a98802f610f6f2fd9cc02f28f2439a5313edd3c05536bd95d38",
+  "source_weights_sha256": "127abc81ad4c6763634edc899451c83210e5461dda48b3295d4b1cfaac7e56ff",
+  "expected_base_names": 8316,
+  "expected_full_names": 8447,
+  "expected_incremental_names": 131,
+  "expected_base_stock_days": 12364370,
+  "expected_incremental_stock_days": 196438,
+  "max_names_per_job": 10,
+  "compute_sha256": {
+    "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+    "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac"
+  },
+  "scope": "Immutable answer add-on for every131 newly available name in the already published8447-name raw manifest; every original173 source part must remain identical. Same original calendar, corrected13-file math, registry,22TF and68904 diagnostic questions. No new vendor/source/type/question, protected-world mutation, full-state/budget/scoring claim."
+}
