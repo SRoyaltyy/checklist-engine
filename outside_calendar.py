@@ -29,6 +29,11 @@ FRED_ARCHIVE_SHA256 = "16a60d96ccbc0f9e5424bc9dc5057e3a72327a48b8036078072cca4bf
 FOMC_CALENDAR_URL = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
 FOMC_2020_URL = "https://www.federalreserve.gov/monetarypolicy/fomchistorical2020.htm"
 WINDOW_START = pd.Timestamp("2020-01-02")
+# Annual schedules are published in advance. One July of the
+# preceding year is a conservative bound: earlier than the real
+# publication, so a count may run early but never late.
+SCHEDULE_PUBLISH_MONTH = 7
+SCHEDULE_PUBLISH_DAY = 1
 MONTHS = {
     "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
     "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
