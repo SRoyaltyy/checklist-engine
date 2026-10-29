@@ -28,6 +28,11 @@ h1 { font-size: 20px; } h2 { font-size: 16px; margin-top: 34px; }
 .chart { border: 1px solid #e3e0ea; border-radius: 8px; margin-top: 12px; }
 .note { color: #667; font-size: 12px; }
 a { color: #7e22ce; }
+table.bin { border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+table.bin td, table.bin th { border: 1px solid #d9d4e3; padding: 4px 10px; text-align: left; }
+table.bin .yes { color: #15803d; font-weight: bold; }
+table.bin .no { color: #b91c1c; font-weight: bold; }
+table.bin .ne { color: #6b7280; font-weight: bold; }
 """
 
 
@@ -39,6 +44,22 @@ def _picker_html():
         out.append(f'<li class="disabled"><b>{html.escape(rid)}</b> — DO_NOT_DRAW: <span class="reason">{html.escape(why)}</span></li>')
     out.append('</ul></div>')
     return '\n'.join(out)
+
+
+def _binary_html(res):
+    if res['binary'] is None:
+        reason = res['answer'].replace('blank ', '') or 'feature not evaluable'
+        return ('<table class="bin"><tr><th>question id</th><th>feature + comparator + threshold</th>'
+                '<th>answer</th></tr><tr><td colspan="2">feature blank — all derived questions excluded</td>'
+                f'<td class="ne">NOT_EVALUABLE ({html.escape(reason)})</td></tr></table>')
+    rows = ['<table class="bin"><tr><th>question id</th><th>feature + comparator + threshold</th>'
+            '<th>answer</th></tr>']
+    for b in res['binary']:
+        cls = {'YES': 'yes', 'NO': 'no'}.get(b['a'], 'ne')
+        rows.append(f"<tr><td>{html.escape(b['qid'])}</td><td>{html.escape(b['q'])}</td>"
+                    f"<td class='{cls}'>{b['a']}</td></tr>")
+    rows.append('</table>')
+    return '\n'.join(rows)
 
 
 def build_page(df, ticker, setup, outdir):
@@ -67,8 +88,9 @@ def build_page(df, ticker, setup, outdir):
                          f'<span class="reason">{html.escape(res["blocker"])}</span></span></p>')
             continue
         fig = R.make_figure(dates, O, H, L, C, V, cutoff, rid, res['label'], res['answer'],
-                            res['ops'], ticker=ticker)
+                            res['ops'], ticker=ticker, binary=res['binary'])
         parts.append('<div class="chart">' + fig.to_html(full_html=False, include_plotlyjs=False) + '</div>')
+        parts.append(_binary_html(res))
 
     parts.append('</body></html>')
     path = os.path.join(outdir, f'{ticker}_{setup_ts}.html')

@@ -195,6 +195,85 @@ def test_as_of_truncation():
     ok('AS_OF: day-S bar never read', len(dates) == 5)
 
 
+def test_binary_ladders():
+    """§0b 2026-10-29 22:51/23:05: every recipe derives strict YES/NO questions
+    (feature + comparator + literal threshold); blank feature -> binary None
+    (NOT_EVALUABLE, never silently NO)."""
+    dates, O, H, L, C, V = synth()
+    c = 60
+
+    # RG ladder on the 2 red / 2 green / 1 doji window from test_rg_count
+    O[c - 4], C[c - 4] = 100, 99
+    O[c - 3], C[c - 3] = 100, 98
+    O[c - 2], C[c - 2] = 99, 101
+    O[c - 1], C[c - 1] = 100, 100
+    O[c], C[c] = 100, 102
+    r = RC.view_rg_count_5d(dates, O, H, L, C, V, c)
+    b = {x['qid'].split('/')[-1]: x['a'] for x in r['binary']}
+    ok('BIN-RG: 4 ladder rungs', len(r['binary']) == 4)
+    ok('BIN-RG: red majority (2>2)=NO', b['red_majority'] == 'NO')
+    ok('BIN-RG: red>4 NO, red>=3 NO, green>=1 YES',
+       b['red_gt_4'] == 'NO' and b['red_ge_3'] == 'NO' and b['green_ge_1'] == 'YES')
+    ok('BIN-RG: every rung states a literal comparator',
+       all(('>' in x['q'] or '>=' in x['q'] or '=' in x['q']) for x in r['binary']))
+
+    # swing highs: NOT_EVALUABLE when fewer than 3 confirmable pivots
+    # (strictly increasing highs -> no bar is a window max -> 0 pivots)
+    H_inc = H.copy()
+    for i in range(len(H_inc)):
+        H_inc[i] = 100.0 + i * 0.01
+    r = RC.view_lower_swing_highs_3(dates, O, H_inc, L, C, V, c)
+    ok('BIN-SWING: 0 confirmable pivots -> NOT_EVALUABLE',
+       r['binary'][0]['a'] == 'NOT_EVALUABLE' and r['answer'].startswith('NOT_EVALUABLE'))
+
+    # vol mean: blank -> binary None
+    for i in range(c - 19, c + 1):
+        V[i] = 0.0
+    r = RC.view_vol_vs_mean_20d(dates, O, H, L, C, V, c)
+    ok('BIN-VOL: all-zero base -> binary None (NOT_EVALUABLE)', r['binary'] is None)
+
+    # body20: all-doji -> NOT_EVALUABLE; red sum 0 with green>0 -> infinite -> YES
+    for i in range(c - 19, c + 1):
+        O[i], C[i] = 100.0, 100.0                    # all doji
+    r = RC.cp_gr_body20(dates, O, H, L, C, V, c)
+    ok('BIN-BODY20: all-doji window -> NOT_EVALUABLE', r['binary'][0]['a'] == 'NOT_EVALUABLE')
+    for i in range(c - 19, c + 1):
+        O[i], C[i] = 100.0, 101.0
+    r = RC.cp_gr_body20(dates, O, H, L, C, V, c)
+    ok('BIN-BODY20: red=0 green>0 -> ratio inf -> YES', r['binary'][0]['a'] == 'YES')
+
+    # RVOL spike ladder
+    for i in range(c - 20, c):
+        V[i] = 100.0
+    V[c] = 400.0
+    r = RC.rvol20(dates, O, H, L, C, V, c)
+    b = {x['qid'].split('/')[-1]: x['a'] for x in r['binary']}
+    ok('BIN-RVOL: RVOL=4 -> spike YES, elevated YES', b['spike'] == 'YES' and b['elevated'] == 'YES')
+
+    # i074 / i101 binaries follow the same contract
+    dates2 = pd.bdate_range('2021-01-04', periods=90).values
+    n = 90
+    O2 = np.full(n, 100.0); H2 = np.full(n, 100.0); L2 = np.full(n, 100.0)
+    C2 = np.full(n, 100.0); V2 = np.full(n, 1000.0)
+    H2[25] = 112.0; L2[30] = 90.0; C2[39] = 104.0
+    C2[45] = 105.0                                   # cutoff close above P
+    r = RC.i074_pivots(dates2, O2, H2, L2, C2, V2, 45, period='M')
+    b = {x['qid'].split('/')[-1]: x['a'] for x in r['binary']}
+    P = (112 + 90 + 104) / 3
+    ok('BIN-I074: close=105 > P=102 -> above_p YES', b['above_p'] == 'YES')
+    ok('BIN-I074: close < R1=114 NO; close >= S1=92 -> below_s1 NO',
+       b['above_r1'] == 'NO' and b['below_s1'] == 'NO')
+    H2[44] = 130.0; L2[43] = 80.0
+    r = RC.i101_donchian20(dates2, O2, H2, L2, C2, V2, 44)
+    b = {x['qid'].split('/')[-1]: x['a'] for x in r['binary']}
+    ok('BIN-DON: close=100 inside the band -> both NO',
+       b['breakout_up'] == 'NO' and b['breakdown'] == 'NO')
+
+    # shape stub stays switched off
+    r = RC.chart_shape_similarity(dates, O, H, L, C, V, c)
+    ok('BIN-SHAPE: DISABLED stub has binary None (switched off)', r['binary'] is None)
+
+
 def run():
     for f in list(globals().values()):
         if callable(f) and f.__name__.startswith('test_'):
