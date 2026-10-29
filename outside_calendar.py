@@ -118,12 +118,19 @@ def parse_fomc_historical(html, year):
         kind = "notation" if "notation" in heading.lower() else "meeting" if "meeting" in heading.lower() else ""
         if not kind:
             continue
+        unscheduled = "unscheduled" in heading.lower()
         month = _month_number(match.group(1))
         start = int(match.group(2))
         end = int(match.group(3) or start)
+        first = pd.Timestamp(year=int(year), month=month, day=start)
+        # An emergency meeting is called on the day, so that day is the announcement.
+        announced = first if unscheduled else schedule_published(first)
         for day in range(start, end + 1):
-            rows.append(dict(date=pd.Timestamp(year=int(year), month=month, day=day), kind=kind))
-    return pd.DataFrame(rows, columns=["date", "kind"])
+            rows.append(dict(
+                date=pd.Timestamp(year=int(year), month=month, day=day),
+                kind=kind, unscheduled=unscheduled, announced=announced,
+            ))
+    return pd.DataFrame(rows, columns=["date", "kind", "unscheduled", "announced"])
 
 
 def parse_fomc_calendars(html):
