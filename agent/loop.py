@@ -13,7 +13,7 @@ DOOR = "https://venice-doorman.fullscan-relay.workers.dev/"
 KEY = os.environ["VENICE_API_KEY"]
 DOOR_KEY = os.environ["DOORMAN_KEY"]
 BRANCH = os.environ.get("AGENT_BRANCH", "venice/calendar-announce-ledger")
-MAX_ITER = int(os.environ.get("MAX_ITERATIONS", "30"))
+MAX_ITER = int(os.environ.get("MAX_ITERATIONS", "12"))
 MAX_MIN = float(os.environ.get("MAX_MINUTES", "45"))
 START = time.time()
 
