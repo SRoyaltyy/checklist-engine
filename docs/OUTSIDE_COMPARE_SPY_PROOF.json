@@ -1,0 +1,247 @@
+{
+  "block": "outside_compare_spy",
+  "release": "outside-compare-spy-v1-20261028",
+  "as_of": "2026-10-27",
+  "stitch_release": "accepted-price-stitch-v2-40494479693-1",
+  "spy_source": "light-daily-box-v1-20261028 SPY close",
+  "names_used": 8315,
+  "names_expected": 8316,
+  "names_percent": 99.988,
+  "rows": 12362658,
+  "output_sha256": "e03526878dc54f5cf2b0acdef4429cdfa29c2f072ba734b13b78d3ae76de747d",
+  "excluded_comparators": [
+    {
+      "comparator": "sector_etf",
+      "reason": "NO_DATED_STOCK_TO_SECTOR_MAP",
+      "coverage_percent": 7.4679
+    },
+    {
+      "comparator": "industry_etf",
+      "reason": "NO_DATED_STOCK_TO_INDUSTRY_MAP",
+      "coverage_percent": 7.4679
+    }
+  ],
+  "map_search": {
+    "sources_checked": [
+      "SRoyaltyy/fullscan data/exports/finviz_YYYY-MM-DD.csv",
+      "SRoyaltyy/theme-radar data/finviz_extras/groups/*_sector.csv",
+      "SRoyaltyy/fullscan src/industry_etf.py",
+      "sec-world-v4-40267486206-1 sec_world_shard_000_attempt_1_part_000.tar"
+    ],
+    "fullscan_snapshot_files": 63,
+    "fullscan_first_file_date": "2026-04-26",
+    "fullscan_last_file_date": "2026-10-27",
+    "sessions_2020_01_02_through_2026_10_27": 1714,
+    "sessions_on_or_after_first_usable_snapshot": 128,
+    "first_usable_session": "2026-04-27",
+    "coverage_percent": 7.4679,
+    "decision": "EXCLUDED",
+    "sec_submissions": {
+      "release": "sec-world-v4-40267486206-1",
+      "sample_archive": "sec_world_shard_000_attempt_1_part_000.tar",
+      "submissions_read": 20,
+      "facts_read": 20,
+      "sic_fields": [
+        "sic",
+        "sicDescription"
+      ],
+      "filings_with_sic_column": 0,
+      "facts_with_sic_column": 0,
+      "decision": "NOT_USED_CURRENT_SIC_WOULD_REWRITE_2020"
+    }
+  },
+  "excluded_names": [
+    {
+      "ticker": "SPY",
+      "reason": "SELF_COMPARATOR"
+    }
+  ],
+  "windows": [
+    1,
+    5,
+    20,
+    60
+  ],
+  "flat_return": 0.01,
+  "comparator_fall": 0.02,
+  "lookahead": "windows end on the session; available_from is the next SPY session",
+  "divergence": {
+    "file": "docs/outside_compare_spy_divergence.parquet",
+    "rows": 12362658,
+    "sha256": "ad86f54835a4c2d7a1a4c66dcb735029cd1db7f9c06a5ad4cf14ebdf8d522d34",
+    "encoding": "bool_bit_packed_ticker_dictionary_zstd19",
+    "flat_vs_fall": "absolute stock return at most 1 percent and SPY return at most -2 percent",
+    "fall_vs_flat": "stock return at most -2 percent and absolute SPY return at most 1 percent",
+    "rates_percent": {
+      "divergence_flat_vs_fall_1d": 0.8045,
+      "divergence_fall_vs_flat_1d": 9.3194,
+      "divergence_flat_vs_fall_5d": 2.4811,
+      "divergence_fall_vs_flat_5d": 9.3087,
+      "divergence_flat_vs_fall_20d": 2.0461,
+      "divergence_fall_vs_flat_20d": 6.5307,
+      "divergence_flat_vs_fall_60d": 1.2752,
+      "divergence_fall_vs_flat_60d": 2.3924
+    }
+  },
+  "stock_day_coverage": {
+    "stock_release": "accepted-price-stitch-v2-40494479693-1",
+    "query_stock_days": 12364370,
+    "compare_rows": 12362658,
+    "gap_rows": 1712,
+    "gap_each_session": 1,
+    "gap_reason": "SPY is in the accepted names and is excluded as the comparator",
+    "covered_percent": 99.9862
+  },
+  "spot_check": {
+    "archive": "accepted stitch part base_0000",
+    "names": [
+      "AFCG",
+      "AFMC",
+      "ALXO",
+      "AVMC",
+      "BANX",
+      "BBEU",
+      "BH",
+      "BHE"
+    ],
+    "spy_close": "light-daily-box-v1-20261028 raw close, not adjusted close",
+    "recomputed_with": "outside_compare.compare_one",
+    "columns": [
+      "rel_strength_ratio",
+      "return_spread_1d",
+      "return_spread_5d",
+      "return_spread_20d",
+      "return_spread_60d",
+      "divergence_flat_vs_fall_1d",
+      "divergence_flat_vs_fall_5d",
+      "divergence_flat_vs_fall_20d",
+      "divergence_flat_vs_fall_60d",
+      "divergence_fall_vs_flat_1d",
+      "divergence_fall_vs_flat_5d",
+      "divergence_fall_vs_flat_20d",
+      "divergence_fall_vs_flat_60d",
+      "corr_20d",
+      "corr_break_20d",
+      "corr_60d",
+      "corr_break_60d"
+    ],
+    "finite_value_rows": {
+      "rel_strength_ratio": 12276,
+      "return_spread_1d": 12268,
+      "return_spread_5d": 12236,
+      "return_spread_20d": 12116,
+      "return_spread_60d": 11796,
+      "corr_20d": 12116,
+      "corr_break_20d": 11636,
+      "corr_60d": 11796,
+      "corr_break_60d": 11316
+    },
+    "flag_cells_checked": 98208,
+    "nan_mismatches": 0,
+    "max_abs_error": 0.0,
+    "available_from": "next NYSE session after the row date",
+    "available_from_rows": 12362658,
+    "available_from_not_next_session": 0,
+    "divergence_sidecar_rows": 12362658,
+    "divergence_sidecar_available_from_not_next_session": 0
+  },
+  "five_session_correlation": {
+    "built_locally": true,
+    "published_release": "not published; the previous release outside-compare-spy-v1-20261028 does not contain corr_5d",
+    "output_file": "compare_spy.parquet",
+    "output_sha256": "e46d4cf92653a0903de7f2dc94478344565efb507192d140d291f34898920a12",
+    "output_bytes": 1011431730,
+    "names_used": 8315,
+    "rows": 12362658,
+    "as_of": "2026-10-27",
+    "correlation_windows": [
+      5,
+      20,
+      60
+    ],
+    "correlation_1d": "NOT_A_COLUMN; one paired daily return has no correlation",
+    "row_non_null_pct": {
+      "corr_5d": 99.4604,
+      "corr_20d": 98.6102,
+      "corr_60d": 95.9428,
+      "corr_break_5d": 94.3409,
+      "corr_break_20d": 94.4989,
+      "corr_break_60d": 91.8972,
+      "divergence_flat_vs_fall_1d": 99.9327,
+      "divergence_flat_vs_fall_60d": 95.9645
+    },
+    "excluded_below_95": [
+      {
+        "column": "corr_break_5d",
+        "non_null_pct": 94.3409,
+        "reason": "A break needs five paired returns and then 60 earlier correlations. That warmup covers 94.3409 percent of comparison rows."
+      },
+      {
+        "column": "corr_break_20d",
+        "non_null_pct": 94.4989,
+        "reason": "A break needs 20 paired returns and then 60 earlier correlations. That warmup covers 94.4989 percent of comparison rows."
+      },
+      {
+        "column": "corr_break_60d",
+        "non_null_pct": 91.8972,
+        "reason": "A break needs 60 paired returns and then 60 earlier correlations. That warmup covers 91.8972 percent of comparison rows."
+      }
+    ],
+    "divergence_unknown": "blank until both returns exist; a known window is 1 or 0",
+    "spot_check": {
+      "ticker": "AFCG",
+      "rows": 1407,
+      "columns": [
+        "corr_5d",
+        "corr_break_5d",
+        "return_spread_5d",
+        "divergence_flat_vs_fall_1d"
+      ],
+      "max_abs_error": 0.0
+    },
+    "committed_column_file": "docs/compare_spy_corr5.parquet",
+    "committed_columns": [
+      "ticker",
+      "date",
+      "available_from",
+      "corr_5d"
+    ],
+    "committed_column_sha256": "49a4ad58dd73505bc7246612d900157d89bf4b87a6f88676b911744d0c854878",
+    "committed_column_bytes": 86545375,
+    "committed_encoding": "ticker dictionary, date and available_from delta, corr_5d byte-stream-split, zstd 19"
+  },
+  "divergence_blank_until_known": {
+    "file": "docs/compare_spy_divergence.parquet",
+    "sha256": "a0be3251298d763df11069c42a90b7b880ed72e1705db563c5861ecd98652c22",
+    "bytes": 9832228,
+    "rows": 12362658,
+    "available_on_or_before_source_session": 0,
+    "rule": "An unknown window is blank. A known window is 1 or 0.",
+    "non_null_pct": {
+      "divergence_flat_vs_fall_1d": 99.9327,
+      "divergence_fall_vs_flat_1d": 99.9327,
+      "divergence_flat_vs_fall_5d": 99.6637,
+      "divergence_fall_vs_flat_5d": 99.6637,
+      "divergence_flat_vs_fall_20d": 98.6548,
+      "divergence_fall_vs_flat_20d": 98.6548,
+      "divergence_flat_vs_fall_60d": 95.9645,
+      "divergence_fall_vs_flat_60d": 95.9645
+    },
+    "replaces": "docs/outside_compare_spy_divergence.parquet stored an unknown window as 0"
+  },
+  "relative_strength": {
+    "source": "local rebuild of the same formula as release outside-compare-spy-v1-20261028",
+    "rows": 12362658,
+    "column_file": "not committed; compressed columns are 401,787,973 bytes",
+    "non_null_pct": {
+      "rel_strength_ratio": 100.0,
+      "return_spread_1d": 99.9327,
+      "return_spread_5d": 99.6637,
+      "return_spread_20d": 98.6548,
+      "return_spread_60d": 95.9645,
+      "corr_20d": 98.6102,
+      "corr_60d": 95.9428
+    },
+    "below_95": []
+  }
+}
