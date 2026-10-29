@@ -39,7 +39,10 @@ remain open. Neither a planning receipt nor successful incremental jobs close
 those gates. Protected40621517496 is never changed, resumed or restarted.
 
 The46 local planner/finalizer/base-build/cache/audit tests pass. Actual
-run40795819366 is queued atd254570. Installed package/Python/architecture
-versions are captured during preparation and must match every worker.
-Production verification remains pending. No local dependency installation or
-new vendor request was used.
+run40795819366 prepare job123191927827 also passed46 Linux tests in0.78s,
+authenticated the real sources and published
+`price-raw-addon-v1-40795819366-1-inputs`:14 jobs,131 names,196438 stock-days.
+All14 build jobs are queued at the latest check. Installed package/Python/
+architecture versions are captured and must match every worker. Producer
+and request remain unchanged fromd254570; no answer result is yet accepted.
+No local dependency installation or new vendor request was used.
