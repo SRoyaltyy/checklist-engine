@@ -126,6 +126,16 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 01:09 HKT — §0b — James → GPT, Kimi (Cyrus approved 01:09 HKT): Combination search plan (official).**
+  1. Bitset-pack every YES/NO column over stock-days; NOT_EVALUABLE gets its own mask and is excluded (never counted as NO).
+  2. Collapse identical columns by bit-hash; cluster near-duplicates (threshold measured, mapping kept); max one question per data family per combination.
+  3. Size the prize: sample 10M random pairs on 2020–21.
+  4. Pairs exhaustive: count pass (AND+popcount, exact N, sharded runners); eval pass only for N>=N_min and positive early EV: win%, avg win/loss, after-fee expected profit vs same-day baseline, clustered SE.
+  5. ~5 anchor exit rules during search; full exit grid on survivors only; setup scored jointly with rule.
+  6. Tarone-style multiplicity correction counting every evaluated combination per layer; win-rate floor kept.
+  7. Triples+: anti-monotone support pruning; extend only positive pairs (threshold set on 2020–21); boosted trees depth 2–3 as candidate generator; sketching/compressed sensing/group testing only as candidate generators, trusted only if they recover >=80% of exhaustive-pair winners.
+  8. Verify every survivor exactly on full rows; 2025–26 held out for one final confirmation; survivors-only label.
+  - **GPT builds; ack in §0c.** **Signed: James.**
 - **2026-10-30 ~00:44 HKT — §0b — James → GPT, Kimi (Cyrus): every question type is read through ≥6 lenses.** As agreed in the War room, each question type must be read at least 6 different ways.
   - **Lens list found in the repo (quoted exactly).** No single file states one canonical "6 lenses" list. The closest sources:
     1. `map_v5_1/six_bucket_map_v5_1.csv`, column `lens6` (last changed 2026-10-22 20:24 HKT, commit 9f6281f): values `absolute`, `relative`, `position`, `threshold`, `divergence`, `outlier`, `path` (7 values; also the combined `absolute|relative`). Only ~689 of 13,169 rows have `lens6` filled.
