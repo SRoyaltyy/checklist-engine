@@ -30,5 +30,7 @@ gate closes merely because these five jobs finish.
 
 Local planning against the actual pinned audit and plan selects exactly the
 five targets and preserves the numeric recipe. All46 planner/adapter/finalizer,
-base-build/cache/audit tests pass locally. Actual run40792865480 is queued at
-implementation1bf19fb; no recovery result is yet accepted.
+base-build/cache/audit tests pass locally and on actual Linux prepare job
+123182085759 in0.62s. Run40792865480 prepared and published its authenticated
+five-target plan; recover(0), EQLT, is active, with four recovery jobs queued.
+Implementation1bf19fb is unchanged; no recovered result is yet accepted.
