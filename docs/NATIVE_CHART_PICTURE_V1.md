@@ -58,3 +58,22 @@ raw/calendar cutoff rebuilds. It measures defaults only. Full-universe
 coverage, every registered setting, v3/history quality, comprehensive leaks,
 historical tradeability, portable exact reconstruction and full dependency
 closure remain open. No checkbox or scoring acceptance is claimed.
+
+## Actual default proof
+
+Run40850036315 at1f1e4f3 passed50 Linux tests9.41s and measured all88 native
+frames(MAN/MNTS/EYE/SPY ×22). Exact persisted reconstruction and176 independent
+raw/calendar cutoff rebuilds reported zero mismatches on every field.
+The report covers5,339,568 numeric cells,2,924,895 known, and15,085,201B of
+temporary exact references. Each input has34,228 native grid rows; these
+include pre2020 and pre-IPO rows, not a whole-universe2020–26 fill rate. No
+invalid OHLCV rows occurred in any sample.
+
+The public506,263B report has SHA256
+`def60dc27f1f6cff39add198d3cf439aaf94b4ae6435b5cd80024cfcde72276e`.
+`CHART_NATIVE_PUBLIC_READBACK_V1.json` authenticates the public bytes, all14
+code hashes, every receipt/input/schema and eight explicit aliases. Native
+reference files were temporary runner data: this public readback inspects
+the bound code/receipts rather than independently downloading or regenerating
+their full numeric contents. Defaults only; full registered-grid coverage,
+all8,447 names and comprehensive quality/PIT/cap gates are not proved here.
