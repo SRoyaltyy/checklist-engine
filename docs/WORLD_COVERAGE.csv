@@ -204,22 +204,22 @@ I172,RS vs XLB,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I173,RS vs XLU,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I174,RS vs XLRE,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I175,RS vs XLC,B,,,,PENDING,awaiting block wiring (see 0c plan)
-I176,RS vs theme peers,C,peer_id|peer_n|peer_r1|peer_r5|peer_r20|vs_peer_r1|vs_peer_r5|vs_peer_r20|peer_corr60,51.73,2018-01-02,WIRED,event/block columns
+I176,RS vs theme peers,C,peer_id|peer_n|peer_r1|peer_r5|peer_r20|vs_peer_r1|vs_peer_r5|vs_peer_r20|peer_corr60,50.59,2018-01-02,WIRED,event/block columns
 I177,RS vs sector peers,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I178,VIX level,I,,,,PENDING,"VIX level: wire with FRED/market-wide block (VIXCLS asset dated, vintages need key)"
-I179,Market breadth %>SMA50,K,breadth,73.33,2018-01-02,WIRED,event/block columns
+I179,Market breadth %>SMA50,K,breadth,73.34,2018-01-02,WIRED,event/block columns
 I180,"A/D line, A/D ratio, new highs-lows (market)",K,,,,PENDING,awaiting block wiring (see 0c plan)
 I181,SPY trend,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I182,Beta,B,,,,PENDING,awaiting block wiring (see 0c plan)
 I183,Calendar context,A,,,,PENDING,awaiting block wiring (see 0c plan)
-I184,Earnings: date & timing,D,earn_days|earn_amc|earn_surp|earn_deps,54.45,2018-01-02,WIRED,event/block columns
-I185,Earnings: surprise,D,earn_days|earn_amc|earn_surp|earn_deps,54.45,2018-01-02,WIRED,event/block columns
-I186,Earnings: gap reaction / drift,D,earn_days|earn_amc|earn_surp|earn_deps,54.45,2018-01-02,WIRED,event/block columns
+I184,Earnings: date & timing,D,earn_days|earn_amc|earn_surp|earn_deps,54.1,2018-01-02,WIRED,event/block columns
+I185,Earnings: surprise,D,earn_days|earn_amc|earn_surp|earn_deps,54.1,2018-01-02,WIRED,event/block columns
+I186,Earnings: gap reaction / drift,D,earn_days|earn_amc|earn_surp|earn_deps,54.1,2018-01-02,WIRED,event/block columns
 I187,Form 4 insider trades,E,,,,PENDING,awaiting block wiring (see 0c plan)
-I188,FINRA short interest,F,si_qty|si_dtc|si_chg|si_days,65.81,2018-01-02,WIRED,event/block columns
-I189,FINRA daily short volume,F,shv_ratio|shv_r5|shv_r20,66.54,2018-01-02,WIRED,event/block columns
-I190,Reg SHO threshold list,G,regsho_days|regsho_on,3.45,2018-01-02,WIRED,event/block columns
-I191,Trading halts,G,halt_days|halt_gap|halt_rsn|halt_n20|halt_n60,27.19,2018-01-02,WIRED,event/block columns
+I188,FINRA short interest,F,si_qty|si_dtc|si_chg|si_days,66.28,2018-01-02,WIRED,event/block columns
+I189,FINRA daily short volume,F,shv_ratio|shv_r5|shv_r20,67.02,2018-01-02,WIRED,event/block columns
+I190,Reg SHO threshold list,G,regsho_days|regsho_on,3.46,2018-01-02,WIRED,event/block columns
+I191,Trading halts,G,halt_days|halt_gap|halt_rsn|halt_n20|halt_n60,26.27,2018-01-02,WIRED,event/block columns
 I192,SEC XBRL fundamentals,H,,,,PENDING,awaiting block wiring (see 0c plan)
 I193,Shares outstanding / float,H,,,,PENDING,awaiting block wiring (see 0c plan)
 I194,Altman Z / Piotroski F / Beneish M,H,,,,PENDING,awaiting block wiring (see 0c plan)
