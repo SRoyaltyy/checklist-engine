@@ -9,7 +9,7 @@ import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from world_timeframes import TIMEFRAMES
 from ci.world_source_evidence import collect,verified_blocker
-from world_scope import NEWS_DROP_REASON,news_columns
+from world_scope import OWNER_DROPPED_ITEMS,news_columns
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -96,15 +96,14 @@ def build(measured,root=ROOT,source_evidence=None):
                 'I194':'Altman Z / Piotroski F / Beneish M not yet implemented and measured',
                 'I197':'upgrade/downgrade counts do not cover the required price-target history',
                 'I199':'filing mentions are not verified fund holdings and share quantities',
-                'I201':'complete market-wide options/term-structure bundle is not yet joined',
             }
             if namespace=='dictionary' and iid in incomplete:
                 status='PENDING';reason=incomplete[iid]
             evidence=source_evidence.get(iid,{}) if namespace=='dictionary' else {}
             if evidence.get('status')=='BLOCKED':
                 status='BLOCKED';reason=evidence['reason']
-            if namespace=='dictionary' and iid=='I200':
-                status='DROPPED_BY_OWNER';reason=NEWS_DROP_REASON;base=[];evidence={}
+            if namespace=='dictionary' and iid in OWNER_DROPPED_ITEMS:
+                status='DROPPED_BY_OWNER';reason=OWNER_DROPPED_ITEMS[iid];base=[];evidence={}
             for tf in TIMEFRAMES:
                 columns=[c+'__'+tf for c in base]
                 missing=[c for c in columns if c not in observed]
@@ -117,7 +116,7 @@ def build(measured,root=ROOT,source_evidence=None):
                 # Exemptions require concrete evidence, never a blank reason.
                 if status_out not in ('WIRED','BLOCKED','BLOCKED_SECRET','NOT_AVAILABLE_FREE','EXCLUDED_FREE_TEXT','EXCLUDED_LIVE_ONLY','DROPPED_BY_OWNER') or (status_out!='WIRED' and not why):
                     failures.append(namespace+':'+iid+'__'+tf)
-                if status_out=='DROPPED_BY_OWNER' and (namespace!='dictionary' or iid!='I200' or why!=NEWS_DROP_REASON):
+                if status_out=='DROPPED_BY_OWNER' and (namespace!='dictionary' or why!=OWNER_DROPPED_ITEMS.get(iid)):
                     failures.append(namespace+':'+iid+'__'+tf+':unauthorized scope exemption')
                 if status_out=='BLOCKED' and (not evidence.get('evidence') or not all(verified_blocker(r) for r in evidence['evidence'])):
                     failures.append(namespace+':'+iid+'__'+tf+':unverified blocker')

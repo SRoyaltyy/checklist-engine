@@ -1,0 +1,27 @@
+{
+  "authority": "9e545e9",
+  "base_commit": "8045caa26e8faa2e01330ba41206dce7b1764185",
+  "item_id": "I201",
+  "reason": "dropped by Cyrus 2026-10-29 (James 9e545e9): I201 CBOE put/call has no free daily 2020-2026 history and fails the live-replicable rule",
+  "files": [
+    {
+      "path": "dictionary/DATA_SOURCES.csv",
+      "changed_records": 1,
+      "untouched_records": 257,
+      "git_content_sha256_before": "5c5d70dd8696b8e46b0efdf2993a8cafa6a43b6306aa148b83ab65e9d517621c",
+      "git_content_sha256_after": "799ba0736bf4b059317b63859eeff7ef14b5041becb64668f8b0d1adb0e674f1",
+      "non_target_records": "UNCHANGED_BYTES"
+    },
+    {
+      "path": "docs/WORLD_COVERAGE.csv",
+      "changed_records": 22,
+      "untouched_records": 12848,
+      "git_content_sha256_before": "b99a89703acc1220f10ae6d56bc6a879d0896bec08ad8986f136e67b3a451412",
+      "git_content_sha256_after": "7eb313de43f8f0e8f5e1012a84a4051fd673561f52e1b4ebe5fff8dbea947cd2",
+      "non_target_records": "UNCHANGED_BYTES"
+    }
+  ],
+  "retained": "Inventory identities, archived source assets, I178 VIX and separate term-structure measurements",
+  "full_world_gate": "NOT_PROVEN; this is an owner scope change, not newly measured data",
+  "coverage_map": "Preserve James659b203 I201=DROPPED and I195=PROVEN; no duplicate map rewrite"
+}
