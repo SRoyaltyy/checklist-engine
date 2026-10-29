@@ -1,0 +1,35 @@
+name: codex-relative-native-sample
+on:
+  push:
+    branches: [codex/native-relative-context]
+    paths: ['ci/RELATIVE_NATIVE_REQUEST.json']
+  pull_request:
+    paths: ['world_relative_context.py', 'outside_compare.py', 'tests/test_native_relative_context.py']
+permissions:
+  contents: write
+concurrency:
+  group: codex-relative-native-sample-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_native_relative_context.py tests/test_relative_native_measure.py tests/test_world_bar_statistics.py tests/test_world_context_store.py -q
+      - if: github.event_name == 'push'
+        run: python -m ci.relative_native_measure --directory relative-native-proof
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'push'
+        with:
+          name: relative-native-proof
+          path: relative-native-proof/*.json
+          if-no-files-found: ignore

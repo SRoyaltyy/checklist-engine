@@ -118,13 +118,15 @@ def bar_statistics(open_,high,low,close,volume,timeframe):
         out[f"CHAIKIN_VOLATILITY{n}_{n}"]=(100*(smooth/prior.where(prior>0)-1)).to_numpy()
     return {key:np.asarray(value,dtype=np.float32) for key,value in out.items()}
 
-def relative_statistics(stock,benchmark,role):
+def relative_statistics(stock,benchmark,role,*,dtype=np.float32):
     """Compare exactly matching candle intervals, never as-of different buckets.
 
     Input columns candle_start/date/close. Caller must supply already-PIT
     completed candles and the same timeframe. Gaps fail rather than forward-fill.
     """
-    if role not in ("spy","sector","industry"):raise ValueError("unknown benchmark role")
+    if role not in ("spy","sector","industry","benchmark"):raise ValueError("unknown benchmark role")
+    if np.dtype(dtype) not in (np.dtype('float32'),np.dtype('float64')):
+        raise ValueError('relative statistics require float32 or float64 output')
     keys=["candle_start","date"]
     if not stock[keys].reset_index(drop=True).equals(benchmark[keys].reset_index(drop=True)):
         raise ValueError("relative features require identical candle boundaries")
@@ -137,7 +139,7 @@ def relative_statistics(stock,benchmark,role):
         out[f"CORRELATION_{role}_{n}"]=ar.rolling(n).corr(br)
         variance=br.rolling(n).var(ddof=1)
         out[f"BETA_{role}_{n}"]=ar.rolling(n).cov(br)/variance.where(variance>0)
-    return {key:value.to_numpy(np.float32) for key,value in out.items()}
+    return {key:value.to_numpy(dtype) for key,value in out.items()}
 
 def universe_rs_rank(close,eligible,period):
     """Cross-sectional percentile of N-candle price return, PIT eligible only.
