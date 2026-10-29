@@ -97,3 +97,19 @@ No scoring result or checklist completion is claimed by this contract.
 
 ### Batch 2 (2026-10-30 ~00:30 HKT)
 +1,358 questions for the 126 items at 2–8 settings (≥10 each; ids `Ixxx-Lnn`), using each item's dictionary settings (short/default/long or N lists) as rungs. Families: zone oscillators (item-specific oversold/overbought per setting, midline, 5-bar change, cross-up), zero-line oscillators (zero line per setting, rising, signal cross, zero cross), trailing stops (side per setting, ATR cushion 0.5/1/2/3, flip), bands (%B >1/<0 per setting, 0.2/0.5/0.8, squeeze, expansion), RS vs ETF (N=10/20/60, -5/5/10% relative return, RS 60-bar high, outperform-day count). Others: per-setting median and 5-bar change, percentile ladder, 5d vs 1d. **Total V1: 2,680 questions, 256 items.**
+
+## Options question family — WAITING_ON_DATA (Cyrus 2026-10-30 00:41 HKT, TIER-1)
+New family, built by GPT once options data lands. Strict YES/NO; `expression` CHART/PANEL/CONCRETE; point-in-time (day D data usable at D+1 open).
+- Put/call volume ratio and put/call open-interest ratio (market-wide: CBOE I201, DATA_READY; single-stock: pending source hunt)
+- IV level, IV percentile/rank, IV term structure, IV skew
+- Unusual options volume
+- Max pain
+- Open-interest walls (max-OI strikes)
+
+## Money-flow question family — WAITING_ON_DATA (Cyrus 2026-10-30 00:41 HKT, TIER-1)
+New family, built by GPT once money-flow data lands (see `docs/MONEYFLOW_SOURCE_HUNT_V1.md`). Strict YES/NO; CHART/PANEL/CONCRETE; point-in-time.
+- Net flow
+- Large vs small orders
+- Block / dark-pool prints
+- ETF flows
+- Short volume
