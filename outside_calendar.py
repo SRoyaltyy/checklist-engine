@@ -13,6 +13,7 @@ Scheduled events come from a dated announcement ledger, not from the previous re
 from __future__ import annotations
 
 import hashlib
+import heapq
 import io
 import re
 from pathlib import Path
