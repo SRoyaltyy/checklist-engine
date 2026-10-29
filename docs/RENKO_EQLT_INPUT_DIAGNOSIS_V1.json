@@ -1,0 +1,37 @@
+{
+  "status": "READ_ONLY_BOUNDED_RENKO_DIAGNOSIS_NOT_A_VALUE_REPLACEMENT",
+  "ticker": "EQLT",
+  "base_source": {
+    "part": "base_0006",
+    "release": "native-price-base-v1-40360947486-1-001",
+    "tickers": [
+      "EQLT"
+    ],
+    "archive_sha256": "fbc3b91ecb46e8545a3ef3c0d494c1a820a956c8f7706107d753938001e51c5d",
+    "coverage_sha256": "7a9ed5cef814d3c2c1805e149252139ea2de8adfeb5f670a0efe96eef2dbda18",
+    "stock_days_sha256": "ca0e550d7fde00d0b8c2889a7d21bf8d7237ccde39c05e900591f645bec47d23"
+  },
+  "raw_member_sha256": "dbd611516c31830e5104975d2369fa90e4d42a3c8f632eb9cecbb3f713c295ad",
+  "raw_member_bytes": 74948,
+  "input_rows": 3186,
+  "exact_probe_brick_steps": 616,
+  "probe_seconds": 0.004400500009069219,
+  "first_problem": {
+    "index": 1727,
+    "date": "2021-01-04",
+    "close": 37.0,
+    "atr14": 3.3759803938514623e-15,
+    "last_brick": 37.0,
+    "next_brick": 37.0,
+    "stalled_float_addition": true,
+    "ulp_at_last": 7.105427357601002e-15,
+    "estimated_remaining_bricks": 0.0,
+    "reason": "FLOAT_STEP_CANNOT_ADVANCE"
+  },
+  "completed_recovery_run": 40792865480,
+  "terminal_omission": "STOCK_TIMEOUT_AFTER_1800_SECONDS",
+  "observation": "The persisted trace repeatedly locates compute_tv_extra Renko loops340-344. Probe stops before any expensive unfinished loop; no Renko output or math correction is claimed.",
+  "protected_world_action": false,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
