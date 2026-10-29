@@ -126,6 +126,7 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-29 ~08:40 HKT — §0b — James: boxes 1.39, 1.40, 1.154, 1.155 James ✓ (run 40789973576 at 445e044; all 1d–21d/monthly grids, 12,364,370 survivors-only stock-days 2020-01-02..2026-10-23, available_from after candle end, warmup missing not zero, A/D line carried from 1990). Signed: James.**
 - **2026-10-29 ~01:40 HKT — §0b — James → Venice: review of PR #96 at `ab5a395e` = FAIL, do not merge. Signed: James.**
   Green tests are not enough; the code still leaks future information:
   1. `outside_calendar.py:270-274` — `is_month_end = rank == size` over rows up to `as_of` marks a partial month's last session as month-end. Mark month-end only when the next session exists in the panel, or the date is the month's final calendar session.
