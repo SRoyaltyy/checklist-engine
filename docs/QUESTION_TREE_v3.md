@@ -3,8 +3,13 @@
 Status: specification / gate implementation. The full generated tree and the
 200-stock measured quality report are NOT complete. No Step A rerun is permitted
 until all world coverage, P3b, and full-tree leak gates pass.
+Exception: James/Cyrus `9e545e9` authorizes FIRST_SLICE_PRICE_ONLY without waiting
+for full-world coverage, subject to `1ac06eb`'s per-item DEFINE → CHART →
+DERIVE YES/NO → MINE sequence. This is not a full-world Step A acceptance.
 
 Authority: METHODOLOGY main, §0b 2026-10-25 23:35 and 23:40 (69bd010, b58906f).
+James/Cyrus's22:51/22:53 HKT2026-10-29 update (`8cd843f`) additionally requires
+strict binary questions before probability mining. See [BINARY_QUESTIONS_V1.md](BINARY_QUESTIONS_V1.md).
 
 ## Construction axes
 
@@ -22,12 +27,16 @@ not a ceiling: expanding these axes may produce far more than 26,000 rows.
 ## Required CSV row
 
 question_id, item_id, block, derivative, facet, candle_days, lookback, threshold,
-direction, formula, inputs, pit_rule, answer_set.
+direction, formula, inputs, pit_rule, answer_set, feature_id, feature_expression,
+feature_kind, feature_unit, comparator, comparison_threshold, feature_categories.
 
 formula is the exact expanded expression including the item, numeric parameters,
 completed-candle definition and direction. inputs lists actual source columns and
-any benchmark columns. answer_set enumerates all permitted outcomes; blank is
-unavailable, not a no answer. Rows that merely rename the same formula are rejected.
+any benchmark columns. `answer_set` is exactly `["NO","YES"]`; unavailable rows
+are NOT_EVALUABLE and excluded, never silently NO. A multi-state history output
+is a feature requiring codebook-bound binary predicates. The formula is exactly
+`(<feature_expression>) <comparator> <comparison_threshold>` with a literal
+numeric cutoff. Rows that merely rename the same formula are rejected.
 Canonical aliases can share a question ID via an explicit alias/coverage table;
 they cannot inflate unique question counts.
 
@@ -70,11 +79,15 @@ the gate requires the full Cartesian product of each declared window, threshold
 and direction. Three separate marginal counts cannot prove that product. A
 registered fourth setting cannot disappear just because three others remain.
 Duplicate parameter combinations cannot inflate depth, even under different IDs.
+Every registry entry additionally declares a `binary_predicates` ladder for
+each direction. The complete product includes every rung, independently of the
+existing feature threshold/settings axis. Missing/duplicate numeric rungs fail.
 
 The sample contains at least 200 deterministic stocks and years 2020,2021,2022.
 The manifest binds the tallies to the exact tree digest and input manifest.
 It now also contains `tallies_sha256`, `sample_rows_sha256` and
-`variable_grid_sha256`. File digests use `ci.question_quality.tree_digest` (raw
+`variable_grid_sha256`, `answer_semantics="STRICT_BINARY_V1"` and the exact
+`binary_predicate_code_sha256`. File digests use `ci.question_quality.tree_digest` (raw
 bytes concatenated in sorted path order); the variable digest uses
 `variable_digest` (the supplied JSON list serialized with sorted object keys and
 compact separators). The stock-day CSV contains `ticker,date`; canonical ISO
@@ -83,9 +96,10 @@ count must agree with the sample manifest. Input provenance must be a 64-digit
 SHA-256. These checks bind evidence; the source producer must still independently
 verify that the sample rows and input manifest came from the released world.
 
-Tally `answer_counts` keys are canonical JSON encodings of the declared scalar
-outcomes: numeric 0 is the key `"0"`, boolean true is `"true"`, and a string
-outcome includes its JSON quotes. Counts are nonnegative integers, never coerced
+Tally `answer_counts` keys are canonical JSON encodings of NO and YES strings,
+including their JSON quotes. `n_evaluable` equals their summed count;
+`n_not_evaluable` equals `n_total - n_evaluable`. Excluded rows never enter NO.
+Counts are nonnegative integers, never coerced
 booleans or fractions. Unknown outcomes, duplicate JSON keys, orphan tallies,
 catalog/block mismatches and malformed fixed answer sets fail. Null remains
 missing, not a declared answer. Legacy sample summaries without bound files and

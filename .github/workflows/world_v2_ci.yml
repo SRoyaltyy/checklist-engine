@@ -22,7 +22,7 @@ on:
         required: true
         default: false
   pull_request:
-    paths: ['.github/workflows/world_v2_ci.yml']
+    paths: ['.github/workflows/world_v2_ci.yml', 'world_binary_questions.py', 'ci/question_quality.py', 'tests/test_binary_questions.py', 'tests/test_question_quality.py']
 permissions:
   contents: read
 jobs:
@@ -38,7 +38,7 @@ jobs:
       - name: Import prerequisite before any source job
         run: python -m ci.world_pipeline run --state .import-state.json --stage imports -- python -m ci.world_pipeline imports
       - name: Regression tests including forced failures
-        run: python -m pytest tests/test_world_v2.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py -q
+        run: python -m pytest tests/test_world_v2.py tests/test_binary_questions.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py -q
   sec-source-evidence:
     # James 13:00 HKT, 01059da: SEC stays held until Cyrus confirms the fix.
     # Ordinary code pushes and PR checks must never perform a live SEC probe.
