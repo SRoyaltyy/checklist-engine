@@ -29,4 +29,6 @@ historical tradeability or comprehensive leak gates. No checkbox or scoring
 gate closes merely because these five jobs finish.
 
 Local planning against the actual pinned audit and plan selects exactly the
-five targets and preserves the numeric recipe. Actual production is pending.
+five targets and preserves the numeric recipe. All46 planner/adapter/finalizer,
+base-build/cache/audit tests pass locally. Actual run40792865480 is queued at
+implementation1bf19fb; no recovery result is yet accepted.
