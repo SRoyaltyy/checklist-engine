@@ -90,3 +90,5 @@ if __name__=='__main__':
             writer=csv.DictWriter(stream,fieldnames=list(values[0]));writer.writeheader();writer.writerows(values)
     (args.output/'FRED_1635_COVERAGE_READBACK_V1.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print('EIGHT_FRED_COVERAGE_MEASURED',len(rows),report['minimum_non_null_stock_day_pct'],report['status'])
+    if report['status']!='PASS_EIGHT_FRED_NATIVE_LEVEL_COVERAGE_ONLY':
+        raise SystemExit('FRED required level coverage incomplete; explicit evidence retained')
