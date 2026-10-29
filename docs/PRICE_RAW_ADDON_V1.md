@@ -46,3 +46,21 @@ All14 build jobs are queued at the latest check. Installed package/Python/
 architecture versions are captured and must match every worker. Producer
 and request remain unchanged fromd254570; no answer result is yet accepted.
 No local dependency installation or new vendor request was used.
+# Actual completion and independent public readback
+
+Run40795819366 atd254570 completed every131 incremental name and196,438
+stock-days, with0 exclusions/errors. All14 build jobs and the finalizer passed;
+the prepare job passed46 Linux tests. The immutable measured report is retained
+in `PRICE_RAW_ADDON_MEASURED_V1.json`.
+
+`RAW_PRICE_ADDON_PUBLIC_READBACK_V1.json` independently verifies every276
+published asset339,307,882B, including all131 answer payloads338,410,274B.
+All final shard/plan/source/registry identities, unique stock memberships,
+query-row totals and worker roundtrip receipts match. The readback hashes all
+payload bytes; it does not independently regenerate/decode all answers.
+
+This does not resolve the protected build's terminal five stock timeouts or its
+unverified final shard. Its50 names remain pending in that original ledger;
+24 durable draft payloads/checkpoints were located and must be preserved by a
+separate recovery version. No protected result is rewritten. Full world and
+scoring gates remain closed.
