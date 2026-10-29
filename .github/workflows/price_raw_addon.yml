@@ -1,0 +1,81 @@
+name: codex-price-raw-addon
+on:
+  push:
+    branches: [codex/raw-price-answer-addon]
+    paths: ['ci/PRICE_RAW_ADDON_REQUEST.json']
+permissions:
+  contents: write
+concurrency:
+  group: codex-price-raw-addon
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      inputs_release: ${{ steps.plan.outputs.inputs_release }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m pytest tests/test_price_raw_addon.py tests/test_compact_world_build.py tests/test_world_answer_cache.py tests/test_completed_price_shard_audit.py -q
+      - id: plan
+        run: python -m ci.price_raw_addon prepare --directory raw-addon-plan
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: raw-price-addon-plan
+          path: |
+            raw-addon-plan/COMPACT_WORLD_BUILD_PLAN.json
+            raw-addon-plan/INCREMENTAL_STOCK_DAY_WEIGHTS_V1.csv
+          if-no-files-found: ignore
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 190
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        index: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.price_raw_addon build --directory raw-addon --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --index '${{ matrix.index }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: raw-price-addon-${{ matrix.index }}
+          path: raw-addon/COMPACT_WORLD_SHARD.json
+          if-no-files-found: ignore
+  finalize:
+    needs: [prepare,build]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: python -m ci.price_raw_addon finalize --directory raw-addon-measured --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: raw-price-addon-measured
+          path: raw-addon-measured/PRICE_RAW_ADDON_MEASURED_V1.json
+          if-no-files-found: ignore
