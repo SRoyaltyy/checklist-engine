@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "base_run": 40621517496,
+  "base_producer": "49043dd375387bddad0d446c56f942f0711b28ed",
+  "base_inputs_release": "compact-world-build-v1-40621517496-1-inputs",
+  "base_plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+  "audit_commit": "b1f83b351fdb9bc96672e6ee4e07e13201d3c59b",
+  "audit_sha256": "dfdd44fe2c1e5859a2f1184eb279b95e4bc31df91324d5a2b6231176bae2eb43",
+  "tickers": ["EQLT", "WKSP", "ABVC", "NXTS", "SU"],
+  "stock_timeout_seconds": 1800,
+  "compute_sha256": {
+    "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+    "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac"
+  },
+  "scope": "Immutable add-on for all five authenticated terminal timeouts from the142-shard audit. Original raw inputs, 22 native grids, 1044 numeric columns,68904 diagnostic questions and math/registry pins retained. Longer per-stock allowance plus periodic traceback only. Never cancel/restart/rerun/reseed/edit protected40621517496 or its checkpoint ledger. No full-world acceptance or scoring."
+}

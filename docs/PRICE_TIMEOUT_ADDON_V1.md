@@ -1,0 +1,32 @@
+# Isolated recovery of terminal timeouts
+
+The 142-shard audit binds five terminal `STOCK_TIMEOUT` outcomes to final
+public summaries: EQLT (17), WKSP (23), ABVC (97), NXTS (126), SU (128).
+The add-on selects all five and authenticates each omission again. It never
+selects a completed stock or an unfinished shard. The original ledger and
+protected run40621517496 remain immutable.
+
+Each recovery job uses one original raw archive member, the same calendar,
+the same13-file numeric recipe at7dcaa486/fingerprint89efd610, the same
+registry and all68904 diagnostic outcomes on22 timeframes. The per-stock
+allowance increases from900 to1800 seconds. A wrapper adds a traceback every
+300 seconds so a remaining timeout identifies the stalled call. The exact
+compute function is unchanged. The wrapper defers orchestrator imports so
+unpinned math cannot enter Python's module cache before the recipe path.
+
+Five independent jobs use a maximum parallelism of5, within the account's
+20-job ceiling. Every recovered result is a new run-specific release; no
+existing asset is overwritten. A failed target remains an explicit omission
+with the retained trace. An above-average payload is retained, not excluded
+to satisfy a storage allowance. The finalizer checks the source, stock
+partition, registry, published payload size/hash and worker roundtrip receipt.
+
+The report is an add-on ledger, not a standalone universe or storage-cap
+claim. It must later compose with every completed original shard, the raw
+131-name add-on, full numeric/shared dependencies and the remaining world
+blocks. Existing diagnostic answers do not satisfy the full question tree,
+historical tradeability or comprehensive leak gates. No checkbox or scoring
+gate closes merely because these five jobs finish.
+
+Local planning against the actual pinned audit and plan selects exactly the
+five targets and preserves the numeric recipe. Actual production is pending.
