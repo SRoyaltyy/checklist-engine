@@ -15,7 +15,7 @@ Usage:
   python3 fetch/fetch_cboe.py probe   # print HTTP status + head for every candidate
   python3 fetch/fetch_cboe.py fetch --out mkt_pc_2020_26.parquet
 """
-import argparse, io, sys, time, urllib.error, urllib.request
+import argparse, io, json, sys, time, urllib.error, urllib.request
 
 import numpy as np
 import pandas as pd
@@ -60,21 +60,74 @@ def get(url, ua=None):
         return None, b''
 
 
+def wayback_latest(url, ua=None, n=4):
+    """Fetch the newest few Wayback snapshots of `url`; return (ts, raw) with
+    the newest data end-date. Raw bytes via the id_ (unmodified) modifier.
+
+    CBOE's CDN 403s datacenter IPs on both the owner network and GitHub
+    runners (proven in runs 40879412423 / 40882550364 / 40883758218), so the
+    keyless direct fetch is not live-replicable from automation. The Wayback
+    Machine is the dated, replicable mirror. Put/call counts are official
+    figures and are never revised, so a late snapshot is PIT-safe for the
+    full history (the CSV is cumulative) -- proven by checking that the
+    overlapping dates of two snapshots agree.
+    """
+    cdx = ('https://web.archive.org/cdx/search/cdx?url=' + url +
+           f'&output=json&fl=timestamp,original,statuscode&filter=statuscode:200&limit=-{n}')
+    st, raw = get(cdx, ua)
+    if not raw:
+        return None, None
+    try:
+        rows = json.loads(raw.decode('utf-8', 'ignore'))
+    except Exception:
+        return None, None
+    if len(rows) < 2:
+        return None, None
+    best = (None, None, None)   # (ts, raw, max_date)
+    for ts, original, _code in rows[1:]:
+        snap = f'https://web.archive.org/web/{ts}id_/{original}'
+        st2, raw2 = get(snap, ua)
+        if not raw2:
+            continue
+        df = parse_hist_csv(raw2)
+        if df is None or not len(df):
+            continue
+        if best[2] is None or df.date.max() > best[2]:
+            best = (ts, raw2, df.date.max())
+        print(f'wayback snapshot {ts}: {len(df)} rows, ends {df.date.max().date()}')
+    return best[0], best[1]
+
+
 def parse_hist_csv(raw):
-    """Parse the put/call historical CSV -> DataFrame[date, calls, puts, total_n, ratio]."""
-    df = pd.read_csv(io.StringIO(raw.decode('utf-8', 'ignore')))
+    """Parse the put/call historical CSV -> DataFrame[date, calls, puts, total_n, ratio].
+
+    Legacy files carry 1-2 preamble lines (disclaimer / product banner)
+    before the DATE header; find the header line first.
+    """
+    lines = raw.decode('utf-8', 'ignore').splitlines()
+    hdr = next((i for i, l in enumerate(lines) if l.split(',')[0].strip().upper() == 'DATE'), None)
+    if hdr is None:
+        return None
+    df = pd.read_csv(io.StringIO('\n'.join(lines[hdr:])))
     cols = {c.lower().strip(): c for c in df.columns}
     date_c = df.columns[0]
+
+    def pick(*names):
+        for n in names:
+            if n in cols:
+                return cols[n]
+        return ''
+
     df = df.rename(columns={
-        cols.get('call volume', ''): 'calls',
-        cols.get('put volume', ''): 'puts',
-        cols.get('total volume', ''): 'total_n',
-        cols.get('p/c ratio', ''): 'ratio',
+        pick('call volume', 'calls'): 'calls',
+        pick('put volume', 'puts'): 'puts',
+        pick('total volume', 'total'): 'total_n',
+        pick('p/c ratio', 'p/c'): 'ratio',
     })
     need = {'calls', 'puts', 'total_n', 'ratio'}
     if not need.issubset(df.columns):
         return None
-    df['date'] = pd.to_datetime(df[date_c], errors='coerce', format='mixed')
+    df['date'] = pd.to_datetime(df[date_c], errors='coerce')
     for c in ('calls', 'puts', 'total_n', 'ratio'):
         df[c] = pd.to_numeric(df[c], errors='coerce')
     df = df.dropna(subset=['date'])[['date', 'calls', 'puts', 'total_n', 'ratio']]
@@ -116,19 +169,27 @@ def probe():
             print(f'daily {pat}: HTTP {st}, {len(raw)} bytes')
             if raw:
                 print('  head: ' + ' | '.join(raw.decode('utf-8', 'ignore').splitlines()[:6]))
+    ts, wb = wayback_latest(HIST_CSV['totalpc-www'], UAS[0][1])
+    if wb:
+        print('wayback totalpc head: ' + ' | '.join(wb.decode('utf-8', 'ignore').splitlines()[:3]))
 
 
 def fetch_all(out, start='2020-01-01', end=None, pace=0.15):
     end = pd.Timestamp(end or pd.Timestamp.today().date())
     start = pd.Timestamp(start)
 
-    # Fast path: single historical CSV.
+    # Fast path: single historical CSV. Direct first, Wayback mirror second.
     for ua_name, ua in UAS:
         for name, url in HIST_CSV.items():
             st, raw = get(url, ua)
+            via = f'direct HTTP {st}'
+            if not raw and name.startswith('totalpc'):
+                ts, wb = wayback_latest(url, ua)
+                if wb:
+                    raw, via = wb, f'wayback {ts}'
             df = parse_hist_csv(raw) if raw else None
             if df is not None and len(df):
-                print(f'historical CSV {name} (UA={ua_name}): HTTP {st}, {len(df)} parsed rows')
+                print(f'historical CSV {name} ({via}): {len(df)} parsed rows')
                 df = df[(df.date >= start) & (df.date <= end)].reset_index(drop=True)
                 if len(df) == 0:
                     continue
