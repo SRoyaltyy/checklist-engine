@@ -1,0 +1,131 @@
+{
+  "status": "TIMEOUT_ADDON_INCOMPLETE",
+  "source_commit": "1bf19fb21b2f270e54746e9e09709c27e940bbe5",
+  "inputs_release": "price-timeout-addon-v1-40792865480-1-inputs",
+  "plan_sha256": "fb589421c6bc62764774f6df43546d40a69cd54fddd197b125acbebe81cbe625",
+  "base_run": 40621517496,
+  "original_ledger_unchanged": true,
+  "origins": [
+    {
+      "ticker": "EQLT",
+      "base_index": 17,
+      "base_release": "compact-world-build-v1-40621517496-1-017",
+      "summary_sha256": "75fa4d8f2d1a8703a1b6ca798d82d88c5d65794319d7e381b8d984d2229db09c",
+      "reason": "STOCK_TIMEOUT"
+    },
+    {
+      "ticker": "WKSP",
+      "base_index": 23,
+      "base_release": "compact-world-build-v1-40621517496-1-023",
+      "summary_sha256": "0d3c39dae772163d46ec4f7d4bc1603a84f39452d472ba7a60fdaa47c41a140e",
+      "reason": "STOCK_TIMEOUT"
+    },
+    {
+      "ticker": "ABVC",
+      "base_index": 97,
+      "base_release": "compact-world-build-v1-40621517496-1-097",
+      "summary_sha256": "5af422b15f262bbccf314b14f5a8b968af51d2249f6cc42e8891aeeb4ccd38d6",
+      "reason": "STOCK_TIMEOUT"
+    },
+    {
+      "ticker": "NXTS",
+      "base_index": 126,
+      "base_release": "compact-world-build-v1-40621517496-1-126",
+      "summary_sha256": "52ed847a3e984bb9ba7f45fce7c3fbe3f16b2f6f37e41726d41315a5caef760b",
+      "reason": "STOCK_TIMEOUT"
+    },
+    {
+      "ticker": "SU",
+      "base_index": 128,
+      "base_release": "compact-world-build-v1-40621517496-1-128",
+      "summary_sha256": "c6b0c7a4fff98fc0b2eb25c447ae068200aa7da56d17d29d0b9672f4333b64a6",
+      "reason": "STOCK_TIMEOUT"
+    }
+  ],
+  "request": {
+    "version": 1,
+    "base_run": 40621517496,
+    "base_producer": "49043dd375387bddad0d446c56f942f0711b28ed",
+    "base_inputs_release": "compact-world-build-v1-40621517496-1-inputs",
+    "base_plan_sha256": "a58db5e64fb59158caee44f5f637b48592f2137b01146bc31a1aec59c189f02a",
+    "audit_commit": "b1f83b351fdb9bc96672e6ee4e07e13201d3c59b",
+    "audit_sha256": "dfdd44fe2c1e5859a2f1184eb279b95e4bc31df91324d5a2b6231176bae2eb43",
+    "tickers": [
+      "EQLT",
+      "WKSP",
+      "ABVC",
+      "NXTS",
+      "SU"
+    ],
+    "stock_timeout_seconds": 1800,
+    "compute_sha256": {
+      "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+      "world_answer_cache.py": "326e2444bfe257b90534294c230c75e69d9f661da6a0023194eb05568655a9ac"
+    },
+    "scope": "Immutable add-on for all five authenticated terminal timeouts from the142-shard audit. Original raw inputs, 22 native grids, 1044 numeric columns,68904 diagnostic questions and math/registry pins retained. Longer per-stock allowance plus periodic traceback only. Never cancel/restart/rerun/reseed/edit protected40621517496 or its checkpoint ledger. No full-world acceptance or scoring."
+  },
+  "completed": [],
+  "excluded": [
+    {
+      "ticker": "EQLT",
+      "reason": "STOCK_TIMEOUT",
+      "error": "Timeout (0:05:00)!\nThread 0x00007fbce9948b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fbce9948b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fbce9948b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 341 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fbce9948b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fbce9948b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 341 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\n"
+    },
+    {
+      "ticker": "WKSP",
+      "reason": "STOCK_TIMEOUT",
+      "error": "Timeout (0:05:00)!\nThread 0x00007f38702f1b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007f38702f1b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007f38702f1b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007f38702f1b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 342 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007f38702f1b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\n"
+    },
+    {
+      "ticker": "ABVC",
+      "reason": "STOCK_TIMEOUT",
+      "error": "Timeout (0:05:00)!\nThread 0x00007fac2b0d0b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 341 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fac2b0d0b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 342 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fac2b0d0b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fac2b0d0b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fac2b0d0b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\n"
+    },
+    {
+      "ticker": "NXTS",
+      "reason": "STOCK_TIMEOUT",
+      "error": "Timeout (0:05:00)!\nThread 0x00007fb0fd914b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fb0fd914b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fb0fd914b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 341 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fb0fd914b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007fb0fd914b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\n"
+    },
+    {
+      "ticker": "SU",
+      "reason": "STOCK_TIMEOUT",
+      "error": "Timeout (0:05:00)!\nThread 0x00007faf99c91b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 341 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007faf99c91b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007faf99c91b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 344 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007faf99c91b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\nTimeout (0:05:00)!\nThread 0x00007faf99c91b80 (most recent call first):\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/facets_world.py\", line 340 in compute_tv_extra\n  File \"/home/runner/work/checklist-engine/checklist-engine/timeout-recovery/recipe/world_timeframes.py\", line 119 in candle_features\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/compact_world_storage_budget.py\", line 44 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 134 in worker\n  File \"/home/runner/work/checklist-engine/checklist-engine/ci/price_timeout_addon.py\", line 187 in <module>\n  File \"<frozen runpy>\", line 88 in _run_code\n  File \"<frozen runpy>\", line 198 in _run_module_as_main\n"
+    }
+  ],
+  "errors": [],
+  "releases": [
+    {
+      "index": 0,
+      "release": "compact-world-build-v1-40792865480-1-000",
+      "summary_sha256": "ce3ab760a20a402031602e5575ee53e163b92813151f167917df760ea0b581a6",
+      "published_bytes": 9811
+    },
+    {
+      "index": 1,
+      "release": "compact-world-build-v1-40792865480-1-001",
+      "summary_sha256": "746de966ba98b74c914e5bc12cdda1928816679629cd14aad1bb6af667fbd8bb",
+      "published_bytes": 9811
+    },
+    {
+      "index": 2,
+      "release": "compact-world-build-v1-40792865480-1-002",
+      "summary_sha256": "946dcd13e1f8e4a31074de33f7446994915823b29d96bb77acbea534a8bab5c3",
+      "published_bytes": 9811
+    },
+    {
+      "index": 3,
+      "release": "compact-world-build-v1-40792865480-1-003",
+      "summary_sha256": "7f4a808475ff86fe5a2f4d8c9d16fcfe534c1164943cbd23b34fe7eaf6845101",
+      "published_bytes": 9811
+    },
+    {
+      "index": 4,
+      "release": "compact-world-build-v1-40792865480-1-004",
+      "summary_sha256": "b79d1b599177606db2898720b8feb83a7f07da79f72251b3278ef9e083dedfd5",
+      "published_bytes": 9803
+    }
+  ],
+  "global_coverage_gate": "NOT_COMPOSED_WITH_ALL_BASE_SHARDS",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
