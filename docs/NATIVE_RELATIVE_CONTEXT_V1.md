@@ -35,8 +35,20 @@ The 39 API/statistics/reader/controller tests pass locally and on actual Linux
 PR run40790401871 (8.79 seconds). After integrating verified breadth main2921fa6,
 all78 combined native-comparison/breadth/statistics/reader/storage/readback tests
 pass locally (41.64 seconds). Producer code remains unchanged from119c08e.
-Push sample run40790389592 is still queued; its actual input proof and public
-readback remain pending.
+Actual sample run40790389592/job123173883370 also passed39 Linux tests and
+completed the real-input proof. All66 native frames (34228 rows per stock
+across22 TF,4107360 numeric cells including explicit unknowns) reopen and
+regenerate exactly; all132 cutoff checks pass. The temporary persisted
+references total15974053 bytes, versus457284 original stock-source bytes
+and264535 shared SPY bytes. MAN/MNTS/EYE full proof times are25.89/20.14/20.22s.
+
+The public report at `relative-native-sample-v1-40790389592-1` was independently
+downloaded and authenticated:458736 bytes, SHA256
+`fa224c6e68b6a0c531460e5c6d3472987dc0c31c71ecfacca224ff163089a3aa`.
+Every66-frame/132-cutoff receipt and all12 code hashes were inspected against
+the exact119c08e Git blobs; the request matches the committed raw-input pins.
+See `RELATIVE_NATIVE_MEASURED_V1.json` and
+`RELATIVE_NATIVE_PUBLIC_READBACK_V1.json` for the actual evidence.
 This is a three-stock component sample; it establishes no full-universe
 coverage, historical eligibility, complete question state or 100GB world
 budget. No checklist box or full-world/scoring gate is closed here.
