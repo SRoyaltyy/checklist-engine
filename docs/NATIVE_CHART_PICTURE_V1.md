@@ -6,6 +6,14 @@ price diagnostic1044-column registry has none of these nine required fields.
 This component supplies their calculations as a separate layer. It changes no
 original price recipe, payload, question tree, registered cutoff grid or type.
 
+Under James155's disambiguation rule, `cp_gr_body20` explicitly measures
+green absolute-body sum divided by red absolute-body sum, as pinned by11a01175.
+The viewport's red:green candle-count example is a different quantity; bindings
+must name which is selected. Body size is abs(close-open) in source price units,
+and the ratio is unitless. Its20-bar window includes the latest completed
+native bar and the preceding19, with availability <= D and source end < D.
+Colours and doji handling are stated below. No count/body substitution occurs.
+
 | Default field | Pinned calculation |
 |---|---|
 | cp_mid_slope_up | BB20 middle(t) − middle(t−5) > 0 |

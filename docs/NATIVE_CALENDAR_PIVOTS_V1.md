@@ -6,6 +6,17 @@ S1, R2 and S2 in float64. The formulas are exactly the dictionary formulas:
 P=(H+L+C)/3; R1=2P-L; S1=2P-H; R2=P+(H-L); S2=P-(H-L).
 No new item, setting range, question identity or threshold is registered.
 
+Definition details under James155: H is the maximum daily high wick, L the
+minimum daily low wick, and C the final session's close in the anchor. All
+sessions in that anchor are included. Equal high/low values give the same
+numeric level; the adapter selects no unique extreme-bar index. Any drawing
+requiring a single tied extreme's location must mark that choice AMBIGUOUS
+until its definition supplies a tie rule. Colour, doji and body size do not
+enter these formulas. All five outputs are continuous price levels in the
+authenticated source's price units and adjustment basis; no unit conversion
+or nominal-price/PIT claim is made. Calendar quarters are Jan–Mar, Apr–Jun,
+Jul–Sep and Oct–Dec.
+
 An anchor is a calendar week (Monday–Sunday), month or quarter. Its HLC is
 aggregated from every expected market session in the frozen calendar, using
 daily source rows. A missing session, nonfinite HLC, nonpositive low or
