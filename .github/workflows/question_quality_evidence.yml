@@ -1,6 +1,6 @@
 name: question-quality-evidence-contract
 on:
-  # James/Cyrus acc6979: preserve runner capacity for the active full price build.
+  # Standalone evidence-contract tests; PR coverage is in world_v2_ci.yml.
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,4 +14,4 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install 'pytest>=8,<10'
-      - run: python -m pytest tests/test_question_quality.py -q
+      - run: python -m pytest tests/test_binary_questions.py tests/test_question_quality.py -q

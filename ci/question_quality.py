@@ -8,9 +8,13 @@ import argparse,csv,gzip,hashlib,itertools,json,re,statistics
 from datetime import date
 from collections import Counter,defaultdict
 from pathlib import Path
+from decimal import Decimal
+from world_binary_questions import ANSWER_SET, SEMANTICS, category_codes, validate_predicate
 CORE_FACETS=('absolute','own_history','peer_relative','position','direction','crossing','extremes','divergence','persistence','state_change')
 REQUIRED=('question_id','item_id','block','derivative','facet','candle_days','lookback','threshold','direction','formula','inputs','pit_rule','answer_set')
+REQUIRED+=('feature_id','feature_expression','feature_kind','feature_unit','comparator','comparison_threshold')
 OPPOSITES=({'above','below'},{'up','down'},{'buy','sell'},{'upgrade','downgrade'},{'present','absent'},{'positive','negative'})
+BINARY_CODE_PATH=Path(__file__).resolve().parents[1]/'world_binary_questions.py'
 
 
 def rows(path):
@@ -38,6 +42,8 @@ def outcome_keys(text):
     if len(keys)!=len(set(keys)):raise ValueError('duplicate answer outcomes')
     numbers=[v for v in values if type(v) in (int,float)]
     if len(numbers)!=len(set(numbers)):raise ValueError('duplicate numeric answer outcomes')
+    if set(values)!=set(ANSWER_SET) or any(type(v) is not str for v in values):
+        raise ValueError('strict binary YES/NO answer set required')
     return set(keys)
 
 
@@ -73,7 +79,11 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
     exemption={(r['item_id'],r['facet']):r['reason'].strip() for r in exemptions if r.get('reason','').strip()}
     fail=defaultdict(set);facets=defaultdict(Counter);grid=defaultdict(lambda:defaultdict(set))
     count=Counter();qids=set();formulas=set();owners={};tallies={};declared={}
+    feature_definitions={};predicates=set()
     global_errors=sample_evidence(sample,sample_rows)
+    if sample.get('answer_semantics')!=SEMANTICS:global_errors.append('strict binary sample semantics missing')
+    if sample.get('binary_predicate_code_sha256')!=tree_digest([BINARY_CODE_PATH]):
+        global_errors.append('sample binary predicate implementation fingerprint differs')
     if len(items)!=len(catalog):global_errors.append('duplicate catalog item')
     if any(not r.get('item_id') or not r.get('block') or type(r.get('is_price_volume')) is not bool for r in catalog):
         global_errors.append('invalid catalog metadata')
@@ -90,13 +100,26 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
         try:
             key=(spec['item_id'],spec['facet'],spec['derivative'])
             windows=spec['lookbacks'];thresholds=spec['thresholds'];directions=spec['directions']
+            binary=spec['binary_predicates']
             valid=(all(isinstance(v,str) and v.strip() for v in key) and key[0] in items and key[1] in CORE_FACETS and
                    all(isinstance(axis,list) for axis in (windows,thresholds,directions)) and
                    len(windows)>=3 and all(type(n) is int and n>0 for n in windows) and len(set(windows))==len(windows) and
                    len(thresholds)>=3 and all(isinstance(t,str) and t.strip() for t in thresholds) and len(set(thresholds))==len(thresholds) and
                    len(set(directions))==len(directions) and any(pair<=set(directions) for pair in OPPOSITES))
             if not valid or key in declared:raise ValueError('invalid or duplicate declared variable grid')
-            declared[key]=(set(windows),set(thresholds),set(directions))
+            if not isinstance(binary,dict) or set(binary)!=set(directions):raise ValueError('binary predicates must cover every declared direction')
+            predicates_by_direction={}
+            for direction,entries in binary.items():
+                if not isinstance(entries,list) or not entries:raise ValueError('binary predicate ladder missing')
+                values=set()
+                for entry in entries:
+                    if not isinstance(entry,dict) or set(entry)!={'comparator','comparison_threshold'}:raise ValueError('invalid binary predicate ladder entry')
+                    validate_predicate(entry['comparator'],entry['comparison_threshold'])
+                    value=(entry['comparator'],Decimal(entry['comparison_threshold']))
+                    if value in values:raise ValueError('duplicate numeric predicate in declared ladder')
+                    values.add(value)
+                predicates_by_direction[direction]=values
+            declared[key]=(set(windows),set(thresholds),set(directions),predicates_by_direction)
         except (KeyError,TypeError,ValueError) as exc:global_errors.append('invalid declared grid: '+str(exc))
     for file in tally_files:
         for row in rows(file):
@@ -107,6 +130,10 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
                 if not isinstance(outcomes,dict) or any(type(v) is not int or v<0 for v in outcomes.values()):raise ValueError('noninteger/negative answer count')
                 if not re.fullmatch(r'[0-9]+',row['n_total']):raise ValueError('invalid n_total')
                 total=int(row['n_total']);nonblank=sum(outcomes.values())
+                for field in ('n_evaluable','n_not_evaluable'):
+                    if not re.fullmatch(r'[0-9]+',row.get(field,'')):raise ValueError('missing/invalid '+field)
+                if int(row['n_evaluable'])!=nonblank or int(row['n_not_evaluable'])!=total-nonblank:
+                    raise ValueError('evaluable/excluded counts do not reconcile')
             except (KeyError,ValueError,TypeError) as exc:
                 global_errors.append('invalid answer tally '+qid+': '+str(exc));continue
             if sample.get('rows') and total!=int(sample['rows']):global_errors.append('tally does not cover the declared sample '+qid)
@@ -119,6 +146,24 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
             if iid not in items:global_errors.append('unknown item '+iid);continue
             missing=[k for k in REQUIRED if not str(row.get(k,'')).strip()]
             if missing:fail[iid].add('blank metadata: '+','.join(missing));continue
+            binary_key=(row['comparator'],row['comparison_threshold'])
+            try:
+                categories=category_codes(row.get('feature_categories','')) if row['feature_kind']=='category_code' else None
+                validate_predicate(row['comparator'],row['comparison_threshold'],row['feature_kind'],categories)
+                binary_key=(row['comparator'],Decimal(row['comparison_threshold']))
+                expression=row['feature_expression'].strip()
+                if row['formula'].strip()!=f"({expression}) {row['comparator']} {row['comparison_threshold']}":
+                    raise ValueError('formula differs from its explicit binary predicate')
+                signature=(expression,row['inputs'].strip(),row['pit_rule'].strip(),row['feature_kind'],row['feature_unit'].strip(),
+                           tuple(sorted((categories or {}).items())))
+                fid=row['feature_id'].strip()
+                if fid in feature_definitions and feature_definitions[fid]!=signature:
+                    raise ValueError('feature ID reused for different measurements')
+                feature_definitions[fid]=signature
+                predicate=(signature,row['comparator'],Decimal(row['comparison_threshold']))
+                if predicate in predicates:raise ValueError('duplicate binary predicate under different question IDs')
+                predicates.add(predicate)
+            except (ValueError,TypeError,KeyError) as exc:fail[iid].add('invalid binary definition: '+str(exc))
             if row['block']!=items[iid]['block']:fail[iid].add('question block differs from catalog')
             try:allowed=outcome_keys(row['answer_set'])
             except (ValueError,TypeError):fail[iid].add('invalid fixed answer set');allowed=set()
@@ -133,11 +178,13 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
             if k not in range(1,22) or n<1:fail[iid].add('invalid candle/lookback')
             cell=grid[(iid,facet,row['derivative'],k)]
             cell['windows'].add(n);cell['thresholds'].add(row['threshold']);cell['directions'].add(row['direction'])
-            if (n,row['threshold'],row['direction']) in cell['combinations']:fail[iid].add('duplicate variable combination')
-            cell['combinations'].add((n,row['threshold'],row['direction']))
+            combination=(n,row['threshold'],row['direction'],*binary_key)
+            if combination in cell['combinations']:fail[iid].add('duplicate variable combination')
+            cell['combinations'].add(combination)
             spec=declared.get((iid,facet,row['derivative']))
             if spec is None:fail[iid].add('question has no declared variable grid')
             elif n not in spec[0] or row['threshold'] not in spec[1] or row['direction'] not in spec[2]:fail[iid].add('question outside declared variable grid')
+            elif binary_key not in spec[3][row['direction']]:fail[iid].add('question outside declared binary predicate ladder')
             if qid not in tallies:fail[iid].add('missing measured answer tally')
             else:
                 pct,constant,outcomes=tallies[qid]
@@ -164,7 +211,8 @@ def evaluate(catalog,tree_files,tally_files,sample,exemptions=(),variables=(),sa
                     if len(cell.get('thresholds',()))<3:fail[iid].add(f'{facet}: fewer than 3 thresholds/settings')
                     if not any(pair<=cell.get('directions',set()) for pair in OPPOSITES):fail[iid].add(f'{facet}: missing opposite direction')
                     spec=declared.get((iid,facet,derivative))
-                    if spec is not None and any(combination not in cell.get('combinations',set()) for combination in itertools.product(*spec)):
+                    if spec is not None and any((n,setting,direction,*predicate) not in cell.get('combinations',set())
+                        for n,setting,direction in itertools.product(*spec[:3]) for predicate in spec[3][direction]):
                         fail[iid].add(f'{facet}: incomplete declared variable cross-product')
     price=[count[iid] for iid,item in items.items() if item.get('is_price_volume')]
     reference=statistics.median(price) if price else 0
@@ -200,7 +248,10 @@ def main():
     (target/'QUESTION_FACET_COUNTS.json').write_text(json.dumps(facets,indent=2))
     summary=dict(items=len(report),passed=sum(r['status']=='PASS' for r in report),failed=sum(r['status']=='FAIL' for r in report),global_errors=errors)
     summary['status']='FAIL' if summary['failed'] or errors or not report else 'PASS'
+    summary['answer_semantics']=SEMANTICS
+    summary['scope']='P3b question quality only; full world/leak/eligibility gates remain separate'
     summary['evidence']=dict(gate_code_sha256=tree_digest([__file__]),
+        binary_predicate_code_sha256=tree_digest([BINARY_CODE_PATH]),
         sample_manifest_sha256=tree_digest([args.sample]),sample_rows_sha256=tree_digest([args.sample_rows]),
         question_tree_sha256=tree_digest(args.tree),tallies_sha256=tree_digest(args.tallies),
         variable_grid_sha256=variable_digest(variables),input_manifest_sha256=sample.get('input_manifest_sha256'))

@@ -160,3 +160,13 @@ New derived PENDING registrations require reasons. The audit separately reports
 legacy PENDING rows that still have no reason, rather than calling them valid
 world evidence. It does not replace the full WORLD_COVERAGE gate, which remains
 failed until actual source values and complete measured bindings are supplied.
+
+## Binary-question addendum (James/Cyrus8cd843f)
+
+Normalized curves, correlation, match counts and outcome aggregates are features.
+Each final question needs its own literal comparator/cutoff and strict YES/NO
+answer. The existing strict Pearson>0.90 match predicate already has that form;
+other measurement readouts do not automatically become approved questions.
+Use [BINARY_QUESTIONS_V1.md](BINARY_QUESTIONS_V1.md) for typed predicates and
+NOT_EVALUABLE exclusions. No unregistered threshold ladder, active renderer or
+probability mining is enabled by this addendum.
