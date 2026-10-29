@@ -1,7 +1,19 @@
 # Complete native breadth history, version 2
 
-Status: actual full-name V2 measurement passed; V3 availability correction pending.
-No additional checklist box is completed by this document.
+Status: full-name V2 measurement and V3 availability correction passed.
+Native and measured component claims require James's independent sign-off.
+
+Actual V3 run40789973576 passed51 Linux tests, inherited44 raw input cutoff
+checks and performed44 additional availability-prefix checks. Independent
+public readback authenticated all28 assets /6,918,925 bytes, all22 factors
+/3,779,577 bytes,9271 daily and34229 native rows. All330 column/timeframe
+coverage measurements were independently recomputed on12,364,370 actual
+approved stock-days:100%, first2020-01-02 through2026-10-23. Every factor's
+numeric Arrow field carries the survivors-only label. All known numeric bits
+and interval keys remain unchanged; only unavailable warmup is made missing.
+See `BREADTH_V3_INDEPENDENT_READBACK_V1.json`, `BREADTH_WARMUP_MEASURED_V3.json`
+and `BREADTH_FACTOR_STORE_V3.json`. Full-world, historical eligibility and
+complete dependency-budget/scoring gates remain open.
 
 Actual run40718683563 passed46 Linux tests, all8316 source names and44 raw
 cutoff checks. It published9271 daily rows (7559 before2020),34229 native rows,
