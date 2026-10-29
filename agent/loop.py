@@ -20,7 +20,7 @@ START = time.time()
 
 def shell(command):
     done = subprocess.run(command, shell=True, capture_output=True, text=True)
-    return (done.stdout + done.stderr)[-3000:]
+    return (done.stdout + done.stderr)[-1500:]
 
 
 def door(op, **params):
