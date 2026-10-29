@@ -1,0 +1,124 @@
+{
+  "status": "PASS_ALL_RAW_ADDON_PUBLIC_ASSET_HASHES_NOT_WORLD",
+  "run": 40795819366,
+  "producer": "d254570d0b2d99405ac2d3dfb8dcb68664a7abdd",
+  "release": "price-raw-addon-measured-v1-40795819366-1",
+  "report_sha256": "0fcdbcb1f25b79c5e00eacddb8866785eca05532569f4946ad98aef6d5d7e22d",
+  "plan_sha256": "5447a2b6cd543c1f863a58259b339a30eb3fddde09270b0e6d9c37a608ade03d",
+  "stocks": 131,
+  "stock_days": 196438,
+  "shards": 14,
+  "public_assets_hashed": 276,
+  "public_bytes_hashed": 339307882,
+  "payload_bytes": 338410274,
+  "errors": [],
+  "excluded": [],
+  "recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "shared_registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+  "input_membership": "All original173 parts preserved;131 incremental names match authenticated plan once each.",
+  "payload_verification": "Every published payload byte independently hashed; all shard/schema/row receipts inspected. Semantic roundtrip uses original worker receipts; no independent full regeneration/decode in this readback.",
+  "shards_reviewed": [
+    {
+      "index": 0,
+      "release": "compact-world-build-v1-40795819366-1-000",
+      "summary_sha256": "fc02e2057428d9a4b9c39d9e7417372f52f9560eb53e859ec672a66113da39f7",
+      "completed": 10,
+      "payload_bytes": 29785331
+    },
+    {
+      "index": 1,
+      "release": "compact-world-build-v1-40795819366-1-001",
+      "summary_sha256": "8dd78153bba714847d626ec4e12067a3398272fe476bf41a2a3c090d557bc4cd",
+      "completed": 10,
+      "payload_bytes": 29786999
+    },
+    {
+      "index": 2,
+      "release": "compact-world-build-v1-40795819366-1-002",
+      "summary_sha256": "38c563980a30971aad5a93a40b145089993c5649b067a15eb154beb4d9038e0a",
+      "completed": 10,
+      "payload_bytes": 30777136
+    },
+    {
+      "index": 3,
+      "release": "compact-world-build-v1-40795819366-1-003",
+      "summary_sha256": "370da56f1fe7579b9f9f8a27f5e354ef99e4e033ce71bf5e5b191893a2803a5a",
+      "completed": 10,
+      "payload_bytes": 25957188
+    },
+    {
+      "index": 4,
+      "release": "compact-world-build-v1-40795819366-1-004",
+      "summary_sha256": "78818e309ec6b26b6be98bb3bee9a92907b7e339308cdb3b1ef42da77d68a000",
+      "completed": 10,
+      "payload_bytes": 23291465
+    },
+    {
+      "index": 5,
+      "release": "compact-world-build-v1-40795819366-1-005",
+      "summary_sha256": "216871ae94f8779e966396b8cf3b049e6bdf6a6aaee85da1ded7b7621ad4d687",
+      "completed": 10,
+      "payload_bytes": 21098539
+    },
+    {
+      "index": 6,
+      "release": "compact-world-build-v1-40795819366-1-006",
+      "summary_sha256": "fa67f6d20f69d50fc638eac01c168609a5682810972a3491f9c823f933605deb",
+      "completed": 10,
+      "payload_bytes": 26634776
+    },
+    {
+      "index": 7,
+      "release": "compact-world-build-v1-40795819366-1-007",
+      "summary_sha256": "75da5a39e80067d25d4f6ec22458022ca3b71b7dc329faa8f4885c83b8558fc2",
+      "completed": 10,
+      "payload_bytes": 24134733
+    },
+    {
+      "index": 8,
+      "release": "compact-world-build-v1-40795819366-1-008",
+      "summary_sha256": "a8e1f5ce4aa00aa99887c3a364a6dc362c31cc2e62c7c7009b03af07456e75ae",
+      "completed": 10,
+      "payload_bytes": 26048209
+    },
+    {
+      "index": 9,
+      "release": "compact-world-build-v1-40795819366-1-009",
+      "summary_sha256": "21a91027a1e3e081be41d6d78c371510b47d76ca3f0806a969bde72fc851a0f7",
+      "completed": 10,
+      "payload_bytes": 24312074
+    },
+    {
+      "index": 10,
+      "release": "compact-world-build-v1-40795819366-1-010",
+      "summary_sha256": "d47ce68f6ce989340aa98ae366b1cc8946efa936080d665c9eac1f6587ce6003",
+      "completed": 10,
+      "payload_bytes": 23038843
+    },
+    {
+      "index": 11,
+      "release": "compact-world-build-v1-40795819366-1-011",
+      "summary_sha256": "9cead73cf9c39946b0123f5ad7cc971da2feb444de3902f5268ce20059924545",
+      "completed": 10,
+      "payload_bytes": 27461874
+    },
+    {
+      "index": 12,
+      "release": "compact-world-build-v1-40795819366-1-012",
+      "summary_sha256": "164a3e27f1cfd34abb84be8229fd40511393a6f59232bfaab8b507a9fc828086",
+      "completed": 10,
+      "payload_bytes": 25362346
+    },
+    {
+      "index": 13,
+      "release": "compact-world-build-v1-40795819366-1-013",
+      "summary_sha256": "e2c40a25206ae4e94b42744f91453e05d02c47f03261908b70b901a3e05074e0",
+      "completed": 1,
+      "payload_bytes": 720761
+    }
+  ],
+  "global_composition_gate": "NOT_COMPOSED_WITH_BASE_AND_TIMEOUT_RECOVERY",
+  "full_world_gate": "NOT_PROVEN",
+  "full_dependency_budget_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

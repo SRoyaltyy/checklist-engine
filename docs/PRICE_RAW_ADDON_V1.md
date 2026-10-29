@@ -1,0 +1,66 @@
+# Answers for the 131 incremental raw names
+
+The completed raw add-on `native-price-base-coverage-v1-40622482865-1`
+contains8447 names, including every original8316 name. Independent fresh
+readback authenticated its three public metadata assets. Every one of the
+original173 source parts is identical, including release identity, tickers
+and hashes. The131 additional names occupy three further archived parts;
+none of the original protected inputs is replaced.
+
+The authenticated full weights contain12560808 stock-days. Subtracting the
+original12364370 by actual session produces exactly196438 additional
+stock-days, with no negative difference or lost date. The planner selects
+all131 names once and creates14 jobs (13×10 names plus1). Same-named parts
+in different releases remain distinct. See the real-data planning receipt
+`PRICE_RAW_ADDON_PLAN_REVIEW_V1.json` for all names and fingerprints.
+
+Production reads only the existing raw bar members. The raw export's older
+numeric features are not adopted. Computation retains the original corrected
+13-file7dcaa486 recipe/fingerprint89efd610, calendar, registry,22 timeframes
+and68904 diagnostic questions. Compute worker and answer encoder are pinned
+byte for byte to protected producer49043dd. Per-stock900-second isolation and
+explicit errors remain. Above-average payloads are retained; there is no
+size-based stock or column pruning. At most5 incremental jobs execute in
+parallel within the account's20-job ceiling.
+
+All outputs have new run-specific releases. The finalizer checks every stock
+partition, producer/recipe/registry identity and published payload size/hash.
+A complete add-on must account for all131 names and all196438 stock-days;
+missing/error stocks remain explicit and prevent completion. Archive and
+per-part metadata dependencies are counted once per unique source binding,
+not once per repeated worker download. This subtotal does not include the
+parent base, shared dependencies, code/runtime or other world blocks.
+
+This is an incremental diagnostic answer ledger. It must later compose with
+all original shards, timeout recovery, full numeric/shared state and the
+complete registered question framework. Historical nominal-price/eligibility,
+full-world, question-quality/leak, complete dependency budget and scoring gates
+remain open. Neither a planning receipt nor successful incremental jobs close
+those gates. Protected40621517496 is never changed, resumed or restarted.
+
+The46 local planner/finalizer/base-build/cache/audit tests pass. Actual
+run40795819366 prepare job123191927827 also passed46 Linux tests in0.78s,
+authenticated the real sources and published
+`price-raw-addon-v1-40795819366-1-inputs`:14 jobs,131 names,196438 stock-days.
+All14 build jobs are queued at the latest check. Installed package/Python/
+architecture versions are captured and must match every worker. Producer
+and request remain unchanged fromd254570; no answer result is yet accepted.
+No local dependency installation or new vendor request was used.
+# Actual completion and independent public readback
+
+Run40795819366 atd254570 completed every131 incremental name and196,438
+stock-days, with0 exclusions/errors. All14 build jobs and the finalizer passed;
+the prepare job passed46 Linux tests. The immutable measured report is retained
+in `PRICE_RAW_ADDON_MEASURED_V1.json`.
+
+`RAW_PRICE_ADDON_PUBLIC_READBACK_V1.json` independently verifies every276
+published asset339,307,882B, including all131 answer payloads338,410,274B.
+All final shard/plan/source/registry identities, unique stock memberships,
+query-row totals and worker roundtrip receipts match. The readback hashes all
+payload bytes; it does not independently regenerate/decode all answers.
+
+This does not resolve the protected build's terminal five stock timeouts or its
+unverified final shard. Its50 names remain pending in that original ledger;
+24 durable draft payloads/checkpoints were located and must be preserved by a
+separate recovery version. No protected result is rewritten. Full world and
+scoring gates remain closed.
