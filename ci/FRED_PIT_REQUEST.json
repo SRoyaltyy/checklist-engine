@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "parent": {
+    "release": "shared-context-v2-40636949344-1",
+    "asset": "SHARED_CONTEXT_STATUS.json",
+    "sha256": "4e13e4c9d3380b23d217156c83e7d2ee472dafd226b1626e128c06d9c65da643"
+  },
+  "calendar": {
+    "release": "native-price-inputs-v1-40336250454-1",
+    "asset": "market_sessions.parquet",
+    "sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074"
+  },
+  "series": [
+    "BAMLH0A0HYM2",
+    "BUSLOANS",
+    "CIVPART",
+    "CPIAUCSL",
+    "DCOILWTICO",
+    "DFII10",
+    "DGS10",
+    "DGS2",
+    "DTB3",
+    "DTWEXBGS",
+    "FEDFUNDS",
+    "ICSA",
+    "INDPRO",
+    "STICKCPIM159S",
+    "T10Y2Y",
+    "T10Y3M",
+    "T10YIE",
+    "T5YIE",
+    "UMCSENT",
+    "UNRATE",
+    "VIXCLS"
+  ],
+  "required_extra_series": [
+    "T10Y3M",
+    "T5YIE",
+    "T10YIE",
+    "STICKCPIM159S",
+    "DFII10",
+    "CIVPART",
+    "INDPRO",
+    "BUSLOANS"
+  ],
+  "cutoffs": [
+    "2020-01-02",
+    "2021-01-04",
+    "2022-01-03",
+    "2023-01-03",
+    "2024-01-02",
+    "2025-01-02",
+    "2026-01-02",
+    "2026-10-23"
+  ],
+  "scope": "All21 existing published ALFRED series and all22 native factors, exhaustive independent online vintage-cutoff oracle, exact factor and daily row projection, eight fresh raw/calendar prefix rebuilds. Source-factor PIT evidence only; no question/world/eligibility/budget/scoring claim or protected-run/source rewrite."
+}
