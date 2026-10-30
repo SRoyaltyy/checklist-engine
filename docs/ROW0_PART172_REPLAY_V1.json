@@ -1,0 +1,517 @@
+{
+  "status": "FAIL_PART172_REPLAY",
+  "source_commit": "16958d53b36f3494ac743f649813ef44f5d3917d",
+  "run": 41059646552,
+  "inputs_release": "row0-part172-replay-v1-41059646552-1-inputs",
+  "plan_sha256": "1d259e324f28221923efde5f75aadf7ec616c978786d2465abfc72a19dfc4636",
+  "completed": 50,
+  "expected": 50,
+  "compared_cells": 5427430272,
+  "mismatched_cells": 166,
+  "errors": [],
+  "results": [
+    {
+      "ticker": "DJCO",
+      "reference_sha256": "44a70c6e1cb67c1bde8a931c78cdb5ce6e6c044698f33b7840d67965e3d0ecfd",
+      "replay_sha256": "c0243c520ff85ed4d25ab8bebfdb11ad8eb59d1050c073765be23f1050c5c47c",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "ECHO",
+      "reference_sha256": "56b201948190948ed9a59d856b277913ba8c43b79735fb911ecf4992622a7fae",
+      "replay_sha256": "6ee02885fe33b553fcd007e24044a1924245c2254ccff6113e6294991bff9681",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "EGBN",
+      "reference_sha256": "d52731f4baa0900a4945ce316b2432cffaf8e3a57fd8cf2927327846dc324673",
+      "replay_sha256": "af7aea86a5091c4803022e3b0b0e82e5dab945de8c519fed6ec847e27c32fa7d",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "EMGF",
+      "reference_sha256": "4866c7ab1cd041fe98fff10e78df427f0adb5405ba21d1da420662a69fe0b96e",
+      "replay_sha256": "2b3101c0e0c06597244585d802102214de7854abe905730c6703a97ec28e772d",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "FEIM",
+      "reference_sha256": "42a708663ddb6494079638591bd954aa7589dbe5635dd93f220d175ea76bc4d5",
+      "replay_sha256": "cd9dff790009baaa484133b2714aac00f893dc6ca148f8925ea6cff5e4439367",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 22,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "FLAO",
+      "reference_sha256": "19302227fb193d8563400c76cecbb3faf6e869106def8804befcd05f81bdafcf",
+      "replay_sha256": "9b1fdf48dec3e5b57424c67379088b74d64a4fc53e02442b4f1073be98136e6e",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 44443080,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "FLRG",
+      "reference_sha256": "eca057856827c2a10a9089ac407cd3298087490396efdb562144b406ba79ac5d",
+      "replay_sha256": "b48d0e3bfdbf05d1cd31ce1a8327ef440be46b8e7a36c0a8dd6b6ebd67b576df",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 105560928,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "FPEI",
+      "reference_sha256": "c8e08e20f25b03a000de78c5c208c3d7463ad14141b712db816081ce0dd6875f",
+      "replay_sha256": "aee1504316cb77580900244126ba4af589d370b0b7b1a322bc3be5aa19485150",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "GRN",
+      "reference_sha256": "1d65838ea2dbbcf840a46b913dbd5f957532cd0b53b51d6d627773afde55ed4f",
+      "replay_sha256": "cabad66997144911610946939c5667e2be4449a60dbae6dcf034db756b362896",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "HDRN",
+      "reference_sha256": "cd43a294981506ec6ce3ac6fab77f0398363cf07bb45aee19dcb825356c6e880",
+      "replay_sha256": "bb83a1126532513da73b2e4562d3ec3c880ff7c804571125a1e1953e6893608f",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 36656928,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "HGV",
+      "reference_sha256": "7162cb6a489b42a7347c26baf3eb33bff6c77f90df9e009f97551d3fb7f3cdd3",
+      "replay_sha256": "085313ac830d5134fac86e0e77f9afd14c041485d2eb5bf1f072ce4166c3bc77",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "HHS",
+      "reference_sha256": "99d6b8175ae253e7cf43727949b23a0f50c7da553719dc80a903c04a7a5949ea",
+      "replay_sha256": "38880267add64744fcd4db9e941fe22a45879cdfeabcfc1588134c49faf65614",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 4,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "HWKN",
+      "reference_sha256": "d266eef7758509f513344d5220b4dd6da999659fc8868d02585555ab95042232",
+      "replay_sha256": "f383de9e531b5dcddbb501200c36e70f8676d8eb1cef14e8f91f91c883976f6c",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "IBBQ",
+      "reference_sha256": "101fa80974670e90c50956e3ae6be2a4b5240ca5755858428b7d80d6d3a700b3",
+      "replay_sha256": "23dd797b1c1a53f70ff17c286d7aa505e490b555b11a87554ccf2791959a9f7f",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 92951496,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "JCI",
+      "reference_sha256": "8f3e7fde4df7d6ddd260657dc90e70d48a0a59d21dd0cc58ab111985d0cabdb9",
+      "replay_sha256": "7158cab133b548860f2312a2297f93913e7346a3e47d8d5260a0cdff015dd44c",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "JHI",
+      "reference_sha256": "ed36365ea7c9d77e1290954417ea8c349c95fd9310b22d0287dc2d087a142016",
+      "replay_sha256": "432bf65c76adb75e91f82a3f23a77759ed5f446535c717523b1e4482fc6206d0",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 2,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "JOUT",
+      "reference_sha256": "856ee578c867478b3e915f850f557d137d4205c741046e3fb474b089a227a25b",
+      "replay_sha256": "5dbad881f7afa4546d06550f486ec96982751083ff94de9d34ae32430d857300",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "JZXN",
+      "reference_sha256": "c9ae6b8ae436b1a692a695c863eb6354260c1c09c608d69808de2fc4454c708a",
+      "replay_sha256": "d7a3739c208d70a03ddd000dc9d9ec40bc7147a5c13a4402d2ed27191229d4e4",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 94122864,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "NKTR",
+      "reference_sha256": "0a149969b80a8b42caa1a5d370f31690c39cfd276c69429b12c4b1d7b715ed9a",
+      "replay_sha256": "1c64b46115b3330efb0a28b903bde30d204235ad757f179cae04a0e8d98c9cca",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 8,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "OCGN",
+      "reference_sha256": "0776f49a0ee793a7c9a64b9330072e329ebe77d65f0421963f43f9ab6d7026a8",
+      "replay_sha256": "92ea476ad5892e5dbb71903f2808dbce160834cf70a658453b86a442d0b3e02c",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 1,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "OGC",
+      "reference_sha256": "372f2430792237fa1d137acd90c84bcde7a91c64a07695c7c31af5c529d6d3ef",
+      "replay_sha256": "6daa0615faf153a6b90938f6343b2d93d8d1213d9fca689a45b6d3b94cbd8df9",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "QMAG",
+      "reference_sha256": "a7a814dbfc3628c9168dc9b82af394282e4fd147c4d51c114a83fc2e81136e6b",
+      "replay_sha256": "74ff331bba0787e4784a5d5fb6168fb2ca42aee3de859abe8cf6bae5fc21e471",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 37759392,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "QUAL",
+      "reference_sha256": "f387bc53d4272a909d2bddeff8c27d7d480da6b0255509c393668a27df08001b",
+      "replay_sha256": "1281c4083651713e7a58fc261843bfe9e1495d1fabb3383a0aac42753d615d57",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "RSPN",
+      "reference_sha256": "90fca6c34139ac07bcc27045bd76c921bae94e279b505a83a95199d15813b63c",
+      "replay_sha256": "bb85905a65cc930e6ee8c8f229b51164d9c084094af67a841640b31bded1eaa7",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "RXD",
+      "reference_sha256": "c0f6a00eb442ad2a753fc7cc8a9ed2d9d2e9dc1c51beb033c7cc441beb66fc87",
+      "replay_sha256": "c0f6a00eb442ad2a753fc7cc8a9ed2d9d2e9dc1c51beb033c7cc441beb66fc87",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "RYM",
+      "reference_sha256": "ccd4a98d5b12f6221030e34868ab115b347d0f7b25bd352ac55167ca446f4b7f",
+      "replay_sha256": "ccd4a98d5b12f6221030e34868ab115b347d0f7b25bd352ac55167ca446f4b7f",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 99359568,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "SCZM",
+      "reference_sha256": "035d85aebe43f2e462d63acb52f6ba2dbcae64265a9f7fa39a46a5efedd2f116",
+      "replay_sha256": "035d85aebe43f2e462d63acb52f6ba2dbcae64265a9f7fa39a46a5efedd2f116",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "SNDR",
+      "reference_sha256": "d5ac37002d6389ba275145f4ef06e0ba59a34b532e9cb0d4f1bfabbe68a6cf11",
+      "replay_sha256": "d5ac37002d6389ba275145f4ef06e0ba59a34b532e9cb0d4f1bfabbe68a6cf11",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "SONO",
+      "reference_sha256": "bea08648e7c3c9ff1c793636a0071aa34b23b673cc174b19721f7726828da719",
+      "replay_sha256": "bea08648e7c3c9ff1c793636a0071aa34b23b673cc174b19721f7726828da719",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "STGW",
+      "reference_sha256": "86e4f723f05e94095e11141d3632f719f5fedac6bb7440746297925180ec17c8",
+      "replay_sha256": "86e4f723f05e94095e11141d3632f719f5fedac6bb7440746297925180ec17c8",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "SUB",
+      "reference_sha256": "13119d8917233720b2d0c457bb9af85ef870a786d2c8cee38b88a23e20ba81f4",
+      "replay_sha256": "13119d8917233720b2d0c457bb9af85ef870a786d2c8cee38b88a23e20ba81f4",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "TARS",
+      "reference_sha256": "df78d456f81a369428a074d64e46ea0e62601e115afd3fcc224ded3ae22f9017",
+      "replay_sha256": "df78d456f81a369428a074d64e46ea0e62601e115afd3fcc224ded3ae22f9017",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 104182848,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "TWM",
+      "reference_sha256": "4ccf3a7b411a8db4e3dc7da5eeced8f5ccc5182cfc2f53fe7960f582471fff66",
+      "replay_sha256": "4ccf3a7b411a8db4e3dc7da5eeced8f5ccc5182cfc2f53fe7960f582471fff66",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "VIST",
+      "reference_sha256": "8b9f5f5da2eb0b666486149bae12a144bf671b66c758bcf6f640a7e63ca03618",
+      "replay_sha256": "8b9f5f5da2eb0b666486149bae12a144bf671b66c758bcf6f640a7e63ca03618",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "VSAT",
+      "reference_sha256": "68437ef2c4c5eefe7beb7b6747f2e804b5a39524cc19ab20cce2b5baf5eb3f35",
+      "replay_sha256": "68437ef2c4c5eefe7beb7b6747f2e804b5a39524cc19ab20cce2b5baf5eb3f35",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "VSDA",
+      "reference_sha256": "f6ee077849032f37460800449ac99b7b9852a10d571649a66e7207d1e40bbf07",
+      "replay_sha256": "f6ee077849032f37460800449ac99b7b9852a10d571649a66e7207d1e40bbf07",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "W",
+      "reference_sha256": "00884071b85aecdf4a727b5a0311fcafc68e3cb0188d2c85359983c27bdde8b9",
+      "replay_sha256": "00884071b85aecdf4a727b5a0311fcafc68e3cb0188d2c85359983c27bdde8b9",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "XISE",
+      "reference_sha256": "c4cfa346fdb42e5ee3064bd98aeed527e4c9ca789e90853e9b5b263be268e62e",
+      "replay_sha256": "c4cfa346fdb42e5ee3064bd98aeed527e4c9ca789e90853e9b5b263be268e62e",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 53676216,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "YDKG",
+      "reference_sha256": "1ca335f981a3fa1ffa3ed836400edffcc2b19744446ace569bcea72b8ae08244",
+      "replay_sha256": "1ca335f981a3fa1ffa3ed836400edffcc2b19744446ace569bcea72b8ae08244",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "AADR",
+      "reference_sha256": "b457d9c9e980d615e3e224da0a3af47ffbf12045d448c0a3ebc1fcd946b76a59",
+      "replay_sha256": "b457d9c9e980d615e3e224da0a3af47ffbf12045d448c0a3ebc1fcd946b76a59",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "ABX",
+      "reference_sha256": "bb4a2a796eab97e6bad3cd4675e644b951a7f38394f296f679654f0c4550ccc8",
+      "replay_sha256": "60e869fa216b07a829dfdd7e0969125fa1bd38c2fe946efd789fadfc8be86b47",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 105836544,
+      "mismatched_cells": 92,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "AMTD",
+      "reference_sha256": "5d2728db961ef7beeadefb767b5a476f9789df74923fda5c7a1f711c9133fa2e",
+      "replay_sha256": "8029e626fae89279d6880a9b78e3da67283bd0e0c395cc81a8dcc52375cad17c",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 35,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "AMZN",
+      "reference_sha256": "1b1bcaa1a505dcfa540548d1ab764c8b6e80b368129bfc0dd9aff7ad9ce2cb86",
+      "replay_sha256": "1b1bcaa1a505dcfa540548d1ab764c8b6e80b368129bfc0dd9aff7ad9ce2cb86",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "ATHM",
+      "reference_sha256": "f6d51987c48940c153989b074c748671b124e07ce693428c04a13b2d6cd68b18",
+      "replay_sha256": "f6d51987c48940c153989b074c748671b124e07ce693428c04a13b2d6cd68b18",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "AVES",
+      "reference_sha256": "3dd5e597c7997bc735df1d9f4d0b87525b8fa55b16cdd0290899c8782d9182e4",
+      "replay_sha256": "3dd5e597c7997bc735df1d9f4d0b87525b8fa55b16cdd0290899c8782d9182e4",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 87645888,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "AVSC",
+      "reference_sha256": "48e2f502a91ecd472cd7e133e35bb489f9968f3300fc457f084e8ad1732887bb",
+      "replay_sha256": "48e2f502a91ecd472cd7e133e35bb489f9968f3300fc457f084e8ad1732887bb",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 82615896,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "BPOP",
+      "reference_sha256": "7e14ca5e5e64ad86b9e253bcc7749d7d0b3970ac6d2cab883aba38b08843a38a",
+      "replay_sha256": "7e14ca5e5e64ad86b9e253bcc7749d7d0b3970ac6d2cab883aba38b08843a38a",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "CATO",
+      "reference_sha256": "bd02829d2bb5e4bd0b7ffc148850dff79aa998efc570d41e4fadbd469857572b",
+      "replay_sha256": "881d6192ce04e0c29574d6efe0b8a5361224830951b2169618d831724a57558e",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 2,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "CZR",
+      "reference_sha256": "f3e4a758f3987b82b6978353306ab141261f82207ad01a0310bc8c3f0c220e00",
+      "replay_sha256": "f3e4a758f3987b82b6978353306ab141261f82207ad01a0310bc8c3f0c220e00",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    },
+    {
+      "ticker": "DEI",
+      "reference_sha256": "3aa9d2dd07ab5efbc6a4e47bf8e58ffbc6090b0ea6f2e46fa58424832f0e0b9f",
+      "replay_sha256": "3aa9d2dd07ab5efbc6a4e47bf8e58ffbc6090b0ea6f2e46fa58424832f0e0b9f",
+      "chunks": 550,
+      "questions": 68904,
+      "compared_cells": 117963648,
+      "mismatched_cells": 0,
+      "known_missing_mismatches": 0
+    }
+  ],
+  "original_run_job_completion": "172/173_UNCHANGED",
+  "full_world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
