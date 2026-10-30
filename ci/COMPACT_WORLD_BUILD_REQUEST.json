@@ -1,10 +1,28 @@
 {
   "version": 1,
   "accepted_price_release": "accepted-price-stitch-v2-40494479693-1",
+  "accepted_price_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
   "inputs_sha256": "a57aee6ae2dd3b2f444d2433bac8242f44b9346a5aea826f0250c96ed376ccf4",
   "corrected_commit": "7dcaa48680daeac9a6025c09f9e4d138f5fcbda5",
-  "corrected_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "source_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+  "recipe_transform": "RENKO_ZERO_STEP_V1",
+  "corrected_recipe_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "full_raw_source": {
+    "release": "native-price-base-coverage-v1-40622482865-1",
+    "asset": "NATIVE_PRICE_BASE_STATUS_V1.json",
+    "sha256": "77c2cd6e15256a98802f610f6f2fd9cc02f28f2439a5313edd3c05536bd95d38",
+    "expected_tickers": 8447,
+    "expected_incremental_tickers": 131,
+    "expected_stock_days": 12560808,
+    "stock_day_weights_sha256": "127abc81ad4c6763634edc899451c83210e5461dda48b3295d4b1cfaac7e56ff"
+  },
+  "prior_timeout_ledger": {
+    "release": "price-timeout-addon-measured-v1-40792865480-1",
+    "asset": "PRICE_TIMEOUT_ADDON_MEASURED_V1.json",
+    "sha256": "0d2d01e997fc49b9a21829aa2985257dcdf48756084e1a1283b3e6a024e5ffc3",
+    "tickers": ["EQLT", "WKSP", "ABVC", "NXTS", "SU"]
+  },
   "registry_artifact_id": 12728032354,
   "registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
   "stock_timeout_seconds": 900,
@@ -14,5 +32,5 @@
   "hard_world_cap_bytes": 100000000000,
   "max_parallel": 20,
   "authority": "James/Cyrus speed directive ca56c456716dec5c583b193fdc2775522a590377: launch full-universe compact build, exclude and log errors/hangs, no additional preflight",
-  "scope": "Full accepted-universe price-answer build stage; 68,904 registered diagnostic fixed outcomes across 22 timeframes. Nonprice/comparison and complete-v3 question coverage remain required subsequent stages; no full-world acceptance or scoring claim."
+  "scope": "Current default price build uses the authenticated full8447-name source, preserving every original8316-name part and explicitly adding131 names; the five prior timeout names remain in guarded inputs with recorded dispositions. Derive only the separately proved Renko zero-step guard from the frozen13-file float64 source. Published legacy plans/results retain their original bits and recipe identities. The68904 diagnostic outcomes across22 grids do not establish full-world/complete-question/PIT/scoring acceptance."
 }

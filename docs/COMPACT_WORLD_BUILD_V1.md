@@ -1,10 +1,18 @@
 # Compact full-universe build
 
+Current default after PR#166/182822a: the actual snapshot constructor derives
+the proved Renko zero-step recipe40ea182c from the frozen13-file89efd610 source.
+The request now includes all8,447 raw names, preserves all173 original parts,
+adds131 names and authenticates the five-name timeout ledger. Fresh prepare
+41058023781 published176 source parts; see `ROW0_INPUT_PLAN_PUBLIC_READBACK_V1.json`.
+The original producer and immutable plans/results described below remain
+unchanged. The new price WORLD GATE is FAIL; see `ROW0_PRICE_WORLD_GATE_V1.json`.
+
 James/Cyrus's 19:00 HKT directive (`ca56c456716dec5c583b193fdc2775522a590377`) authorizes proceeding at 95% coverage with explicit exclusions and launching the compact build without another preflight. The actual prior sample, run 40489430053, projected **36.295 GB** of price-answer storage, measured 355,092–505,792 bytes per stock-year and 1.340 GB peak RSS. Every sample answer roundtripped exactly, with missing distinct from false/zero. This projection does not measure complete nonprice/comparison or v3-question coverage.
 
 The production workflow consumes the new hash-verified raw-price stitch. Its 95% gate uses the **original 8,727-name universe**, including the 280 pinned prior source exclusions. The initial compact snapshot had 8,192 names (93.87% of the original universe); raw-only recovery 40494316284 fills the remaining prepared price checkpoints without waiting for stalled dense indicator calculations. Source parts are immutable and reused by hash.
 
-The build schedules one runner job per compact source part, at most 20 in parallel. Each stock executes in a fresh subprocess with a **900-second timeout**. A timeout/error/schema mismatch/storage overrun is logged and the next stock runs. The process is killed and reaped before proceeding. Completed answer payloads and uniquely named checkpoint snapshots upload immediately, so a later stock cannot erase completed work. No prior release or numerical checkpoint is overwritten. The separately versioned Renko fix stays off this critical path.
+The build schedules one runner job per compact source part, at most 20 in parallel. Each stock executes in a fresh subprocess with a **900-second timeout**. A timeout/error/schema mismatch/storage overrun is logged and the next stock runs. The process is killed and reaped before proceeding. Completed answer payloads and uniquely named checkpoint snapshots upload immediately, so a later stock cannot erase completed work. No prior release or numerical checkpoint is overwritten. The original producer kept the separate Renko fix off its path; the current default uses the authenticated guard as described above.
 
 The registered stage contains **68,904 price diagnostic questions**: rising versus the previous native candle, above its native 20-candle mean, and above mean plus one population standard deviation, for 1,044 numeric fields × 22 timeframes. Both operands must be finite; otherwise the answer is missing. Query rows are actual source stock sessions from 2020 onward. Completed candles become visible only on their next valid session. Fixed outcome dictionaries and exact formulas are shared once; raw daily OHLCV is reused once; numeric indicator intermediates are transient. Encoded chunks retain the recipe, input, registry, row-key and unfiltered-mask hashes, and every answer is decoded and compared exactly before publication.
 
