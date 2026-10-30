@@ -1,5 +1,6 @@
 import copy
 import unittest
+from unittest.mock import patch
 import numpy as np
 from ci.price_v1_sample_gate import compare,select,scope,verdict,align_prefix
 
@@ -24,6 +25,28 @@ class PriceV1SampleGateTest(unittest.TestCase):
         self.assertEqual(select(names,policy),select(names[::-1],policy))
         self.assertEqual(len(set(select(names,policy))),100)
         with self.assertRaises(ValueError):select(names[:-1],policy)
+
+    def test_distinct_source_releases_can_reuse_part_filenames(self):
+        import gzip,json,tempfile
+        from pathlib import Path
+        from ci.price_v1_sample_gate import chunk,sha
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);calendar=root/'calendar';calendar.write_bytes(b'calendar')
+            names=[str(i) for i in range(10)]
+            parts=[dict(release=tag,part='base_0005',archive_sha256=sha(tag.encode()),tickers=names[i*5:(i+1)*5]) for i,tag in enumerate(('source-A','source-B'))]
+            plan=dict(request={'corrected_recipe_fingerprint':'recipe'},sample=names,parts=parts,price_fields=['close'],scope=scope())
+            plan_file=root/'plan.json';plan_file.write_text(json.dumps(plan))
+            def download(tag,name,directory):
+                directory.mkdir(parents=True,exist_ok=True);file=directory/name
+                data=json.dumps({'archive_sha256':sha(tag.encode())}).encode() if name.endswith('.json') else tag.encode()
+                if file.exists() and file.read_bytes()!=data:raise ValueError('cross-release asset collision')
+                file.write_bytes(data);return file
+            def run(command,**kwargs):
+                own=Path(command[command.index('--directory')+1])
+                with gzip.open(own/'STOCK_PRICE_SAMPLE_V1.json.gz','wt') as stream:json.dump({'status':'PASS_SAMPLE_ONLY'},stream)
+            with patch('ci.price_v1_sample_gate.checked',return_value=plan_file),patch('ci.compact_world_build.snapshot',return_value=(root,calendar)),patch('ci.native_price_blocks.read_member',return_value=b'raw'),patch('ci.release_assets.download_asset',side_effect=download),patch('ci.price_v1_sample_gate.subprocess.run',side_effect=run),patch('ci.price_v1_sample_gate.publish') as published,patch.dict('os.environ',{'GITHUB_RUN_ID':'1','GITHUB_RUN_ATTEMPT':'1'}):
+                chunk(root,'inputs',0,'pin')
+                self.assertEqual(len(published.call_args.args[1]),11)
 
     def test_exact_bits_missing_and_infinity(self):
         x=np.array([1.,np.nan,np.inf,0.,-np.inf])

@@ -144,8 +144,9 @@ def chunk(root,inputs,index,pin):
     for part in plan['parts']:
         names=[t for t in wanted if t in part['tickers']]
         if not names:continue
-        manifest=json.loads(download_asset(part['release'],part['part']+'.json',root/'source').read_bytes())
-        archive=download_asset(part['release'],part['part']+'.tar',root/'source')
+        source=root/'source'/sha(part['release'].encode())
+        manifest=json.loads(download_asset(part['release'],part['part']+'.json',source).read_bytes())
+        archive=download_asset(part['release'],part['part']+'.tar',source)
         if manifest['archive_sha256']!=part['archive_sha256'] or sha(archive.read_bytes())!=part['archive_sha256']:raise ValueError('sample archive differs')
         for ticker in names:
             own=root/ticker.encode().hex();own.mkdir(exist_ok=True)
