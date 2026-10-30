@@ -121,6 +121,24 @@ def test_numerical_spelling_and_large_decimal_precision_are_not_rounded():
     assert canonical_number('123456789012345678901234567890.125')=='123456789012345678901234567890.125'
 
 
+@pytest.mark.parametrize('close,outcome',[
+    ((100.,101.,102.,101.),'green_longer'),((100.,99.,98.,99.),'red_longer'),
+    ((100.,101.,100.,101.),'equal'),((100.,100.,100.,100.),'equal')])
+def test_close_streaks_use_n_changes_not_body_colours_and_keep_integer_counts(catalog,close,outcome):
+    qid='B|candles|OHLC|run_structure|1x3';variant=next(catalog.variants(qid))
+    assert not variant.settings
+    definitions=bind_price_question(catalog.tree[qid],variant)
+    b=bars((200.,)*4,close)
+    answer={q['source_outcome']:evaluate_price(q,b,date(2024,1,6),3).answer for q in definitions}
+    assert answer[outcome]=='YES' and list(answer.values()).count('YES')==1
+    assert type(measurement('run_structure',b,date(2024,1,6),3,3)) is int
+    assert all(q['feature_kind']=='integer_count' and q['comparison_threshold']=='0' for q in definitions)
+    b={k:replace(v,open=None) for k,v in b.items()}
+    assert evaluate_price(next(q for q in definitions if q['source_outcome']==outcome),b,date(2024,1,6),3).answer=='YES'
+    del b[0]
+    assert {evaluate_price(q,b,date(2024,1,6),3).answer for q in definitions}=={'NOT_EVALUABLE'}
+
+
 def test_plan_keeps_pending_stages_and_unbound_families_visible(tmp_path):
     from ci.binary_canonical_plan import generate
     report=generate(Path(__file__).resolve().parents[1],tmp_path)
