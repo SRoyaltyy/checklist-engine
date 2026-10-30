@@ -1,0 +1,56 @@
+name: row0-price-world-gate
+on:
+  push:
+    branches: [codex/row0-price-world-gate]
+    paths: ['ci/row0_price_gate.py', '.github/workflows/row0_price_gate.yml']
+  pull_request:
+    paths: ['ci/row0_price_gate.py', 'tests/test_row0_price_gate.py', '.github/workflows/row0_price_gate.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: row0-price-gate-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5
+      - run: python -m pytest tests/test_row0_price_gate.py tests/test_compact_world_build.py tests/test_renko_recipe.py tests/test_price_raw_addon.py tests/test_price_timeout_addon.py tests/test_terminal_price_recovery.py tests/test_world_answer_cache.py -q
+  gate:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - name: Prepare actual guarded full-source build inputs without scheduling duplicate workers
+        id: inputs
+        run: python -m ci.compact_world_build prepare --directory row0-plan
+      - name: Authenticate all original parts,131 added names,55 resolutions and run price WORLD GATE
+        run: python -m ci.row0_price_gate --directory row0-gate --new-plan row0-plan/COMPACT_WORLD_BUILD_PLAN.json --new-inputs-release '${{ steps.inputs.outputs.inputs_release }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: row0-price-world-gate-evidence
+          path: |
+            row0-plan/COMPACT_WORLD_BUILD_PLAN.json
+            row0-gate/ROW0_*.json
+            row0-gate/ROW0_*.csv
+          if-no-files-found: ignore
