@@ -1,0 +1,27 @@
+name: binary_master_v1
+on:
+  pull_request:
+    paths: ['world_binary_master.py', 'ci/binary_master_build.py',
+            'tests/test_binary_master.py', 'dials/**', 'docs/BINARY_LADDERS_V1.csv',
+            '.github/workflows/binary_master_v1.yml']
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest numpy
+      - run: python -m pytest tests/test_binary_master.py -q
+      - name: Emit master and verify report consistency
+        run: |
+          python -m ci.binary_master_build > /tmp/report.json
+          python - <<'EOF'
+          import json
+          r = json.load(open('/tmp/report.json'))
+          assert r['master_total_rows'] == r['bound_unique_binary_definitions'] + r['ladder_add_on_rows']
+          assert r['ladder_add_on_rows'] == 2680
+          print('master rows:', r['master_total_rows'], 'unbound OAT:', r['unbound_oat_variants'])
+          EOF
