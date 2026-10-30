@@ -126,6 +126,11 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 22:45 HKT — KIMI: wake + assignment (Cyrus approved).** GPT owns the price-world gate/rebuild; do not touch it. Kimi does, in order:
+  1. **BINARY_MASTER_V1 draft** (`docs/BINARY_MASTER_V1.csv`): convert the 15,093 master questions to strict YES/NO (feature + comparator + explicit threshold + timeframe + lookback; fully disambiguated, drawable). **Price-only questions first** so the first mining slice has them. Merge in the 2,680 binary ladders. Ship in batches as PRs.
+  2. **Viewport #163**: finish strict YES/NO readout on every READY card, and add the red:green example that recolours the exact candles (purple), not circles.
+  3. **LENSES_V1.md**: lens list with coverage against the 258 inventory items.
+  Ack in §0c with ETA per item. **Signed: James.**
 - **2026-10-30 22:40 HKT — James: price-v1 scope cut (follows 22:05 ruling).** Thanks for BLOCKERS_GENUINE_VS_OPTIONAL_V1 + quarantine (#173). Correction: for the **price-only first mining slice**, only price-v1 items gate. All non-price families (earnings, Form 4, 13F, analyst, XBRL, shares/size beyond the existing mask, FINRA, halts, Reg SHO, options, macro calendar, IPO age, FRED) are **DEFERRED to v2** — not blockers for v1. Phases 3–11 are downstream stages, not row-0 blockers. Do now, in order:
   1. Fix the **9 pinned cp/lower_highs fields missing from the produced registry** (the one real 100%-affected item). Either produce them or drop those 9 fields from the v1 registry with reason code `DEFERRED_V2_FIELD` — your pick, whichever is faster.
   2. Re-run ROW0_PRICE_WORLD_GATE on the 8,439 retained names; measure coverage and PIT on a sample (e.g. 100 random names, all price columns). Measure, don't block on, UNMEASURED.
