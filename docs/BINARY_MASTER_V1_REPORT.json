@@ -298,7 +298,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "78426e28a276f61c8f8b88466775341b729fc71609f58163d5ef777224e59a8d",
+    "world_binary_master.py": "f7c72d33cb902262e6fcf4359f00d7b59039298436104c42f4e6890fd7dc2a82",
     "ci/binary_master_build.py": "3cf0af44b417d9b194ccc237ef37e068d2c1f668d9248a51ae5b6f73a415eca4"
   },
   "answer_generation": "NOT_RUN",

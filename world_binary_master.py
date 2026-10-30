@@ -44,8 +44,10 @@ class NativeBar:
 
 
 def _strict_positive(values, name):
-    if any(isinstance(v, bool) or not isinstance(v, Real) for v in values):
+    if any(v is not None and (isinstance(v, bool) or not isinstance(v, Real)) for v in values):
         raise TypeError(name + ' must be numeric scalars')
+    if any(v is None for v in values):
+        return None
     arr = np.asarray(values, dtype=np.float64)
     if not np.isfinite(arr).all() or not (arr > 0).all():
         return None
@@ -62,12 +64,15 @@ def _tf_window(bars, setup_date, expected_slot, lookback, candle_days):
         raise ValueError('canonical setup date and shared-calendar slot required')
     if type(lookback) is not int or lookback < 1 or type(candle_days) is not int or candle_days < 1:
         raise ValueError('positive integer lookback and candle_days required')
+    # expected_slot is the last daily shared-calendar slot visible at D.
+    # A partially observed bucket must not shift the fixed slot//k groups.
+    last = ((expected_slot + 1) // candle_days) * candle_days - 1
     span = lookback * candle_days
-    first = expected_slot - span + 1
+    first = last - span + 1
     if first < 0:
         return None
     selected = []
-    for slot in range(first, expected_slot + 1):
+    for slot in range(first, last + 1):
         bar = bars.get(slot)
         if bar is None:
             return None
@@ -80,10 +85,17 @@ def _tf_window(bars, setup_date, expected_slot, lookback, candle_days):
         if selected and bar.end <= selected[-1].end:
             raise ValueError('native candle ends must increase strictly with shared slot')
         selected.append(bar)
+    inputs = [_strict_positive([getattr(bar, field) for bar in selected], 'daily '+field)
+              for field in ('open','high','low','close')]
+    if any(values is None for values in inputs):
+        return None
+    opened,high,low,close = inputs
+    if ((high < np.maximum(opened,close)) | (low > np.minimum(opened,close)) | (high < low)).any():
+        return None
     candles = []
     for i in range(lookback):
         group = selected[i * candle_days:(i + 1) * candle_days]
-        candles.append(NativeBar(end=group[-1].end, available_from=None,
+        candles.append(NativeBar(end=group[-1].end, available_from=group[-1].available_from,
                                  open=group[0].open, high=max(b.high for b in group),
                                  low=min(b.low for b in group), close=group[-1].close))
     return candles
@@ -246,10 +258,26 @@ _MASTER_RECIPES = {spec['recipe'] for spec in FACETS.values()}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
+    """Evaluate all bound families from DAILY shared-calendar slot bars.
+
+    GPT's reference functions consume already aggregated native slots; adapt
+    the fallback explicitly rather than passing this daily coordinate space.
+    """
     feature = definition['feature']
     if feature['recipe'] in _MASTER_RECIPES:
         candles = _tf_window(bars, setup_date, expected_slot, feature['lookback'], feature['candle_days'])
         value = None if candles is None else _measure(feature['recipe'], candles)
         return evaluate_binary(_apply_transform(value, feature['transform']),
                                definition['comparator'], definition['comparison_threshold'])
-    return _eval_gpt_price(definition, bars, setup_date, expected_slot)
+    if feature['recipe'] not in ('native_intraday_change_fraction_v1',
+                                 'native_interday_change_fraction_v1',
+                                 'native_close_streak_balance_v1'):
+        raise NotImplementedError('unbound canonical master feature: '+feature['recipe'])
+    needed = feature['lookback'] + (feature['recipe'] == 'native_close_streak_balance_v1')
+    candles = _tf_window(bars, setup_date, expected_slot, needed, feature['candle_days'])
+    if candles is None:
+        return evaluate_binary(None, definition['comparator'], definition['comparison_threshold'])
+    last_native = (expected_slot + 1) // feature['candle_days'] - 1
+    native = {last_native-len(candles)+1+i: bar for i,bar in enumerate(candles)}
+    return _eval_gpt_price(definition, native, setup_date, last_native)
+
