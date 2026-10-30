@@ -1,0 +1,68 @@
+{
+  "ci_run": 41060885579,
+  "ci_job": 124080018259,
+  "producer_commit": "3cb894bf257cac10992844beea973bd712687b2d",
+  "artifact_id": 12978363953,
+  "scope": "Actual CI metadata enumeration; no real-data binary answers, chart or mining approval.",
+  "report": {
+    "source_questions": 15093,
+    "registered_cutoffs": 232,
+    "cutoff_associations": 35647,
+    "oat_variants": 154667,
+    "ordered_variant_ids_sha256": "5d01e4094af9dab4f5016690458fbded66e0eadfdee5ffbd8170ad29045ccdc5",
+    "status": "CANONICAL_GRID_ONLY_NOT_BINARY_MASTER_OR_ANSWER_PROOF",
+    "bound_source_questions": 38,
+    "bound_unique_binary_definitions": 570,
+    "bound_source_aliases": 570,
+    "unbound_oat_variants": 154477,
+    "canonical_questions_flagged_fewer_than_six_lenses": 15093,
+    "requested_lenses": [
+      "absolute",
+      "relative",
+      "position",
+      "threshold",
+      "divergence",
+      "outlier",
+      "path",
+      "streak",
+      "cross",
+      "change_since_last",
+      "rank_vs_market_or_sector",
+      "percentile",
+      "extreme_vs_own_history",
+      "timeframe"
+    ],
+    "absolute_threshold_alias_credit": "COUNT_ONCE_FOR_IDENTICAL_FIXED_LEVEL_PREDICATE",
+    "full_binary_master": "INCOMPLETE",
+    "real_answer_generation": "NOT_RUN",
+    "chart_gate": "NOT_PASSED",
+    "mining": "NOT_RUN",
+    "native_bar_definition": "FIXED_SHARED_SESSION_CALENDAR_V1; legacy rolling-offset artifacts unchanged",
+    "source_fingerprints": {
+      "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": {
+        "raw_sha256": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6",
+        "lf_sha256": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6"
+      },
+      "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": {
+        "raw_sha256": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d",
+        "lf_sha256": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d"
+      },
+      "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": {
+        "raw_sha256": "85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292",
+        "lf_sha256": "85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292"
+      }
+    },
+    "code_fingerprints": {
+      "world_question_grid.py": "53875a6607fda44caec48734a6154caeda73134e8af2b410dc70fd158b71c420",
+      "world_binary_price.py": "fd3018d9e5ec8cb30eb07a3e50ce919351831f8d562dabe90f687877e77c4955",
+      "ci/binary_canonical_plan.py": "d93093f580c49da7a5d6e8e12d1533d70f1e41a3ee206b086bdd9609f8db50b2"
+    },
+    "artifact_fingerprints": {
+      "CANONICAL_VARIANT_PLAN_V1.csv.gz": "f1b58290c100a96438cb226e0a268fa08bca47d11fa091b60fb6d0006c56e2f5",
+      "BOUND_PRICE_DEFINITIONS_V1.jsonl": "dc4de0920a6af2ffaeb5ba17ff91c13b788a0da5e6d54af10992b28330235381",
+      "BOUND_PRICE_SOURCE_ALIASES_V1.csv": "fa312a8e82e6c80fe2d77473e71270e5b3fdd4ad9b8807ccddd08e4bac93ebcd",
+      "UNBOUND_CANONICAL_FAMILIES_V1.csv": "b7355f2177b3fa0d04048ffd7c16c14f35b2cc6cc548c0d498b81a1121d0fed0",
+      "CANONICAL_LENS_COVERAGE_V1.csv": "86c2ee4623827a7d90ba56ef7b4da4292a4c356efdbf43b54127b17f076ce887"
+    }
+  }
+}
