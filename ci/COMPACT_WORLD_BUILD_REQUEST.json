@@ -1,5 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
+  "replay_quarantine": {
+    "path": "dictionary/REPLAY_QUARANTINE_V1.json",
+    "lf_sha256": "2046c1358d56a36c4bada671329e21d701d16b8497b3f7e5f707889e11e23bf5"
+  },
   "accepted_price_release": "accepted-price-stitch-v2-40494479693-1",
   "accepted_price_stitch_sha256": "9f97db992522777ef9ae27a0ec9aad4fb9caa80a269393b0d76521aa9aa3f6fe",
   "inputs_tag": "native-price-inputs-v1-40336250454-1",
@@ -32,5 +36,5 @@
   "hard_world_cap_bytes": 100000000000,
   "max_parallel": 20,
   "authority": "James/Cyrus speed directive ca56c456716dec5c583b193fdc2775522a590377: launch full-universe compact build, exclude and log errors/hangs, no additional preflight",
-  "scope": "Current default price build uses the authenticated full8447-name source, preserving every original8316-name part and explicitly adding131 names; the five prior timeout names remain in guarded inputs with recorded dispositions. Derive only the separately proved Renko zero-step guard from the frozen13-file float64 source. Published legacy plans/results retain their original bits and recipe identities. The68904 diagnostic outcomes across22 grids do not establish full-world/complete-question/PIT/scoring acceptance."
+  "scope": "Cyrus91a593a v1 cohort: authenticate all8447 raw names and preserved original source parts/131 additions, then exclude8 named EXCLUDED_REPLAY_MISMATCH stocks from v1 work, leaving8439 names/96.6999% of original8727. Preserve the raw source and explicit quarantine/eligibility ledger; no edited bits or epsilon. The five prior timeout names remain in guarded inputs. Use only the proved Renko guard from the frozen13-file float64 source. Legacy results remain unchanged;68904 diagnostics do not establish complete canonical/PIT/scoring acceptance."
 }

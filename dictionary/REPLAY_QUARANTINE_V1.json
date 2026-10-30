@@ -1,0 +1,157 @@
+{
+  "format": "OWNER_REPLAY_QUARANTINE_V1",
+  "authority_commit": "91a593a",
+  "authority": "Cyrus via James METHODOLOGY section0b2026-10-30 22:05 HKT",
+  "original_universe": 8727,
+  "raw_source_names": 8447,
+  "raw_source_stock_days": 12560808,
+  "raw_source_excluded_names": 280,
+  "quarantined_names": 8,
+  "quarantined_stock_days": 13520,
+  "v1_names": 8439,
+  "v1_stock_days": 12547288,
+  "quarantine_pct_original_names": 0.09166953133952102,
+  "quarantine_pct_raw_source_rows": 0.10763638772282802,
+  "v1_pct_original_names": 96.69989687177724,
+  "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+  "replay_report_sha256": "0d2067913197775a4a9092fda4cce674cd36caf66ca1637b12bee551e548debf",
+  "records": [
+    {
+      "ticker": "ABX",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 92,
+      "source_query_stock_days": 1536,
+      "affected_predicates": [
+        "HURST_RS20:rising1__1d",
+        "HURST_RS20:rising1__2d",
+        "HURST_RS60:rising1__1d",
+        "HURST_RS60:rising1__2d",
+        "HURST_RS60:rising1__4d",
+        "HV20:rising1__1d",
+        "HV60:rising1__3d",
+        "I070_default_per_candle_sigma:rising1__1d",
+        "RETURN_AUTOCORR1_20:rising1__1d",
+        "RETURN_AUTOCORR1_20:rising1__2d",
+        "RETURN_AUTOCORR1_60:rising1__1d",
+        "RETURN_AUTOCORR1_60:rising1__3d",
+        "RETURN_EXCESS_KURTOSIS20:rising1__1d",
+        "RETURN_EXCESS_KURTOSIS20:rising1__2d",
+        "RETURN_EXCESS_KURTOSIS20:rising1__7d",
+        "RETURN_EXCESS_KURTOSIS60:rising1__1d",
+        "RETURN_SKEW20:rising1__1d",
+        "RETURN_SKEW20:rising1__2d",
+        "RETURN_SKEW20:rising1__6d",
+        "RETURN_SKEW60:rising1__1d",
+        "RETURN_SKEW60:rising1__2d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-005",
+      "source_trace_sha256": "392a143e132ba855652bf4a32db01c85d5e175c78bdd02c7289e11172c8d6725"
+    },
+    {
+      "ticker": "AMTD",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 35,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HURST_RS20:rising1__1d",
+        "HV10:rising1__3d",
+        "HV60:rising1__1d",
+        "RETURN_AUTOCORR1_20:rising1__1d",
+        "RETURN_AUTOCORR1_20:rising1__2d",
+        "RETURN_AUTOCORR1_60:rising1__1d",
+        "RETURN_AUTOCORR1_60:rising1__2d",
+        "RETURN_EXCESS_KURTOSIS20:rising1__1d",
+        "RETURN_SKEW20:rising1__1d",
+        "RETURN_SKEW60:rising1__6d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-006",
+      "source_trace_sha256": "e34d65c8e6ba60443c2f8435a7db2ef5c85453836f0189aa2cb5d7e62f52241c"
+    },
+    {
+      "ticker": "CATO",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 2,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HV20:rising1__2d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-007",
+      "source_trace_sha256": "1e3b609ef19a54f508df6a0cd50e69d628eacb140dad095b94a5f0c88db986c5"
+    },
+    {
+      "ticker": "FEIM",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 22,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HURST_RS20:rising1__1d",
+        "HURST_RS60:rising1__1d",
+        "HV10:rising1__2d",
+        "RETURN_SKEW20:rising1__17d",
+        "RETURN_SKEW20:rising1__1d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-000",
+      "source_trace_sha256": "6507cb2feef514bb52222ca5f2e96c751fa8236fb6d644dfb0f4ec2836a29a8c"
+    },
+    {
+      "ticker": "HHS",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 4,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "RETURN_EXCESS_KURTOSIS20:rising1__1d",
+        "RETURN_SKEW20:rising1__1d",
+        "RETURN_SKEW60:rising1__2d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-001",
+      "source_trace_sha256": "2bc09f42bd07272300ad847e667e5495eda330701fe8e2e36a4a224533f4d7d6"
+    },
+    {
+      "ticker": "JHI",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 2,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HURST_RS20:rising1__1d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-002",
+      "source_trace_sha256": "aadae5de76f2a43e25b726e87d795f4be61e7f9a3c6ec5103af4d9a5693a91b0"
+    },
+    {
+      "ticker": "NKTR",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 8,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HV20:rising1__1d",
+        "I070_default_per_candle_sigma:rising1__1d",
+        "RETURN_AUTOCORR1_60:rising1__1d",
+        "RETURN_EXCESS_KURTOSIS20:rising1__1d",
+        "RETURN_SKEW20:rising1__3d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-003",
+      "source_trace_sha256": "e068b9745dd20c9f722c2a9141b276c15486559c2cf77d4d882d159d8e80f7c7"
+    },
+    {
+      "ticker": "OCGN",
+      "reason_code": "EXCLUDED_REPLAY_MISMATCH",
+      "scope": "ALL_V1_ANSWERS_AND_MINING_ALL_DATES",
+      "mismatched_cells": 1,
+      "source_query_stock_days": 1712,
+      "affected_predicates": [
+        "HURST_RS20:rising1__1d"
+      ],
+      "source_trace_release": "price-numeric-runtime-trace-v1-41065814230-1-004",
+      "source_trace_sha256": "2670f582b9e059cc1c00949ed2978676ffa345c2218019118265bfdca895bd11"
+    }
+  ],
+  "diagnosis": "OPTIONAL_NONBLOCKING_BACKGROUND;NO_EPSILON_OR_EDITED_BITS",
+  "overall_PIT_eligibility": "NOT_PROVEN"
+}

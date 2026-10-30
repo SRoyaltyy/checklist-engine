@@ -4,6 +4,7 @@ This launches real production-sized price work; nonprice/comparison joins and
 the complete v3 quality/leak gates remain explicit, separate prerequisites.
 """
 import argparse
+import copy
 import hashlib
 import io
 import json
@@ -18,6 +19,7 @@ import zipfile
 from ci.native_price_blocks import read_member, sha, write_json
 from ci.release_assets import asset_index, download_asset, gh_retry, publish_assets, describe_failure
 from ci.renko_recipe import BASE_COMMIT, BASE_FINGERPRINT, derive as derive_renko_recipe, fingerprint as recipe_fingerprint
+from world_replay_quarantine import load_policy,filter_parts
 
 REQUEST=Path('ci/COMPACT_WORLD_BUILD_REQUEST.json')
 
@@ -77,6 +79,15 @@ def prepare(root,request):
         accepted=full['selected_tickers'];source_excluded=status['original_universe']-accepted
         extension=dict(source=binding,incremental_tickers=added,incremental_count=len(added),base_parts_preserved=len(status['parts']))
         extra_files.append(file)
+    raw_source_parts=copy.deepcopy(parts);raw_accepted=accepted;raw_excluded=source_excluded;quarantined=[]
+    if request.get('replay_quarantine'):
+        binding=request['replay_quarantine'];policy_file=Path(binding['path'])
+        policy=load_policy(policy_file,binding['lf_sha256'])
+        parts,quarantined=filter_parts(parts,policy)
+        accepted-=len(quarantined);source_excluded+=len(quarantined)
+        if accepted!=policy['v1_names'] or 100*accepted/status['original_universe']<95:
+            raise ValueError('quarantined build cohort does not meet owner coverage floor')
+        extra_files.append(policy_file)
     timeout_dispositions=[]
     if request.get('prior_timeout_ledger'):
         binding=request['prior_timeout_ledger'];file=download_asset(binding['release'],binding['asset'],root)
@@ -111,6 +122,9 @@ def prepare(root,request):
     plan=dict(request=request,source_stitch_sha256=sha(status_file),parts=parts,
               accepted_tickers=accepted,original_universe=status['original_universe'],
               source_excluded_tickers=source_excluded,raw_dependency_bytes=source_bytes,
+              raw_source_parts=raw_source_parts,raw_source_accepted_tickers=raw_accepted,
+              raw_source_excluded_tickers=raw_excluded,replay_quarantined_tickers=len(quarantined),
+              replay_quarantine=quarantined,exclusion_accounting='source_excluded_tickers aggregates raw exclusions and owner quarantine',
               source_input_extension=extension,prior_timeout_dispositions=timeout_dispositions,
               shared_registry_bytes=len(registry),bound_input_bytes=bound_input_bytes,
               price_answer_per_ticker_limit=request['answer_budget_bytes']//status['original_universe'],

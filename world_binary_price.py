@@ -152,3 +152,11 @@ def evaluate_price(definition, bars, setup_date, expected_slot):
     if value is not None and feature['transform'] == 'abs':
         value = abs(value)
     return evaluate_binary(value, definition['comparator'], definition['comparison_threshold'])
+
+
+def evaluate_v1_price(definition,bars,setup_date,expected_slot,*,ticker,pit_eligible):
+    """Production-cohort entry point; excluded/unknown rows never become NO."""
+    from world_replay_quarantine import v1_eligible
+    if v1_eligible(ticker,pit_eligible) is not True:
+        return evaluate_binary(None,definition['comparator'],definition['comparison_threshold'],known=False)
+    return evaluate_price(definition,bars,setup_date,expected_slot)
