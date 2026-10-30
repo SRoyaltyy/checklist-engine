@@ -2,8 +2,68 @@ import json
 import hashlib
 from pathlib import Path
 import sys
+import copy
 import pytest
 from ci.compact_world_build import limited_process,validate_shard,REQUEST
+
+
+@pytest.mark.parametrize('legacy',[False,True])
+def test_actual_build_path_uses_guarded_snapshot_and_keeps_legacy_snapshots_exact(tmp_path,monkeypatch,legacy):
+    import subprocess
+    from ci import compact_world_build as build
+    from ci.renko_recipe import BASE_COMMIT,BASE_FINGERPRINT,derive,fingerprint
+    manifest=json.loads(Path('recipes/renko_zero_step_v1/RECIPE.json').read_text())
+    files={name:subprocess.check_output(['git','show',BASE_COMMIT+':'+name]) for name in manifest['files']}
+    request=json.loads(REQUEST.read_text())
+    if legacy:
+        request.pop('recipe_transform');request.pop('source_recipe_fingerprint')
+        request['corrected_recipe_fingerprint']=BASE_FINGERPRINT
+    calendar=b'synthetic-calendar';inputs=dict(recipe_files=list(files),calendar_sha256=hashlib.sha256(calendar).hexdigest())
+    raw=json.dumps(inputs).encode();request['inputs_sha256']=hashlib.sha256(raw).hexdigest()
+    part=dict(release='raw',part='source',tickers=['A'])
+    plan=dict(request=request,parts=[part]);calls=[]
+    def download(tag,name,directory):
+        directory=Path(directory);directory.mkdir(parents=True,exist_ok=True);file=directory/name
+        if name=='COMPACT_WORLD_BUILD_PLAN.json':file.write_text(json.dumps(plan))
+        elif name=='BUILD_INPUTS.json':file.write_bytes(raw)
+        elif name=='market_sessions.parquet':file.write_bytes(calendar)
+        else:raise RuntimeError('STOP_AFTER_REAL_BUILD_SNAPSHOT')
+        return file
+    monkeypatch.setattr(build,'download_asset',download)
+    original_run=subprocess.run
+    def run(command,*args,**kwargs):
+        if command[:2]==['git','fetch']:return subprocess.CompletedProcess(command,0)
+        return original_run(command,*args,**kwargs)
+    monkeypatch.setattr(build.subprocess,'run',run)
+    def guarded(source):
+        calls.append(fingerprint(source));return derive(source)
+    monkeypatch.setattr(build,'derive_renko_recipe',guarded)
+    with pytest.raises(RuntimeError,match='STOP_AFTER_REAL_BUILD_SNAPSHOT'):
+        build.build(tmp_path/'build','new-plan',0)
+    actual={name:(tmp_path/'build'/'recipe'/name).read_bytes() for name in files}
+    assert fingerprint(actual)==request['corrected_recipe_fingerprint']
+    assert calls==([] if legacy else [BASE_FINGERPRINT])
+    assert {name for name in files if actual[name]!=files[name]}==(set() if legacy else {'facets_world.py'})
+    if not legacy:assert actual['facets_world.py'].count(b'raise FloatingPointError("Renko brick cannot advance')==2
+
+
+@pytest.mark.parametrize('problem',[None,'replace','missing','duplicate','wrong_total','wrong_inputs'])
+def test_current_input_extension_preserves_all_base_parts_and_names(problem):
+    from ci.compact_world_build import complete_input_parts
+    old=dict(inputs_tag='frozen',accepted_tickers=2,parts=[dict(release='old',part='same',tickers=['A','B'],archive_sha256='old')])
+    full=dict(status='FULL_ACCEPTED_PRICE_BASE_ONLY_NOT_WORLD',inputs_tag='frozen',selected_tickers=3,
+        query_rows=5,stock_day_weights_sha256='weights',parts=copy.deepcopy(old['parts'])+[dict(release='new',part='same',tickers=['C'])])
+    binding=dict(expected_tickers=3,expected_incremental_tickers=1,expected_stock_days=5,stock_day_weights_sha256='weights')
+    if problem=='replace':full['parts'][0]['archive_sha256']='changed'
+    elif problem=='missing':full['parts'][0]['tickers']=['A']
+    elif problem=='duplicate':full['parts'][-1]['tickers']=['A']
+    elif problem=='wrong_total':full['query_rows']=6
+    elif problem=='wrong_inputs':full['inputs_tag']='other'
+    if problem:
+        with pytest.raises(ValueError):complete_input_parts(old,full,binding)
+    else:
+        parts,added=complete_input_parts(old,full,binding)
+        assert added==['C'] and parts==full['parts'] and old['parts'][0]==parts[0]
 
 
 def test_hung_stock_is_killed_and_next_stock_can_complete(tmp_path):

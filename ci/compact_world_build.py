@@ -17,8 +17,30 @@ import zipfile
 
 from ci.native_price_blocks import read_member, sha, write_json
 from ci.release_assets import asset_index, download_asset, gh_retry, publish_assets, describe_failure
+from ci.renko_recipe import BASE_COMMIT, BASE_FINGERPRINT, derive as derive_renko_recipe, fingerprint as recipe_fingerprint
 
 REQUEST=Path('ci/COMPACT_WORLD_BUILD_REQUEST.json')
+
+
+def complete_input_parts(status, full, binding):
+    """Extend the original source without replacing any original part/name."""
+    def indexed(parts):
+        result={};names=[]
+        for part in parts:
+            key=(part['release'],part['part'])
+            if key in result:raise ValueError('duplicate release-aware input part')
+            result[key]=part;names.extend(part['tickers'])
+        if len(names)!=len(set(names)):raise ValueError('duplicate input ticker')
+        return result,set(names)
+    old,old_names=indexed(status['parts']);new,new_names=indexed(full['parts'])
+    if (full['status']!='FULL_ACCEPTED_PRICE_BASE_ONLY_NOT_WORLD' or full['inputs_tag']!=status['inputs_tag']
+        or full['selected_tickers']!=binding['expected_tickers'] or len(new_names)!=full['selected_tickers']
+        or len(old_names)!=status['accepted_tickers'] or len(new_names-old_names)!=binding['expected_incremental_tickers']
+        or not old_names<=new_names or any(new.get(key)!=part for key,part in old.items())
+        or full['query_rows']!=binding['expected_stock_days']
+        or full['stock_day_weights_sha256']!=binding['stock_day_weights_sha256']):
+        raise ValueError('full input extension replaces or loses a source binding')
+    return full['parts'],sorted(new_names-old_names)
 
 
 def limited_process(command, directory, seconds):
@@ -38,13 +60,36 @@ def limited_process(command, directory, seconds):
 def prepare(root,request):
     root.mkdir(parents=True,exist_ok=True)
     status_file=download_asset(request['accepted_price_release'],'ACCEPTED_PRICE_STITCH.json',root)
+    if request.get('accepted_price_stitch_sha256') and sha(status_file)!=request['accepted_price_stitch_sha256']:
+        raise ValueError('original accepted-price source changed')
     status=json.loads(status_file.read_text())
     if (status['status']!='ACCEPTED_PRICE_BASE_WITH_LOGGED_EXCLUSIONS_NOT_WORLD'
         or status['original_universe']!=8727 or 100*status['accepted_tickers']/8727<95
         or status['accepted_tickers']+status['excluded_tickers']!=8727
         or status['accepted_percent']<95 or status['inputs_sha256']!=request['inputs_sha256']):
         raise ValueError('accepted new-price stitch is not ready')
-    parts=status['parts']
+    parts=status['parts'];accepted=status['accepted_tickers'];source_excluded=status['excluded_tickers'];extension={};extra_files=[]
+    if request.get('full_raw_source'):
+        binding=request['full_raw_source']
+        file=download_asset(binding['release'],binding['asset'],root)
+        if sha(file)!=binding['sha256']:raise ValueError('full raw input source changed')
+        full=json.loads(file.read_text());parts,added=complete_input_parts(status,full,binding)
+        accepted=full['selected_tickers'];source_excluded=status['original_universe']-accepted
+        extension=dict(source=binding,incremental_tickers=added,incremental_count=len(added),base_parts_preserved=len(status['parts']))
+        extra_files.append(file)
+    timeout_dispositions=[]
+    if request.get('prior_timeout_ledger'):
+        binding=request['prior_timeout_ledger'];file=download_asset(binding['release'],binding['asset'],root)
+        if sha(file)!=binding['sha256']:raise ValueError('prior timeout ledger changed')
+        ledger=json.loads(file.read_text());names=[r['ticker'] for r in ledger['excluded']]
+        if (ledger['status']!='TIMEOUT_ADDON_INCOMPLETE' or ledger['completed'] or ledger['errors']
+            or len(names)!=len(set(names)) or set(names)!=set(binding['tickers'])
+            or any(r['reason']!='STOCK_TIMEOUT' for r in ledger['excluded'])
+            or not set(names)<={t for p in parts for t in p['tickers']}
+            or request.get('recipe_transform')!='RENKO_ZERO_STEP_V1'):
+            raise ValueError('prior timeout ledger is not fully covered by guarded inputs')
+        timeout_dispositions=[dict(ticker=t,prior_reason='STOCK_TIMEOUT',disposition='GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER') for t in sorted(names)]
+        extra_files.append(file)
     if not 0<len(parts)<=256:raise ValueError('matrix must fit the Actions 256-job bound')
     inventories={};source_bytes=0
     for part in parts:
@@ -64,8 +109,9 @@ def prepare(root,request):
     bound_input_bytes=sum(p.stat().st_size for p in recipe.rglob('*') if p.is_file())
     bound_input_bytes+=calendar.stat().st_size+(root/'bound-inputs'/'BUILD_INPUTS.json').stat().st_size
     plan=dict(request=request,source_stitch_sha256=sha(status_file),parts=parts,
-              accepted_tickers=status['accepted_tickers'],original_universe=status['original_universe'],
-              source_excluded_tickers=status['excluded_tickers'],raw_dependency_bytes=source_bytes,
+              accepted_tickers=accepted,original_universe=status['original_universe'],
+              source_excluded_tickers=source_excluded,raw_dependency_bytes=source_bytes,
+              source_input_extension=extension,prior_timeout_dispositions=timeout_dispositions,
               shared_registry_bytes=len(registry),bound_input_bytes=bound_input_bytes,
               price_answer_per_ticker_limit=request['answer_budget_bytes']//status['original_universe'],
               per_ticker_budget_policy='DIAGNOSTIC_AVERAGE_ONLY_NEVER_EXCLUDE_FOR_SIZE',
@@ -74,10 +120,10 @@ def prepare(root,request):
     tag=f"compact-world-build-v1-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}-inputs"
     gh_retry('release','create',tag,'--draft','--title',tag,'--target',os.environ['GITHUB_SHA'],
              '--notes','Owner-authorized full accepted-universe compact price-answer stage. Remaining world coverage is explicit.')
-    publish_assets(tag,file,registry_file,status_file,REQUEST);gh_retry('release','edit',tag,'--draft=false')
+    publish_assets(tag,file,registry_file,status_file,REQUEST,*extra_files);gh_retry('release','edit',tag,'--draft=false')
     with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
         stream.write('matrix='+json.dumps(list(range(len(parts))))+'\ninputs_release='+tag+'\n')
-    print('COMPACT_WORLD_STARTED',tag,len(parts),status['accepted_tickers'],flush=True)
+    print('COMPACT_WORLD_STARTED',tag,len(parts),accepted,flush=True)
 
 
 def snapshot(root,request):
@@ -90,10 +136,17 @@ def snapshot(root,request):
     for name in inputs['recipe_files']:
         if Path(name).is_absolute() or '..' in Path(name).parts:raise ValueError('unsafe recipe path')
         raw=subprocess.check_output(['git','show',request['corrected_commit']+':'+name])
-        file=recipe/name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(raw)
-        files[name]=hashlib.sha256(raw).hexdigest()
-    if hashlib.sha256(json.dumps(files,sort_keys=True).encode()).hexdigest()!=request['corrected_recipe_fingerprint']:
+        files[name]=raw
+    transform=request.get('recipe_transform')
+    if transform is not None:
+        if (transform!='RENKO_ZERO_STEP_V1' or request['corrected_commit']!=BASE_COMMIT
+            or request.get('source_recipe_fingerprint')!=BASE_FINGERPRINT):
+            raise ValueError('unknown or unbound recipe transform')
+        files=derive_renko_recipe(files)
+    if recipe_fingerprint(files)!=request['corrected_recipe_fingerprint']:
         raise ValueError('versioned math snapshot differs')
+    for name,raw in files.items():
+        file=recipe/name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(raw)
     return recipe,calendar
 
 
