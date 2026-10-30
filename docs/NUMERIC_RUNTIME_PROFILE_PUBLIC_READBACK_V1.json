@@ -1,0 +1,159 @@
+{
+  "status": "PASS_ALL10_PUBLIC_STOCK_TRACE_HASHES",
+  "results": [
+    {
+      "ticker": "FEIM",
+      "avx512": false,
+      "avx2": true,
+      "disabled_avx512": false,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 0,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "HHS",
+      "avx512": false,
+      "avx2": true,
+      "disabled_avx512": false,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 0,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "JHI",
+      "avx512": false,
+      "avx2": true,
+      "disabled_avx512": false,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 0,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "NKTR",
+      "avx512": true,
+      "avx2": true,
+      "disabled_avx512": true,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 12,
+      "unsupported": [
+        {
+          "question_id": "I070_default_per_candle_sigma:rising1__1d",
+          "query_row": 936,
+          "old_code": 1,
+          "replay_code": 2,
+          "row_keys_sha256": "a9bb473370638afbe731570b6afd64ccd5b191c245eb2b93ac23c4a30341352f",
+          "timeframe": "1d",
+          "native_index": 7398,
+          "status": "UNSUPPORTED_OR_INSUFFICIENT",
+          "missing": "I070_default_per_candle_sigma"
+        }
+      ],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "OCGN",
+      "avx512": true,
+      "avx2": true,
+      "disabled_avx512": true,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 3,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "ABX",
+      "avx512": true,
+      "avx2": true,
+      "disabled_avx512": true,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 94,
+      "unsupported": [
+        {
+          "question_id": "I070_default_per_candle_sigma:rising1__1d",
+          "query_row": 306,
+          "old_code": 2,
+          "replay_code": 1,
+          "row_keys_sha256": "8cdfba488c5829c0536460d8120219c943c357c29047ce432c1d4431ddb2cf38",
+          "timeframe": "1d",
+          "native_index": 305,
+          "status": "UNSUPPORTED_OR_INSUFFICIENT",
+          "missing": "I070_default_per_candle_sigma"
+        }
+      ],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "AMTD",
+      "avx512": false,
+      "avx2": true,
+      "disabled_avx512": false,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 0,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "CATO",
+      "avx512": true,
+      "avx2": true,
+      "disabled_avx512": true,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 3,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "DJCO",
+      "avx512": false,
+      "avx2": true,
+      "disabled_avx512": false,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 0,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    },
+    {
+      "ticker": "BPOP",
+      "avx512": true,
+      "avx2": true,
+      "disabled_avx512": true,
+      "disabled_avx2": true,
+      "same_ratio_operands": true,
+      "changed_log_calls": 6,
+      "unsupported": [],
+      "baseline_repeat_differences": 0,
+      "prefix_differences": 0,
+      "disabled_selector_prefix_differences": 0
+    }
+  ]
+}
