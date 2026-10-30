@@ -1,0 +1,872 @@
+{
+  "format": "ROW0_PRICE_WORLD_GATE_V2",
+  "authority_commit": "0b57c0939e56c1611874e01b45f98cf2cd994aee",
+  "price_v1_gate": "PASS",
+  "retained_names": 8439,
+  "original_universe": 8727,
+  "source_coverage_pct": 96.69989687177724,
+  "sample_names": [
+    "SPT",
+    "ICL",
+    "SANG",
+    "PLBY",
+    "SDIV",
+    "ELAB",
+    "TBG",
+    "RCI",
+    "XNCR",
+    "EPSN",
+    "WINN",
+    "PRCH",
+    "MXCT",
+    "TIL",
+    "DFUS",
+    "TE",
+    "IBRN",
+    "RTX",
+    "AIRE",
+    "GAUZ",
+    "TUR",
+    "UMAY",
+    "LQDW",
+    "QETA",
+    "SWK",
+    "BBY",
+    "ZDAI",
+    "WGO",
+    "PSP",
+    "MATV",
+    "DJUL",
+    "ALAB",
+    "IJH",
+    "BOUT",
+    "MBIN",
+    "XBJA",
+    "LEXX",
+    "VRTX",
+    "SUZ",
+    "UNF",
+    "MART",
+    "FUTU",
+    "WLTG",
+    "VREX",
+    "RYTM",
+    "CCCC",
+    "ESPO",
+    "LOAN",
+    "CMP",
+    "ETHU",
+    "JGLO",
+    "CGRO",
+    "IHRT",
+    "GDL",
+    "GDC",
+    "NZAC",
+    "OOSP",
+    "VTWV",
+    "GCV",
+    "GEM",
+    "QUIK",
+    "AMBP",
+    "SPEU",
+    "STOK",
+    "HTCO",
+    "INTU",
+    "IMCC",
+    "NVCT",
+    "MED",
+    "CELU",
+    "CKX",
+    "UPW",
+    "ENOV",
+    "HLN",
+    "SSTI",
+    "EVLU",
+    "INCY",
+    "JUNZ",
+    "RPM",
+    "IBTI",
+    "MGV",
+    "JCSE",
+    "TBT",
+    "UVSP",
+    "RSPH",
+    "SEED",
+    "ZECP",
+    "IWB",
+    "DELL",
+    "CAT",
+    "DECO",
+    "PCG",
+    "HPS",
+    "AZI",
+    "PG",
+    "LPX",
+    "CLLS",
+    "QETH",
+    "PRVA",
+    "SECR"
+  ],
+  "sample_stocks": 100,
+  "price_columns_per_timeframe": 1044,
+  "native_timeframes": 22,
+  "cut_checks": 4400,
+  "compared_cells": 2287295424,
+  "prefix_mismatch_blocks": 0,
+  "prefix_failures": [],
+  "deferred_fields": {
+    "cp_mid_slope_up": "DEFERRED_V2_FIELD",
+    "cp_gr_body20": "DEFERRED_V2_FIELD",
+    "cp_pctB": "DEFERRED_V2_FIELD",
+    "cp_dip_atr": "DEFERRED_V2_FIELD",
+    "cp_days_since_h20": "DEFERRED_V2_FIELD",
+    "cp_dd_vs_run": "DEFERRED_V2_FIELD",
+    "cp_redgreen_vol10": "DEFERRED_V2_FIELD",
+    "cp_hard_all": "DEFERRED_V2_FIELD",
+    "lower_highs10": "DEFERRED_V2_FIELD"
+  },
+  "nonprice_families": "DEFERRED_V2",
+  "existing_eligibility_mask": "UNCHANGED_NOT_REPLACED_BY_ALL_TRUE",
+  "full_cohort_price_PIT": "UNMEASURED_NOT_A_ROW0_BLOCKER_UNDER_OWNER_SCOPE",
+  "complete_world_and_canonical_answers": "DOWNSTREAM_INCOMPLETE",
+  "scoring_gate": "CLOSED",
+  "rebuild_handoff": "REQUEST_TASKFORCE_IF_PASS",
+  "protected_source_mutations": "NONE",
+  "run": 41075612310,
+  "source_commit": "c6fc84d95b5fa7b0e7f7b0f49cba409975244c3f",
+  "plan_sha256": "31e4343882718de0de5cccc7794c663daeefbd544f11fa3218268a2e6c8713ce",
+  "stock_bindings": [
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "TBG",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "544247.sample.json.gz",
+      "sha256": "441c35c31d7d520794b5464239e11a8bf84f26b986b201e3fbe8ddcfb1de7c2e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "EPSN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4550534e.sample.json.gz",
+      "sha256": "83ccfae298317853306fd15c48c113863f27015086b9c8107575730357ebc33a"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "XNCR",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "584e4352.sample.json.gz",
+      "sha256": "97b55bebfeadad89b9636ef00f7e7e6d096bd6e915816925cf3510d6c1232810"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "SDIV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53444956.sample.json.gz",
+      "sha256": "d2569bcbfc79354644ce111397fec552217a79fa36309298539ad07cf3a4c9ed"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "ICL",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "49434c.sample.json.gz",
+      "sha256": "1b3b1d119ba8b54836671f749f0f5cdba673c18f415582ae1e71f08f9626f1b0"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "PLBY",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "504c4259.sample.json.gz",
+      "sha256": "6c4146183af255a54bf22d1b6e435c72c75251633440ae7cb86e4b138d5290dd"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "ELAB",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "454c4142.sample.json.gz",
+      "sha256": "82bc3d0e8d5cdf029b2e9c6bb8a536466388473a8934f78d1cf55b3198f62301"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "SPT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "535054.sample.json.gz",
+      "sha256": "a79032be8b9bfa6cf1c949983bc765a52753dc6f475d4b329fc688608b9f25f7"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "SANG",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53414e47.sample.json.gz",
+      "sha256": "2de51524a46575135a8ea0fda6db0c0d234e21547611dcf9684efeade16b6015"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-00",
+      "ticker": "RCI",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "524349.sample.json.gz",
+      "sha256": "2ec85fce44fd69c8f8c5ab1209e17b702548e60d9f927cbed67a0e4e03595a9a"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "PRCH",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "50524348.sample.json.gz",
+      "sha256": "c8484945a1805595fe612537f688a8198b3bdd57c225323b9c93c9fe5e08033a"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "RTX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "525458.sample.json.gz",
+      "sha256": "c2bc82df453f128042a0451efcff02539c6142efef0d1f2f9b6d1e31e3ba832c"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "MXCT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d584354.sample.json.gz",
+      "sha256": "ac640232714fcc526755994c6f4c9c88db5709bf17e82aabc77ae0d6cf03d30c"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "WINN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "57494e4e.sample.json.gz",
+      "sha256": "b9434ef7e55bcee1a56652c4ed1e40f2c52c79b14d929281fbc67cdede04e3ac"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "GAUZ",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4741555a.sample.json.gz",
+      "sha256": "2008bf9f51f0ce57bee09423989ea246a0be1e550757b527bed54503ade22b27"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "TE",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5445.sample.json.gz",
+      "sha256": "88992cfde020a4ec0888ddb906664ab9dc7490f36875e92929fd74d1dfc7a693"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "IBRN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4942524e.sample.json.gz",
+      "sha256": "7ea43a392c6a72b40d867656534a526c478942bd280c7ab01b6ebf1984031c0d"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "DFUS",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "44465553.sample.json.gz",
+      "sha256": "c6d0dcefc0b8cd9dd413e22adc1d5e23eb7cc6c9c48c78ef4a2b2a7d56a17f1f"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "TIL",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "54494c.sample.json.gz",
+      "sha256": "8c8549528429c8f8e2c6d37bf9be6a5f5539796743aeca344bad45238cac6ea8"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-01",
+      "ticker": "AIRE",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "41495245.sample.json.gz",
+      "sha256": "3aeb913aaa22537c6be15a1404b466d734620b08d27a121ad6063c54f94fdb3e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "PSP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "505350.sample.json.gz",
+      "sha256": "2c041e12f170995f6fe8ab6ef9fadd15bbfe3c74bea59303edba014aafa04cdb"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "UMAY",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "554d4159.sample.json.gz",
+      "sha256": "6e06843f53eb4bc4567f52b6b63d5edc154254a03b79b3ff0e6b4b443c5e95a6"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "WGO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "57474f.sample.json.gz",
+      "sha256": "f606d22f97e0eb2a9d456d8899988de3bc4beea0fb47e2727c1c7600eb7bada3"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "TUR",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "545552.sample.json.gz",
+      "sha256": "c1d9489f5b659b0c4662de23f67315909ec3d48a3eaf8085dc2c978fb68ac451"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "SWK",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53574b.sample.json.gz",
+      "sha256": "580cdb9a5bef3db59a7d9c224781581c800429f2883a07520f3de423f2f9d8d9"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "LQDW",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4c514457.sample.json.gz",
+      "sha256": "1cc6ae653391ac2487394a0c96dc198bd26253b95b9dbd7d4ac282d2f98d65e9"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "MATV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d415456.sample.json.gz",
+      "sha256": "4aa09239c7b0802ed4393e658847e4c380ca035e9d9f6d599e0777962f48234e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "QETA",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "51455441.sample.json.gz",
+      "sha256": "d97f61511b0b4a94cd5158be65d4adaab1cc7d1406f53b5ab73ec7838559750f"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "BBY",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "424259.sample.json.gz",
+      "sha256": "895a9931bbd6fb029e643e7d69f3598b0cdc88e21a49942280ee7efa4974c133"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-02",
+      "ticker": "ZDAI",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5a444149.sample.json.gz",
+      "sha256": "96be78ad6912ed78a0581a935f76481490b754ac9f2a42af4443db1e55a833f2"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "IJH",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "494a48.sample.json.gz",
+      "sha256": "80d291c0b682c11a65c6c1d1af310491a24dac9afde85f434fa3dcf10c5f2cc7"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "XBJA",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "58424a41.sample.json.gz",
+      "sha256": "1e01857e495df956b1a51e0e1d31aca9ff98276690575b260577290a4b41ad37"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "LEXX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4c455858.sample.json.gz",
+      "sha256": "048e1d6a05eb0b7a221b045611b320b1494ce2cf83c4aff378c215deb62dac14"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "MBIN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d42494e.sample.json.gz",
+      "sha256": "87be595ec93a3082f17994644653c7d6bd16d03656238b4e2d5bccc8dd6934c8"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "BOUT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "424f5554.sample.json.gz",
+      "sha256": "dda41f0f0238aceb52fb0b3d1420ca358675861c9719b2d060b9d866803428e5"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "SUZ",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53555a.sample.json.gz",
+      "sha256": "e8a06bbbf7ac2b75bdfc711ed7f63a5584c1d516ee8a5a43d0f01217bad7a1c0"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "DJUL",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "444a554c.sample.json.gz",
+      "sha256": "ee11ef386e78186ae1c48227b89c409bc3c1bb8b5ab5d1e20c605e8105da8022"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "VRTX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "56525458.sample.json.gz",
+      "sha256": "01b6aaca0721d5660308cfab1c43a8806c02349e26bbf3b768a35ce4433e2159"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "ALAB",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "414c4142.sample.json.gz",
+      "sha256": "1fe88623b2fc3aad7c1b3383c5f478d6e88c7509335f3d3785a60dac57fa09c5"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-03",
+      "ticker": "UNF",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "554e46.sample.json.gz",
+      "sha256": "574557303302ff9ce1b48d537a6349ad3d0ccc87ff20267bc0722689b775e9bb"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "MART",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d415254.sample.json.gz",
+      "sha256": "b1b280b2cf2bcfe3bac1a9318b18f6b36e30e51097c8bd43bb3ce99538f7885c"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "WLTG",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "574c5447.sample.json.gz",
+      "sha256": "5ee29f99ed91e55dd908e213c7463ffc231cf20a178068460845ac1141f78a38"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "ETHU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "45544855.sample.json.gz",
+      "sha256": "312ccf68e6bcc2e796f910073b1ab92e6bee0351a1cad05ffaf6d616f98281ee"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "RYTM",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5259544d.sample.json.gz",
+      "sha256": "d81d372c8f0e5a228a2533d062352857b532582f937135a161ee16615f1d31ae"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "ESPO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4553504f.sample.json.gz",
+      "sha256": "830ff46b56f2b38c04f58f0518c33d16f0af0a203541ce1763d258e298f53c41"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "VREX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "56524558.sample.json.gz",
+      "sha256": "04f8da183519ebbd58bd5922a4e647b499a57bb28d7fe465a0555d02e3a44de3"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "CCCC",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "43434343.sample.json.gz",
+      "sha256": "7898ce89440f7f27351b186b888ecec60054b7cf283c9c910bf51b8dbf8d73f2"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "LOAN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4c4f414e.sample.json.gz",
+      "sha256": "0e653901aba1d5af030676683f89527103e9fda8faef1f39d78e4aff608df188"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "CMP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "434d50.sample.json.gz",
+      "sha256": "8fea03534d3dde465107c26712fc20c02484c8ee98f2d8664b72e9a45a813960"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-04",
+      "ticker": "FUTU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "46555455.sample.json.gz",
+      "sha256": "b5867955e7d893e31e18213a4d6b380999427c8ee4749e462a1803bc3012a0b6"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "JGLO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4a474c4f.sample.json.gz",
+      "sha256": "99d5e599d681e61767b6f4082a057d2b1b16dc001c0a90b3def4feec82a26e1b"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "GDC",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "474443.sample.json.gz",
+      "sha256": "02ff3399dff4cb29bc46dc1d22786c1a43904bdab42495cf3f39156789e63d33"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "OOSP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4f4f5350.sample.json.gz",
+      "sha256": "4c13405e42bd515d5178d16dbdc068bdb8c0fcc751cb920f2b4da6e8942f0a21"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "IHRT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "49485254.sample.json.gz",
+      "sha256": "af75d43d7c28d5c6ead246c1de42ca54d15824fd891c21e44e66a709fb29df76"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "GEM",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "47454d.sample.json.gz",
+      "sha256": "26c1a8e15117dedbbe0a531c87daf77fa946f953f810c7ed20d091f188e19c7c"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "CGRO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4347524f.sample.json.gz",
+      "sha256": "f53ebd8fc11f18c5aaed7d204601b42dad702766d784e42295b9bf3390c432ad"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "GDL",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "47444c.sample.json.gz",
+      "sha256": "4561e05daefe4a35e35d135779272958c06ff889bf3d6f04691002a671f3e03a"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "NZAC",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4e5a4143.sample.json.gz",
+      "sha256": "d63998429335f97c51eefc1028b38213ce8c4db269be0c58bd01c14640e2929b"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "GCV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "474356.sample.json.gz",
+      "sha256": "e7976fc913f010c04dde181530545388629cd9b87e0139b26218ffda0855045e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-05",
+      "ticker": "VTWV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "56545756.sample.json.gz",
+      "sha256": "d66f510eb431c410918bb2c257ac0ebc8e3dfb97be24cccb961535a8fafbe8d8"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "CELU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "43454c55.sample.json.gz",
+      "sha256": "c10256e658969d4be85de3a82e73eb112815115b237960c2b874832aeb2b801b"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "SPEU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53504555.sample.json.gz",
+      "sha256": "f89da4c70eca9b244c7b9180511aa3ac049b8edceb71c8c6552f39ebdb19880b"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "MED",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d4544.sample.json.gz",
+      "sha256": "8f98f983f0b59b4a4412861189d4736ea9ba65ac31416067b655c72d69d68a4c"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "NVCT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4e564354.sample.json.gz",
+      "sha256": "d02d800efc8f9e50b119cfa2ce922bcaf954a9f5038e244b82177aa2676ce65d"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "IMCC",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "494d4343.sample.json.gz",
+      "sha256": "519f671aff6e2cad0202013e483575663b719e848716288f33c850cd9c39f36d"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "QUIK",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5155494b.sample.json.gz",
+      "sha256": "3f4398e95049959dc1f331d1b6642fbcf2017fe33b8ea441630be860fc6cf53e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "INTU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "494e5455.sample.json.gz",
+      "sha256": "107c7194c195323eac66225e152a0087eae9299c5265cdd8ecdc9158ea25a62e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "AMBP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "414d4250.sample.json.gz",
+      "sha256": "70a243f9646ee5487ab2fbb53f656e46c6ee0028ae3eb1b7df3e5b76a94d2236"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "STOK",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53544f4b.sample.json.gz",
+      "sha256": "aeef5768f4bc580e44893bc25161e2e489b30347b19f4266cac7b070be017a46"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-06",
+      "ticker": "HTCO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4854434f.sample.json.gz",
+      "sha256": "8feef2587139ccbfa9bae4d4db37c4a409a54422b0e36d4c77fb53bfb27bcf15"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "CKX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "434b58.sample.json.gz",
+      "sha256": "55c5fc419db5989e213607565efb652e3ccd4263831b9e775419ffac7e51cb7d"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "IBTI",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "49425449.sample.json.gz",
+      "sha256": "3603400f4f9fb0ccfe1604a0ba7ed2bcce21bde98d67f24f96217c6b14bcc5ad"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "ENOV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "454e4f56.sample.json.gz",
+      "sha256": "346b792eedf1e91b676dbea798cc0faea55780d013aab9a0954ef2e1e6ae92bb"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "INCY",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "494e4359.sample.json.gz",
+      "sha256": "9fbd26c3840bfaada62b077e478360fab402d6bfc099da1f14805f2d7ef38733"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "SSTI",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53535449.sample.json.gz",
+      "sha256": "a788b7131cd88a0b216b74ca579dc367525569a7c19bf93b5ae9f1d4a24394cd"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "HLN",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "484c4e.sample.json.gz",
+      "sha256": "44c5daec86b583cb21e1511fe1b7bbce411e8f128e9a294551bf1f3e27ea9544"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "JUNZ",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4a554e5a.sample.json.gz",
+      "sha256": "6e2004e9e45368ff2ab1c8f5bea81f63d6b8157f0c62804a73e0fc43460e823f"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "UPW",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "555057.sample.json.gz",
+      "sha256": "5cb97ad3e5f4c6257eed294a18ac546b94f98ec15cc24ce00fc4bff5e81aad1a"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "EVLU",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "45564c55.sample.json.gz",
+      "sha256": "0189744bd56ba051ebb1cc9d1a829d7be3c0e2c644a2cd569fc8507aad2a9749"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-07",
+      "ticker": "RPM",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "52504d.sample.json.gz",
+      "sha256": "da363a189d1bd31bce53e6c0ac19d6f24f5aace0a34382cae2784e05872076c4"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "IWB",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "495742.sample.json.gz",
+      "sha256": "c0627b5fb1c486c178ec25d48dbb2aeeba3c69f39a3baeb6051cf7a363ff0ee6"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "JCSE",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4a435345.sample.json.gz",
+      "sha256": "464b6e53ad70bfc09612d2e0b79ee80c84ec95901006d9da5a3a74df3778a8b7"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "MGV",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4d4756.sample.json.gz",
+      "sha256": "717a620b0ea8372d5fca98372cc3c5bd9c8b65140d9cf9401d122ecda19913de"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "ZECP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5a454350.sample.json.gz",
+      "sha256": "3e93c1ec29c59b52be24629874a6577a855c3c58cd88c71b97ece769f089cd68"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "CAT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "434154.sample.json.gz",
+      "sha256": "25345e4912cc2e6ebcfdc6cd8f937f78bc36f35f3c2da3d2a512896837f821b9"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "TBT",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "544254.sample.json.gz",
+      "sha256": "b318ade6fe86621b7f758c81232195d3f2e7d2fed453f78bf8664ea3b8309511"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "RSPH",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "52535048.sample.json.gz",
+      "sha256": "b318662dade5f9a8a4e979a095228db6eb5b25d22a197aea90890a44b01d09dc"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "DELL",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "44454c4c.sample.json.gz",
+      "sha256": "b912e791d8eb3fc398453dca2f70a688c5f0b00faa5985c620646367d5f4b47b"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "UVSP",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "55565350.sample.json.gz",
+      "sha256": "be6eea2789b5e72d4f4bd151a9c06be10718a0dce871046a82c440d495acbe87"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-08",
+      "ticker": "SEED",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53454544.sample.json.gz",
+      "sha256": "c1a15a2bbd62c6af7ceb7eacf942b8cc6bf67981409d5ed3735f82e5db9e9298"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "PCG",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "504347.sample.json.gz",
+      "sha256": "b5c4795ff3732d3e90084a856ba5f72a6fae5079f5ca7d04d484ba50a4b1ffa9"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "SECR",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "53454352.sample.json.gz",
+      "sha256": "64cf8dae25645752b5da85534da64e2539cfe6a3a8648f21aeb74634cc30432f"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "QETH",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "51455448.sample.json.gz",
+      "sha256": "b62c83545c811dea75bb02fc4c87a24f0475e91c7a75342ce29abb00332299c5"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "PG",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "5047.sample.json.gz",
+      "sha256": "641937113c7b891837d7d96d93ff5e1575b4ba32081d36c8135f18ab88abd1b8"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "PRVA",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "50525641.sample.json.gz",
+      "sha256": "4986c51443413ae6b739cefbeba988761ff2a1918e0d7cf2c2f04fd137d3942e"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "CLLS",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "434c4c53.sample.json.gz",
+      "sha256": "b33299612a0a42a6e78a5bd0fc831c0dc665915fd493106f383357dce2204ac8"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "AZI",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "415a49.sample.json.gz",
+      "sha256": "a865fb7a725466b7bb30e8f4ab5fc62688417de0e06bf647adc33a74c6b29436"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "LPX",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4c5058.sample.json.gz",
+      "sha256": "3e4fe019f69d147b0b5c1d9bf837866ab9062353a552ca957c04a15cd3e80c58"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "DECO",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "4445434f.sample.json.gz",
+      "sha256": "58aca3c23ed3db740256ada219192fafe57bfda0655836c9f46ffcae0bd83406"
+    },
+    {
+      "release": "price-v1-sample-41075612310-1-09",
+      "ticker": "HPS",
+      "status": "PASS_SAMPLE_ONLY",
+      "asset": "485053.sample.json.gz",
+      "sha256": "22d8a86761ac92515065e5eb972e3a9f6d1981515c8550bb076bdc84d5c0fda6"
+    }
+  ],
+  "coverage_rows": 22968,
+  "zero_nonblank_field_timeframes": [
+    {
+      "timeframe": "16d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "17d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "18d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "19d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "20d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "21d",
+      "field": "TEMA200"
+    },
+    {
+      "timeframe": "monthly",
+      "field": "TEMA200"
+    }
+  ],
+  "coverage_sha256": "a50f545b9df65ff9aaa0e5e37468b3a021c3dc1bd48fecc29136b2fc045df2b0"
+}
