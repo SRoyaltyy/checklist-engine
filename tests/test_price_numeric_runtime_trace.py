@@ -32,11 +32,13 @@ def test_fresh_worker_loads_bound_math_and_emits_exact_profile_and_prefix_eviden
     bars_file=tmp_path/'bars.parquet';calendar=tmp_path/'calendar.parquet';bars.to_parquet(bars_file,index=False)
     pd.DataFrame(dict(date=dates)).to_parquet(calendar,index=False)
     config=dict(bars=str(bars_file),bars_sha256=sha(bars_file.read_bytes()),calendar=str(calendar),calendar_sha256=sha(calendar.read_bytes()),
-        stock=dict(ticker='SYN',query_rows=320,selectors=[dict(question_id='RETURN_SKEW20:rising1__1d',query_row=217,old_code=1,replay_code=2,
-            row_keys_sha256=sha(b'SYN'+dates.asi8.tobytes()))]),profile='synthetic',prefix_checks=True)
+        stock=dict(ticker='SYN',query_rows=320,selectors=[dict(question_id=q,query_row=217,old_code=1,replay_code=2,
+            row_keys_sha256=sha(b'SYN'+dates.asi8.tobytes())) for q in ('RETURN_SKEW20:rising1__1d','I070_default_per_candle_sigma:rising1__1d')]),profile='synthetic',prefix_checks=True)
     root=tmp_path/'worker';root.mkdir();(root/'WORKER.json').write_text(json.dumps(config),encoding='utf-8')
     subprocess.run([sys.executable,'-m','ci.price_numeric_runtime_trace','worker','--directory',str(root),'--recipe',str(recipe)],check=True,timeout=60)
     result=json.loads((root/'TRACE.json').read_text(encoding='utf-8'))
-    assert result['selectors'][0]['status']=='TRACED'
+    assert all(s['status']=='TRACED' for s in result['selectors'])
     assert len(result['prefix_checks'])==2 and result['observed_log_calls']
     assert result['runtime']['numpy']==np.__version__ and result['scoring_gate']=='CLOSED'
+    assert result['runtime']['active_ufunc_dispatch']['log']
+    assert result['I070_parameter_selection'].startswith('ALL_FROZEN_I070_SETTINGS')
