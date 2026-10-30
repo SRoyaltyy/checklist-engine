@@ -1,0 +1,41 @@
+{
+  "status": "PASS_HASH_AUTHENTICATED_CURRENT_GUARDED_FULL_SOURCE_PLAN",
+  "run": 41058023781,
+  "producer": "69854fa0f1b844239b5d9dd4a5a7b3f977953572",
+  "release": "compact-world-build-v1-41058023781-1-inputs",
+  "plan_sha256": "92a327dd424589bf8a7e1b748feac5fecd6475b73bbd893b191ced93e6a9f18a",
+  "input_tickers": 8447,
+  "original_parts_preserved": 173,
+  "incremental_tickers": 131,
+  "prior_timeout_dispositions": [
+    {
+      "ticker": "ABVC",
+      "prior_reason": "STOCK_TIMEOUT",
+      "disposition": "GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER"
+    },
+    {
+      "ticker": "EQLT",
+      "prior_reason": "STOCK_TIMEOUT",
+      "disposition": "GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER"
+    },
+    {
+      "ticker": "NXTS",
+      "prior_reason": "STOCK_TIMEOUT",
+      "disposition": "GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER"
+    },
+    {
+      "ticker": "SU",
+      "prior_reason": "STOCK_TIMEOUT",
+      "disposition": "GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER"
+    },
+    {
+      "ticker": "WKSP",
+      "prior_reason": "STOCK_TIMEOUT",
+      "disposition": "GUARDED_RECIPE_RETRY_WITH_BOUNDED_WORKER"
+    }
+  ],
+  "source_parts": 176,
+  "raw_dependency_bytes": 3865911091,
+  "recipe_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "scoring_gate": "CLOSED"
+}
