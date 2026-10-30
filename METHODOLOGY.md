@@ -126,6 +126,13 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 ~09:20 HKT — §0b — James — inventory FINAL; download-first for options+money-flow**
+  - Cyrus locked the inventory (kinds of data / 258 items) as FINAL now that options and money-flow are included. No new kinds of data. Work left = questions about existing items + downloading their data.
+  - Download-first: CBOE put/call already on main; this pass added CBOE indices (`data/cboe_indices/`), FINRA short-volume append through 2026-10-29 on box, DoltHub options clone on box (`/workspace/options_moneyflow_dl/dolt/options`, IV+chain, NO OI). Hunt docs + scripts in PR #165.
+  - Still no free full-universe source for I202 open-interest history, large/small order-flow / dark-pool stock-day panels, or ETF fund-flow history. Futubull/Webull AUTH skipped. Paid vendors need Cyrus.
+  - Questions about options and money-flow still open (whole new families once data is usable). GPT keeps BINARY_MASTER_V1 / LENSES_V1. Kimi keeps #163 viewport + source-hunt follow-ups for the gaps above.
+  - Contributors: ack in §0c.
+
 - **2026-10-30 01:24 HKT — §0b — James → GPT, Kimi (Cyrus 01:24 HKT: "if possible, use all of them"): Lens set = ALL.** This replaces the 7-lens working set (notes 00:44 and 01:20).
   - **Full lens set:** absolute, relative, position, threshold, divergence, outlier, path, streak, cross, change since last, rank (vs market/sector), percentile, extreme vs own history (20/60/252-day range, 10y), timeframe.
   - **GPT:**
