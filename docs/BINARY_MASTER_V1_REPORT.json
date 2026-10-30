@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 143,
-  "bound_unique_binary_definitions": 1893,
-  "bound_source_aliases": 1893,
+  "bound_source_questions": 227,
+  "bound_unique_binary_definitions": 2355,
+  "bound_source_aliases": 2670,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -280,17 +280,21 @@
   ],
   "batch1_bound_facets": [
     "down_vs_up_moves",
+    "gap_down",
+    "gap_up",
+    "inside_outside",
     "last_green_vs_red",
     "red_green_balance",
+    "run_biggest_move",
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 989,
-  "unbound_oat_variants": 154036,
+  "unbound_family_variant_count": 985,
+  "unbound_oat_variants": 153805,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 4573,
-  "csv_sha256": "85430a77491b84984d025729dbdbe1263c207c933fb98bab0396fc83dd58cc13",
+  "master_total_rows": 5035,
+  "csv_sha256": "455851b98d92da92a1386076e4c7d6991f1e2027f1c9352c6feaa4a13b02bea9",
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
@@ -298,8 +302,8 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "f7c72d33cb902262e6fcf4359f00d7b59039298436104c42f4e6890fd7dc2a82",
-    "ci/binary_master_build.py": "3cf0af44b417d9b194ccc237ef37e068d2c1f668d9248a51ae5b6f73a415eca4"
+    "world_binary_master.py": "fad576e2257a4262d32ff246ca38f0cf1ccec439151d3c1f926b696063e9e3e0",
+    "ci/binary_master_build.py": "b251aabf5b267d56583e4332f5388674b7351369369f2e08a4eaa7bd49022d12"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",

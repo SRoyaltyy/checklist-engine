@@ -32,21 +32,28 @@ def test_batch1_facets_have_exactly_one_registered_cutoff(grid):
                              and q.split('|')[1] == 'candles')]
         assert row['L4_analysis'] == facet
         tags = [t for t in grid.questions[row['question_id']]['default_tags'].split(';') if t]
-        assert [t.split('=')[0] for t in tags] == [spec['cutoff_id']]
+        if spec['cutoff_id'] is None:
+            # bool3 facets (gap fates) register no cutoff dial
+            assert tags == []
+        else:
+            assert [t.split('=')[0] for t in tags] == [spec['cutoff_id']]
 
 
 def test_bind_default_and_changed_variants(grid):
     for facet in FACETS:
         row, variant = _first_variant(grid, facet)
         defs = bind_master_question(row, variant)
-        assert len(defs) == 3
+        assert len(defs) == len(FACETS[facet]['outcomes'])
         for d in defs:
             assert d['question_id'].startswith('BM1-')
             assert d['definition_status'] == 'BOUND'
             literal_threshold(d['comparison_threshold'])
-        # changed variant (second variant yielded) must differ in threshold
-        _, changed = None, None
+        # changed variant (second variant yielded) must differ in threshold;
+        # bool3 facets (gap fates) have no cutoff dial -> only the default variant
         variants = list(grid.variants(row['question_id']))
+        if len(variants) < 2:
+            assert FACETS[facet]['cutoff_id'] is None
+            continue
         changed = variants[1]
         defs2 = bind_master_question(row, changed)
         assert {d['comparison_threshold'] for d in defs} != {d['comparison_threshold'] for d in defs2}
@@ -162,10 +169,132 @@ def test_master_falls_back_to_gpt_binders(grid):
 
 
 def test_unbound_family_raises(grid):
-    row = grid.tree['B|candles|OHLC|gap_up|1x3']
+    # overnight_vs_intraday has no registered share cutoff (gap_driven vs mixed
+    # boundary undefined) -> honestly unbound until the dials register one.
+    row = grid.tree['B|candles|OHLC|overnight_vs_intraday|1x3']
     variant = next(grid.variants(row['question_id']))
     with pytest.raises(NotImplementedError):
         bind_master_question(row, variant)
+
+
+def _q(grid, qid):
+    return grid.tree[qid], next(grid.variants(qid))
+
+
+def _by_outcome(defs):
+    return {d['source_outcome']: d for d in defs}
+
+
+def test_bind_batch2_variants(grid):
+    for facet, qid, n_outcomes in (('gap_up', 'B|candles|OHLC|gap_up|1x3', 3),
+                                   ('gap_down', 'B|candles|OHLC|gap_down|1x3', 3),
+                                   ('inside_outside', 'B|candles|OHLC|inside_outside|1x3', 4),
+                                   ('run_biggest_move', 'B|candles|OHLC|run_biggest_move|1x20', 3)):
+        row, variant = _q(grid, qid)
+        defs = bind_master_question(row, variant)
+        assert len(defs) == n_outcomes
+        for d in defs:
+            assert d['feature_kind'] in ('boolean', 'integer_count', 'continuous')
+            literal_threshold(d['comparison_threshold'])
+    # bool3 facets take no cutoff; mixed/band take exactly their registered one
+    _, gv = _q(grid, 'B|candles|OHLC|gap_up|1x3')
+    assert dict(gv.settings) == {}
+    _, iv = _q(grid, 'B|candles|OHLC|inside_outside|1x3')
+    assert set(dict(iv.settings)) == {'C019_inside_outside__scalar2'}
+
+
+def _bars_hl(spec, slot0=100):
+    """spec: list of (open, high, low, close)."""
+    bars = {}
+    for i, (o, h, l, c) in enumerate(spec):
+        end = date(2024, 3, 1) + timedelta(days=i)
+        bars[slot0 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
+                                    open=float(o), high=float(h), low=float(l), close=float(c))
+    return bars
+
+
+def test_evaluate_gap_up_fate(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|gap_up|1x3')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 8)
+    last = 103
+    # bars 1..3 = window; no gap (each open inside prior range)
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (11, 12, 10.5, 11.5),
+                     (11.5, 12.5, 11, 12)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['open'], bars, setup, last).answer == 'NO'
+    # gap up at window bar 2 (open 13 > prior high 11.5), never trades back -> open
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (13, 14, 12.5, 13.5),
+                     (13.5, 14.5, 13, 14)])
+    assert evaluate_master(defs['open'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['filled'], bars, setup, last).answer == 'NO'
+    # gap up then a later low back at/below the pre-gap high -> filled
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (13, 14, 12.5, 13.5),
+                     (13, 13.2, 11.0, 11.5)])
+    assert evaluate_master(defs['filled'], bars, setup, last).answer == 'YES'
+    # insufficient bars (need 4) -> all NOT_EVALUABLE
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (11, 12, 10.5, 11.5)])
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_gap_down_fate(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|gap_down|1x3')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 8)
+    last = 103
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (11, 12, 10.5, 11.5),
+                     (11.5, 12.5, 11, 12)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    # gap down at bar 2 (open 8 < prior low 10), later high back >= prior low -> filled
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (8, 9.5, 7.5, 9),
+                     (9, 10.5, 8.8, 10.2)])
+    assert evaluate_master(defs['filled'], bars, setup, last).answer == 'YES'
+    # gap down staying down -> open
+    bars = _bars_hl([(10, 11, 9, 10.5), (10.5, 11.5, 10, 11), (8, 9.5, 7.5, 9),
+                     (9, 9.6, 8.6, 9.2)])
+    assert evaluate_master(defs['open'], bars, setup, last).answer == 'YES'
+
+
+def test_evaluate_inside_outside(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|inside_outside|1x3')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 8)
+    last = 103
+    # bar2 inside bar1 (h/l within), bar3 inside bar2 -> max inside run 2
+    bars = _bars_hl([(10, 12, 9, 11), (10.5, 11.5, 9.5, 11), (10.6, 11.4, 9.6, 10.8),
+                     (10.7, 11.3, 9.7, 10.9)])
+    assert evaluate_master(defs['inside_cluster_ge'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # strict majority outside: make 2 of 3 window bars outside
+    bars = _bars_hl([(10, 12, 9, 11), (13, 14, 8, 9.5), (10.5, 11.5, 9.5, 11),
+                     (13, 14, 8, 9.5)])
+    assert evaluate_master(defs['mostly_outside'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['inside_cluster_ge'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_run_biggest_move(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|run_biggest_move|1x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 21   # lookback 20 + 1 prior
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # tiny ranges (ATR ~0.3) then one big body run: 3 green bars of body ~3
+    spec = [(10 + i * 0.05, 10.2 + i * 0.05, 9.9 + i * 0.05, 10.1 + i * 0.05)
+            for i in range(span - 4)]
+    base = 10.1 + (span - 5) * 0.05
+    spec += [(base, base + 3.2, base - 0.1, base + 3.0),
+             (base + 3.0, base + 6.2, base + 2.9, base + 6.0),
+             (base + 6.0, base + 9.2, base + 5.9, base + 9.0),
+             (base + 9.0, base + 9.3, base + 8.9, base + 9.2)]
+    bars = _bars_hl(spec)
+    assert evaluate_master(defs['big'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['normal'], bars, setup, last).answer == 'NO'
+    # all doji -> NOT_EVALUABLE (no run)
+    spec = [(10, 10.1, 9.9, 10)] * span
+    bars = _bars_hl(spec)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
 
 
 def _stage_root(tmp_path):

@@ -33,7 +33,7 @@ def test_daily_adapter_matches_existing_fixed_calendar_resampler(days):
 
 def probe(recipe='native_body_colour_balance_v1',days=3,lookback=1):
     return dict(feature=dict(recipe=recipe,transform='identity',candle_days=days,lookback=lookback),
-                comparator='>',comparison_threshold='1')
+                comparator='>',comparison_threshold='1',feature_kind='continuous')
 
 
 @pytest.mark.parametrize('field',['open','high','low','close'])
