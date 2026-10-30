@@ -1,0 +1,15 @@
+{
+  "format": "PRICE_V1_SCOPE_V1",
+  "authority_commit": "0b57c0939e56c1611874e01b45f98cf2cd994aee",
+  "registry_sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+  "deferred_fields_reason": "DEFERRED_V2_FIELD",
+  "deferred_fields": ["cp_mid_slope_up", "cp_gr_body20", "cp_pctB", "cp_dip_atr", "cp_days_since_h20", "cp_dd_vs_run", "cp_redgreen_vol10", "cp_hard_all", "lower_highs10"],
+  "deferred_families": ["earnings", "Form 4", "13F", "analyst", "XBRL", "shares/size beyond existing mask", "FINRA", "halts", "Reg SHO", "options", "macro calendar", "IPO age", "FRED"],
+  "downstream_stages": "Phases 3 through 11; not row-0 prerequisites",
+  "sample_size": 100,
+  "sample_seed": "price-v1-owner-0b57c09-sample100-v1",
+  "prefix_cuts": ["2023-01-03", "2025-01-02"],
+  "sample_rule": "First100 distinct retained tickers sorted by SHA256(seed + literal ticker), ties by literal ticker; selected before calculation.",
+  "comparison": "All produced price columns, every22 native timeframe, both cuts; exact float64 bits with missing distinct; no epsilon.",
+  "scope": "Price-only row-0 sample gate. A PASS authorizes rebuild handoff, not full-world/P4, canonical answers or probability claims."
+}

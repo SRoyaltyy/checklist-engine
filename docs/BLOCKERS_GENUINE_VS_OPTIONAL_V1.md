@@ -1,6 +1,6 @@
 # Genuine vs optional blockers V1
 
-Authority: Cyrus ruling91a593a,2026-10-30 22:05 HKT. The8 replay-discrepancy names are OPTIONAL once the exclusion is enforced. No epsilon or edited bits.
+Latest authority: James0b57c09,2026-10-30 22:40 HKT, applying Cyrus91a593a. Price-v1 is price-only; non-price families and shares/size beyond the existing mask are DEFERRED_V2, and Phases3–11 are downstream. Full-project requirements below retain their applicable-stage meaning and do not gate row0. The8 replay-discrepancy names are OPTIONAL once the exclusion is enforced. No epsilon or edited bits.
 
 The v1 build/eligibility policy removes8/8727 names(0.09167%) and13520/12560808 raw-source stock-days(0.10764%). It retains8439 names(96.69990% of the original universe),12547288 source stock-days and every131 added source name. The280 prior raw-source exclusions remain separately identified.
 
@@ -10,13 +10,13 @@ The v1 build/eligibility policy removes8/8727 names(0.09167%) and13520/12560808 
 |---|---|---|---|
 |166 replay flips / eight named stocks|OPTIONAL|8/8727 names=0.09167%;13520/12560808 source stock-days=0.10764%|EXCLUDED_REPLAY_MISMATCH in dictionary/REPLAY_QUARANTINE_V1.json and docs/WORLD_V1_ELIGIBILITY_LEDGER_V1.csv; background diagnosis does not block.|
 |280 prior raw-source exclusions|OPTIONAL|280/8727 names=3.20843%; stock-day denominator unavailable for names without raw history|Existing published source reasons retained; combined v1 retained-name coverage remains96.69990%.|
-|Nine pinned cp/lower_highs price fields absent from the produced registry|GENUINE|100% of remaining8439 names lack these produced fields|Actual1044-field diagnostic registry and ROW0_PRICE_WORLD_GATE_V1.json; this is common field coverage, not a small set of bad names.|
-|Complete measured native price-world coverage|GENUINE|100% of v1 cohort is in proof scope; actual failure fraction UNMEASURED|Complete native numeric world artifact/measurement has not been supplied; do not infer coverage from question IDs or asset hashes.|
-|Comprehensive price prefix/PIT proof|GENUINE|100% of v1 cohort is in required proof scope; actual leak fraction UNMEASURED|The ten-stock statistic prefix probes passed but do not cover every price column/question/cut. Missing full proof is not a claim that every row leaks.|
-|Historical tradeable / nominal >=$100M mask|GENUINE|100% of v1 cohort is in required eligibility scope; actual affected fraction UNMEASURED|Raw nominal price/share publication lineage and full day-D mask are not proved. Non-quarantine alone never means PIT-eligible.|
+|Nine pinned cp/lower_highs fields|OPTIONAL for v1; required v2|100% of remaining8439 names lack these9 fields;9/1053 requested fields=0.85470%|Explicit DEFERRED_V2_FIELD under0b57c09; exact field list in dictionary/PRICE_V1_SCOPE_V1.json. Immutable produced1044-field registry unchanged.|
+|Price-field coverage sample|GENUINE for row0 measurement|100 predeclared random names/all1044 produced fields/all22 native timeframes; actual failure fraction pending measurement|ci.price_v1_sample_gate publishes actual nonblank counts/dates. Unsampled remainder is UNMEASURED, not an extra row0 blocker under0b57c09.|
+|Price prefix/PIT sample|GENUINE for row0 measurement|100 names/all price columns/22 timeframes/two cuts; full-cohort fraction UNMEASURED|Observed prefix failures block; an unmeasured full-cohort remainder does not block this owner-scoped row0. Comprehensive P4 remains a later assurance claim.|
+|Shares/size beyond the existing mask|OPTIONAL for price-v1; required v2|Actual affected fraction UNMEASURED|Explicitly deferred by0b57c09; existing mask semantics unchanged. Quarantine alone never means eligible and does not authorize an all-true mask.|
 |Complete binary master / v1 answers and lens coverage|GENUINE for answer/mining stage|59/15093 source questions currently bound; stock-day answer coverage UNMEASURED|633 definitions are not a completed master/answer layer. This downstream work is not a new raw-build prerequisite.|
 
-Known optional exclusions are removed before v1 work. A future producer cannot count an excluded stock as NO. Unmeasured exposure cannot honestly be labeled <5%; it remains unverified at its applicable stage until measured. Percentages above use the named denominator, rather than interchanging names, rows, columns and questions.
+Known optional exclusions are removed before v1 work. Non-price families and future phases are not row0 blockers; the current scope is recorded in docs/PRICE_V1_SAMPLE_GATE_V1.md. A future producer cannot count an excluded stock as NO. Unmeasured exposure cannot honestly be labeled <5%; it remains unverified at its applicable stage until measured. Percentages above use the named denominator, rather than interchanging names, rows, columns and questions.
 
 ## Every open project-checklist item
 
@@ -66,79 +66,79 @@ The affected-universe percentage is UNMEASURED where the repository has no full-
 |1.53|GENUINE|Phase 1 — World rebuild / Theme peers|Theme peers: joined point-in-time|UNMEASURED|
 |1.54|GENUINE|Phase 1 — World rebuild / Theme peers|Theme peers: built at candle sizes 1 through 21|UNMEASURED|
 |1.55|GENUINE|Phase 1 — World rebuild / Theme peers|Theme peers: column count and fill rate measured|UNMEASURED|
-|1.56|GENUINE|Phase 1 — World rebuild / Earnings|Earnings: source located. Items: I184 date and timing, I185 surprise, I186 gap reaction and drift|UNMEASURED|
-|1.57|GENUINE|Phase 1 — World rebuild / Earnings|Earnings: fetched onto a checklist-engine release|UNMEASURED|
-|1.58|GENUINE|Phase 1 — World rebuild / Earnings|Earnings: joined point-in-time|UNMEASURED|
-|1.59|GENUINE|Phase 1 — World rebuild / Earnings|Earnings: built at candle sizes 1 through 21|UNMEASURED|
-|1.60|GENUINE|Phase 1 — World rebuild / Earnings|Earnings: column count and fill rate measured|UNMEASURED|
-|1.61|GENUINE|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: source located. Items: I187|UNMEASURED|
-|1.62|GENUINE|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: fetched onto a checklist-engine release|UNMEASURED|
-|1.63|GENUINE|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: joined point-in-time|UNMEASURED|
-|1.64|GENUINE|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: built at candle sizes 1 through 21|UNMEASURED|
-|1.65|GENUINE|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: column count and fill rate measured|UNMEASURED|
-|1.66|GENUINE|Phase 1 — World rebuild / 13F holdings|13F holdings: source located. Items: I199|UNMEASURED|
-|1.67|GENUINE|Phase 1 — World rebuild / 13F holdings|13F holdings: fetched onto a checklist-engine release|UNMEASURED|
-|1.68|GENUINE|Phase 1 — World rebuild / 13F holdings|13F holdings: joined point-in-time|UNMEASURED|
-|1.69|GENUINE|Phase 1 — World rebuild / 13F holdings|13F holdings: built at candle sizes 1 through 21|UNMEASURED|
-|1.70|GENUINE|Phase 1 — World rebuild / 13F holdings|13F holdings: column count and fill rate measured|UNMEASURED|
-|1.71|GENUINE|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: source located. Items: I197|UNMEASURED|
-|1.72|GENUINE|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: fetched onto a checklist-engine release|UNMEASURED|
-|1.73|GENUINE|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: joined point-in-time|UNMEASURED|
-|1.74|GENUINE|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: built at candle sizes 1 through 21|UNMEASURED|
-|1.75|GENUINE|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: column count and fill rate measured|UNMEASURED|
-|1.76|GENUINE|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: source located. Items: I192 SEC fundamentals and I194 Altman Z, Piotroski F, and Beneish M|UNMEASURED|
-|1.77|GENUINE|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: fetched onto a checklist-engine release|UNMEASURED|
-|1.78|GENUINE|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: joined point-in-time|UNMEASURED|
-|1.79|GENUINE|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: built at candle sizes 1 through 21|UNMEASURED|
-|1.80|GENUINE|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: column count and fill rate measured|UNMEASURED|
-|1.81|GENUINE|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: source located. Items: I193, plus the raw D−1 close used for price-level tests and the $100M market-cap cutoff|UNMEASURED|
-|1.82|GENUINE|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: fetched onto a checklist-engine release|UNMEASURED|
-|1.83|GENUINE|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: joined point-in-time|UNMEASURED|
-|1.84|GENUINE|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: built at candle sizes 1 through 21|UNMEASURED|
-|1.85|GENUINE|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: column count and fill rate measured|UNMEASURED|
+|1.56|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings|Earnings: source located. Items: I184 date and timing, I185 surprise, I186 gap reaction and drift|UNMEASURED|
+|1.57|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings|Earnings: fetched onto a checklist-engine release|UNMEASURED|
+|1.58|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings|Earnings: joined point-in-time|UNMEASURED|
+|1.59|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings|Earnings: built at candle sizes 1 through 21|UNMEASURED|
+|1.60|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings|Earnings: column count and fill rate measured|UNMEASURED|
+|1.61|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: source located. Items: I187|UNMEASURED|
+|1.62|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: fetched onto a checklist-engine release|UNMEASURED|
+|1.63|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: joined point-in-time|UNMEASURED|
+|1.64|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: built at candle sizes 1 through 21|UNMEASURED|
+|1.65|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Form 4 insider trades|Form 4 insider trades: column count and fill rate measured|UNMEASURED|
+|1.66|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / 13F holdings|13F holdings: source located. Items: I199|UNMEASURED|
+|1.67|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / 13F holdings|13F holdings: fetched onto a checklist-engine release|UNMEASURED|
+|1.68|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / 13F holdings|13F holdings: joined point-in-time|UNMEASURED|
+|1.69|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / 13F holdings|13F holdings: built at candle sizes 1 through 21|UNMEASURED|
+|1.70|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / 13F holdings|13F holdings: column count and fill rate measured|UNMEASURED|
+|1.71|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: source located. Items: I197|UNMEASURED|
+|1.72|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: fetched onto a checklist-engine release|UNMEASURED|
+|1.73|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: joined point-in-time|UNMEASURED|
+|1.74|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: built at candle sizes 1 through 21|UNMEASURED|
+|1.75|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Analyst ratings and targets|Analyst ratings and targets: column count and fill rate measured|UNMEASURED|
+|1.76|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: source located. Items: I192 SEC fundamentals and I194 Altman Z, Piotroski F, and Beneish M|UNMEASURED|
+|1.77|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: fetched onto a checklist-engine release|UNMEASURED|
+|1.78|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: joined point-in-time|UNMEASURED|
+|1.79|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: built at candle sizes 1 through 21|UNMEASURED|
+|1.80|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL companyfacts, every filing version|XBRL companyfacts, every filing version: column count and fill rate measured|UNMEASURED|
+|1.81|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: source located. Items: I193, plus the raw D−1 close used for price-level tests and the $100M market-cap cutoff|UNMEASURED|
+|1.82|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: fetched onto a checklist-engine release|UNMEASURED|
+|1.83|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: joined point-in-time|UNMEASURED|
+|1.84|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: built at candle sizes 1 through 21|UNMEASURED|
+|1.85|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Shares outstanding, float, and the size filter|Shares outstanding, float, and the size filter: column count and fill rate measured|UNMEASURED|
 |1.86|OPTIONAL|Phase 1 — World rebuild / GDELT news counts and tone|GDELT news counts and tone: source located. Items: I200|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.87|OPTIONAL|Phase 1 — World rebuild / GDELT news counts and tone|GDELT news counts and tone: fetched onto a checklist-engine release|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.88|OPTIONAL|Phase 1 — World rebuild / GDELT news counts and tone|GDELT news counts and tone: joined point-in-time|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.89|OPTIONAL|Phase 1 — World rebuild / GDELT news counts and tone|GDELT news counts and tone: built at candle sizes 1 through 21|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.90|OPTIONAL|Phase 1 — World rebuild / GDELT news counts and tone|GDELT news counts and tone: column count and fill rate measured|0% historical-v1 impact; owner-dropped news/live-only scope|
-|1.93|GENUINE|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: joined point-in-time|UNMEASURED|
-|1.94|GENUINE|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: built at candle sizes 1 through 21|UNMEASURED|
-|1.95|GENUINE|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: column count and fill rate measured|UNMEASURED|
+|1.93|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: joined point-in-time|UNMEASURED|
+|1.94|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: built at candle sizes 1 through 21|UNMEASURED|
+|1.95|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FRED and ALFRED macro|FRED and ALFRED macro: column count and fill rate measured|UNMEASURED|
 |1.96|OPTIONAL|Phase 1 — World rebuild / Finviz snapshot, live only|Finviz snapshot, live only: source located. Items: I198, block P|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.97|OPTIONAL|Phase 1 — World rebuild / Finviz snapshot, live only|Finviz snapshot, live only: fetched onto a checklist-engine release|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.98|OPTIONAL|Phase 1 — World rebuild / Finviz snapshot, live only|Finviz snapshot, live only: joined point-in-time|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.99|OPTIONAL|Phase 1 — World rebuild / Finviz snapshot, live only|Finviz snapshot, live only: built at candle sizes 1 through 21|0% historical-v1 impact; owner-dropped news/live-only scope|
 |1.100|OPTIONAL|Phase 1 — World rebuild / Finviz snapshot, live only|Finviz snapshot, live only: column count and fill rate measured|0% historical-v1 impact; owner-dropped news/live-only scope|
-|1.101|GENUINE|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: source located. Items: I188 and I189|UNMEASURED|
-|1.102|GENUINE|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: fetched onto a checklist-engine release|UNMEASURED|
-|1.103|GENUINE|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: joined point-in-time|UNMEASURED|
-|1.104|GENUINE|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: built at candle sizes 1 through 21|UNMEASURED|
-|1.105|GENUINE|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: column count and fill rate measured|UNMEASURED|
-|1.106|GENUINE|Phase 1 — World rebuild / Trading halts|Trading halts: source located. Items: I191|UNMEASURED|
-|1.107|GENUINE|Phase 1 — World rebuild / Trading halts|Trading halts: fetched onto a checklist-engine release|UNMEASURED|
-|1.108|GENUINE|Phase 1 — World rebuild / Trading halts|Trading halts: joined point-in-time|UNMEASURED|
-|1.109|GENUINE|Phase 1 — World rebuild / Trading halts|Trading halts: built at candle sizes 1 through 21|UNMEASURED|
-|1.110|GENUINE|Phase 1 — World rebuild / Trading halts|Trading halts: column count and fill rate measured|UNMEASURED|
-|1.111|GENUINE|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: source located. Items: I190|UNMEASURED|
-|1.112|GENUINE|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: fetched onto a checklist-engine release|UNMEASURED|
-|1.113|GENUINE|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: joined point-in-time|UNMEASURED|
-|1.114|GENUINE|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: built at candle sizes 1 through 21|UNMEASURED|
-|1.115|GENUINE|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: column count and fill rate measured|UNMEASURED|
+|1.101|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: source located. Items: I188 and I189|UNMEASURED|
+|1.102|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: fetched onto a checklist-engine release|UNMEASURED|
+|1.103|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: joined point-in-time|UNMEASURED|
+|1.104|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: built at candle sizes 1 through 21|UNMEASURED|
+|1.105|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / FINRA short interest and daily short volume|FINRA short interest and daily short volume: column count and fill rate measured|UNMEASURED|
+|1.106|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Trading halts|Trading halts: source located. Items: I191|UNMEASURED|
+|1.107|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Trading halts|Trading halts: fetched onto a checklist-engine release|UNMEASURED|
+|1.108|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Trading halts|Trading halts: joined point-in-time|UNMEASURED|
+|1.109|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Trading halts|Trading halts: built at candle sizes 1 through 21|UNMEASURED|
+|1.110|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Trading halts|Trading halts: column count and fill rate measured|UNMEASURED|
+|1.111|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: source located. Items: I190|UNMEASURED|
+|1.112|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: fetched onto a checklist-engine release|UNMEASURED|
+|1.113|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: joined point-in-time|UNMEASURED|
+|1.114|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: built at candle sizes 1 through 21|UNMEASURED|
+|1.115|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Reg SHO threshold list|Reg SHO threshold list: column count and fill rate measured|UNMEASURED|
 |1.116|GENUINE|Phase 1 — World rebuild / Dividends and splits|Dividends and splits: source located. Items: I196. This is the item that was marked WIRED at 0 percent fill. A split baked into the adjusted bar does not satisfy the row|UNMEASURED|
 |1.117|GENUINE|Phase 1 — World rebuild / Dividends and splits|Dividends and splits: fetched onto a checklist-engine release|UNMEASURED|
 |1.118|GENUINE|Phase 1 — World rebuild / Dividends and splits|Dividends and splits: joined point-in-time|UNMEASURED|
 |1.119|GENUINE|Phase 1 — World rebuild / Dividends and splits|Dividends and splits: built at candle sizes 1 through 21|UNMEASURED|
 |1.120|GENUINE|Phase 1 — World rebuild / Dividends and splits|Dividends and splits: column count and fill rate measured|UNMEASURED|
-|1.121|GENUINE|Phase 1 — World rebuild / Options|Options: source located. Items: I201 CBOE market-wide, and I202 single-stock|UNMEASURED|
-|1.122|GENUINE|Phase 1 — World rebuild / Options|Options: fetched onto a checklist-engine release|UNMEASURED|
-|1.123|GENUINE|Phase 1 — World rebuild / Options|Options: joined point-in-time|UNMEASURED|
-|1.124|GENUINE|Phase 1 — World rebuild / Options|Options: built at candle sizes 1 through 21|UNMEASURED|
-|1.125|GENUINE|Phase 1 — World rebuild / Options|Options: column count and fill rate measured|UNMEASURED|
-|1.126|GENUINE|Phase 1 — World rebuild / Calendar context|Calendar context: source located. Items: I183, NYSE holidays and the rule-based option expiry. No outside panel|UNMEASURED|
-|1.127|GENUINE|Phase 1 — World rebuild / Calendar context|Calendar context: fetched onto a checklist-engine release|UNMEASURED|
-|1.128|GENUINE|Phase 1 — World rebuild / Calendar context|Calendar context: joined point-in-time|UNMEASURED|
-|1.129|GENUINE|Phase 1 — World rebuild / Calendar context|Calendar context: built at candle sizes 1 through 21|UNMEASURED|
-|1.130|GENUINE|Phase 1 — World rebuild / Calendar context|Calendar context: column count and fill rate measured|UNMEASURED|
+|1.121|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Options|Options: source located. Items: I201 CBOE market-wide, and I202 single-stock|UNMEASURED|
+|1.122|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Options|Options: fetched onto a checklist-engine release|UNMEASURED|
+|1.123|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Options|Options: joined point-in-time|UNMEASURED|
+|1.124|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Options|Options: built at candle sizes 1 through 21|UNMEASURED|
+|1.125|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Options|Options: column count and fill rate measured|UNMEASURED|
+|1.126|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Calendar context|Calendar context: source located. Items: I183, NYSE holidays and the rule-based option expiry. No outside panel|UNMEASURED|
+|1.127|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Calendar context|Calendar context: fetched onto a checklist-engine release|UNMEASURED|
+|1.128|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Calendar context|Calendar context: joined point-in-time|UNMEASURED|
+|1.129|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Calendar context|Calendar context: built at candle sizes 1 through 21|UNMEASURED|
+|1.130|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Calendar context|Calendar context: column count and fill rate measured|UNMEASURED|
 |1.131|GENUINE|Phase 1 — World rebuild / Industry ETF map|Industry ETF map: source located|UNMEASURED|
 |1.132|GENUINE|Phase 1 — World rebuild / Industry ETF map|Industry ETF map: fetched onto a checklist-engine release|UNMEASURED|
 |1.133|GENUINE|Phase 1 — World rebuild / Industry ETF map|Industry ETF map: joined point-in-time|UNMEASURED|
@@ -151,21 +151,21 @@ The affected-universe percentage is UNMEASURED where the repository has no full-
 |1.149|GENUINE|Phase 1 — World rebuild / Extra ETFs|Extra ETFs: coverage measured|UNMEASURED|
 |1.150|GENUINE|Phase 1 — World rebuild / Extra ETFs|Extra ETFs: multi-timeframe features|UNMEASURED|
 |1.153|GENUINE|Phase 1 — World rebuild / Extra breadth|Extra breadth: point-in-time and leak check|UNMEASURED|
-|1.156|GENUINE|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: source located|UNMEASURED|
-|1.157|GENUINE|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: downloaded onto a checklist-engine release|UNMEASURED|
-|1.158|GENUINE|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: point-in-time and leak check|UNMEASURED|
-|1.159|GENUINE|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: coverage measured|UNMEASURED|
-|1.160|GENUINE|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: multi-timeframe features|UNMEASURED|
-|1.161|GENUINE|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: source located. Items: I184 and I185 for 2025–26|UNMEASURED|
-|1.162|GENUINE|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: downloaded onto a checklist-engine release|UNMEASURED|
-|1.163|GENUINE|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: point-in-time and leak check|UNMEASURED|
-|1.164|GENUINE|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: coverage measured|UNMEASURED|
-|1.165|GENUINE|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: multi-timeframe features|UNMEASURED|
-|1.166|GENUINE|Phase 1 — World rebuild / IPO age|IPO age: source located|UNMEASURED|
-|1.167|GENUINE|Phase 1 — World rebuild / IPO age|IPO age: downloaded onto a checklist-engine release|UNMEASURED|
-|1.168|GENUINE|Phase 1 — World rebuild / IPO age|IPO age: point-in-time and leak check|UNMEASURED|
-|1.169|GENUINE|Phase 1 — World rebuild / IPO age|IPO age: coverage measured|UNMEASURED|
-|1.170|GENUINE|Phase 1 — World rebuild / IPO age|IPO age: multi-timeframe features|UNMEASURED|
+|1.156|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: source located|UNMEASURED|
+|1.157|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: downloaded onto a checklist-engine release|UNMEASURED|
+|1.158|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: point-in-time and leak check|UNMEASURED|
+|1.159|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: coverage measured|UNMEASURED|
+|1.160|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Macro event calendar|Macro event calendar: multi-timeframe features|UNMEASURED|
+|1.161|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: source located. Items: I184 and I185 for 2025–26|UNMEASURED|
+|1.162|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: downloaded onto a checklist-engine release|UNMEASURED|
+|1.163|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: point-in-time and leak check|UNMEASURED|
+|1.164|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: coverage measured|UNMEASURED|
+|1.165|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Earnings dates and surprise, 2025–26|Earnings dates and surprise, 2025–26: multi-timeframe features|UNMEASURED|
+|1.166|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / IPO age|IPO age: source located|UNMEASURED|
+|1.167|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / IPO age|IPO age: downloaded onto a checklist-engine release|UNMEASURED|
+|1.168|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / IPO age|IPO age: point-in-time and leak check|UNMEASURED|
+|1.169|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / IPO age|IPO age: coverage measured|UNMEASURED|
+|1.170|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / IPO age|IPO age: multi-timeframe features|UNMEASURED|
 |1.171|GENUINE|Phase 1 — World rebuild / Gap-review price indicators|Gap-review price indicators: source located. Items: RS rank percentile across the universe; Mansfield RS versus SPY, the sector ETF, and the industry ETF at 20/60/120; NATR; price z-score versus the 20-day and 50-day means; up-day and down-day streak count; historical volatility at 10/20/60/120 and the short/long vol ratio; gap size in ATR units and gap-fill rate; rolling skew, kurtosis, autocorrelation, and Hurst at 20/60; linear-regression R²; correlation and beta at 20/60/120 versus SPY and versus the sector ETF; Chaikin Volatility|UNMEASURED|
 |1.172|GENUINE|Phase 1 — World rebuild / Gap-review price indicators|Gap-review price indicators: built onto a checklist-engine release|UNMEASURED|
 |1.173|GENUINE|Phase 1 — World rebuild / Gap-review price indicators|Gap-review price indicators: point-in-time and leak check|UNMEASURED|
@@ -181,13 +181,13 @@ The affected-universe percentage is UNMEASURED where the repository has no full-
 |1.190|GENUINE|Phase 1 — World rebuild / Breadth from our universe, added 2026-10-26 16:35|Breadth from our universe, added 2026-10-26 16:35: point-in-time and leak check|UNMEASURED|
 |1.191|GENUINE|Phase 1 — World rebuild / Breadth from our universe, added 2026-10-26 16:35|Breadth from our universe, added 2026-10-26 16:35: coverage measured|UNMEASURED|
 |1.192|GENUINE|Phase 1 — World rebuild / Breadth from our universe, added 2026-10-26 16:35|Breadth from our universe, added 2026-10-26 16:35: multi-timeframe features|UNMEASURED|
-|1.193|GENUINE|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: source located. Items: EV/CFO, P/FCF, shareholder yield, accruals, earnings variability, direction of margin change, sales per share, cash EPS, BVPS, payout ratio, internal growth g|UNMEASURED|
-|1.194|GENUINE|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: downloaded onto a checklist-engine release|UNMEASURED|
-|1.195|GENUINE|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: point-in-time and leak check|UNMEASURED|
-|1.196|GENUINE|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: coverage measured|UNMEASURED|
-|1.197|GENUINE|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: multi-timeframe features|UNMEASURED|
-|1.198|GENUINE|Phase 1 — World rebuild / Put/call open interest|Put/call open interest: free history or a logged exclusion|UNMEASURED|
-|1.201|GENUINE|Phase 1 — World rebuild / DoltHub options history|DoltHub options history: coverage log|UNMEASURED|
+|1.193|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: source located. Items: EV/CFO, P/FCF, shareholder yield, accruals, earnings variability, direction of margin change, sales per share, cash EPS, BVPS, payout ratio, internal growth g|UNMEASURED|
+|1.194|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: downloaded onto a checklist-engine release|UNMEASURED|
+|1.195|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: point-in-time and leak check|UNMEASURED|
+|1.196|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: coverage measured|UNMEASURED|
+|1.197|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / XBRL ratios named 2026-10-26 16:35|XBRL ratios named 2026-10-26 16:35: multi-timeframe features|UNMEASURED|
+|1.198|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / Put/call open interest|Put/call open interest: free history or a logged exclusion|UNMEASURED|
+|1.201|OPTIONAL for price-v1; required v2|Phase 1 — World rebuild / DoltHub options history|DoltHub options history: coverage log|UNMEASURED|
 |1.202|GENUINE|Phase 1 — World rebuild / Comparisons outside the stock — 2026-10-27 11:30 HKT|Point-in-time correlation peer sets|UNMEASURED|
 |1.203|GENUINE|Phase 1 — World rebuild / Comparisons outside the stock — 2026-10-27 11:30 HKT|Relative strength against every registered comparator|UNMEASURED|
 |1.204|GENUINE|Phase 1 — World rebuild / Comparisons outside the stock — 2026-10-27 11:30 HKT|Cross-entity divergence inputs|UNMEASURED|
