@@ -274,6 +274,49 @@ def test_binary_ladders():
     ok('BIN-SHAPE: DISABLED stub has binary None (switched off)', r['binary'] is None)
 
 
+def test_rg_exact():
+    dates, O, H, L, C, V = synth()
+    c = 80
+    # 3 red, 1 green, 1 doji in the nearest 5 -> red majority; exact recolour = the 3 red bars only
+    for i, col in ((c - 4, 'red'), (c - 3, 'red'), (c - 2, 'green'), (c - 1, 'red')):
+        if col == 'red':
+            O[i] = 102.0; C[i] = 100.0
+        else:
+            O[i] = 100.0; C[i] = 102.0
+    r = RC.view_rg_exact_5d(dates, O, H, L, C, V, c)
+    ok('RG-EXACT: R:G = 3:1 with doji', r['answer'].startswith('R:G = 3:1 (doji 1)'))
+    rec = [op for op in r['ops'] if op['op'] == 'recolour']
+    ok('RG-EXACT: exactly one recolour op (no circles/dots)', len(rec) == 1)
+    ok('RG-EXACT: exact candles = the 3 red bars, not the whole window',
+       rec and rec[0]['bars'] == [c - 4, c - 3, c - 1])
+    ok('RG-EXACT: window band kept for context', r['ops'][0]['op'] == 'vband')
+    b = {x['qid'].split('/')[-1]: x['a'] for x in r['binary']}
+    ok('RG-EXACT: binary ladder matches mockup 1',
+       b['red_majority'] == 'YES' and b['red_gt_4'] == 'NO'
+       and b['red_ge_3'] == 'YES' and b['green_ge_1'] == 'YES')
+    # green majority -> the green bars are the exact evidence set
+    for i in range(c - 4, c + 1):
+        O[i] = 100.0; C[i] = 102.0
+    O[c - 2] = 102.0; C[c - 2] = 100.0   # one red bar
+    r = RC.view_rg_exact_5d(dates, O, H, L, C, V, c)
+    rec = [op for op in r['ops'] if op['op'] == 'recolour']
+    ok('RG-EXACT: green majority -> exact candles = the 4 green bars',
+       rec and rec[0]['bars'] == [c - 4, c - 3, c - 1, c])
+    # tie -> no exact recolour op at all (2 red, 2 green, 1 doji)
+    for i in (c - 4, c - 3):
+        O[i] = 102.0; C[i] = 100.0
+    for i in (c - 2, c - 1):
+        O[i] = 100.0; C[i] = 102.0
+    O[c] = 100.0; C[c] = 100.0
+    r = RC.view_rg_exact_5d(dates, O, H, L, C, V, c)
+    ok('RG-EXACT: tie -> no recolour op (window band only)',
+       all(op['op'] != 'recolour' for op in r['ops']))
+    # fewer than 5 bars -> blank, binary None (never silently NO)
+    r = RC.view_rg_exact_5d(dates, O, H, L, C, V, 3)
+    ok('RG-EXACT: short window -> blank, binary None',
+       r['answer'].startswith('blank') and r['binary'] is None)
+
+
 def run():
     for f in list(globals().values()):
         if callable(f) and f.__name__.startswith('test_'):

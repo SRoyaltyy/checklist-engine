@@ -93,6 +93,44 @@ def view_rg_count_5d(dates, O, H, L, C, V, cutoff):
     ], binary=binary)
 
 
+# ---------------------------------------------------------------- 1b. red:green EXACT-candle recolour example (§0b 22:45 #163)
+def view_rg_exact_5d(dates, O, H, L, C, V, cutoff):
+    """Same R:G measurement as mockup 1, but only the exact qualifying candles
+    are recoloured purple (never circled): the majority-colour candles are the
+    evidence set. Tie or all-doji -> no exact recolour (window band only)."""
+    id_ = 'VIEW_RG_EXACT_5D'
+    label = ('Red:green EXACT-candle recolour example (§0b 22:45 #163): nearest 5 completed daily '
+             'candles; the candles of the majority colour (the answer evidence) are recoloured '
+             'purple exactly — no circles, no whole-window recolour; doji counts as neither')
+    w = _window(cutoff, 5)
+    if len(w) < 5:
+        return _blank(id_, label, 'fewer than 5 completed bars before cutoff')
+    col = _colours(O[w], C[w])
+    r = int((col == RED).sum()); g = int((col == GREEN).sum())
+    doji = 5 - r - g
+    ans = f'R:G = {r}:{g}' + (f' (doji {doji})' if doji > 0 else '')
+    if r > g:
+        exact = [int(i) for i, c in zip(w, col) if c == RED]
+        ans += f' — exact recolour: {r} red candle(s) (majority evidence)'
+    elif g > r:
+        exact = [int(i) for i, c in zip(w, col) if c == GREEN]
+        ans += f' — exact recolour: {g} green candle(s) (majority evidence)'
+    else:
+        exact = []
+        ans += ' — tie, no majority-colour evidence candles (window band only)'
+    binary = [
+        _bq(f'{id_}/red_majority', 'red majority of nearest 5 completed daily candles '
+            '(red_count > green_count; doji counts as neither)?', _yn(r > g)),
+        _bq(f'{id_}/red_gt_4', 'red_count of nearest 5 completed daily candles > 4?', _yn(r > 4)),
+        _bq(f'{id_}/red_ge_3', 'red_count of nearest 5 completed daily candles >= 3?', _yn(r >= 3)),
+        _bq(f'{id_}/green_ge_1', 'green_count of nearest 5 completed daily candles >= 1?', _yn(g >= 1)),
+    ]
+    ops = [{'op': 'vband', 'i0': int(w[0]), 'i1': int(w[-1])}]
+    if exact:
+        ops.append({'op': 'recolour', 'bars': exact})
+    return _res(id_, label, ans, ops, binary=binary)
+
+
 # ---------------------------------------------------------------- 2. mockup: Fib from window HH/LL, 60d
 FIB_RATIOS = (0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0)
 
@@ -373,6 +411,7 @@ def chart_shape_similarity(dates, O, H, L, C, V, cutoff):
 # ---------------------------------------------------------------- registry
 PICKER = [
     ('VIEW_RG_COUNT_5D', 'Red:green candle count, nearest 5 daily candles (mockup 1)', view_rg_count_5d),
+    ('VIEW_RG_EXACT_5D', 'Red:green EXACT-candle purple recolour example, nearest 5 (§0b 22:45 #163)', view_rg_exact_5d),
     ('VIEW_FIB_HHLL_60D', 'Fibonacci retracement, past 60 daily bars, HH/LL anchors (mockup 2)', view_fib_hhll_60d),
     ('VIEW_LOWER_SWING_HIGHS_3', 'Three descending fractal swing highs, L=5 (mockup 3)', view_lower_swing_highs_3),
     ('VIEW_VOL_VS_MEAN_20D', 'Volume today vs mean of last 20 daily bars, inclusive base (mockup 4)', view_vol_vs_mean_20d),
