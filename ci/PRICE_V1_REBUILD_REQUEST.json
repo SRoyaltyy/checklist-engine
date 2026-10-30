@@ -1,0 +1,12 @@
+{
+  "gate": {
+    "release": "row0-price-world-gate-v2-41075612310-1",
+    "asset": "ROW0_PRICE_WORLD_GATE_V2.json",
+    "sha256": "81817c17527f6af6a71448095df729dd2056984464a13a8c6baf4d4f6329c8db"
+  },
+  "sample_plan": {
+    "release": "price-v1-sample-41075612310-1-inputs",
+    "asset": "PRICE_V1_SAMPLE_PLAN_V1.json",
+    "sha256": "31e4343882718de0de5cccc7794c663daeefbd544f11fa3218268a2e6c8713ce"
+  }
+}

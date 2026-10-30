@@ -1,0 +1,12 @@
+{
+  "status": "PASS_ALL100_PUBLIC_STOCK_HASHES_AND_AGGREGATE_COVERAGE_RECONCILED",
+  "gate": "PASS",
+  "stocks": 100,
+  "cut_checks": 4400,
+  "compared_cells": 2287295424,
+  "empty_prelisting_cut_checks": 374,
+  "coverage_rows": 22968,
+  "observed_prefix_failures": 0,
+  "source_coverage_pct": 96.69989687177724,
+  "full_world_and_scoring": "NOT_APPROVED_BY_SAMPLE"
+}
