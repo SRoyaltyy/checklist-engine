@@ -514,6 +514,114 @@ def test_evaluate_spike(grid):
         assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
 
 
+def test_bind_batch4b_variants(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|maxvol_wick|1x20')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 3
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['bull_wick']['feature']['maxvol_wick_atr'] == '1'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+
+    row, variant = _q(grid, 'B|volume|RVOL20|pullback_vs_run_volume|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 6
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['bull_lighter']['feature']['ratio_key'] == 'bull_ratio'
+    assert by_outcome['bear_heavier']['feature']['ratio_key'] == 'bear_ratio'
+    assert by_outcome['bull_lighter']['comparator'] == '<'
+    assert by_outcome['bull_heavier']['comparator'] == '>'
+    assert by_outcome['bull_similar']['feature']['transform'] == 'mirror_min'
+    for d in defs:
+        assert d['feature_kind'] == 'continuous'
+        literal_threshold(d['comparison_threshold'])
+
+    row, variant = _q(grid, 'B|volume|up_down_volume|flip|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 3
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+
+
+def test_evaluate_maxvol_wick(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|maxvol_wick|1x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 21
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # calm bars (ATR ~0.3); max-volume bar at window index 10 with a long
+    # lower wick of 2 (>> 1*ATR14)
+    spec = [(10 + i * 0.02, 10.1 + i * 0.02, 9.9 + i * 0.02, 10.05 + i * 0.02, 100)
+            for i in range(span)]
+    s = list(spec[10])
+    spec[10] = (s[0], s[1], s[0] - 2.0, s[3], 900)   # low 2 below body
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['bull_wick'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear_wick'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['small'], bars, setup, last).answer == 'NO'
+    # long upper wick instead -> bear (lower wick stays small)
+    spec = [(10 + i * 0.02, 10.1 + i * 0.02, 9.9 + i * 0.02, 10.05 + i * 0.02, 100)
+            for i in range(span)]
+    s = spec[10]
+    spec[10] = (s[0], s[0] + 2.5, s[0] - 0.02, s[3], 900)
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['bear_wick'], bars, setup, last).answer == 'YES'
+    # short window (needs 14+1) -> NOT_EVALUABLE
+    bars = _bars_hlv(spec[:10])
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, 109).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_pullback_vs_run_volume(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|pullback_vs_run_volume|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 12)
+    last = 109
+    # up leg: 4 green bars vol 100; pullback: 3 red bars vol 50 -> ratio 0.5 < 1/1.3
+    up = (10, 10.5, 9.9, 10.4)
+    dn = (10.4, 10.5, 9.9, 10.0)
+    spec = [up] * 4 + [dn] * 6   # up leg ends at 3; pullback runs to window end
+    vols = [100] * 4 + [50] * 6
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['bull_lighter'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull_heavier'], bars, setup, last).answer == 'NO'
+    # bear side has no qualifying leg -> NOT_EVALUABLE
+    assert evaluate_master(defs['bear_lighter'], bars, setup, last).answer == 'NOT_EVALUABLE'
+    # heavier pullback: pullback vol 200 -> ratio 2 > 1.3
+    vols = [100] * 4 + [200] * 6
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['bull_heavier'], bars, setup, last).answer == 'YES'
+    # bear leg last: 4 red bars then bounce to window end
+    spec = [dn] * 4 + [up] * 6
+    vols = [100] * 4 + [50] * 6
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['bear_lighter'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull_lighter'], bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_flip(grid):
+    row, variant = _q(grid, 'B|volume|up_down_volume|flip|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 12)
+    last = 109
+    up = (10, 10.5, 9.9, 10.4)
+    dn = (10.4, 10.5, 9.9, 10.0)
+    # early half down-dominant (vol 200 on down), late half up-dominant -> to_up
+    spec = [dn] * 2 + [up] + [dn] + [up] * 4 + [dn] + [up]
+    vols = [200, 200, 10, 200, 200, 200, 200, 200, 10, 200]
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['to_up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['to_down'], bars, setup, last).answer == 'NO'
+    # mirror -> to_down
+    spec = [up] * 3 + [dn] + [dn] * 4 + [up] + [dn]
+    vols = [200, 200, 200, 10, 200, 200, 200, 200, 10, 200]
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['to_down'], bars, setup, last).answer == 'YES'
+    # same dominance both halves -> none
+    spec = [up] * 5 + [up] * 5
+    vols = [200] * 10
+    bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

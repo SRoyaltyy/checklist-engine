@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 324,
-  "bound_unique_binary_definitions": 3447,
-  "bound_source_aliases": 4707,
+  "bound_source_questions": 375,
+  "bound_unique_binary_definitions": 4059,
+  "bound_source_aliases": 5523,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -282,11 +282,14 @@
     "dominance",
     "down_vs_up_moves",
     "dry_up_at_low",
+    "flip",
     "gap_down",
     "gap_up",
     "inside_outside",
     "last_green_vs_red",
     "max_vol_position",
+    "maxvol_wick",
+    "pullback_vs_run_volume",
     "red_green_balance",
     "run_biggest_move",
     "spike",
@@ -294,12 +297,12 @@
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 980,
-  "unbound_oat_variants": 153189,
+  "unbound_family_variant_count": 977,
+  "unbound_oat_variants": 153002,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 6127,
-  "csv_sha256": "249fe119108435f7fd256ff7deb345f497a35a7709a4f5cc3914d1b7beb4f436",
+  "master_total_rows": 6739,
+  "csv_sha256": "98c300ddffe265aa60bd180be8b566eb4c02ca678fafc75b69bf6aa420c8ece4",
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
@@ -307,7 +310,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "b5a17949d6fcea909857ba08d0208ff468697e1c0be0b70dc1f6ae00228b3370",
+    "world_binary_master.py": "3785d04b21aa5026475e04f4ab8c86c99767106d4ca5832dc6428751013ef501",
     "ci/binary_master_build.py": "b251aabf5b267d56583e4332f5388674b7351369369f2e08a4eaa7bd49022d12"
   },
   "answer_generation": "NOT_RUN",

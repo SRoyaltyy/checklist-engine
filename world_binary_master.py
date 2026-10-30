@@ -277,6 +277,92 @@ def _measure(recipe, candles, feature=None):
                     'start': bool(not at_price_low and start),
                     'middle': bool(not at_price_low and not start and not end),
                     'end': bool(not at_price_low and not start and end)}
+        if recipe == 'native_volume_dominance_flip_v1':
+            # Window split in half; a side is up-dominant when up-bar volume
+            # strictly exceeds down-bar volume. to_up = early not up-dominant
+            # and late up-dominant; to_down = mirror; none = same dominance
+            # on both halves (incl. neither side dominant).
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles)
+            half = n // 2
+            if half < 1 or n - half < 1:
+                return None
+
+            def up_dom(seg):
+                b = close[seg] - opened[seg]
+                up = float(vol[seg][b > 0].sum(dtype=np.float64))
+                down = float(vol[seg][b < 0].sum(dtype=np.float64))
+                return up > down
+
+            early = up_dom(slice(0, half))
+            late = up_dom(slice(half, n))
+            return {'to_up': bool(not early and late),
+                    'to_down': bool(early and not late),
+                    'none': bool(early == late)}
+        if recipe == 'native_maxvol_wick_v1':
+            # candles[0] is the prior candle (TR base). Window's max-volume
+            # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
+            # bear, else small; bull takes precedence when both exceed.
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles) - 1
+            if n < 14:
+                return None
+            prev_close = np.concatenate(([close[0]], close[:-1]))
+            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
+                                                   np.abs(low - prev_close)))
+            atr14 = float(tr[-14:].mean(dtype=np.float64))
+            if atr14 == 0:
+                return None
+            win_vol = vol[1:]
+            i = 1 + int(np.argmax(win_vol))          # first max on tie
+            v = float(feature['maxvol_wick_atr'])
+            lower = float(min(opened[i], close[i]) - low[i])
+            upper = float(high[i] - max(opened[i], close[i]))
+            bull = lower > v * atr14
+            bear = (not bull) and upper > v * atr14
+            return {'bull_wick': bool(bull), 'bear_wick': bool(bear),
+                    'small': bool(not bull and not bear)}
+        if recipe == 'native_pullback_run_volume_ratio_v1':
+            # Last leg = most recent run of >=2 same-sign bodies with at least
+            # one opposite-sign bar after it (the pullback, through window
+            # end). Ratio = mean pullback volume / mean leg volume, assigned
+            # to bull_ratio (up leg) or bear_ratio (down leg); the other side
+            # stays None -> NOT_EVALUABLE for its outcomes. Zero-volume leg:
+            # skip to an earlier qualifying leg (ratio undefined, not 0/0=0).
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles)
+            sign = np.sign(close - opened)
+            runs = []
+            i = 0
+            while i < n:
+                if sign[i] == 0:
+                    i += 1
+                    continue
+                j = i
+                while j + 1 < n and sign[j + 1] == sign[i]:
+                    j += 1
+                runs.append((int(sign[i]), i, j))
+                i = j + 1
+            result = {'bull_ratio': None, 'bear_ratio': None}
+            for sg, s, e in reversed(runs):
+                if e - s + 1 < 2 or e == n - 1:
+                    continue
+                pull = [k for k in range(e + 1, n) if sign[k] != 0]
+                if not pull or any(sign[k] == sg for k in pull):
+                    continue
+                leg_mean = float(vol[s:e + 1].mean(dtype=np.float64))
+                if leg_mean == 0:
+                    continue
+                pull_mean = float(vol[pull].mean(dtype=np.float64))
+                result['bull_ratio' if sg > 0 else 'bear_ratio'] = pull_mean / leg_mean
+                break
+            return result
         if recipe == 'native_volume_spike_v1':
             # candles[0:B-1] are the prior bars backing the per-bar baseline
             # median (B = baked C031 dial); window = candles[B-1:]. A window
@@ -445,6 +531,42 @@ FACETS = {
         outcome_spec={'yes_early': ('boolean', '=', 'one'),
                       'yes_late': ('boolean', '=', 'one'),
                       'no': ('boolean', '=', 'one')}),
+    'maxvol_wick': dict(
+        binding='mixed', l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_maxvol_wick_v1',
+        unit='wick_size_on_max_volume_bar_over_atr14',
+        outcomes=('bull_wick', 'bear_wick', 'small'), cutoff_id=None,
+        baked_cutoff_ids=('C047_maxvol_wick__atr1',),
+        baked_map={'C047_maxvol_wick__atr1': 'maxvol_wick_atr'},
+        outcome_spec={'bull_wick': ('boolean', '=', 'one'),
+                      'bear_wick': ('boolean', '=', 'one'),
+                      'small': ('boolean', '=', 'one')}),
+    'pullback_vs_run_volume': dict(
+        binding='splitband', mirror=True, l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_pullback_run_volume_ratio_v1',
+        unit='mean_pullback_volume_over_mean_leg_volume',
+        outcomes=('bull_lighter', 'bull_similar', 'bull_heavier',
+                  'bear_lighter', 'bear_similar', 'bear_heavier'),
+        cutoff_id='S_ratio_band_1p3',
+        feature_key_by_outcome={
+            'bull_lighter': 'bull_ratio', 'bull_similar': 'bull_ratio',
+            'bull_heavier': 'bull_ratio', 'bear_lighter': 'bear_ratio',
+            'bear_similar': 'bear_ratio', 'bear_heavier': 'bear_ratio'},
+        transform_by_outcome={
+            'bull_lighter': 'identity', 'bull_similar': 'mirror_min',
+            'bull_heavier': 'identity', 'bear_lighter': 'identity',
+            'bear_similar': 'mirror_min', 'bear_heavier': 'identity'},
+        comparator_by_outcome={
+            'bull_lighter': '<', 'bull_similar': '>=', 'bull_heavier': '>',
+            'bear_lighter': '<', 'bear_similar': '>=', 'bear_heavier': '>'}),
+    'flip': dict(
+        binding='mixed', l1_l3=(('volume', 'up_down_volume'),),
+        recipe='native_volume_dominance_flip_v1',
+        unit='up_down_volume_dominance_flip_in_window',
+        outcomes=('to_up', 'to_down', 'none'), cutoff_id=None,
+        outcome_spec={'to_up': ('boolean', '=', 'one'),
+                      'to_down': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
 }
 
 for _spec in FACETS.values():
@@ -540,6 +662,30 @@ def _bind_facet(tree_row, variant, spec):
                                       variant.source_question_id, suffix, feature_extra))
         return result
 
+    # binding == 'splitband': one measured dict, two ratio slots (bull/bear);
+    # per-outcome ratio_key selects the slot; thresholds mirror the band dial.
+    if spec['binding'] == 'splitband':
+        v = settings[spec['cutoff_id']]
+        high, low = _ratio_thresholds(spec, v)
+        result = []
+        for outcome in spec['outcomes']:
+            transform = spec['transform_by_outcome'][outcome]
+            operator = spec['comparator_by_outcome'][outcome]
+            if operator == '>':
+                threshold = high
+            elif operator == '<':
+                threshold = low
+            else:
+                threshold = low if spec['mirror'] else high
+            extra = dict(feature_extra)
+            extra['ratio_key'] = spec['feature_key_by_outcome'][outcome]
+            suffix = (';mirror_min' if transform == 'mirror_min' else '')
+            suffix += ';' + extra['ratio_key']
+            result.append(_definition(spec, timeframe, lookback, outcome, transform,
+                                      operator, threshold, 'continuous', variant.variant_id,
+                                      variant.source_question_id, suffix, extra))
+        return result
+
     # binding == 'band'
     v = settings[spec['cutoff_id']]
     high, low = _ratio_thresholds(spec, v)
@@ -583,10 +729,11 @@ _MASTER_RECIPES = {spec['recipe'] for spec in FACETS.values()}
 # baseline length from the feature (baked S_baseline_bars dial).
 _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
-                'native_volume_dry_up_at_low_v1': 49}
+                'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
-                        'native_max_vol_position_v1', 'native_volume_spike_v1'}
+                        'native_max_vol_position_v1', 'native_volume_spike_v1',
+                        'native_maxvol_wick_v1', 'native_volume_dominance_flip_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -612,7 +759,10 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             return evaluate_binary(value, definition['comparator'],
                                    definition['comparison_threshold'],
                                    feature_kind=definition['feature_kind'])
-        value = None if measured is None else _apply_transform(measured, feature['transform'])
+        raw = measured
+        if 'ratio_key' in feature:
+            raw = None if measured is None else measured[feature['ratio_key']]
+        value = None if raw is None else _apply_transform(raw, feature['transform'])
         return evaluate_binary(value, definition['comparator'],
                                definition['comparison_threshold'],
                                feature_kind=definition['feature_kind'])
