@@ -12,6 +12,7 @@ on:
       - 'tests/test_world*.py'
       - 'tests/test_price_reconcile.py'
       - 'tests/test_question_quality.py'
+      - 'tests/test_binary_canonical_plan.py'
       - 'requirements-world-v2.txt'
       - '.github/workflows/world_v2*.yml'
   workflow_dispatch:
@@ -22,7 +23,7 @@ on:
         required: true
         default: false
   pull_request:
-    paths: ['.github/workflows/world_v2_ci.yml', 'world_binary_questions.py', 'world_scope.py', 'ci/world_v2_coverage.py', 'ci/question_quality.py', 'tests/test_binary_questions.py', 'tests/test_question_quality.py', 'tests/test_world_scope.py']
+    paths: ['.github/workflows/world_v2_ci.yml', 'world_binary_questions.py', 'world_binary_price.py', 'world_question_grid.py', 'world_scope.py', 'ci/binary_canonical_plan.py', 'ci/world_v2_coverage.py', 'ci/question_quality.py', 'tests/test_binary_questions.py', 'tests/test_binary_canonical_plan.py', 'tests/test_question_quality.py', 'tests/test_world_scope.py']
 permissions:
   contents: read
 jobs:
@@ -38,7 +39,13 @@ jobs:
       - name: Import prerequisite before any source job
         run: python -m ci.world_pipeline run --state .import-state.json --stage imports -- python -m ci.world_pipeline imports
       - name: Regression tests including forced failures
-        run: python -m pytest tests/test_world_v2.py tests/test_world_scope.py tests/test_binary_questions.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py -q
+        run: python -m pytest tests/test_world_v2.py tests/test_world_scope.py tests/test_binary_questions.py tests/test_binary_canonical_plan.py tests/test_question_quality.py tests/test_price_reconcile.py tests/test_world_infrastructure.py -q
+      - name: Enumerate every canonical question and registered cutoff without deriving market answers
+        run: python -m ci.binary_canonical_plan --out binary-plan-evidence
+      - uses: actions/upload-artifact@v4
+        with:
+          name: canonical-binary-definition-plan-v1
+          path: binary-plan-evidence/
   sec-source-evidence:
     # James 13:00 HKT, 01059da: SEC stays held until Cyrus confirms the fix.
     # Ordinary code pushes and PR checks must never perform a live SEC probe.
