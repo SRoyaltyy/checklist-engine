@@ -40,6 +40,18 @@ def compare(a,b):
                 missing_differences=int((known_a!=known_b).sum()),example_indices=np.flatnonzero(changed)[:5].tolist())
 
 
+def align_prefix(expected,rebuilt):
+    import pandas as pd
+    a=pd.DatetimeIndex(expected.available_from).as_unit('ns');b=pd.DatetimeIndex(rebuilt.available_from).as_unit('ns')
+    if a.has_duplicates or b.has_duplicates:raise ValueError('duplicate prefix availability')
+    differences=[]
+    if not a.equals(b):
+        differences=[dict(field='available_from',different_cells=len(a.symmetric_difference(b)),
+            expected_only=[str(d) for d in a.difference(b)[:5]],rebuilt_only=[str(d) for d in b.difference(a)[:5]])]
+    common=a.intersection(b)
+    return expected.set_index('available_from').reindex(common),rebuilt.set_index('available_from').reindex(common),differences
+
+
 def checked(binding,root):
     from ci.release_assets import download_asset
     file=download_asset(binding['release'],binding['asset'],root/binding['release'])
@@ -107,9 +119,8 @@ def worker(root,recipe):
             candles=wt.completed_candles(prior,tf,session_calendar=cal)
             rebuilt=wt.candle_features(candles,funcs,timeframe=tf)
             expected=full[full.available_from<=cut].reset_index(drop=True)
-            if not rebuilt.available_from.reset_index(drop=True).equals(expected.available_from):raise ValueError('sample prefix availability differs')
             if len(rebuilt) and sorted(c for c in rebuilt if c!='available_from')!=fields:raise ValueError('sample prefix schema differs')
-            differences=[];cells=0
+            expected,rebuilt,differences=align_prefix(expected,rebuilt);cells=0
             for field in fields if len(expected) else []:
                 stats=compare(expected[field],rebuilt[field]);cells+=stats['cells']
                 if stats['different_cells']:differences.append(dict(field=field,**stats))

@@ -1,10 +1,24 @@
 import copy
 import unittest
 import numpy as np
-from ci.price_v1_sample_gate import compare,select,scope,verdict
+from ci.price_v1_sample_gate import compare,select,scope,verdict,align_prefix
 
 
 class PriceV1SampleGateTest(unittest.TestCase):
+    def test_empty_prelisting_prefix_and_real_availability_difference(self):
+        import pandas as pd
+        a=pd.DataFrame({'available_from':pd.Series(dtype='datetime64[ns]'),'close':pd.Series(dtype=float)})
+        b=pd.DataFrame(columns=['available_from'])
+        left,right,differences=align_prefix(a,b)
+        self.assertEqual(differences,[])
+        self.assertEqual(len(left),0)
+        self.assertEqual(len(right),0)
+        a=pd.DataFrame({'available_from':pd.to_datetime(['2023-01-03','2023-01-04']),'close':[1.,2.]})
+        left,right,differences=align_prefix(a,a.iloc[:1])
+        self.assertEqual(len(left),1)
+        self.assertEqual(len(right),1)
+        self.assertEqual(differences[0]['different_cells'],1)
+
     def test_predeclared_selection_is_order_independent(self):
         names=[str(i) for i in range(8439)];policy=scope()
         self.assertEqual(select(names,policy),select(names[::-1],policy))
