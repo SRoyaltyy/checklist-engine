@@ -463,6 +463,57 @@ def test_evaluate_vs_own_past(grid):
         bind_master_question(row2, variant2)
 
 
+def test_bind_batch4_spike(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|spike|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 3
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['yes_early']['feature']['spike_baseline_bars'] == '50'
+    assert by_outcome['yes_early']['feature']['spike_mult'] == '3'
+    for d in defs:
+        assert d['feature_kind'] == 'boolean'
+        assert d['comparison_threshold'] == '1'
+        literal_threshold(d['comparison_threshold'])
+
+
+def test_evaluate_spike(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|spike|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 59  # 49 prior + 10 window (C031 default baseline 50)
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    prior = [(10 + i * 0.01, 10.2 + i * 0.01, 9.8 + i * 0.01, 10.1 + i * 0.01, 100)
+             for i in range(49)]
+    win_flat = [(10.5, 10.7, 10.3, 10.6, 100)] * 10
+    # no spike: everything at the baseline median
+    bars = _bars_hlv(prior + win_flat)
+    assert evaluate_master(defs['no'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['yes_early'], bars, setup, last).answer == 'NO'
+    # early spike at window index 1 (500 > 3*100); median window still 100
+    win = list(win_flat)
+    win[1] = (10.5, 10.7, 10.3, 10.6, 500)
+    bars = _bars_hlv(prior + win)
+    assert evaluate_master(defs['yes_early'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['yes_late'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['no'], bars, setup, last).answer == 'NO'
+    # late spike at window index 8
+    win = list(win_flat)
+    win[8] = (10.5, 10.7, 10.3, 10.6, 500)
+    bars = _bars_hlv(prior + win)
+    assert evaluate_master(defs['yes_late'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['yes_early'], bars, setup, last).answer == 'NO'
+    # earliest spike wins when two spikes present (early one at 2, late at 8)
+    win = list(win_flat)
+    win[2] = (10.5, 10.7, 10.3, 10.6, 400)
+    win[8] = (10.5, 10.7, 10.3, 10.6, 900)
+    bars = _bars_hlv(prior + win)
+    assert evaluate_master(defs['yes_early'], bars, setup, last).answer == 'YES'
+    # missing volume -> NOT_EVALUABLE
+    bars = _bars_hl([(10.5, 10.7, 10.3, 10.6)] * span)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

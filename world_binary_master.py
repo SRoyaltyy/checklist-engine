@@ -277,10 +277,36 @@ def _measure(recipe, candles, feature=None):
                     'start': bool(not at_price_low and start),
                     'middle': bool(not at_price_low and not start and not end),
                     'end': bool(not at_price_low and not start and end)}
+        if recipe == 'native_volume_spike_v1':
+            # candles[0:B-1] are the prior bars backing the per-bar baseline
+            # median (B = baked C031 dial); window = candles[B-1:]. A window
+            # bar is a spike when its volume exceeds mult * median of the B
+            # bars ending at that bar (all <= D-1). yes_early/yes_late split
+            # on the earliest spike (first half / second half of the window).
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            base_n = int(feature['spike_baseline_bars'])
+            n = len(candles) - (base_n - 1)
+            if base_n < 2 or n < 1:
+                return None
+            win = vol[base_n - 1:]
+            mult = float(feature['spike_mult'])
+            earliest = None
+            for j in range(n):
+                abs_i = base_n - 1 + j
+                med = float(np.median(vol[abs_i - base_n + 1:abs_i + 1]))
+                if win[j] > mult * med:
+                    earliest = j
+                    break
+            if earliest is None:
+                return {'yes_early': False, 'yes_late': False, 'no': True}
+            early = earliest < n // 2
+            return {'yes_early': bool(early), 'yes_late': bool(not early),
+                    'no': False}
         if recipe == 'native_volume_vs_own_past_v1':
             # candles[0:baseline] are the prior baseline bars; window = last
-            # lookback candles. Source = raw share volume (RVOL20) or the
-            # tf-aggregate dollar field (dollar_volume).
+            # lookback candles. Source = raw share volume (RVOL20).
             base_n = int(feature['baseline_bars'])
             if len(candles) <= base_n:
                 return None
@@ -407,6 +433,18 @@ FACETS = {
         volume_source_by_l3={'RVOL20': 'volume'},
         transform_by_outcome={'high': 'identity', 'normal': 'mirror_min', 'low': 'identity'},
         comparator_by_outcome={'high': '>', 'normal': '>=', 'low': '<'}),
+    'spike': dict(
+        binding='mixed', l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_volume_spike_v1',
+        unit='earliest_volume_spike_over_baseline_median',
+        outcomes=('yes_early', 'yes_late', 'no'),
+        cutoff_id=None,
+        baked_cutoff_ids=('C031_spike__bars50', 'S_vol_spike_mult'),
+        baked_map={'C031_spike__bars50': 'spike_baseline_bars',
+                   'S_vol_spike_mult': 'spike_mult'},
+        outcome_spec={'yes_early': ('boolean', '=', 'one'),
+                      'yes_late': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one')}),
 }
 
 for _spec in FACETS.values():
@@ -470,8 +508,9 @@ def _bind_facet(tree_row, variant, spec):
 
     # Baked dials are consumed inside the measurement (they shape the feature,
     # not the comparison threshold); every registered dial must be accounted
-    # for by exactly one of the threshold dial or the baked map.
-    allowed = {spec['cutoff_id']} | set(spec['baked_cutoff_ids'])
+    # for by exactly one of the threshold dial or the baked map. A None
+    # cutoff_id means the facet has no threshold dial (all-boolean outcomes).
+    allowed = ({spec['cutoff_id']} | set(spec['baked_cutoff_ids'])) - {None}
     if spec['binding'] == 'bool3':
         if settings:
             raise ValueError('bool3 binding takes no registered cutoff: ' + str(sorted(settings)))
@@ -490,7 +529,7 @@ def _bind_facet(tree_row, variant, spec):
                 for outcome in spec['outcomes']]
 
     if spec['binding'] == 'mixed':
-        v = settings[spec['cutoff_id']]
+        v = settings[spec['cutoff_id']] if spec['cutoff_id'] is not None else None
         result = []
         for outcome in spec['outcomes']:
             kind, operator, tsource = spec['outcome_spec'][outcome]
@@ -547,7 +586,7 @@ _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
-                        'native_max_vol_position_v1'}
+                        'native_max_vol_position_v1', 'native_volume_spike_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -556,6 +595,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
         extra = _EXTRA_PRIOR.get(feature['recipe'], 0)
         if feature['recipe'] == 'native_volume_vs_own_past_v1':
             extra = int(feature['baseline_bars'])  # baked S_baseline_bars dial
+        if feature['recipe'] == 'native_volume_spike_v1':
+            extra = int(feature['spike_baseline_bars']) - 1  # baked C031 dial
         lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)
