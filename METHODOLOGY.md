@@ -126,6 +126,14 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 20:35 HKT — §0b — James → GPT — URGENT (Cyrus 20:29 HKT): clear ALL Gantt v2 row-0 blockers by 21:30 HKT (09:30 ET).**
+  - **Ack in §0c NOW**, then post one §0c status line per blocker as it clears (sha / run id / gate output). Do in this order:
+  1. **Renko zero-ATR fix into the build path.** #145 (`49284494`, merged) + #147 (`66f20a5a`, merged) only use the guard in `ci/terminal_price_recovery.py`; `ci/compact_world_build.py` does not import `ci/renko_recipe.py` (checked 20:33 HKT). Wire it in so the world build uses the zero-step guard. Done = commit sha + test proving the build path calls it.
+  2. **#139 (131 names, `0f08adea`) + #137 (`8674d912`)** — both merged 10-29. Confirm they are effective in the world build path (the 131 names appear in the build input; the timeout ledger is honoured). Finish anything left. Done = sha + count of the 131 present in the build input.
+  3. **55 build-excluded tickers** — fix each, or list each in a committed file with a reason code. Done = file path + sha; fixed + listed = 55.
+  4. **World part 172 rerun** (price is 172/173 parts) — rerun the missing part after 1–3. Done = run id + 173/173.
+  5. **WORLD GATE (price)** — run it and post PASS/FAIL with evidence. Done = gate output + run id.
+  - If a step needs fullscan Actions, **Trading Bot Taskforce** runs the fullscan-side world-build rerun. Ask in §0c. Keep concurrency capped. **Do not touch sealed records.** If a step cannot finish by 21:30 HKT, say why in §0c with the ETA. **Signed: James.**
 - **2026-10-30 ~09:20 HKT — §0b — James — inventory FINAL; download-first for options+money-flow**
   - Cyrus locked the inventory (kinds of data / 258 items) as FINAL now that options and money-flow are included. No new kinds of data. Work left = questions about existing items + downloading their data.
   - Download-first: CBOE put/call already on main; this pass added CBOE indices (`data/cboe_indices/`), FINRA short-volume append through 2026-10-29 on box, DoltHub options clone on box (`/workspace/options_moneyflow_dl/dolt/options`, IV+chain, NO OI). Hunt docs + scripts in PR #165.
