@@ -1,0 +1,54 @@
+name: price-gate-ex-quarantine
+on:
+  push:
+    branches: [codex/replay-quarantine-v1]
+    paths: ['ci/price_gate_ex_quarantine.py', '.github/workflows/replay_quarantine_gate.yml']
+  pull_request:
+    paths: ['world_replay_quarantine.py', 'dictionary/REPLAY_QUARANTINE_V1.json', 'ci/price_gate_ex_quarantine.py', 'tests/test_replay_quarantine.py', '.github/workflows/replay_quarantine_gate.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: price-ex-quarantine-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5
+      - run: python -m pytest tests/test_replay_quarantine.py tests/test_compact_world_build.py tests/test_binary_canonical_plan.py tests/test_row0_price_gate.py -q
+  gate:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-world-v2.txt
+      - id: inputs
+        name: Prepare actual v1 cohort excluding all eight quarantined names
+        run: python -m ci.compact_world_build prepare --directory quarantine-plan
+      - run: python -m ci.price_gate_ex_quarantine --directory quarantine-gate --plan quarantine-plan/COMPACT_WORLD_BUILD_PLAN.json --inputs-release '${{ steps.inputs.outputs.inputs_release }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-gate-ex-quarantine-evidence
+          path: |
+            quarantine-plan/COMPACT_WORLD_BUILD_PLAN.json
+            quarantine-gate/PRICE_GATE_EX_QUARANTINE_V1.json
+          if-no-files-found: ignore
