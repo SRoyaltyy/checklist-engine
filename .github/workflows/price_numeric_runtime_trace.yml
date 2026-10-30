@@ -1,0 +1,90 @@
+name: price-numeric-runtime-trace
+on:
+  push:
+    branches: [codex/price-numeric-runtime-trace]
+    paths: ['ci/price_numeric_runtime_trace.py', '.github/workflows/price_numeric_runtime_trace.yml']
+  pull_request:
+    paths: ['ci/price_numeric_runtime_trace.py', 'tests/test_price_numeric_runtime_trace.py', '.github/workflows/price_numeric_runtime_trace.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: price-numeric-runtime-trace-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5
+      - run: python -m pytest tests/test_price_numeric_runtime_trace.py tests/test_row0_part172_replay.py tests/test_world_answer_cache.py -q
+  prepare:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      inputs_release: ${{ steps.plan.outputs.inputs_release }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - id: plan
+        run: python -m ci.price_numeric_runtime_trace prepare --directory trace-plan
+  trace:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        index: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.price_numeric_runtime_trace stock --directory trace --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --index '${{ matrix.index }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: numeric-runtime-trace-${{ matrix.index }}
+          path: |
+            trace/NUMERIC_RUNTIME_STOCK_TRACE_V1.json
+            trace/*/TRACE.json
+            trace/*/TRACE_VALUES.npz
+          if-no-files-found: ignore
+  finalize:
+    needs: [prepare,trace]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.price_numeric_runtime_trace finalize --directory trace-final --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: numeric-runtime-trace-final
+          path: trace-final/NUMERIC_RUNTIME_TRACE_V1.json
+          if-no-files-found: ignore
