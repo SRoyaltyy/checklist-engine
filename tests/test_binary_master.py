@@ -20,23 +20,30 @@ def grid():
     return CanonicalGrid(ROOT)
 
 
+def _l1_l3(facet):
+    return FACETS[facet]['l1_l3'][0]
+
+
 def _first_variant(grid, facet):
+    l1, l3 = _l1_l3(facet)
     qid = next(q for q in sorted(grid.questions)
-               if q.split('|')[1:4] == ['candles', 'OHLC', facet])
+               if q.split('|')[1:4] == [l1, l3, facet])
     return grid.tree[qid], next(grid.variants(qid))
 
 
 def test_batch1_facets_have_exactly_one_registered_cutoff(grid):
     for facet, spec in FACETS.items():
-        row = grid.tree[next(q for q in grid.questions if q.split('|')[3] == facet
-                             and q.split('|')[1] == 'candles')]
-        assert row['L4_analysis'] == facet
-        tags = [t for t in grid.questions[row['question_id']]['default_tags'].split(';') if t]
-        if spec['cutoff_id'] is None:
-            # bool3 facets (gap fates) register no cutoff dial
-            assert tags == []
-        else:
-            assert [t.split('=')[0] for t in tags] == [spec['cutoff_id']]
+        expected = {spec['cutoff_id']} | set(spec['baked_cutoff_ids'])
+        expected.discard(None)
+        for l1, l3 in spec['l1_l3']:
+            row = grid.tree[next(q for q in grid.questions if q.split('|')[3] == facet
+                                 and q.split('|')[1] == l1 and q.split('|')[2] == l3)]
+            assert row['L4_analysis'] == facet
+            tags = [t for t in grid.questions[row['question_id']]['default_tags'].split(';') if t]
+            if not expected:
+                assert tags == []          # bool3 facets register no cutoff dial
+            else:
+                assert {t.split('=')[0] for t in tags} == expected
 
 
 def test_bind_default_and_changed_variants(grid):
@@ -56,7 +63,12 @@ def test_bind_default_and_changed_variants(grid):
             continue
         changed = variants[1]
         defs2 = bind_master_question(row, changed)
-        assert {d['comparison_threshold'] for d in defs} != {d['comparison_threshold'] for d in defs2}
+        if {d['comparison_threshold'] for d in defs} == {d['comparison_threshold'] for d in defs2}:
+            # all-boolean facets carry the dial inside the feature (baked map);
+            # the changed variant must then differ in the baked feature value
+            assert FACETS[facet].get('baked_map'), facet
+            key = next(iter(FACETS[facet]['baked_map'].values()))
+            assert {d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
 
 
 def test_ratio_mirror_threshold_is_exact_reciprocal(grid):
@@ -295,6 +307,160 @@ def test_evaluate_run_biggest_move(grid):
     bars = _bars_hl(spec)
     for d in defs.values():
         assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def _bars_hlv(spec, slot0=100):
+    """spec: list of (open, high, low, close, volume)."""
+    bars = {}
+    for i, (o, h, l, c, v) in enumerate(spec):
+        end = date(2024, 3, 1) + timedelta(days=i)
+        bars[slot0 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
+                                    open=float(o), high=float(h), low=float(l),
+                                    close=float(c), volume=float(v))
+    return bars
+
+
+def test_bind_batch3_variants(grid):
+    for facet, qid, n_outcomes in (
+            ('dominance', 'B|volume|up_down_volume|dominance|1x10', 3),
+            ('dry_up_at_low', 'B|volume|RVOL20|dry_up_at_low|1x10', 4),
+            ('max_vol_position', 'B|volume|RVOL20|max_vol_position|1x10', 4),
+            ('vs_own_past', 'B|volume|RVOL20|vs_own_past|1x10', 3)):
+        row, variant = _q(grid, qid)
+        defs = bind_master_question(row, variant)
+        assert len(defs) == n_outcomes
+        for d in defs:
+            assert d['question_id'].startswith('BM1-')
+            assert d['definition_status'] == 'BOUND'
+            literal_threshold(d['comparison_threshold'])
+        by_outcome = {d['source_outcome']: d for d in defs}
+        if facet == 'dominance':
+            assert by_outcome['up_heavy']['comparator'] == '>'
+            assert by_outcome['down_heavy']['comparator'] == '<'
+            assert by_outcome['even']['feature']['transform'] == 'mirror_min'
+        if facet == 'dry_up_at_low':
+            assert by_outcome['at_low']['feature']['dry_up_mult'] == '0.6'
+            assert all(by_outcome[o]['feature_kind'] == 'boolean' for o in by_outcome)
+        if facet == 'max_vol_position':
+            assert by_outcome['start']['feature']['max_vol_edge_bars'] == '2'
+        if facet == 'vs_own_past':
+            assert by_outcome['high']['feature']['baseline_bars'] == '250'
+            assert by_outcome['high']['feature']['volume_source'] == 'volume'
+
+
+def test_evaluate_dominance(grid):
+    row, variant = _q(grid, 'B|volume|up_down_volume|dominance|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 12)
+    last = 109
+    # 6 up bars vol 200, 4 down bars vol 100 -> ratio 1200/400 = 3 -> up_heavy
+    spec = [(10, 11, 9, 10.8, 200) if i % 5 in (0, 1, 2) else (10, 10.2, 9.8, 9.9, 100)
+            for i in range(10)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['up_heavy'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['down_heavy'], bars, setup, last).answer == 'NO'
+    # all volume on up bars -> +inf -> up_heavy YES, down_heavy NO
+    spec = [(10, 11, 9, 10.8, 100)] * 10
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['up_heavy'], bars, setup, last).answer == 'YES'
+    # all doji with volume -> 0/0 -> NOT_EVALUABLE
+    spec = [(10, 10.2, 9.8, 10, 100)] * 10
+    bars = _bars_hlv(spec)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    # bars without volume -> NOT_EVALUABLE, never a crash
+    bars = _bars_hl([(10, 11, 9, 10.8)] * 10)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_dry_up_at_low(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|dry_up_at_low|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 59  # 49 prior + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # prior 49 bars volume 100; window: bar 5 has the lowest close AND dry volume 30
+    spec = [(10 + i * 0.01, 10.2 + i * 0.01, 9.8 + i * 0.01, 10.1 + i * 0.01, 100)
+            for i in range(49)]
+    win = [(10.5, 10.7, 10.3, 10.6, 100),
+           (10.6, 10.8, 10.4, 10.7, 100),
+           (10.7, 10.9, 10.5, 10.8, 100),
+           (10.8, 11.0, 10.6, 10.9, 100),
+           (10.9, 11.1, 10.7, 11.0, 100),
+           (9.0, 9.2, 8.8, 8.9, 30),     # window lowest close, dry (30 < 0.6*100)
+           (10.0, 10.2, 9.8, 10.1, 100),
+           (10.1, 10.3, 9.9, 10.2, 100),
+           (10.2, 10.4, 10.0, 10.3, 100),
+           (11.5, 11.7, 11.3, 11.6, 100)]  # window highest close, not dry
+    bars = _bars_hlv(spec + win)
+    assert evaluate_master(defs['at_low'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['at_high'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['both'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # also dry at the highest close -> both YES (exclusive at_low/at_high NO)
+    win2 = list(win)
+    win2[9] = (11.5, 11.7, 11.3, 11.6, 20)
+    bars = _bars_hlv(spec + win2)
+    assert evaluate_master(defs['both'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['at_low'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_max_vol_position(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|max_vol_position|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 12)
+    last = 109
+    closes = [10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 11.0, 10.2, 11.1]  # min at 8
+    base = [(c - 0.1, c + 0.1, c - 0.2, c, 100) for c in closes]
+    # max volume at index 0 -> start (edge bars v=2); price low is index 8
+    first = (base[0][0], base[0][1], base[0][2], base[0][3], 900)
+    bars = _bars_hlv([first] + list(base[1:]))
+    assert evaluate_master(defs['start'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['at_price_low'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['end'], bars, setup, last).answer == 'NO'
+    # max volume at the window's lowest close (index 4) -> at_price_low beats start
+    spec = list(base)
+    spec[4] = (spec[4][0], spec[4][1], spec[4][2], 9.0, 900)
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['at_price_low'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['start'], bars, setup, last).answer == 'NO'
+    # max volume in the middle -> middle
+    spec = list(base)
+    spec[5] = (spec[5][0], spec[5][1], spec[5][2], spec[5][3], 900)
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['middle'], bars, setup, last).answer == 'YES'
+    # max volume at the last bar -> end
+    spec = list(base)
+    spec[9] = (spec[9][0], spec[9][1], spec[9][2], spec[9][3], 900)
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['end'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['middle'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_vs_own_past(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|vs_own_past|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 260  # 250 baseline + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # baseline volume 100, window volume 200 -> ratio 2 > 1.5 -> high
+    spec = [(10 + i * 0.01, 10.2 + i * 0.01, 9.8 + i * 0.01, 10.1 + i * 0.01,
+             100 if i < 250 else 200) for i in range(span)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['high'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['low'], bars, setup, last).answer == 'NO'
+    # window quieter than baseline -> low YES
+    spec = [(10 + i * 0.01, 10.2 + i * 0.01, 9.8 + i * 0.01, 10.1 + i * 0.01,
+             100 if i < 250 else 50) for i in range(span)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['low'], bars, setup, last).answer == 'YES'
+    # dollar_volume|vs_own_past registers only S_baseline_bars (no ratio dial)
+    # -> stays honestly unbound this batch (counted by the emitter, not skipped)
+    import pytest as _pytest
+    row2, variant2 = _q(grid, 'B|volume|dollar_volume|vs_own_past|1x10')
+    with _pytest.raises(NotImplementedError):
+        bind_master_question(row2, variant2)
 
 
 def _stage_root(tmp_path):

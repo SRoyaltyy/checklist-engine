@@ -41,6 +41,8 @@ class NativeBar:
     high: float | None
     low: float | None
     close: float | None
+    volume: float | None = None      # shares traded; None = not supplied
+    dollar: float | None = None      # sum(close*volume) over the candle's sessions (tf aggregates)
 
 
 def _strict_positive(values, name):
@@ -83,13 +85,31 @@ def _tf_window(bars, setup_date, expected_slot, lookback, candle_days):
     candles = []
     for i in range(lookback):
         group = selected[i * candle_days:(i + 1) * candle_days]
+        vols = [b.volume for b in group]
+        dollars = [None if b.volume is None or b.close is None else b.close * b.volume
+                   for b in group]
+        volume = None if any(v is None for v in vols) else float(sum(vols))
+        dollar = None if any(d is None for d in dollars) else float(sum(dollars))
         candles.append(NativeBar(end=group[-1].end, available_from=None,
                                  open=group[0].open, high=max(b.high for b in group),
-                                 low=min(b.low for b in group), close=group[-1].close))
+                                 low=min(b.low for b in group), close=group[-1].close,
+                                 volume=volume, dollar=dollar))
     return candles
 
 
-def _measure(recipe, candles):
+def _nonnegative(values, name):
+    """Volume/dollar path: None or a bad value means NOT_EVALUABLE, never a crash."""
+    if any(v is None for v in values):
+        return None
+    if any(isinstance(v, bool) or not isinstance(v, Real) for v in values):
+        raise TypeError(name + ' must be numeric scalars')
+    arr = np.asarray(values, dtype=np.float64)
+    if not np.isfinite(arr).all() or (arr < 0).any():
+        return None
+    return arr
+
+
+def _measure(recipe, candles, feature=None):
     """Return the binary64 measurement or None (NOT_EVALUABLE)."""
     opened = _strict_positive([b.open for b in candles], 'native open')
     high = _strict_positive([b.high for b in candles], 'native high')
@@ -201,6 +221,82 @@ def _measure(recipe, candles):
                     return None      # 0/0 is unavailable, never invented
                 return math.inf      # KNOWN signed infinity per ratio rule
             return float(biggest / atr14)
+        if recipe == 'native_up_down_volume_dominance_v1':
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            up = float(vol[body > 0].sum(dtype=np.float64))
+            down = float(vol[body < 0].sum(dtype=np.float64))
+            if up == 0 and down == 0:
+                return None
+            if down == 0:
+                return math.inf      # all volume on up bars, KNOWN infinity
+            if up == 0:
+                return 0.0
+            return up / down
+        if recipe == 'native_volume_dry_up_at_low_v1':
+            # candles[0..48] are the 49 prior bars backing the 50-bar median
+            # (med50 = median of the 50 bars ending at the reference bar,
+            # all strictly before D). Window = candles[49:].
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles) - 49
+            if n < 1:
+                return None
+            win_vol = vol[-n:]
+            win_close = close[-n:]
+            mult = float(feature['dry_up_mult'])
+
+            def dry(j):
+                abs_i = len(candles) - n + j
+                med = float(np.median(vol[abs_i - 49:abs_i + 1]))
+                if med == 0:
+                    return None      # 50-bar median of zero volume: undefined
+                return bool(win_vol[j] < mult * med)
+
+            dry_low = dry(int(np.argmin(win_close)))   # first lowest close
+            dry_high = dry(int(np.argmax(win_close)))  # first highest close
+            if dry_low is None or dry_high is None:
+                return None
+            return {'at_low': dry_low and not dry_high,
+                    'at_high': dry_high and not dry_low,
+                    'both': dry_low and dry_high,
+                    'none': not dry_low and not dry_high}
+        if recipe == 'native_max_vol_position_v1':
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles)
+            edge = int(feature['max_vol_edge_bars'])
+            pos = int(np.argmax(vol))                  # first max on tie
+            at_price_low = pos == int(np.argmin(close))
+            start = pos < edge
+            end = (n - 1 - pos) < edge
+            return {'at_price_low': bool(at_price_low),
+                    'start': bool(not at_price_low and start),
+                    'middle': bool(not at_price_low and not start and not end),
+                    'end': bool(not at_price_low and not start and end)}
+        if recipe == 'native_volume_vs_own_past_v1':
+            # candles[0:baseline] are the prior baseline bars; window = last
+            # lookback candles. Source = raw share volume (RVOL20) or the
+            # tf-aggregate dollar field (dollar_volume).
+            base_n = int(feature['baseline_bars'])
+            if len(candles) <= base_n:
+                return None
+            if feature['volume_source'] == 'dollar':
+                vals = _nonnegative([b.dollar for b in candles], 'native dollar volume')
+            else:
+                vals = _nonnegative([b.volume for b in candles], 'native volume')
+            if vals is None:
+                return None
+            win_mean = float(vals[base_n:].mean(dtype=np.float64))
+            base_mean = float(vals[:base_n].mean(dtype=np.float64))
+            if base_mean == 0:
+                if win_mean == 0:
+                    return None      # 0/0 is unavailable, never invented
+                return math.inf      # KNOWN signed infinity per ratio rule
+            return win_mean / base_mean
     raise NotImplementedError('unbound canonical master feature: ' + recipe)
 
 
@@ -268,14 +364,65 @@ FACETS = {
                       'outside_after_inside': ('boolean', '=', 'one'),
                       'mostly_outside': ('boolean', '=', 'one'),
                       'none': ('boolean', '=', 'one')}),
+    # ---- batch 3: volume group (share volume and dollar volume are native
+    # fields of the price world; all evidence bars still end <= D-1) ----
+    'dominance': dict(
+        binding='band', mirror=True, l1_l3=(('volume', 'up_down_volume'),),
+        recipe='native_up_down_volume_dominance_v1',
+        unit='sum_volume_up_bars_over_sum_volume_down_bars',
+        outcomes=('up_heavy', 'down_heavy', 'even'), cutoff_id='S_ratio_band_1p3',
+        transform_by_outcome={'up_heavy': 'identity', 'down_heavy': 'identity',
+                              'even': 'mirror_min'},
+        comparator_by_outcome={'up_heavy': '>', 'down_heavy': '<', 'even': '>='}),
+    'dry_up_at_low': dict(
+        binding='mixed', l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_volume_dry_up_at_low_v1',
+        unit='volume_dry_up_against_50bar_median_at_extreme_close',
+        outcomes=('at_low', 'at_high', 'both', 'none'),
+        cutoff_id='C032_dry_up_at_low__mult0p6',
+        baked_map={'C032_dry_up_at_low__mult0p6': 'dry_up_mult'},
+        outcome_spec={'at_low': ('boolean', '=', 'one'),
+                      'at_high': ('boolean', '=', 'one'),
+                      'both': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'max_vol_position': dict(
+        binding='mixed', l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_max_vol_position_v1',
+        unit='position_of_window_max_volume_bar',
+        outcomes=('start', 'middle', 'at_price_low', 'end'),
+        cutoff_id='C036_max_vol_position__bars2',
+        baked_map={'C036_max_vol_position__bars2': 'max_vol_edge_bars'},
+        outcome_spec={'start': ('boolean', '=', 'one'),
+                      'middle': ('boolean', '=', 'one'),
+                      'at_price_low': ('boolean', '=', 'one'),
+                      'end': ('boolean', '=', 'one')}),
+    'vs_own_past': dict(
+        binding='band', mirror=True,
+        l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_volume_vs_own_past_v1',
+        unit='window_mean_volume_over_prior_baseline_mean_volume',
+        outcomes=('high', 'normal', 'low'), cutoff_id='S_ratio_band_1p5',
+        baked_cutoff_ids=('S_baseline_bars',),
+        baked_map={'S_baseline_bars': 'baseline_bars'},
+        volume_source_by_l3={'RVOL20': 'volume'},
+        transform_by_outcome={'high': 'identity', 'normal': 'mirror_min', 'low': 'identity'},
+        comparator_by_outcome={'high': '>', 'normal': '>=', 'low': '<'}),
 }
+
+for _spec in FACETS.values():
+    _spec.setdefault('l1_l3', (('candles', 'OHLC'),))
+    _spec.setdefault('baked_cutoff_ids', ())
+    _spec.setdefault('baked_map', {})
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
                  'candle pair is required, +14 for the ATR14 base of run_biggest_move), a missing/late '
                  'native bar, a non-positive or non-finite price, a zero total body on both sides '
                  '(colour-balance facets), a missing green or red bar (last_green_vs_red, down_vs_up_moves), '
                  'an all-zero-range window (wick_body), no monochromatic body run (run_biggest_move), '
-                 'or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO).')
+                 'or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO). '
+                 'Volume facets add: a missing/negative/non-finite native volume or dollar field, '
+                 'all-zero window volume on both sides (dominance), a zero 50-bar median volume '
+                 '(dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past).')
 KNOWABLE = ('Uses only native candles with available_from <= setup date D and end < D '
             '(last completed candle = D-1); D open is execution only. Bars are strict '
             + BAR_DEFINITION + ' slot groups; no day-D candle.')
@@ -294,10 +441,12 @@ def _ratio_thresholds(spec, v):
 
 
 def _definition(spec, timeframe, lookback, outcome, transform, operator, threshold,
-                feature_kind, source_variant_id, source_question_id, expression_suffix=''):
+                feature_kind, source_variant_id, source_question_id, expression_suffix='',
+                feature_extra=None):
     scalar = dict(recipe=spec['recipe'], candle_days=timeframe, lookback=lookback,
                   transform=transform, bar_definition=BAR_DEFINITION,
                   price_basis=PRICE_BASIS, numeric_contract=CONTRACT)
+    scalar.update(feature_extra or {})
     semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold)
     expression = (spec['recipe'] + '(' + str(timeframe) + 'd,N=' + str(lookback) + ')'
                   + expression_suffix)
@@ -319,17 +468,28 @@ def _bind_facet(tree_row, variant, spec):
     if timeframe not in range(1, 22) or lookback < 1:
         raise ValueError('registered native timeframe/lookback required')
 
+    # Baked dials are consumed inside the measurement (they shape the feature,
+    # not the comparison threshold); every registered dial must be accounted
+    # for by exactly one of the threshold dial or the baked map.
+    allowed = {spec['cutoff_id']} | set(spec['baked_cutoff_ids'])
     if spec['binding'] == 'bool3':
         if settings:
             raise ValueError('bool3 binding takes no registered cutoff: ' + str(sorted(settings)))
+        feature_extra = {}
+    elif set(settings) != allowed:
+        raise ValueError('master binding cannot silently ignore a cutoff: ' + str(sorted(settings)))
+    else:
+        feature_extra = {key: settings[dial] for dial, key in spec['baked_map'].items()}
+    if 'volume_source_by_l3' in spec:
+        feature_extra['volume_source'] = spec['volume_source_by_l3'][tree_row['L3_derivative']]
+
+    if spec['binding'] == 'bool3':
         return [_definition(spec, timeframe, lookback, outcome, 'identity', '=', '1',
                             'boolean', variant.variant_id, variant.source_question_id,
-                            ';' + outcome)
+                            ';' + outcome, feature_extra)
                 for outcome in spec['outcomes']]
 
     if spec['binding'] == 'mixed':
-        if set(settings) != {spec['cutoff_id']}:
-            raise ValueError('master binding cannot silently ignore a cutoff: ' + str(sorted(settings)))
         v = settings[spec['cutoff_id']]
         result = []
         for outcome in spec['outcomes']:
@@ -338,12 +498,10 @@ def _bind_facet(tree_row, variant, spec):
             suffix = ';max_inside_run' if tsource == 'cutoff' else ';' + outcome
             result.append(_definition(spec, timeframe, lookback, outcome, 'identity',
                                       operator, threshold, kind, variant.variant_id,
-                                      variant.source_question_id, suffix))
+                                      variant.source_question_id, suffix, feature_extra))
         return result
 
     # binding == 'band'
-    if set(settings) != {spec['cutoff_id']}:
-        raise ValueError('master binding cannot silently ignore a cutoff: ' + str(sorted(settings)))
     v = settings[spec['cutoff_id']]
     high, low = _ratio_thresholds(spec, v)
     result = []
@@ -360,39 +518,47 @@ def _bind_facet(tree_row, variant, spec):
                   else ';abs' if transform == 'abs' else '')
         result.append(_definition(spec, timeframe, lookback, outcome, transform,
                                   operator, threshold, 'continuous', variant.variant_id,
-                                  variant.source_question_id, suffix))
+                                  variant.source_question_id, suffix, feature_extra))
     return result
 
 
 def bind_master_question(tree_row, variant):
     """Bind a canonical source question+variant to strict binary definitions.
 
-    Batch-1 candle facets bind here; everything else falls through to the
+    Kimi candle/volume facets bind here; everything else falls through to the
     reference price binders, which raise NotImplementedError when unbound.
     """
-    if (tree_row['part'] == 'base' and tree_row['L1_type'] == 'candles'
-            and tree_row['L3_derivative'] == 'OHLC' and tree_row['L4_analysis'] in FACETS):
+    spec = FACETS.get(tree_row['L4_analysis'])
+    if (tree_row['part'] == 'base' and spec is not None
+            and (tree_row['L1_type'], tree_row['L3_derivative']) in spec['l1_l3']):
         if tree_row['question_id'] != variant.source_question_id:
             raise ValueError('source tree and variant question differ')
-        return _bind_facet(tree_row, variant, FACETS[tree_row['L4_analysis']])
+        return _bind_facet(tree_row, variant, spec)
     return _bind_gpt_price(tree_row, variant)
 
 
 _MASTER_RECIPES = {spec['recipe'] for spec in FACETS.values()}
 # Recipes that compare each window candle with its predecessor need one extra
-# native candle before the window (gaps, inside/outside, ATR14 warmup).
-_NEEDS_PRIOR = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
-                'native_inside_outside_seq_v1', 'native_run_biggest_move_ratio_v1'}
+# native candle before the window (gaps, inside/outside, ATR14 warmup); the
+# 50-bar median volume recipes need 49 prior bars; vs_own_past reads its
+# baseline length from the feature (baked S_baseline_bars dial).
+_EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
+                'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
+                'native_volume_dry_up_at_low_v1': 49}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
-                        'native_inside_outside_seq_v1'}
+                        'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
+                        'native_max_vol_position_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
     feature = definition['feature']
     if feature['recipe'] in _MASTER_RECIPES:
-        lookback = feature['lookback'] + (1 if feature['recipe'] in _NEEDS_PRIOR else 0)
+        extra = _EXTRA_PRIOR.get(feature['recipe'], 0)
+        if feature['recipe'] == 'native_volume_vs_own_past_v1':
+            extra = int(feature['baseline_bars'])  # baked S_baseline_bars dial
+        lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
-        measured = None if candles is None else _measure(feature['recipe'], candles)
+        measured = None if candles is None else _measure(feature['recipe'], candles, feature)
         if feature['recipe'] in _CATEGORICAL_RECIPES:
             if measured is None:
                 value = None

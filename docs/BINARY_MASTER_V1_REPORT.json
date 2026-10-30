@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 227,
-  "bound_unique_binary_definitions": 2355,
-  "bound_source_aliases": 2670,
+  "bound_source_questions": 303,
+  "bound_unique_binary_definitions": 3258,
+  "bound_source_aliases": 4140,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -279,22 +279,26 @@
     "zone_route"
   ],
   "batch1_bound_facets": [
+    "dominance",
     "down_vs_up_moves",
+    "dry_up_at_low",
     "gap_down",
     "gap_up",
     "inside_outside",
     "last_green_vs_red",
+    "max_vol_position",
     "red_green_balance",
     "run_biggest_move",
+    "vs_own_past",
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 985,
-  "unbound_oat_variants": 153805,
+  "unbound_family_variant_count": 981,
+  "unbound_oat_variants": 153378,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 5035,
-  "csv_sha256": "455851b98d92da92a1386076e4c7d6991f1e2027f1c9352c6feaa4a13b02bea9",
+  "master_total_rows": 5938,
+  "csv_sha256": "5b717eb9a74797d53a8fca4d1f4f933c215654cdddbf7f5f1cf2955b9aa8e926",
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
@@ -302,7 +306,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "bcb515fc35f72e7fa4672785786c786aad96cb2954358494056850775f0ac623",
+    "world_binary_master.py": "5ff1b8f8ed034efe7992c4bc87290289f2fcdd5466e15908dbe5241f89db4871",
     "ci/binary_master_build.py": "b251aabf5b267d56583e4332f5388674b7351369369f2e08a4eaa7bd49022d12"
   },
   "answer_generation": "NOT_RUN",
