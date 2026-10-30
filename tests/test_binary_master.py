@@ -421,7 +421,7 @@ def test_evaluate_max_vol_position(grid):
     assert evaluate_master(defs['end'], bars, setup, last).answer == 'NO'
     # max volume at the window's lowest close (index 4) -> at_price_low beats start
     spec = list(base)
-    spec[4] = (spec[4][0], spec[4][1], spec[4][2], 9.0, 900)
+    spec[4] = (spec[4][0], spec[4][1], 8.8, 9.0, 900)  # valid bar, new lowest close
     bars = _bars_hlv(spec)
     assert evaluate_master(defs['at_price_low'], bars, setup, last).answer == 'YES'
     assert evaluate_master(defs['start'], bars, setup, last).answer == 'NO'

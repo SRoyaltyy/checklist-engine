@@ -310,7 +310,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "3785d04b21aa5026475e04f4ab8c86c99767106d4ca5832dc6428751013ef501",
+    "world_binary_master.py": "d38f4875e6162f779aa23a51ac1fc858b790d209ca4d7943be33989661a4f84b",
     "ci/binary_master_build.py": "b251aabf5b267d56583e4332f5388674b7351369369f2e08a4eaa7bd49022d12"
   },
   "answer_generation": "NOT_RUN",
