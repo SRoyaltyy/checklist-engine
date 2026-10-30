@@ -1,6 +1,6 @@
 # Genuine vs optional blockers V1
 
-Authority: Cyrus ruling91a593a,2026-10-30 22:05 HKT. The8 replay-discrepancy names are OPTIONAL once the exclusion is enforced. No epsilon or edited bits.
+Latest authority: James0b57c09,2026-10-30 22:40 HKT, applying Cyrus91a593a. Price-v1 is price-only; non-price families and shares/size beyond the existing mask are DEFERRED_V2, and Phases3–11 are downstream. Full-project requirements below retain their applicable-stage meaning and do not gate row0. The8 replay-discrepancy names are OPTIONAL once the exclusion is enforced. No epsilon or edited bits.
 
 The v1 build/eligibility policy removes8/8727 names(0.09167%) and13520/12560808 raw-source stock-days(0.10764%). It retains8439 names(96.69990% of the original universe),12547288 source stock-days and every131 added source name. The280 prior raw-source exclusions remain separately identified.
 
@@ -10,13 +10,13 @@ The v1 build/eligibility policy removes8/8727 names(0.09167%) and13520/12560808 
 |---|---|---|---|
 |166 replay flips / eight named stocks|OPTIONAL|8/8727 names=0.09167%;13520/12560808 source stock-days=0.10764%|EXCLUDED_REPLAY_MISMATCH in dictionary/REPLAY_QUARANTINE_V1.json and docs/WORLD_V1_ELIGIBILITY_LEDGER_V1.csv; background diagnosis does not block.|
 |280 prior raw-source exclusions|OPTIONAL|280/8727 names=3.20843%; stock-day denominator unavailable for names without raw history|Existing published source reasons retained; combined v1 retained-name coverage remains96.69990%.|
-|Nine pinned cp/lower_highs price fields absent from the produced registry|GENUINE|100% of remaining8439 names lack these produced fields|Actual1044-field diagnostic registry and ROW0_PRICE_WORLD_GATE_V1.json; this is common field coverage, not a small set of bad names.|
-|Complete measured native price-world coverage|GENUINE|100% of v1 cohort is in proof scope; actual failure fraction UNMEASURED|Complete native numeric world artifact/measurement has not been supplied; do not infer coverage from question IDs or asset hashes.|
-|Comprehensive price prefix/PIT proof|GENUINE|100% of v1 cohort is in required proof scope; actual leak fraction UNMEASURED|The ten-stock statistic prefix probes passed but do not cover every price column/question/cut. Missing full proof is not a claim that every row leaks.|
-|Historical tradeable / nominal >=$100M mask|GENUINE|100% of v1 cohort is in required eligibility scope; actual affected fraction UNMEASURED|Raw nominal price/share publication lineage and full day-D mask are not proved. Non-quarantine alone never means PIT-eligible.|
+|Nine pinned cp/lower_highs fields|OPTIONAL for v1; required v2|100% of remaining8439 names lack these9 fields;9/1053 requested fields=0.85470%|Explicit DEFERRED_V2_FIELD under0b57c09; exact field list in dictionary/PRICE_V1_SCOPE_V1.json. Immutable produced1044-field registry unchanged.|
+|Price-field coverage sample|GENUINE for row0 measurement|100 predeclared random names/all1044 produced fields/all22 native timeframes; actual failure fraction pending measurement|ci.price_v1_sample_gate publishes actual nonblank counts/dates. Unsampled remainder is UNMEASURED, not an extra row0 blocker under0b57c09.|
+|Price prefix/PIT sample|GENUINE for row0 measurement|100 names/all price columns/22 timeframes/two cuts; full-cohort fraction UNMEASURED|Observed prefix failures block; an unmeasured full-cohort remainder does not block this owner-scoped row0. Comprehensive P4 remains a later assurance claim.|
+|Shares/size beyond the existing mask|OPTIONAL for price-v1; required v2|Actual affected fraction UNMEASURED|Explicitly deferred by0b57c09; existing mask semantics unchanged. Quarantine alone never means eligible and does not authorize an all-true mask.|
 |Complete binary master / v1 answers and lens coverage|GENUINE for answer/mining stage|59/15093 source questions currently bound; stock-day answer coverage UNMEASURED|633 definitions are not a completed master/answer layer. This downstream work is not a new raw-build prerequisite.|
 
-Known optional exclusions are removed before v1 work. A future producer cannot count an excluded stock as NO. Unmeasured exposure cannot honestly be labeled <5%; it remains unverified at its applicable stage until measured. Percentages above use the named denominator, rather than interchanging names, rows, columns and questions.
+Known optional exclusions are removed before v1 work. Non-price families and future phases are not row0 blockers; the current scope is recorded in docs/PRICE_V1_SAMPLE_GATE_V1.md. A future producer cannot count an excluded stock as NO. Unmeasured exposure cannot honestly be labeled <5%; it remains unverified at its applicable stage until measured. Percentages above use the named denominator, rather than interchanging names, rows, columns and questions.
 
 ## Every open project-checklist item
 

@@ -1,0 +1,81 @@
+name: price-v1-sample-gate
+on:
+  push:
+    branches: [codex/price-v1-sample-gate]
+    paths: ['ci/price_v1_sample_gate.py', 'dictionary/PRICE_V1_SCOPE_V1.json', '.github/workflows/price_v1_sample_gate.yml']
+  pull_request:
+    paths: ['ci/price_v1_sample_gate.py', 'dictionary/PRICE_V1_SCOPE_V1.json', 'tests/test_price_v1_sample_gate.py', '.github/workflows/price_v1_sample_gate.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: price-v1-sample-gate-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m pytest tests/test_price_v1_sample_gate.py tests/test_replay_quarantine.py -q
+  prepare:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      inputs_release: ${{ steps.plan.outputs.inputs_release }}
+      plan_sha256: ${{ steps.plan.outputs.plan_sha256 }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - id: plan
+        run: python -m ci.price_v1_sample_gate prepare --directory sample-plan
+  measure:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        index: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.price_v1_sample_gate chunk --directory sample --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --index '${{ matrix.index }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+  finalize:
+    needs: [prepare,measure]
+    if: ${{ always() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.price_v1_sample_gate finalize --directory sample-final --inputs-release '${{ needs.prepare.outputs.inputs_release }}' --plan-sha256 '${{ needs.prepare.outputs.plan_sha256 }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-v1-sample-gate
+          path: sample-final/ROW0_PRICE_WORLD_GATE_V2.json
+          if-no-files-found: ignore
