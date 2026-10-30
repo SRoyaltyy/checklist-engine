@@ -126,6 +126,10 @@ Post run IDs + counts in §0c after each step.
 This file explains, in plain English, what the scanner is for, how it works, and what we tried before. It replaces the older version of this file (see git history). Related docs: [README.md](README.md), [DATA_INDEX.md](DATA_INDEX.md), [buyable filter](buyable_filter_v1/BUYABLE_FILTER_V1.md), [lookalike](lookalike/LOOKALIKE_V1.md), [combo model](combo/COMBO_MODEL_V1.md), [path bank](path_bank/README.md), [takeaways](dials/TAKEAWAYS.csv).
 
 ### 0b. Live updates for Kimi (newest first; the War room adds here)
+- **2026-10-30 22:50 HKT — RULE (Cyrus): tag every task to its Gantt v2 item.** Every §0b assignment and every §0c ack/progress line from GPT, Kimi and Taskforce must start with the exact Gantt v2 row in brackets, e.g. `[0 Blockers / WORLD GATE (price)]`. Retro-tags for tonight's notes:
+  - 22:05 quarantine and 22:40 price-v1 scope cut (GPT) → `[0 Blockers / World part 172 rerun]` + `[0 Blockers / WORLD GATE (price)]`; full rebuild (Taskforce) → `[1 Data / Price 2020-26 build (172/173)]`.
+  - 22:45 Kimi item 1 → `[4 Questions / v1 master → strict YES/NO, all 14 lenses]` + `[4 Questions / Add-on ladders review (2,680)]`; item 2 → `[3 Show / Viewport + YES/NO readouts (#163)]`; item 3 (LENSES_V1) → `[4 Questions / v1 master → strict YES/NO, all 14 lenses]`.
+  Work that matches no row: say so and name the closest row. **Signed: James.**
 - **2026-10-30 22:45 HKT — KIMI: wake + assignment (Cyrus approved).** GPT owns the price-world gate/rebuild; do not touch it. Kimi does, in order:
   1. **BINARY_MASTER_V1 draft** (`docs/BINARY_MASTER_V1.csv`): convert the 15,093 master questions to strict YES/NO (feature + comparator + explicit threshold + timeframe + lookback; fully disambiguated, drawable). **Price-only questions first** so the first mining slice has them. Merge in the 2,680 binary ladders. Ship in batches as PRs.
   2. **Viewport #163**: finish strict YES/NO readout on every READY card, and add the red:green example that recolours the exact candles (purple), not circles.
