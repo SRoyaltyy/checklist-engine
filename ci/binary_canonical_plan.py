@@ -13,6 +13,9 @@ from pathlib import Path
 from world_question_grid import CanonicalGrid, GRID, QUESTIONS, TREE, ROOT
 from world_binary_price import bind_price_question
 
+LENSES=('absolute','relative','position','threshold','divergence','outlier','path','streak','cross',
+        'change_since_last','rank_vs_market_or_sector','percentile','extreme_vs_own_history','timeframe')
+
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -59,15 +62,19 @@ def generate(root, out):
     lenses=out/'CANONICAL_LENS_COVERAGE_V1.csv'
     with lenses.open('w',encoding='utf-8',newline='') as stream:
         writer=csv.writer(stream,lineterminator='\n')
-        writer.writerow(['source_question_id','implemented_lenses','implemented_count','fewer_than_six','missing'])
+        writer.writerow(['source_question_id','implemented_lenses','implemented_count','fewer_than_six',
+                         'pending_lenses_json','applicability_review','missing'])
         for qid in sorted(source.questions):
-            implemented='threshold' if qid in bound_sources else ''
+            implemented='absolute|threshold' if qid in bound_sources else ''
+            pending=[name for name in LENSES if not implemented or name not in ('absolute','threshold')]
             writer.writerow([qid,implemented,int(bool(implemented)),'YES',
+                json.dumps(pending,separators=(',',':')),'PENDING_NO_INAPPLICABILITY_INFERRED_FROM_MISSING_CODE',
                 'remaining_applicable_lens_bindings_and_applicability_review'])
     report=source.audit()
     report.update(bound_source_questions=len(bound_sources),bound_unique_binary_definitions=len(bound),
                   bound_source_aliases=len(aliases),unbound_oat_variants=sum(unbound.values()),
                   canonical_questions_flagged_fewer_than_six_lenses=len(source.questions),
+                  requested_lenses=list(LENSES),absolute_threshold_alias_credit='COUNT_ONCE_FOR_IDENTICAL_FIXED_LEVEL_PREDICATE',
                   full_binary_master='INCOMPLETE',real_answer_generation='NOT_RUN',chart_gate='NOT_PASSED',mining='NOT_RUN',
                   native_bar_definition='FIXED_SHARED_SESSION_CALENDAR_V1; legacy rolling-offset artifacts unchanged',
                   source_fingerprints={p:dict(raw_sha256=digest(root/p),

@@ -44,6 +44,8 @@ def _window(bars, setup_date, expected_slot, lookback):
             return None
         if bar.available_from <= bar.end:
             raise ValueError('native candle cannot be available before the next session')
+        if selected and bar.end <= selected[-1].end:
+            raise ValueError('native candle ends must increase strictly with shared slot')
         selected.append(bar)
     return selected
 
@@ -104,16 +106,18 @@ def bind_price_question(tree_row, variant):
     if timeframe not in range(1,22) or lookback < 1:
         raise ValueError('registered native timeframe/lookback required')
     feature = dict(recipe='native_'+kind+'_fraction_v1', candle_days=timeframe,
-                   lookback=lookback, bar_definition='FIXED_SHARED_SESSION_CALENDAR_V1')
+                   lookback=lookback, bar_definition='FIXED_SHARED_SESSION_CALENDAR_V1',
+                   price_basis='PIT_SPLIT_ADJUSTED_OHLC',numeric_contract='FLOAT64_NO_EPSILON_V1')
     result = []
     for outcome in outcomes:
         scalar = dict(feature, transform='abs' if outcome == 'flat' else 'identity')
         operator = {'up': '>', 'down': '<', 'flat': '<='}[outcome]
         threshold = '-'+cutoff if outcome == 'down' else cutoff
         semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold)
+        expression=scalar['recipe']+'('+str(timeframe)+'d,N='+str(lookback)+')'+(';abs' if outcome == 'flat' else '')
         result.append(dict(question_id='BM1-'+identity(semantic), feature_id='BF1-'+identity(scalar),
-            feature=scalar, feature_expression=scalar['recipe']+'('+str(timeframe)+'d,N='+str(lookback)+')'+
-                (';abs' if outcome == 'flat' else ''), comparator=operator, comparison_threshold=threshold,
+            feature=scalar, feature_expression=expression,feature_kind='continuous',formula=f'({expression}) {operator} {threshold}',
+            answer_set=['NO','YES'], comparator=operator, comparison_threshold=threshold,
             feature_unit='fraction', source_question_id=variant.source_question_id,
             source_variant_id=variant.variant_id, source_outcome=outcome,
             expression='NOT_YET', missing='tested_native_price_renderer_binding;released_price_source_binding',

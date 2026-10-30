@@ -101,6 +101,11 @@ def test_setup_and_future_prices_are_never_read(catalog):
     assert answers(definitions(catalog)[0],b)=={'up':'NO','down':'NO','flat':'YES'}
 
 
+def test_slot_order_cannot_hide_duplicate_or_reversed_native_ends(catalog):
+    b=bars();b[1]=replace(b[1],end=b[0].end)
+    with pytest.raises(ValueError,match='increase strictly'):answers(definitions(catalog)[0],b)
+
+
 def test_price_definition_cannot_ignore_extra_cutoffs_or_change_source_identity(catalog):
     qid='B|candles|OHLC|intraday_change|1x3';variant=next(catalog.variants(qid));row=catalog.tree[qid]
     with pytest.raises(ValueError,match='ignore a cutoff'):
@@ -125,3 +130,8 @@ def test_plan_keeps_pending_stages_and_unbound_families_visible(tmp_path):
     values=[json.loads(line) for line in (tmp_path/'BOUND_PRICE_DEFINITIONS_V1.jsonl').read_text().splitlines()]
     assert len(values)==report['bound_unique_binary_definitions']>0
     assert all(q['expression']=='NOT_YET' and q['chart_status']=='PENDING' for q in values)
+    assert len(report['requested_lenses'])==14
+    coverage=list(csv.DictReader((tmp_path/'CANONICAL_LENS_COVERAGE_V1.csv').open(encoding='utf-8')))
+    bound=next(r for r in coverage if r['implemented_lenses'])
+    assert bound['implemented_lenses']=='absolute|threshold' and bound['implemented_count']=='1'
+    assert len(json.loads(bound['pending_lenses_json']))==12

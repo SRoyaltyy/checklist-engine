@@ -1,6 +1,6 @@
 # Lens definitions V1
 
-Authority: James/Cyrus01926ea(2026-10-30 01:24 HKT), superseding the seven-lens
+Authority: James/Cyrus01926ea (2026-10-30 01:24 HKT), superseding the seven-lens
 working set. Apply **all applicable** lenses; publish an explicit reason for an
 inapplicable lens and flag each question type with fewer than six distinct
 implemented readings. A missing implementation/data source is pending work,
@@ -12,6 +12,7 @@ Offsets are native slots on the shared calendar, not a compressed list of
 available stock bars. Missing required slots/values yield NOT_EVALUABLE. An
 actual generated row must expand X, units, settings, counterpart, dates and every
 numeric parameter; examples are not replacements for registered source grids.
+The examples use daily values unless a resolution is explicitly shown.
 
 | Lens | Strict definition, with a concrete numeric instance |
 |---|---|
@@ -19,7 +20,7 @@ numeric parameter; examples are not replacements for registered source grids.
 | relative | Compare the same quantity, units and intervals to an explicitly identified PIT reference: (C(t)/C(t−20)−1)−(SPY(t)/SPY(t−20)−1)>0.05, with both21-close windows aligned. |
 | position | Compare location relative to a stated earlier range: (X(t)−min(X(t−20..t−1)))/(max(X(t−20..t−1))−min(X(t−20..t−1)))>0.8; current value is excluded from that range. |
 | threshold | Compare the scalar to one rung of an explicit fixed ladder, e.g. RSI14(t)>70; this is identical to the absolute example and receives one semantic predicate ID, not two. |
-| divergence | Two latest confirmed inclusive close-pivot lows, k=2 and confirmation at pivot+2, both inside t−19..t: newer close<older close AND newer RSI14−older RSI14>=5 points; no qualifying pair means NO once required inputs are known. |
+| divergence | Select the two latest p in t−17..t−2 satisfying C(p)=min(C(p−2..p+2)); require newer C<older C AND newer RSI14−older RSI14>=5 points; these are inclusive five-candle lows confirmed at p+2, and no qualifying pair means NO once required inputs are known. |
 | outlier | Compare standardized surprise to a literal cutoff: abs((X(t)−mean(X(t−60..t−1)))/sample_std_ddof1(X(t−60..t−1)))>=2. |
 | path | Compare aggregates from specified parts of the route: mean(X(t−5..t))−mean(X(t−19..t−14))>0; only the first6 and last6 observations of the20-slot window contribute. |
 | streak | Require an uninterrupted condition for a stated length: all(RSI14(s)>70 for s=t−4..t), equivalent to a true streak of at least5; equality breaks the streak. |
@@ -27,7 +28,7 @@ numeric parameter; examples are not replacements for registered source grids.
 | change since last | Compare two explicit offsets: RSI14(t)−RSI14(t−5)>0; this uses the endpoint difference, not a mean of the intervening values. |
 | rank (vs market/sector) | Rank among the full named PIT peer set, excluding self: 100*count(peer X(t)<stock X(t))/peer_count>=90; ties do not count below, an empty/unknown peer set is NOT_EVALUABLE. |
 | percentile | Rank against own earlier observations: 100*count(X(s)<X(t), s=t−250..t−1)/250>=80; ties do not count below, and all250 preceding values are required(core C25). |
-| extreme vs own history | Test a strict record: X(t)>max(X(s),s=t−20..t−1); also instantiate the explicitly registered60/252-native-slot and10-calendar-year windows, preserving their distinct endpoints. |
+| extreme vs own history | Test a strict record: X(t)>max(X(s),s=t−20..t−1) on daily values; also instantiate the60/252-session and10-calendar-year baselines, labeling any separately registered native-candle baseline distinctly and preserving its endpoints. |
 | timeframe | Compare independently computed native resolutions at the same setup cutoff: RSI14(latest completed1d)−RSI14(latest completed5d)>0; show both actual candle-end dates and never resample daily RSI as five-day RSI. |
 
 No raw value or threshold is epsilon-shifted or clipped. For the explicitly
