@@ -17,6 +17,7 @@ from world_question_grid import canonical_number, identity
 RECIPES = {
     'intraday_change': ('C001_intraday_change__pct1', ('up', 'down', 'flat')),
     'interday_change': ('C002_interday_change__pct5', ('up', 'flat', 'down')),
+    'run_structure': (None, ('green_longer','red_longer','equal')),
 }
 
 
@@ -65,7 +66,9 @@ def _prices(bars, name):
 def measurement(kind, bars, setup_date, expected_slot, lookback):
     if kind not in RECIPES:
         raise NotImplementedError('unbound canonical price feature: '+kind)
-    selected = _window(bars, setup_date, expected_slot, lookback)
+    if type(lookback) is not int or lookback<1:
+        raise ValueError('positive integer lookback required')
+    selected = _window(bars, setup_date, expected_slot, lookback+(kind=='run_structure'))
     if selected is None:
         return None
     close = _prices(selected, 'close')
@@ -80,6 +83,16 @@ def measurement(kind, bars, setup_date, expected_slot, lookback):
             value = float(((close-opened)/opened).mean())
         elif kind == 'interday_change':
             value = float(close[-1]/close[0]-1)
+        elif kind == 'run_structure':
+            longest={1:0,-1:0};previous=0;length=0
+            # N close-to-close changes need N+1 closes. Equal closes break a
+            # streak; open/close candle colour is a different quantity.
+            for change in np.diff(close):
+                sign=int(np.sign(change))
+                length=length+1 if sign and sign==previous else int(sign!=0)
+                previous=sign
+                if sign:longest[sign]=max(longest[sign],length)
+            return longest[1]-longest[-1]
         else:
             raise NotImplementedError('unbound canonical price feature: '+kind)
     return None if math.isnan(value) else value
@@ -93,32 +106,37 @@ def bind_price_question(tree_row, variant):
         raise ValueError('source tree and variant question differ')
     cid, outcomes = RECIPES[kind]
     settings = dict(variant.settings)
-    if set(settings) != {cid}:
+    if set(settings) != ({cid} if cid else set()):
         raise ValueError('price binding cannot silently ignore a cutoff')
     # Percent -> fraction is an exact decimal power-of-ten conversion, then the
     # predicate helper performs the same binary64 comparison as the source.
-    percent = Decimal(settings[cid])
-    if not percent.is_finite() or percent <= 0:
-        raise ValueError('positive percent cutoff required')
-    decimal_tuple = percent.as_tuple()
-    cutoff = canonical_number(str(Decimal((decimal_tuple.sign,decimal_tuple.digits,decimal_tuple.exponent-2))))
+    cutoff='0'
+    if cid:
+        percent = Decimal(settings[cid])
+        if not percent.is_finite() or percent <= 0:
+            raise ValueError('positive percent cutoff required')
+        decimal_tuple = percent.as_tuple()
+        cutoff = canonical_number(str(Decimal((decimal_tuple.sign,decimal_tuple.digits,decimal_tuple.exponent-2))))
     timeframe, lookback = map(int, tree_row['L2_timeframe'].split('x'))
     if timeframe not in range(1,22) or lookback < 1:
         raise ValueError('registered native timeframe/lookback required')
     feature = dict(recipe='native_'+kind+'_fraction_v1', candle_days=timeframe,
                    lookback=lookback, bar_definition='FIXED_SHARED_SESSION_CALENDAR_V1',
                    price_basis='PIT_SPLIT_ADJUSTED_OHLC',numeric_contract='FLOAT64_NO_EPSILON_V1')
+    if kind=='run_structure':
+        feature.update(recipe='native_close_streak_balance_v1',numeric_contract='EXACT_INTEGER_STREAK_COUNTS_ON_FLOAT64_CLOSE_V1')
     result = []
     for outcome in outcomes:
         scalar = dict(feature, transform='abs' if outcome == 'flat' else 'identity')
-        operator = {'up': '>', 'down': '<', 'flat': '<='}[outcome]
+        operator = ({'green_longer':'>','red_longer':'<','equal':'='} if kind=='run_structure'
+                    else {'up': '>', 'down': '<', 'flat': '<='})[outcome]
         threshold = '-'+cutoff if outcome == 'down' else cutoff
         semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold)
         expression=scalar['recipe']+'('+str(timeframe)+'d,N='+str(lookback)+')'+(';abs' if outcome == 'flat' else '')
         result.append(dict(question_id='BM1-'+identity(semantic), feature_id='BF1-'+identity(scalar),
-            feature=scalar, feature_expression=expression,feature_kind='continuous',formula=f'({expression}) {operator} {threshold}',
+            feature=scalar, feature_expression=expression,feature_kind='integer_count' if kind=='run_structure' else 'continuous',formula=f'({expression}) {operator} {threshold}',
             answer_set=['NO','YES'], comparator=operator, comparison_threshold=threshold,
-            feature_unit='fraction', source_question_id=variant.source_question_id,
+            feature_unit='native_candle_count_difference' if kind=='run_structure' else 'fraction', source_question_id=variant.source_question_id,
             source_variant_id=variant.variant_id, source_outcome=outcome,
             expression='NOT_YET', missing='tested_native_price_renderer_binding;released_price_source_binding',
             definition_status='BOUND', chart_status='PENDING', derive_status='PENDING', mine_status='PENDING'))
@@ -129,7 +147,7 @@ def evaluate_price(definition, bars, setup_date, expected_slot):
     feature = definition['feature']
     if feature['transform'] not in ('identity','abs'):
         raise ValueError('unknown feature transform')
-    kind = feature['recipe'].removeprefix('native_').removesuffix('_fraction_v1')
+    kind = 'run_structure' if feature['recipe']=='native_close_streak_balance_v1' else feature['recipe'].removeprefix('native_').removesuffix('_fraction_v1')
     value = measurement(kind, bars, setup_date, expected_slot, feature['lookback'])
     if value is not None and feature['transform'] == 'abs':
         value = abs(value)

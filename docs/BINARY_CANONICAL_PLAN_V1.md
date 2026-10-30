@@ -28,10 +28,11 @@ No incomplete semantic key is used to declare two unbound questions duplicates.
 
 ## Explicitly bound initial price definitions
 
-The initial reference adapters bind all registered variants of the canonical
-OHLC intraday_change and interday_change families:38 source questions,
-190 OAT variants and570 distinct binary definitions, retaining570 source aliases.
-The remaining154,477 OAT variants are explicitly unbound.
+The reference adapters bind all registered variants of the canonical OHLC
+intraday_change, interday_change and run_structure families:59 source questions,
+211 OAT variants and633 distinct binary definitions, retaining633 source aliases.
+The remaining154,456 OAT variants are explicitly unbound. The earlier570-row
+component and its immutable CI report remain valid historical evidence.
 
 Intraday change is the binary64 mean of per-candle(C−O)/O, preserving operation
 order. Interday change is last close/first close−1 across N closes, spanning
@@ -40,6 +41,14 @@ to a fraction; flat uses abs(value)<=cutoff, preserving endpoint equality.
 IDs use the expanded feature recipe, native timeframe/lookback, price basis,
 numeric contract, transform, comparator and exact cutoff. Labels do not define
 semantic identity. These are price predicates, not raw measurements sent to mining.
+
+Run structure measures longest rising-close streak minus longest falling-close
+streak over N close-to-close changes, requiring N+1 completed closes. Equal
+closes break either streak. These are not open/close body colours: every candle
+can have a red body while closes rise between candles. Counts and their signed
+difference remain exact integers; green_longer compares>0, red_longer<0 and
+equal=0. Unknown required prior closes remain NOT_EVALUABLE. All21 registered
+source rows have zero internal cutoffs; no hidden setting is ignored or added.
 
 Callers must supply trusted native candles on the fixed shared session calendar,
 PIT split-adjusted compatible OHLC and a known-before-open date contract. The
