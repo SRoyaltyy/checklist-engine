@@ -1,0 +1,367 @@
+{
+  "status": "PASS_ALL10_PUBLIC_V2_STOCK_HASHES_AND_ALL166_SELECTORS_TRACED",
+  "results": [
+    {
+      "ticker": "FEIM",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V3",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        },
+        "baseline_b": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        }
+      },
+      "changed_log_calls": 0
+    },
+    {
+      "ticker": "HHS",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 4,
+          "replay_matches": 0,
+          "total": 4
+        },
+        "baseline_b": {
+          "old_matches": 4,
+          "replay_matches": 0,
+          "total": 4
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 4,
+          "total": 4
+        }
+      },
+      "changed_log_calls": 40
+    },
+    {
+      "ticker": "JHI",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V3",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        },
+        "baseline_b": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        }
+      },
+      "changed_log_calls": 0
+    },
+    {
+      "ticker": "NKTR",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 8,
+          "replay_matches": 0,
+          "total": 8
+        },
+        "baseline_b": {
+          "old_matches": 8,
+          "replay_matches": 0,
+          "total": 8
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 1,
+          "replay_matches": 7,
+          "total": 8
+        }
+      },
+      "changed_log_calls": 60
+    },
+    {
+      "ticker": "OCGN",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 1,
+          "replay_matches": 0,
+          "total": 1
+        },
+        "baseline_b": {
+          "old_matches": 1,
+          "replay_matches": 0,
+          "total": 1
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 1,
+          "total": 1
+        }
+      },
+      "changed_log_calls": 15
+    },
+    {
+      "ticker": "ABX",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 92,
+          "replay_matches": 0,
+          "total": 92
+        },
+        "baseline_b": {
+          "old_matches": 92,
+          "replay_matches": 0,
+          "total": 92
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 19,
+          "replay_matches": 73,
+          "total": 92
+        }
+      },
+      "changed_log_calls": 470
+    },
+    {
+      "ticker": "AMTD",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 35,
+          "replay_matches": 0,
+          "total": 35
+        },
+        "baseline_b": {
+          "old_matches": 35,
+          "replay_matches": 0,
+          "total": 35
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 18,
+          "replay_matches": 17,
+          "total": 35
+        }
+      },
+      "changed_log_calls": 250
+    },
+    {
+      "ticker": "CATO",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 2,
+          "replay_matches": 0,
+          "total": 2
+        },
+        "baseline_b": {
+          "old_matches": 2,
+          "replay_matches": 0,
+          "total": 2
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        }
+      },
+      "changed_log_calls": 15
+    },
+    {
+      "ticker": "DJCO",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "baseline_b": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        }
+      },
+      "changed_log_calls": 30
+    },
+    {
+      "ticker": "BPOP",
+      "baseline_kernel": {
+        "dd": {
+          "current": "X86_V4",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "experiment_kernel": {
+        "dd": {
+          "current": "baseline(X86_V2)",
+          "available": "X86_V4 X86_V3 baseline(X86_V2)"
+        }
+      },
+      "baseline_repeat_bit_differences": 0,
+      "prefix_bit_differences": 0,
+      "all_selectors_traced": true,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "baseline_b": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        }
+      },
+      "changed_log_calls": 30
+    }
+  ],
+  "production_changes": "NONE;OWNER_QUARANTINE_REMAINS_THE_V1_POLICY",
+  "scoring_gate": "CLOSED"
+}

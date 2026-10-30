@@ -1,0 +1,261 @@
+{
+  "status": "DIAGNOSTIC_COMPLETE",
+  "source_commit": "063f7fdc7eae2553348701fa10ada97e98bd770f",
+  "plan_sha256": "f8e75dff021ac9fb59d2f7dcc163e09ddf3277416dca0d74ed865ec6fe8d22de",
+  "results": [
+    {
+      "ticker": "FEIM",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-000",
+      "sha256": "ad452eb12f5cc6b7cee6cea64b82c7882b412661c0e1f6f4fa19fc576e0a43f9",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 0,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        },
+        "baseline_b": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 22,
+          "total": 22
+        }
+      }
+    },
+    {
+      "ticker": "HHS",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-001",
+      "sha256": "0116a1ba6553aba7942301e3f306b9579e032f0165b34d6f0cd827e799e0ee62",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 143278,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 4,
+          "replay_matches": 0,
+          "total": 4
+        },
+        "baseline_b": {
+          "old_matches": 4,
+          "replay_matches": 0,
+          "total": 4
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 4,
+          "total": 4
+        }
+      }
+    },
+    {
+      "ticker": "JHI",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-002",
+      "sha256": "11c622103f1ffd9b8fd0faef3652316958b91bf1dc8c58bc3c90c2f8d6f61dfb",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 0,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        },
+        "baseline_b": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        }
+      }
+    },
+    {
+      "ticker": "NKTR",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-003",
+      "sha256": "4599994a5244b6b1eaba4cd9c5416870fb658b4b99f9c40964944f52949f14eb",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 112466,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 8,
+          "replay_matches": 0,
+          "total": 8
+        },
+        "baseline_b": {
+          "old_matches": 8,
+          "replay_matches": 0,
+          "total": 8
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 1,
+          "replay_matches": 7,
+          "total": 8
+        }
+      }
+    },
+    {
+      "ticker": "OCGN",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-004",
+      "sha256": "7bf95f9f104f8827278647a32c12fc510201346b9ad6ecbce403a863699b9f71",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 20907,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 1,
+          "replay_matches": 0,
+          "total": 1
+        },
+        "baseline_b": {
+          "old_matches": 1,
+          "replay_matches": 0,
+          "total": 1
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 1,
+          "total": 1
+        }
+      }
+    },
+    {
+      "ticker": "ABX",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-005",
+      "sha256": "f07434445781907f19d8630706441e170ab7adc3d90b8cc56bdcbb0f80fd8753",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 21801,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 92,
+          "replay_matches": 0,
+          "total": 92
+        },
+        "baseline_b": {
+          "old_matches": 92,
+          "replay_matches": 0,
+          "total": 92
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 19,
+          "replay_matches": 73,
+          "total": 92
+        }
+      }
+    },
+    {
+      "ticker": "AMTD",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-006",
+      "sha256": "723abed6a8c933fbe2a1cc1c68ffc992f770b489a317e404bae7037257e05618",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 20528,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 35,
+          "replay_matches": 0,
+          "total": 35
+        },
+        "baseline_b": {
+          "old_matches": 35,
+          "replay_matches": 0,
+          "total": 35
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 18,
+          "replay_matches": 17,
+          "total": 35
+        }
+      }
+    },
+    {
+      "ticker": "CATO",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-007",
+      "sha256": "2cd49fee84f55e8ac1e168e278426f8e1fa8e389c55a0d957596cf6227902238",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 49317,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 2,
+          "replay_matches": 0,
+          "total": 2
+        },
+        "baseline_b": {
+          "old_matches": 2,
+          "replay_matches": 0,
+          "total": 2
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 0,
+          "replay_matches": 2,
+          "total": 2
+        }
+      }
+    },
+    {
+      "ticker": "DJCO",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-008",
+      "sha256": "1c78d1d2bfc45567226cc2cc2448effe1fbe428ec739ec93b76c0185080d9362",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 139400,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "baseline_b": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        }
+      }
+    },
+    {
+      "ticker": "BPOP",
+      "release": "price-numeric-runtime-trace-v2-41068145897-1-009",
+      "sha256": "1bda793343c077eee67c50d3f1fed113fd57c468906d8348d1625ddd2de7ac3f",
+      "baseline_repeat_bit_differences": 0,
+      "dispatch_bit_differences": 153634,
+      "baseline_prefix_bit_differences": 0,
+      "selector_codes": {
+        "baseline_a": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "baseline_b": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        },
+        "no_numpy_dispatch": {
+          "old_matches": 3,
+          "replay_matches": 3,
+          "total": 3
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "cause": "REQUIRES_REVIEW_OF_PROFILE_AND_PREFIX_TRACES",
+  "production_changes": "NONE",
+  "scoring_gate": "CLOSED"
+}
