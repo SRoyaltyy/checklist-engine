@@ -2,7 +2,7 @@ name: binary_master_v1
 on:
   pull_request:
     paths: ['world_binary_master.py', 'world_binary_price.py', 'world_binary_questions.py', 'ci/binary_master_build.py', 'ci/binary_master_storage.py',
-            'tests/test_binary_master.py', 'tests/test_binary_master_storage.py', 'tests/test_binary_master_native_ma.py', 'tests/test_binary_master_williams_r.py', 'tests/test_binary_master_recursive_state.py', 'tests/test_binary_master_calendar.py', 'tests/test_binary_questions.py',
+            'tests/test_binary_master.py', 'tests/test_binary_master_storage.py', 'tests/test_binary_master_native_ma.py', 'tests/test_binary_master_williams_r.py', 'tests/test_binary_master_recursive_state.py', 'tests/test_binary_master_stochastic.py', 'tests/test_binary_master_calendar.py', 'tests/test_binary_questions.py',
             'tests/test_binary_canonical_plan.py', 'dials/**', 'docs/BINARY_LADDERS_V1.csv',
             '.github/workflows/binary_master_v1.yml']
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
           python-version: '3.12.15'
       - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
       - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5
-      - run: python -m pytest tests/test_binary_master.py tests/test_binary_master_storage.py tests/test_binary_master_native_ma.py tests/test_binary_master_williams_r.py tests/test_binary_master_recursive_state.py tests/test_binary_master_calendar.py tests/test_binary_questions.py tests/test_binary_canonical_plan.py -q
+      - run: python -m pytest tests/test_binary_master.py tests/test_binary_master_storage.py tests/test_binary_master_native_ma.py tests/test_binary_master_williams_r.py tests/test_binary_master_recursive_state.py tests/test_binary_master_stochastic.py tests/test_binary_master_calendar.py tests/test_binary_questions.py tests/test_binary_canonical_plan.py -q
       - name: Emit master and verify report consistency
         run: |
           python -m ci.binary_master_storage unpack
