@@ -14,7 +14,7 @@ not compute features from raw data, join sources, or authorize mining.
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal, getcontext
-from numbers import Real
+from numbers import Integral, Real
 import math
 import numpy as np
 
@@ -128,21 +128,53 @@ def _nonnegative(values, name):
 
 
 def _ma_series(feature, close):
-    """SMA_p (full-window moving mean) or EMA_p (seed = SMA of the first p
-    bars, then alpha=2/(p+1)); entry k corresponds to candle index p-1+k.
-    Callers must fetch p prior bars (ma_period warmup). None -> too few bars.
+    """Registered native TA-Lib SMA/EMA over the supplied source history.
+
+    Match world_timeframes.parameter_variants, including initialization and
+    float64 operation order. Entry k corresponds to candle index p-1+k.
+    The facet window is selected only after calculating the native series.
     """
+    import talib
     period = int(feature['ma_period'])
     if len(close) < period:
         return None
-    if feature['ma_kind'] == 'SMA':
-        return np.convolve(close, np.ones(period) / period, mode='valid')
-    alpha = 2.0 / (period + 1)
-    ma = np.empty(len(close) - period + 1, dtype=np.float64)
-    ma[0] = float(close[:period].mean(dtype=np.float64))
-    for j in range(period, len(close)):
-        ma[j - period + 1] = alpha * close[j] + (1 - alpha) * ma[j - period]
-    return ma
+    kind = feature['ma_kind']
+    if kind not in ('SMA', 'EMA'):
+        raise NotImplementedError('unregistered moving average: ' + kind)
+    return getattr(talib, kind)(np.asarray(close, dtype=np.float64), timeperiod=period)[period - 1:]
+
+
+def _native_ma_history(bars, setup_date, expected_slot, candle_days):
+    """Complete native groups from supplied history, aligned to shared slots.
+
+    As in frozen world_timeframes.completed_candles, omit partial IPO/halt
+    groups. A present but unavailable/invalid history bar cannot become known
+    indicator state. Nothing after the requested completed group is read.
+    """
+    last = ((expected_slot + 1) // candle_days) * candle_days - 1
+    groups = sorted({int(slot) // candle_days for slot in bars
+                     if isinstance(slot, Integral) and not isinstance(slot, (bool, np.bool_))
+                     and 0 <= slot <= last})
+    complete = [g for g in groups if all(slot in bars for slot in
+                range(g * candle_days, (g + 1) * candle_days))]
+    # Validate/aggregate contiguous runs in bulk, preserving the existing raw
+    # bar checks without a separate NumPy allocation for every daily candle.
+    runs = []
+    for group in complete:
+        if runs and group == runs[-1][1] + 1:
+            runs[-1][1] = group
+        else:
+            runs.append([group, group])
+    history = []
+    for first, end in runs:
+        candles = _tf_window(bars, setup_date, (end + 1) * candle_days - 1,
+                             end - first + 1, candle_days)
+        if candles is None:
+            return None
+        if history and candles[0].end <= history[-1].end:
+            raise ValueError('native history ends must increase with shared slot')
+        history.extend(candles)
+    return history or None
 
 
 def _ema_series(values, period):
@@ -476,14 +508,16 @@ def _measure(recipe, candles, feature=None):
             extreme = max(values)
             return sum(1 for t in thresholds if extreme > t)
         if recipe == 'native_ma_cross_v1':
-            # MA from the L3 derivative (SMA_p / EMA_p, period baked in the
-            # feature). candles[0:period] warm the MA; window = last lookback
-            # candles, plus one prior bar for the first cross check.
+            # Native MA state uses supplied history; only the last lookback
+            # candles plus the prior anchor participate in the facet.
             period = int(feature['ma_period'])
             ma = _ma_series(feature, close)
-            if ma is None or len(ma) < 2:
+            count = int(feature['lookback']) + 1
+            if ma is None or len(ma) < count:
                 return None
-            diff = close[period - 1:] - ma
+            diff = (close[period - 1:] - ma)[-count:]
+            if not np.isfinite(diff).all():
+                return None
             up_cross = bool(any(diff[k - 1] <= 0 and diff[k] > 0
                                 for k in range(1, len(diff))))
             down_cross = bool(any(diff[k - 1] >= 0 and diff[k] < 0
@@ -493,15 +527,15 @@ def _measure(recipe, candles, feature=None):
                     'both': bool(up_cross and down_cross),
                     'none': bool(not up_cross and not down_cross)}
         if recipe == 'native_ma_slope_v1':
-            # MA from the L3 derivative (same construction as native_ma_cross_v1;
-            # candles[0:period] warm the MA). Slope = percent change of the MA
-            # from its first to its last WINDOW bar (ma[0] is the prior-bar
-            # anchor and is excluded). Flat band is |slope| <= v (abs transform).
+            # Percent change from first to last WINDOW native MA, excluding
+            # its prior anchor. Earlier history initializes the series only.
             period = int(feature['ma_period'])
             ma = _ma_series(feature, close)
-            if ma is None or len(ma) < 3:      # need prior anchor + 2 window points
+            count = int(feature['lookback'])
+            if count < 2 or ma is None or len(ma) < count:
                 return None
-            first, last = float(ma[1]), float(ma[-1])
+            ma = ma[-count:]
+            first, last = float(ma[0]), float(ma[-1])
             if first <= 0 or not np.isfinite(first) or not np.isfinite(last):
                 return None
             return (last / first - 1.0) * 100.0
@@ -534,9 +568,12 @@ def _measure(recipe, candles, feature=None):
             # empty -> NOT_EVALUABLE rather than a invented bucket.
             period = int(feature['ma_period'])
             ma = _ma_series(feature, close)
-            if ma is None or len(ma) < 2:
+            size = int(feature['lookback']) + 1
+            if ma is None or len(ma) < size:
                 return None
-            diff = close[period - 1:] - ma
+            diff = (close[period - 1:] - ma)[-size:]
+            if not np.isfinite(diff).all():
+                return None
             count = 0
             for k in range(1, len(diff)):
                 if ((diff[k - 1] <= 0 and diff[k] > 0)
@@ -628,10 +665,12 @@ def _measure(recipe, candles, feature=None):
             for p in (10, 20, 50, 200):
                 mas[p] = _ma_series(dict(feature, ma_kind='SMA', ma_period=str(p)),
                                     close)
-            if any(mas[p] is None for p in mas) or len(close) < 200 + lb:
+            if any(mas[p] is None for p in mas) or len(mas[200]) < lb:
                 return None
             idx = np.arange(199, len(close))[-lb:]
             aligned = {p: mas[p][idx - p + 1] for p in (10, 20, 50, 200)}
+            if not all(np.isfinite(a).all() for a in aligned.values()):
+                return None
             c = close[idx]
             bull = ((c > aligned[10]) & (aligned[10] > aligned[20])
                     & (aligned[20] > aligned[50]) & (aligned[50] > aligned[200]))
@@ -674,10 +713,14 @@ def _measure(recipe, candles, feature=None):
             e1 = int(feature['streak_short_edge'])
             e2 = int(feature['streak_long_edge'])
             ma = _ma_series(dict(feature, ma_kind='SMA', ma_period='30'), close)
-            if ma is None or len(close) < 30 + hist + lb:
+            if ma is None or len(ma) < hist + lb:
                 return None
-            aligned = ma[np.arange(29, len(close)) - 29]
-            c = close[np.arange(29, len(close))]
+            # The current run can extend into earlier supplied history. Only
+            # its record comparator is limited to the baked H prior bars.
+            aligned = ma
+            c = close[29:]
+            if not np.isfinite(aligned).all():
+                return None
             side = c > aligned                 # True = above, False = below
             if c[-1] == aligned[-1]:
                 return None
@@ -688,7 +731,7 @@ def _measure(recipe, candles, feature=None):
                     run += 1
                 else:
                     break
-            prior = side[:-lb]
+            prior = side[-(hist + lb):-lb]
             best = cur = 0
             for v in prior:
                 if v:
@@ -1153,8 +1196,10 @@ def _measure(recipe, candles, feature=None):
             slow = int(feature['ma_slow'])
             if len(candles) < lb or fast >= slow or len(candles) < slow:
                 return None
-            ma_f = np.convolve(close, np.ones(fast) / fast, mode='valid')
-            ma_s = np.convolve(close, np.ones(slow) / slow, mode='valid')
+            ma_f = _ma_series(dict(feature, ma_kind='SMA', ma_period=str(fast)), close)
+            ma_s = _ma_series(dict(feature, ma_kind='SMA', ma_period=str(slow)), close)
+            if ma_f is None or ma_s is None or not np.isfinite([ma_f[-1], ma_s[-1]]).all():
+                return None
             c = float(close[-1])
             f = float(ma_f[-1])
             s = float(ma_s[-1])
@@ -2072,6 +2117,12 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
+    """Evaluate from supplied source history; do not pre-trim MA history to N.
+
+    Native MA state uses all supplied complete candles before setup. The facet
+    alone uses N candles. The derivation caller must supply its complete source
+    prefix, with the same shared-calendar slots and availability as the world.
+    """
     feature = definition['feature']
     if feature['recipe'] in _MASTER_RECIPES:
         extra = _EXTRA_PRIOR.get(feature['recipe'], 0)
@@ -2081,24 +2132,29 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['spike_baseline_bars']) - 1  # baked C031 dial
         if feature['recipe'] in ('native_rsi_floor_v1', 'native_rsi_ceiling_v1'):
             extra = int(feature['rsi_period'])               # RSI seed warmup
-        if feature['recipe'] == 'native_ma_cross_v1':
-            extra = int(feature['ma_period'])                # MA warmup
-        if feature['recipe'] in ('native_ma_slope_v1', 'native_ma_cross_count_v1'):
-            extra = int(feature['ma_period'])                # MA warmup
         if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1',
                                  'native_osc_swing_speed_v1',
                                  'native_extreme_position_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
-        if feature['recipe'] == 'native_full_stack_streak_v1':
-            extra = 200                                      # slowest MA (SMA200) warmup
-        if feature['recipe'] == 'native_ma30_side_streak_v1':
-            extra = 30 + int(feature['long_history_bars'])   # SMA30 + prior history
-        if feature['recipe'] == 'native_weekly_stack_v1':
-            extra = int(feature['ma_slow'])                  # slowest baked SMA warmup
-        lookback = feature['lookback'] + extra
-        candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
+        if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
+                                 'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
+                                 'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
+            # Required facet/history groups must be present; an old halt/IPO
+            # partial group is omitted only from indicator initialization.
+            required = feature['lookback']
+            if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1'):
+                required += 1
+            if feature['recipe'] == 'native_ma30_side_streak_v1':
+                required += int(feature['long_history_bars'])
+            window = _tf_window(bars, setup_date, expected_slot,
+                                required, feature['candle_days'])
+            candles = None if window is None else _native_ma_history(
+                bars, setup_date, expected_slot, feature['candle_days'])
+        else:
+            lookback = feature['lookback'] + extra
+            candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)
         if feature['recipe'] in _CATEGORICAL_RECIPES:
             if measured is None:
