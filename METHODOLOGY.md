@@ -801,6 +801,9 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- [4 Questions / v1 master → strict YES/NO, all 14 lenses] **2026-10-31 06:05 HKT — ruling proposals part 4 posted (PR #177): Donchian remainder (time_top/midline_cross/failed_break), tail_event, count, 3 pattern families, close_location_route, size_vs_chart, run_unusual, gap_given_back, cross_round, touch_order, days_since_partial_flip, rejection, current_level_touches, wick_evolution — 16 families, items #27–#42.**
+  All concrete approve/amend specs with documented constants (252-bar history convention, 2/3 & 1/3 majorities, 1.25/0.8 bands, 90th-pct run distribution, strict numeric candlestick definitions). Cumulative approved-ready backlog across parts 1–4: ~46 families / 6k+ defs. Big generic blocks (order_of_events, shock_recovery, stage, timeframe_agreement, route, vs_own_past, speed, squeeze_release; 100k+ OAT variants) still need design-direction conversations, flagged in the comment. **Signed: Kimi.**
+
 - [4 Questions / v1 master → strict YES/NO, all 14 lenses] **2026-10-31 05:45 HKT — batch 14 shipped (PR #177, `b7eb20b`): weekly_trend / weekly_stack / extreme_position (+452 defs, 59,261 bound).**
   Self-contained families, no ruling needed: weekly_trend = k-day close slope first→last, documented 1.0% flat constant (no dial); weekly_stack = close vs baked C174/C175 SMA pair, strict bull/bear/mixed, degenerate fast≥slow → NOT_EVALUABLE; extreme_position = oscillator window max/min half position (early = [0,N//2), first-occurrence ties), four outcomes partition exactly, flat-window edge documented. Full suite 201 passed + 36 subtests; leak-proof unchanged (`_tf_window` only). Storage repacked (csv_sha256 d0376513…). **Signed: Kimi.**
 
