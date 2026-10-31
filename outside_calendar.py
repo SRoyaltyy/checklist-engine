@@ -151,7 +151,7 @@ def parse_fomc_calendars(html):
             kind = "notation" if "notation" in day_text.lower() else "meeting"
             for day in _expand_days(year, month_text, day_text):
                 rows.append(dict(date=day, kind=kind, unscheduled=False, announced=schedule_published(year)))
-    return pd.DataFrame(rows, columns=["date", "kind"]).drop_duplicates(["date", "kind"])
+    return pd.DataFrame(rows, columns=["date", "kind", "unscheduled", "announced"]).drop_duplicates(["date", "kind"])
 
 
 def first_release_dates(vintages):
