@@ -2406,6 +2406,37 @@ for _facet, _spec in _iter_specs():
     _spec.setdefault('baked_cutoff_ids', ())
     _spec.setdefault('baked_map', {})
 
+# Categorical facets whose outcomes form an EXACT partition of evaluable
+# windows: every evaluable window answers exactly one outcome YES (zero-YES
+# can only occur when every outcome is NOT_EVALUABLE). Checked by property
+# test tests/test_binary_master_partition.py on seeded random-regime tapes.
+# Facets are excluded here when their outcomes are independent booleans
+# (ma30_side_streak), per-direction independent measurements
+# (full_stack_streak, osc_swing_speed), or priority/overlay schemes that can
+# legitimately fire more than once (inside_outside, dry_up_at_low,
+# hl_base_breakout), or when bucket contiguity depends on the OAT dial
+# pairing being verified elsewhere (rsi_floor/rsi_ceiling codeN buckets).
+EXACT_PARTITION_FACETS = {
+    # batch 1: mirror-band balance facets
+    'red_green_balance', 'last_green_vs_red', 'down_vs_up_moves', 'wick_body',
+    # batch 2: fate partitions
+    'gap_up', 'gap_down', 'run_biggest_move',
+    # batch 3/4: band mirrors and fate partitions
+    'dominance', 'vs_own_past', 'spike', 'maxvol_wick',
+    'pullback_vs_run_volume',   # one side evaluable -> its band answers once
+    'flip',
+    # batch 5-7: mutually exclusive event partitions
+    'fresh_cross', 'slope', 'cross_event', 'cross_count', 'shock', 'time_in_zone',
+    # batch 9-11: mirror bands and crossed partitions
+    'segment_compare', 'absorption_day', 'capitulation_bar',
+    # batch 12-13: order and run partitions
+    'high_then_low', 'intraday_change', 'interday_change', 'run_structure',
+    # batch 14-18
+    'weekly_trend', 'weekly_stack', 'extreme_position', 'exit_os', 'trend',
+    'path_dir', 'distance_route', 'above_share',
+    'efficiency', 'skew', 'autocorr', 'stack_flip',
+}
+
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
                  'candle pair is required), an uninitialized required native indicator value, a missing/late '
                  'native bar, a non-positive or non-finite price, a zero total body on both sides '

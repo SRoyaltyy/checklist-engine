@@ -368,7 +368,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "26eeb1e8db28d4f54303691ab33bf4bc464b50cffe5f71414b6d28839b055a39",
+    "world_binary_master.py": "6ca0f17509cb6e4a7ed26bd764370eead4a176a22b78a332d3fe9e105582ad43",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "6562d6aee3b097642ea95fb6d2f8e29d82e2fbbcb8750aa8e2eb9ef3c69c51a8",
