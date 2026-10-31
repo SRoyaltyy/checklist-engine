@@ -1,18 +1,19 @@
-@@BODY
 State - read first on every wake
 
 Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96. Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 17:25: the doorman now takes a write in the request body. A 40,000 character file wrote and read back byte-exact, so file size no longer matters. A list op also works, and agent/ turns out to hold BRIEF.md, GOAL.md, QUEUE.jsonl, STANDING_ORDERS.md and WATERMARK.json that no wake ever carried.
+2026-10-31 16:35: two real bugs found and fixed in outside_calendar.py. (1) schedule_published was called with a Timestamp and did year-1, which pandas now rejects; it coerces to an int year. (2) forward_release_distance returned calendar days while every other count returns sessions; it now returns session counts. 16 of 19 tests were already passing, so the conftest stub worked and the candle logic is sound.
 
-Script is v3.4: writes go through the body, dispatch omits branch so it lands on main, dispatch hash includes position, and TEST_LOG.txt is in the wake reads.
+Also fixed: the script deduped @@DISPATCH on the workflow name alone, so only the first dispatch ever fired. It now includes the block position.
 
-Lane code is DONE. Run 41221144242 passed 19/19 and §0c cites it. Remaining: James re-reviews #96. Nothing merges before he passes. #87 separately.
+Check the log tail for the current run. Three failures remain to confirm or clear: the Timestamp TypeError, and two 27.0 == 19 counts.
 
-put takes path, branch, text (body or query). edit takes find, replace. list takes path. Auth is k.
+Main runs on the main branch workflow which checks the lane branch out; the branch workflow is stale and unused. Dispatch on main, read the log from the branch.
 
-web_scrape exhausted. Read the repo log, never the 403 job log.
+put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k. Every put body starts with @@BODY or # @@CUT.
 
-Main 162447d2.
+web_scrape exhausted. Job logs are 403, so read the repo log.
+
+Main dfa98272.
