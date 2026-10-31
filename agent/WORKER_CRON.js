@@ -13,9 +13,7 @@
 const WAKE_REPO = "SRoyaltyy/checklist-engine";
 const WAKE_BRANCH = "venice/calendar-announce-ledger";
 const WAKE_PATH = "agent/WAKE.json";
-const WAKE_THROTTLE_MIN = 20;
-const WAKE_FRESH_COMMIT_MIN = 20;
-const WAKE_FRESH_FAIL_MIN = 30;
+
 
 function wakeGh(env, path, init = {}) {
   return fetch(`https://api.github.com${path}`, {
