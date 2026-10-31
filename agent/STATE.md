@@ -9,14 +9,16 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 15:25: the renderer decorates every code block with chrome lines, so every @@PUT body now starts with a @@BODY sentinel and cleanBody discards everything before it. Nothing depends on guessing the decoration any more.
+2026-10-31 15:30: BREAKTHROUGH. The workflow is valid and run 41213696372 executed instead of being rejected. It failed, and main moved to b7693dde, which is the failure commit step pushing the log. So agent/TEST_LOG.txt should now hold the real traceback. READ IT FIRST, it is not in READS.
 
-Seven runs are wasted on malformed workflow files: 41212368062, 41212370204, 41212371986, 41212374275, 41212376194, and two earlier. All failed before checkout, so no TEST_LOG.txt exists and no test has ever executed. The world_timeframes theory is UNPROVEN.
+The world_timeframes theory is still unproven until the log says so. conftest.py is on the branch and its stub only installs when the real import fails.
 
-CONFIRM THE WORKFLOW HEAD BEFORE ANY DISPATCH. It must begin with the comment line. Never dispatch in the same turn as the write; the dispatch races the put.
+@@BODY sentinel is required on every put now; the renderer injects chrome lines.
+
+The journal is being truncated around 4615 chars by the URL length. Keep journal rewrites short or split them.
 
 Doorman contract: put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
 
 web_scrape exhausted. Job logs are 403, so read the repo log, never the run.
 
-Main 5efb236c, contents unread.
+Main b7693dde, contents unread.
