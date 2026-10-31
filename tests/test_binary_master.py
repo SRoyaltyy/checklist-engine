@@ -1594,6 +1594,108 @@ def test_evaluate_intraday_interday_change(grid):
     assert evaluate_master(defs['down'], bars, setup, last).answer == 'YES'
 
 
+def test_bind_batch14_variants(grid):
+    row, variant = _q(grid, 'B|extremes|big_picture|weekly_trend|5x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3          # {rising,falling,flat}, no dial
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    row, variant = _q(grid, 'B|extremes|big_picture|weekly_stack|5x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3          # {bull,bear,mixed}
+    # baked C174/C175 periods enter the feature identity and re-hash it
+    assert defs['bull']['feature']['ma_fast'] == '10'
+    assert defs['bull']['feature']['ma_slow'] == '40'
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings)['C175_weekly_stack__scalar40'] != '40')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    slow2 = dict(changed.settings)['C175_weekly_stack__scalar40']
+    assert defs2['bull']['feature']['ma_slow'] == slow2
+    assert defs2['bull']['feature_id'] != defs['bull']['feature_id']
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|extreme_position|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 4
+
+
+def test_evaluate_weekly_trend_and_stack(grid):
+    span = 100                       # 20 bars x 5 sessions
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|extremes|big_picture|weekly_trend|5x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    rising = [(100.0 + 2.0 * i, 101.5 + 2.0 * i, 99.0 + 2.0 * i,
+               101.0 + 2.0 * i) for i in range(span)]     # +40% over window
+    bars = _bars_hl(rising)
+    assert evaluate_master(defs['rising'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['falling'], bars, setup, last).answer == 'NO'
+    falling = [(300.0 - 2.0 * i, 301.5 - 2.0 * i, 297.0 - 2.0 * i,
+                299.0 - 2.0 * i) for i in range(span)]   # -40%
+    bars = _bars_hl(falling)
+    assert evaluate_master(defs['falling'], bars, setup, last).answer == 'YES'
+    drifting = [(100.0 + 0.01 * i, 101.5 + 0.01 * i, 99.0 + 0.01 * i,
+                 101.0 + 0.01 * i) for i in range(span)]  # ~+1.0% total -> flat
+    bars = _bars_hl(drifting)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['rising'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+    # weekly_stack: needs lookback(20) + ma_slow(40) k-day bars = 300 sessions
+    span = 300
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|extremes|big_picture|weekly_stack|5x20')
+    defs = _by_outcome(bind_master_question(row, variant))
+    up = [(100.0 + 0.5 * i, 101.5 + 0.5 * i, 99.0 + 0.5 * i,
+           100.5 + 0.5 * i) for i in range(span)]
+    bars = _bars_hl(up)          # strict rise: close > SMA10 > SMA40
+    assert evaluate_master(defs['bull'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'NO'
+    down = [(400.0 - 0.5 * i, 401.5 - 0.5 * i, 396.0 - 0.5 * i,
+             397.0 - 0.5 * i) for i in range(span)]
+    bars = _bars_hl(down)        # strict fall: close < SMA10 < SMA40
+    assert evaluate_master(defs['bear'], bars, setup, last).answer == 'YES'
+    flat = [(100.0, 101.5, 99.0, 100.5)] * span   # close == SMA10 == SMA40
+    bars = _bars_hl(flat)
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_extreme_position(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|extreme_position|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    # warmup 7 prior bars + 10 window bars; half = index 5. The 7 warmup
+    # changes alternate +/-0.1 so the Wilder RSI seed is defined (never 0/0).
+    seed = [0.1, -0.1, 0.1, -0.1, 0.1, -0.1]
+    span = 17
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+
+    def bars_for(window_changes):
+        closes = [100.0]
+        for ch in seed + window_changes:
+            closes.append(closes[-1] + ch)
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    up5 = [2.0] * 5
+    dn5 = [-2.0] * 5
+    bars = bars_for(up5 + dn5)          # RSI max early (idx 4), min late (idx 9)
+    assert evaluate_master(defs['max_early_min_late'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['min_early_max_late'], bars, setup, last).answer == 'NO'
+    bars = bars_for(dn5 + up5)          # mirrored
+    assert evaluate_master(defs['min_early_max_late'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['max_early_min_late'], bars, setup, last).answer == 'NO'
+    bars = bars_for([2.0] * 3 + [-1.0] * 2 + [0.2] * 5)
+    assert evaluate_master(defs['both_early'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['both_late'], bars, setup, last).answer == 'NO'
+    bars = bars_for([0.1, -0.1, 0.1, -0.1, 0.1, 3.0, 3.0, -3.0, -3.0, 0.5])
+    assert evaluate_master(defs['both_late'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['both_early'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

@@ -1123,6 +1123,67 @@ def _measure(recipe, candles, feature=None):
                     best[sign] = run
             g, r = best[1], best[-1]
             return {'green_longer': g > r, 'red_longer': r > g, 'equal': g == r}
+        if recipe == 'native_weekly_trend_v1':
+            # Big-picture trend on the k-day candle stream (5x = the spec's
+            # "weekly"). Slope = percent change of the close from the first
+            # to the last WINDOW bar (same slope convention as
+            # native_ma_slope_v1). Documented flat constant: |slope| <= 1.0%
+            # -> flat (no dial is registered on this family; amendable).
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            w0 = len(candles) - lb
+            first = float(close[w0])
+            last = float(close[-1])
+            if first <= 0 or not np.isfinite(first) or not np.isfinite(last):
+                return None
+            slope = (last / first - 1.0) * 100.0
+            return {'rising': slope > 1.0,
+                    'falling': slope < -1.0,
+                    'flat': abs(slope) <= 1.0}
+        if recipe == 'native_weekly_stack_v1':
+            # Big-picture stack on the k-day candle stream: last close vs two
+            # baked SMA periods (C174 fast / C175 slow), same full-window SMA
+            # construction as _ma_series, read at the last fetched bar.
+            # bull = close > SMA_fast > SMA_slow (strict); bear mirror;
+            # anything else mixed. A degenerate pairing (fast >= slow) is
+            # NOT_EVALUABLE rather than an invented order.
+            lb = int(feature['lookback'])
+            fast = int(feature['ma_fast'])
+            slow = int(feature['ma_slow'])
+            if len(candles) < lb or fast >= slow or len(candles) < slow:
+                return None
+            ma_f = np.convolve(close, np.ones(fast) / fast, mode='valid')
+            ma_s = np.convolve(close, np.ones(slow) / slow, mode='valid')
+            c = float(close[-1])
+            f = float(ma_f[-1])
+            s = float(ma_s[-1])
+            bull = c > f > s
+            bear = c < f < s
+            return {'bull': bull, 'bear': bear, 'mixed': not bull and not bear}
+        if recipe == 'native_extreme_position_v1':
+            # Where the L3 oscillator's window MAX and MIN sit. early = first
+            # half of the window [0, lb//2), late = second half; ties use the
+            # FIRST occurrence (numpy argmax/argmin). A flat window (max ==
+            # min on one bar) lands both on that bar's half -> both_early or
+            # both_late (documented; the four outcomes still partition).
+            lb = int(feature['lookback'])
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, _line = osc
+            if len(series) < lb:
+                return None
+            win = series[-lb:]
+            i_max = int(np.argmax(win))
+            i_min = int(np.argmin(win))
+            half = lb // 2
+            max_early = i_max < half
+            min_early = i_min < half
+            return {'max_early_min_late': max_early and not min_early,
+                    'min_early_max_late': min_early and not max_early,
+                    'both_early': max_early and min_early,
+                    'both_late': not max_early and not min_early}
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1743,6 +1804,51 @@ FACETS = {
         outcome_spec={'green_longer': ('boolean', '=', 'one'),
                       'red_longer': ('boolean', '=', 'one'),
                       'equal': ('boolean', '=', 'one')}),
+    # ---- batch 14: big_picture weekly families + oscillator extreme
+    # position. weekly_* measure the k-day candle stream (5x = the spec's
+    # "weekly"); extreme_position reuses the documented Wilder-RSI series. ----
+    'weekly_trend': dict(
+        binding='mixed', l1_l3=(('extremes', 'big_picture'),),
+        recipe='native_weekly_trend_v1',
+        unit='window_kday_close_slope_pct_bucket',
+        outcomes=('rising', 'falling', 'flat'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'rising': ('boolean', '=', 'one'),
+                      'falling': ('boolean', '=', 'one'),
+                      'flat': ('boolean', '=', 'one')}),
+    'weekly_stack': dict(
+        binding='mixed', l1_l3=(('extremes', 'big_picture'),),
+        recipe='native_weekly_stack_v1',
+        unit='kday_close_vs_two_baked_sma_stack_order',
+        outcomes=('bull', 'bear', 'mixed'),
+        cutoff_id=None,
+        baked_cutoff_ids=('C174_weekly_stack__scalar10',
+                          'C175_weekly_stack__scalar40'),
+        baked_map={'C174_weekly_stack__scalar10': 'ma_fast',
+                   'C175_weekly_stack__scalar40': 'ma_slow'},
+        outcome_spec={'bull': ('boolean', '=', 'one'),
+                      'bear': ('boolean', '=', 'one'),
+                      'mixed': ('boolean', '=', 'one')}),
+    'extreme_position': dict(
+        binding='mixed',
+        l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24')),
+        recipe='native_extreme_position_v1',
+        unit='window_oscillator_max_min_half_position',
+        outcomes=('max_early_min_late', 'min_early_max_late',
+                  'both_early', 'both_late'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                         'osc_warmup': '7'},
+                'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
+                          'osc_warmup': '13'},
+                'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
+                          'osc_warmup': '15'},
+                'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
+                          'osc_warmup': '25'}},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('max_early_min_late', 'min_early_max_late',
+                                'both_early', 'both_late')}),
 }
 
 def _iter_specs():
@@ -1961,7 +2067,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_osc_swing_speed_v1',
                         'native_absorption_day_v1', 'native_capitulation_bar_v1',
                         'native_hl_base_breakout_v1', 'native_high_then_low_v1',
-                        'native_run_structure_v1'}
+                        'native_run_structure_v1', 'native_weekly_trend_v1',
+                        'native_weekly_stack_v1', 'native_extreme_position_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -1979,7 +2086,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
         if feature['recipe'] in ('native_ma_slope_v1', 'native_ma_cross_count_v1'):
             extra = int(feature['ma_period'])                # MA warmup
         if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1',
-                                 'native_osc_swing_speed_v1'):
+                                 'native_osc_swing_speed_v1',
+                                 'native_extreme_position_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
@@ -1987,6 +2095,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = 200                                      # slowest MA (SMA200) warmup
         if feature['recipe'] == 'native_ma30_side_streak_v1':
             extra = 30 + int(feature['long_history_bars'])   # SMA30 + prior history
+        if feature['recipe'] == 'native_weekly_stack_v1':
+            extra = int(feature['ma_slow'])                  # slowest baked SMA warmup
         lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)

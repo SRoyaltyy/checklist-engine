@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 1151,
-  "bound_unique_binary_definitions": 58809,
-  "bound_source_aliases": 58998,
+  "bound_source_questions": 1231,
+  "bound_unique_binary_definitions": 59261,
+  "bound_source_aliases": 59450,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -289,6 +289,7 @@
     "dominance",
     "down_vs_up_moves",
     "dry_up_at_low",
+    "extreme_position",
     "flip",
     "fresh_cross",
     "full_stack_streak",
@@ -316,20 +317,22 @@
     "spike",
     "time_in_zone",
     "vs_own_past",
+    "weekly_stack",
+    "weekly_trend",
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 932,
-  "unbound_oat_variants": 147353,
+  "unbound_family_variant_count": 926,
+  "unbound_oat_variants": 147225,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 61489,
-  "csv_sha256": "beebaa8f271675a6c7893e8b3bfda8bcc633b84b52aa29b73a8c9eada209947c",
+  "master_total_rows": 61941,
+  "csv_sha256": "d0376513b367c6e989f62d5ac101a6f3a5b644124ec96b564919b1789eaeda77",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 98478037,
-    "compressed_bytes": 11404220,
+    "raw_bytes": 99186967,
+    "compressed_bytes": 11515003,
     "chunk_count": 12
   },
   "source_fingerprints": {
@@ -339,7 +342,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "fe229c3dcdd1dcb862180d8e10965e727fbb50dfaa8071d5e89f9856e3242e3f",
+    "world_binary_master.py": "4411c70748ef7481fde536051a201a5fd5da161bef924448c8980de9edef25d8",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "f1ee99c7386a2d9edb63d5a29dc80b7d46b8cd266c1ef6b0b986622ea84bfc9c",
