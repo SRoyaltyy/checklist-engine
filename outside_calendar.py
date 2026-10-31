@@ -210,6 +210,40 @@ def forward_releases(schedule, as_of):
     return pd.DatetimeIndex(latest.loc[latest["status"] == "scheduled", "scheduled"]).sort_values()
 
 
+def forward_release_distance(schedule, sessions, as_of):
+    """Days from each session to the next release announced by it.
+
+    Filtered per row, not once at the build date: a release announced
+    after a row must not be visible to that row. A cancelled date drops
+    out once its cancellation has been announced.
+    """
+    sessions = pd.DatetimeIndex(pd.to_datetime(sessions)).sort_values()
+    out = np.full(len(sessions), np.nan)
+    if schedule.empty:
+        return out
+    rows = schedule.copy()
+    rows["announced"] = pd.to_datetime(rows["announced"])
+    rows["scheduled"] = pd.to_datetime(rows["scheduled"])
+    rows = rows.sort_values(["announced", "scheduled"])
+    stamps = rows["announced"].to_numpy(dtype="datetime64[ns]")
+    targets = rows["scheduled"].to_numpy(dtype="datetime64[ns]")
+    live = (rows["status"] == "scheduled").to_numpy()
+    heap = []
+    status = {}
+    cursor = 0
+    for index, day in enumerate(sessions.to_numpy(dtype="datetime64[ns]")):
+        while cursor < len(stamps) and stamps[cursor] <= day:
+            status[targets[cursor]] = bool(live[cursor])
+            if live[cursor]:
+                heapq.heappush(heap, targets[cursor])
+            cursor += 1
+        while heap and (heap[0] <= day or not status.get(heap[0], False)):
+            heapq.heappop(heap)
+        if heap:
+            out[index] = float((pd.Timestamp(heap[0]) - pd.Timestamp(day)).days)
+    return out
+
+
 def session_or_next(dates, sessions):
     """A weekend or holiday announcement is flagged on the next NYSE session."""
     sessions = pd.DatetimeIndex(pd.to_datetime(sessions)).sort_values()
