@@ -1,0 +1,73 @@
+{
+  "status": "PASS_PUBLIC_COMPOSITION_BODY_AND_EXACT_METADATA_REPLAY_NOT_WORLD",
+  "observed_at": "2026-10-31T16:47:29.487189+00:00",
+  "run": 41221028803,
+  "source_commit": "106204922d25e4379a095398a2b0a7bc2f7ce7fc",
+  "release": "compact-world-build-composed-v1-41221028803-1",
+  "receipt_sha256": "84dc8205c12e9112e083d425e45af63d5b64b2bff3324c40a6ce7be4dde498c1",
+  "receipt_bytes": 7573427,
+  "request_sha256": "cc8fd08eb69d3494ace121e2221872abe5b29a9ee812a1f563749a9688f67782",
+  "request_bytes": 1167,
+  "code_sha256": "0813323865abf137bba17610d3a300038272e79939fe4cc41ce68b7adaecb2f0",
+  "parent_sha256": "1d49218cc593a28d5940a216dfd263648f13d0302dcc5af2e603d6587b9383cc",
+  "replacement_sha256": "f96ef20f28cbf34287902d8155a93e1e6a32af32861f907c7f8e0b777eca934e",
+  "completed": 8439,
+  "build_excluded": 0,
+  "source_excluded": 288,
+  "original_universe": 8727,
+  "unchanged_parent_rows": 8389,
+  "unchanged_replacement_rows": 50,
+  "dependency_inventory_readbacks": [
+    {
+      "release": "compact-world-build-v1-41078405278-1-006",
+      "role": "output",
+      "assets": 17,
+      "bytes": 18425135,
+      "readback": "authenticated connector draft snapshot"
+    },
+    {
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "role": "output",
+      "assets": 11,
+      "bytes": 18390940,
+      "readback": "fresh public API"
+    },
+    {
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "role": "output",
+      "assets": 85,
+      "bytes": 109296258,
+      "readback": "fresh public API"
+    },
+    {
+      "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
+      "role": "output",
+      "assets": 4,
+      "bytes": 66096,
+      "readback": "fresh public API"
+    },
+    {
+      "release": "compact-world-build-recovery-v1-41159096064-1-inputs",
+      "role": "shared",
+      "assets": 3,
+      "bytes": 16787,
+      "readback": "fresh public API"
+    },
+    {
+      "release": "rebuild-partial-checkpoint-v1-41093742477-1",
+      "role": "shared",
+      "assets": 3,
+      "bytes": 20159,
+      "readback": "fresh public API"
+    }
+  ],
+  "answer_and_checkpoint_bytes": 21704671599,
+  "shared_and_bound_input_bytes": 38167588,
+  "raw_dependency_bytes": 3865911091,
+  "measured_price_dependency_bytes": 25608750278,
+  "parent_measured_price_dependency_bytes": 25447459201,
+  "storage_gate": "PASS_PRICE_RESERVATION_ONLY_NOT_WORLD",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "scope": "Published receipt/request body hashes, exact unchanged 8389+50 row union, all six fresh dependency inventories (including read-only draft source), exact metadata-only composer replay and self-receipt bytes. No market recalculation or new full-payload/PIT/world acceptance."
+}
