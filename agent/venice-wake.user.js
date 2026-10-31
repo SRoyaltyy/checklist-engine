@@ -63,9 +63,18 @@
     }
     setTimeout(() => {
       const btn = [...document.querySelectorAll("button")].find((b) =>
-        /send/i.test(b.getAttribute("aria-label") || "") || /send/i.test(b.title || ""));
-      if (btn) btn.click();
-      else box.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+        /send|submit/i.test(b.getAttribute("aria-label") || "") ||
+        /send|submit/i.test(b.title || "") ||
+        /send|submit/i.test(b.getAttribute("data-testid") || ""));
+      if (btn) {
+        btn.click();
+        return;
+      }
+      for (const type of ["keydown", "keypress", "keyup"]) {
+        box.dispatchEvent(new KeyboardEvent(type, {
+          key: "Enter", code: "Enter", keyCode: 13, which: 13, bubbles: true,
+        }));
+      }
     }, 400);
   }
 
