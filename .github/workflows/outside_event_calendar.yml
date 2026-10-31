@@ -1,4 +1,6 @@
 yaml
+Copy code
+@@BODY
 # calendar flags; unit tests gate the build and the log survives any failure
 name: outside-event-calendar
 
