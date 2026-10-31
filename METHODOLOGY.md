@@ -801,6 +801,9 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-31 (14:15 HKT) — ruling proposals part 2 posted (PR #177): batch-13 candidates fully specified.**
+- `touch_52w` (252-bar basis, high precedence on both-spans), `new_extreme` (60 pre-window bars, NOT_EVALUABLE on truncated history), gap families (open-gap core definition + side/count/age/partial_fill), `magnet` (round-level set + sub-dollar levels), `follow_through` (252-history new high, 3-bar follow-through). One-word approvals queue ~8 families (~1,500+ defs) for implementation behind the LFS ruling.
+
 - **2026-10-31 (14:05 HKT) — [4 Questions / v1 master → strict YES/NO] ruling proposals posted for the three big deferred blocks (PR #177).**
 - Concrete, approve-or-amend algorithm proposals: `3ATR_legs` leg partition (close-based 3xATR14 zigzag + 9-label priority), `flag` (3xATR14 pole + contracting <=50% retrace flag), `cup_handle` (lips within 0.5 ATR, depth >=10%, handle <=50% of cup). One-word 'approved' unblocks implementation; 3ATR_legs alone gates 8 families.
 - Still held: LFS/format ruling gates shipping any new CSV rows (508 KB headroom).
