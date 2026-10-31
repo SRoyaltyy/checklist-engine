@@ -177,6 +177,14 @@ def _native_indicator_history(bars, setup_date, expected_slot, candle_days):
     return history or None
 
 
+def _native_atr_series(high, low, close):
+    """Unchanged registered ATR14 values over the supplied native prefix."""
+    import talib
+    return talib.ATR(np.asarray(high, dtype=np.float64),
+                     np.asarray(low, dtype=np.float64),
+                     np.asarray(close, dtype=np.float64), timeperiod=14)
+
+
 def _native_rsi_series(close, period):
     """Registered RSI values plus the definition's exact 0/0 known mask.
 
@@ -384,16 +392,16 @@ def _measure(recipe, candles, feature=None):
                     'mostly_outside': bool(2 * int(outside.sum()) > n),
                     'none': bool(not inside.any() and not outside.any())}
         if recipe == 'native_run_biggest_move_ratio_v1':
-            # candles[0] is the prior candle. ATR14 = mean(TR) over the last 14
-            # window candles; requires lookback >= 14 and lookback+1 candles.
-            n = len(candles) - 1
-            if n < 14:
+            # Native ATR14 uses the complete supplied prefix; the longest
+            # body run is selected only inside the last N facet candles.
+            n = int(feature['lookback'])
+            if len(candles) < n:
                 return None
-            prev_close = np.concatenate(([close[0]], close[:-1]))
-            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
-                                                   np.abs(low - prev_close)))
-            atr14 = float(tr[-14:].mean(dtype=np.float64))
-            sign = np.sign(close[1:] - opened[1:])
+            atr14 = float(_native_atr_series(high, low, close)[-1])
+            if np.isnan(atr14):
+                return None
+            win_body = close[-n:] - opened[-n:]
+            sign = np.sign(win_body)
             best_run = None      # (length, biggest_body, most_recent_end)
             i = 0
             while i < n:
@@ -403,7 +411,7 @@ def _measure(recipe, candles, feature=None):
                 j = i
                 while j + 1 < n and sign[j + 1] == sign[i]:
                     j += 1
-                seg = np.abs(close[1 + i:1 + j + 1] - opened[1 + i:1 + j + 1])
+                seg = np.abs(win_body[i:j + 1])
                 cand = (j - i + 1, float(np.max(seg)), j)
                 if best_run is None or cand[0] > best_run[0] or (
                         cand[0] == best_run[0] and (
@@ -857,18 +865,15 @@ def _measure(recipe, candles, feature=None):
             # Mean ATR14 of the rally leg vs the decline leg around the first
             # lowest close, as a SIGNED percent expansion:
             #   (mean_rally_atr14 / mean_decline_atr14 - 1) * 100
-            # Additive +/-pct band (no mirror). ATR14[t] = mean(TR) over the
-            # 14 bars ending at t, TR needing the prior close; evaluate_master
-            # fetches lookback+14 candles so every window bar has an ATR14.
+            # Additive +/-pct band (no mirror). Initialize the registered
+            # native ATR14 over supplied history, then read only the window.
             lb = int(feature['lookback'])
             n = len(candles)
             if n < lb + 14:
                 return None
-            prev_close = np.concatenate(([close[0]], close[:-1]))
-            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
-                                                   np.abs(low - prev_close)))
-            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')  # entry j = bar j+13
-            win_atr = atr[n - lb - 13:]
+            win_atr = _native_atr_series(high, low, close)[-lb:]
+            if np.isnan(win_atr).any():
+                return None
             win_close = close[n - lb:]
             decline, rally = _split_segments(win_close)
             d = float(win_atr[decline].mean(dtype=np.float64))
@@ -890,20 +895,19 @@ def _measure(recipe, candles, feature=None):
             # strictly classifiable day exists -> none. Age = window-end
             # bars since the day: <=recent / (recent,old] / >old.
             lb = int(feature['lookback'])
-            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            vol = _nonnegative([b.volume for b in candles[-(lb + 49):]], 'native volume')
             if vol is None:
                 return None
             n = len(candles)
             if n < lb + 49:
                 return None
             prev_close = np.concatenate(([close[0]], close[:-1]))
-            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
-                                                    np.abs(low - prev_close)))
-            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')  # entry j = bar j+13
             w0 = n - lb
-            win_vol = vol[w0:]
-            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(w0, n)])
-            win_atr = atr[w0 - 13:]
+            win_vol = vol[-lb:]
+            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(49, len(vol))])
+            win_atr = _native_atr_series(high, low, close)[-lb:]
+            if np.isnan(win_atr).any():
+                return None
             win_prev = prev_close[w0:]
             win_c = close[w0:]
             mult = float(feature['spike_mult'])
@@ -946,20 +950,18 @@ def _measure(recipe, candles, feature=None):
             # close in the outer C156/2% (i.e. the middle of the qualifying
             # zone counts as close_mid); else close_mid.
             lb = int(feature['lookback'])
-            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            vol = _nonnegative([b.volume for b in candles[-(lb + 49):]], 'native volume')
             if vol is None:
                 return None
             n = len(candles)
             if n < lb + 49:
                 return None
-            prev_close = np.concatenate(([close[0]], close[:-1]))
-            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
-                                                    np.abs(low - prev_close)))
-            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')
             w0 = n - lb
-            win_vol = vol[w0:]
-            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(w0, n)])
-            win_atr = atr[w0 - 13:]
+            win_vol = vol[-lb:]
+            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(49, len(vol))])
+            win_atr = _native_atr_series(high, low, close)[-lb:]
+            if np.isnan(win_atr).any():
+                return None
             win_o = opened[w0:]
             win_h = high[w0:]
             win_l = low[w0:]
@@ -1215,23 +1217,20 @@ def _measure(recipe, candles, feature=None):
                     'both_early': max_early and min_early,
                     'both_late': not max_early and not min_early}
         if recipe == 'native_maxvol_wick_v1':
-            # candles[0] is the prior candle (TR base). Window's max-volume
+            # Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
             # bear, else small; bull takes precedence when both exceed.
-            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            lb = int(feature['lookback'])
+            vol = _nonnegative([b.volume for b in candles[-lb:]], 'native volume')
             if vol is None:
                 return None
-            n = len(candles) - 1
-            if n < 14:
+            n = len(candles)
+            if n < lb:
                 return None
-            prev_close = np.concatenate(([close[0]], close[:-1]))
-            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
-                                                   np.abs(low - prev_close)))
-            atr14 = float(tr[-14:].mean(dtype=np.float64))
-            if atr14 == 0:
+            atr14 = float(_native_atr_series(high, low, close)[-1])
+            if np.isnan(atr14) or atr14 == 0:
                 return None
-            win_vol = vol[1:]
-            i = 1 + int(np.argmax(win_vol))          # first max on tie
+            i = n - lb + int(np.argmax(vol))          # first window max on tie
             v = float(feature['maxvol_wick_atr'])
             lower = float(min(opened[i], close[i]) - low[i])
             upper = float(high[i] - max(opened[i], close[i]))
@@ -1897,7 +1896,7 @@ for _facet, _spec in _iter_specs():
     _spec.setdefault('baked_map', {})
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
-                 'candle pair is required, +14 for the ATR14 base of run_biggest_move), a missing/late '
+                 'candle pair is required), an uninitialized required native indicator value, a missing/late '
                  'native bar, a non-positive or non-finite price, a zero total body on both sides '
                  '(colour-balance facets), a missing green or red bar (last_green_vs_red, down_vs_up_moves), '
                  'an all-zero-range window (wick_body), no monochromatic body run (run_biggest_move), '
@@ -2077,13 +2076,12 @@ def bind_master_question(tree_row, variant):
 
 _MASTER_RECIPES = {spec['recipe'] for _facet, spec in _iter_specs()}
 # Recipes that compare each window candle with its predecessor need one extra
-# native candle before the window (gaps, inside/outside, ATR14 warmup); the
+# native candle before the window (gaps, inside/outside); the
 # 50-bar median volume recipes need 49 prior bars; vs_own_past reads its
 # baseline length from the feature (baked S_baseline_bars dial).
 _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
-                'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
-                'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1,
-                'native_segment_atr_compare_v1': 14,
+                'native_inside_outside_seq_v1': 1,
+                'native_volume_dry_up_at_low_v1': 49,
                 'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49,
                 'native_hl_base_breakout_v1': 30}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
@@ -2129,7 +2127,11 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             and feature['osc_kind'] in ('RSI', 'MACD', 'STOCH'))
         recursive_rsi = feature['recipe'] in (
             'native_rsi_floor_v1', 'native_rsi_ceiling_v1', 'native_hl_base_breakout_v1')
-        if native_osc or recursive_rsi or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
+        native_atr = feature['recipe'] in (
+            'native_run_biggest_move_ratio_v1', 'native_maxvol_wick_v1',
+            'native_segment_atr_compare_v1', 'native_absorption_day_v1',
+            'native_capitulation_bar_v1')
+        if native_osc or recursive_rsi or native_atr or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
             # Required facet/history groups must be present; an old halt/IPO
@@ -2140,6 +2142,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += 1
             if feature['recipe'] == 'native_hl_base_breakout_v1':
                 required += _EXTRA_PRIOR[feature['recipe']]
+            if feature['recipe'] in ('native_absorption_day_v1', 'native_capitulation_bar_v1'):
+                required += _EXTRA_PRIOR[feature['recipe']]  # 50-bar volume-median baseline
             if feature['recipe'] == 'native_ma30_side_streak_v1':
                 required += int(feature['long_history_bars'])
             window = _tf_window(bars, setup_date, expected_slot,
