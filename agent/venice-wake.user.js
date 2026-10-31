@@ -114,8 +114,9 @@
     localStorage.setItem(KEY_LAST_FIRE, String(now));
     const text =
       `[wake ${state.id}] ${state.reason}\n\n` +
-      `Read agent/STANDING_ORDERS.md and follow it in full. ` +
-      `Work to the stop condition. Do not merge.`;
+      `1. Read agent/STATE.md and agent/JOURNAL.md, then resume the named next step.\n` +
+      `2. Audit Kimi and GPT against agent/GANTT_ROWS.md, finished percent per row.\n` +
+      `3. Then work the lane. Journal and rewrite STATE before stopping. Do not merge.`;
     type(box, text);
     setTimeout(() => send(box), 400);
   }
