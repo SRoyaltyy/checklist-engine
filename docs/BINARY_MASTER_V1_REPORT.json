@@ -326,10 +326,11 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "6b17ef9e132e1a19dd6918a440e5125b6956f625bf749cf17b028e02dc2e5486",
-    "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
-    "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
-    "ci/binary_master_build.py": "b1ab9de12f3a54dbcbc874d467f5ad93a0b900a0db5c33408146c95ddf607862"
+    "world_binary_master.py": "a2dc9ebc575d3f11498bef8bfb6fb5f1152269f7d74e98316255a7af31be378f",
+    "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
+    "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
+    "ci/binary_master_build.py": "d6d2a69584af805d80ca48c65559a7f931dde8b7de9675d632df2ea4a0d9e135",
+    "ci/binary_master_storage.py": "704cc7fb2ec7a9b31f4ad3bb5bd699d0b3ab2fc472030aa2a0cbb601ac2bd581"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
@@ -339,5 +340,12 @@
     "knowable_at_setup_open": "Uses only native candles with available_from <= setup date D and end < D (last completed candle = D-1); D open is execution only. Bars are strict FIXED_SHARED_SESSION_CALENDAR_V1 slot groups; no day-D candle.",
     "viewport_drawing": "Purple recolour of the D-1 native candle if YES; ratio/scalar value printed on the item pane header; no circles.",
     "csv_note": "CSV rows carry compact condition text with a reference to world_binary_master; full prose is this report field and the module constants."
+  },
+  "csv_storage": {
+    "manifest": "BINARY_MASTER_V1_STORAGE.json",
+    "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
+    "raw_bytes": 98491183,
+    "compressed_bytes": 11418852,
+    "chunk_count": 12
   }
 }
