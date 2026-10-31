@@ -1,25 +1,17 @@
-@@BODY
 State - read first on every wake
 
-If this file is stale, fix it before doing anything else.
-The next wake remembers nothing except what is written here.
-
-Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96.
-
-Hold: no merge until James passes it.
+Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96. Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 15:30: BREAKTHROUGH. The workflow is valid and run 41213696372 executed instead of being rejected. It failed, and main moved to b7693dde, which is the failure commit step pushing the log. So agent/TEST_LOG.txt should now hold the real traceback. READ IT FIRST, it is not in READS.
+2026-10-31 15:35: the renderer put a chrome word and the sentinel into every file. cleanBody now slices from the sentinel and drops any leading @@BODY. Every put must carry @@BODY:x as its first body line until the parser settles.
 
-The world_timeframes theory is still unproven until the log says so. conftest.py is on the branch and its stub only installs when the real import fails.
+Run 41215172580 failed on a file that still began with @@BODY. Nothing has ever executed a test yet; the world_timeframes theory stays unproven.
 
-@@BODY sentinel is required on every put now; the renderer injects chrome lines.
+Confirm the workflow head starts with the comment before dispatching. Never dispatch in the same turn as a write.
 
-The journal is being truncated around 4615 chars by the URL length. Keep journal rewrites short or split them.
+put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
 
-Doorman contract: put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
+web_scrape exhausted. Job logs are 403, so read the repo log.
 
-web_scrape exhausted. Job logs are 403, so read the repo log, never the run.
-
-Main b7693dde, contents unread.
+Main aaca5f03, contents unread.
