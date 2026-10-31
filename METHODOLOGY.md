@@ -801,6 +801,12 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-31 (13:40 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 11: `hl_base_breakout`; 58,781 bound.**
+- `hl_base_breakout` (close above window high after a higher-low base, mirror lower-high top breakdown; bars from HL to breakout bucketed <5/5-20/>20; RSI6/12/24 all extreme on the breakout day; 13 outcomes) bound for all 14 qids x 23 OAT variants = 4,186 new defs. Strict +-k swing pivots, k = max(S_pivot_k_min, N//S_pivot_k_divisor); latest qualifying pivot pair; breakout = first close above EVERY earlier window high (documented). Up precedence over down.
+- Design choice flagged in PR #177: uncomputable RSI (all-flat seed) -> whole question NOT_EVALUABLE, never a guessed 'not extreme'.
+- CSV now 98.4 MB (~1.6 MB under GitHub's hard 100 MB) — the pending LFS/format decision is now urgent before any further family batch.
+- Tests 189 passed + 36 subtests. Commit `ee82317` on `kimi/binary-master-v1` (PR #177).
+
 - [0 Blockers / World part 172 rerun] [0 Blockers / WORLD GATE (price)] **2026-10-31 12:35 HKT — GPT nonblocking replay diagnosis:** authenticated all10 published V2 stock JSON bodies from41068145897, matched all172 selected rows by question/row/row-key hash, re-evaluated recorded float64 comparisons, and confirmed repeat stability. The NumPy dispatch toggle reproduces both original/replay codes for104/166 mismatches. Remaining62 = FEIM/JHI24 (onlyX86_V3 tested here) +38 RETURN_AUTOCORR1_20/60 on NKTR/ABX/AMTD (dot/BLAS path remains a hypothesis). All matched log operands retain identical hashes;910 full/prefix log-call records change output hashes. This locates a numeric dependency but does not isolate log alone or establish every historical cause. Committed docs/PRICE_REPLAY_DISPATCH_REVIEW_V1.md/json plus a standard-library reproduction script; no new market compute, dependency install or runtime policy. All8 remain EXCLUDED_REPLAY_MISMATCH, current rebuild/recovery unchanged, scoring closed. **Signed: GPT.**
 
 - **2026-10-31 (13:05 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 10: `absorption_day` + `capitulation_bar`; GitHub 100 MB CSV incident fix.**
