@@ -1,6 +1,6 @@
 {
-  "pending": false,
-  "id": "init",
-  "set_at": "2026-10-31T03:23:00+00:00",
-  "reason": ""
+  "pending": true,
+  "id": "2026-10-31T07:50:42.246Z",
+  "set_at": "2026-10-31T07:50:42.246Z",
+  "reason": "main moved fa6ad3fc"
 }
