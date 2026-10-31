@@ -349,9 +349,9 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of, cpi_cancellatio
     frame["is_opex"] = frame["date"].isin(opex)
     month = frame["date"].dt.to_period("M")
     rank = frame.groupby(month).cumcount() + 1
-    size = frame.groupby(month)["date"].transform("size")
+    ends = _month_end_sessions(sessions)
     frame["is_month_start"] = rank == 1
-    frame["is_month_end"] = rank == size
+    frame["is_month_end"] = frame["date"].isin(ends)
     frame["is_turn_of_month"] = frame["is_month_end"] | (rank <= 3)
     frame["day_of_week"] = frame["date"].dt.dayofweek.astype("int16")
     frame["day_of_month"] = frame["date"].dt.day.astype("int16")
