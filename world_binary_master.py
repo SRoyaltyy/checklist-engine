@@ -573,6 +573,112 @@ def _measure(recipe, candles, feature=None):
                     'mostly_low': winner == 'mostly_low',
                     'mostly_mid': winner == 'mostly_mid',
                     'mixed': winner == 'mixed'}
+        if recipe == 'native_full_stack_streak_v1':
+            # Longest run of consecutive WINDOW bars in full bull order
+            # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
+            # full bear order (mirrored). Bucket edges are the four baked
+            # scalar dials, read as contiguous ranges {0} | [1, e1] |
+            # [e_lo, e_hi] | [e2, inf); a non-contiguous OAT pairing
+            # (e_lo != e1+1 or e2 != e_hi+1) -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            e1 = int(feature['streak_low_edge'])
+            e_lo = int(feature['streak_mid_lo'])
+            e_hi = int(feature['streak_mid_hi'])
+            e2 = int(feature['streak_high_edge'])
+            if e_lo != e1 + 1 or e2 != e_hi + 1:
+                return None
+            mas = {}
+            for p in (10, 20, 50, 200):
+                mas[p] = _ma_series(dict(feature, ma_kind='SMA', ma_period=str(p)),
+                                    close)
+            if any(mas[p] is None for p in mas) or len(close) < 200 + lb:
+                return None
+            idx = np.arange(199, len(close))[-lb:]
+            aligned = {p: mas[p][idx - p + 1] for p in (10, 20, 50, 200)}
+            c = close[idx]
+            bull = ((c > aligned[10]) & (aligned[10] > aligned[20])
+                    & (aligned[20] > aligned[50]) & (aligned[50] > aligned[200]))
+            bear = ((c < aligned[10]) & (aligned[10] < aligned[20])
+                    & (aligned[20] < aligned[50]) & (aligned[50] < aligned[200]))
+
+            def _longest_run(mask):
+                best = cur = 0
+                for v in mask:
+                    cur = cur + 1 if v else 0
+                    best = max(best, cur)
+                return best
+
+            def _bucket(s):
+                if s == 0:
+                    return 0
+                if s <= e1:
+                    return 1
+                if s <= e_hi:
+                    return 2
+                return 3
+
+            names = ('zero', 'low', 'mid', 'high')
+            out = {}
+            for direction, mask in (('bull', bull), ('bear', bear)):
+                code = _bucket(_longest_run(mask))
+                for i, name in enumerate(names):
+                    out[direction + '_' + name] = code == i
+            return out
+        if recipe == 'native_ma30_side_streak_v1':
+            # Current run of closes above (bull) or below (bear) SMA30 at the
+            # window end, bucketed by the two baked scalar edges, crossed with
+            # record = current run strictly longer than the longest above/below
+            # run in the baked prior history. The current run may extend into
+            # the prior bars (it is "as of D-1"); a last close exactly on the
+            # SMA30, or fewer prior bars than the baked history, ->
+            # NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            hist = int(feature['long_history_bars'])
+            e1 = int(feature['streak_short_edge'])
+            e2 = int(feature['streak_long_edge'])
+            ma = _ma_series(dict(feature, ma_kind='SMA', ma_period='30'), close)
+            if ma is None or len(close) < 30 + hist + lb:
+                return None
+            aligned = ma[np.arange(29, len(close)) - 29]
+            c = close[np.arange(29, len(close))]
+            side = c > aligned                 # True = above, False = below
+            if c[-1] == aligned[-1]:
+                return None
+            above = bool(c[-1] > aligned[-1])
+            run = 0
+            for v in reversed(side):
+                if bool(v) == above:
+                    run += 1
+                else:
+                    break
+            prior = side[:-lb]
+            best = cur = 0
+            for v in prior:
+                if v:
+                    cur += 1
+                    best = max(best, cur)
+                else:
+                    cur = 0
+            cur = 0
+            for v in prior:
+                if not v:
+                    cur += 1
+                    best = max(best, cur)
+                else:
+                    cur = 0
+            record = run > best
+            if run < e1:
+                band = 'short'
+            elif run <= e2:
+                band = 'mid'
+            else:
+                band = 'long'
+            key = ('above' if above else 'below') + '_' + band + (
+                '_record' if record else '_not')
+            outcomes = tuple(s + '_' + b + r for s in ('above', 'below')
+                             for b in ('short', 'mid', 'long')
+                             for r in ('_record', '_not'))
+            return {o: o == key for o in outcomes}
         if recipe == 'native_volume_dominance_flip_v1':
             # Window split in half; a side is up-dominant when up-bar volume
             # strictly exceeds down-bar volume. to_up = early not up-dominant
@@ -1003,6 +1109,44 @@ FACETS = {
                       'mostly_low': ('boolean', '=', 'one'),
                       'mostly_mid': ('boolean', '=', 'one'),
                       'mixed': ('boolean', '=', 'one')}),
+    'full_stack_streak': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
+        recipe='native_full_stack_streak_v1',
+        unit='longest_run_of_full_ma_order_window_bars_bucket',
+        outcomes=('bull_zero', 'bull_low', 'bull_mid', 'bull_high',
+                  'bear_zero', 'bear_low', 'bear_mid', 'bear_high'),
+        cutoff_id=None,
+        baked_cutoff_ids=('C101_full_stack_streak__scalar4',
+                          'C102_full_stack_streak__scalar5',
+                          'C103_full_stack_streak__scalar19',
+                          'C104_full_stack_streak__scalar20'),
+        baked_map={'C101_full_stack_streak__scalar4': 'streak_low_edge',
+                   'C102_full_stack_streak__scalar5': 'streak_mid_lo',
+                   'C103_full_stack_streak__scalar19': 'streak_mid_hi',
+                   'C104_full_stack_streak__scalar20': 'streak_high_edge'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('bull_zero', 'bull_low', 'bull_mid', 'bull_high',
+                                'bear_zero', 'bear_low', 'bear_mid', 'bear_high')}),
+    'ma30_side_streak': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
+        recipe='native_ma30_side_streak_v1',
+        unit='current_sma30_side_run_bucket_vs_own_history_record',
+        outcomes=tuple(s + '_' + b + r for s in ('above', 'below')
+                       for b in ('short', 'mid', 'long')
+                       for r in ('_record', '_not')),
+        cutoff_id=None,
+        baked_cutoff_ids=('C107_ma30_side_streak__scalar10',
+                          'C108_ma30_side_streak__scalar30',
+                          'S_long_history_bars'),
+        baked_map={'C107_ma30_side_streak__scalar10': 'streak_short_edge',
+                   'C108_ma30_side_streak__scalar30': 'streak_long_edge',
+                   'S_long_history_bars': 'long_history_bars'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(s + '_' + b + r for s in ('above', 'below')
+                                     for b in ('short', 'mid', 'long')
+                                     for r in ('_record', '_not'))}),
     'flip': dict(
         binding='mixed', l1_l3=(('volume', 'up_down_volume'),),
         recipe='native_volume_dominance_flip_v1',
@@ -1196,7 +1340,9 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
                         'native_maxvol_wick_v1', 'native_volume_dominance_flip_v1',
                         'native_ma_cross_v1', 'native_osc_cross_v1',
-                        'native_shock_v1', 'native_osc_zone_share_v1'}
+                        'native_shock_v1', 'native_osc_zone_share_v1',
+                        'native_full_stack_streak_v1',
+                        'native_ma30_side_streak_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -1217,6 +1363,10 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
+        if feature['recipe'] == 'native_full_stack_streak_v1':
+            extra = 200                                      # slowest MA (SMA200) warmup
+        if feature['recipe'] == 'native_ma30_side_streak_v1':
+            extra = 30 + int(feature['long_history_bars'])   # SMA30 + prior history
         lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)

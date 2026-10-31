@@ -943,6 +943,96 @@ def test_evaluate_time_in_zone(grid):
     assert evaluate_master(defs['mostly_mid'], bars, setup, last).answer == 'YES'
 
 
+def test_bind_batch8_variants(grid):
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|full_stack_streak|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 8
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['bull_mid']['feature']['streak_low_edge'] == '4'
+    assert by_outcome['bull_mid']['feature']['streak_mid_lo'] == '5'
+    assert by_outcome['bull_mid']['feature']['streak_mid_hi'] == '19'
+    assert by_outcome['bull_mid']['feature']['streak_high_edge'] == '20'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+    degenerate = next(v for v in grid.variants(row['question_id'])
+                      if dict(v.settings).get('C101_full_stack_streak__scalar4') == '3')
+    defs2 = {d['source_outcome']: d for d in bind_master_question(row, degenerate)}
+    assert defs2['bull_mid']['feature']['streak_low_edge'] == '3'
+
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|ma30_side_streak|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 12
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['above_long_record']['feature']['streak_short_edge'] == '10'
+    assert by_outcome['above_long_record']['feature']['streak_long_edge'] == '30'
+    assert by_outcome['above_long_record']['feature']['long_history_bars'] == '500'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C107_ma30_side_streak__scalar10') == '5')
+    defs3 = {d['source_outcome']: d for d in bind_master_question(row, changed)}
+    assert defs3['above_long_record']['feature']['streak_short_edge'] == '5'
+
+
+def test_evaluate_full_stack_streak(grid):
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|full_stack_streak|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 210  # 200 MA warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # steady rise: full bull order all window -> run 10 -> bull_mid (5-19)
+    closes = [100.0 + 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bull_mid'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull_high'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['bear_zero'], bars, setup, last).answer == 'YES'
+    # steady decline: full bear order -> bear_mid
+    closes = [200.0 - 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bear_mid'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull_zero'], bars, setup, last).answer == 'YES'
+    # flat: no strict ordering anywhere -> both zero
+    closes = [100.0] * span
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bull_zero'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear_zero'], bars, setup, last).answer == 'YES'
+    # degenerate dial pairing (3,5,19,20) -> NOT_EVALUABLE
+    degenerate = next(v for v in grid.variants(row['question_id'])
+                      if dict(v.settings).get('C101_full_stack_streak__scalar4') == '3')
+    defs2 = _by_outcome(bind_master_question(row, degenerate))
+    closes = [100.0 + 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs2['bull_mid'], bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_ma30_side_streak(grid):
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|ma30_side_streak|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 540  # 30 SMA warmup + 500 prior history + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # 500 alternating bars (runs of 1), then 40 rising: current above-run 40
+    # -> above_long, and a record vs the prior longest run of 1
+    closes = [100.0]
+    for i in range(499):
+        closes.append(closes[-1] + (0.1 if i % 2 == 0 else -0.1))
+    base = closes[-1]
+    closes += [base + 0.5 * (i + 1) for i in range(40)]
+    assert len(closes) == span
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['above_long_record'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['above_mid_record'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['below_long_not'], bars, setup, last).answer == 'NO'
+    # prior history holds a 100-bar run; current run 20 -> above_mid, not record
+    closes = [100.0 + 0.5 * i for i in range(100)]
+    for i in range(400):
+        closes.append(closes[-1] + (0.1 if i % 2 == 0 else -0.1))
+    base = closes[-1]
+    closes += [base + 0.5 * (i + 1) for i in range(40)]
+    assert len(closes) == span
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['above_long_not'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['above_long_record'], bars, setup, last).answer == 'NO'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel
