@@ -1,0 +1,24 @@
+{
+  "execute": true,
+  "run": 41078405278,
+  "job": 124141406844,
+  "release_id": 429178716,
+  "index": 6,
+  "processed_checkpoint_rows": 9,
+  "source_commit": "64f603de862adc81e6cd7e50e849cd7a684bf6bb",
+  "plan": {
+    "release": "compact-world-build-v1-41078405278-1-inputs",
+    "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+    "sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c"
+  },
+  "checkpoint": {
+    "release": "compact-world-build-v1-41078405278-1-006",
+    "asset": "checkpoint_0009.json",
+    "sha256": "665c63ebc1601e32b78883acb15d402c3ecf61f303c34208dc89f571b2b9062a"
+  },
+  "probe": {
+    "release": "rebuild-partial-checkpoint-v1-41093742477-1",
+    "asset": "REBUILD_PARTIAL_CHECKPOINT_V1.json",
+    "sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198"
+  }
+}

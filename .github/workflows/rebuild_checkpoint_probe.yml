@@ -1,0 +1,32 @@
+name: new-rebuild-checkpoint-probe
+on:
+  push:
+    branches: [codex/new-rebuild-checkpoint-probe]
+    paths: ['ci/REBUILD_CHECKPOINT_PROBE_REQUEST.json', 'ci/rebuild_checkpoint_probe.py', '.github/workflows/rebuild_checkpoint_probe.yml']
+  pull_request:
+    paths: ['ci/REBUILD_CHECKPOINT_PROBE_REQUEST.json', 'ci/rebuild_checkpoint_probe.py', 'tests/test_rebuild_checkpoint_probe.py', '.github/workflows/rebuild_checkpoint_probe.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: new-rebuild-checkpoint-probe-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s tests -p test_rebuild_checkpoint_probe.py -v
+  probe:
+    if: github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m ci.rebuild_checkpoint_probe --directory checkpoint-probe

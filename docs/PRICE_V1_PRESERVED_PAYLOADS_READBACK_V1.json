@@ -1,0 +1,59 @@
+{
+  "status": "PASS_EIGHT_PUBLISHED_PAYLOADS_MATCH_AUTHENTICATED_CHECKPOINT_BYTES",
+  "release": "compact-world-build-preserved-v1-41159096064-1-006",
+  "source_probe_sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198",
+  "receipt_sha256": "3862997a7c8f8ab319f0db1ab1d820025b6628b88a0ff7e6dc49d8db31b96128",
+  "payload_count": 8,
+  "payload_bytes": 18371907,
+  "payloads": [
+    {
+      "ticker": "APRE",
+      "asset": "41505245.diagnostic_answers.tar.zst",
+      "bytes": 2522120,
+      "sha256": "674e631685729961d98144c31267eaa4fc6bffcd27debbf295d8ae51eeb29dd1"
+    },
+    {
+      "ticker": "AVBH",
+      "asset": "41564248.diagnostic_answers.tar.zst",
+      "bytes": 3028142,
+      "sha256": "28cadbd904b38f08820919cd8e9436ec9da6aa5afc88ff5f922a637fd5e0c795"
+    },
+    {
+      "ticker": "BBSB",
+      "asset": "42425342.diagnostic_answers.tar.zst",
+      "bytes": 1369428,
+      "sha256": "0f650a41e220c3d3b311640d8488d7d0d0916bcfb158192533213c308dab7964"
+    },
+    {
+      "ticker": "BJ",
+      "asset": "424a.diagnostic_answers.tar.zst",
+      "bytes": 2961936,
+      "sha256": "e2cf530db96c8e2608fe304343d22c809450dae3f327d4a6915e2f09dca5d931"
+    },
+    {
+      "ticker": "BTX",
+      "asset": "425458.diagnostic_answers.tar.zst",
+      "bytes": 2255140,
+      "sha256": "e8c18d0470dcbdd14cf1d96291ffe718af3e2b45e1794dba387b4764f41c17c0"
+    },
+    {
+      "ticker": "CFG",
+      "asset": "434647.diagnostic_answers.tar.zst",
+      "bytes": 3112562,
+      "sha256": "9c4b097a512f59bc1571d182bf53d9fa275e6e5c3d942ef9ad05a9f1ffefeca0"
+    },
+    {
+      "ticker": "CGCB",
+      "asset": "43474342.diagnostic_answers.tar.zst",
+      "bytes": 1170566,
+      "sha256": "afa5a466ac295e35d1ac640ece7d4004fd2f9d9a89817bd3c35a9f85b2044930"
+    },
+    {
+      "ticker": "CVAR",
+      "asset": "43564152.diagnostic_answers.tar.zst",
+      "bytes": 1952013,
+      "sha256": "0e5a8aef779b115be1c0ab31ee6b4f8e186a6c38c126c8e96158a3e29d382cba"
+    }
+  ],
+  "scope": "Bounded streamed byte hashing only; no local market calculation or world/scoring approval"
+}

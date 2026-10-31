@@ -1,0 +1,45 @@
+{
+  "status": "REPRODUCED_WINDOW_RESET_VS_FULL_HISTORY_EMA21_ANSWER_DISAGREEMENT",
+  "producer_commit": "4e6241efd1510c9de488709c6e4f7379ea811729",
+  "producer_file_sha256": "9d2b347e97108e6639f673a7a0b0abe7037f5acd412446332b411f33ef7b2d27",
+  "source_question_id": "B|moving_averages|EMA21|fresh_cross|1x3",
+  "feature": {
+    "recipe": "native_ma_cross_v1",
+    "candle_days": 1,
+    "lookback": 3,
+    "transform": "identity",
+    "bar_definition": "FIXED_SHARED_SESSION_CALENDAR_V1",
+    "price_basis": "PIT_SPLIT_ADJUSTED_OHLC",
+    "numeric_contract": "FLOAT64_NO_EPSILON_V1",
+    "ma_kind": "EMA",
+    "ma_period": "21"
+  },
+  "synthetic_prices": {
+    "prefix_70": 1000,
+    "next_25": 100,
+    "last_3": [
+      101,
+      102,
+      103
+    ]
+  },
+  "current_answers": {
+    "up": "YES",
+    "down": "NO",
+    "both": "NO",
+    "none": "NO"
+  },
+  "same_declared_ema_algorithm_over_all_supplied_history_answers": {
+    "up": "NO",
+    "down": "NO",
+    "both": "NO",
+    "none": "YES"
+  },
+  "current_window_ema21_last": 100.51314800901577,
+  "full_history_ema21_last": 162.92216255398773,
+  "last_close": 103,
+  "bars_supplied": 98,
+  "bars_used_by_current_adapter": 24,
+  "scope": "Synthetic downstream definition-parity audit, not a new raw price gate or real market calculation",
+  "action": "Bind the registered full-history native EMA21 before DERIVE; bounded reseeding must not silently replace the existing world field"
+}

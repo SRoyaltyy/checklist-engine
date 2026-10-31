@@ -39,23 +39,45 @@ def validate_provenance(provenance):
         raise ValueError('complete provenance hashes required')
 
 
+def _binary_registry(registry):
+    return all(len(q['outcomes'])==2 and all(type(x) is int for x in q['outcomes'])
+               and q['outcomes']==[0,1] for q in registry)
+
+
+def _binary_raw(frame,registry):
+    if not _binary_registry(registry):return None
+    # The producer supplies ordinary float64 answers. Preserve categorical
+    # validation for every other dtype (notably bool vs integer categories).
+    if any(dtype!=np.dtype('float64') for dtype in frame.dtypes):return None
+    values=frame.to_numpy()
+    no=values==0;yes=values==1
+    if (~(no|yes|pd.isna(values))).any():
+        raise ValueError('unregistered answer; do not silently make it missing')
+    # V1 order is question, then low/high code bit, then row. Missing=0,
+    # NO=1 and YES=2; both comparisons are false for NaN. Padding stays zero.
+    planes=np.stack((no.T,yes.T),axis=1)
+    return np.packbits(planes,axis=2,bitorder='little').tobytes()
+
+
 def encode_answers(frame,registry,provenance,max_cells=10000000):
     schema=registry_bytes(registry);validate_provenance(provenance)
     if list(frame)!=[q['question_id'] for q in registry] or frame.size>max_cells:
         raise ValueError('answer chunk schema/order or size differs')
-    planes=[]
-    for question in registry:
-        values=frame[question['question_id']]
-        if (values.notna() & ~values.isin(question['outcomes'])).any():
-            raise ValueError('unregistered answer; do not silently make it missing')
-        categorical=pd.Categorical(values,categories=question['outcomes'])
-        if ((categorical.codes<0)&values.notna().to_numpy()).any():
-            raise ValueError('unregistered answer; do not silently make it missing')
-        codes=(categorical.codes.astype(np.int64)+1).astype(np.uint16)
-        bits=max(1,int(math.ceil(math.log2(len(question['outcomes'])+1))))
-        for bit in range(bits):
-            planes.append(np.packbits(((codes>>bit)&1).astype(np.uint8),bitorder='little').tobytes())
-    raw=b''.join(planes)
+    raw=_binary_raw(frame,registry)
+    if raw is None:
+        planes=[]
+        for question in registry:
+            values=frame[question['question_id']]
+            if (values.notna() & ~values.isin(question['outcomes'])).any():
+                raise ValueError('unregistered answer; do not silently make it missing')
+            categorical=pd.Categorical(values,categories=question['outcomes'])
+            if ((categorical.codes<0)&values.notna().to_numpy()).any():
+                raise ValueError('unregistered answer; do not silently make it missing')
+            codes=(categorical.codes.astype(np.int64)+1).astype(np.uint16)
+            bits=max(1,int(math.ceil(math.log2(len(question['outcomes'])+1))))
+            for bit in range(bits):
+                planes.append(np.packbits(((codes>>bit)&1).astype(np.uint8),bitorder='little').tobytes())
+        raw=b''.join(planes)
     compressed=bytes(pa.Codec('zstd',compression_level=9).compress(raw))
     meta=dict(format='REGISTERED_ANSWER_BITPLANES_V1',rows=len(frame),registry_sha256=digest(schema),
               provenance=dict(provenance),raw_bytes=len(raw),raw_sha256=digest(raw),
@@ -77,6 +99,13 @@ def decode_answers(compressed,meta,registry,provenance,max_raw_bytes=256000000):
     if expected!=meta['raw_bytes']:raise ValueError('answer bitplane shape differs')
     raw=bytes(pa.Codec('zstd').decompress(compressed,meta['raw_bytes']))
     if digest(raw)!=meta['raw_sha256']:raise ValueError('raw answer bytes differ')
+    if _binary_registry(registry):
+        planes=np.unpackbits(np.frombuffer(raw,dtype=np.uint8).reshape(len(registry),2,stride),axis=2,bitorder='little')
+        if planes[:,:,rows:].any():raise ValueError('nonzero answer padding')
+        codes=planes[:,0,:rows]+2*planes[:,1,:rows]
+        if (codes>2).any():raise ValueError('answer code outside registered dictionary')
+        values=np.asarray([None,0,1],dtype=object)[codes].T
+        return pd.DataFrame(values,columns=[q['question_id'] for q in registry],dtype=object)
     result={};offset=0
     for question in registry:
         outcomes=question['outcomes'];bits=max(1,int(math.ceil(math.log2(len(outcomes)+1))))

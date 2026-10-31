@@ -1,0 +1,592 @@
+{
+  "status": "PASS_EXACT_RECOVERED_PART_50_WITH_42_NEW_PUBLIC_BODY_HASHES",
+  "observed_at": "2026-10-31T04:54:30.159709+00:00",
+  "recovery_run": 41159096064,
+  "source_commit": "71f30b0b121b760d38a09b87196195ee046f7d87",
+  "producer_status": "completed",
+  "producer_conclusion": "success",
+  "plan_sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c",
+  "probe_sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198",
+  "replacement": {
+    "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
+    "asset": "COMPACT_WORLD_SHARD.json",
+    "sha256": "f96ef20f28cbf34287902d8155a93e1e6a32af32861f907c7f8e0b777eca934e"
+  },
+  "calculated_receipt_sha256": "4fade5079e95387841c0bc77728b22e5e5bd12b7a484052e5a133e9797507ec6",
+  "preserved_receipt_sha256": "3862997a7c8f8ab319f0db1ab1d820025b6628b88a0ff7e6dc49d8db31b96128",
+  "completed": 50,
+  "excluded": 0,
+  "preserved_count": 8,
+  "calculated_count": 42,
+  "answer_bytes": 126762606,
+  "new_payload_bytes": 108390699,
+  "new_payload_body_readbacks": [
+    {
+      "ticker": "CXDO",
+      "bytes": 2970651,
+      "sha256": "8bb4c38cd6e4d156632ef700981b372673d8b16215cfd4719640c0e6f53fe557"
+    },
+    {
+      "ticker": "DBL",
+      "bytes": 3026830,
+      "sha256": "ef64267b04d8df42e61a966e9282f101bee6cb548e166a657e4192a1ca354c7b"
+    },
+    {
+      "ticker": "DOCT",
+      "bytes": 2209548,
+      "sha256": "5e20a3f6723f585593875ae6c0b9c1b1793d395743046342ccb73f02a97a42e4"
+    },
+    {
+      "ticker": "DRV",
+      "bytes": 2915219,
+      "sha256": "b70104cb0fa32175685f019e437edb6571a974096fb824cc529ad5eb11bc39d3"
+    },
+    {
+      "ticker": "DSTX",
+      "bytes": 2242413,
+      "sha256": "708daa6962a01d779c93664633644ada4c9dabb38337500112553f94b12f94c1"
+    },
+    {
+      "ticker": "DUBS",
+      "bytes": 1232709,
+      "sha256": "e37ab0c778d393bef5be3e0d94108a13165fa277ca92136a23db788f320f346e"
+    },
+    {
+      "ticker": "EQRR",
+      "bytes": 3051815,
+      "sha256": "d9fcf9c94bcaf5ccb37d02ec5f8b58f69ededcfdb551d8f99e3c42c2f8bee5fc"
+    },
+    {
+      "ticker": "ESS",
+      "bytes": 3172517,
+      "sha256": "3bc3b9855a77976c4106aa8fdb1c0d4258cb6ab9130b93bc6d1ba632fba63397"
+    },
+    {
+      "ticker": "EYPT",
+      "bytes": 3132078,
+      "sha256": "0a7667ba5c45b3c4e66ba1462915520cc131110204552ead92b519808bd1321f"
+    },
+    {
+      "ticker": "FFAI",
+      "bytes": 2008326,
+      "sha256": "96ec1164a56f67ba1f1bd235f29ed4cd0bd7bd4ffa3d9a6a02326567d5a09917"
+    },
+    {
+      "ticker": "HUDI",
+      "bytes": 2136444,
+      "sha256": "7fe122bfb418c309f7c76403037e92f97f5eb30f306223ade57fc17b36fe2680"
+    },
+    {
+      "ticker": "HVT",
+      "bytes": 3186907,
+      "sha256": "e061f86f68c62fcb40c30b2da8608544577109da152a8e3789a0dd5ca5c37d26"
+    },
+    {
+      "ticker": "IGIB",
+      "bytes": 3004029,
+      "sha256": "41fee0259aef81f98f4e9380fb7b6d50210aeac5e57fa7d712075bdedf86cb05"
+    },
+    {
+      "ticker": "JANT",
+      "bytes": 2089608,
+      "sha256": "fef2b4b455ca4cef2d219c11791cc8b8967efccafe7496026037fa5bd898cebc"
+    },
+    {
+      "ticker": "JGRO",
+      "bytes": 1572569,
+      "sha256": "2d91d5bd0624e100cda78365a869c3f6a86e893f325e0e4cbe3c168c4470406b"
+    },
+    {
+      "ticker": "LLY",
+      "bytes": 2891650,
+      "sha256": "39429cac3664cf0450f371a1fb9243f554c45ec7ad4baa140866175148b88117"
+    },
+    {
+      "ticker": "MAC",
+      "bytes": 3032213,
+      "sha256": "f6947b95a7c6c8b38689115692504a6a74320ff05cae2989c50e97d520b4eb4a"
+    },
+    {
+      "ticker": "MSGS",
+      "bytes": 3211004,
+      "sha256": "d5622913d45704cb7bd9d46400d9145c9782f801d8678a95983bd688ff31ca36"
+    },
+    {
+      "ticker": "MYMH",
+      "bytes": 733430,
+      "sha256": "81557b57f14a4389238bc0cd7ff3d94072b1bd6e0f7c3c1ee77f4b1b6a612960"
+    },
+    {
+      "ticker": "NFXS",
+      "bytes": 743476,
+      "sha256": "57790cf63f9eea8306b5bad6ca7e4a2434081931e70e57634ba11d5511ace82d"
+    },
+    {
+      "ticker": "NIO",
+      "bytes": 2831291,
+      "sha256": "5cf1653192016526569e4e19f3ea5dfcbd38ba1e67fdd126d884c041777719db"
+    },
+    {
+      "ticker": "NMAD",
+      "bytes": 2986699,
+      "sha256": "97346f6da0ced3c5cb4badf03dbd903fbec6ef03fd01d2d9876823e3fc0317f5"
+    },
+    {
+      "ticker": "NVDU",
+      "bytes": 1228460,
+      "sha256": "f9146a409d349cb1e875570e78c236c828ece3605b07a1621b7039a41ffd9a2d"
+    },
+    {
+      "ticker": "OGN",
+      "bytes": 2042807,
+      "sha256": "4d3ce3f52ab976ff91952275562e9ecb89d6042cf2b6c5491d13803ad6e693fb"
+    },
+    {
+      "ticker": "PH",
+      "bytes": 2964129,
+      "sha256": "2b7ae3813f68d98f560df6f425d7a6298ac75516c5f733b6e02dd34e9eb962f8"
+    },
+    {
+      "ticker": "PHYS",
+      "bytes": 2998272,
+      "sha256": "763f296e03d9ae575f18c7591d545c0bec4cc7d6a6604c6c5662abd837c5586f"
+    },
+    {
+      "ticker": "RDHL",
+      "bytes": 2745443,
+      "sha256": "bc9963e182c5e922bfce78b176cdfa114e719fe739cb040608d04913153394fb"
+    },
+    {
+      "ticker": "REPX",
+      "bytes": 3310723,
+      "sha256": "b33e9cb4aa87fbc024734214354d58ecc59dcc48b94f53a36304e1e5d47b2732"
+    },
+    {
+      "ticker": "SLYG",
+      "bytes": 3117960,
+      "sha256": "633cc928a8d2415c080acd1e55d7ffa8cbf640b6cb0216e32a76fe00af4f163c"
+    },
+    {
+      "ticker": "SSBI",
+      "bytes": 3124053,
+      "sha256": "8ceea6c0236280f7bd0c6cb6cf421cd5f90321902ef59fefe6052f2ba52f37df"
+    },
+    {
+      "ticker": "STXT",
+      "bytes": 1249889,
+      "sha256": "5f234a78a794a4edecaf31ed2e787e824a831c386763e82833c63570d98a0fb7"
+    },
+    {
+      "ticker": "SYBT",
+      "bytes": 3103218,
+      "sha256": "63f419c4a879a7bc41d224ba022041fa7463f32299a430b5d6d583d1643049a4"
+    },
+    {
+      "ticker": "TNYA",
+      "bytes": 1928986,
+      "sha256": "bf81b96f1d180aa57d25ff9e35e7ed254e278e30e8a8dcd00b970cb06cdc9dd3"
+    },
+    {
+      "ticker": "UEC",
+      "bytes": 3129193,
+      "sha256": "3cf295c47e2791861bd9acef1ad292b629ab4e017c7ec565de71438f27c0068c"
+    },
+    {
+      "ticker": "VPG",
+      "bytes": 3162341,
+      "sha256": "690861baf8184e1112db587e02390c1acdc6026e1be0262590b61ae9ae38a537"
+    },
+    {
+      "ticker": "WEC",
+      "bytes": 3192133,
+      "sha256": "0340c4ab86b907e2e654c17889cfe782e3cb239496358bbe9976772906ad326c"
+    },
+    {
+      "ticker": "XLF",
+      "bytes": 3029116,
+      "sha256": "81ba0fa58e44f20fb513e9107b693853ce7a89482e4773e7eded1b0e32fc366b"
+    },
+    {
+      "ticker": "Z",
+      "bytes": 3077427,
+      "sha256": "4c80a0ba0adf8b2b9118ba3300cf6dc75f7634e1e096c49d04c384bb55fce458"
+    },
+    {
+      "ticker": "ABCL",
+      "bytes": 2207836,
+      "sha256": "98f4f486300325355c0f5d70d110e107dbb4fef62922d472b85a53b45f0ee65c"
+    },
+    {
+      "ticker": "ANGI",
+      "bytes": 2985445,
+      "sha256": "80993828b757d29d42e96ccdf524707a4f676dd045a5bb805a2d0a81d01e7be0"
+    },
+    {
+      "ticker": "AOUT",
+      "bytes": 2401753,
+      "sha256": "74efeab117694f41d17018cc32c96b94712378a4e3c2ca45b029d1206992c6d0"
+    },
+    {
+      "ticker": "BAK",
+      "bytes": 3010089,
+      "sha256": "a0cf375657f12db965567bf23f8487a683baf98d793e6abb2d4a1c456d731fdf"
+    }
+  ],
+  "payload_metadata": [
+    {
+      "ticker": "APRE",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "41505245.diagnostic_answers.tar.zst",
+      "bytes": 2522120,
+      "sha256": "674e631685729961d98144c31267eaa4fc6bffcd27debbf295d8ae51eeb29dd1"
+    },
+    {
+      "ticker": "AVBH",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "41564248.diagnostic_answers.tar.zst",
+      "bytes": 3028142,
+      "sha256": "28cadbd904b38f08820919cd8e9436ec9da6aa5afc88ff5f922a637fd5e0c795"
+    },
+    {
+      "ticker": "BBSB",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "42425342.diagnostic_answers.tar.zst",
+      "bytes": 1369428,
+      "sha256": "0f650a41e220c3d3b311640d8488d7d0d0916bcfb158192533213c308dab7964"
+    },
+    {
+      "ticker": "BJ",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "424a.diagnostic_answers.tar.zst",
+      "bytes": 2961936,
+      "sha256": "e2cf530db96c8e2608fe304343d22c809450dae3f327d4a6915e2f09dca5d931"
+    },
+    {
+      "ticker": "BTX",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "425458.diagnostic_answers.tar.zst",
+      "bytes": 2255140,
+      "sha256": "e8c18d0470dcbdd14cf1d96291ffe718af3e2b45e1794dba387b4764f41c17c0"
+    },
+    {
+      "ticker": "CFG",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "434647.diagnostic_answers.tar.zst",
+      "bytes": 3112562,
+      "sha256": "9c4b097a512f59bc1571d182bf53d9fa275e6e5c3d942ef9ad05a9f1ffefeca0"
+    },
+    {
+      "ticker": "CGCB",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "43474342.diagnostic_answers.tar.zst",
+      "bytes": 1170566,
+      "sha256": "afa5a466ac295e35d1ac640ece7d4004fd2f9d9a89817bd3c35a9f85b2044930"
+    },
+    {
+      "ticker": "CVAR",
+      "release": "compact-world-build-preserved-v1-41159096064-1-006",
+      "asset": "43564152.diagnostic_answers.tar.zst",
+      "bytes": 1952013,
+      "sha256": "0e5a8aef779b115be1c0ab31ee6b4f8e186a6c38c126c8e96158a3e29d382cba"
+    },
+    {
+      "ticker": "CXDO",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4358444f.diagnostic_answers.tar.zst",
+      "bytes": 2970651,
+      "sha256": "8bb4c38cd6e4d156632ef700981b372673d8b16215cfd4719640c0e6f53fe557"
+    },
+    {
+      "ticker": "DBL",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "44424c.diagnostic_answers.tar.zst",
+      "bytes": 3026830,
+      "sha256": "ef64267b04d8df42e61a966e9282f101bee6cb548e166a657e4192a1ca354c7b"
+    },
+    {
+      "ticker": "DOCT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "444f4354.diagnostic_answers.tar.zst",
+      "bytes": 2209548,
+      "sha256": "5e20a3f6723f585593875ae6c0b9c1b1793d395743046342ccb73f02a97a42e4"
+    },
+    {
+      "ticker": "DRV",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "445256.diagnostic_answers.tar.zst",
+      "bytes": 2915219,
+      "sha256": "b70104cb0fa32175685f019e437edb6571a974096fb824cc529ad5eb11bc39d3"
+    },
+    {
+      "ticker": "DSTX",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "44535458.diagnostic_answers.tar.zst",
+      "bytes": 2242413,
+      "sha256": "708daa6962a01d779c93664633644ada4c9dabb38337500112553f94b12f94c1"
+    },
+    {
+      "ticker": "DUBS",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "44554253.diagnostic_answers.tar.zst",
+      "bytes": 1232709,
+      "sha256": "e37ab0c778d393bef5be3e0d94108a13165fa277ca92136a23db788f320f346e"
+    },
+    {
+      "ticker": "EQRR",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "45515252.diagnostic_answers.tar.zst",
+      "bytes": 3051815,
+      "sha256": "d9fcf9c94bcaf5ccb37d02ec5f8b58f69ededcfdb551d8f99e3c42c2f8bee5fc"
+    },
+    {
+      "ticker": "ESS",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "455353.diagnostic_answers.tar.zst",
+      "bytes": 3172517,
+      "sha256": "3bc3b9855a77976c4106aa8fdb1c0d4258cb6ab9130b93bc6d1ba632fba63397"
+    },
+    {
+      "ticker": "EYPT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "45595054.diagnostic_answers.tar.zst",
+      "bytes": 3132078,
+      "sha256": "0a7667ba5c45b3c4e66ba1462915520cc131110204552ead92b519808bd1321f"
+    },
+    {
+      "ticker": "FFAI",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "46464149.diagnostic_answers.tar.zst",
+      "bytes": 2008326,
+      "sha256": "96ec1164a56f67ba1f1bd235f29ed4cd0bd7bd4ffa3d9a6a02326567d5a09917"
+    },
+    {
+      "ticker": "HUDI",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "48554449.diagnostic_answers.tar.zst",
+      "bytes": 2136444,
+      "sha256": "7fe122bfb418c309f7c76403037e92f97f5eb30f306223ade57fc17b36fe2680"
+    },
+    {
+      "ticker": "HVT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "485654.diagnostic_answers.tar.zst",
+      "bytes": 3186907,
+      "sha256": "e061f86f68c62fcb40c30b2da8608544577109da152a8e3789a0dd5ca5c37d26"
+    },
+    {
+      "ticker": "IGIB",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "49474942.diagnostic_answers.tar.zst",
+      "bytes": 3004029,
+      "sha256": "41fee0259aef81f98f4e9380fb7b6d50210aeac5e57fa7d712075bdedf86cb05"
+    },
+    {
+      "ticker": "JANT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4a414e54.diagnostic_answers.tar.zst",
+      "bytes": 2089608,
+      "sha256": "fef2b4b455ca4cef2d219c11791cc8b8967efccafe7496026037fa5bd898cebc"
+    },
+    {
+      "ticker": "JGRO",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4a47524f.diagnostic_answers.tar.zst",
+      "bytes": 1572569,
+      "sha256": "2d91d5bd0624e100cda78365a869c3f6a86e893f325e0e4cbe3c168c4470406b"
+    },
+    {
+      "ticker": "LLY",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4c4c59.diagnostic_answers.tar.zst",
+      "bytes": 2891650,
+      "sha256": "39429cac3664cf0450f371a1fb9243f554c45ec7ad4baa140866175148b88117"
+    },
+    {
+      "ticker": "MAC",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4d4143.diagnostic_answers.tar.zst",
+      "bytes": 3032213,
+      "sha256": "f6947b95a7c6c8b38689115692504a6a74320ff05cae2989c50e97d520b4eb4a"
+    },
+    {
+      "ticker": "MSGS",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4d534753.diagnostic_answers.tar.zst",
+      "bytes": 3211004,
+      "sha256": "d5622913d45704cb7bd9d46400d9145c9782f801d8678a95983bd688ff31ca36"
+    },
+    {
+      "ticker": "MYMH",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4d594d48.diagnostic_answers.tar.zst",
+      "bytes": 733430,
+      "sha256": "81557b57f14a4389238bc0cd7ff3d94072b1bd6e0f7c3c1ee77f4b1b6a612960"
+    },
+    {
+      "ticker": "NFXS",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4e465853.diagnostic_answers.tar.zst",
+      "bytes": 743476,
+      "sha256": "57790cf63f9eea8306b5bad6ca7e4a2434081931e70e57634ba11d5511ace82d"
+    },
+    {
+      "ticker": "NIO",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4e494f.diagnostic_answers.tar.zst",
+      "bytes": 2831291,
+      "sha256": "5cf1653192016526569e4e19f3ea5dfcbd38ba1e67fdd126d884c041777719db"
+    },
+    {
+      "ticker": "NMAD",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4e4d4144.diagnostic_answers.tar.zst",
+      "bytes": 2986699,
+      "sha256": "97346f6da0ced3c5cb4badf03dbd903fbec6ef03fd01d2d9876823e3fc0317f5"
+    },
+    {
+      "ticker": "NVDU",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4e564455.diagnostic_answers.tar.zst",
+      "bytes": 1228460,
+      "sha256": "f9146a409d349cb1e875570e78c236c828ece3605b07a1621b7039a41ffd9a2d"
+    },
+    {
+      "ticker": "OGN",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4f474e.diagnostic_answers.tar.zst",
+      "bytes": 2042807,
+      "sha256": "4d3ce3f52ab976ff91952275562e9ecb89d6042cf2b6c5491d13803ad6e693fb"
+    },
+    {
+      "ticker": "PH",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "5048.diagnostic_answers.tar.zst",
+      "bytes": 2964129,
+      "sha256": "2b7ae3813f68d98f560df6f425d7a6298ac75516c5f733b6e02dd34e9eb962f8"
+    },
+    {
+      "ticker": "PHYS",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "50485953.diagnostic_answers.tar.zst",
+      "bytes": 2998272,
+      "sha256": "763f296e03d9ae575f18c7591d545c0bec4cc7d6a6604c6c5662abd837c5586f"
+    },
+    {
+      "ticker": "RDHL",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "5244484c.diagnostic_answers.tar.zst",
+      "bytes": 2745443,
+      "sha256": "bc9963e182c5e922bfce78b176cdfa114e719fe739cb040608d04913153394fb"
+    },
+    {
+      "ticker": "REPX",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "52455058.diagnostic_answers.tar.zst",
+      "bytes": 3310723,
+      "sha256": "b33e9cb4aa87fbc024734214354d58ecc59dcc48b94f53a36304e1e5d47b2732"
+    },
+    {
+      "ticker": "SLYG",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "534c5947.diagnostic_answers.tar.zst",
+      "bytes": 3117960,
+      "sha256": "633cc928a8d2415c080acd1e55d7ffa8cbf640b6cb0216e32a76fe00af4f163c"
+    },
+    {
+      "ticker": "SSBI",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "53534249.diagnostic_answers.tar.zst",
+      "bytes": 3124053,
+      "sha256": "8ceea6c0236280f7bd0c6cb6cf421cd5f90321902ef59fefe6052f2ba52f37df"
+    },
+    {
+      "ticker": "STXT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "53545854.diagnostic_answers.tar.zst",
+      "bytes": 1249889,
+      "sha256": "5f234a78a794a4edecaf31ed2e787e824a831c386763e82833c63570d98a0fb7"
+    },
+    {
+      "ticker": "SYBT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "53594254.diagnostic_answers.tar.zst",
+      "bytes": 3103218,
+      "sha256": "63f419c4a879a7bc41d224ba022041fa7463f32299a430b5d6d583d1643049a4"
+    },
+    {
+      "ticker": "TNYA",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "544e5941.diagnostic_answers.tar.zst",
+      "bytes": 1928986,
+      "sha256": "bf81b96f1d180aa57d25ff9e35e7ed254e278e30e8a8dcd00b970cb06cdc9dd3"
+    },
+    {
+      "ticker": "UEC",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "554543.diagnostic_answers.tar.zst",
+      "bytes": 3129193,
+      "sha256": "3cf295c47e2791861bd9acef1ad292b629ab4e017c7ec565de71438f27c0068c"
+    },
+    {
+      "ticker": "VPG",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "565047.diagnostic_answers.tar.zst",
+      "bytes": 3162341,
+      "sha256": "690861baf8184e1112db587e02390c1acdc6026e1be0262590b61ae9ae38a537"
+    },
+    {
+      "ticker": "WEC",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "574543.diagnostic_answers.tar.zst",
+      "bytes": 3192133,
+      "sha256": "0340c4ab86b907e2e654c17889cfe782e3cb239496358bbe9976772906ad326c"
+    },
+    {
+      "ticker": "XLF",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "584c46.diagnostic_answers.tar.zst",
+      "bytes": 3029116,
+      "sha256": "81ba0fa58e44f20fb513e9107b693853ce7a89482e4773e7eded1b0e32fc366b"
+    },
+    {
+      "ticker": "Z",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "5a.diagnostic_answers.tar.zst",
+      "bytes": 3077427,
+      "sha256": "4c80a0ba0adf8b2b9118ba3300cf6dc75f7634e1e096c49d04c384bb55fce458"
+    },
+    {
+      "ticker": "ABCL",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "4142434c.diagnostic_answers.tar.zst",
+      "bytes": 2207836,
+      "sha256": "98f4f486300325355c0f5d70d110e107dbb4fef62922d472b85a53b45f0ee65c"
+    },
+    {
+      "ticker": "ANGI",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "414e4749.diagnostic_answers.tar.zst",
+      "bytes": 2985445,
+      "sha256": "80993828b757d29d42e96ccdf524707a4f676dd045a5bb805a2d0a81d01e7be0"
+    },
+    {
+      "ticker": "AOUT",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "414f5554.diagnostic_answers.tar.zst",
+      "bytes": 2401753,
+      "sha256": "74efeab117694f41d17018cc32c96b94712378a4e3c2ca45b029d1206992c6d0"
+    },
+    {
+      "ticker": "BAK",
+      "release": "compact-world-build-v1-41159096064-1-000",
+      "asset": "42414b.diagnostic_answers.tar.zst",
+      "bytes": 3010089,
+      "sha256": "a0cf375657f12db965567bf23f8487a683baf98d793e6abb2d4a1c456d731fdf"
+    }
+  ],
+  "preserved_body_proof": "docs/PRICE_V1_PRESERVED_PAYLOADS_READBACK_V1.json (all8 streamed/hash-verified previously)",
+  "scope": "Receipt bodies plus all50 final asset metadata; independently hash all42 new payload bodies. No local market computation, source-value recomputation or full-cohort PIT proof.",
+  "parent_composition": "PENDING_PINNED_COMPLETED_PARENT_REPORT",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
