@@ -22,3 +22,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 10:25 | ledger/7 | build_calendar wires forward_release_distance; one-shot filter removed | 8250f33f, 738f3675 | not run
 2026-10-31 10:30 | tests/1 | stale cancellation-premise test replaced with three: publication weekend roll, cancellation override, half-built month | 10358e24 | not run
 2026-10-31 10:31 | dispatch | outside_event_calendar.yml dispatched on the branch; run id not yet listed | n/a | pending
+2026-10-31 10:44 | dispatch | run 41193103387 exists and FAILED at the Unit tests step; job 124513743987, sha 10358e24 | n/a | FAIL
+2026-10-31 10:44 | infra | job logs are 11 403 unauthenticated; no log op in the doorman, so the failure is undiagnosed | n/a | n/a
