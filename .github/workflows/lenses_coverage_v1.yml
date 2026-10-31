@@ -1,0 +1,19 @@
+name: lenses_coverage_v1
+on:
+  pull_request:
+    paths: ['ci/lenses_coverage.py', 'tests/test_lenses_coverage.py', 'dictionary/DATA_SOURCES.csv',
+            'docs/LENSES_V1.md', 'docs/LENSES_COVERAGE_V1.csv', '.github/workflows/lenses_coverage_v1.yml']
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m unittest discover -s tests -p test_lenses_coverage.py -v
+      - name: Regenerate planning table and verify committed bytes
+        run: |
+          python -m ci.lenses_coverage
+          git diff --exit-code -- docs/LENSES_V1.md docs/LENSES_COVERAGE_V1.csv

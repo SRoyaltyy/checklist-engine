@@ -5,8 +5,9 @@ measurement class, applies the class applicability rule table from
 docs/LENSES_V1.md (14 lenses), and writes docs/LENSES_COVERAGE_V1.csv plus the
 inventory-coverage section of docs/LENSES_V1.md (between fixed markers, so
 reruns are idempotent). Every inapplicable lens carries a reason code; the
-absolute/threshold alias is counted once; conditional lenses name their missing
-prerequisite. Deterministic: no floats, fixed ordering.
+absolute/threshold candidate alias is counted once for planning only;
+conditional lenses name their missing prerequisite. This does not measure
+implemented predicates or certify the minimum-six gate. Deterministic output.
 """
 import csv
 import io
@@ -21,7 +22,7 @@ LENSES = ('absolute', 'relative', 'position', 'threshold', 'divergence', 'outlie
           'path', 'streak', 'cross', 'change_since_last', 'rank',
           'percentile', 'extreme_vs_own_history', 'timeframe')
 
-# Reason codes for inapplicable lenses (kept short for the table).
+# Reasons distinguish semantic inapplicability from missing prerequisites.
 REASONS = {
     'RANK_GLOBAL': 'market-global series: identical across stocks, no cross-stock rank',
     'POS_CAT': 'categorical/boolean has no ordered magnitude; use the declared share reading',
@@ -32,9 +33,9 @@ REASONS = {
     'DROPPED': 'item dropped (GDELT news stays dropped, 2026-10-28): no lens readings',
 }
 
-# Measurement classes. Each rule: applicable lenses, inapplicable {lens: reason},
-# flags (named missing prerequisites / conditions). absolute==threshold is one
-# predicate (alias counted once); cross/streak/path/change stay separate lenses.
+# Measurement classes describe planning eligibility, not implemented predicates.
+# Missing prerequisites become conditional below; semantic exclusions stay
+# separate. Candidate aliases affect the planning count only, never the gate.
 CLASS_RULES = {
     'STOCK_SCALAR': dict(
         applicable=set(LENSES), inapplicable={}, alias=('absolute', 'threshold'),
@@ -79,6 +80,18 @@ CLASS_RULES = {
                                  inapplicable={l: 'DROPPED' for l in LENSES},
                                  alias=None, flags=()),
 }
+
+# A missing reference/pair is pending work, not semantic inapplicability
+# (LENSES_V1 authority). Keep these labels in the potential plan and expose
+# their prerequisites separately. No implementation is inferred from a class.
+for _class, _rule in CLASS_RULES.items():
+    _rule['conditional'] = {lens: why for lens, why in _rule['inapplicable'].items()
+                            if why in ('REL_NAMED', 'DIV_PAIR')}
+    _rule['inapplicable'] = {lens: why for lens, why in _rule['inapplicable'].items()
+                             if why not in ('REL_NAMED', 'DIV_PAIR')}
+    if _class == 'CATEGORICAL_STATE':
+        _rule['applicable'].remove('divergence')
+        _rule['conditional']['divergence'] = 'DIV_PAIR'
 
 # Explicit per-item classification. Items not listed here take their block default.
 BLOCK_DEFAULT = {'A': 'STOCK_SCALAR', 'B': 'STOCK_SCALAR', 'C': 'STOCK_SCALAR',
@@ -136,15 +149,18 @@ def classify(row):
     return cls, CLASS_RULES[cls]
 
 
-def unique_count(rule):
-    n = len(rule['applicable'])
-    if rule.get('alias') and set(rule['alias']) <= rule['applicable']:
+def potential_count(rule):
+    """Planning labels after declared candidate aliases, not predicate proof."""
+    labels = rule['applicable'] | set(rule['conditional'])
+    n = len(labels)
+    if rule.get('alias') and set(rule['alias']) <= labels:
         n -= 1
     return n
 
 
 def build():
-    rows = list(csv.DictReader(SOURCES.open(encoding='utf-8-sig', newline='')))
+    with SOURCES.open(encoding='utf-8-sig', newline='') as stream:
+        rows = list(csv.DictReader(stream))
     assert len(rows) == 258, 'inventory must have 258 items'
     out = []
     class_counts = {}
@@ -152,19 +168,27 @@ def build():
         iid = row['id']
         cls, rule = classify(row)
         class_counts[cls] = class_counts.get(cls, 0) + 1
-        n_unique = unique_count(rule)
+        excluded = cls.startswith('NO_QUESTIONS')
         flags = list(rule['flags']) + list(ITEM_FLAGS.get(iid, ()))
         out.append(dict(id=iid, item=row['item'], block=row['block'], cls=cls,
+                        coverage_scope='CLASS_APPLICABILITY_ONLY',
                         applicable='|'.join(l for l in LENSES if l in rule['applicable']),
-                        n_unique=str(n_unique),
+                        conditional='; '.join(f'{lens}={REASONS[why]}' for lens, why
+                                              in sorted(rule['conditional'].items())),
+                        potential_lens_count=str(potential_count(rule)),
+                        candidate_alias='|'.join(rule.get('alias') or ()),
+                        implemented_lens_count='0' if excluded else '',
+                        implementation_status='NOT_APPLICABLE' if excluded else 'UNMEASURED',
+                        minimum_6_status='NOT_APPLICABLE' if excluded else 'NOT_PROVEN',
                         inapplicable=inapplicable_text(cls, rule),
                         flags='; '.join(flags)))
-        if not cls.startswith('NO_QUESTIONS'):
-            assert n_unique >= 6, f'{iid} has fewer than 6 lenses'
 
     with COVERAGE_CSV.open('w', encoding='utf-8', newline='') as f:
         w = csv.DictWriter(f, fieldnames=['id', 'item', 'block', 'cls', 'applicable',
-                                          'n_unique', 'inapplicable', 'flags'], lineterminator='\n')
+                                          'conditional', 'potential_lens_count', 'candidate_alias',
+                                          'coverage_scope', 'implemented_lens_count',
+                                          'implementation_status', 'minimum_6_status',
+                                          'inapplicable', 'flags'], lineterminator='\n')
         w.writeheader()
         w.writerows(out)
 
@@ -190,14 +214,20 @@ def render_md(out, class_counts):
              '',
              'Kimi, 2026-10-30 (22:45 assignment item 3). One row per inventory item from',
              '`dictionary/DATA_SOURCES.csv`. Applicability follows the measurement-class',
-             'rule table below; every inapplicable lens names its reason code, conditional',
-             'readings name their prerequisite, and `absolute`/`threshold` count as one',
-             'predicate (`n_unique`). Full table: `docs/LENSES_COVERAGE_V1.csv`.',
+             'rule table below. This is **CLASS_APPLICABILITY_ONLY**, not measured',
+             'implemented coverage. Missing named references/pairings are CONDITIONAL,',
+             'not semantic inapplicability. Every exclusion still names its reason.',
+             '`potential_lens_count` counts planning labels after the declared candidate',
+             '`absolute`/`threshold` alias; actual expanded-predicate equality is unmeasured.',
+             'For every measurable item, implemented count is unknown, implementation is',
+             '**UNMEASURED**, and the minimum-six gate is **NOT_PROVEN**. Ontology/dropped',
+             'items are NOT_APPLICABLE. No YES/NO rows or completed lens readings are',
+             'certified here. Full table: `docs/LENSES_COVERAGE_V1.csv`.',
              '',
              '### Measurement-class rule table',
              '',
-             '| Class | Items | Applicable lenses | Inapplicable (reason) |',
-             '|---|---:|---|---|']
+             '| Class | Items | Eligible labels | Conditional (prerequisite) | Inapplicable (reason) |',
+             '|---|---:|---|---|---|']
     for cls in sorted(CLASS_RULES, key=lambda c: -class_counts.get(c, 0)):
         rule = CLASS_RULES[cls]
         if cls == 'NO_QUESTIONS':
@@ -207,19 +237,23 @@ def render_md(out, class_counts):
         else:
             inapp = ', '.join(f'{l} ({REASONS[w].split(";")[0]})' for l, w in
                               sorted(rule['inapplicable'].items())) or '—'
+        conditional = ', '.join(f'{lens} ({REASONS[why]})' for lens, why
+                                 in sorted(rule['conditional'].items())) or '—'
         lines.append(f'| {cls} | {class_counts.get(cls, 0)} | '
-                     f'{len(rule["applicable"])} of 14 | {inapp} |')
+                     f'{len(rule["applicable"])} of 14 | {conditional} | {inapp} |')
     lines += ['', 'Reason codes: ' + '; '.join(f'{k}: {v}' for k, v in REASONS.items()),
               '',
               '### Per-item coverage (258 rows)',
               '',
-              '| id | item | class | unique lenses | inapplicable | flags |',
-              '|---|---|---|---:|---|---|']
+              '| id | item | class | potential lenses | implementation | minimum 6 | conditional | inapplicable | flags |',
+              '|---|---|---|---:|---|---|---|---|---|']
     for r in out:
         inapp = r['inapplicable'] or '—'
         flags = r['flags'] or '—'
         item = r['item'].replace('|', '/')
-        lines.append(f"| {r['id']} | {item} | {r['cls']} | {r['n_unique']} | {inapp} | {flags} |")
+        conditional = r['conditional'] or '—'
+        lines.append(f"| {r['id']} | {item} | {r['cls']} | {r['potential_lens_count']} | "
+                     f"{r['implementation_status']} | {r['minimum_6_status']} | {conditional} | {inapp} | {flags} |")
     lines.append(END)
     return '\n'.join(lines)
 
