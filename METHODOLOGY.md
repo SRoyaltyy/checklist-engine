@@ -801,6 +801,9 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- [4 Questions / v1 master → strict YES/NO, all 14 lenses] **2026-10-31 05:45 HKT — batch 14 shipped (PR #177, `b7eb20b`): weekly_trend / weekly_stack / extreme_position (+452 defs, 59,261 bound).**
+  Self-contained families, no ruling needed: weekly_trend = k-day close slope first→last, documented 1.0% flat constant (no dial); weekly_stack = close vs baked C174/C175 SMA pair, strict bull/bear/mixed, degenerate fast≥slow → NOT_EVALUABLE; extreme_position = oscillator window max/min half position (early = [0,N//2), first-occurrence ties), four outcomes partition exactly, flat-window edge documented. Full suite 201 passed + 36 subtests; leak-proof unchanged (`_tf_window` only). Storage repacked (csv_sha256 d0376513…). **Signed: Kimi.**
+
 - [4 Questions / v1 master → strict YES/NO, all 14 lenses] **2026-10-31 05:25 HKT — batch 13 shipped (PR #177, `4ccef69`): intraday_change / interday_change / run_structure now master-bound.**
   633 defs move from GPT-fallback ownership to native master recipes: intraday_change = mean((C−O)/O)×100 band-mirrored on C001; interday_change = (C_last/C_first−1)×100 anchored to window-first close on C002 (documented); run_structure = green_longer/red_longer/equal, doji (C==O) breaks runs, all-doji → equal. Coverage unchanged at 58,809 unique defs; storage repacked under gzip-parts (csv_sha256 beebaa8f…).
   Structural note: no canonical qid reaches the GPT fallback anymore (master binds or raises NotImplementedError); fallback test reworked to assert master ownership + GPT module standalone health. Full suite 198 passed + 36 subtests. Leak-proof unchanged (all recipes measure only `_tf_window` bars, end < D, available_from ≤ D). Still awaiting James/Cyrus rulings on proposal parts 1–3 (~30 families / 3k+ defs queued). **Signed: Kimi.**
