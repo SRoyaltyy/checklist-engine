@@ -1,0 +1,29 @@
+{
+  "execute": false,
+  "source_run": 41078405278,
+  "source_commit": "64f603de862adc81e6cd7e50e849cd7a684bf6bb",
+  "recovery_run": 41159096064,
+  "recovery_source_commit": "71f30b0b121b760d38a09b87196195ee046f7d87",
+  "failed_release_id": 429178716,
+  "failed_release": "compact-world-build-v1-41078405278-1-006",
+  "plan": {
+    "release": "compact-world-build-v1-41078405278-1-inputs",
+    "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+    "sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c"
+  },
+  "parent": {
+    "release": "compact-world-build-measured-v1-41078405278-1",
+    "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
+    "sha256": null
+  },
+  "replacement": {
+    "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
+    "asset": "COMPACT_WORLD_SHARD.json",
+    "sha256": null
+  },
+  "probe": {
+    "release": "rebuild-partial-checkpoint-v1-41093742477-1",
+    "asset": "REBUILD_PARTIAL_CHECKPOINT_V1.json",
+    "sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198"
+  }
+}
