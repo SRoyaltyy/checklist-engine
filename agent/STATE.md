@@ -10,8 +10,4 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 14:55: RUN 41204085538 NEVER RAN A JOB. GitHub rejected the file at sha 96694b42: "Invalid workflow file ... yaml syntax on line 4". Line 4 is on:, so the indentation was stripped and workflow_dispatch sat at column 0. No checkout, no log step, no commit step, so agent/TEST_LOG.txt and conftest.py were both 404 for a reason that has nothing to do with the tests.
-
-The world_timeframes theory is UNPROVEN. conftest.py is written but has never executed.
-
-2026-10-31 14:55: root cause of three silent turns: the userscript put regex required a literal
+2026-10-31 15:00: WRITES NOW LAND. The put block needed an
