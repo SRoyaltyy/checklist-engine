@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-10-31T14:42:42.678Z",
-  "set_at": "2026-10-31T14:42:42.678Z",
-  "reason": "heartbeat: interval elapsed"
+  "id": "2026-10-31T14:58:42.458Z",
+  "set_at": "2026-10-31T14:58:42.458Z",
+  "reason": "main moved 954a53fc; run 41212443677 failed (.github/workflows/outside_event_calendar.yml)"
 }
