@@ -1,7 +1,7 @@
 name: binary_master_v1
 on:
   pull_request:
-    paths: ['world_binary_master.py', 'world_binary_price.py', 'world_binary_questions.py', 'ci/binary_master_build.py', 'ci/binary_master_storage.py', 'ci/ladder_semantic_review.py',
+    paths: ['world_binary_master.py', 'world_binary_price.py', 'world_binary_questions.py', 'ci/binary_master_build.py', 'ci/binary_master_storage.py', 'ci/ladder_semantic_review.py', 'docs/LADDER_SCALAR_REVIEW_V2.json', 'dictionary/WORLD_SNAPSHOT_DICTIONARY.csv', 'dictionary/INDICATOR_SETTINGS.json',
             'tests/test_binary_master.py', 'tests/test_binary_master_ratio_bands.py', 'tests/test_binary_master_storage.py', 'tests/test_binary_master_ladder_semantics.py', 'tests/test_binary_master_native_ma.py', 'tests/test_binary_master_williams_r.py', 'tests/test_binary_master_recursive_state.py', 'tests/test_binary_master_stochastic.py', 'tests/test_binary_master_native_atr.py', 'tests/test_binary_master_calendar.py', 'tests/test_binary_master_leak.py', 'tests/test_binary_master_partition.py', 'tests/test_binary_questions.py',
             'tests/test_binary_canonical_plan.py', 'dials/**', 'docs/BINARY_LADDERS_V1.csv',
             '.github/workflows/binary_master_v1.yml']
@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.12.15'
       - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
-      - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5 cae1923a45ec049ce9e9db97fe5c3e07943c99c3 6dcfced3263533afc13f518258d5eec24451db96
+      - run: git fetch --depth=1 origin 7dcaa48680daeac9a6025c09f9e4d138f5fcbda5 cae1923a45ec049ce9e9db97fe5c3e07943c99c3 6dcfced3263533afc13f518258d5eec24451db96 1095a1aca85bd35f26837dfd49b35e1d26c543e3
       - run: python -m pytest tests/test_binary_master.py tests/test_binary_master_ratio_bands.py tests/test_binary_master_storage.py tests/test_binary_master_ladder_semantics.py tests/test_binary_master_native_ma.py tests/test_binary_master_williams_r.py tests/test_binary_master_recursive_state.py tests/test_binary_master_stochastic.py tests/test_binary_master_native_atr.py tests/test_binary_master_calendar.py tests/test_binary_master_leak.py tests/test_binary_master_partition.py tests/test_binary_questions.py tests/test_binary_canonical_plan.py -q
       - name: Emit master and verify report consistency
         run: |
@@ -44,7 +44,7 @@ jobs:
           assert hashlib.sha256(restored.read_bytes()).hexdigest() == r['csv_sha256']
           assert r['master_total_rows'] == r['bound_unique_binary_definitions'] + r['ladder_add_on_rows']
           assert r['ladder_source_rows'] == 2680
-          assert r['ladder_alias_rows'] == 4
+          assert r['ladder_alias_rows'] == 16
           assert r['ladder_add_on_rows'] + r['ladder_alias_rows'] == r['ladder_source_rows']
           assert r['ladder_review_artifacts'] == json.loads(Path('/tmp/committed-ladder-review.json').read_text())
           print('master rows:', r['master_total_rows'], 'unbound OAT:', r['unbound_oat_variants'])
@@ -58,3 +58,4 @@ jobs:
             docs/BINARY_MASTER_V1_REPORT.json
             docs/BINARY_MASTER_LADDER_ALIASES_V1.csv
             docs/BINARY_MASTER_LADDER_REVIEW_V1.csv
+            docs/LADDER_SCALAR_REVIEW_V2.json

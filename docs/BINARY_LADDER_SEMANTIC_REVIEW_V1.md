@@ -1,5 +1,8 @@
 # Ladder semantic review V1
 
+Historical first-batch proof. See [the second batch](BINARY_LADDER_SEMANTIC_REVIEW_V2.md)
+for the current cumulative review counts and additional explicit scalar aliases.
+
 The source remains all2,680 rows of BINARY_LADDERS_V1.csv. A raw-text key
 reported zero duplicates, but four repeated predicates have different default
 annotations. Text uniqueness does not prove unique computed meaning.
