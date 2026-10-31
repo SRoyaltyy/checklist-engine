@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 1621,
-  "bound_unique_binary_definitions": 62114,
-  "bound_source_aliases": 64139,
+  "bound_source_questions": 1705,
+  "bound_unique_binary_definitions": 62366,
+  "bound_source_aliases": 64391,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -282,6 +282,7 @@
     "zone_route"
   ],
   "batch1_bound_facets": [
+    "above_share",
     "absorption_day",
     "capitulation_bar",
     "cross_count",
@@ -326,17 +327,17 @@
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 904,
-  "unbound_oat_variants": 145662,
+  "unbound_family_variant_count": 900,
+  "unbound_oat_variants": 145578,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 64794,
-  "csv_sha256": "cffa3ebf15382657510351d66d7e213fe4bb2ebe45414f542afec8ef80a76af3",
+  "master_total_rows": 65046,
+  "csv_sha256": "a1e06f10f8b285aa9f482e248d1a778166a8e1eb0d7a58699156526af86b007a",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 103411102,
-    "compressed_bytes": 12188070,
+    "raw_bytes": 103791295,
+    "compressed_bytes": 12243138,
     "chunk_count": 13
   },
   "source_fingerprints": {
@@ -346,7 +347,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "e898ae95afcdbf004226017f126d8a34e5ae864d834d89d76c6c1a1899e8b975",
+    "world_binary_master.py": "b32086781d2893b12faac5ba75adbbe24c9afd9eab0b194c5342f04188cea87d",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "f1ee99c7386a2d9edb63d5a29dc80b7d46b8cd266c1ef6b0b986622ea84bfc9c",

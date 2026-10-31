@@ -1427,6 +1427,27 @@ def _measure(recipe, candles, feature=None):
             return {'stretching': delta > 0.5,
                     'reverting': delta < -0.5,
                     'stable': abs(delta) <= 0.5}
+        if recipe == 'native_above_share_v1':
+            # Share of window bars closing strictly above the L3 MA:
+            # count(C > MA) / lookback (equality counts as NOT above;
+            # documented strict rule). mostly_above = share >= 0.6,
+            # mostly_below = share <= 0.4, else mixed (documented 0.6/0.4
+            # constants, exact partition; no dial registered on this family;
+            # amendable like the trend 5% / distance 0.5-ATR constants).
+            # A non-finite MA in the window -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            period = int(feature['ma_period'])
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < lb:
+                return None
+            win_c = close[period - 1:][-lb:]
+            win_m = ma[-lb:]
+            if not np.isfinite(win_c).all() or not np.isfinite(win_m).all():
+                return None
+            share = float((win_c > win_m).sum(dtype=np.float64)) / lb
+            return {'mostly_above': share >= 0.6,
+                    'mostly_below': share <= 0.4,
+                    'mixed': 0.4 < share < 0.6}
         if recipe == 'native_maxvol_wick_v1':
             # Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -2189,6 +2210,25 @@ FACETS = {
         outcome_spec={'stretching': ('boolean', '=', 'one'),
                       'reverting': ('boolean', '=', 'one'),
                       'stable': ('boolean', '=', 'one')}),
+    # ---- batch 17: MA side-share. One documented 0.6/0.4 partition constant
+    # (same standing as the trend 5% / distance 0.5-ATR constants); strict
+    # C > MA rule (equality is NOT above). VWAP_anchored stays honestly
+    # unbound (no registered anchor definition). ----
+    'above_share': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_above_share_v1',
+        unit='window_close_above_ma_share_bucket',
+        outcomes=('mostly_above', 'mostly_below', 'mixed'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={'mostly_above': ('boolean', '=', 'one'),
+                      'mostly_below': ('boolean', '=', 'one'),
+                      'mixed': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -2409,7 +2449,7 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_run_structure_v1', 'native_weekly_trend_v1',
                         'native_weekly_stack_v1', 'native_extreme_position_v1',
                         'native_exit_os_v1', 'native_series_trend_v1',
-                        'native_distance_route_v1'}
+                        'native_distance_route_v1', 'native_above_share_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -2448,7 +2488,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
         if native_osc or recursive_rsi or native_atr or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1',
-                                 'native_path_dir_v1', 'native_distance_route_v1'):
+                                 'native_path_dir_v1', 'native_distance_route_v1',
+                                 'native_above_share_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']

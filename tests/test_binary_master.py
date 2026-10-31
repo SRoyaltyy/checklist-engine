@@ -2,6 +2,7 @@
 import csv
 from datetime import date, timedelta
 import hashlib
+import math
 import shutil
 from pathlib import Path
 
@@ -1921,6 +1922,47 @@ def test_evaluate_distance_route(grid):
     bars = _bars_hl([(100.0, 101.5, 99.0, 100.0)] * span)
     assert evaluate_master(defs['stable'], bars, setup, last).answer == 'YES'
     assert evaluate_master(defs['stretching'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_bind_batch17_variants(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|above_share|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                # {mostly_above,mostly_below,mixed}
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    assert defs['mostly_above']['feature']['ma_period'] == '20'
+    assert defs['mostly_above']['feature']['recipe'] == 'native_above_share_v1'
+    # VWAP_anchored has no registered anchor definition -> honestly unbound.
+    row, variant = _q(grid, 'B|volume|VWAP_anchored|above_share|1x10')
+    with pytest.raises(NotImplementedError):
+        bind_master_question(row, variant)
+
+
+def test_evaluate_above_share(grid):
+    span = 30                        # 20 SMA20 warm + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|moving_averages|SMA20|above_share|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(closes):
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    up = [100.0 + 0.15 * i + 3.0 * math.sin(i * 1.05) for i in range(span)]
+    bars = bars_for(up)              # window share >= 0.6 above SMA20
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'NO'
+    dn = [100.0 - 0.15 * i + 3.0 * math.sin(i * 1.05) for i in range(span)]
+    bars = bars_for(dn)              # window share <= 0.4 above SMA20
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'NO'
+    mx = [100.0 + 2.0 * math.sin(i * 1.05 + 2.0) for i in range(span)]
+    bars = bars_for(mx)              # window share exactly 0.5 -> mixed
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'NO'
     for d in defs.values():
         assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
 
