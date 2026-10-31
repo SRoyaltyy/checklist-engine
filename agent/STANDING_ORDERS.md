@@ -2,6 +2,14 @@
 
 Fires on every automated wake. Read in full before acting. The wake text points here.
 
+## 0. Order of operations, every wake
+1. Read agent/STATE.md and agent/JOURNAL.md. Resume the named next step.
+2. Audit Kimi and GPT against agent/GANTT_ROWS.md, finished percent per row.
+3. Work the lane. Rewrite STATE and journal before stopping.
+
+Sections 1-7 below are the detail for those three steps.
+The audit moved to second because resuming beats reporting: an audit that eats the turn leaves the lane unworked.
+
 ## 1. Audit first, every wake
 1. Read the watermark and skip anything already reported.
 2. Pull both agents' activity since it: Kimi's commits and PRs, GPT's commits and PRs, and any new §0c lines.
