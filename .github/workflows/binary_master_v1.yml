@@ -18,10 +18,14 @@ jobs:
       - run: python -m pytest tests/test_binary_master.py tests/test_binary_master_storage.py tests/test_binary_master_calendar.py tests/test_binary_questions.py tests/test_binary_canonical_plan.py -q
       - name: Emit master and verify report consistency
         run: |
+          python -m ci.binary_master_storage unpack
           python - <<'EOF' > /tmp/committed-master.sha
           import json
+          import hashlib
           from pathlib import Path
-          print(json.loads(Path('docs/BINARY_MASTER_V1_REPORT.json').read_bytes())['csv_sha256'])
+          expected = json.loads(Path('docs/BINARY_MASTER_V1_REPORT.json').read_bytes())['csv_sha256']
+          assert hashlib.sha256(Path('docs/BINARY_MASTER_V1.csv').read_bytes()).hexdigest() == expected
+          print(expected)
           EOF
           python -m ci.binary_master_build > /tmp/report.json
           python - <<'EOF'
@@ -37,3 +41,10 @@ jobs:
           assert r['ladder_add_on_rows'] == 2680
           print('master rows:', r['master_total_rows'], 'unbound OAT:', r['unbound_oat_variants'])
           EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-master-storage-${{ github.run_id }}
+          path: |
+            docs/BINARY_MASTER_V1.parts/
+            docs/BINARY_MASTER_V1_STORAGE.json
+            docs/BINARY_MASTER_V1_REPORT.json

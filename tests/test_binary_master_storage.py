@@ -49,3 +49,17 @@ def test_manifest_cannot_read_outside_package_and_repeated_chunks_are_valid(tmp_
     (tmp_path / MANIFEST).write_text(json.dumps(manifest))
     with pytest.raises(ValueError, match='invalid part path'):
         unpack_csv(tmp_path)
+
+
+def test_regeneration_removes_only_obsolete_manifest_parts(tmp_path):
+    source = tmp_path / CSV_NAME
+    source.write_bytes(b'first generation')
+    previous = pack_csv(source, chunk_bytes=6)
+    unrelated = tmp_path / 'BINARY_MASTER_V1.parts' / 'notes.txt'
+    unrelated.write_text('keep this')
+    source.write_bytes(b'new generation')
+    current = pack_csv(source, chunk_bytes=6)
+    live = {c['path'] for c in current['chunks']}
+    assert all(not (tmp_path / c['path']).exists() for c in previous['chunks'] if c['path'] not in live)
+    assert unrelated.read_text() == 'keep this'
+    assert unpack_csv(tmp_path).read_bytes() == b'new generation'

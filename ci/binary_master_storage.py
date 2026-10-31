@@ -33,7 +33,7 @@ def part_path(root, entry):
 
 def pack_csv(csv_path, chunk_bytes=CHUNK_BYTES):
     csv_path = Path(csv_path)
-    require(csv_path.name == CSV_NAME and 0 < chunk_bytes <= CHUNK_BYTES, 'invalid master packaging request')
+    require(csv_path.name == CSV_NAME and type(chunk_bytes) is int and 0 < chunk_bytes <= CHUNK_BYTES, 'invalid master packaging request')
     root = csv_path.parent
     manifest_path = root / MANIFEST
     previous = json.loads(manifest_path.read_bytes()) if manifest_path.exists() else None
@@ -71,6 +71,8 @@ def pack_csv(csv_path, chunk_bytes=CHUNK_BYTES):
     for path in set(stale):
         require(path.resolve().is_relative_to(root.resolve()), 'stale part escapes storage root')
         if path.resolve() not in current:
+            if path.exists():
+                require(sha(path.read_bytes()) == path.stem, 'obsolete generated part was edited; preserve it')
             path.unlink(missing_ok=True)
     return manifest
 
