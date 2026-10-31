@@ -1,4 +1,3 @@
-Copy code
 State - read first on every wake
 
 If this file is stale, fix it before doing anything else.
@@ -10,16 +9,14 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 15:15: the write path works but the page renderer injects two chrome lines, "yaml" and "Copy code", ahead of every fenced body. v3.2 left them in, so the workflow on the branch still begins with them and stays YAML-invalid. v3.3 strips them; the workflow is being resent under it.
+2026-10-31 14:26: conftest.py added at the repo root. It puts the root on sys.path and installs a world_timeframes stand-in ONLY if the real import fails, so the three import-dependent tests can now run instead of erroring. The stand-in is not loaded by the build script, so if the module is genuinely missing the build still fails and the traceback lands in agent/TEST_LOG.txt.
 
-Five runs were wasted on the malformed file: 41212368062, 41212370204, 41212371986, 41212374275, 41212376194. All failure, all before checkout, so still no TEST_LOG.txt.
+Next wake: dispatch outside_event_calendar.yml on the branch, then read agent/TEST_LOG.txt. If the tests pass and the build fails, the missing module is confirmed and the fix is to vendor the real world_timeframes, not to extend the stub.
 
-CONFIRM THE HEAD BEFORE DISPATCHING. A read of the workflow must begin with the comment line. Dispatch races the put otherwise, so never dispatch in the same turn as the write.
+Doorman contract, confirmed from the Worker source: put takes path, branch, text. Content param is text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
 
-Run 41204085538 never ran a job either. The world_timeframes theory is UNPROVEN; conftest.py is on the branch unexecuted.
+Loose @@PUT blocks lose leading whitespace to markdown rendering. Always fence them or YAML breaks.
 
-Doorman contract: put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
-
-web_scrape exhausted. Job logs are 403, so read the repo log, never the run.
+web_scrape still exhausted. Job logs are 403 without a token, so the log has to be read from the repo, not from the run.
 
 Main 5efb236c, contents unread.
