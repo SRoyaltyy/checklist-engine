@@ -1,0 +1,67 @@
+# @@CUT
+# runs the calendar tests from the lane branch; dispatched on main because the Worker pins the ref
+name: outside-event-calendar
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: outside-event-calendar-lane
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: venice/calendar-announce-ledger
+
+      - name: Start the log
+        if: always()
+        run: |
+          mkdir -p agent
+          {
+            echo "run_id: ${{ github.run_id }}"
+            echo "ref: venice/calendar-announce-ledger"
+            echo "sha: ${{ github.sha }}"
+            echo "----"
+          } > agent/TEST_LOG.txt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the calendar dependencies
+        run: |
+          set -x
+          python -m pip install --upgrade pip >> agent/TEST_LOG.txt 2>&1
+          python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2" >> agent/TEST_LOG.txt 2>&1
+
+      - name: Unit tests
+        run: |
+          set +e
+          python -m pytest tests/test_outside_calendar.py -q --tb=long -p no:cacheprovider 2>&1 | tee -a agent/TEST_LOG.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> agent/TEST_LOG.txt
+          exit $code
+
+      - name: Commit the log on failure
+        if: failure()
+        run: |
+          set +e
+          git config user.name "venice-wake"
+          git config user.email "venice@users.noreply.github.com"
+          git add -f agent/TEST_LOG.txt
+          git commit -m "ci: failure log for run ${{ github.run_id }}"
+          for attempt in 1 2 3; do
+            git push origin HEAD:venice/calendar-announce-ledger && exit 0
+            sleep 3
+            git pull --rebase --autostash origin venice/calendar-announce-ledger
+          done
+          echo "log push failed after three attempts"
+          exit 0
