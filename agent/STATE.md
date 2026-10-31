@@ -1,1 +1,21 @@
-ClN0YXRlIC0gcmVhZCBmaXJzdCBvbiBldmVyeSB3YWtlCgpJZiB0aGlzIGZpbGUgaXMgc3RhbGUsIGZpeCBpdCBiZWZvcmUgZG9pbmcgYW55dGhpbmcgZWxzZS4KVGhlIG5leHQgd2FrZSByZW1lbWJlcnMgbm90aGluZyBleGNlcHQgd2hhdCBpcyB3cml0dGVuIGhlcmUuCgpMYW5lOiBjYWxlbmRhciBhbm5vdW5jZSBsZWRnZXIgKCM1MikuIEJyYW5jaDogdmVuaWNlL2NhbGVuZGFyLWFubm91bmNlLWxlZGdlci4gUFIgIzk2LgoKSG9sZDogbm8gbWVyZ2UgdW50aWwgSmFtZXMgcGFzc2VzIGl0LgoKR2FudHQgcm93OiBtYXRjaGVzIG5vbmUuIE5lYXJlc3Q6IFs0IFF1ZXN0aW9ucy92MSBtYXN0ZXJdLgoKMjAyNi0xMC0zMSAxMjowMDogdGhlIGRvb3JtYW4gcHV0IHdyaXRlcyB0aGUgYyBwYXJhbWV0ZXIgdmVyYmF0aW0sIHdpdGggbm8gYmFzZTY0IGRlY29kZS4gU1RBVEUgYW5kIEpPVVJOQUwgYXJlIGN1cnJlbnRseSBiYXNlNjQgdGV4dDsgdGhlIG5leHQgd3JpdGUgcmVwbGFjZXMgdGhlbS4gQ29udGVudCBub3cgZ29lcyBhcyBwZXJjZW50LWVuY29kZWQgcGxhaW4gdGV4dC4KCkxpa2VseSBjYXVzZSBvZiBydW4gNDExOTMxMDMzODc6IHRocmVlIHRlc3RzIGltcG9ydCB3b3JsZF90aW1lZnJhbWVzLCB3aGljaCBpcyBuZWl0aGVyIGluc3RhbGxlZCBub3IgaW4gdGhlIHJlcG8uIEV4cGVjdCBNb2R1bGVOb3RGb3VuZEVycm9yLiBDb25maXJtIGZyb20gYWdlbnQvVEVTVF9MT0cudHh0IGJlZm9yZSBlZGl0aW5nIGNvZGUuCgpSdW5zIDQxMTk4MjM1NDcxIGFuZCBhbnkgbGF0ZXIgcnVuIGZhaWwgdW50aWwgdGhlIHdvcmtmbG93IGlzIHJlc3RvcmVkLCBiZWNhdXNlIGl0IGlzIGN1cnJlbnRseSB6ZXJvIGJ5dGVzLgoKd2ViX3NjcmFwZSBzdGlsbCBleGhhdXN0ZWQuIE9ubHkgdGhlIHNldmVuIFJFQURTIGZpbGVzIGFyZSByZWFkYWJsZS4KCk1haW4gYzIxMzdjOWUsIGNvbnRlbnRzIHVucmVhZC4K
+
+State - read first on every wake
+
+If this file is stale, fix it before doing anything else.
+The next wake remembers nothing except what is written here.
+
+Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96.
+
+Hold: no merge until James passes it.
+
+Gantt row: matches none. Nearest: [4 Questions/v1 master].
+
+2026-10-31 12:58: doorman contract found in the Worker source. put takes path, branch and text; content param is text, not c or content. That was the whole bug. Script is v3.1 with the real names.
+
+Workflow restored with content at 12:56 after five runs died on a zero-byte file. Runs 41198235471, 41198595221, 41199358550, 41200533563, 41201733751 are all blank-file failures and prove nothing.
+
+Likely cause of the original 41193103387 failure: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
+
+web_scrape still exhausted. Only the seven READS files are readable.
+
+Main 6638e47f, contents unread.
