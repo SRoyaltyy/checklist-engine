@@ -4,14 +4,14 @@ Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. P
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 17:00: DONE with the code. Run 41221144242 passed 19/19. §0c carries the entry, the run id, the counts and the Gantt row tag. Workflow log step changed to if: always() and now pushes to the lane branch, so green runs keep their proof.
+2026-10-31 17:25: the doorman now takes a write in the request body. A 40,000 character file wrote and read back byte-exact, so file size no longer matters. A list op also works, and agent/ turns out to hold BRIEF.md, GOAL.md, QUEUE.jsonl, STANDING_ORDERS.md and WATERMARK.json that no wake ever carried.
 
-Dispatch is a console call with no branch param, which lands on main. The script sends branch=BR and so hits the stale branch workflow. The Worker put reads only the query; use op=edit with find/replace for any file too big for a URL (METHODOLOGY.md is 361KB).
+Script is v3.4: writes go through the body, dispatch omits branch so it lands on main, dispatch hash includes position, and TEST_LOG.txt is in the wake reads.
 
-Remaining: ask James to re-review #96 against the six leak-trap tests. Nothing merges until he passes. #87 merges separately after.
+Lane code is DONE. Run 41221144242 passed 19/19 and §0c cites it. Remaining: James re-reviews #96. Nothing merges before he passes. #87 separately.
 
-put takes path, branch, text. edit takes path, find, replace. Auth is k.
+put takes path, branch, text (body or query). edit takes find, replace. list takes path. Auth is k.
 
 web_scrape exhausted. Read the repo log, never the 403 job log.
 
-Main 3ae33db2.
+Main 162447d2.
