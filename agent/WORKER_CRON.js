@@ -84,12 +84,7 @@ async function wakeDecide(env) {
     }
   }
 
-  if (reasons.length) {
-    const stamp = new Date(now).toISOString();
-    await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
-  } else if (wake.pending) {
-    await wakeWrite(env, { pending: false, id: wake.id, set_at: new Date(now).toISOString() }, wake.sha);
-  }
+
 }
 
 // Add this method INSIDE the existing export default object:
