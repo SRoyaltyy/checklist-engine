@@ -16,6 +16,8 @@ from world_question_grid import CanonicalGrid, GRID, QUESTIONS, TREE, ROOT
 from world_binary_master import (FACETS, NOT_EVALUABLE, KNOWABLE, VIEWPORT,
                                  bind_master_question)
 from ci.binary_master_storage import MANIFEST as STORAGE_MANIFEST, pack_csv
+from ci.ladder_semantic_review import (ALIASES as LADDER_ALIASES, REVIEW as LADDER_REVIEW,
+                                      review_ladders, write_review)
 
 LADDERS = 'docs/BINARY_LADDERS_V1.csv'
 MASTER_CSV = 'BINARY_MASTER_V1.csv'
@@ -77,43 +79,29 @@ def master_row(definition, tree_row):
             'feature_json': json.dumps(feature, sort_keys=True, separators=(',', ':'))}
 
 
-def verify_ladder_dedupe(root):
-    """Within-ladders computed-meaning dedupe check.
-
-    Computed meaning = (item_id, feature, comparator, threshold). BINARY_LADDERS_V1
-    ships 2,680 rows that must be unique on that key; this verifies it at build
-    time instead of trusting the PENDING flag. Cross-dedupe (ladder vs bound
-    master defs) is NOT automated: ladder features are free text, and name-level
-    matching is provably insufficient (e.g. item 'Gap size in ATR' names ATR14
-    but measures gaps) — the per-item semantic review is assigned to GPT per
-    James's 00:15/00:30 instructions. Ladder rows carry definition_status
-    LADDER_ADDON and never enter BOUND counts, so keeping them is safe.
-    """
-    path = Path(root) / LADDERS
-    seen = {}
-    duplicates = []
-    with path.open(encoding='utf-8-sig', newline='') as stream:
-        for row in csv.DictReader(stream):
-            key = (row['item_id'], row['feature'], row['comparator'], row['threshold'])
-            if key in seen:
-                duplicates.append((seen[key], row['question_id']))
-            else:
-                seen[key] = row['question_id']
+def verify_ladder_dedupe(root, reviewed=None):
+    """Reviewed equivalences are distinct from raw text-identity checks."""
+    reviewed = review_ladders(root) if reviewed is None else reviewed
     return {
         'within_ladders': {
-            'status': 'DONE' if not duplicates else 'DUPLICATES_FOUND',
-            'meaning_key': 'item_id + feature + comparator + threshold',
-            'rows_total': len(seen) + len(duplicates),
-            'duplicates_found': len(duplicates),
-            'duplicate_pairs': duplicates[:20],
-            'rows_dropped': 0,   # duplicates would be dropped here; none exist
+            'status': 'PARTIAL_SEMANTIC_REVIEW',
+            'rows_total': len(reviewed['source']),
+            'raw_text_duplicate_pairs': reviewed['raw_text_duplicate_pairs'],
+            'reviewed_source_rows': reviewed['reviewed_source_rows'],
+            'unreviewed_source_rows': len(reviewed['source']) - reviewed['reviewed_source_rows'],
+            'verified_alias_rows': len(reviewed['aliases']),
+            'canonical_rows': len(reviewed['retained']),
+            'source_rows_deleted': 0,
+            'alias_file': LADDER_ALIASES,
+            'review_file': LADDER_REVIEW,
+            'remaining_semantic_dedupe': 'NOT_PROVEN',
         },
         'ladder_vs_master': {
             'status': 'REVIEW_ASSIGNED_GPT',
             'note': 'ladder features are free text; name-level matching insufficient '
                     '(Gap size in ATR names ATR14 but measures gaps). Per-item '
-                    'semantic review assigned to GPT (James 00:15/00:30). All rows '
-                    'kept as definition_status=LADDER_ADDON, excluded from BOUND counts.',
+                    'semantic review assigned to GPT (James 00:15/00:30). Canonical ladder rows '
+                    'remain LADDER_ADDON, excluded from BOUND counts; source IDs have a lossless map.',
         },
         'within_master': {
             'status': 'DONE_BY_CONSTRUCTION',
@@ -123,27 +111,26 @@ def verify_ladder_dedupe(root):
     }
 
 
-def ladder_rows(root):
-    path = root / LADDERS
+def ladder_rows(root, reviewed=None):
+    reviewed = review_ladders(root) if reviewed is None else reviewed
     rows = []
-    with path.open(encoding='utf-8-sig', newline='') as stream:
-        for row in csv.DictReader(stream):
-            item = row['item_id']
-            rows.append({'question_id': row['question_id'], 'feature_id': '', 'definition_status': 'LADDER_ADDON',
-                         'data_group': 'ladders', 'block': item, 'facet': row['item_name'],
-                         'source_question_id': '', 'source_variant_id': '', 'source_outcome': '',
-                         'timeframe_days': '', 'lookback_bars': '',
-                         'feature_recipe': 'ladder:' + item,
-                         'feature_expression': row['feature'][:400], 'feature_kind': '',
-                         'feature_unit': '', 'transform': '', 'comparator': row['comparator'],
-                         'comparison_threshold': row['threshold'],
-                         'formula': row['feature'][:400] + ' | ' + row['comparator'] + ' ' + row['threshold'],
-                         'yes_condition': row['yes_condition'],
-                         'not_evaluable_condition': row['not_evaluable_condition'],
-                         'viewport_drawing': row['viewport_drawing'],
-                         'knowable_at_setup_open': row['knowable_at_setup_open'],
-                         'expression': 'PENDING_CLASSIFICATION', 'missing': 'ladder_add_on_pending_expression_lens_dedupe',
-                         'feature_json': ''})
+    for row in reviewed['retained']:
+        item = row['item_id']
+        rows.append({'question_id': row['question_id'], 'feature_id': '', 'definition_status': 'LADDER_ADDON',
+                     'data_group': 'ladders', 'block': item, 'facet': row['item_name'],
+                     'source_question_id': '', 'source_variant_id': '', 'source_outcome': '',
+                     'timeframe_days': '', 'lookback_bars': '',
+                     'feature_recipe': 'ladder:' + item,
+                     'feature_expression': row['feature'][:400], 'feature_kind': '',
+                     'feature_unit': '', 'transform': '', 'comparator': row['comparator'],
+                     'comparison_threshold': row['threshold'],
+                     'formula': row['feature'][:400] + ' | ' + row['comparator'] + ' ' + row['threshold'],
+                     'yes_condition': row['yes_condition'],
+                     'not_evaluable_condition': row['not_evaluable_condition'],
+                     'viewport_drawing': row['viewport_drawing'],
+                     'knowable_at_setup_open': row['knowable_at_setup_open'],
+                     'expression': 'PENDING_CLASSIFICATION', 'missing': 'ladder_add_on_pending_expression_lens_dedupe',
+                     'feature_json': ''})
     return rows
 
 
@@ -171,7 +158,9 @@ def build(root):
                                 source_variant_id=variant.variant_id,
                                 source_outcome=question['source_outcome']))
 
-    ladder = ladder_rows(root)
+    reviewed = review_ladders(root)
+    write_review(root, reviewed)
+    ladder = ladder_rows(root, reviewed)
     csv_path = root / 'docs' / MASTER_CSV
     with csv_path.open('w', encoding='utf-8', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=CSV_COLUMNS, lineterminator='\n')
@@ -194,7 +183,11 @@ def build(root):
         unbound_family_variant_count=len(unbound),
         unbound_oat_variants=sum(unbound.values()),
         ladder_add_on_rows=len(ladder),
-        dedupe_by_computed_meaning=verify_ladder_dedupe(root),
+        ladder_source_rows=len(reviewed['source']),
+        ladder_alias_rows=len(reviewed['aliases']),
+        ladder_review_artifacts={name: digest(root / 'docs' / name)
+                                 for name in (LADDER_ALIASES, LADDER_REVIEW)},
+        dedupe_by_computed_meaning=verify_ladder_dedupe(root, reviewed),
         master_total_rows=canonical_rows + len(ladder),
         csv_sha256=digest(csv_path),
         csv_storage=dict(manifest=STORAGE_MANIFEST, format=storage['format'],
@@ -205,7 +198,7 @@ def build(root):
         code_fingerprints={p: digest(Path(__file__).resolve().parent.parent / p) for p in
                            ('world_binary_master.py', 'world_binary_price.py',
                             'world_binary_questions.py', 'ci/binary_master_build.py',
-                            'ci/binary_master_storage.py')},
+                            'ci/binary_master_storage.py', 'ci/ladder_semantic_review.py')},
         answer_generation='NOT_RUN', chart_gate='NOT_PASSED', mining='NOT_RUN',
         condition_docs={'not_evaluable_condition': NOT_EVALUABLE,
                         'knowable_at_setup_open': KNOWABLE,

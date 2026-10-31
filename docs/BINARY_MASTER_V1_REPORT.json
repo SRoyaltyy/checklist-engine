@@ -333,46 +333,58 @@
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
   "unbound_family_variant_count": 896,
   "unbound_oat_variants": 145408,
-  "ladder_add_on_rows": 2680,
+  "ladder_add_on_rows": 2676,
+  "ladder_source_rows": 2680,
+  "ladder_alias_rows": 4,
+  "ladder_review_artifacts": {
+    "BINARY_MASTER_LADDER_ALIASES_V1.csv": "d63adb0c6ed204b659247ca0438c7099c90fb40b4f1f45e60ba3ac0a13486f1c",
+    "BINARY_MASTER_LADDER_REVIEW_V1.csv": "cc7b32c173e2ddd593b5116c2efe0fbfa317668fa345f8b90b929d38c2d93a9d"
+  },
   "dedupe_by_computed_meaning": {
     "within_ladders": {
-      "status": "DONE",
-      "meaning_key": "item_id + feature + comparator + threshold",
+      "status": "PARTIAL_SEMANTIC_REVIEW",
       "rows_total": 2680,
-      "duplicates_found": 0,
-      "duplicate_pairs": [],
-      "rows_dropped": 0
+      "raw_text_duplicate_pairs": 0,
+      "reviewed_source_rows": 20,
+      "unreviewed_source_rows": 2660,
+      "verified_alias_rows": 4,
+      "canonical_rows": 2676,
+      "source_rows_deleted": 0,
+      "alias_file": "BINARY_MASTER_LADDER_ALIASES_V1.csv",
+      "review_file": "BINARY_MASTER_LADDER_REVIEW_V1.csv",
+      "remaining_semantic_dedupe": "NOT_PROVEN"
     },
     "ladder_vs_master": {
       "status": "REVIEW_ASSIGNED_GPT",
-      "note": "ladder features are free text; name-level matching insufficient (Gap size in ATR names ATR14 but measures gaps). Per-item semantic review assigned to GPT (James 00:15/00:30). All rows kept as definition_status=LADDER_ADDON, excluded from BOUND counts."
+      "note": "ladder features are free text; name-level matching insufficient (Gap size in ATR names ATR14 but measures gaps). Per-item semantic review assigned to GPT (James 00:15/00:30). Canonical ladder rows remain LADDER_ADDON, excluded from BOUND counts; source IDs have a lossless map."
     },
     "within_master": {
       "status": "DONE_BY_CONSTRUCTION",
       "note": "bound defs keyed by question_id = semantic identity hash; batch-5 fix includes the outcome label; aliases share feature_id."
     }
   },
-  "master_total_rows": 65556,
-  "csv_sha256": "918494ae8f46deb33e83de9930bde8c66f804a0081b7aae68e654d6c3eae1c26",
+  "master_total_rows": 65552,
+  "csv_sha256": "6b011355c911f4ec4c13d03da73a76aa6ff4d5d8fa553a394fc19768d467e116",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 104547607,
-    "compressed_bytes": 12368831,
+    "raw_bytes": 104545698,
+    "compressed_bytes": 12368761,
     "chunk_count": 13
   },
   "source_fingerprints": {
-    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
-    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
-    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "02640b7e0a6e2bbe9c03b7a47c94b4c28a7c68a1c10d612b3986baaea382b73f",
+    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6",
+    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d",
+    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292",
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
     "world_binary_master.py": "8aea0bb391578eb5b065f33be0aa601a6bd78d19884ef8698de08f15dad87053",
-    "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
-    "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
-    "ci/binary_master_build.py": "6562d6aee3b097642ea95fb6d2f8e29d82e2fbbcb8750aa8e2eb9ef3c69c51a8",
-    "ci/binary_master_storage.py": "e887470e06da9aba27d640eef9316e02a44abe9c4cde5eeb620d01cedc4015f9"
+    "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
+    "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
+    "ci/binary_master_build.py": "5cd3e5bfbd238c4ff640d594d8bf27856ef87e2ce1eb8e1f64147e125ad82349",
+    "ci/binary_master_storage.py": "704cc7fb2ec7a9b31f4ad3bb5bd699d0b3ab2fc472030aa2a0cbb601ac2bd581",
+    "ci/ladder_semantic_review.py": "743a5b9cecaae057ff629954025d58237246d87f73ca521fc7057b5aaea27be5"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",

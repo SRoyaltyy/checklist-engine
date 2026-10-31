@@ -2166,7 +2166,10 @@ def test_emitter_smoke_and_determinism(tmp_path):
     assert report1['csv_sha256'] == first == report2['csv_sha256']
     assert report1['master_total_rows'] == (
         report1['bound_unique_binary_definitions'] + report1['ladder_add_on_rows'])
-    assert report1['ladder_add_on_rows'] == 2680
+    assert report1['ladder_source_rows'] == 2680
+    assert report1['ladder_add_on_rows'] == 2676
+    assert report1['ladder_alias_rows'] == 4
+    assert report1['ladder_source_rows'] == report1['ladder_add_on_rows'] + report1['ladder_alias_rows']
     for name in ('world_binary_price.py','world_binary_questions.py'):
         assert report1['code_fingerprints'][name] == hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
     assert report1['bound_unique_binary_definitions'] > 633  # GPT 633 + batch-1 facets
@@ -2188,12 +2191,15 @@ def test_emitter_smoke_and_determinism(tmp_path):
         assert r['not_evaluable_condition']
     assert report1['unbound_oat_variants'] > 0
     assert (tmp_path / 'docs' / REPORT).exists()
-    # Ladder dedupe verdict: within-ladders verified unique on computed meaning;
-    # cross-dedupe stays a documented GPT review (free-text features).
+    # A reviewed spelling rule proves four aliases. Text uniqueness alone
+    # cannot certify remaining semantic or cross-master dedupe.
     verdict = report1['dedupe_by_computed_meaning']
-    assert verdict['within_ladders']['status'] == 'DONE'
+    assert verdict['within_ladders']['status'] == 'PARTIAL_SEMANTIC_REVIEW'
     assert verdict['within_ladders']['rows_total'] == 2680
-    assert verdict['within_ladders']['duplicates_found'] == 0
+    assert verdict['within_ladders']['raw_text_duplicate_pairs'] == 0
+    assert verdict['within_ladders']['verified_alias_rows'] == 4
+    assert verdict['within_ladders']['unreviewed_source_rows'] == 2660
+    assert verdict['within_ladders']['source_rows_deleted'] == 0
     assert verdict['ladder_vs_master']['status'] == 'REVIEW_ASSIGNED_GPT'
     assert verdict['within_master']['status'] == 'DONE_BY_CONSTRUCTION'
 
