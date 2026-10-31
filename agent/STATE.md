@@ -9,12 +9,14 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 12:58: doorman contract found in the Worker source. put takes path, branch and text; content param is text, not c or content. That was the whole bug. Script is v3.1 with the real names.
+2026-10-31 13:40: workflow now parses. Run 41204085538 failed against the good file, so it is a real failure and agent/TEST_LOG.txt should hold the reason. READ IT FIRST with the console line, it is not in READS.
 
-Workflow restored with content at 12:56 after five runs died on a zero-byte file. Runs 41198235471, 41198595221, 41199358550, 41200533563, 41201733751 are all blank-file failures and prove nothing.
+Doorman contract, confirmed from the Worker source: put takes path, branch, text. Content param is text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
 
-Likely cause of the original 41193103387 failure: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
+Loose @@PUT blocks lose leading whitespace to markdown rendering. Always fence them or YAML breaks.
 
-web_scrape still exhausted. Only the seven READS files are readable.
+Suspected real cause: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError.
 
-Main 6638e47f, contents unread.
+web_scrape still exhausted.
+
+Main 5efb236c, contents unread.
