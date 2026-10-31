@@ -9,11 +9,11 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 11:55: STATE, JOURNAL and the workflow were all truncated to zero bytes by v2.7's content-less POST. v2.9 sends content in the query, reads every file back after writing, retries over GET on failure, and refuses empty writes.
+2026-10-31 12:00: the doorman put writes the c parameter verbatim, with no base64 decode. STATE and JOURNAL are currently base64 text; the next write replaces them. Content now goes as percent-encoded plain text.
 
 Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
 
-Run 41198235471 also failed, against the blank workflow.
+Runs 41198235471 and any later run fail until the workflow is restored, because it is currently zero bytes.
 
 web_scrape still exhausted. Only the seven READS files are readable.
 
