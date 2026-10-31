@@ -1,0 +1,91 @@
+name: agent-watch
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: venice/calendar-announce-ledger
+      - name: Decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, datetime, pathlib, subprocess
+
+          branch = "venice/calendar-announce-ledger"
+          now = datetime.datetime.now(datetime.timezone.utc)
+          wake = pathlib.Path("agent/WAKE.json")
+
+          state = {}
+          if wake.exists():
+              try:
+                  state = json.loads(wake.read_text())
+              except Exception:
+                  state = {}
+
+          if state.get("pending"):
+              age = (now - datetime.datetime.fromisoformat(state["set_at"].replace("Z", "+00:00"))).total_seconds() / 60
+              if age < 60:
+                  print("already pending, age %.0f min" % age)
+                  raise SystemExit
+
+          reasons = []
+          queue = pathlib.Path("agent/QUEUE.jsonl")
+          if queue.exists():
+              for line in queue.read_text().splitlines():
+                  if not line.strip():
+                      continue
+                  row = json.loads(line)
+                  if row.get("status") == "blocked":
+                      reasons.append("queue item %s is blocked" % row.get("id"))
+
+          out = subprocess.run(["gh", "api",
+                                "repos/SRoyaltyy/checklist-engine/actions/runs?branch=%s&per_page=5" % branch],
+                             capture_output=True, text=True).stdout
+          try:
+              runs = json.loads(out).get("workflow_runs", [])
+          except Exception:
+              runs = []
+          for run in runs:
+              if run.get("conclusion") == "failure":
+                  created = datetime.datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
+                  if (now - created).total_seconds() < 1800:
+                      reasons.append("run %s failed (%s)" % (run["id"], run["name"]))
+              break
+
+          if not reasons:
+              if state.get("pending"):
+                  wake.write_text(json.dumps({"pending": False, "id": state.get("id"),
+                                       "set_at": now.isoformat()}))
+                  print("cleared")
+              else:
+                  print("nothing to do")
+              raise SystemExit
+
+          wake.write_text(json.dumps({"pending": True, "id": now.strftime("%Y%m%dT%H%M%SZ"),
+                                 "set_at": now.isoformat(),
+                                 "reason": "; ".join(reasons)}, indent=2))
+          print("WAKE:", reasons)
+          PY
+      - name: Commit
+        run: |
+          git config user.name venice-agent
+          git config user.email noreply@localhost
+          git add agent/WAKE.json
+          git diff --cached --quiet || git commit -m "agent: wake flag"
+          git push origin HEAD
