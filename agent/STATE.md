@@ -1,4 +1,3 @@
-
 State - read first on every wake
 
 If this file is stale, fix it before doing anything else.
@@ -10,14 +9,12 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 13:40: workflow now parses. Run 41204085538 failed against the good file, so it is a real failure and agent/TEST_LOG.txt should hold the reason. READ IT FIRST with the console line, it is not in READS.
+2026-10-31 11:31: outside_event_calendar.yml rewritten whole: pytest -q --tb=long with no -x, output teed to agent/TEST_LOG.txt, log committed under if: failure(). Written from scratch because the file was never readable. Needs a dispatch and a read of TEST_LOG.txt to confirm it replaced the old steps rather than sitting beside them.
 
-Doorman contract, confirmed from the Worker source: put takes path, branch, text. Content param is text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
+web_scrape still exhausted. Repo reads now arrive inside the wake body; arbitrary reads still need READS expanded in the userscript.
 
-Loose @@PUT blocks lose leading whitespace to markdown rendering. Always fence them or YAML breaks.
+Run 41193103387 FAIL, sha 10358e24, undiagnosed.
 
-Suspected real cause: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError.
+Main is c2137c9e; contents unread.
 
-web_scrape still exhausted.
-
-Main 5efb236c, contents unread.
+Transport defect: reads return JSON, script pastes raw. Wake text also shows the WAKE.json blob sha instead of the commit sha.
