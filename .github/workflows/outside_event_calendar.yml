@@ -54,8 +54,7 @@ jobs:
           echo "exit_code=$code" >> agent/TEST_LOG.txt
           exit $code
 
-      - name: Commit the log on failure
-        if: failure()
+
         run: |
           set +e
           git config user.name "venice-wake"
