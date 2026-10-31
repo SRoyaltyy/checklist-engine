@@ -193,15 +193,9 @@ def release_schedule(dates, cancellations=None):
     """
     ordered = pd.DatetimeIndex(pd.to_datetime(dates)).sort_values().unique()
     rows = []
-    previous = None
     for day in ordered:
-        rows.append(dict(announced=day if previous is None else previous, scheduled=day, status="scheduled"))
-        previous = day
-    for day in pd.DatetimeIndex(pd.to_datetime(cancellations if cancellations is not None else [])):
-        earlier = [row["scheduled"] for row in rows if row["scheduled"] < day]
-        if not earlier:
-            raise ValueError("cancelled release has no earlier release: " + str(day.date()))
-        rows.append(dict(announced=max(earlier), scheduled=day, status="cancelled"))
+        rows.append(dict(announced=schedule_published(day.year), scheduled=day, status="scheduled"))
+    rows.extend(_cancellation_rows(cancellations).to_dict("records"))
     return pd.DataFrame(rows, columns=["announced", "scheduled", "status"])
 
 
