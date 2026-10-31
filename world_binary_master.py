@@ -105,10 +105,9 @@ def _tf_window(bars, setup_date, expected_slot, lookback, candle_days):
     for i in range(lookback):
         group = selected[i * candle_days:(i + 1) * candle_days]
         vols = [b.volume for b in group]
-        dollars = [None if b.volume is None or b.close is None else b.close * b.volume
-                   for b in group]
-        volume = None if any(v is None for v in vols) else float(sum(vols))
-        dollar = None if any(d is None for d in dollars) else float(sum(dollars))
+        known_volume = _nonnegative(vols, 'daily volume') is not None
+        volume = float(sum(vols)) if known_volume else None
+        dollar = float(sum(b.close * b.volume for b in group)) if known_volume else None
         candles.append(NativeBar(end=group[-1].end, available_from=group[-1].available_from,
                                  open=group[0].open, high=max(b.high for b in group),
                                  low=min(b.low for b in group), close=group[-1].close,
@@ -1061,8 +1060,12 @@ def _definition(spec, timeframe, lookback, outcome, transform, operator, thresho
                     outcome=outcome)
     expression = (spec['recipe'] + '(' + str(timeframe) + 'd,N=' + str(lookback) + ')'
                   + expression_suffix)
+    # A recipe can return several scalar components. The cache identity must
+    # distinguish their expressions and types even when their raw recipe is
+    # shared (e.g. inside-run count versus the three boolean sequence outcomes).
+    feature_identity=dict(feature=scalar,expression=expression,kind=feature_kind,unit=spec['unit'])
     return dict(
-        question_id='BM1-' + identity(semantic), feature_id='BF1-' + identity(scalar),
+        question_id='BM1-' + identity(semantic), feature_id='BF1-' + identity(feature_identity),
         feature=scalar, feature_expression=expression, feature_kind=feature_kind,
         formula='(' + expression + ') ' + operator + ' ' + threshold,
         answer_set=['NO', 'YES'], comparator=operator, comparison_threshold=threshold,

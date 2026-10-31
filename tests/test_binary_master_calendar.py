@@ -15,7 +15,8 @@ def source(n):
     close=100.+np.arange(n);opened=close-.25
     frame=pd.DataFrame(dict(date=calendar[:n],open=opened,high=close+1,low=opened-1,close=close,volume=np.ones(n)))
     bars={i:NativeBar(end=calendar[i].date(),available_from=calendar[i+1].date(),
-        open=float(r.open),high=float(r.high),low=float(r.low),close=float(r.close)) for i,r in frame.iterrows()}
+        open=float(r.open),high=float(r.high),low=float(r.low),close=float(r.close),
+        volume=float(r.volume),dollar=float(r.close*r.volume)) for i,r in frame.iterrows()}
     return frame,calendar,bars
 
 
@@ -29,6 +30,8 @@ def test_daily_adapter_matches_existing_fixed_calendar_resampler(days):
     for bar,(_,row) in zip(actual,expected.iterrows()):
         assert (bar.open,bar.high,bar.low,bar.close)==(row.open,row.high,row.low,row.close)
         assert bar.end==row.date.date() and bar.available_from==row.available_from.date()
+        own=frame[(frame.date>=row.candle_start)&(frame.date<=row.date)]
+        assert bar.volume==row.volume and bar.dollar==float((own.close*own.volume).sum())
 
 
 def probe(recipe='native_body_colour_balance_v1',days=3,lookback=1):
@@ -61,6 +64,22 @@ def test_partial_future_bucket_cannot_change_last_fixed_candle():
 def test_no_complete_bucket_is_missing_not_a_rolling_substitute():
     _,calendar,bars=source(12)
     assert evaluate_master(probe(),bars,calendar[2].date(),1).answer=='NOT_EVALUABLE'
+
+
+@pytest.mark.parametrize('bad',[None,np.nan,np.inf,-np.inf,-1.])
+def test_unknown_or_negative_daily_volume_is_not_hidden_by_a_valid_total(bad):
+    _,calendar,bars=source(10);bars[4]=replace(bars[4],volume=bad)
+    window=_tf_window(bars,calendar[6].date(),5,1,3)
+    assert window[0].volume is None and window[0].dollar is None
+    assert evaluate_master(probe(),bars,calendar[6].date(),5).answer=='YES'
+    volume=probe('native_up_down_volume_dominance_v1')
+    assert evaluate_master(volume,bars,calendar[6].date(),5).answer=='NOT_EVALUABLE'
+
+
+def test_zero_daily_volume_remains_known_and_sums_are_preserved():
+    _,calendar,bars=source(10);bars[4]=replace(bars[4],volume=0.)
+    window=_tf_window(bars,calendar[6].date(),5,1,3)
+    assert window[0].volume==2. and window[0].dollar==bars[3].close+bars[5].close
 
 
 @pytest.mark.parametrize('kind',['intraday_change','interday_change','run_structure'])

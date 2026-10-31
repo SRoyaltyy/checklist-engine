@@ -52,6 +52,20 @@ class BinaryQuestionsTest(unittest.TestCase):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 validate_predicate(bad, '3')
 
+    def test_signed_integer_differences_keep_negative_values_and_exact_precision(self):
+        for value in (-3, -2**53-1, 0, 2**53+1):
+            with self.subTest(value=value):
+                self.assertEqual(evaluate_binary(value,'=',str(value),feature_kind='signed_integer').answer,'YES')
+                comparator='<' if value>=0 else '>'
+                self.assertEqual(evaluate_binary(value,comparator,str(value)+'.1',feature_kind='signed_integer').answer,'YES')
+        self.assertEqual(evaluate_binary(-3,'<','0',feature_kind='signed_integer').answer,'YES')
+        for value in (None,math.nan):
+            self.assertEqual(evaluate_binary(value,'<','0',feature_kind='signed_integer').answer,'NOT_EVALUABLE')
+        for value in (.5,math.inf,-math.inf):
+            with self.assertRaises(ValueError):evaluate_binary(value,'<','0',feature_kind='signed_integer')
+        with self.assertRaises(TypeError):evaluate_binary(True,'<','0',feature_kind='signed_integer')
+        with self.assertRaises(ValueError):evaluate_binary(-3,'<','0',feature_kind='integer_count')
+
     def test_categorical_feature_is_split_into_codebook_bound_binary_equalities(self):
         book = category_codes('{"0":"none","1":"bull_div","2":"bear_div"}')
         self.assertEqual(evaluate_binary(1, '=', '1', feature_kind='category_code', categories=book).answer, 'YES')
