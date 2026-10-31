@@ -6,7 +6,7 @@
 
 const REPO = "SRoyaltyy/checklist-engine";
 const BRANCH = "venice/calendar-announce-ledger";
-const WORKFLOW = "agent-loop.yml";
+const WORKFLOW = "agent-watch.yml";
 
 function dispatch(env) {
   return fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, {
