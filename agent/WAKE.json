@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-10-31T10:10:42.134Z",
-  "set_at": "2026-10-31T10:10:42.134Z",
-  "reason": "main moved 30dfc519"
+  "id": "2026-10-31T10:26:42.645Z",
+  "set_at": "2026-10-31T10:26:42.645Z",
+  "reason": "heartbeat: interval elapsed"
 }
