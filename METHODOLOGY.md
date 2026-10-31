@@ -801,6 +801,12 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-31 (13:55 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 12: `high_then_low`; 58,809 bound; pipeline held for LFS ruling.**
+- `high_then_low` (order of window high vs window low; first-occurrence argmax/argmin; same-bar tie counts as high_first — documented, no same_bar outcome exists) bound for all 14 qids = 28 defs. The last family that fits the current CSV headroom (now 98,491,183 bytes, ~508 KB left).
+- Leak-proof confirmation for batches 1–12 posted on PR #177: `_tf_window` enforces end < D and available_from <= D per bar; recipes measure only their window; calendar tests cover partial-bucket and unavailability paths.
+- ALL further binding held for James/GPT decision: LFS vs column-trim vs per-family CSV split. Batch-13 candidates precision-ranked in PR #177 (`touch_52w`, `new_extreme`, gap families, `magnet`, `follow_through`).
+- Tests 191 passed + 36 subtests. Commit `920e06e` on `kimi/binary-master-v1` (PR #177).
+
 - **2026-10-31 (13:40 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 11: `hl_base_breakout`; 58,781 bound.**
 - `hl_base_breakout` (close above window high after a higher-low base, mirror lower-high top breakdown; bars from HL to breakout bucketed <5/5-20/>20; RSI6/12/24 all extreme on the breakout day; 13 outcomes) bound for all 14 qids x 23 OAT variants = 4,186 new defs. Strict +-k swing pivots, k = max(S_pivot_k_min, N//S_pivot_k_divisor); latest qualifying pivot pair; breakout = first close above EVERY earlier window high (documented). Up precedence over down.
 - Design choice flagged in PR #177: uncomputable RSI (all-flat seed) -> whole question NOT_EVALUABLE, never a guessed 'not extreme'.
