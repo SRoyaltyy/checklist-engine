@@ -9,12 +9,12 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 11:31: outside_event_calendar.yml rewritten whole: pytest -q --tb=long with no -x, output teed to agent/TEST_LOG.txt, log committed under if: failure(). Written from scratch because the file was never readable. Needs a dispatch and a read of TEST_LOG.txt to confirm it replaced the old steps rather than sitting beside them.
+2026-10-31 11:39: reads work, writes do not. All three puts from 11:31 400'd; STATE and the workflow came back unchanged. Cause: put sends only b, while read needed b+branch+ref before it worked. v2.6 aliases every put parameter and logs the Worker body.
 
-web_scrape still exhausted. Repo reads now arrive inside the wake body; arbitrary reads still need READS expanded in the userscript.
+Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError on those three. Confirm from agent/TEST_LOG.txt before changing any code.
 
-Run 41193103387 FAIL, sha 10358e24, undiagnosed.
+Workflow written whole from the real file, preserving deps, build and artifact steps; Unit tests now tees to agent/TEST_LOG.txt and commits it on failure.
 
-Main is c2137c9e; contents unread.
+web_scrape still exhausted. Only the seven READS files are readable.
 
-Transport defect: reads return JSON, script pastes raw. Wake text also shows the WAKE.json blob sha instead of the commit sha.
+Main c2137c9e, contents unread.
