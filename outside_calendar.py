@@ -167,10 +167,7 @@ def first_release_dates(vintages):
 def release_schedule(dates, cancellations=None):
     """Key every release to the date it became public.
 
-    A published schedule is knowable before the release it names. Without archived
-    schedule pages the conservative rule is the previous release date: the next
-    release counts as announced only once the previous one has happened, so a
-    forward count never reads a date that was not yet public.
+
     """
     ordered = pd.DatetimeIndex(pd.to_datetime(dates)).sort_values().unique()
     rows = []
