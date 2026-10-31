@@ -7,13 +7,15 @@
 //   2. Add the scheduled method shown at the bottom INSIDE the existing export default object.
 //   3. Deploy, then Settings -> Triggers -> Cron Triggers -> add */2 * * * *
 //
-// The throttle lives in WAKE.json itself, so this needs no KV and no stored sha.
-// Firing late does not matter: it asks "is main fresh", not "did main move".
+// A wake fires on a fixed interval whether or not anything moved, plus sooner on a real event.
+// The interval is the throttle: one wake per WAKE_HEARTBEAT_MIN. No KV, no stored sha.
 
 const WAKE_REPO = "SRoyaltyy/checklist-engine";
 const WAKE_BRANCH = "venice/calendar-announce-ledger";
 const WAKE_PATH = "agent/WAKE.json";
-
+const WAKE_HEARTBEAT_MIN = 15;
+const WAKE_FRESH_COMMIT_MIN = 20;
+const WAKE_FRESH_FAIL_MIN = 30;
 
 function wakeGh(env, path, init = {}) {
   return fetch(`https://api.github.com${path}`, {
@@ -44,7 +46,7 @@ async function wakeRead(env) {
 async function wakeWrite(env, payload, sha) {
   const body = {
     message: "agent: wake flag",
-
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))),
     branch: WAKE_BRANCH,
   };
   if (sha) body.sha = sha;
@@ -58,7 +60,10 @@ async function wakeDecide(env) {
   const now = Date.now();
   const wake = await wakeRead(env);
 
-
+  if (wake.pending && wake.set_at) {
+    const age = (now - Date.parse(wake.set_at)) / 60000;
+    if (age < WAKE_HEARTBEAT_MIN) return;
+  }
 
   const reasons = [];
 
@@ -84,7 +89,10 @@ async function wakeDecide(env) {
     }
   }
 
+  if (!reasons.length) reasons.push("heartbeat: interval elapsed");
 
+  const stamp = new Date(now).toISOString();
+  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
 }
 
 // Add this method INSIDE the existing export default object:
