@@ -1,3 +1,5 @@
+@@BODY
+
 Journal - append only, newest last
 
 One line per action: date UTC | item | action | sha | test result.
