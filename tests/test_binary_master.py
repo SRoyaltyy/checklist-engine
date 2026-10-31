@@ -1232,6 +1232,113 @@ def test_evaluate_segment_atr_compare(grid):
     assert evaluate_master(defs['contracted'], bars, setup, last).answer == 'NO'
 
 
+def test_bind_batch10_variants(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|absorption_day|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 7          # 2 directions x 3 age bands + none
+    f = defs['after_decline_ageR']['feature']
+    assert (f['spike_mult'], f['atr_frac'], f['dir_lookback'],
+            f['age_recent'], f['age_old']) == ('3', '0.5', '6', '5', '20')
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C041_absorption_day__scalar6') == '12')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    assert defs2['after_rise_ageM']['feature']['dir_lookback'] == '12'
+    row, variant = _q(grid, 'B|extremes|drawdown|capitulation_bar|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 73         # 2x3x2x2x3 combos + none
+    f = defs['capitulation_ageM_sizeL_recY_end']['feature']
+    assert (f['spike_mult'], f['shock_atr'], f['close_pct'], f['big_atr'],
+            f['age_recent'], f['age_old']) == ('3', '3', '20', '5', '5', '20')
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C160_capitulation_bar__atr5') == '10')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    assert defs2['capitulation_ageM_sizeL_recY_end']['feature']['big_atr'] == '10'
+
+
+def _abs_cap_bars(window):
+    """49 flat warmup bars (close 100, vol 100, range 0.4) + 10 window bars."""
+    spec = [(100.0, 100.2, 99.8, 100.0, 100.0)] * 49
+    return spec + window
+
+
+def test_evaluate_absorption_day(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|absorption_day|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 59  # 49 median warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # window idx 3: vol 500 vs median 100, tiny move (106 -> 106.05) vs
+    # ATR~0.66; lookback close (idx -6 -> warmup 100) below -> after_rise;
+    # age 6 -> ageM
+    window = [(106.0, 106.2, 105.8, 106.0, 100.0)] * 3
+    window.append((108.0, 108.0, 104.0, 106.05, 500.0))
+    window += [(105.0, 105.2, 104.8, 105.0, 100.0)] * 6
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['after_rise_ageM'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['after_decline_ageM'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # decline into the day instead: lookback close 100 vs day close 94.05
+    window = [(94.0, 94.2, 93.8, 94.0, 100.0)] * 3
+    window.append((96.0, 96.0, 92.0, 94.05, 500.0))
+    window += [(95.0, 95.2, 94.8, 95.0, 100.0)] * 6
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['after_decline_ageM'], bars, setup, last).answer == 'YES'
+    # no spike volume day -> none
+    bars = _bars_hlv(_abs_cap_bars([(100.0, 100.2, 99.8, 100.0, 100.0)] * 10))
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    # bars without volume -> NOT_EVALUABLE
+    bars = _bars_hl([(100.0, 100.2, 99.8, 100.0)] * span)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_capitulation_bar(grid):
+    row, variant = _q(grid, 'B|extremes|drawdown|capitulation_bar|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 59
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    quiet = (100.0, 100.2, 99.8, 100.0, 100.0)
+    # idx 2: range 6 > 3*ATR(~0.8), vol 600 vs median 100, close 0.1 from the
+    # low, open at the high -> capitulation, age 7 -> M, 6/0.8 -> sizeL,
+    # record vol, close_near_far_end (loc 0.1 <= pct/2)
+    window = [quiet, quiet, (103.0, 103.0, 97.0, 97.6, 600.0)] + [quiet] * 7
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['capitulation_ageM_sizeL_recY_end'],
+                           bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['capitulation_ageM_sizeS_recY_end'],
+                           bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['blowoff_ageM_sizeL_recY_end'],
+                           bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # long reversal wick: close at loc 1/6 (in the zone, not extreme),
+    # open 0.4 away -> body 0.4, lower wick 1.0 >= 2x body and >= 0.5*ATR
+    window = [quiet, quiet, (98.4, 103.0, 97.0, 98.0, 600.0)] + [quiet] * 7
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['capitulation_ageM_sizeL_recY_wk'],
+                           bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['capitulation_ageM_sizeL_recY_end'],
+                           bars, setup, last).answer == 'NO'
+    # close in the qualifying zone but not extreme, no long wick -> mid
+    window = [quiet, quiet, (102.0, 103.0, 97.0, 98.1, 600.0)] + [quiet] * 7
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['capitulation_ageM_sizeL_recY_mid'],
+                           bars, setup, last).answer == 'YES'
+    # mirror blow-off near the high, recent (age 1 -> R)
+    window = [quiet] * 8 + [quiet, (97.0, 103.0, 97.0, 102.4, 600.0)]
+    bars = _bars_hlv(_abs_cap_bars(window))
+    assert evaluate_master(defs['blowoff_ageR_sizeL_recY_end'],
+                           bars, setup, last).answer == 'YES'
+    # quiet window -> none
+    bars = _bars_hlv(_abs_cap_bars([quiet] * 10))
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    # bars without volume -> NOT_EVALUABLE
+    bars = _bars_hl([(100.0, 100.2, 99.8, 100.0)] * span)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

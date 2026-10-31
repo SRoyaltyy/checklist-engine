@@ -821,6 +821,138 @@ def _measure(recipe, candles, feature=None):
                     return None      # both legs zero range: 0/0 undefined
                 return math.inf      # expansion out of zero: KNOWN infinity
             return (r / d - 1.0) * 100.0
+        if recipe == 'native_absorption_day_v1':
+            # Latest absorption day in the window (dial definitions): RVOL >
+            # S_vol_spike_mult (volume vs the 50-bar median ending at the
+            # bar, the registered "RVOL" rule) while the bar's move is tiny:
+            # |C/Cprev-1| < C039 * ATR14/Cprev (both on the prev-close
+            # basis). Direction: close C041 bars before the day strictly
+            # above the day's close = after_decline (mirror after_rise);
+            # exact equality classifies nothing (documented: a flat lookback
+            # is neither a decline nor a rise) and the day is skipped; if no
+            # strictly classifiable day exists -> none. Age = window-end
+            # bars since the day: <=recent / (recent,old] / >old.
+            lb = int(feature['lookback'])
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles)
+            if n < lb + 49:
+                return None
+            prev_close = np.concatenate(([close[0]], close[:-1]))
+            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
+                                                    np.abs(low - prev_close)))
+            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')  # entry j = bar j+13
+            w0 = n - lb
+            win_vol = vol[w0:]
+            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(w0, n)])
+            win_atr = atr[w0 - 13:]
+            win_prev = prev_close[w0:]
+            win_c = close[w0:]
+            mult = float(feature['spike_mult'])
+            frac = float(feature['atr_frac'])
+            day = ((win_med > 0) & (win_vol > mult * win_med)
+                   & (np.abs(win_c / win_prev - 1.0) < frac * win_atr / win_prev))
+            idxs = np.nonzero(day)[0]
+            out = {o: False for o in tuple(
+                d + '_' + a for d in ('after_decline', 'after_rise')
+                for a in ('ageR', 'ageM', 'ageO')) + ('none',)}
+            picked = None
+            for j in reversed(idxs):
+                k = w0 + j - int(feature['dir_lookback'])
+                if close[k] > win_c[j]:
+                    picked = (j, 'after_decline')
+                    break
+                if close[k] < win_c[j]:
+                    picked = (j, 'after_rise')
+                    break
+            if picked is None:
+                out['none'] = True
+                return out
+            j, direction = picked
+            age = lb - 1 - j
+            recent = int(feature['age_recent'])
+            old = int(feature['age_old'])
+            band = 'ageR' if age <= recent else 'ageM' if age <= old else 'ageO'
+            out[direction + '_' + band] = True
+            return out
+        if recipe == 'native_capitulation_bar_v1':
+            # Latest capitulation bar (range > S_shock_atr*ATR14, RVOL >
+            # S_vol_spike_mult, close in the outer C156% of its range) else
+            # latest blow-off bar (mirror, close in the top C156%), else
+            # none. Crossed with: age (<recent / <=old / else, "age<5,5-20,
+            # >20" style), size (range/ATR14 <= C160 -> sizeS, else sizeL),
+            # record volume (bar volume >= every window bar's volume;
+            # documented interpretation of "record"), and close shape:
+            # long_reversal_wick = reversal-side wick >= 2x body AND >=
+            # 0.5*ATR14 (documented thresholds); else close_near_far_end =
+            # close in the outer C156/2% (i.e. the middle of the qualifying
+            # zone counts as close_mid); else close_mid.
+            lb = int(feature['lookback'])
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            n = len(candles)
+            if n < lb + 49:
+                return None
+            prev_close = np.concatenate(([close[0]], close[:-1]))
+            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
+                                                    np.abs(low - prev_close)))
+            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')
+            w0 = n - lb
+            win_vol = vol[w0:]
+            win_med = np.array([np.median(vol[i - 49:i + 1]) for i in range(w0, n)])
+            win_atr = atr[w0 - 13:]
+            win_o = opened[w0:]
+            win_h = high[w0:]
+            win_l = low[w0:]
+            win_c = close[w0:]
+            mult = float(feature['spike_mult'])
+            shock = float(feature['shock_atr'])
+            pct = float(feature['close_pct']) / 100.0
+            big = float(feature['big_atr'])
+            recent = int(feature['age_recent'])
+            old = int(feature['age_old'])
+            rng = win_h - win_l
+            valid = (win_med > 0) & (rng > shock * win_atr) & (win_vol > mult * win_med)
+            with np.errstate(all='ignore'):
+                loc = np.where(rng > 0, (win_c - win_l) / rng, 0.5)
+            caps = np.nonzero(valid & (loc <= pct))[0]
+            blows = np.nonzero(valid & (loc >= 1.0 - pct))[0]
+            t = None
+            direction = None
+            if caps.size:
+                t = int(caps[-1])
+                direction = 'capitulation'
+            elif blows.size:
+                t = int(blows[-1])
+                direction = 'blowoff'
+            out = {o: False for o in tuple(
+                d + '_age' + b + '_' + s + '_' + r + '_' + sh
+                for d in ('capitulation', 'blowoff')
+                for b in ('R', 'M', 'O')
+                for s in ('sizeS', 'sizeL')
+                for r in ('recY', 'recN')
+                for sh in ('end', 'mid', 'wk')) + ('none',)}
+            if t is None:
+                out['none'] = True
+                return out
+            age = lb - 1 - t
+            band = 'R' if age < recent else 'M' if age <= old else 'O'
+            size = 'sizeS' if rng[t] <= big * win_atr[t] else 'sizeL'
+            rec = 'recY' if win_vol[t] >= win_vol.max() else 'recN'
+            wick = (win_c[t] - win_l[t]) if direction == 'capitulation' else (
+                win_h[t] - win_c[t])
+            body = abs(win_c[t] - win_o[t])
+            if wick >= 2.0 * body and wick >= 0.5 * win_atr[t]:
+                shape = 'wk'
+            elif (direction == 'capitulation' and loc[t] <= pct / 2.0) or (
+                    direction == 'blowoff' and loc[t] >= 1.0 - pct / 2.0):
+                shape = 'end'
+            else:
+                shape = 'mid'
+            out[direction + '_age' + band + '_' + size + '_' + rec + '_' + shape] = True
+            return out
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1336,6 +1468,58 @@ FACETS = {
             comparator_by_outcome={'expanded': '>', 'contracted': '<',
                                    'similar': '<='}),
     ],
+    # ---- batch 10: absorption day + capitulation/blow-off bar (both use the
+    # registered 50-bar-median RVOL rule; S_vol_spike_mult is the multiple).
+    # Two thresholds (wick >= 2x body and >= 0.5*ATR14 for long_reversal_wick,
+    # window-max for record_vol, flat-lookback -> none) are DOCUMENTED
+    # INTERPRETATIONS of the dial text, flagged for James in PR #177. ----
+    'absorption_day': dict(
+        binding='mixed', l1_l3=(('volume', 'RVOL20'),),
+        recipe='native_absorption_day_v1',
+        unit='latest_rvol_spike_tiny_move_day_direction_and_age',
+        outcomes=tuple(d + '_' + a for d in ('after_decline', 'after_rise')
+                       for a in ('ageR', 'ageM', 'ageO')) + ('none',),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_vol_spike_mult', 'C039_absorption_day__atr0p5',
+                          'C041_absorption_day__scalar6',
+                          'S_age_recent_bars', 'S_age_old_bars'),
+        baked_map={'S_vol_spike_mult': 'spike_mult',
+                   'C039_absorption_day__atr0p5': 'atr_frac',
+                   'C041_absorption_day__scalar6': 'dir_lookback',
+                   'S_age_recent_bars': 'age_recent',
+                   'S_age_old_bars': 'age_old'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(d + '_' + a
+                                     for d in ('after_decline', 'after_rise')
+                                     for a in ('ageR', 'ageM', 'ageO')) + ('none',)}),
+    'capitulation_bar': dict(
+        binding='mixed', l1_l3=(('extremes', 'drawdown'),),
+        recipe='native_capitulation_bar_v1',
+        unit='latest_capitulation_or_blowoff_bar_age_size_record_shape',
+        outcomes=tuple(d + '_age' + b + '_' + s + '_' + r + '_' + sh
+                       for d in ('capitulation', 'blowoff')
+                       for b in ('R', 'M', 'O')
+                       for s in ('sizeS', 'sizeL')
+                       for r in ('recY', 'recN')
+                       for sh in ('end', 'mid', 'wk')) + ('none',),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_vol_spike_mult', 'S_shock_atr',
+                          'C156_capitulation_bar__pct20',
+                          'C160_capitulation_bar__atr5',
+                          'S_age_recent_bars', 'S_age_old_bars'),
+        baked_map={'S_vol_spike_mult': 'spike_mult',
+                   'S_shock_atr': 'shock_atr',
+                   'C156_capitulation_bar__pct20': 'close_pct',
+                   'C160_capitulation_bar__atr5': 'big_atr',
+                   'S_age_recent_bars': 'age_recent',
+                   'S_age_old_bars': 'age_old'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(d + '_age' + b + '_' + s + '_' + r + '_' + sh
+                                     for d in ('capitulation', 'blowoff')
+                                     for b in ('R', 'M', 'O')
+                                     for s in ('sizeS', 'sizeL')
+                                     for r in ('recY', 'recN')
+                                     for sh in ('end', 'mid', 'wk')) + ('none',)}),
 }
 
 def _iter_specs():
@@ -1540,7 +1724,8 @@ _MASTER_RECIPES = {spec['recipe'] for _facet, spec in _iter_specs()}
 _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1,
-                'native_segment_atr_compare_v1': 14}
+                'native_segment_atr_compare_v1': 14,
+                'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
@@ -1549,7 +1734,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_shock_v1', 'native_osc_zone_share_v1',
                         'native_full_stack_streak_v1',
                         'native_ma30_side_streak_v1',
-                        'native_osc_swing_speed_v1'}
+                        'native_osc_swing_speed_v1',
+                        'native_absorption_day_v1', 'native_capitulation_bar_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):

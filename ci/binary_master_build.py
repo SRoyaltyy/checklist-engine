@@ -33,6 +33,22 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+# Compact per-row condition text: the full prose lives in the world_binary_master
+# module constants and is copied verbatim into BINARY_MASTER_V1_REPORT.json by
+# build(); repeating it on every CSV row pushed docs/BINARY_MASTER_V1.csv past
+# GitHub's 100 MB file limit at 125 MB (batch 10). The reference keeps every
+# row self-describing without the megabyte-scale duplication.
+NOT_EVALUABLE_CSV = ('NOT_EVALUABLE (excluded, never NO): evidence bars insufficient or missing '
+                     '(short history, missing/late native bar, non-positive/non-finite price), or '
+                     'a documented definitional undefined (0/0 ratio, zero baseline or median, '
+                     'zero range, non-contiguous baked-dial pairing). Full per-facet list: '
+                     'world_binary_master.NOT_EVALUABLE')
+KNOWABLE_CSV = ('All evidence bars end < setup date D with available_from <= D; the D open is '
+                'execution only; no day-D candle. Full text: world_binary_master.KNOWABLE')
+VIEWPORT_CSV = ('Purple recolour of the D-1 native candle if YES; measured value printed on the '
+                'item pane header; no circles. Full text: world_binary_master.VIEWPORT')
+
+
 def master_row(definition, tree_row):
     feature = definition['feature']
     return {'question_id': definition['question_id'],
@@ -54,8 +70,8 @@ def master_row(definition, tree_row):
             'comparison_threshold': definition['comparison_threshold'],
             'formula': definition['formula'],
             'yes_condition': definition['formula'] + ' is TRUE',
-            'not_evaluable_condition': NOT_EVALUABLE,
-            'viewport_drawing': VIEWPORT, 'knowable_at_setup_open': KNOWABLE,
+            'not_evaluable_condition': NOT_EVALUABLE_CSV,
+            'viewport_drawing': VIEWPORT_CSV, 'knowable_at_setup_open': KNOWABLE_CSV,
             'expression': definition['expression'], 'missing': definition['missing'],
             'feature_json': json.dumps(feature, sort_keys=True, separators=(',', ':'))}
 
@@ -137,7 +153,13 @@ def build(root):
         code_fingerprints={p: digest(Path(__file__).resolve().parent.parent / p) for p in
                            ('world_binary_master.py', 'world_binary_price.py',
                             'world_binary_questions.py', 'ci/binary_master_build.py')},
-        answer_generation='NOT_RUN', chart_gate='NOT_PASSED', mining='NOT_RUN')
+        answer_generation='NOT_RUN', chart_gate='NOT_PASSED', mining='NOT_RUN',
+        condition_docs={'not_evaluable_condition': NOT_EVALUABLE,
+                        'knowable_at_setup_open': KNOWABLE,
+                        'viewport_drawing': VIEWPORT,
+                        'csv_note': 'CSV rows carry compact condition text with a reference to '
+                                    'world_binary_master; full prose is this report field and '
+                                    'the module constants.'})
     report_path = root / 'docs' / REPORT
     report_path.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     return report

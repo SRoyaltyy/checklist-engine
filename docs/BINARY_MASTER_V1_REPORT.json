@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 1092,
-  "bound_unique_binary_definitions": 27687,
-  "bound_source_aliases": 27876,
+  "bound_source_questions": 1123,
+  "bound_unique_binary_definitions": 54595,
+  "bound_source_aliases": 54784,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -279,6 +279,8 @@
     "zone_route"
   ],
   "batch1_bound_facets": [
+    "absorption_day",
+    "capitulation_bar",
     "cross_count",
     "cross_event",
     "dominance",
@@ -309,12 +311,12 @@
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 936,
-  "unbound_oat_variants": 148365,
+  "unbound_family_variant_count": 934,
+  "unbound_oat_variants": 147689,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 30367,
-  "csv_sha256": "86257fa3d08a6bebe7e96146f6c7f842c5fe1b73547b820ac9bbd2b145ba3401",
+  "master_total_rows": 57275,
+  "csv_sha256": "1b6689fdfdd50f857713784ae03aa22824ccf1488b6167df91bb298948a70c72",
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
@@ -322,12 +324,18 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "210711053db7b6c1321ee59a482552df0cca4d40e1194af1a6fb19a181dbb5e6",
+    "world_binary_master.py": "54c07b5612c7ef42db1d4e55ee9d517d329471ac8f7517fa4f5ba057f39ad29c",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
-    "ci/binary_master_build.py": "cdb361bae49f29a8b938d284cda5581db848c3a07e981266ee37b4f47427a26e"
+    "ci/binary_master_build.py": "b1ab9de12f3a54dbcbc874d467f5ad93a0b900a0db5c33408146c95ddf607862"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
-  "mining": "NOT_RUN"
+  "mining": "NOT_RUN",
+  "condition_docs": {
+    "not_evaluable_condition": "Fewer completed native sessions than lookback*candle_days (+1 prior candle where a candle pair is required, +14 for the ATR14 base of run_biggest_move), a missing/late native bar, a non-positive or non-finite price, a zero total body on both sides (colour-balance facets), a missing green or red bar (last_green_vs_red, down_vs_up_moves), an all-zero-range window (wick_body), no monochromatic body run (run_biggest_move), or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO). Volume facets add: a missing/negative/non-finite native volume or dollar field, all-zero window volume on both sides (dominance), a zero 50-bar median volume (dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past). Swing/segment facets add: a non-contiguous OAT scalar pairing (swing_mid_lo != swing_low_edge+1), no complete cross-zone swing in the window (both *_none outcomes answer NO; the question is still evaluable), or a zero decline-leg mean with zero rally-leg mean (all three segment recipes).",
+    "knowable_at_setup_open": "Uses only native candles with available_from <= setup date D and end < D (last completed candle = D-1); D open is execution only. Bars are strict FIXED_SHARED_SESSION_CALENDAR_V1 slot groups; no day-D candle.",
+    "viewport_drawing": "Purple recolour of the D-1 native candle if YES; ratio/scalar value printed on the item pane header; no circles.",
+    "csv_note": "CSV rows carry compact condition text with a reference to world_binary_master; full prose is this report field and the module constants."
+  }
 }
