@@ -39,5 +39,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 13:20 | ci | workflow restored with indentation inside a fence; log step moved first, commit step widened to if failure() | n/a | parses
 2026-10-31 14:26 | tests | root conftest drafted for the world_timeframes imports | n/a | never landed
 2026-10-31 14:31 | ci | failure commit step given a three-attempt push retry | n/a | never landed
-2026-10-31 14:55 | ci | run 41204085538 diagnosed from the run page: YAML error line 4, no job ran, so the tests were never reached | n/a | INVALID FILE
-2026-10-31 14:55 | infra | root cause of three silent turns: the put regex needed an
+2026-10-31 14:55 | ci | run 41204085538 diagnosed from the run page: YAML error line 4, no job ran, tests never reached | n/a | INVALID FILE
+2026-10-31 14:55 | infra | root cause of three silent turns: put regex needed an
