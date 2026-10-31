@@ -224,8 +224,8 @@ def _osc_series(feature, close, high, low):
         t0 = period - 1
         raw = np.empty(len(close) - t0, dtype=np.float64)
         for t in range(t0, len(close)):
-            hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
-            ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
+            hh = float(high[t - period + 1:t + 1].max())
+            ll = float(low[t - period + 1:t + 1].min())
             if hh == ll:
                 return None
             raw[t - t0] = 100.0 * (close[t] - ll) / (hh - ll)
@@ -235,15 +235,22 @@ def _osc_series(feature, close, high, low):
         series = np.convolve(raw, kernel, mode='valid')
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'WILLR':
+        import talib
         period = int(feature['osc_period'])
+        if len(close) < period:
+            return None
         t0 = period - 1
-        series = np.empty(len(close) - t0, dtype=np.float64)
         for t in range(t0, len(close)):
-            hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
-            ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
+            hh = float(high[t - period + 1:t + 1].max())
+            ll = float(low[t - period + 1:t + 1].min())
             if hh == ll:
                 return None
-            series[t - t0] = 100.0 * (hh - close[t]) / (hh - ll)
+        # Match the registered negative-valued WILLR field, including the
+        # native operation order. Keep the declared zero-range NI policy.
+        series = talib.WILLR(np.asarray(high, dtype=np.float64),
+                             np.asarray(low, dtype=np.float64),
+                             np.asarray(close, dtype=np.float64),
+                             timeperiod=period)[t0:]
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'ROC':
         period = int(feature['osc_period'])
