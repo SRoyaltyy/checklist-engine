@@ -92,7 +92,7 @@ def test_ratio_mirror_threshold_is_exact_reciprocal(grid):
         Decimal(1) / Decimal(v), 'f').rstrip('0').rstrip('.')
     assert by_outcome['green']['comparator'] == '>'
     assert by_outcome['red']['comparator'] == '<'
-    assert by_outcome['even']['feature']['transform'] == 'mirror_min'
+    assert by_outcome['even']['feature']['transform'] == 'closed_band_margin'
     assert by_outcome['even']['comparator'] == '>='
 
 
@@ -357,7 +357,7 @@ def test_bind_batch3_variants(grid):
         if facet == 'dominance':
             assert by_outcome['up_heavy']['comparator'] == '>'
             assert by_outcome['down_heavy']['comparator'] == '<'
-            assert by_outcome['even']['feature']['transform'] == 'mirror_min'
+            assert by_outcome['even']['feature']['transform'] == 'closed_band_margin'
         if facet == 'dry_up_at_low':
             assert by_outcome['at_low']['feature']['dry_up_mult'] == '0.6'
             assert all(by_outcome[o]['feature_kind'] == 'boolean' for o in by_outcome)
@@ -550,7 +550,7 @@ def test_bind_batch4b_variants(grid):
     assert by_outcome['bear_heavier']['feature']['ratio_key'] == 'bear_ratio'
     assert by_outcome['bull_lighter']['comparator'] == '<'
     assert by_outcome['bull_heavier']['comparator'] == '>'
-    assert by_outcome['bull_similar']['feature']['transform'] == 'mirror_min'
+    assert by_outcome['bull_similar']['feature']['transform'] == 'closed_band_margin'
     for d in defs:
         assert d['feature_kind'] == 'continuous'
         literal_threshold(d['comparison_threshold'])
@@ -1073,7 +1073,7 @@ def test_bind_batch9_variants(grid):
     assert defs['rally_heavier']['comparator'] == '>'
     assert defs['rally_heavier']['comparison_threshold'] == '1.25'
     assert defs['decline_heavier']['comparison_threshold'] == '0.8'
-    assert defs['similar']['feature']['transform'] == 'mirror_min'
+    assert defs['similar']['feature']['transform'] == 'closed_band_margin'
     changed = next(v for v in grid.variants(row['question_id'])
                    if dict(v.settings).get('S_ratio_band_1p25') == '2.5')
     defs2 = _by_outcome(bind_master_question(row, changed))

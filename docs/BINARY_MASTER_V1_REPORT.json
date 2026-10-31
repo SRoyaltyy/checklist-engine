@@ -336,6 +336,21 @@
   "ladder_add_on_rows": 2676,
   "ladder_source_rows": 2680,
   "ladder_alias_rows": 4,
+  "ratio_band_binding": {
+    "contract": "LITERAL_CLOSED_INTERVAL_V2",
+    "bound_definitions": 2994,
+    "inverted_interval_definitions": 888,
+    "inverted_hi_rungs": [
+      "0.625",
+      "0.65",
+      "0.75",
+      "0.938",
+      "0.975"
+    ],
+    "inverted_interval_handling": "NOT_EVALUABLE:INVERTED_LITERAL_RATIO_BAND",
+    "registered_cutoffs_edited": false,
+    "note": "All registered OAT variants retained; invalid intervals are not usable questions. Their domain/rulings remain unresolved; this is not a question-quality gate PASS."
+  },
   "ladder_review_artifacts": {
     "BINARY_MASTER_LADDER_ALIASES_V1.csv": "d63adb0c6ed204b659247ca0438c7099c90fb40b4f1f45e60ba3ac0a13486f1c",
     "BINARY_MASTER_LADDER_REVIEW_V1.csv": "cc7b32c173e2ddd593b5116c2efe0fbfa317668fa345f8b90b929d38c2d93a9d"
@@ -364,12 +379,12 @@
     }
   },
   "master_total_rows": 65552,
-  "csv_sha256": "6b011355c911f4ec4c13d03da73a76aa6ff4d5d8fa553a394fc19768d467e116",
+  "csv_sha256": "ee088c514a52046e556b5ea0e2a58f061ca900d9548a7a10b505be48f8a29b3e",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 104545698,
-    "compressed_bytes": 12368761,
+    "raw_bytes": 105006320,
+    "compressed_bytes": 12477181,
     "chunk_count": 13
   },
   "source_fingerprints": {
@@ -379,10 +394,10 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "8aea0bb391578eb5b065f33be0aa601a6bd78d19884ef8698de08f15dad87053",
+    "world_binary_master.py": "12e4b85aea43addf38447e93f347bcd8be3ff71113ba6db2a0d3a4674cb00c3f",
     "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
     "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
-    "ci/binary_master_build.py": "5cd3e5bfbd238c4ff640d594d8bf27856ef87e2ce1eb8e1f64147e125ad82349",
+    "ci/binary_master_build.py": "6285f90b4f7626368626a2781be5560fff95ab50a66dad39b9331ea2ae6403ed",
     "ci/binary_master_storage.py": "704cc7fb2ec7a9b31f4ad3bb5bd699d0b3ab2fc472030aa2a0cbb601ac2bd581",
     "ci/ladder_semantic_review.py": "743a5b9cecaae057ff629954025d58237246d87f73ca521fc7057b5aaea27be5"
   },
@@ -390,7 +405,7 @@
   "chart_gate": "NOT_PASSED",
   "mining": "NOT_RUN",
   "condition_docs": {
-    "not_evaluable_condition": "Fewer completed native sessions than lookback*candle_days (+1 prior candle where a candle pair is required), an uninitialized required native indicator value, a missing/late native bar, a non-positive or non-finite price, a zero total body on both sides (colour-balance facets), a missing green or red bar (last_green_vs_red, down_vs_up_moves), an all-zero-range window (wick_body), no monochromatic body run (run_biggest_move), or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO). Volume facets add: a missing/negative/non-finite native volume or dollar field, all-zero window volume on both sides (dominance), a zero 50-bar median volume (dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past). Swing/segment facets add: a non-contiguous OAT scalar pairing (swing_mid_lo != swing_low_edge+1), no complete cross-zone swing in the window (both *_none outcomes answer NO; the question is still evaluable), or a zero decline-leg mean with zero rally-leg mean (all three segment recipes).",
+    "not_evaluable_condition": "Fewer completed native sessions than lookback*candle_days (+1 prior candle where a candle pair is required), an uninitialized required native indicator value, a missing/late native bar, a non-positive or non-finite price, a zero total body on both sides (colour-balance facets), a missing green or red bar (last_green_vs_red, down_vs_up_moves), an all-zero-range window (wick_body), no monochromatic body run (run_biggest_move), or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO). Volume facets add: a missing/negative/non-finite native volume or dollar field, all-zero window volume on both sides (dominance), a zero 50-bar median volume (dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past). Swing/segment facets add: a non-contiguous OAT scalar pairing (swing_mid_lo != swing_low_edge+1), no complete cross-zone swing in the window (both *_none outcomes answer NO; the question is still evaluable), an inverted literal ratio interval (registered hi < 1 so 1/hi > hi; retained, never reordered), or a zero decline-leg mean with zero rally-leg mean (all three segment recipes).",
     "knowable_at_setup_open": "Uses only native candles with available_from <= setup date D and end < D (last completed candle = D-1); D open is execution only. Bars are strict FIXED_SHARED_SESSION_CALENDAR_V1 slot groups; no day-D candle.",
     "viewport_drawing": "Purple recolour of the D-1 native candle if YES; ratio/scalar value printed on the item pane header; no circles.",
     "csv_note": "CSV rows carry compact condition text with a reference to world_binary_master; full prose is this report field and the module constants."
