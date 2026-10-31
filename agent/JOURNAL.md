@@ -24,6 +24,7 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 10:31 | dispatch | outside_event_calendar.yml dispatched on the branch; run id not yet listed | n/a | pending
 2026-10-31 10:44 | dispatch | run 41193103387 exists and FAILED at the Unit tests step; job 124513743987, sha 10358e24 | n/a | FAIL
 2026-10-31 10:44 | infra | job logs are 11 403 unauthenticated; no log op in the doorman, so the failure is undiagnosed | n/a | n/a
-2026-10-31 11:24 | infra | userscript v2.3: doorman reads inlined into the wake body, write blocks parsed from replies | n/a | works
+2026-10-31 11:24 | infra | userscript v2.3: doorman reads inlined into the wake body, write blocks parsed from replies | n/a | reads work
 2026-10-31 11:31 | infra | v2.4: key alias, cooldown bypass on manual wake, no silent returns | n/a | works
-2026-10-31 11:31 | ci | outside_event_calendar.yml rewritten whole with pytest tee to agent/TEST_LOG.txt and failure commit | pending | pending
+2026-10-31 11:31 | ci | outside_event_calendar.yml rewritten with pytest tee and failure commit | n/a | put 400
+2026-10-31 11:39 | infra | v2.6: put parameter aliases (p/path/file, b/branch/ref, c/content/text/body); POST still first, GET fallback | n/a | untested
