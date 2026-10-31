@@ -53,6 +53,12 @@ Ladder rungs/opposite predicates can share a feature ID. Reusing that ID for a
 different expression/input/PIT rule/kind/unit/codebook fails. Numerically equal
 cutoff spellings such as0 and0.0 cannot inflate the question count.
 
+The master CSV exports `feature_id` for each bound scalar. Components of a
+multi-output recipe have distinct typed expressions and feature IDs; for example,
+the inside-run count cannot share its cache identity with the `none` boolean.
+The underlying recipe can still be computed once before selecting components.
+Ladder add-ons keep this field blank until their scalar bindings are reviewed.
+
 A legacy bull_div/bear_div/none result is a categorical **feature**. It needs an
 explicit JSON codebook, e.g. `{"0":"none","1":"bull_div","2":"bear_div"}`,
 then separate binary predicates `state_code = 1`, `state_code = 2`.

@@ -20,7 +20,7 @@ LADDERS = 'docs/BINARY_LADDERS_V1.csv'
 MASTER_CSV = 'BINARY_MASTER_V1.csv'
 REPORT = 'BINARY_MASTER_V1_REPORT.json'
 
-CSV_COLUMNS = ['question_id', 'definition_status', 'data_group', 'block', 'facet',
+CSV_COLUMNS = ['question_id', 'feature_id', 'definition_status', 'data_group', 'block', 'facet',
                'source_question_id', 'source_variant_id', 'source_outcome',
                'timeframe_days', 'lookback_bars', 'feature_recipe', 'feature_expression',
                'feature_kind', 'feature_unit', 'transform', 'comparator',
@@ -36,6 +36,7 @@ def digest(path):
 def master_row(definition, tree_row):
     feature = definition['feature']
     return {'question_id': definition['question_id'],
+            'feature_id': definition['feature_id'],
             'definition_status': definition['definition_status'],
             'data_group': tree_row['L1_type'], 'block': tree_row['L3_derivative'],
             'facet': tree_row['L4_analysis'],
@@ -65,7 +66,7 @@ def ladder_rows(root):
     with path.open(encoding='utf-8-sig', newline='') as stream:
         for row in csv.DictReader(stream):
             item = row['item_id']
-            rows.append({'question_id': row['question_id'], 'definition_status': 'LADDER_ADDON',
+            rows.append({'question_id': row['question_id'], 'feature_id': '', 'definition_status': 'LADDER_ADDON',
                          'data_group': 'ladders', 'block': item, 'facet': row['item_name'],
                          'source_question_id': '', 'source_variant_id': '', 'source_outcome': '',
                          'timeframe_days': '', 'lookback_bars': '',

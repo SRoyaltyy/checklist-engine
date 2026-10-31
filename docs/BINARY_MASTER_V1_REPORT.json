@@ -305,7 +305,7 @@
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
   "master_total_rows": 15422,
-  "csv_sha256": "9728f27f144b3c76eac801a5b5842beec101195260143f20b221a97b609ca04f",
+  "csv_sha256": "575fd2dec952d87eb7876c2c72b0494b9af72dd375b169c78ec095a89e1f8a9e",
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d",
@@ -313,10 +313,10 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "4eb35ec06ff141034554989a912eb8997d25204972d742a2aa8219e2a362d914",
+    "world_binary_master.py": "6c98f277b1f596b2b06d463efdffa8d1d7c1434550d414e617916638ff0924a5",
     "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
     "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
-    "ci/binary_master_build.py": "d08abe0bdb7d7276ec5f5f58fb415a320cc327f84c535840e4825b252158d80d"
+    "ci/binary_master_build.py": "634d404234a9206783effc5b9535b61ae47a8401ab3069c92d93a78ca71774f9"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",

@@ -745,8 +745,12 @@ def _definition(spec, timeframe, lookback, outcome, transform, operator, thresho
                     outcome=outcome)
     expression = (spec['recipe'] + '(' + str(timeframe) + 'd,N=' + str(lookback) + ')'
                   + expression_suffix)
+    # A recipe can return several scalar components. The cache identity must
+    # distinguish their expressions and types even when their raw recipe is
+    # shared (e.g. inside-run count versus the three boolean sequence outcomes).
+    feature_identity=dict(feature=scalar,expression=expression,kind=feature_kind,unit=spec['unit'])
     return dict(
-        question_id='BM1-' + identity(semantic), feature_id='BF1-' + identity(scalar),
+        question_id='BM1-' + identity(semantic), feature_id='BF1-' + identity(feature_identity),
         feature=scalar, feature_expression=expression, feature_kind=feature_kind,
         formula='(' + expression + ') ' + operator + ' ' + threshold,
         answer_set=['NO', 'YES'], comparator=operator, comparison_threshold=threshold,

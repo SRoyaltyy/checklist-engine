@@ -763,10 +763,23 @@ def test_emitter_smoke_and_determinism(tmp_path):
     assert {r['facet'] for r in bound} >= set(FACETS)
     assert {r['facet'] for r in bound} <= set(FACETS) | {
         'intraday_change', 'interday_change', 'run_structure'}
+    features={}
     for r in bound:
         literal_threshold(r['comparison_threshold'])
         assert r['question_id'].startswith('BM1-')
+        assert r['feature_id'].startswith('BF1-')
+        signature=tuple(r[k] for k in ('feature_json','feature_expression','feature_kind','feature_unit'))
+        assert features.setdefault(r['feature_id'],signature)==signature
         assert r['knowable_at_setup_open']
         assert r['not_evaluable_condition']
     assert report1['unbound_oat_variants'] > 0
     assert (tmp_path / 'docs' / REPORT).exists()
+
+
+def test_scalar_feature_ids_distinguish_components_of_one_native_recipe(grid):
+    qid='B|candles|OHLC|inside_outside|1x3'
+    definitions=bind_master_question(grid.tree[qid],next(grid.variants(qid)))
+    assert {q['source_outcome'] for q in definitions}=={
+        'inside_cluster_ge','outside_after_inside','mostly_outside','none'}
+    assert len({q['feature_id'] for q in definitions})==4
+    assert {q['feature_kind'] for q in definitions}=={'integer_count','boolean'}
