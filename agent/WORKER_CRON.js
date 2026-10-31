@@ -94,7 +94,7 @@ async function wakeDecide(env) {
   if (!reasons.length) reasons.push("heartbeat: interval elapsed");
 
   const stamp = new Date(now).toISOString();
-  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
+  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; "), last_main_sha: head }, wake.sha);
 }
 
 // Add this method INSIDE the existing export default object:
