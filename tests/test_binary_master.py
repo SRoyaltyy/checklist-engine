@@ -1339,6 +1339,119 @@ def test_evaluate_capitulation_bar(grid):
         assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
 
 
+def test_bind_batch11_variants(grid):
+    row, variant = _q(grid, 'B|extremes|new_highs_lows|hl_base_breakout|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 13         # up/down x lt5/b5_20/gt20 x extreme/not (12) + none
+    f = defs['up_lt5_extreme']['feature']
+    assert (f['pivot_k_min'], f['pivot_k_divisor'], f['age_recent'],
+            f['age_old'], f['rsi_high'], f['rsi_low']) == ('2', '10', '5', '20', '70', '30')
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('S_rsi_extreme_high') == '80')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    assert defs2['up_lt5_extreme']['feature']['rsi_high'] == '80'
+
+
+def _hl_warm_rising(start=100.0, step=1.0):
+    return [(start + i * step, start + i * step + 0.5, start + i * step - 0.5,
+             start + i * step, 100.0) for i in range(30)]
+
+
+def _hl_warm_osc(start):
+    out, p = [], float(start)
+    for i in range(30):
+        p += 0.5 if i % 2 else -0.5
+        out.append((p, p + 0.4, p - 0.4, p, 100.0))
+    return out
+
+
+# 10-bar windows: pivot lows (highs) at idx 2 and 5, first breakout bar idx 6
+# (dist 1 -> lt5).  "not" windows keep the warmup level adjacent to the window
+# so the breakout day is not itself an overbought/oversold day; "extreme"
+# windows gap away from a trending warmup, which is what pushes RSI6/12/24
+# all past 70 (below 30 for the mirror).
+_HL_WIN_UP = [(131.2, 131.6, 130.7, 131.0, 100.0), (131.0, 131.2, 130.0, 130.3, 100.0),
+              (130.3, 130.5, 129.3, 129.9, 100.0), (129.9, 130.9, 129.8, 130.6, 100.0),
+              (130.6, 130.8, 130.1, 130.4, 100.0), (130.4, 130.6, 129.6, 130.2, 100.0),
+              (130.2, 134.5, 130.0, 134.0, 100.0), (134.0, 136.5, 133.8, 136.0, 100.0),
+              (136.0, 138.4, 135.8, 138.0, 100.0), (138.0, 141.0, 137.8, 140.5, 100.0)]
+_HL_WIN_DOWN = [(128.8, 129.3, 128.4, 129.0, 100.0), (129.0, 130.0, 128.8, 129.7, 100.0),
+                (129.7, 130.7, 129.5, 130.1, 100.0), (130.1, 130.2, 129.1, 129.4, 100.0),
+                (129.4, 129.9, 128.6, 129.6, 100.0), (129.6, 130.4, 129.2, 129.8, 100.0),
+                (129.8, 130.0, 125.5, 126.0, 100.0), (126.0, 126.3, 123.8, 124.2, 100.0),
+                (124.2, 124.5, 121.8, 122.2, 100.0), (122.2, 122.5, 119.8, 120.2, 100.0)]
+_HL_WIN_UP_NOT = [(128.6, 129.0, 128.5, 128.8, 100.0), (128.4, 128.9, 128.2, 128.4, 100.0),
+                  (128.2, 128.5, 127.9, 128.1, 100.0), (128.9, 129.0, 128.3, 128.8, 100.0),
+                  (129.0, 129.0, 128.6, 128.9, 100.0), (128.9, 129.0, 128.2, 128.7, 100.0),
+                  (129.0, 129.1, 128.9, 129.1, 100.0), (129.4, 129.6, 129.2, 129.5, 100.0),
+                  (129.5, 129.8, 129.4, 129.6, 100.0), (129.6, 129.9, 129.5, 129.7, 100.0)]
+_HL_WIN_DOWN_NOT = [(129.3, 129.6, 129.0, 129.2, 100.0), (128.9, 129.7, 128.6, 128.8, 100.0),
+                    (128.7, 130.0, 128.3, 128.5, 100.0), (128.8, 129.4, 128.6, 128.9, 100.0),
+                    (128.9, 129.3, 128.7, 129.0, 100.0), (128.8, 129.5, 128.5, 128.8, 100.0),
+                    (128.7, 129.1, 128.0, 128.2, 100.0), (128.2, 129.0, 127.9, 127.9, 100.0),
+                    (127.8, 128.4, 127.7, 127.8, 100.0), (127.7, 128.2, 127.6, 127.7, 100.0)]
+
+
+def _hl_win_band():
+    """20-bar window, pivot lows (2, 5), first breakout bar idx 11
+    (dist 6 -> b5_20).  Warmup level matches the window so the breakout
+    day is not an RSI-extreme day."""
+    closes = [128.8, 128.4, 128.1, 128.6, 128.8, 128.4, 128.5, 128.6, 128.5,
+              128.6, 128.7, 129.0, 129.1, 129.2, 129.3, 129.4, 129.5, 129.6,
+              129.7, 129.8]
+    lows = [128.5, 128.2, 127.9, 128.3, 128.6, 128.2, 128.3, 128.4, 128.3,
+            128.4, 128.5, 128.8, 128.9, 129.0, 129.1, 129.2, 129.3, 129.4,
+            129.5, 129.6]
+    return [(c - 0.05, c + 0.05, lows[i], c, 100.0) for i, c in enumerate(closes)]
+
+
+def test_evaluate_hl_base_breakout(grid):
+    row, variant = _q(grid, 'B|extremes|new_highs_lows|hl_base_breakout|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 40  # 30 RSI warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # up: rising warmup, HL base at idx 2/5 (129.3 -> 129.6), breakout idx 6
+    # closes 134.0 above every earlier window high; trending RSI all > 70
+    bars = _bars_hlv(_hl_warm_rising() + _HL_WIN_UP)
+    assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up_lt5_not'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['down_lt5_extreme'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # down mirror: falling warmup, lower-high top at idx 2/5, breakdown idx 6
+    bars = _bars_hlv(_hl_warm_rising(160.0, -1.0) + _HL_WIN_DOWN)
+    assert evaluate_master(defs['down_lt5_extreme'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'NO'
+    # not-extreme: warmup level adjacent to window, small breakout day move
+    bars = _bars_hlv(_hl_warm_osc(128.5) + _HL_WIN_UP_NOT)
+    assert evaluate_master(defs['up_lt5_not'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'NO'
+    bars = _bars_hlv(_hl_warm_osc(129.5) + _HL_WIN_DOWN_NOT)
+    assert evaluate_master(defs['down_lt5_not'], bars, setup, last).answer == 'YES'
+    # monotonically rising window: no pivot pair, no breakout -> none
+    mono = [(131.0 + i, 131.5 + i, 130.5 + i, 131.5 + i, 100.0) for i in range(10)]
+    bars = _bars_hlv(_hl_warm_rising() + mono)
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'NO'
+    # all-flat warmup: RSI seeding window is 0/0 -> NOT_EVALUABLE, never NO
+    flat = [(100.0, 100.5, 99.5, 100.0, 100.0)] * 30
+    bars = _bars_hlv(flat + _HL_WIN_UP)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    # b5_20 band: 20-bar window, breakout 6 bars after the second pivot low
+    row20, variant20 = _q(grid, 'B|extremes|new_highs_lows|hl_base_breakout|1x20')
+    defs20 = _by_outcome(bind_master_question(row20, variant20))
+    span20 = 50  # 30 RSI warmup + 20 window
+    setup20 = date(2024, 3, 1) + timedelta(days=span20 + 1)
+    last20 = 100 + span20 - 1
+    bars = _bars_hlv(_hl_warm_osc(128.5) + _hl_win_band())
+    assert evaluate_master(defs20['up_b5_20_not'], bars, setup20, last20).answer == 'YES'
+    assert evaluate_master(defs20['up_lt5_not'], bars, setup20, last20).answer == 'NO'
+    assert evaluate_master(defs20['up_gt20_not'], bars, setup20, last20).answer == 'NO'
+    assert evaluate_master(defs20['none'], bars, setup20, last20).answer == 'NO'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

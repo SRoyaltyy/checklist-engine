@@ -243,6 +243,35 @@ def _split_segments(close):
     return slice(0, k + 1), slice(k, len(close))
 
 
+def _rsi_at(close, period, idx):
+    """Wilder RSI(period) at absolute bar idx, seeded with the simple average
+    of the first `period` changes (same seeding as the L3 RSI recipes).
+    Needs idx >= period; None when the seeding window is all-flat (0/0)."""
+    changes = np.diff(close[:idx + 1])
+    if len(changes) < period:
+        return None
+    gains = np.maximum(changes, 0.0)
+    losses = np.maximum(-changes, 0.0)
+    ag = float(gains[:period].mean(dtype=np.float64))
+    al = float(losses[:period].mean(dtype=np.float64))
+    if al == 0:
+        if ag == 0:
+            return None
+        val = 100.0
+    else:
+        val = 100.0 - 100.0 / (1.0 + ag / al)
+    for j in range(period, len(changes)):
+        ag = (ag * (period - 1) + gains[j]) / period
+        al = (al * (period - 1) + losses[j]) / period
+        if al == 0:
+            if ag == 0:
+                return None
+            val = 100.0
+        else:
+            val = 100.0 - 100.0 / (1.0 + ag / al)
+    return val
+
+
 def _measure(recipe, candles, feature=None):
     """Return the binary64 measurement or None (NOT_EVALUABLE)."""
     opened = _strict_positive([b.open for b in candles], 'native open')
@@ -953,6 +982,84 @@ def _measure(recipe, candles, feature=None):
                 shape = 'mid'
             out[direction + '_age' + band + '_' + size + '_' + rec + '_' + shape] = True
             return out
+        if recipe == 'native_hl_base_breakout_v1':
+            # Higher-low base breakout (mirror lower-high top breakdown):
+            # strict swing pivots (min/max of +-k window bars, k =
+            # max(S_pivot_k_min, N//S_pivot_k_divisor)); scan consecutive
+            # pivot-low pairs from the latest, first pair with a higher
+            # second low whose later first bar closes above EVERY earlier
+            # window high = breakout (window-high reading, breakout bar
+            # excluded from its own max; documented). Bars HL->breakout
+            # bucketed <recent / recent..old / >old. RSI6/12/24 on the
+            # breakout bar all > S_rsi_extreme_high (up) or all < low (down)
+            # = extreme. Up takes precedence when both somehow qualify.
+            lb = int(feature['lookback'])
+            k = max(int(feature['pivot_k_min']),
+                    lb // int(feature['pivot_k_divisor']))
+            recent = int(feature['age_recent'])
+            old = int(feature['age_old'])
+            n = len(candles)
+            if n < lb + 25 or k < 1 or 2 * k >= lb:
+                return None
+            w0 = n - lb
+            win_c = close[w0:]
+            win_h = high[w0:]
+            win_l = low[w0:]
+            piv_lo = [i for i in range(k, lb - k)
+                      if win_l[i] < min(win_l[i - k:i]) and win_l[i] < min(win_l[i + 1:i + k + 1])]
+            piv_hi = [i for i in range(k, lb - k)
+                      if win_h[i] > max(win_h[i - k:i]) and win_h[i] > max(win_h[i + 1:i + k + 1])]
+
+            def rsi_all(idx, cmp_hi):
+                for period, edge in ((6, feature['rsi_high']), (12, feature['rsi_high']),
+                                     (24, feature['rsi_high'])) if cmp_hi else (
+                        (6, feature['rsi_low']), (12, feature['rsi_low']),
+                        (24, feature['rsi_low'])):
+                    v = _rsi_at(close, period, w0 + idx)
+                    if v is None:
+                        return None
+                    if cmp_hi and not v > float(edge):
+                        return False
+                    if not cmp_hi and not v < float(edge):
+                        return False
+                return True
+
+            found = None
+            for i2 in reversed(piv_lo[1:]):
+                i1 = piv_lo[piv_lo.index(i2) - 1]
+                if not win_l[i2] > win_l[i1]:
+                    continue
+                for t in range(i2 + 1, lb):
+                    if win_c[t] > float(np.max(win_h[:t])):
+                        found = ('up', t - i2, t)
+                        break
+                if found:
+                    break
+            if found is None:
+                for i2 in reversed(piv_hi[1:]):
+                    i1 = piv_hi[piv_hi.index(i2) - 1]
+                    if not win_h[i2] < win_h[i1]:
+                        continue
+                    for t in range(i2 + 1, lb):
+                        if win_c[t] < float(np.min(win_l[:t])):
+                            found = ('down', t - i2, t)
+                            break
+                    if found:
+                        break
+            out = {o: False for o in tuple(
+                d + '_' + b + '_' + r for d in ('up', 'down')
+                for b in ('lt5', 'b5_20', 'gt20')
+                for r in ('extreme', 'not')) + ('none',)}
+            if found is None:
+                out['none'] = True
+                return out
+            direction, dist, t = found
+            band = 'lt5' if dist < recent else 'b5_20' if dist <= old else 'gt20'
+            extreme = rsi_all(t, direction == 'up')
+            if extreme is None:
+                return None
+            out[direction + '_' + band + ('_extreme' if extreme else '_not')] = True
+            return out
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1520,6 +1627,28 @@ FACETS = {
                                      for s in ('sizeS', 'sizeL')
                                      for r in ('recY', 'recN')
                                      for sh in ('end', 'mid', 'wk')) + ('none',)}),
+    'hl_base_breakout': dict(
+        binding='mixed', l1_l3=(('extremes', 'new_highs_lows'),),
+        recipe='native_hl_base_breakout_v1',
+        unit='higher_low_base_breakout_direction_age_rsi_extreme',
+        outcomes=tuple(d + '_' + b + '_' + r for d in ('up', 'down')
+                       for b in ('lt5', 'b5_20', 'gt20')
+                       for r in ('extreme', 'not')) + ('none',),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_pivot_k_min', 'S_pivot_k_divisor',
+                          'S_age_recent_bars', 'S_age_old_bars',
+                          'S_rsi_extreme_high', 'S_rsi_extreme_low'),
+        baked_map={'S_pivot_k_min': 'pivot_k_min',
+                   'S_pivot_k_divisor': 'pivot_k_divisor',
+                   'S_age_recent_bars': 'age_recent',
+                   'S_age_old_bars': 'age_old',
+                   'S_rsi_extreme_high': 'rsi_high',
+                   'S_rsi_extreme_low': 'rsi_low'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(d + '_' + b + '_' + r
+                                     for d in ('up', 'down')
+                                     for b in ('lt5', 'b5_20', 'gt20')
+                                     for r in ('extreme', 'not')) + ('none',)}),
 }
 
 def _iter_specs():
@@ -1725,7 +1854,8 @@ _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1,
                 'native_segment_atr_compare_v1': 14,
-                'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49}
+                'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49,
+                'native_hl_base_breakout_v1': 30}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
@@ -1735,7 +1865,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_full_stack_streak_v1',
                         'native_ma30_side_streak_v1',
                         'native_osc_swing_speed_v1',
-                        'native_absorption_day_v1', 'native_capitulation_bar_v1'}
+                        'native_absorption_day_v1', 'native_capitulation_bar_v1',
+                        'native_hl_base_breakout_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
