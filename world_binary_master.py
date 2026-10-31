@@ -295,6 +295,71 @@ def _measure(recipe, candles, feature=None):
                     'start': bool(not at_price_low and start),
                     'middle': bool(not at_price_low and not start and not end),
                     'end': bool(not at_price_low and not start and end)}
+        if recipe in ('native_rsi_floor_v1', 'native_rsi_ceiling_v1'):
+            # Wilder RSI(period) seeded with the simple average of the first
+            # `period` changes over the fetched warmup, then smoothed forward
+            # (all bars <= D-1). Window = last lookback candles. The three
+            # baked thresholds partition the window extreme into 4 codes
+            # (floor: count of thresholds with extreme >= t; ceiling: > t).
+            period = int(feature['rsi_period'])
+            changes = np.diff(close)
+            if len(changes) < period:
+                return None
+            gains = np.maximum(changes, 0.0)
+            losses = np.maximum(-changes, 0.0)
+            avg_g = float(gains[:period].mean(dtype=np.float64))
+            avg_l = float(losses[:period].mean(dtype=np.float64))
+            values = []
+
+            def rsi(ag, al):
+                if al == 0:
+                    return 100.0 if ag > 0 else None
+                return 100.0 - 100.0 / (1.0 + ag / al)
+
+            values.append(rsi(avg_g, avg_l))
+            for j in range(period, len(changes)):
+                avg_g = (avg_g * (period - 1) + gains[j]) / period
+                avg_l = (avg_l * (period - 1) + losses[j]) / period
+                values.append(rsi(avg_g, avg_l))
+            lookback = len(values)                  # window bars
+            if lookback < 1 or any(v is None for v in values):
+                return None
+            thresholds = sorted(float(feature[k]) for k in ('rsi_t1', 'rsi_t2', 'rsi_t3'))
+            if recipe == 'native_rsi_floor_v1':
+                extreme = min(values)
+                return sum(1 for t in thresholds if extreme >= t)
+            extreme = max(values)
+            return sum(1 for t in thresholds if extreme > t)
+        if recipe == 'native_ma_cross_v1':
+            # MA from the L3 derivative (SMA_p / EMA_p, period baked in the
+            # feature). candles[0:period] warm the MA (EMA seeded with the
+            # SMA of the first period bars); window = last lookback candles,
+            # plus one prior bar for the first cross check.
+            period = int(feature['ma_period'])
+            n = len(candles) - period
+            if n < 2:
+                return None
+            # MA values for candle indices period-1 .. len-1 (the prior bar
+            # plus the whole window): SMA = moving mean over `period` closes;
+            # EMA seeded with the SMA of the first period closes.
+            win_close = close
+            if feature['ma_kind'] == 'SMA':
+                ma = np.convolve(win_close, np.ones(period) / period, mode='valid')
+            else:
+                alpha = 2.0 / (period + 1)
+                ma = np.empty(len(win_close) - period + 1, dtype=np.float64)
+                ma[0] = float(win_close[:period].mean(dtype=np.float64))
+                for j in range(period, len(win_close)):
+                    ma[j - period + 1] = alpha * win_close[j] + (1 - alpha) * ma[j - period]
+            diff = win_close[period - 1:] - ma
+            up_cross = bool(any(diff[k - 1] <= 0 and diff[k] > 0
+                                for k in range(1, len(diff))))
+            down_cross = bool(any(diff[k - 1] >= 0 and diff[k] < 0
+                                  for k in range(1, len(diff))))
+            return {'up': bool(up_cross and not down_cross),
+                    'down': bool(down_cross and not up_cross),
+                    'both': bool(up_cross and down_cross),
+                    'none': bool(not up_cross and not down_cross)}
         if recipe == 'native_volume_dominance_flip_v1':
             # Window split in half; a side is up-dominant when up-bar volume
             # strictly exceeds down-bar volume. to_up = early not up-dominant
@@ -577,6 +642,52 @@ FACETS = {
         comparator_by_outcome={
             'bull_lighter': '<', 'bull_similar': '>=', 'bull_heavier': '>',
             'bear_lighter': '<', 'bear_similar': '>=', 'bear_heavier': '>'}),
+    'rsi_floor': dict(
+        binding='mixed',
+        l1_l3=tuple(('overbought_oversold', 'RSI' + str(n)) for n in (6, 12, 14, 24)),
+        recipe='native_rsi_floor_v1', unit='minimum_window_rsi_threshold_code',
+        outcomes=('below_extreme', 'low_band', 'mid_band', 'high_band'),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_rsi_extreme_low', 'C221_rsi_floor__scalar40',
+                          'C222_rsi_floor__scalar50'),
+        baked_map={'S_rsi_extreme_low': 'rsi_t1',
+                   'C221_rsi_floor__scalar40': 'rsi_t2',
+                   'C222_rsi_floor__scalar50': 'rsi_t3'},
+        l3_map={'RSI6': {'rsi_period': '6'}, 'RSI12': {'rsi_period': '12'},
+                'RSI14': {'rsi_period': '14'}, 'RSI24': {'rsi_period': '24'}},
+        outcome_spec={'below_extreme': ('integer_count', '=', 'code0'),
+                      'low_band': ('integer_count', '=', 'code1'),
+                      'mid_band': ('integer_count', '=', 'code2'),
+                      'high_band': ('integer_count', '=', 'code3')}),
+    'rsi_ceiling': dict(
+        binding='mixed',
+        l1_l3=tuple(('overbought_oversold', 'RSI' + str(n)) for n in (6, 12, 14, 24)),
+        recipe='native_rsi_ceiling_v1', unit='maximum_window_rsi_threshold_code',
+        outcomes=('above_extreme', 'high_band', 'mid_band', 'low_band'),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_rsi_extreme_high', 'C224_rsi_ceiling__scalar60',
+                          'C225_rsi_ceiling__scalar50'),
+        baked_map={'S_rsi_extreme_high': 'rsi_t1',
+                   'C224_rsi_ceiling__scalar60': 'rsi_t2',
+                   'C225_rsi_ceiling__scalar50': 'rsi_t3'},
+        l3_map={'RSI6': {'rsi_period': '6'}, 'RSI12': {'rsi_period': '12'},
+                'RSI14': {'rsi_period': '14'}, 'RSI24': {'rsi_period': '24'}},
+        outcome_spec={'above_extreme': ('integer_count', '=', 'code3'),
+                      'high_band': ('integer_count', '=', 'code2'),
+                      'mid_band': ('integer_count', '=', 'code1'),
+                      'low_band': ('integer_count', '=', 'code0')}),
+    'fresh_cross': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_ma_cross_v1', unit='close_ma_cross_events_in_window',
+        outcomes=('up', 'down', 'both', 'none'), cutoff_id=None,
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={'up': ('boolean', '=', 'one'), 'down': ('boolean', '=', 'one'),
+                      'both': ('boolean', '=', 'one'), 'none': ('boolean', '=', 'one')}),
     'flip': dict(
         binding='mixed', l1_l3=(('volume', 'up_down_volume'),),
         recipe='native_volume_dominance_flip_v1',
@@ -625,7 +736,13 @@ def _definition(spec, timeframe, lookback, outcome, transform, operator, thresho
                   transform=transform, bar_definition=BAR_DEFINITION,
                   price_basis=PRICE_BASIS, numeric_contract=CONTRACT)
     scalar.update(feature_extra or {})
-    semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold)
+    # The outcome is part of the question's meaning: several outcomes can share
+    # one measurement (same feature, comparator and threshold) yet ask different
+    # questions (e.g. fresh_cross up/down/both/none all boolean ==1 on the same
+    # cross-event dict). Without it in the semantic identity, the build's
+    # question_id dedupe silently kept only the first outcome of such facets.
+    semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold,
+                    outcome=outcome)
     expression = (spec['recipe'] + '(' + str(timeframe) + 'd,N=' + str(lookback) + ')'
                   + expression_suffix)
     return dict(
@@ -661,6 +778,8 @@ def _bind_facet(tree_row, variant, spec):
         feature_extra = {key: settings[dial] for dial, key in spec['baked_map'].items()}
     if 'volume_source_by_l3' in spec:
         feature_extra['volume_source'] = spec['volume_source_by_l3'][tree_row['L3_derivative']]
+    if 'l3_map' in spec:
+        feature_extra.update(spec['l3_map'][tree_row['L3_derivative']])
 
     if spec['binding'] == 'bool3':
         return [_definition(spec, timeframe, lookback, outcome, 'identity', '=', '1',
@@ -673,7 +792,12 @@ def _bind_facet(tree_row, variant, spec):
         result = []
         for outcome in spec['outcomes']:
             kind, operator, tsource = spec['outcome_spec'][outcome]
-            threshold = canonical_number(v) if tsource == 'cutoff' else '1'
+            if tsource == 'cutoff':
+                threshold = canonical_number(v)
+            elif tsource.startswith('code'):
+                threshold = tsource[4:]
+            else:
+                threshold = '1'
             suffix = ';max_inside_run' if tsource == 'cutoff' else ';' + outcome
             result.append(_definition(spec, timeframe, lookback, outcome, 'identity',
                                       operator, threshold, kind, variant.variant_id,
@@ -751,7 +875,8 @@ _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
-                        'native_maxvol_wick_v1', 'native_volume_dominance_flip_v1'}
+                        'native_maxvol_wick_v1', 'native_volume_dominance_flip_v1',
+                        'native_ma_cross_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -762,6 +887,10 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['baseline_bars'])  # baked S_baseline_bars dial
         if feature['recipe'] == 'native_volume_spike_v1':
             extra = int(feature['spike_baseline_bars']) - 1  # baked C031 dial
+        if feature['recipe'] in ('native_rsi_floor_v1', 'native_rsi_ceiling_v1'):
+            extra = int(feature['rsi_period'])               # RSI seed warmup
+        if feature['recipe'] == 'native_ma_cross_v1':
+            extra = int(feature['ma_period'])                # MA warmup
         lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)
