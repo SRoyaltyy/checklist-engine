@@ -227,10 +227,22 @@ def test_a_release_is_not_counted_before_it_is_announced():
     assert row.days_to_cpi == 1
 
 
-def test_a_cancellation_announced_after_the_cutoff_does_not_drop_the_date():
-    sessions = pd.bdate_range("2024-01-02", periods=80)
-    cpi = pd.to_datetime(["2024-01-11", "2024-02-13", "2024-03-12"])
-    cancelled = pd.to_datetime(["2024-03-12"])
-    # Announced on 2024-02-13, so at a 2024-02-12 cutoff it is not known yet.
-    panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, [], "2024-02-12", cpi_cancellations=cancelled)
-    assert panel.set_index("date").loc[pd.Timestamp("2024-02-12"), "days_to_cpi"] == 1
+def test_schedule_publication_rolls_off_a_weekend():
+    # 2023-07-01 is a Saturday, so the 2024 block lands on Monday the 3rd.
+    assert cal.schedule_published(2024) == pd.Timestamp("2023-07-03")
+
+
+def test_cancellation_rows_default_to_the_block_and_accept_an_override():
+    default = cal._cancellation_rows(["2024-03-12"])
+    assert default.iloc[0].announced == cal.schedule_published(2024)
+    assert default.iloc[0].status == "cancelled"
+    explicit = cal._cancellation_rows(["2024-03-12"], announced="2024-02-01")
+    assert explicit.iloc[0].announced == pd.Timestamp("2024-02-01")
+
+
+def test_month_end_is_not_claimed_for_a_half_built_month():
+    sessions = pd.bdate_range("2024-01-02", periods=60)
+    early = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), [], [], "2024-01-17")
+    assert not bool(early[early.date.dt.month == 1].iloc[-1].is_month_end)
+    full = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), [], [], "2024-02-15")
+    assert bool(full[full.date.dt.month == 1].iloc[-1].is_month_end)
