@@ -235,6 +235,14 @@ def _osc_series(feature, close, high, low):
     return series, line
 
 
+def _split_segments(close):
+    """Split a window at its FIRST lowest close (argmin; on a plateau the
+    earliest lowest bar). The pivot bar belongs to BOTH legs: the decline
+    into it and the rally out of it. Returns (decline_slice, rally_slice)."""
+    k = int(np.argmin(close))
+    return slice(0, k + 1), slice(k, len(close))
+
+
 def _measure(recipe, candles, feature=None):
     """Return the binary64 measurement or None (NOT_EVALUABLE)."""
     opened = _strict_positive([b.open for b in candles], 'native open')
@@ -679,6 +687,54 @@ def _measure(recipe, candles, feature=None):
                              for b in ('short', 'mid', 'long')
                              for r in ('_record', '_not'))
             return {o: o == key for o in outcomes}
+        if recipe == 'native_osc_swing_speed_v1':
+            # Latest COMPLETE cross-zone swing of the L3 oscillator inside the
+            # window: bear = a bar >= zone_high with a LATER bar <= zone_low
+            # (bull mirrored). Take the latest ending touch j, then the latest
+            # starting touch i before j; swing length = j - i (0 = same-bar
+            # round trip). The three baked scalar dials read as contiguous
+            # ranges: <=e1 short | [e_lo,e_hi] mid | >e_hi long, requiring
+            # e_lo == e1+1 (a non-contiguous OAT pairing -> NOT_EVALUABLE);
+            # no complete swing in the window -> none. Both directions are
+            # measured independently and may both fire.
+            lb = int(feature['lookback'])
+            e1 = int(feature['swing_low_edge'])
+            e_lo = int(feature['swing_mid_lo'])
+            e_hi = int(feature['swing_mid_hi'])
+            if e_lo != e1 + 1:
+                return None
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, _line = osc
+            if len(series) < lb:
+                return None
+            win = series[-lb:]
+            zh = float(feature['zone_high'])
+            zl = float(feature['zone_low'])
+            n = len(win)
+            out = {}
+            for direction, start_cond, end_cond in (
+                    ('bear', lambda v: v >= zh, lambda v: v <= zl),
+                    ('bull', lambda v: v <= zl, lambda v: v >= zh)):
+                length = None
+                ends = [j for j in range(n) if end_cond(win[j])]
+                if ends:
+                    j = ends[-1]
+                    starts = [i for i in range(j) if start_cond(win[i])]
+                    if starts:
+                        length = j - starts[-1]
+                if length is None:
+                    band = 'none'
+                elif length <= e1:
+                    band = 'short'
+                elif length <= e_hi:
+                    band = 'mid'
+                else:
+                    band = 'long'
+                for b in ('short', 'mid', 'long', 'none'):
+                    out[direction + '_' + b] = band == b
+            return out
         if recipe == 'native_volume_dominance_flip_v1':
             # Window split in half; a side is up-dominant when up-bar volume
             # strictly exceeds down-bar volume. to_up = early not up-dominant
@@ -703,6 +759,68 @@ def _measure(recipe, candles, feature=None):
             return {'to_up': bool(not early and late),
                     'to_down': bool(early and not late),
                     'none': bool(early == late)}
+        if recipe == 'native_segment_volume_compare_v1':
+            # Window split at its first lowest close (decline into the pivot
+            # vs rally out of it; the pivot bar counts on both sides).
+            # Ratio = mean rally volume / mean decline volume (mirror band).
+            vol = _nonnegative([b.volume for b in candles], 'native volume')
+            if vol is None:
+                return None
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            win_close = close[-lb:]
+            win_vol = vol[-lb:]
+            decline, rally = _split_segments(win_close)
+            d = float(win_vol[decline].mean(dtype=np.float64))
+            r = float(win_vol[rally].mean(dtype=np.float64))
+            if d == 0:
+                if r == 0:
+                    return None      # both legs zero volume: 0/0 undefined
+                return math.inf      # KNOWN signed infinity per ratio rule
+            return r / d
+        if recipe == 'native_segment_return_compare_v1':
+            # Leg magnitudes around the first lowest close, both >= 0 because
+            # the pivot is the window minimum. Ratio = rally magnitude /
+            # decline magnitude (mirror band).
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            win_close = close[-lb:]
+            decline, rally = _split_segments(win_close)
+            k = decline.stop - 1
+            d_mag = float(win_close[0] / win_close[k] - 1.0)
+            r_mag = float(win_close[-1] / win_close[k] - 1.0)
+            if d_mag == 0:
+                if r_mag == 0:
+                    return None      # perfectly flat window: 0/0 undefined
+                return math.inf      # rally out of a zero decline: KNOWN infinity
+            return r_mag / d_mag
+        if recipe == 'native_segment_atr_compare_v1':
+            # Mean ATR14 of the rally leg vs the decline leg around the first
+            # lowest close, as a SIGNED percent expansion:
+            #   (mean_rally_atr14 / mean_decline_atr14 - 1) * 100
+            # Additive +/-pct band (no mirror). ATR14[t] = mean(TR) over the
+            # 14 bars ending at t, TR needing the prior close; evaluate_master
+            # fetches lookback+14 candles so every window bar has an ATR14.
+            lb = int(feature['lookback'])
+            n = len(candles)
+            if n < lb + 14:
+                return None
+            prev_close = np.concatenate(([close[0]], close[:-1]))
+            tr = np.maximum(high - low, np.maximum(np.abs(high - prev_close),
+                                                   np.abs(low - prev_close)))
+            atr = np.convolve(tr, np.ones(14) / 14, mode='valid')  # entry j = bar j+13
+            win_atr = atr[n - lb - 13:]
+            win_close = close[n - lb:]
+            decline, rally = _split_segments(win_close)
+            d = float(win_atr[decline].mean(dtype=np.float64))
+            r = float(win_atr[rally].mean(dtype=np.float64))
+            if d == 0:
+                if r == 0:
+                    return None      # both legs zero range: 0/0 undefined
+                return math.inf      # expansion out of zero: KNOWN infinity
+            return (r / d - 1.0) * 100.0
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1155,9 +1273,82 @@ FACETS = {
         outcome_spec={'to_up': ('boolean', '=', 'one'),
                       'to_down': ('boolean', '=', 'one'),
                       'none': ('boolean', '=', 'one')}),
+    # ---- batch 9: oscillator swing speed + two-segment compare. The
+    # segment_compare family holds a LIST of sub-specs: one L4 analysis name
+    # with three different (L1,L3) recipes; bind picks the sub-spec whose
+    # l1_l3 matches the tree row. ----
+    'osc_swing_speed': dict(
+        binding='mixed',
+        l1_l3=(('overbought_oversold', 'RSI6'),),
+        recipe='native_osc_swing_speed_v1',
+        unit='latest_complete_rsi6_cross_zone_swing_length_bucket',
+        outcomes=('bull_short', 'bull_mid', 'bull_long', 'bull_none',
+                  'bear_short', 'bear_mid', 'bear_long', 'bear_none'),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_osc_zone_high', 'S_osc_zone_low',
+                          'C228_osc_swing_speed__scalar5',
+                          'C229_osc_swing_speed__scalar6',
+                          'C230_osc_swing_speed__scalar15'),
+        baked_map={'S_osc_zone_high': 'zone_high',
+                   'S_osc_zone_low': 'zone_low',
+                   'C228_osc_swing_speed__scalar5': 'swing_low_edge',
+                   'C229_osc_swing_speed__scalar6': 'swing_mid_lo',
+                   'C230_osc_swing_speed__scalar15': 'swing_mid_hi'},
+        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                         'osc_warmup': '7'}},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('bull_short', 'bull_mid', 'bull_long', 'bull_none',
+                                'bear_short', 'bear_mid', 'bear_long', 'bear_none')}),
+    'segment_compare': [
+        dict(
+            binding='band', mirror=True,
+            l1_l3=(('volume', 'RVOL20'),),
+            recipe='native_segment_volume_compare_v1',
+            unit='mean_rally_volume_over_mean_decline_volume',
+            outcomes=('rally_heavier', 'decline_heavier', 'similar'),
+            cutoff_id='S_ratio_band_1p25',
+            transform_by_outcome={'rally_heavier': 'identity',
+                                  'decline_heavier': 'identity',
+                                  'similar': 'mirror_min'},
+            comparator_by_outcome={'rally_heavier': '>', 'decline_heavier': '<',
+                                   'similar': '>='}),
+        dict(
+            binding='band', mirror=True,
+            l1_l3=(('return_path', 'daily_returns'),),
+            recipe='native_segment_return_compare_v1',
+            unit='rally_magnitude_over_decline_magnitude',
+            outcomes=('rally_steeper', 'decline_steeper', 'similar'),
+            cutoff_id='S_ratio_band_1p5',
+            transform_by_outcome={'rally_steeper': 'identity',
+                                  'decline_steeper': 'identity',
+                                  'similar': 'mirror_min'},
+            comparator_by_outcome={'rally_steeper': '>', 'decline_steeper': '<',
+                                   'similar': '>='}),
+        dict(
+            binding='band', mirror=False,
+            l1_l3=(('volatility', 'ATR14'),),
+            recipe='native_segment_atr_compare_v1',
+            unit='signed_pct_expansion_of_mean_atr14_rally_over_decline',
+            outcomes=('expanded', 'contracted', 'similar'),
+            cutoff_id='C244_segment_compare__pct20',
+            transform_by_outcome={'expanded': 'identity', 'contracted': 'identity',
+                                  'similar': 'abs'},
+            comparator_by_outcome={'expanded': '>', 'contracted': '<',
+                                   'similar': '<='}),
+    ],
 }
 
-for _spec in FACETS.values():
+def _iter_specs():
+    """Flatten FACETS values: a facet holds one spec dict, or a LIST of
+    sub-specs when one L4 analysis name maps to several (L1,L3) recipes
+    (segment_compare: volume/returns/ATR)."""
+    for facet, entry in FACETS.items():
+        specs = entry if isinstance(entry, list) else (entry,)
+        for spec in specs:
+            yield facet, spec
+
+
+for _facet, _spec in _iter_specs():
     _spec.setdefault('l1_l3', (('candles', 'OHLC'),))
     _spec.setdefault('baked_cutoff_ids', ())
     _spec.setdefault('baked_map', {})
@@ -1170,7 +1361,11 @@ NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 
                  'or a 0/0 ratio (zero body AND zero ATR14) -> NOT_EVALUABLE (excluded, never NO). '
                  'Volume facets add: a missing/negative/non-finite native volume or dollar field, '
                  'all-zero window volume on both sides (dominance), a zero 50-bar median volume '
-                 '(dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past).')
+                 '(dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past). '
+                 'Swing/segment facets add: a non-contiguous OAT scalar pairing '
+                 '(swing_mid_lo != swing_low_edge+1), no complete cross-zone swing in the window '
+                 '(both *_none outcomes answer NO; the question is still evaluable), or a zero '
+                 'decline-leg mean with zero rally-leg mean (all three segment recipes).')
 KNOWABLE = ('Uses only native candles with available_from <= setup date D and end < D '
             '(last completed candle = D-1); D open is execution only. Bars are strict '
             + BAR_DEFINITION + ' slot groups; no day-D candle.')
@@ -1312,29 +1507,40 @@ def _bind_facet(tree_row, variant, spec):
     return result
 
 
+def _facet_spec(tree_row):
+    """The sub-spec binding this tree row, or None when the facet does not
+    cover the row's (L1, L3) (falls through to the reference price binders)."""
+    entry = FACETS.get(tree_row['L4_analysis'])
+    if entry is None:
+        return None
+    specs = entry if isinstance(entry, list) else (entry,)
+    key = (tree_row['L1_type'], tree_row['L3_derivative'])
+    return next((spec for spec in specs if key in spec['l1_l3']), None)
+
+
 def bind_master_question(tree_row, variant):
     """Bind a canonical source question+variant to strict binary definitions.
 
     Kimi candle/volume facets bind here; everything else falls through to the
     reference price binders, which raise NotImplementedError when unbound.
     """
-    spec = FACETS.get(tree_row['L4_analysis'])
-    if (tree_row['part'] == 'base' and spec is not None
-            and (tree_row['L1_type'], tree_row['L3_derivative']) in spec['l1_l3']):
+    spec = _facet_spec(tree_row)
+    if tree_row['part'] == 'base' and spec is not None:
         if tree_row['question_id'] != variant.source_question_id:
             raise ValueError('source tree and variant question differ')
         return _bind_facet(tree_row, variant, spec)
     return _bind_gpt_price(tree_row, variant)
 
 
-_MASTER_RECIPES = {spec['recipe'] for spec in FACETS.values()}
+_MASTER_RECIPES = {spec['recipe'] for _facet, spec in _iter_specs()}
 # Recipes that compare each window candle with its predecessor need one extra
 # native candle before the window (gaps, inside/outside, ATR14 warmup); the
 # 50-bar median volume recipes need 49 prior bars; vs_own_past reads its
 # baseline length from the feature (baked S_baseline_bars dial).
 _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1, 'native_run_biggest_move_ratio_v1': 1,
-                'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1}
+                'native_volume_dry_up_at_low_v1': 49, 'native_maxvol_wick_v1': 1,
+                'native_segment_atr_compare_v1': 14}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
@@ -1342,7 +1548,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_ma_cross_v1', 'native_osc_cross_v1',
                         'native_shock_v1', 'native_osc_zone_share_v1',
                         'native_full_stack_streak_v1',
-                        'native_ma30_side_streak_v1'}
+                        'native_ma30_side_streak_v1',
+                        'native_osc_swing_speed_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -1359,7 +1566,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['ma_period'])                # MA warmup
         if feature['recipe'] in ('native_ma_slope_v1', 'native_ma_cross_count_v1'):
             extra = int(feature['ma_period'])                # MA warmup
-        if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1'):
+        if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1',
+                                 'native_osc_swing_speed_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline

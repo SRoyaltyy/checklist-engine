@@ -20,8 +20,16 @@ def grid():
     return CanonicalGrid(ROOT)
 
 
+def _iter_specs():
+    for facet, entry in FACETS.items():
+        for spec in (entry if isinstance(entry, list) else (entry,)):
+            yield facet, spec
+
+
 def _l1_l3(facet):
-    return FACETS[facet]['l1_l3'][0]
+    entry = FACETS[facet]
+    spec = entry[0] if isinstance(entry, list) else entry
+    return spec['l1_l3'][0]
 
 
 def _first_variant(grid, facet):
@@ -32,7 +40,7 @@ def _first_variant(grid, facet):
 
 
 def test_batch1_facets_have_exactly_one_registered_cutoff(grid):
-    for facet, spec in FACETS.items():
+    for facet, spec in _iter_specs():
         expected = {spec['cutoff_id']} | set(spec['baked_cutoff_ids'])
         expected.discard(None)
         for l1, l3 in spec['l1_l3']:
@@ -47,10 +55,10 @@ def test_batch1_facets_have_exactly_one_registered_cutoff(grid):
 
 
 def test_bind_default_and_changed_variants(grid):
-    for facet in FACETS:
+    for facet, spec in _iter_specs():
         row, variant = _first_variant(grid, facet)
         defs = bind_master_question(row, variant)
-        assert len(defs) == len(FACETS[facet]['outcomes'])
+        assert len(defs) == len(spec['outcomes'])
         for d in defs:
             assert d['question_id'].startswith('BM1-')
             assert d['definition_status'] == 'BOUND'
@@ -59,16 +67,16 @@ def test_bind_default_and_changed_variants(grid):
         # bool3 facets (gap fates) have no cutoff dial -> only the default variant
         variants = list(grid.variants(row['question_id']))
         if len(variants) < 2:
-            assert FACETS[facet]['cutoff_id'] is None
+            assert spec['cutoff_id'] is None
             continue
         changed = variants[1]
         defs2 = bind_master_question(row, changed)
         if {d['comparison_threshold'] for d in defs} == {d['comparison_threshold'] for d in defs2}:
             # all-boolean/code facets carry dials inside the feature (baked map);
             # the changed variant must differ in at least one baked feature value
-            assert FACETS[facet].get('baked_map'), facet
+            assert spec.get('baked_map'), facet
             assert any({d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
-                       for key in FACETS[facet]['baked_map'].values())
+                       for key in spec['baked_map'].values())
 
 
 def test_ratio_mirror_threshold_is_exact_reciprocal(grid):
@@ -1031,6 +1039,197 @@ def test_evaluate_ma30_side_streak(grid):
     bars = _bars_from_closes(closes)
     assert evaluate_master(defs['above_long_not'], bars, setup, last).answer == 'YES'
     assert evaluate_master(defs['above_long_record'], bars, setup, last).answer == 'NO'
+
+
+def test_bind_batch9_variants(grid):
+    # osc_swing_speed: five baked dials, eight boolean outcomes
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|osc_swing_speed|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 8
+    f = defs['bear_mid']['feature']
+    assert (f['zone_high'], f['zone_low'], f['swing_low_edge'], f['swing_mid_lo'],
+            f['swing_mid_hi'], f['osc_warmup']) == ('80', '20', '5', '6', '15', '7')
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C228_osc_swing_speed__scalar5') == '7')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    assert defs2['bear_short']['feature']['swing_low_edge'] == '7'
+    # segment_compare: one L4 name, three (L1,L3) sub-specs
+    row, variant = _q(grid, 'B|volume|RVOL20|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['rally_heavier']['feature']['recipe'] == 'native_segment_volume_compare_v1'
+    assert defs['rally_heavier']['comparator'] == '>'
+    assert defs['rally_heavier']['comparison_threshold'] == '1.25'
+    assert defs['decline_heavier']['comparison_threshold'] == '0.8'
+    assert defs['similar']['feature']['transform'] == 'mirror_min'
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('S_ratio_band_1p25') == '2.5')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    assert defs2['rally_heavier']['comparison_threshold'] == '2.5'
+    assert defs2['decline_heavier']['comparison_threshold'] == '0.4'
+    row, variant = _q(grid, 'B|return_path|daily_returns|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['rally_steeper']['feature']['recipe'] == 'native_segment_return_compare_v1'
+    assert defs['rally_steeper']['comparison_threshold'] == '1.5'
+    row, variant = _q(grid, 'B|volatility|ATR14|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['expanded']['feature']['recipe'] == 'native_segment_atr_compare_v1'
+    assert defs['expanded']['comparison_threshold'] == '20'
+    assert defs['contracted']['comparison_threshold'] == '-20'
+    assert defs['similar']['feature']['transform'] == 'abs'
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C244_segment_compare__pct20') == '40')
+    assert _by_outcome(bind_master_question(row, changed))['expanded']['comparison_threshold'] == '40'
+
+
+def _closes_from_changes(start, changes):
+    closes = [float(start)]
+    for d in changes:
+        closes.append(closes[-1] + d)
+    return closes
+
+
+def test_evaluate_osc_swing_speed(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|osc_swing_speed|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 17  # 7 RSI6 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # 9 up (+3, RSI 100 through window bar 2) then 7 down (-5): RSI hits
+    # 18.8 at the last window bar -> bear swing length 7 (start idx 2, end
+    # idx 9) -> bear_mid; no bull swing -> bull_none
+    closes = _closes_from_changes(100, [3] * 9 + [-5] * 7)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bear_mid'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear_short'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['bear_long'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['bear_none'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['bull_none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bull_mid'], bars, setup, last).answer == 'NO'
+    # mirror: 9 down then 7 up -> RSI 0 then 81.1 at the last bar -> bull
+    # swing length 7 -> bull_mid; no bear swing -> bear_none
+    closes = _closes_from_changes(160, [-3] * 9 + [5] * 7)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bull_mid'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear_none'], bars, setup, last).answer == 'YES'
+    # sharp 3-bar drop to RSI 18.6 then recovery above 20: latest (only)
+    # low-zone touch ends the swing at idx 5, start idx 2 -> length 3 -> short
+    closes = _closes_from_changes(100, [3] * 9 + [-18] * 3 + [1] * 4)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['bear_short'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['bear_mid'], bars, setup, last).answer == 'NO'
+    # dial variant C230=5: the 7-bar swing of case 1 exceeds the 5-bar mid
+    # edge -> bear_long
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C230_osc_swing_speed__scalar15') == '5')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    closes = _closes_from_changes(100, [3] * 9 + [-5] * 7)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs2['bear_long'], bars, setup, last).answer == 'YES'
+    # non-contiguous pairing (C228=5, C229=4) -> NOT_EVALUABLE
+    degenerate = next(v for v in grid.variants(row['question_id'])
+                      if dict(v.settings).get('C229_osc_swing_speed__scalar6') == '4')
+    defs3 = _by_outcome(bind_master_question(row, degenerate))
+    for d in defs3.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_segment_volume_compare(grid):
+    row, variant = _q(grid, 'B|volume|RVOL20|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    setup = date(2024, 3, 12)
+    last = 109
+    closes = [12, 11, 10, 9, 8, 9, 10, 11, 12, 13]
+    # pivot = idx 4 (close 8). Rally leg mean 350 vs decline leg mean 100
+    # -> ratio 3.5 -> rally_heavier
+    spec = [(c, c * 1.01, c * 0.99, c, 100 if i < 5 else 400)
+            for i, c in enumerate(closes)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['rally_heavier'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['decline_heavier'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['similar'], bars, setup, last).answer == 'NO'
+    # mirror: rally mean 150 vs decline mean 400 -> ratio 0.375
+    spec = [(c, c * 1.01, c * 0.99, c, 400 if i < 5 else 100)
+            for i, c in enumerate(closes)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['decline_heavier'], bars, setup, last).answer == 'YES'
+    # equal legs -> ratio 1 -> similar
+    spec = [(c, c * 1.01, c * 0.99, c, 200) for c in closes]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs['similar'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['rally_heavier'], bars, setup, last).answer == 'NO'
+    # bars without volume -> NOT_EVALUABLE
+    bars = _bars_hl([(c, c * 1.01, c * 0.99, c) for c in closes])
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_segment_return_compare(grid):
+    row, variant = _q(grid, 'B|return_path|daily_returns|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 10
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # decline 0.5 (12->8), rally 0.625 (8->13) -> ratio 1.25 vs 1.5 band ->
+    # similar
+    bars = _bars_from_closes([12, 11, 10, 9, 8, 9, 10, 11, 12, 13])
+    assert evaluate_master(defs['similar'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['rally_steeper'], bars, setup, last).answer == 'NO'
+    # rally 1.5 (6->15) vs decline 0.667 (10->6) -> ratio 2.25 -> rally_steeper
+    bars = _bars_from_closes([10, 9, 8, 7, 6, 7, 9, 11, 13, 15])
+    assert evaluate_master(defs['rally_steeper'], bars, setup, last).answer == 'YES'
+    # window starts at the low: decline magnitude 0, rally 1.125 -> KNOWN
+    # infinity -> rally_steeper
+    bars = _bars_from_closes([8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+    assert evaluate_master(defs['rally_steeper'], bars, setup, last).answer == 'YES'
+    # perfectly flat window -> 0/0 -> NOT_EVALUABLE
+    bars = _bars_from_closes([10.0] * span)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_segment_atr_compare(grid):
+    row, variant = _q(grid, 'B|volatility|ATR14|segment_compare|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 24  # 14 ATR warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    closes = [12.0] * 14 + [12, 11, 10, 9, 8, 9, 10, 11, 12, 13]
+    # uniform ranges -> near-zero signed change -> similar
+    spec = [(c, c + 2.0, c - 2.0, c) for c in closes]
+    bars = _bars_hl(spec)
+    assert evaluate_master(defs['similar'], bars, setup, last).answer == 'YES'
+    # all-zero ranges (doji at one price) -> 0/0 -> NOT_EVALUABLE
+    bars = _bars_hl([(12.0, 12.0, 12.0, 12.0)] * span)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    # strong expansion/contraction need a long rally leg: ATR14 lags 14 bars,
+    # so a 6-bar rally still carries the decline-era ranges. Use 1x60.
+    row, variant = _q(grid, 'B|volatility|ATR14|segment_compare|1x60')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 74  # 14 ATR warmup + 60 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    decline = [12 - 0.5 * (i + 1) for i in range(12)]          # 12 -> 6
+    rally = [6 + 0.25 * (i + 1) for i in range(48)]            # 6 -> 18
+    closes = [12.0] * 14 + decline + rally
+    pivot = 14 + 11                                            # first lowest close
+    assert closes[pivot] == 6.0 and closes[pivot - 1] == 6.5
+    # decline leg big ranges, rally leg tiny -> contraction
+    spec = [(c, c + (0.05 if i >= pivot else 5.0),
+             c - (0.05 if i >= pivot else 5.0), c)
+            for i, c in enumerate(closes)]
+    bars = _bars_hl(spec)
+    assert evaluate_master(defs['contracted'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['expanded'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['similar'], bars, setup, last).answer == 'NO'
+    # mirror: tiny ranges into the pivot, big after -> expansion
+    spec = [(c, c + (5.0 if i >= pivot else 0.05),
+             c - (5.0 if i >= pivot else 0.05), c)
+            for i, c in enumerate(closes)]
+    bars = _bars_hl(spec)
+    assert evaluate_master(defs['expanded'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['contracted'], bars, setup, last).answer == 'NO'
 
 
 def _stage_root(tmp_path):
