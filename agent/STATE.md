@@ -10,16 +10,8 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 14:31: conftest.py at the repo root puts the root on sys.path and installs a world_timeframes stand-in ONLY when the real import fails, so the three import tests run instead of erroring. It is not loaded by the build script, so a genuinely missing module still fails the build with a real traceback in agent/TEST_LOG.txt.
+2026-10-31 14:55: RUN 41204085538 NEVER RAN A JOB. GitHub rejected the file at sha 96694b42: "Invalid workflow file ... yaml syntax on line 4". Line 4 is on:, so the indentation was stripped and workflow_dispatch sat at column 0. No checkout, no log step, no commit step, so agent/TEST_LOG.txt and conftest.py were both 404 for a reason that has nothing to do with the tests.
 
-LANDING IS UNCONFIRMED. The 14:26 wake fired 46s after the writes and its snapshot still showed the old STATE, so read conftest.py back first. If it is missing, the user's block parser is not firing and the console snippet route is the only way to write.
+The world_timeframes theory is UNPROVEN. conftest.py is written but has never executed.
 
-Next wake: read conftest.py and agent/TEST_LOG.txt. Then dispatch. If tests pass and the build fails, the missing module is confirmed and the fix is to vendor the real world_timeframes, not to extend the stub.
-
-Doorman contract, confirmed from the Worker source: put takes path, branch, text. Content param is text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
-
-Loose @@PUT blocks lose leading whitespace to markdown rendering. Always fence them or YAML breaks.
-
-web_scrape still exhausted. Job logs are 403 without a token, so the log has to be read from the repo, not from the run.
-
-Main 5efb236c, contents unread.
+2026-10-31 14:55: root cause of three silent turns: the userscript put regex required a literal
