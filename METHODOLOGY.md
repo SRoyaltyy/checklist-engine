@@ -801,6 +801,10 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-31 (14:05 HKT) — [4 Questions / v1 master → strict YES/NO] ruling proposals posted for the three big deferred blocks (PR #177).**
+- Concrete, approve-or-amend algorithm proposals: `3ATR_legs` leg partition (close-based 3xATR14 zigzag + 9-label priority), `flag` (3xATR14 pole + contracting <=50% retrace flag), `cup_handle` (lips within 0.5 ATR, depth >=10%, handle <=50% of cup). One-word 'approved' unblocks implementation; 3ATR_legs alone gates 8 families.
+- Still held: LFS/format ruling gates shipping any new CSV rows (508 KB headroom).
+
 - **2026-10-31 (13:55 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 12: `high_then_low`; 58,809 bound; pipeline held for LFS ruling.**
 - `high_then_low` (order of window high vs window low; first-occurrence argmax/argmin; same-bar tie counts as high_first — documented, no same_bar outcome exists) bound for all 14 qids = 28 defs. The last family that fits the current CSV headroom (now 98,491,183 bytes, ~508 KB left).
 - Leak-proof confirmation for batches 1–12 posted on PR #177: `_tf_window` enforces end < D and available_from <= D per bar; recipes measure only their window; calendar tests cover partial-bucket and unavailability paths.
