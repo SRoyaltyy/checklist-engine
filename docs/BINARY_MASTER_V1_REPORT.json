@@ -342,7 +342,7 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "dac29b98c2724774fad4c00c2b422976a4c1f511a0691864ecc972a7b2eb3d64",
+    "world_binary_master.py": "c77bd6adb6feacfc7218a68a99f4152b2669529c117c19b8793e575306a9b74e",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "f1ee99c7386a2d9edb63d5a29dc80b7d46b8cd266c1ef6b0b986622ea84bfc9c",

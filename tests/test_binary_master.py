@@ -1445,11 +1445,17 @@ def test_evaluate_hl_base_breakout(grid):
     bars = _bars_hlv(_hl_warm_rising() + mono)
     assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
     assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'NO'
-    # all-flat warmup: RSI seeding window is 0/0 -> NOT_EVALUABLE, never NO
+    # Flat initialization is unknown only until movement defines RSI. At
+    # this breakout, registered RSI6/12/24 are all defined and above 70.
     flat = [(100.0, 100.5, 99.5, 100.0, 100.0)] * 30
     bars = _bars_hlv(flat + _HL_WIN_UP)
-    for d in defs.values():
-        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    import talib
+    import numpy as np
+    close = np.array([b.close for _, b in sorted(bars.items())])
+    assert all(talib.RSI(close, timeperiod=p)[36] > 70 for p in (6, 12, 24))
+    assert evaluate_master(defs['up_lt5_extreme'], bars, setup, last).answer == 'YES'
+    assert all(evaluate_master(d, bars, setup, last).answer != 'NOT_EVALUABLE'
+               for d in defs.values())
     # b5_20 band: 20-bar window, breakout 6 bars after the second pivot low
     row20, variant20 = _q(grid, 'B|extremes|new_highs_lows|hl_base_breakout|1x20')
     defs20 = _by_outcome(bind_master_question(row20, variant20))

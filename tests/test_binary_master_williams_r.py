@@ -34,12 +34,14 @@ def grid():
 def test_williams_r_bits_match_registered_field_and_truncated_window(frozen, prices):
     high, low = prices + 1., prices - 1.
     feature = dict(osc_kind='WILLR', osc_period='14', cross_line='-50')
-    actual, line = _osc_series(feature, prices, high, low)
+    actual, line, known = _osc_series(feature, prices, high, low)
     native = frozen.parameter_variants(prices, high, low, prices, np.ones(len(prices)))['WILLR14'][13:]
     assert np.array_equal(actual.view(np.uint64), native.view(np.uint64))
     assert (actual <= 0).all() and (actual >= -100).all()
     assert (line == -50).all()
-    shorter, _ = _osc_series(feature, prices[-24:], high[-24:], low[-24:])
+    assert known.all()
+    shorter, _, shorter_known = _osc_series(feature, prices[-24:], high[-24:], low[-24:])
+    assert shorter_known.all()
     assert np.array_equal(shorter.view(np.uint64), native[-11:].view(np.uint64))
 
 
