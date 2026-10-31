@@ -164,6 +164,28 @@ def first_release_dates(vintages):
     return pd.DatetimeIndex(first["vintage_date"].drop_duplicates().sort_values())
 
 
+def schedule_published(year):
+    """The date a whole year's release schedule became public.
+
+    The BLS publishes a year in one block on the first weekday of the
+    preceding July, so every date in that year is knowable from then.
+    """
+    day = pd.Timestamp(year=year - 1, month=SCHEDULE_PUBLISH_MONTH, day=SCHEDULE_PUBLISH_DAY)
+    while day.dayofweek > 4:
+        day += pd.Timedelta(days=1)
+    return day
+
+
+def _cancellation_rows(cancellations, announced=None):
+    """A cancelled date is its own record: announced, then dropped."""
+    days = pd.DatetimeIndex(pd.to_datetime(cancellations if cancellations is not None else []))
+    rows = []
+    for day in days:
+        stamp = announced if announced is not None else schedule_published(day.year)
+        rows.append(dict(announced=pd.Timestamp(stamp), scheduled=day, status="cancelled"))
+    return pd.DataFrame(rows, columns=["announced", "scheduled", "status"])
+
+
 def release_schedule(dates, cancellations=None):
     """Key every release to the date it became public.
 
