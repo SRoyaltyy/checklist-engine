@@ -76,6 +76,22 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python -m ci.outside_event_calendar --out outside-calendar-out --publish
 
+      - name: Record the coverage rows
+        if: always()
+        run: |
+          python - <<PY >> agent/TEST_LOG.txt 2>&1
+          import json
+          from pathlib import Path
+          p = Path("outside-calendar-out/OUTSIDE_EVENT_CALENDAR_PROOF.json")
+          if not p.exists():
+              print("coverage: no proof written")
+          else:
+              rows = {r["series"]: r for r in json.loads(p.read_text())["series"]}
+              for name in ("days_to_cpi", "days_to_jobs"):
+                  r = rows[name]
+                  print(f'{name}: {r["status"]} {r["coverage_percent"]}% rows={r["rows"]} missing={r["missing_sessions"]}')
+          PY
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
