@@ -840,6 +840,109 @@ def test_evaluate_cross_event(grid):
         assert evaluate_master(defs[outcome], bars, setup, last).answer in ('YES', 'NO')
 
 
+def test_bind_batch7_variants(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|cross_count|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 4
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['zero']['feature']['cross_low_edge'] == '2'
+    assert by_outcome['zero']['feature']['cross_high_edge'] == '5'
+    assert by_outcome['zero']['comparison_threshold'] == '0'
+    assert by_outcome['high_band']['comparison_threshold'] == '3'
+    assert all(d['feature_kind'] == 'integer_count' for d in defs)
+
+    row, variant = _q(grid, 'B|volatility|ATR14|shock|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 5
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['none']['feature']['baseline_bars'] == '250'
+    assert by_outcome['none']['feature']['shock_low_mult'] == '3'
+    assert by_outcome['none']['feature']['shock_high_mult'] == '5'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|time_in_zone|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 4
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['mostly_high']['feature']['majority_pct'] == '60'
+    assert by_outcome['mostly_high']['feature']['zone_high'] == '70'
+    assert by_outcome['mostly_high']['feature']['zone_low'] == '30'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('S_majority_share_pct') == '90')
+    defs2 = {d['source_outcome']: d for d in bind_master_question(row, changed)}
+    assert defs2['mostly_high']['feature']['majority_pct'] == '90'
+
+    row, variant = _q(grid, 'B|overbought_oversold|WilliamsR14|time_in_zone|1x10')
+    by_outcome = {d['source_outcome']: d for d in bind_master_question(row, variant)}
+    assert by_outcome['mostly_high']['feature']['zone_high'] == '-20'
+    assert by_outcome['mostly_high']['feature']['zone_low'] == '-80'
+
+
+def test_evaluate_cross_count(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|cross_count|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 30  # 20 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # four sign flips of close vs MA in the window -> mid_band (3-5)
+    closes = [95.0] * 20 + [95.0, 95.0, 105.0, 105.0, 95.0, 95.0, 105.0, 105.0,
+                            95.0, 95.0]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['mid_band'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['zero'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['high_band'], bars, setup, last).answer == 'NO'
+    # perfectly flat -> no crosses -> zero
+    closes = [100.0] * span
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['zero'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mid_band'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_shock(grid):
+    row, variant = _q(grid, 'B|volatility|ATR14|shock|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 260  # 250 baseline + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # quiet baseline (range ~0.3), one huge early window bar (range 10 = ~33x)
+    closes = [100.0 + 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    big = bars[100 + 250]
+    bars[100 + 250] = NativeBar(end=big.end, available_from=big.available_from,
+                                open=big.open, high=big.open + 5.0,
+                                low=big.open - 5.0, close=big.close)
+    assert evaluate_master(defs['big_early'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # uniform ranges -> biggest ratio ~1x -> none
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+
+
+def test_evaluate_time_in_zone(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|time_in_zone|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 17  # 7 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # all window bars strong gains -> RSI 100 throughout -> mostly_high
+    closes = [50.0 + 0.1 * i for i in range(7)] + [50.7 + 1.0 * i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['mostly_high'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'NO'
+    # all losses -> RSI 0 -> mostly_low
+    closes = [50.0 - 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['mostly_low'], bars, setup, last).answer == 'YES'
+    # alternating small +/- keeps RSI mid (~50) -> mostly_mid
+    changes = [1, -1] * 8
+    closes = [50.0]
+    for ch in changes[:span - 1]:
+        closes.append(closes[-1] + 0.1 * ch)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['mostly_mid'], bars, setup, last).answer == 'YES'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

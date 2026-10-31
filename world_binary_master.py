@@ -128,6 +128,114 @@ def _nonnegative(values, name):
     return arr
 
 
+def _ma_series(feature, close):
+    """SMA_p (full-window moving mean) or EMA_p (seed = SMA of the first p
+    bars, then alpha=2/(p+1)); entry k corresponds to candle index p-1+k.
+    Callers must fetch p prior bars (ma_period warmup). None -> too few bars.
+    """
+    period = int(feature['ma_period'])
+    if len(close) < period:
+        return None
+    if feature['ma_kind'] == 'SMA':
+        return np.convolve(close, np.ones(period) / period, mode='valid')
+    alpha = 2.0 / (period + 1)
+    ma = np.empty(len(close) - period + 1, dtype=np.float64)
+    ma[0] = float(close[:period].mean(dtype=np.float64))
+    for j in range(period, len(close)):
+        ma[j - period + 1] = alpha * close[j] + (1 - alpha) * ma[j - period]
+    return ma
+
+
+def _ema_series(values, period):
+    alpha = 2.0 / (period + 1)
+    out = np.empty(len(values) - period + 1, dtype=np.float64)
+    out[0] = float(values[:period].mean(dtype=np.float64))
+    for j in range(period, len(values)):
+        out[j - period + 1] = alpha * values[j] + (1 - alpha) * out[j - period]
+    return out
+
+
+def _osc_series(feature, close, high, low):
+    """Oscillator series per the L3 derivative (documented seeding per kind)
+    and its comparison line, as equal-length float arrays covering the LAST
+    len(series) fetched bars. The line is the definitional constant
+    (midline for RSI/Stoch/WillR/ROC) or the MACD signal series.
+    None -> NOT_EVALUABLE (a zero 14-bar range or flat RSI is undefined,
+    never invented)."""
+    kind = feature['osc_kind']
+    if kind == 'RSI':
+        period = int(feature['osc_period'])
+        changes = np.diff(close)
+        if len(changes) < period:
+            return None
+        gains = np.maximum(changes, 0.0)
+        losses = np.maximum(-changes, 0.0)
+        avg_g = float(gains[:period].mean(dtype=np.float64))
+        avg_l = float(losses[:period].mean(dtype=np.float64))
+
+        def rsi(ag, al):
+            if al == 0:
+                return 100.0 if ag > 0 else None
+            return 100.0 - 100.0 / (1.0 + ag / al)
+
+        vals = [rsi(avg_g, avg_l)]
+        for j in range(period, len(changes)):
+            avg_g = (avg_g * (period - 1) + gains[j]) / period
+            avg_l = (avg_l * (period - 1) + losses[j]) / period
+            vals.append(rsi(avg_g, avg_l))
+        if any(v is None for v in vals):
+            return None
+        series = np.asarray(vals, dtype=np.float64)
+        line = np.full(series.shape, float(feature['cross_line']))
+    elif kind == 'STOCH':
+        period = int(feature['osc_period'])
+        slow = int(feature['osc_slow'])
+        t0 = period - 1
+        raw = np.empty(len(close) - t0, dtype=np.float64)
+        for t in range(t0, len(close)):
+            hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
+            ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
+            if hh == ll:
+                return None
+            raw[t - t0] = 100.0 * (close[t] - ll) / (hh - ll)
+        if len(raw) < slow:
+            return None
+        kernel = np.ones(slow) / slow
+        series = np.convolve(raw, kernel, mode='valid')
+        line = np.full(series.shape, float(feature['cross_line']))
+    elif kind == 'WILLR':
+        period = int(feature['osc_period'])
+        t0 = period - 1
+        series = np.empty(len(close) - t0, dtype=np.float64)
+        for t in range(t0, len(close)):
+            hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
+            ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
+            if hh == ll:
+                return None
+            series[t - t0] = 100.0 * (hh - close[t]) / (hh - ll)
+        line = np.full(series.shape, float(feature['cross_line']))
+    elif kind == 'ROC':
+        period = int(feature['osc_period'])
+        if len(close) <= period:
+            return None
+        base = close[:-period]
+        if (base <= 0).any():
+            return None
+        series = (close[period:] / base - 1.0) * 100.0
+        line = np.full(series.shape, float(feature['cross_line']))
+    elif kind == 'MACD':
+        fast = _ema_series(close, int(feature['osc_fast']))
+        slow = _ema_series(close, int(feature['osc_slow']))
+        macd = fast[-len(slow):] - slow     # bars slow_p-1 .. end
+        if len(macd) < int(feature['osc_signal']):
+            return None
+        line = _ema_series(macd, int(feature['osc_signal']))
+        series = macd[-len(line):]
+    else:
+        raise NotImplementedError('unregistered oscillator kind: ' + kind)
+    return series, line
+
+
 def _measure(recipe, candles, feature=None):
     """Return the binary64 measurement or None (NOT_EVALUABLE)."""
     opened = _strict_positive([b.open for b in candles], 'native open')
@@ -333,26 +441,13 @@ def _measure(recipe, candles, feature=None):
             return sum(1 for t in thresholds if extreme > t)
         if recipe == 'native_ma_cross_v1':
             # MA from the L3 derivative (SMA_p / EMA_p, period baked in the
-            # feature). candles[0:period] warm the MA (EMA seeded with the
-            # SMA of the first period bars); window = last lookback candles,
-            # plus one prior bar for the first cross check.
+            # feature). candles[0:period] warm the MA; window = last lookback
+            # candles, plus one prior bar for the first cross check.
             period = int(feature['ma_period'])
-            n = len(candles) - period
-            if n < 2:
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < 2:
                 return None
-            # MA values for candle indices period-1 .. len-1 (the prior bar
-            # plus the whole window): SMA = moving mean over `period` closes;
-            # EMA seeded with the SMA of the first period closes.
-            win_close = close
-            if feature['ma_kind'] == 'SMA':
-                ma = np.convolve(win_close, np.ones(period) / period, mode='valid')
-            else:
-                alpha = 2.0 / (period + 1)
-                ma = np.empty(len(win_close) - period + 1, dtype=np.float64)
-                ma[0] = float(win_close[:period].mean(dtype=np.float64))
-                for j in range(period, len(win_close)):
-                    ma[j - period + 1] = alpha * win_close[j] + (1 - alpha) * ma[j - period]
-            diff = win_close[period - 1:] - ma
+            diff = close[period - 1:] - ma
             up_cross = bool(any(diff[k - 1] <= 0 and diff[k] > 0
                                 for k in range(1, len(diff))))
             down_cross = bool(any(diff[k - 1] >= 0 and diff[k] < 0
@@ -367,18 +462,8 @@ def _measure(recipe, candles, feature=None):
             # from its first to its last WINDOW bar (ma[0] is the prior-bar
             # anchor and is excluded). Flat band is |slope| <= v (abs transform).
             period = int(feature['ma_period'])
-            win_close = close
-            if len(win_close) <= period:
-                return None
-            if feature['ma_kind'] == 'SMA':
-                ma = np.convolve(win_close, np.ones(period) / period, mode='valid')
-            else:
-                alpha = 2.0 / (period + 1)
-                ma = np.empty(len(win_close) - period + 1, dtype=np.float64)
-                ma[0] = float(win_close[:period].mean(dtype=np.float64))
-                for j in range(period, len(win_close)):
-                    ma[j - period + 1] = alpha * win_close[j] + (1 - alpha) * ma[j - period]
-            if len(ma) < 3:                # need prior anchor + 2 window points
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < 3:      # need prior anchor + 2 window points
                 return None
             first, last = float(ma[1]), float(ma[-1])
             if first <= 0 or not np.isfinite(first) or not np.isfinite(last):
@@ -386,99 +471,17 @@ def _measure(recipe, candles, feature=None):
             return (last / first - 1.0) * 100.0
         if recipe == 'native_osc_cross_v1':
             # Oscillator from the L3 derivative crosses its definitional
-            # midline/signal within the window. Series values are computed
-            # over all fetched bars (seed warmups documented per kind); the
-            # cross check uses the prior bar + the last `lookback` bars only.
-            # All bars end <= D-1; a zero 14-bar range (flat Stoch/WillR) is
-            # undefined -> NOT_EVALUABLE, never invented.
-            kind = feature['osc_kind']
+            # midline/signal within the window (the prior bar anchors the
+            # first check). All bars end <= D-1.
             lb = int(feature['lookback'])
-
-            def _ema_series(values, period):
-                alpha = 2.0 / (period + 1)
-                out = np.empty(len(values) - period + 1, dtype=np.float64)
-                out[0] = float(values[:period].mean(dtype=np.float64))
-                for j in range(period, len(values)):
-                    out[j - period + 1] = alpha * values[j] + (1 - alpha) * out[j - period]
-                return out
-
-            line_is_signal = False
-            if kind == 'RSI':
-                period = int(feature['osc_period'])
-                changes = np.diff(close)
-                if len(changes) < period:
-                    return None
-                gains = np.maximum(changes, 0.0)
-                losses = np.maximum(-changes, 0.0)
-                avg_g = float(gains[:period].mean(dtype=np.float64))
-                avg_l = float(losses[:period].mean(dtype=np.float64))
-
-                def rsi(ag, al):
-                    if al == 0:
-                        return 100.0 if ag > 0 else None
-                    return 100.0 - 100.0 / (1.0 + ag / al)
-
-                vals = [rsi(avg_g, avg_l)]
-                for j in range(period, len(changes)):
-                    avg_g = (avg_g * (period - 1) + gains[j]) / period
-                    avg_l = (avg_l * (period - 1) + losses[j]) / period
-                    vals.append(rsi(avg_g, avg_l))
-                if any(v is None for v in vals):
-                    return None
-                series = np.asarray(vals, dtype=np.float64)
-                line = float(feature['cross_line'])
-            elif kind == 'STOCH':
-                period = int(feature['osc_period'])
-                slow = int(feature['osc_slow'])
-                t0 = period - 1
-                raw = np.empty(len(close) - t0, dtype=np.float64)
-                for t in range(t0, len(close)):
-                    hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
-                    ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
-                    if hh == ll:
-                        return None
-                    raw[t - t0] = 100.0 * (close[t] - ll) / (hh - ll)
-                if len(raw) < slow:
-                    return None
-                kernel = np.ones(slow) / slow
-                series = np.convolve(raw, kernel, mode='valid')
-                line = float(feature['cross_line'])
-            elif kind == 'WILLR':
-                period = int(feature['osc_period'])
-                t0 = period - 1
-                series = np.empty(len(close) - t0, dtype=np.float64)
-                for t in range(t0, len(close)):
-                    hh = float(high[t - period + 1:t + 1].max(dtype=np.float64))
-                    ll = float(low[t - period + 1:t + 1].min(dtype=np.float64))
-                    if hh == ll:
-                        return None
-                    series[t - t0] = 100.0 * (hh - close[t]) / (hh - ll)
-                line = float(feature['cross_line'])
-            elif kind == 'ROC':
-                period = int(feature['osc_period'])
-                if len(close) <= period:
-                    return None
-                base = close[:-period]
-                if (base <= 0).any():
-                    return None
-                series = (close[period:] / base - 1.0) * 100.0
-                line = float(feature['cross_line'])
-            elif kind == 'MACD':
-                fast = _ema_series(close, int(feature['osc_fast']))
-                slow = _ema_series(close, int(feature['osc_slow']))
-                macd = fast[-len(slow):] - slow     # bars slow_p-1 .. end
-                if len(macd) < int(feature['osc_signal']):
-                    return None
-                sig = _ema_series(macd, int(feature['osc_signal']))
-                series = macd[-len(sig):]
-                line_series = sig
-                line_is_signal = True
-            else:
-                raise NotImplementedError('unregistered oscillator kind: ' + kind)
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, line_series = osc
             if len(series) < lb + 1:
                 return None
             a = series[-(lb + 1):]
-            b = line_series[-(lb + 1):] if line_is_signal else np.full(lb + 1, line)
+            b = line_series[-(lb + 1):]
             up_cross = bool(any(a[k - 1] <= b[k - 1] and a[k] > b[k]
                                 for k in range(1, len(a))))
             down_cross = bool(any(a[k - 1] >= b[k - 1] and a[k] < b[k]
@@ -487,6 +490,90 @@ def _measure(recipe, candles, feature=None):
                     'down': bool(down_cross and not up_cross),
                     'both': bool(up_cross and down_cross),
                     'none': bool(not up_cross and not down_cross)}
+        if recipe == 'native_ma_cross_count_v1':
+            # Number of times price crossed the L3 MA within the window (the
+            # prior bar anchors the first check). Bucket edges are the two
+            # baked scalar dials: code 0 = no cross; 1 = 1..t1; 2 = t1+1..t2;
+            # 3 = more than t2. A degenerate pairing (t2 < t1) leaves bucket 2
+            # empty -> NOT_EVALUABLE rather than a invented bucket.
+            period = int(feature['ma_period'])
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < 2:
+                return None
+            diff = close[period - 1:] - ma
+            count = 0
+            for k in range(1, len(diff)):
+                if ((diff[k - 1] <= 0 and diff[k] > 0)
+                        or (diff[k - 1] >= 0 and diff[k] < 0)):
+                    count += 1
+            t1 = int(feature['cross_low_edge'])
+            t2 = int(feature['cross_high_edge'])
+            if t2 < t1:
+                return None
+            if count == 0:
+                return 0
+            return 1 + int(count > t1) + int(count > t2)
+        if recipe == 'native_shock_v1':
+            # candles[0:base_n] are the prior bars backing the baseline median
+            # bar range; window = candles[base_n:]. Bucket edges are the two
+            # baked dials: none = biggest window range < t1 x median; mid =
+            # t1..t2 inclusive; big = above t2. Timing = position of the
+            # first max-range window bar (early = first half). A zero median
+            # baseline range is undefined -> NOT_EVALUABLE.
+            base_n = int(feature['baseline_bars'])
+            if len(candles) <= base_n:
+                return None
+            med = float(np.median((high - low)[:base_n]))
+            if med <= 0:
+                return None
+            win = (high - low)[base_n:]
+            i = int(np.argmax(win))              # first max on tie
+            ratio = float(win[i]) / med
+            t1 = float(feature['shock_low_mult'])
+            t2 = float(feature['shock_high_mult'])
+            if t2 < t1:
+                return None
+            early = i < len(win) // 2
+            mid = t1 <= ratio <= t2
+            big = ratio > t2
+            return {'none': bool(ratio < t1),
+                    'mid_early': bool(mid and early),
+                    'mid_late': bool(mid and not early),
+                    'big_early': bool(big and early),
+                    'big_late': bool(big and not early)}
+        if recipe == 'native_osc_zone_share_v1':
+            # Share of window bars with the L3 oscillator in its canonical
+            # zone (zone edges are definitional constants of the oscillator,
+            # declared in the feature). A category wins when its share is
+            # strictly above the baked majority_pct dial (">60% rule" at the
+            # default); if several categories pass (only possible below 50%)
+            # precedence is high > low > mid; otherwise mixed.
+            lb = int(feature['lookback'])
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, _line = osc
+            if len(series) < lb:
+                return None
+            win = series[-lb:]
+            zh = float(feature['zone_high'])
+            zl = float(feature['zone_low'])
+            pct = float(feature['majority_pct'])
+            hi = float((win >= zh).sum(dtype=np.float64)) * 100.0 / lb
+            lo = float((win <= zl).sum(dtype=np.float64)) * 100.0 / lb
+            mid = 100.0 - hi - lo
+            if hi > pct:
+                winner = 'mostly_high'
+            elif lo > pct:
+                winner = 'mostly_low'
+            elif mid > pct:
+                winner = 'mostly_mid'
+            else:
+                winner = 'mixed'
+            return {'mostly_high': winner == 'mostly_high',
+                    'mostly_low': winner == 'mostly_low',
+                    'mostly_mid': winner == 'mostly_mid',
+                    'mixed': winner == 'mixed'}
         if recipe == 'native_volume_dominance_flip_v1':
             # Window split in half; a side is up-dominant when up-bar volume
             # strictly exceeds down-bar volume. to_up = early not up-dominant
@@ -856,6 +943,67 @@ FACETS = {
                           'osc_warmup': '21'}},
         outcome_spec={'up': ('boolean', '=', 'one'), 'down': ('boolean', '=', 'one'),
                       'both': ('boolean', '=', 'one'), 'none': ('boolean', '=', 'one')}),
+    'cross_count': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_ma_cross_count_v1', unit='price_ma_cross_count_window_bucket_code',
+        outcomes=('zero', 'low_band', 'mid_band', 'high_band'), cutoff_id=None,
+        baked_cutoff_ids=('C087_cross_count__scalar2', 'C089_cross_count__scalar5'),
+        baked_map={'C087_cross_count__scalar2': 'cross_low_edge',
+                   'C089_cross_count__scalar5': 'cross_high_edge'},
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={'zero': ('integer_count', '=', 'code0'),
+                      'low_band': ('integer_count', '=', 'code1'),
+                      'mid_band': ('integer_count', '=', 'code2'),
+                      'high_band': ('integer_count', '=', 'code3')}),
+    'shock': dict(
+        binding='mixed', l1_l3=(('volatility', 'ATR14'),),
+        recipe='native_shock_v1',
+        unit='biggest_window_range_over_baseline_median_range_bucket_and_timing',
+        outcomes=('none', 'mid_early', 'mid_late', 'big_early', 'big_late'),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_baseline_bars', 'C242_shock__scalar3',
+                          'C243_shock__mult5'),
+        baked_map={'S_baseline_bars': 'baseline_bars',
+                   'C242_shock__scalar3': 'shock_low_mult',
+                   'C243_shock__mult5': 'shock_high_mult'},
+        outcome_spec={'none': ('boolean', '=', 'one'),
+                      'mid_early': ('boolean', '=', 'one'),
+                      'mid_late': ('boolean', '=', 'one'),
+                      'big_early': ('boolean', '=', 'one'),
+                      'big_late': ('boolean', '=', 'one')}),
+    'time_in_zone': dict(
+        binding='mixed',
+        l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+               ('overbought_oversold', 'Stoch14_3'),
+               ('overbought_oversold', 'WilliamsR14')),
+        recipe='native_osc_zone_share_v1', unit='window_zone_share_majority_bucket',
+        outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
+        baked_cutoff_ids=('S_majority_share_pct',),
+        baked_map={'S_majority_share_pct': 'majority_pct'},
+        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                         'osc_warmup': '7', 'zone_high': '70', 'zone_low': '30'},
+                'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
+                          'osc_warmup': '13', 'zone_high': '70', 'zone_low': '30'},
+                'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
+                          'osc_warmup': '15', 'zone_high': '70', 'zone_low': '30'},
+                'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
+                          'osc_warmup': '25', 'zone_high': '70', 'zone_low': '30'},
+                'Stoch14_3': {'osc_kind': 'STOCH', 'osc_period': '14', 'osc_slow': '3',
+                              'cross_line': '50', 'osc_warmup': '16',
+                              'zone_high': '80', 'zone_low': '20'},
+                'WilliamsR14': {'osc_kind': 'WILLR', 'osc_period': '14',
+                                'cross_line': '-50', 'osc_warmup': '14',
+                                'zone_high': '-20', 'zone_low': '-80'}},
+        outcome_spec={'mostly_high': ('boolean', '=', 'one'),
+                      'mostly_low': ('boolean', '=', 'one'),
+                      'mostly_mid': ('boolean', '=', 'one'),
+                      'mixed': ('boolean', '=', 'one')}),
     'flip': dict(
         binding='mixed', l1_l3=(('volume', 'up_down_volume'),),
         recipe='native_volume_dominance_flip_v1',
@@ -1044,7 +1192,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
                         'native_maxvol_wick_v1', 'native_volume_dominance_flip_v1',
-                        'native_ma_cross_v1', 'native_osc_cross_v1'}
+                        'native_ma_cross_v1', 'native_osc_cross_v1',
+                        'native_shock_v1', 'native_osc_zone_share_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -1059,10 +1208,12 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['rsi_period'])               # RSI seed warmup
         if feature['recipe'] == 'native_ma_cross_v1':
             extra = int(feature['ma_period'])                # MA warmup
-        if feature['recipe'] in ('native_ma_slope_v1',):
+        if feature['recipe'] in ('native_ma_slope_v1', 'native_ma_cross_count_v1'):
             extra = int(feature['ma_period'])                # MA warmup
-        if feature['recipe'] == 'native_osc_cross_v1':
+        if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
+        if feature['recipe'] == 'native_shock_v1':
+            extra = int(feature['baseline_bars'])            # median-range baseline
         lookback = feature['lookback'] + extra
         candles = _tf_window(bars, setup_date, expected_slot, lookback, feature['candle_days'])
         measured = None if candles is None else _measure(feature['recipe'], candles, feature)
