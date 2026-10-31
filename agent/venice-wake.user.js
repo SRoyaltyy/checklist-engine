@@ -37,8 +37,14 @@
   }
 
   function composer() {
-    return document.querySelector("textarea") ||
-      [...document.querySelectorAll('[contenteditable="true"]')].pop();
+    const pick = (sel) => document.querySelector(sel);
+    return (
+      pick('textarea[placeholder*="Ask" i]') ||
+      pick('[contenteditable="true"][data-placeholder*="Ask" i]') ||
+      pick('[contenteditable="true"][aria-label*="Ask" i]') ||
+      pick("textarea") ||
+      [...document.querySelectorAll('[contenteditable="true"]')].pop()
+    );
   }
 
   function fire(state) {
