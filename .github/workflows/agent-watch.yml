@@ -1,0 +1,102 @@
+name: agent-watch
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: venice/calendar-announce-ledger
+      - name: Decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, datetime, pathlib, subprocess
+
+          branch = "venice/calendar-announce-ledger"
+          now = datetime.datetime.now(datetime.timezone.utc)
+          wake = pathlib.Path("agent/WAKE.json")
+          seen_path = pathlib.Path("agent/SEEN.json")
+
+          state = {}
+          if wake.exists():
+              try:
+                  state = json.loads(wake.read_text())
+              except Exception:
+                  state = {}
+
+          # One wake per 30 minutes at most, however many events land.
+          if state.get("pending"):
+              age = (now - datetime.datetime.fromisoformat(state["set_at"].replace("Z", "+00:00"))).total_seconds() / 60
+              if age < 30:
+                  print("pending, age %.0f min" % age)
+                  raise SystemExit
+
+          seen = {}
+          if seen_path.exists():
+              try:
+                  seen = json.loads(seen_path.read_text())
+              except Exception:
+                  seen = {}
+
+          reasons = []
+
+          # Repo movement on main: new methodology entries, other agents' pushes.
+          head = subprocess.run(["gh", "api",
+                                "repos/SRoyaltyy/checklist-engine/commits?sha=main&per_page=1",
+                                "--jq", ".[0].sha"],
+                             capture_output=True, text=True).stdout.strip()
+          if head and head != seen.get("main_sha"):
+              reasons.append("main moved to " + head[:8])
+
+          # A failed run on this branch inside 30 minutes.
+          out = subprocess.run(["gh", "api",
+                                "repos/SRoyaltyy/checklist-engine/actions/runs?branch=%s&per_page=5" % branch],
+                             capture_output=True, text=True).stdout
+          try:
+              runs = json.loads(out).get("workflow_runs", [])
+          except Exception:
+              runs = []
+          for run in runs:
+              if run.get("conclusion") == "failure":
+                  created = datetime.datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
+                  if (now - created).total_seconds() < 1800:
+                      reasons.append("run %s failed (%s)" % (run["id"], run["name"]))
+              break
+
+          if reasons:
+              wake.write_text(json.dumps({"pending": True,
+                                    "id": now.strftime("%Y%m%dT%H%M%SZ"),
+                                    "set_at": now.isoformat(),
+                                    "reason": "; ".join(reasons)}, indent=2))
+              if head:
+                  seen_path.write_text(json.dumps({"main_sha": head}, indent=2))
+              print("WAKE:", reasons)
+          elif state.get("pending"):
+              wake.write_text(json.dumps({"pending": False, "id": state.get("id"),
+                                    "set_at": now.isoformat()}))
+              print("cleared")
+          else:
+              print("nothing to do")
+          PY
+      - name: Commit
+        run: |
+          git config user.name venice-agent
+          git config user.email noreply@localhost
+          git add agent/WAKE.json agent/SEEN.json
+          git diff --cached --quiet || git commit -m "agent: wake flag"
+          git push origin HEAD
