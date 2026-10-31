@@ -15,3 +15,8 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 10:02 | infra | STATE.md resume file added | 7a4766ea | n/a
 2026-10-31 10:12 | ledger/5 | _month_end_sessions and _later_weekday_in_month added; is_month_end reads the full index | 0e25f55a, b04a5dd1 | not run
 2026-10-31 10:12 | audit | wake repeated sha 30dfc519, no new main commit; freshness window 20min > heartbeat 15min causes duplicates | n/a | n/a
+2026-10-31 10:18 | infra | wake text now three steps: resume, audit, work | 43a09a8e | n/a
+2026-10-31 10:19 | infra | standing orders order of operations added | 93a6a4e2 | n/a
+2026-10-31 10:24 | infra | worker reports main movement only on a real sha change, stores last_main_sha | 9224e78b, 7ee59ab5 | n/a
+2026-10-31 10:25 | ledger/6 | parse_fomc_calendars carries unscheduled and announced; fomc frame columns widened | 01dbc02a, 2c275933 | not run
+2026-10-31 10:25 | ledger/7 | build_calendar wires forward_release_distance; one-shot filter removed | 8250f33f, 738f3675 | not run
