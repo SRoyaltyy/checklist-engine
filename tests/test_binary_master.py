@@ -1702,6 +1702,117 @@ def test_evaluate_extreme_position(grid):
         assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
 
 
+def test_bind_batch15_variants(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|exit_os|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {exit_os, exit_ob, none}
+    assert defs['exit_os']['feature']['zone_low'] == '30'
+    assert defs['exit_os']['feature']['zone_high'] == '70'
+    row, variant = _q(grid, 'B|volatility|ATR14|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {expanding, contracting, flat}
+    assert defs['expanding']['feature']['trend_kind'] == 'ATR14'
+    row, variant = _q(grid, 'B|volume|RVOL20|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['flat']['feature']['trend_kind'] == 'RVOL20'
+    row, variant = _q(grid, 'B|volume|dollar_volume|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['flat']['feature']['trend_kind'] == 'DOLLAR'
+    # up_down_volume has no registered series semantics (OBV/AD overlap,
+    # needs a ruling) -> honestly unbound.
+    row, variant = _q(grid, 'B|volume|up_down_volume|trend|1x10')
+    with pytest.raises(NotImplementedError):
+        bind_master_question(row, variant)
+
+
+def test_evaluate_exit_os(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|exit_os|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 17                        # 7 warm + 10 window; RSI6 known on last 11
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+
+    def bars_for(changes):
+        closes = [100.0]
+        for ch in changes:
+            closes.append(closes[-1] + ch)
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    alt = [0.1, -0.1] * 3
+    dip = [-2.0] * 6 + [2.0] * 4      # into oversold, then back above 30
+    bars = bars_for(alt + dip)
+    assert evaluate_master(defs['exit_os'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['exit_ob'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    rally = [2.0] * 8 + [-2.0] * 2     # into overbought, then back below 70
+    bars = bars_for(alt + rally)
+    assert evaluate_master(defs['exit_ob'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['exit_os'], bars, setup, last).answer == 'NO'
+    bars = bars_for(alt + [0.1, -0.1] * 5)   # never leaves the mid zone
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_trend(grid):
+    span = 34                        # ATR14 known on the last 10 window bars
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+
+    def bars_ranged(closes, lows_off, highs_off, volumes=None):
+        bars = {}
+        for i, c in enumerate(closes):
+            end = date(2024, 3, 1) + timedelta(days=i)
+            kwargs = {}
+            if volumes is not None:
+                kwargs['volume'] = volumes[i]
+            bars[100 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
+                                      open=float(c), high=float(c) + highs_off[i],
+                                      low=float(c) - lows_off[i], close=float(c),
+                                      **kwargs)
+        return bars
+
+    row, variant = _q(grid, 'B|volatility|ATR14|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0 + 0.1 * i for i in range(span)]
+    grow_lo = [1.0] * 24 + [1.0 + 0.3 * i for i in range(10)]
+    grow_hi = [1.5] * 24 + [1.5 + 0.45 * i for i in range(10)]
+    bars = bars_ranged(closes, grow_lo, grow_hi)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['contracting'], bars, setup, last).answer == 'NO'
+    shrink_lo = [1.0 + 0.3 * i for i in range(10)] + [1.0] * 24
+    shrink_hi = [1.5 + 0.45 * i for i in range(10)] + [1.5] * 24
+    bars = bars_ranged(closes, shrink_lo, shrink_hi)
+    assert evaluate_master(defs['contracting'], bars, setup, last).answer == 'YES'
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+    # RVOL20: 49 prior bars + 10 window bars; volume ramps 1.0x -> 4.6x
+    span = 59
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|volume|RVOL20|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0 + 0.1 * i for i in range(span)]
+    vols = [1000.0] * 49 + [1000.0 + 400.0 * i for i in range(10)]
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span, volumes=vols)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span,
+                       volumes=[1000.0] * span)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    # dollar_volume: price ramps over the window, volume constant
+    span = 30
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|volume|dollar_volume|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0] * 20 + [100.0 + 1.0 * i for i in range(10)]
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span,
+                       volumes=[1000.0] * span)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

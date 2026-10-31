@@ -1216,6 +1216,71 @@ def _measure(recipe, candles, feature=None):
                     'min_early_max_late': min_early and not max_early,
                     'both_early': max_early and min_early,
                     'both_late': not max_early and not min_early}
+        if recipe == 'native_exit_os_v1':
+            # RSI left its canonical zone inside the window: exit_os = a bar
+            # crossed UP out of oversold (prev <= zone_low < current);
+            # exit_ob = crossed DOWN out of overbought (prev >= zone_high >
+            # current). The LATEST exit event decides; none = no exit event.
+            # The bar before the window anchors the first check (evaluate_
+            # master requires lookback+1 known bars).
+            lb = int(feature['lookback'])
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, _line, known = osc
+            if len(series) < lb + 1 or not known[-(lb + 1):].all():
+                return None
+            win = series[-(lb + 1):]
+            zl = float(feature['zone_low'])
+            zh = float(feature['zone_high'])
+            events = []
+            for k in range(1, len(win)):
+                if win[k - 1] <= zl < win[k]:
+                    events.append('exit_os')
+                elif win[k - 1] >= zh > win[k]:
+                    events.append('exit_ob')
+            return {'exit_os': bool(events and events[-1] == 'exit_os'),
+                    'exit_ob': bool(events and events[-1] == 'exit_ob'),
+                    'none': not events}
+        if recipe == 'native_series_trend_v1':
+            # Slope of a per-bar series across the window: percent change of
+            # its first to last WINDOW value (documented convention; only
+            # ratio-scale positive series). expanding > +5%, contracting <
+            # -5%, else flat (documented 5% constant; no dial registered on
+            # this family; amendable). Series per trend_kind:
+            #   ATR14  -> ATR% = ATR14/C x 100 per bar (the question's "ATR%")
+            #   RVOL20 -> volume / median of the 50 bars ENDING at that bar
+            #             (registered codebase rule; first known at bar 49)
+            #   DOLLAR -> C x volume per bar
+            lb = int(feature['lookback'])
+            kind = feature['trend_kind']
+            if kind == 'ATR14':
+                series = _native_atr_series(high, low, close) / close * 100.0
+                known = ~np.isnan(series)
+            else:
+                vols = _nonnegative([b.volume for b in candles], 'native volume')
+                if vols is None:
+                    return None
+                if kind == 'RVOL20':
+                    series = np.full(len(vols), np.nan)
+                    known = np.zeros(len(vols), dtype=bool)
+                    for t in range(49, len(vols)):
+                        series[t] = vols[t] / float(np.median(vols[t - 49:t + 1]))
+                        known[t] = True
+                else:  # DOLLAR
+                    series = close * vols
+                    known = np.ones(len(vols), dtype=bool)
+            if len(series) < lb or not known[-lb:].all():
+                return None
+            win = series[-lb:]
+            first = float(win[0])
+            last = float(win[-1])
+            if first <= 0 or not np.isfinite(first) or not np.isfinite(last):
+                return None
+            slope = (last / first - 1.0) * 100.0
+            return {'expanding': slope > 5.0,
+                    'contracting': slope < -5.0,
+                    'flat': abs(slope) <= 5.0}
         if recipe == 'native_maxvol_wick_v1':
             # Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1878,6 +1943,42 @@ FACETS = {
         outcome_spec={o: ('boolean', '=', 'one')
                       for o in ('max_early_min_late', 'min_early_max_late',
                                 'both_early', 'both_late')}),
+    # ---- batch 15: RSI zone exit + per-bar series slope. Both consume the
+    # registered native indicator state (TA-Lib parity, full supplied prefix)
+    # exactly like the batch-9..14 oscillator recipes. ----
+    'exit_os': dict(
+        binding='mixed',
+        l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24')),
+        recipe='native_exit_os_v1',
+        unit='window_rsi_zone_exit_event',
+        outcomes=('exit_os', 'exit_ob', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                         'zone_high': '70', 'zone_low': '30', 'osc_warmup': '7'},
+                'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '13'},
+                'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '15'},
+                'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '25'}},
+        outcome_spec={'exit_os': ('boolean', '=', 'one'),
+                      'exit_ob': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'trend': dict(
+        binding='mixed',
+        l1_l3=(('volatility', 'ATR14'), ('volume', 'RVOL20'),
+               ('volume', 'dollar_volume')),
+        recipe='native_series_trend_v1',
+        unit='window_series_slope_pct_bucket',
+        outcomes=('expanding', 'contracting', 'flat'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'ATR14': {'trend_kind': 'ATR14'},
+                'RVOL20': {'trend_kind': 'RVOL20'},
+                'dollar_volume': {'trend_kind': 'DOLLAR'}},
+        outcome_spec={'expanding': ('boolean', '=', 'one'),
+                      'contracting': ('boolean', '=', 'one'),
+                      'flat': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -2096,7 +2197,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_absorption_day_v1', 'native_capitulation_bar_v1',
                         'native_hl_base_breakout_v1', 'native_high_then_low_v1',
                         'native_run_structure_v1', 'native_weekly_trend_v1',
-                        'native_weekly_stack_v1', 'native_extreme_position_v1'}
+                        'native_weekly_stack_v1', 'native_extreme_position_v1',
+                        'native_exit_os_v1', 'native_series_trend_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -2117,20 +2219,21 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['rsi_period'])               # RSI seed warmup
         if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1',
                                  'native_osc_swing_speed_v1',
-                                 'native_extreme_position_v1'):
+                                 'native_extreme_position_v1', 'native_exit_os_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
         native_osc = (feature['recipe'] in (
             'native_osc_cross_v1', 'native_osc_zone_share_v1',
-            'native_osc_swing_speed_v1', 'native_extreme_position_v1')
+            'native_osc_swing_speed_v1', 'native_extreme_position_v1',
+            'native_exit_os_v1')
             and feature['osc_kind'] in ('RSI', 'MACD', 'STOCH'))
         recursive_rsi = feature['recipe'] in (
             'native_rsi_floor_v1', 'native_rsi_ceiling_v1', 'native_hl_base_breakout_v1')
         native_atr = feature['recipe'] in (
             'native_run_biggest_move_ratio_v1', 'native_maxvol_wick_v1',
             'native_segment_atr_compare_v1', 'native_absorption_day_v1',
-            'native_capitulation_bar_v1')
+            'native_capitulation_bar_v1', 'native_series_trend_v1')
         if native_osc or recursive_rsi or native_atr or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
@@ -2138,7 +2241,7 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
             if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1',
-                                     'native_osc_cross_v1'):
+                                     'native_osc_cross_v1', 'native_exit_os_v1'):
                 required += 1
             if feature['recipe'] == 'native_hl_base_breakout_v1':
                 required += _EXTRA_PRIOR[feature['recipe']]
