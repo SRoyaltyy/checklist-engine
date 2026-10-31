@@ -9,11 +9,11 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 11:52: doorman put takes path from the JSON body and content from the c query parameter. A v2.7 put returned 200 with no content and truncated the workflow file to zero bytes; v2.8 sends both and refuses empty writes. Confirm the workflow is not empty before dispatching.
+2026-10-31 11:55: STATE, JOURNAL and the workflow were all truncated to zero bytes by v2.7's content-less POST. v2.9 sends content in the query, reads every file back after writing, retries over GET on failure, and refuses empty writes.
 
 Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
 
-Workflow carries deps, unit tests with the tee, the failure commit, the build and the artifact steps.
+Run 41198235471 also failed, against the blank workflow.
 
 web_scrape still exhausted. Only the seven READS files are readable.
 
