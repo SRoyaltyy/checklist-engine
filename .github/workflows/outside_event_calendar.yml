@@ -1,4 +1,4 @@
-calendar flags, unit-tested; the log is committed when the tests fail
+calendar flags; unit tests gate the build and the log is committed on failure
 
 name: outside-event-calendar
 
