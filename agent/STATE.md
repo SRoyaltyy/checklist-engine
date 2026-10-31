@@ -1,17 +1,20 @@
+@@BODY
 State - read first on every wake
 
 Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96. Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 15:35: the renderer put a chrome word and the sentinel into every file. cleanBody now slices from the sentinel and drops any leading @@BODY. Every put must carry @@BODY:x as its first body line until the parser settles.
+2026-10-31 16:35: two real bugs found and fixed in outside_calendar.py. (1) schedule_published was called with a Timestamp and did year-1, which pandas now rejects; it coerces to an int year. (2) forward_release_distance returned calendar days while every other count returns sessions; it now returns session counts. 16 of 19 tests were already passing, so the conftest stub worked and the candle logic is sound.
 
-Run 41215172580 failed on a file that still began with @@BODY. Nothing has ever executed a test yet; the world_timeframes theory stays unproven.
+Also fixed: the script deduped @@DISPATCH on the workflow name alone, so only the first dispatch ever fired. It now includes the block position.
 
-Confirm the workflow head starts with the comment before dispatching. Never dispatch in the same turn as a write.
+Check the log tail for the current run. Three failures remain to confirm or clear: the Timestamp TypeError, and two 27.0 == 19 counts.
 
-put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k.
+Main runs on the main branch workflow which checks the lane branch out; the branch workflow is stale and unused. Dispatch on main, read the log from the branch.
+
+put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k. Every put body starts with @@BODY or # @@CUT.
 
 web_scrape exhausted. Job logs are 403, so read the repo log.
 
-Main aaca5f03, contents unread.
+Main dfa98272.
