@@ -1,5 +1,4 @@
 python
-Copy code
 """Test bootstrap for the calendar suite.
 
 outside_calendar imports world_timeframes lazily inside the candle helpers.
