@@ -105,10 +105,9 @@ def _tf_window(bars, setup_date, expected_slot, lookback, candle_days):
     for i in range(lookback):
         group = selected[i * candle_days:(i + 1) * candle_days]
         vols = [b.volume for b in group]
-        dollars = [None if b.volume is None or b.close is None else b.close * b.volume
-                   for b in group]
-        volume = None if any(v is None for v in vols) else float(sum(vols))
-        dollar = None if any(d is None for d in dollars) else float(sum(dollars))
+        known_volume = _nonnegative(vols, 'daily volume') is not None
+        volume = float(sum(vols)) if known_volume else None
+        dollar = float(sum(b.close * b.volume for b in group)) if known_volume else None
         candles.append(NativeBar(end=group[-1].end, available_from=group[-1].available_from,
                                  open=group[0].open, high=max(b.high for b in group),
                                  low=min(b.low for b in group), close=group[-1].close,

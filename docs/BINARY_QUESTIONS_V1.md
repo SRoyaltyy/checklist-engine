@@ -36,8 +36,12 @@ units, warm-up, window, tie and anchor-confirmation rules.
 The v3 CSV adds `feature_id`, `feature_expression`, `feature_kind`, `feature_unit`,
 `comparator`, `comparison_threshold` and conditional `feature_categories`.
 The expression fully expands the measurement and its registered settings.
-Kinds are continuous, integer_count, category_code and boolean. Units are
-explicit: candle counts differ from sums of candle-body sizes.
+Kinds are continuous, integer_count, signed_integer, category_code and boolean.
+`integer_count` is nonnegative; `signed_integer` permits negative differences
+while retaining exact integer comparisons. A longest-up minus longest-down
+streak is a signed integer, rather than a nonnegative count. This is a predicate
+value type, not a new market-data inventory item. Units are explicit: candle
+counts differ from sums of candle-body sizes.
 
 Comparators are exactly `>`, `>=`, `=`, `!=`, `<=`, `<`. The comparison threshold
 is a literal number, never `ATR * 0.5` or `q80`; expose normalized distance as the

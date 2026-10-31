@@ -134,7 +134,8 @@ def build(root):
         csv_sha256=digest(csv_path),
         source_fingerprints={p: digest(root / p) for p in (GRID, QUESTIONS, TREE, LADDERS)},
         code_fingerprints={p: digest(Path(__file__).resolve().parent.parent / p) for p in
-                           ('world_binary_master.py', 'ci/binary_master_build.py')},
+                           ('world_binary_master.py', 'world_binary_price.py',
+                            'world_binary_questions.py', 'ci/binary_master_build.py')},
         answer_generation='NOT_RUN', chart_gate='NOT_PASSED', mining='NOT_RUN')
     report_path = root / 'docs' / REPORT
     report_path.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')

@@ -640,6 +640,8 @@ def test_emitter_smoke_and_determinism(tmp_path):
     assert report1['master_total_rows'] == (
         report1['bound_unique_binary_definitions'] + report1['ladder_add_on_rows'])
     assert report1['ladder_add_on_rows'] == 2680
+    for name in ('world_binary_price.py','world_binary_questions.py'):
+        assert report1['code_fingerprints'][name] == hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
     assert report1['bound_unique_binary_definitions'] > 633  # GPT 633 + batch-1 facets
     with csv_path.open(encoding='utf-8', newline='') as stream:
         rows = list(csv.DictReader(stream))

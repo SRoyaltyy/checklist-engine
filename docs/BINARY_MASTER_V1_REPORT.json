@@ -302,16 +302,18 @@
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
   "master_total_rows": 6739,
-  "csv_sha256": "98c300ddffe265aa60bd180be8b566eb4c02ca678fafc75b69bf6aa420c8ece4",
+  "csv_sha256": "8eea65600c391dd4365e1faa590e56eeea1e927a14ee44f547dad00f76ccb7d7",
   "source_fingerprints": {
-    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
-    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
-    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "02640b7e0a6e2bbe9c03b7a47c94b4c28a7c68a1c10d612b3986baaea382b73f",
+    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6",
+    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d",
+    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292",
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "d38f4875e6162f779aa23a51ac1fc858b790d209ca4d7943be33989661a4f84b",
-    "ci/binary_master_build.py": "b251aabf5b267d56583e4332f5388674b7351369369f2e08a4eaa7bd49022d12"
+    "world_binary_master.py": "cbf933ee2e15a51485ddbaced5406c54e2e22b8609a7b87318ca1619889d1c62",
+    "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
+    "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
+    "ci/binary_master_build.py": "d08abe0bdb7d7276ec5f5f58fb415a320cc327f84c535840e4825b252158d80d"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
