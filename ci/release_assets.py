@@ -18,7 +18,8 @@ _RELEASE_IDS = {}
 _DRAFTS_SCANNED = set()
 TRANSIENT = re.compile(
     r"HTTP (?:408|429|5\d\d)\b|connection reset|unexpected EOF|"
-    r"TLS handshake timeout|i/o timeout|temporary failure|timed out",
+    r"TLS handshake timeout|i/o timeout|temporary failure|timed out|"
+    r"error connecting to (?:api|uploads)\.github\.com\b|\bEAI_AGAIN\b",
     re.IGNORECASE,
 )
 

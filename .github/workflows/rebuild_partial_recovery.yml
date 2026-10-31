@@ -1,0 +1,66 @@
+name: new-price-shard-partial-recovery
+on:
+  push:
+    branches: [codex/price-partial-recovery]
+    paths: ['ci/REBUILD_PARTIAL_RECOVERY_REQUEST.json']
+  pull_request:
+    paths: ['ci/rebuild_partial_recovery.py', 'ci/REBUILD_PARTIAL_RECOVERY_REQUEST.json', 'ci/release_assets.py', 'tests/test_rebuild_partial_recovery.py', '.github/workflows/rebuild_partial_recovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: new-price-shard-partial-recovery-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m pytest tests/test_rebuild_partial_recovery.py tests/test_rebuild_checkpoint_probe.py tests/test_world_release_assets.py -q
+      - id: request
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          request=json.loads(Path('ci/REBUILD_PARTIAL_RECOVERY_REQUEST.json').read_bytes())
+          assert type(request['execute']) is bool
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('execute='+str(request['execute']).lower()+'\n')
+          PY
+  recover:
+    needs: verify
+    if: github.event_name != 'pull_request' && needs.verify.outputs.execute == 'true'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 310
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.rebuild_partial_recovery --directory partial-recovery
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: partial-recovery-state
+          path: |
+            partial-recovery/*.json
+            partial-recovery/build/COMPACT_WORLD_SHARD.json
+          if-no-files-found: ignore
