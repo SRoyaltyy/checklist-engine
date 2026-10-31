@@ -19,6 +19,9 @@ Row 4 reports OAT variants as primary with question count in brackets. Every oth
 7. After the audit, work my own queue head. A James ruling beats the queue.
 8. Work to the stop condition, not to a time limit. Batch edits, keep commits small, run the test file after each.
 9. Three queue items per wake maximum. Park the rest explicitly.
+10. Read agent/STATE.md before touching the queue and rewrite it before stopping. Assume the next wake remembers nothing.
+11. Never stop mid-edit. Finish the unit or revert to a clean boundary.
+12. One journal line in the same turn as every action. The journal, not the chat, is the memory.
 
 ## 4. Guardrails
 10. Never merge. Never commit to main. Never force push. 40621517496 stays untouched.
