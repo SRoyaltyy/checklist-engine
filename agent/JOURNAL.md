@@ -20,3 +20,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 10:24 | infra | worker reports main movement only on a real sha change, stores last_main_sha | 9224e78b, 7ee59ab5 | n/a
 2026-10-31 10:25 | ledger/6 | parse_fomc_calendars carries unscheduled and announced; fomc frame columns widened | 01dbc02a, 2c275933 | not run
 2026-10-31 10:25 | ledger/7 | build_calendar wires forward_release_distance; one-shot filter removed | 8250f33f, 738f3675 | not run
+2026-10-31 10:30 | tests/1 | stale cancellation-premise test replaced with three: publication weekend roll, cancellation override, half-built month | 10358e24 | not run
+2026-10-31 10:31 | dispatch | outside_event_calendar.yml dispatched on the branch; run id not yet listed | n/a | pending
