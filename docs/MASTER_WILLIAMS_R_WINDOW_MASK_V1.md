@@ -13,7 +13,9 @@ undefined slot13 anchor. Both questions are defined at24.
 
 The adapter now retains native TA-Lib WILLR values unchanged and supplies a
 separate per-bar zero-range mask. Existing consumers apply it only to their
-declared N or N+1 evidence. Defined0 and-100 remain known. No epsilon,
+declared N or N+1 evidence. The newer path-direction facet uses the same
+native helper: an earlier flat prefix does not invalidate its defined N-bar
+path. Defined0 and-100 remain known. No epsilon,
 cutoff, question identity, frozen producer or canonical CSV changes.
 
 Tests authenticate frozen7dc native source, compare all numeric bits including

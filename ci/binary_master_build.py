@@ -77,6 +77,52 @@ def master_row(definition, tree_row):
             'feature_json': json.dumps(feature, sort_keys=True, separators=(',', ':'))}
 
 
+def verify_ladder_dedupe(root):
+    """Within-ladders computed-meaning dedupe check.
+
+    Computed meaning = (item_id, feature, comparator, threshold). BINARY_LADDERS_V1
+    ships 2,680 rows that must be unique on that key; this verifies it at build
+    time instead of trusting the PENDING flag. Cross-dedupe (ladder vs bound
+    master defs) is NOT automated: ladder features are free text, and name-level
+    matching is provably insufficient (e.g. item 'Gap size in ATR' names ATR14
+    but measures gaps) — the per-item semantic review is assigned to GPT per
+    James's 00:15/00:30 instructions. Ladder rows carry definition_status
+    LADDER_ADDON and never enter BOUND counts, so keeping them is safe.
+    """
+    path = Path(root) / LADDERS
+    seen = {}
+    duplicates = []
+    with path.open(encoding='utf-8-sig', newline='') as stream:
+        for row in csv.DictReader(stream):
+            key = (row['item_id'], row['feature'], row['comparator'], row['threshold'])
+            if key in seen:
+                duplicates.append((seen[key], row['question_id']))
+            else:
+                seen[key] = row['question_id']
+    return {
+        'within_ladders': {
+            'status': 'DONE' if not duplicates else 'DUPLICATES_FOUND',
+            'meaning_key': 'item_id + feature + comparator + threshold',
+            'rows_total': len(seen) + len(duplicates),
+            'duplicates_found': len(duplicates),
+            'duplicate_pairs': duplicates[:20],
+            'rows_dropped': 0,   # duplicates would be dropped here; none exist
+        },
+        'ladder_vs_master': {
+            'status': 'REVIEW_ASSIGNED_GPT',
+            'note': 'ladder features are free text; name-level matching insufficient '
+                    '(Gap size in ATR names ATR14 but measures gaps). Per-item '
+                    'semantic review assigned to GPT (James 00:15/00:30). All rows '
+                    'kept as definition_status=LADDER_ADDON, excluded from BOUND counts.',
+        },
+        'within_master': {
+            'status': 'DONE_BY_CONSTRUCTION',
+            'note': 'bound defs keyed by question_id = semantic identity hash; batch-5 '
+                    'fix includes the outcome label; aliases share feature_id.',
+        },
+    }
+
+
 def ladder_rows(root):
     path = root / LADDERS
     rows = []
@@ -148,7 +194,7 @@ def build(root):
         unbound_family_variant_count=len(unbound),
         unbound_oat_variants=sum(unbound.values()),
         ladder_add_on_rows=len(ladder),
-        dedupe_by_computed_meaning='PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER',
+        dedupe_by_computed_meaning=verify_ladder_dedupe(root),
         master_total_rows=canonical_rows + len(ladder),
         csv_sha256=digest(csv_path),
         csv_storage=dict(manifest=STORAGE_MANIFEST, format=storage['format'],

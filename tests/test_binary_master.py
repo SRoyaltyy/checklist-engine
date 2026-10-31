@@ -2,6 +2,7 @@
 import csv
 from datetime import date, timedelta
 import hashlib
+import math
 import shutil
 from pathlib import Path
 
@@ -1702,6 +1703,452 @@ def test_evaluate_extreme_position(grid):
         assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
 
 
+def test_bind_batch15_variants(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|exit_os|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {exit_os, exit_ob, none}
+    assert defs['exit_os']['feature']['zone_low'] == '30'
+    assert defs['exit_os']['feature']['zone_high'] == '70'
+    row, variant = _q(grid, 'B|volatility|ATR14|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {expanding, contracting, flat}
+    assert defs['expanding']['feature']['trend_kind'] == 'ATR14'
+    row, variant = _q(grid, 'B|volume|RVOL20|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['flat']['feature']['trend_kind'] == 'RVOL20'
+    row, variant = _q(grid, 'B|volume|dollar_volume|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert defs['flat']['feature']['trend_kind'] == 'DOLLAR'
+    # up_down_volume has no registered series semantics (OBV/AD overlap,
+    # needs a ruling) -> honestly unbound.
+    row, variant = _q(grid, 'B|volume|up_down_volume|trend|1x10')
+    with pytest.raises(NotImplementedError):
+        bind_master_question(row, variant)
+
+
+def test_evaluate_exit_os(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|exit_os|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 17                        # 7 warm + 10 window; RSI6 known on last 11
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+
+    def bars_for(changes):
+        closes = [100.0]
+        for ch in changes:
+            closes.append(closes[-1] + ch)
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    alt = [0.1, -0.1] * 3
+    dip = [-2.0] * 6 + [2.0] * 4      # into oversold, then back above 30
+    bars = bars_for(alt + dip)
+    assert evaluate_master(defs['exit_os'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['exit_ob'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    rally = [2.0] * 8 + [-2.0] * 2     # into overbought, then back below 70
+    bars = bars_for(alt + rally)
+    assert evaluate_master(defs['exit_ob'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['exit_os'], bars, setup, last).answer == 'NO'
+    bars = bars_for(alt + [0.1, -0.1] * 5)   # never leaves the mid zone
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_trend(grid):
+    span = 34                        # ATR14 known on the last 10 window bars
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+
+    def bars_ranged(closes, lows_off, highs_off, volumes=None):
+        bars = {}
+        for i, c in enumerate(closes):
+            end = date(2024, 3, 1) + timedelta(days=i)
+            kwargs = {}
+            if volumes is not None:
+                kwargs['volume'] = volumes[i]
+            bars[100 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
+                                      open=float(c), high=float(c) + highs_off[i],
+                                      low=float(c) - lows_off[i], close=float(c),
+                                      **kwargs)
+        return bars
+
+    row, variant = _q(grid, 'B|volatility|ATR14|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0 + 0.1 * i for i in range(span)]
+    grow_lo = [1.0] * 24 + [1.0 + 0.3 * i for i in range(10)]
+    grow_hi = [1.5] * 24 + [1.5 + 0.45 * i for i in range(10)]
+    bars = bars_ranged(closes, grow_lo, grow_hi)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['contracting'], bars, setup, last).answer == 'NO'
+    shrink_lo = [1.0 + 0.3 * i for i in range(10)] + [1.0] * 24
+    shrink_hi = [1.5 + 0.45 * i for i in range(10)] + [1.5] * 24
+    bars = bars_ranged(closes, shrink_lo, shrink_hi)
+    assert evaluate_master(defs['contracting'], bars, setup, last).answer == 'YES'
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+    # RVOL20: 49 prior bars + 10 window bars; volume ramps 1.0x -> 4.6x
+    span = 59
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|volume|RVOL20|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0 + 0.1 * i for i in range(span)]
+    vols = [1000.0] * 49 + [1000.0 + 400.0 * i for i in range(10)]
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span, volumes=vols)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span,
+                       volumes=[1000.0] * span)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    # dollar_volume: price ramps over the window, volume constant
+    span = 30
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|volume|dollar_volume|trend|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    closes = [100.0] * 20 + [100.0 + 1.0 * i for i in range(10)]
+    bars = bars_ranged(closes, [1.0] * span, [1.5] * span,
+                       volumes=[1000.0] * span)
+    assert evaluate_master(defs['expanding'], bars, setup, last).answer == 'YES'
+
+
+def test_bind_batch16_variants(grid):
+    # path_dir: band binding on the S_trend_t_stat dial (exact partition
+    # t > +v / t < -v / |t| <= v; thresholds carry the dial sign).
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|path_dir|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {rising,falling,flat}
+    assert defs['rising']['feature_kind'] == 'continuous'
+    assert (defs['rising']['comparator'], defs['rising']['comparison_threshold']) == ('>', '2')
+    assert (defs['falling']['comparator'], defs['falling']['comparison_threshold']) == ('<', '-2')
+    assert (defs['flat']['comparator'], defs['flat']['comparison_threshold']) == ('<=', '2')
+    assert defs['flat']['feature']['transform'] == 'abs'
+    assert defs['rising']['feature']['path_kind'] == 'RSI'
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings)['S_trend_t_stat'] != '2')
+    v4 = dict(changed.settings)['S_trend_t_stat']
+    defs4 = _by_outcome(bind_master_question(row, changed))
+    assert defs4['rising']['comparison_threshold'] == v4
+    assert defs4['rising']['feature_id'] == defs['rising']['feature_id']  # same measurement
+    # volume kinds carry three extra registered dials the OLS definition does
+    # not consume (declared-but-unmapped; see FACETS note) -> still bind.
+    row, variant = _q(grid, 'B|volume|OBV|path_dir|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3
+    assert defs['rising']['feature']['path_kind'] == 'OBV'
+    assert 'S_baseline_bars' not in defs['rising']['feature']
+    # distance_route: no dial, three boolean outcomes.
+    row, variant = _q(grid, 'B|moving_averages|SMA20|distance_route|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                    # {stretching,reverting,stable}
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    assert defs['stretching']['feature']['ma_period'] == '20'
+    # VWAP_anchored has no registered anchor definition -> honestly unbound.
+    row, variant = _q(grid, 'B|volume|VWAP_anchored|distance_route|1x10')
+    with pytest.raises(NotImplementedError):
+        bind_master_question(row, variant)
+
+
+def test_evaluate_path_dir(grid):
+    span = 25                        # 15 RSI14 warm + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|path_dir|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(changes):
+        closes = [100.0]
+        for ch in changes:
+            closes.append(closes[-1] + ch)
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Rising RSI path inside the window: gains growing 1.0 -> 2.8 (step 0.2)
+    # between small constant losses. Falling: gains shrinking 2.8 -> 1.0
+    # between the same losses (decelerating rise bleeds RSI, t = -6.4 vs
+    # +6.4 for the rising tape).
+    rising, falling = [], []
+    g_up, g_dn = 1.0, 2.8
+    for i in range(24):
+        if i % 2 == 0:
+            rising.append(round(g_up, 3)); g_up += 0.2
+            falling.append(round(g_dn, 3)); g_dn -= 0.2
+        else:
+            rising.append(-0.2)
+            falling.append(-0.2)
+    bars = bars_for(rising)
+    assert evaluate_master(defs['rising'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['falling'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'NO'
+    bars = bars_for(falling)
+    assert evaluate_master(defs['falling'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['rising'], bars, setup, last).answer == 'NO'
+    # Flat path: constant alternating +/-0.5 keeps RSI pinned -> t = 0.
+    bars = bars_for([0.5 if i % 2 == 0 else -0.5 for i in range(24)])
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['rising'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+    # A stricter dial variant (t > 4) demotes the same tape to flat.
+    strict = next(v for v in grid.variants(row['question_id'])
+                  if dict(v.settings)['S_trend_t_stat'] == '4')
+    defs4 = _by_outcome(bind_master_question(row, strict))
+    bars = bars_for(rising)
+    assert evaluate_master(defs4['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs4['rising'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_distance_route(grid):
+    span = 40
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|moving_averages|SMA20|distance_route|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    # Quadratic ramp: the close/SMA20 gap widens in ATR units -> stretching.
+    bars = _bars_hl([(100.0 + 0.05 * i * i, 101.5 + 0.05 * i * i,
+                      99.0 + 0.05 * i * i, 100.0 + 0.05 * i * i)
+                     for i in range(span)])
+    assert evaluate_master(defs['stretching'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['reverting'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['stable'], bars, setup, last).answer == 'NO'
+    # Ramp then sharp convergence back to the MA -> reverting.
+    closes = [100.0 + 0.05 * i * i for i in range(30)]
+    closes += [closes[-1] - 8.25 * (i - 29) for i in range(30, 40)]
+    bars = _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+    assert evaluate_master(defs['reverting'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['stretching'], bars, setup, last).answer == 'NO'
+    # Flat tape: close == SMA20 == 100 every bar -> stable.
+    bars = _bars_hl([(100.0, 101.5, 99.0, 100.0)] * span)
+    assert evaluate_master(defs['stable'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['stretching'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_bind_batch17_variants(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|above_share|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                # {mostly_above,mostly_below,mixed}
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    assert defs['mostly_above']['feature']['ma_period'] == '20'
+    assert defs['mostly_above']['feature']['recipe'] == 'native_above_share_v1'
+    # VWAP_anchored has no registered anchor definition -> honestly unbound.
+    row, variant = _q(grid, 'B|volume|VWAP_anchored|above_share|1x10')
+    with pytest.raises(NotImplementedError):
+        bind_master_question(row, variant)
+
+
+def test_evaluate_above_share(grid):
+    span = 30                        # 20 SMA20 warm + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|moving_averages|SMA20|above_share|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(closes):
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    up = [100.0 + 0.15 * i + 3.0 * math.sin(i * 1.05) for i in range(span)]
+    bars = bars_for(up)              # window share >= 0.6 above SMA20
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'NO'
+    dn = [100.0 - 0.15 * i + 3.0 * math.sin(i * 1.05) for i in range(span)]
+    bars = bars_for(dn)              # window share <= 0.4 above SMA20
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'NO'
+    mx = [100.0 + 2.0 * math.sin(i * 1.05 + 2.0) for i in range(span)]
+    bars = bars_for(mx)              # window share exactly 0.5 -> mixed
+    assert evaluate_master(defs['mixed'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mostly_above'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['mostly_below'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_bind_batch18_variants(grid):
+    # efficiency is dial-exact: the C302/C303 chop edges land in the feature
+    # and every swept variant re-binds with its own edges.
+    row, variant = _q(grid, 'B|return_path|daily_returns|efficiency|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3                     # {smooth, mid, choppy}
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    assert defs['smooth']['feature']['recipe'] == 'native_efficiency_v1'
+    assert defs['smooth']['feature']['chop_smooth_edge'] == '2'
+    assert defs['smooth']['feature']['chop_choppy_edge'] == '5'
+    variants = list(grid.variants(row['question_id']))
+    assert len(variants) == 7                 # default 2/5 + one-dial sweeps
+    for v in variants:
+        d2 = _by_outcome(bind_master_question(row, v))
+        s = dict(v.settings)
+        assert d2['smooth']['feature']['chop_smooth_edge'] == s['C302_efficiency__scalar2']
+        assert d2['smooth']['feature']['chop_choppy_edge'] == s['C303_efficiency__scalar5']
+    # skew / autocorr / stack_flip: single default variant, documented
+    # constants (0.5 / 0.2 / SMA50-SMA200) live in the recipe, no dial.
+    for facet, qid, recipe in (
+            ('skew', 'B|return_path|daily_returns|skew|1x10', 'native_skew_v1'),
+            ('autocorr', 'B|return_path|daily_returns|autocorr|1x10',
+             'native_autocorr_v1'),
+            ('stack_flip', 'B|moving_averages|MA_group(10/20/50/200)|stack_flip|1x10',
+             'native_stack_flip_v1')):
+        row, variant = _q(grid, qid)
+        defs = _by_outcome(bind_master_question(row, variant))
+        assert len(defs) == 3
+        assert list(grid.variants(row['question_id'])) == [variant]
+        assert defs[FACETS[facet]['outcomes'][0]]['feature']['recipe'] == recipe
+    sf = _by_outcome(bind_master_question(
+        *_q(grid, 'B|moving_averages|MA_group(10/20/50/200)|stack_flip|1x10')))
+    assert sf['golden']['feature']['ma_fast'] == '50'
+    assert sf['golden']['feature']['ma_slow'] == '200'
+
+
+def test_evaluate_efficiency(grid):
+    span = 11                         # 10 lookback closes + 1 prior anchor
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|return_path|daily_returns|efficiency|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(closes):
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Monotonic ramp: path == net -> chop = 1.0 <= smooth edge 2 -> smooth.
+    bars = bars_for([100.0 + i for i in range(span)])
+    assert evaluate_master(defs['smooth'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mid'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['choppy'], bars, setup, last).answer == 'NO'
+    # Sawtooth flat: first == last close, path large -> chop = inf -> choppy.
+    bars = bars_for([100.0 + 10.0 * (i % 2) for i in range(span)])
+    assert evaluate_master(defs['choppy'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['smooth'], bars, setup, last).answer == 'NO'
+    # Oscillating drift: chop = 22/8 = 2.75 -> inside the 2..5 mid band.
+    closes = [100.0]
+    for d in (3.0, -1.0, 3.0, -1.0, 3.0, -1.0, -2.0, -2.0, 3.0, 3.0):
+        closes.append(closes[-1] + d)
+    win = closes[-11:]
+    chop = sum(abs(win[i + 1] - win[i]) for i in range(10)) / abs(win[-1] - win[0])
+    assert 2.0 < chop < 5.0
+    bars = bars_for(closes)
+    assert evaluate_master(defs['mid'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['smooth'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['choppy'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_skew(grid):
+    span = 11                         # 10 returns from 11 closes
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|return_path|daily_returns|skew|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(rets):
+        closes = [100.0]
+        for r in rets:
+            closes.append(closes[-1] * (1.0 + r))
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Positive skew: many small losses + one big gain (g1 = +2.67 > 0.5).
+    bars = bars_for([-0.01] * 9 + [0.10])
+    assert evaluate_master(defs['pos'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['neg'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['neutral'], bars, setup, last).answer == 'NO'
+    # Mirror: many small gains + one big loss -> negative skew.
+    bars = bars_for([0.01] * 9 + [-0.10])
+    assert evaluate_master(defs['neg'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['pos'], bars, setup, last).answer == 'NO'
+    # Symmetric alternating returns -> g1 = 0 -> neutral.
+    bars = bars_for([0.01 if i % 2 == 0 else -0.01 for i in range(10)])
+    assert evaluate_master(defs['neutral'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['pos'], bars, setup, last).answer == 'NO'
+    # Zero-variance returns (constant drift) -> undefined g1 -> NOT_EVALUABLE.
+    bars = bars_for([0.01] * 10)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_autocorr(grid):
+    span = 11                         # 10 returns -> 9 lag-1 pairs
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|return_path|daily_returns|autocorr|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(rets):
+        closes = [100.0]
+        for r in rets:
+            closes.append(closes[-1] * (1.0 + r))
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Same-sign increasing returns: b = a + const -> rho = +1 -> trending.
+    bars = bars_for([0.01 * (i + 1) for i in range(10)])
+    assert evaluate_master(defs['trending'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['mean_reverting'], bars, setup, last).answer == 'NO'
+    # Alternating-sign increasing magnitude: b = -k*a -> rho = -1.
+    bars = bars_for([(-1) ** i * 0.01 * (i + 1) for i in range(10)])
+    assert evaluate_master(defs['mean_reverting'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['trending'], bars, setup, last).answer == 'NO'
+    # Irregular magnitudes with rho ~ -0.02 (found by random search) -> none.
+    bars = bars_for([-0.0093, -0.0148, 0.0011, -0.0105, -0.0156, -0.0135,
+                     -0.018, -0.0119, -0.0075, -0.0078])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['trending'], bars, setup, last).answer == 'NO'
+    # Zero variance on either side (constant return) -> rho undefined.
+    bars = bars_for([0.01] * 10)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_stack_flip(grid):
+    span = 260                        # 200-bar SMA warm-up + 10-bar window + slack
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|stack_flip|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(closes):
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Long decline then a sharp sustained rally: the latest SMA50/SMA200
+    # cross inside the window is upward -> golden.
+    closes = []
+    c = 200.0
+    for _ in range(220):
+        c -= 0.3
+        closes.append(c)
+    for _ in range(40):
+        c += 2.5
+        closes.append(c)
+    bars = bars_for(closes)
+    assert evaluate_master(defs['golden'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['death'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # Mirror tape -> death.
+    closes = []
+    c = 100.0
+    for _ in range(220):
+        c += 0.3
+        closes.append(c)
+    for _ in range(40):
+        c -= 2.5
+        closes.append(c)
+    bars = bars_for(closes)
+    assert evaluate_master(defs['death'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['golden'], bars, setup, last).answer == 'NO'
+    # Steady uptrend: SMA50 stays above SMA200 after warm-up, no cross -> none.
+    bars = bars_for([100.0 + 0.2 * i for i in range(span)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['golden'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel
@@ -1741,6 +2188,14 @@ def test_emitter_smoke_and_determinism(tmp_path):
         assert r['not_evaluable_condition']
     assert report1['unbound_oat_variants'] > 0
     assert (tmp_path / 'docs' / REPORT).exists()
+    # Ladder dedupe verdict: within-ladders verified unique on computed meaning;
+    # cross-dedupe stays a documented GPT review (free-text features).
+    verdict = report1['dedupe_by_computed_meaning']
+    assert verdict['within_ladders']['status'] == 'DONE'
+    assert verdict['within_ladders']['rows_total'] == 2680
+    assert verdict['within_ladders']['duplicates_found'] == 0
+    assert verdict['ladder_vs_master']['status'] == 'REVIEW_ASSIGNED_GPT'
+    assert verdict['within_master']['status'] == 'DONE_BY_CONSTRUCTION'
 
 
 def test_scalar_feature_ids_distinguish_components_of_one_native_recipe(grid):

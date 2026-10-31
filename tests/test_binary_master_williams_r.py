@@ -130,3 +130,16 @@ def test_defined_zero_and_minus_hundred_remain_known(grid, price, winner):
     answers = {d['source_outcome']: evaluate_master(d, source, setup, last).answer
                for d in definitions(grid, 'WilliamsR14', 'native_osc_zone_share_v1')}
     assert answers[winner] == 'YES' and sum(a == 'YES' for a in answers.values()) == 1
+
+
+def test_path_direction_uses_the_same_window_scoped_native_mask(grid):
+    prices = np.full(80, 100.)
+    high = np.r_[np.full(14, 100.), np.full(66, 110.)]
+    low = np.r_[np.full(14, 100.), np.full(66, 90.)]
+    source, setup, last = bars(prices, high, low)
+    defs = definitions(grid, 'WilliamsR14', 'native_path_dir_v1')
+    answers = {d['source_outcome']: evaluate_master(d, source, setup, last).answer for d in defs}
+    assert answers == dict(rising='NO', falling='NO', flat='YES')
+    # A zero-range value that actually belongs to the last N path remains NI.
+    flat, setup, last = bars(prices, high=prices, low=prices)
+    assert all(evaluate_master(d, flat, setup, last).answer == 'NOT_EVALUABLE' for d in defs)

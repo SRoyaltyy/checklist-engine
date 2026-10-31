@@ -222,6 +222,23 @@ def _native_rsi_series(close, period):
     return values, known
 
 
+def _native_williams_r_series(high, low, close, period):
+    """Native values with zero-range missingness scoped to each output bar."""
+    import talib
+    if len(close) < period:
+        return None
+    t0 = period - 1
+    range_known = np.ones(len(close) - t0, dtype=bool)
+    for t in range(t0, len(close)):
+        hh = float(high[t - period + 1:t + 1].max())
+        ll = float(low[t - period + 1:t + 1].min())
+        range_known[t - t0] = hh != ll
+    values = talib.WILLR(np.asarray(high, dtype=np.float64),
+                         np.asarray(low, dtype=np.float64),
+                         np.asarray(close, dtype=np.float64), timeperiod=period)[t0:]
+    return values, range_known & ~np.isnan(values)
+
+
 def _osc_series(feature, close, high, low):
     """Oscillator series per the L3 derivative (documented seeding per kind)
     and its comparison line, as equal-length float arrays covering the LAST
@@ -259,24 +276,10 @@ def _osc_series(feature, close, high, low):
                 known[t:min(t + slow, len(close))] = False
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'WILLR':
-        import talib
-        period = int(feature['osc_period'])
-        if len(close) < period:
+        native = _native_williams_r_series(high, low, close, int(feature['osc_period']))
+        if native is None:
             return None
-        t0 = period - 1
-        range_known = np.ones(len(close) - t0, dtype=bool)
-        for t in range(t0, len(close)):
-            hh = float(high[t - period + 1:t + 1].max())
-            ll = float(low[t - period + 1:t + 1].min())
-            if hh == ll:
-                range_known[t - t0] = False
-        # Match the registered negative-valued WILLR field, including the
-        # native operation order. Keep the declared zero-range NI policy.
-        series = talib.WILLR(np.asarray(high, dtype=np.float64),
-                             np.asarray(low, dtype=np.float64),
-                             np.asarray(close, dtype=np.float64),
-                             timeperiod=period)[t0:]
-        known = range_known & ~np.isnan(series)
+        series, known = native
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'ROC':
         period = int(feature['osc_period'])
@@ -299,6 +302,80 @@ def _osc_series(feature, close, high, low):
         known = ~np.isnan(series)
     known = known & ~np.isnan(line)
     return series, line, known
+
+
+def _path_series(feature, candles, high, low, close):
+    """Per-bar oscillator/money-path series for the OLS slope t-stat facet
+    (path_dir). Same seeding and known-mask policy as _osc_series, but the
+    MACD branch reads the HISTOGRAM (the question's "MACD path"), and the
+    volume-branch kinds (AD/OBV/MFI) read the registered share volume.
+    Returns the series and its per-bar known mask; series length may be
+    shorter than len(close) (ROC/WILLR slices), as in _osc_series.
+    """
+    kind = feature['path_kind']
+    known = None
+    if kind == 'MACD_HIST':
+        import talib
+        _macd, _signal, series = talib.MACD(
+            np.asarray(close, dtype=np.float64),
+            fastperiod=int(feature['osc_fast']),
+            slowperiod=int(feature['osc_slow']),
+            signalperiod=int(feature['osc_signal']))
+    elif kind == 'RSI':
+        series, known = _native_rsi_series(close, int(feature['osc_period']))
+    elif kind == 'STOCH':
+        import talib
+        period = int(feature['osc_period'])
+        slow = int(feature['osc_slow'])
+        if len(close) < period:
+            return None
+        # Registered STOCH14_3_3_k seeding, mirrored from _osc_series.
+        series, _ = talib.STOCH(np.asarray(high, dtype=np.float64),
+                                np.asarray(low, dtype=np.float64),
+                                np.asarray(close, dtype=np.float64),
+                                fastk_period=period, slowk_period=slow,
+                                slowk_matype=0, slowd_period=3, slowd_matype=0)
+        known = ~np.isnan(series)
+        for t in range(period - 1, len(close)):
+            hh = float(high[t - period + 1:t + 1].max())
+            ll = float(low[t - period + 1:t + 1].min())
+            if hh == ll:
+                # Preserve undefined raw %K as a separate mask across each
+                # slow-K value that consumes it; do not edit native zeros.
+                known[t:min(t + slow, len(close))] = False
+    elif kind == 'WILLR':
+        native = _native_williams_r_series(high, low, close, int(feature['osc_period']))
+        if native is None:
+            return None
+        series, known = native
+    elif kind == 'ROC':
+        period = int(feature['osc_period'])
+        if len(close) <= period:
+            return None
+        base = close[:-period]
+        if (base <= 0).any():
+            return None
+        series = (close[period:] / base - 1.0) * 100.0
+    elif kind in ('AD', 'OBV', 'MFI'):
+        import talib
+        vol = _nonnegative([b.volume for b in candles], 'native volume')
+        if vol is None:
+            return None
+        h = np.asarray(high, dtype=np.float64)
+        l = np.asarray(low, dtype=np.float64)
+        c = np.asarray(close, dtype=np.float64)
+        v = np.asarray(vol, dtype=np.float64)
+        if kind == 'AD':
+            series = talib.AD(h, l, c, v)
+        elif kind == 'OBV':
+            series = talib.OBV(c, v)
+        else:
+            series = talib.MFI(h, l, c, v, timeperiod=int(feature['osc_period']))
+    else:
+        raise NotImplementedError('unregistered path kind: ' + kind)
+    if known is None:
+        known = ~np.isnan(series)
+    return series, known
 
 
 def _split_segments(close):
@@ -1218,6 +1295,262 @@ def _measure(recipe, candles, feature=None):
                     'min_early_max_late': min_early and not max_early,
                     'both_early': max_early and min_early,
                     'both_late': not max_early and not min_early}
+        if recipe == 'native_exit_os_v1':
+            # RSI left its canonical zone inside the window: exit_os = a bar
+            # crossed UP out of oversold (prev <= zone_low < current);
+            # exit_ob = crossed DOWN out of overbought (prev >= zone_high >
+            # current). The LATEST exit event decides; none = no exit event.
+            # The bar before the window anchors the first check (evaluate_
+            # master requires lookback+1 known bars).
+            lb = int(feature['lookback'])
+            osc = _osc_series(feature, close, high, low)
+            if osc is None:
+                return None
+            series, _line, known = osc
+            if len(series) < lb + 1 or not known[-(lb + 1):].all():
+                return None
+            win = series[-(lb + 1):]
+            zl = float(feature['zone_low'])
+            zh = float(feature['zone_high'])
+            events = []
+            for k in range(1, len(win)):
+                if win[k - 1] <= zl < win[k]:
+                    events.append('exit_os')
+                elif win[k - 1] >= zh > win[k]:
+                    events.append('exit_ob')
+            return {'exit_os': bool(events and events[-1] == 'exit_os'),
+                    'exit_ob': bool(events and events[-1] == 'exit_ob'),
+                    'none': not events}
+        if recipe == 'native_series_trend_v1':
+            # Slope of a per-bar series across the window: percent change of
+            # its first to last WINDOW value (documented convention; only
+            # ratio-scale positive series). expanding > +5%, contracting <
+            # -5%, else flat (documented 5% constant; no dial registered on
+            # this family; amendable). Series per trend_kind:
+            #   ATR14  -> ATR% = ATR14/C x 100 per bar (the question's "ATR%")
+            #   RVOL20 -> volume / median of the 50 bars ENDING at that bar
+            #             (registered codebase rule; first known at bar 49)
+            #   DOLLAR -> C x volume per bar
+            lb = int(feature['lookback'])
+            kind = feature['trend_kind']
+            if kind == 'ATR14':
+                series = _native_atr_series(high, low, close) / close * 100.0
+                known = ~np.isnan(series)
+            else:
+                vols = _nonnegative([b.volume for b in candles], 'native volume')
+                if vols is None:
+                    return None
+                if kind == 'RVOL20':
+                    series = np.full(len(vols), np.nan)
+                    known = np.zeros(len(vols), dtype=bool)
+                    for t in range(49, len(vols)):
+                        series[t] = vols[t] / float(np.median(vols[t - 49:t + 1]))
+                        known[t] = True
+                else:  # DOLLAR
+                    series = close * vols
+                    known = np.ones(len(vols), dtype=bool)
+            if len(series) < lb or not known[-lb:].all():
+                return None
+            win = series[-lb:]
+            first = float(win[0])
+            last = float(win[-1])
+            if first <= 0 or not np.isfinite(first) or not np.isfinite(last):
+                return None
+            slope = (last / first - 1.0) * 100.0
+            return {'expanding': slope > 5.0,
+                    'contracting': slope < -5.0,
+                    'flat': abs(slope) <= 5.0}
+        if recipe == 'native_path_dir_v1':
+            # OLS slope t-statistic of the L3 path series across the window:
+            # rising = t > +v, falling = t < -v, flat = |t| <= v with v the
+            # S_trend_t_stat dial value (exact partition, no undocumented
+            # constant). n = lookback; the last lookback KNOWN series values
+            # form the sample. Documented boundaries: n < 3 -> NOT_EVALUABLE;
+            # a perfect fit (se == 0) with zero slope reads t = 0 (flat);
+            # se == 0 with a nonzero slope reads +/-inf and the comparison
+            # decides (KNOWN infinity, as the segment recipes).
+            lb = int(feature['lookback'])
+            if lb < 3:
+                return None
+            ps = _path_series(feature, candles, high, low, close)
+            if ps is None:
+                return None
+            series, known = ps
+            if len(series) < lb or not known[-lb:].all():
+                return None
+            y = np.asarray(series[-lb:], dtype=np.float64)
+            if not np.isfinite(y).all():
+                return None
+            n = lb
+            x = np.arange(n, dtype=np.float64)
+            xc = x - x.mean()
+            ybar = float(y.mean(dtype=np.float64))
+            sxx = float((xc * xc).sum(dtype=np.float64))
+            beta = float((xc * (y - ybar)).sum(dtype=np.float64)) / sxx
+            resid = y - (ybar + beta * xc)
+            s2 = float((resid * resid).sum(dtype=np.float64)) / (n - 2)
+            se = math.sqrt(s2 / sxx)
+            if se == 0.0:
+                return 0.0 if beta == 0.0 else math.copysign(math.inf, beta)
+            return beta / se
+        if recipe == 'native_distance_route_v1':
+            # Signed distance of close from its L3 MA in ATR14 units, first
+            # to last WINDOW bar: d_t = (C_t - MA_t)/ATR14_t (both native
+            # series initialized over the supplied prefix). stretching =
+            # d_end - d_start > +0.5, reverting < -0.5, stable otherwise
+            # (documented 0.5-ATR constant; no dial registered on this
+            # family; amendable like the trend 5% / weekly 1% constants).
+            # A zero/non-finite ATR14 or MA inside the window -> NOT_EVALUABLE
+            # (a zero ATR makes d non-finite; never epsilon-filled).
+            lb = int(feature['lookback'])
+            period = int(feature['ma_period'])
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < lb:
+                return None
+            if not np.isfinite(ma).all():
+                return None
+            atr = _native_atr_series(high, low, close)[period - 1:]
+            d = (close[period - 1:] - ma) / atr
+            if len(d) < lb:
+                return None
+            win = d[-lb:]
+            if not np.isfinite(win).all():
+                return None
+            delta = float(win[-1] - win[0])
+            return {'stretching': delta > 0.5,
+                    'reverting': delta < -0.5,
+                    'stable': abs(delta) <= 0.5}
+        if recipe == 'native_above_share_v1':
+            # Share of window bars closing strictly above the L3 MA:
+            # count(C > MA) / lookback (equality counts as NOT above;
+            # documented strict rule). mostly_above = share >= 0.6,
+            # mostly_below = share <= 0.4, else mixed (documented 0.6/0.4
+            # constants, exact partition; no dial registered on this family;
+            # amendable like the trend 5% / distance 0.5-ATR constants).
+            # A non-finite MA in the window -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            period = int(feature['ma_period'])
+            ma = _ma_series(feature, close)
+            if ma is None or len(ma) < lb:
+                return None
+            win_c = close[period - 1:][-lb:]
+            win_m = ma[-lb:]
+            if not np.isfinite(win_c).all() or not np.isfinite(win_m).all():
+                return None
+            share = float((win_c > win_m).sum(dtype=np.float64)) / lb
+            return {'mostly_above': share >= 0.6,
+                    'mostly_below': share <= 0.4,
+                    'mixed': 0.4 < share < 0.6}
+        if recipe == 'native_efficiency_v1':
+            # Chop ratio over the window's native candle closes (inverse
+            # Kaufman ER): path = sum|C_i - C_{i-1}| across the window
+            # (one prior close anchors the first difference); net = |C_last
+            # - C_first|. smooth = chop <= C302 edge, choppy = chop >= C303
+            # edge, mid otherwise (both baked dials; exact partition; a
+            # degenerate pairing with choppy < smooth leaves mid empty ->
+            # NOT_EVALUABLE). net == 0 with path > 0 -> chop = inf ->
+            # choppy (KNOWN infinity per ratio rule); a flat window (path
+            # and net both 0) is 0/0 -> NOT_EVALUABLE, never invented.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1:
+                return None
+            win = close[-(lb + 1):]
+            path = float(np.abs(np.diff(win)).sum(dtype=np.float64))
+            net = abs(float(win[-1] - win[0]))
+            if net == 0.0:
+                if path == 0.0:
+                    return None
+                chop = math.inf
+            else:
+                chop = path / net
+            s = float(feature['chop_smooth_edge'])
+            c = float(feature['chop_choppy_edge'])
+            if c < s:
+                return None      # degenerate dial pairing: mid band empty
+            return {'smooth': chop <= s,
+                    'mid': (chop > s) and (chop < c),
+                    'choppy': chop >= c}
+        if recipe == 'native_skew_v1':
+            # Skewness of the window's per-bar returns r_i = C_i/C_{i-1} - 1
+            # (lookback returns from lookback+1 closes): g1 = m3 / m2**1.5,
+            # the Fisher-Pearson coefficient (documented; no bias
+            # correction, amendable). pos = g1 > +0.5, neg = g1 < -0.5,
+            # neutral otherwise (documented 0.5 constant; no dial registered
+            # on this family; same standing as the trend 5% constant). A
+            # zero-variance return window is undefined -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1 or lb < 3:
+                return None
+            win = close[-(lb + 1):]
+            with np.errstate(all='ignore'):
+                r = win[1:] / win[:-1] - 1.0
+            if not np.isfinite(r).all():
+                return None
+            rbar = float(r.mean(dtype=np.float64))
+            dev = r - rbar
+            m2 = float((dev * dev).sum(dtype=np.float64)) / len(r)
+            if m2 == 0.0:
+                return None
+            m3 = float((dev * dev * dev).sum(dtype=np.float64)) / len(r)
+            g1 = m3 / m2 ** 1.5
+            return {'pos': g1 > 0.5, 'neg': g1 < -0.5,
+                    'neutral': abs(g1) <= 0.5}
+        if recipe == 'native_autocorr_v1':
+            # Lag-1 autocorrelation of the window's per-bar returns
+            # (Pearson of r_1..r_{n-1} vs r_2..r_n over n = lookback
+            # returns). trending = rho > +0.2, mean_reverting = rho < -0.2,
+            # none otherwise (documented 0.2 constant, about a 2/sqrt(n)
+            # band at typical window lengths; no dial registered; amendable
+            # like the trend 5% constant). Zero variance on either side
+            # leaves rho undefined -> NOT_EVALUABLE, never invented.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1 or lb < 3:
+                return None
+            win = close[-(lb + 1):]
+            with np.errstate(all='ignore'):
+                r = win[1:] / win[:-1] - 1.0
+            if not np.isfinite(r).all():
+                return None
+            a = r[:-1]
+            b = r[1:]
+            da = a - float(a.mean(dtype=np.float64))
+            db = b - float(b.mean(dtype=np.float64))
+            va = float((da * da).sum(dtype=np.float64))
+            vb = float((db * db).sum(dtype=np.float64))
+            if va == 0.0 or vb == 0.0:
+                return None
+            rho = float((da * db).sum(dtype=np.float64)) / math.sqrt(va * vb)
+            return {'trending': rho > 0.2, 'mean_reverting': rho < -0.2,
+                    'none': abs(rho) <= 0.2}
+        if recipe == 'native_stack_flip_v1':
+            # Golden/death cross of the group's documented convention pair
+            # SMA50 vs SMA200 (registered native TA-Lib SMAs over the
+            # supplied prefix; the comparison uses their common range from
+            # the SMA200 warmup onward). The LATEST cross in the window
+            # decides (exit_os latest-event precedent; the prior common
+            # bar anchors the first check): golden = SMA50 crossed above
+            # SMA200; death = crossed below; none = no cross in the window.
+            lb = int(feature['lookback'])
+            import talib
+            close64 = np.asarray(close, dtype=np.float64)
+            fast = talib.SMA(close64, timeperiod=int(feature['ma_fast']))
+            slow = talib.SMA(close64, timeperiod=int(feature['ma_slow']))
+            p_slow = int(feature['ma_slow'])
+            if len(close64) < p_slow:
+                return None
+            d = fast[p_slow - 1:] - slow[p_slow - 1:]
+            if len(d) < lb + 1 or not np.isfinite(d[-(lb + 1):]).all():
+                return None
+            win = d[-(lb + 1):]
+            events = []
+            for k in range(1, len(win)):
+                if win[k - 1] <= 0 and win[k] > 0:
+                    events.append('golden')
+                elif win[k - 1] >= 0 and win[k] < 0:
+                    events.append('death')
+            return {'golden': bool(events and events[-1] == 'golden'),
+                    'death': bool(events and events[-1] == 'death'),
+                    'none': not events}
         if recipe == 'native_maxvol_wick_v1':
             # Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1880,6 +2213,175 @@ FACETS = {
         outcome_spec={o: ('boolean', '=', 'one')
                       for o in ('max_early_min_late', 'min_early_max_late',
                                 'both_early', 'both_late')}),
+    # ---- batch 15: RSI zone exit + per-bar series slope. Both consume the
+    # registered native indicator state (TA-Lib parity, full supplied prefix)
+    # exactly like the batch-9..14 oscillator recipes. ----
+    'exit_os': dict(
+        binding='mixed',
+        l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24')),
+        recipe='native_exit_os_v1',
+        unit='window_rsi_zone_exit_event',
+        outcomes=('exit_os', 'exit_ob', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                         'zone_high': '70', 'zone_low': '30', 'osc_warmup': '7'},
+                'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '13'},
+                'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '15'},
+                'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
+                          'zone_high': '70', 'zone_low': '30', 'osc_warmup': '25'}},
+        outcome_spec={'exit_os': ('boolean', '=', 'one'),
+                      'exit_ob': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'trend': dict(
+        binding='mixed',
+        l1_l3=(('volatility', 'ATR14'), ('volume', 'RVOL20'),
+               ('volume', 'dollar_volume')),
+        recipe='native_series_trend_v1',
+        unit='window_series_slope_pct_bucket',
+        outcomes=('expanding', 'contracting', 'flat'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'ATR14': {'trend_kind': 'ATR14'},
+                'RVOL20': {'trend_kind': 'RVOL20'},
+                'dollar_volume': {'trend_kind': 'DOLLAR'}},
+        outcome_spec={'expanding': ('boolean', '=', 'one'),
+                      'contracting': ('boolean', '=', 'one'),
+                      'flat': ('boolean', '=', 'one')}),
+    # ---- batch 16: OLS path direction + MA-distance route. path_dir is a
+    # band binding on the S_trend_t_stat dial (t > +v / t < -v / |t| <= v:
+    # an exact partition, so no undocumented constant). distance_route uses
+    # one documented 0.5-ATR constant (same standing as the trend 5% and
+    # weekly 1% constants); VWAP_anchored has no registered anchor
+    # definition and stays honestly unbound pending a ruling. ----
+    'path_dir': [dict(
+        binding='band', mirror=False,
+        l1_l3=(('momentum', 'MACD12_26_9'), ('momentum', 'ROC20'),
+               ('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+               ('overbought_oversold', 'Stoch14_3'),
+               ('overbought_oversold', 'WilliamsR14')),
+        recipe='native_path_dir_v1',
+        unit='window_path_series_ols_slope_t_statistic',
+        outcomes=('rising', 'falling', 'flat'), cutoff_id='S_trend_t_stat',
+        l3_map={'MACD12_26_9': {'path_kind': 'MACD_HIST', 'osc_fast': '12',
+                                'osc_slow': '26', 'osc_signal': '9'},
+                'ROC20': {'path_kind': 'ROC', 'osc_period': '20'},
+                'RSI6': {'path_kind': 'RSI', 'osc_period': '6'},
+                'RSI12': {'path_kind': 'RSI', 'osc_period': '12'},
+                'RSI14': {'path_kind': 'RSI', 'osc_period': '14'},
+                'RSI24': {'path_kind': 'RSI', 'osc_period': '24'},
+                'Stoch14_3': {'path_kind': 'STOCH', 'osc_period': '14',
+                              'osc_slow': '3'},
+                'WilliamsR14': {'path_kind': 'WILLR', 'osc_period': '14'}},
+        transform_by_outcome={'rising': 'identity', 'falling': 'identity',
+                              'flat': 'abs'},
+        comparator_by_outcome={'rising': '>', 'falling': '<', 'flat': '<='}),
+        dict(
+        binding='band', mirror=False,
+        l1_l3=(('volume', 'AD_line'), ('volume', 'MFI14'), ('volume', 'OBV')),
+        recipe='native_path_dir_v1',
+        unit='window_path_series_ols_slope_t_statistic',
+        outcomes=('rising', 'falling', 'flat'), cutoff_id='S_trend_t_stat',
+        # The volume-kind questions also register S_baseline_bars /
+        # S_osc_zone_high / S_osc_zone_low on the grid; the OLS t-stat path
+        # definition consumes none of them (an exact partition needs no
+        # zones or baseline), so they are declared-but-unmapped rather than
+        # invented a role. Flagged for James in PR #177.
+        baked_cutoff_ids=('S_baseline_bars', 'S_osc_zone_high',
+                          'S_osc_zone_low'),
+        baked_map={},
+        l3_map={'AD_line': {'path_kind': 'AD'},
+                'MFI14': {'path_kind': 'MFI', 'osc_period': '14'},
+                'OBV': {'path_kind': 'OBV'}},
+        transform_by_outcome={'rising': 'identity', 'falling': 'identity',
+                              'flat': 'abs'},
+        comparator_by_outcome={'rising': '>', 'falling': '<', 'flat': '<='})],
+    'distance_route': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_distance_route_v1',
+        unit='window_price_ma_distance_atr_change_bucket',
+        outcomes=('stretching', 'reverting', 'stable'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={'stretching': ('boolean', '=', 'one'),
+                      'reverting': ('boolean', '=', 'one'),
+                      'stable': ('boolean', '=', 'one')}),
+    # ---- batch 17: MA side-share. One documented 0.6/0.4 partition constant
+    # (same standing as the trend 5% / distance 0.5-ATR constants); strict
+    # C > MA rule (equality is NOT above). VWAP_anchored stays honestly
+    # unbound (no registered anchor definition). ----
+    'above_share': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_above_share_v1',
+        unit='window_close_above_ma_share_bucket',
+        outcomes=('mostly_above', 'mostly_below', 'mixed'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={'mostly_above': ('boolean', '=', 'one'),
+                      'mostly_below': ('boolean', '=', 'one'),
+                      'mixed': ('boolean', '=', 'one')}),
+    # ---- batch 18: return-path statistics + MA golden/death cross.
+    # efficiency is dial-exact (C302/C303 chop edges); skew (0.5) and
+    # autocorr (0.2) carry documented constants with no dial registered,
+    # same standing as the trend 5% constant; stack_flip uses the
+    # documented golden/death convention pair SMA50/SMA200 with the
+    # latest-cross rule (exit_os precedent). None of these families was in
+    # the parts 1-4 ruling queue. ----
+    'efficiency': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_efficiency_v1',
+        unit='window_chop_ratio_bucket',
+        outcomes=('smooth', 'mid', 'choppy'),
+        cutoff_id=None,
+        baked_cutoff_ids=('C302_efficiency__scalar2',
+                          'C303_efficiency__scalar5'),
+        baked_map={'C302_efficiency__scalar2': 'chop_smooth_edge',
+                   'C303_efficiency__scalar5': 'chop_choppy_edge'},
+        outcome_spec={'smooth': ('boolean', '=', 'one'),
+                      'mid': ('boolean', '=', 'one'),
+                      'choppy': ('boolean', '=', 'one')}),
+    'skew': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_skew_v1',
+        unit='window_return_skewness_bucket',
+        outcomes=('pos', 'neg', 'neutral'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'pos': ('boolean', '=', 'one'),
+                      'neg': ('boolean', '=', 'one'),
+                      'neutral': ('boolean', '=', 'one')}),
+    'autocorr': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_autocorr_v1',
+        unit='window_return_lag1_autocorr_bucket',
+        outcomes=('trending', 'mean_reverting', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'trending': ('boolean', '=', 'one'),
+                      'mean_reverting': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'stack_flip': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
+        recipe='native_stack_flip_v1',
+        unit='window_sma50_sma200_cross_latest',
+        outcomes=('golden', 'death', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'MA_group(10/20/50/200)': {'ma_fast': '50',
+                                           'ma_slow': '200'}},
+        outcome_spec={'golden': ('boolean', '=', 'one'),
+                      'death': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -1896,6 +2398,37 @@ for _facet, _spec in _iter_specs():
     _spec.setdefault('l1_l3', (('candles', 'OHLC'),))
     _spec.setdefault('baked_cutoff_ids', ())
     _spec.setdefault('baked_map', {})
+
+# Categorical facets whose outcomes form an EXACT partition of evaluable
+# windows: every evaluable window answers exactly one outcome YES (zero-YES
+# can only occur when every outcome is NOT_EVALUABLE). Checked by property
+# test tests/test_binary_master_partition.py on seeded random-regime tapes.
+# Facets are excluded here when their outcomes are independent booleans
+# (ma30_side_streak), per-direction independent measurements
+# (full_stack_streak, osc_swing_speed), or priority/overlay schemes that can
+# legitimately fire more than once (inside_outside, dry_up_at_low,
+# hl_base_breakout), or when bucket contiguity depends on the OAT dial
+# pairing being verified elsewhere (rsi_floor/rsi_ceiling codeN buckets).
+EXACT_PARTITION_FACETS = {
+    # batch 1: mirror-band balance facets
+    'red_green_balance', 'last_green_vs_red', 'down_vs_up_moves', 'wick_body',
+    # batch 2: fate partitions
+    'gap_up', 'gap_down', 'run_biggest_move',
+    # batch 3/4: band mirrors and fate partitions
+    'dominance', 'vs_own_past', 'spike', 'maxvol_wick',
+    'pullback_vs_run_volume',   # one side evaluable -> its band answers once
+    'flip',
+    # batch 5-7: mutually exclusive event partitions
+    'fresh_cross', 'slope', 'cross_event', 'cross_count', 'shock', 'time_in_zone',
+    # batch 9-11: mirror bands and crossed partitions
+    'segment_compare', 'absorption_day', 'capitulation_bar',
+    # batch 12-13: order and run partitions
+    'high_then_low', 'intraday_change', 'interday_change', 'run_structure',
+    # batch 14-18
+    'weekly_trend', 'weekly_stack', 'extreme_position', 'exit_os', 'trend',
+    'path_dir', 'distance_route', 'above_share',
+    'efficiency', 'skew', 'autocorr', 'stack_flip',
+}
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
                  'candle pair is required), an uninitialized required native indicator value, a missing/late '
@@ -2085,7 +2618,9 @@ _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49,
                 'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49,
-                'native_hl_base_breakout_v1': 30}
+                'native_hl_base_breakout_v1': 30,
+                'native_efficiency_v1': 1, 'native_skew_v1': 1,
+                'native_autocorr_v1': 1}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
@@ -2098,7 +2633,11 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_absorption_day_v1', 'native_capitulation_bar_v1',
                         'native_hl_base_breakout_v1', 'native_high_then_low_v1',
                         'native_run_structure_v1', 'native_weekly_trend_v1',
-                        'native_weekly_stack_v1', 'native_extreme_position_v1'}
+                        'native_weekly_stack_v1', 'native_extreme_position_v1',
+                        'native_exit_os_v1', 'native_series_trend_v1',
+                        'native_distance_route_v1', 'native_above_share_v1',
+                        'native_efficiency_v1', 'native_skew_v1',
+                        'native_autocorr_v1', 'native_stack_flip_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -2119,28 +2658,32 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['rsi_period'])               # RSI seed warmup
         if feature['recipe'] in ('native_osc_cross_v1', 'native_osc_zone_share_v1',
                                  'native_osc_swing_speed_v1',
-                                 'native_extreme_position_v1'):
+                                 'native_extreme_position_v1', 'native_exit_os_v1'):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
         native_osc = (feature['recipe'] in (
             'native_osc_cross_v1', 'native_osc_zone_share_v1',
-            'native_osc_swing_speed_v1', 'native_extreme_position_v1')
+            'native_osc_swing_speed_v1', 'native_extreme_position_v1',
+            'native_exit_os_v1')
             and feature['osc_kind'] in ('RSI', 'MACD', 'STOCH'))
         recursive_rsi = feature['recipe'] in (
             'native_rsi_floor_v1', 'native_rsi_ceiling_v1', 'native_hl_base_breakout_v1')
         native_atr = feature['recipe'] in (
             'native_run_biggest_move_ratio_v1', 'native_maxvol_wick_v1',
             'native_segment_atr_compare_v1', 'native_absorption_day_v1',
-            'native_capitulation_bar_v1')
+            'native_capitulation_bar_v1', 'native_series_trend_v1')
         if native_osc or recursive_rsi or native_atr or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
-                                 'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
+                                 'native_ma30_side_streak_v1', 'native_weekly_stack_v1',
+                                 'native_path_dir_v1', 'native_distance_route_v1',
+                                 'native_above_share_v1', 'native_stack_flip_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
             if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1',
-                                     'native_osc_cross_v1'):
+                                     'native_osc_cross_v1', 'native_exit_os_v1',
+                                     'native_stack_flip_v1'):
                 required += 1
             if feature['recipe'] == 'native_hl_base_breakout_v1':
                 required += _EXTRA_PRIOR[feature['recipe']]
