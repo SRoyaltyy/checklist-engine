@@ -64,11 +64,11 @@ def test_bind_default_and_changed_variants(grid):
         changed = variants[1]
         defs2 = bind_master_question(row, changed)
         if {d['comparison_threshold'] for d in defs} == {d['comparison_threshold'] for d in defs2}:
-            # all-boolean facets carry the dial inside the feature (baked map);
-            # the changed variant must then differ in the baked feature value
+            # all-boolean/code facets carry dials inside the feature (baked map);
+            # the changed variant must differ in at least one baked feature value
             assert FACETS[facet].get('baked_map'), facet
-            key = next(iter(FACETS[facet]['baked_map'].values()))
-            assert {d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
+            assert any({d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
+                       for key in FACETS[facet]['baked_map'].values())
 
 
 def test_ratio_mirror_threshold_is_exact_reciprocal(grid):
@@ -619,6 +619,119 @@ def test_evaluate_flip(grid):
     spec = [up] * 5 + [up] * 5
     vols = [200] * 10
     bars = _bars_hlv([(o, h, l, c, v) for (o, h, l, c), v in zip(spec, vols)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+
+
+def _bars_from_closes(closes, slot0=100):
+    bars = {}
+    prev = closes[0]
+    for i, c in enumerate(closes):
+        end = date(2024, 3, 1) + timedelta(days=i)
+        o = prev
+        bars[slot0 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
+                                    open=float(o), high=float(max(o, c) * 1.001),
+                                    low=float(min(o, c) * 0.999), close=float(c))
+        prev = c
+    return bars
+
+
+def test_bind_batch5_variants(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|rsi_floor|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 4
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['below_extreme']['feature']['rsi_period'] == '14'
+    assert by_outcome['below_extreme']['feature']['rsi_t1'] == '30'
+    assert by_outcome['below_extreme']['feature']['rsi_t2'] == '40'
+    assert by_outcome['below_extreme']['feature']['rsi_t3'] == '50'
+    assert by_outcome['below_extreme']['comparison_threshold'] == '0'
+    assert by_outcome['high_band']['comparison_threshold'] == '3'
+    assert all(d['feature_kind'] == 'integer_count' for d in defs)
+
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|rsi_ceiling|1x10')
+    defs = bind_master_question(row, variant)
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['above_extreme']['feature']['rsi_t1'] == '70'
+
+    row, variant = _q(grid, 'B|moving_averages|SMA20|fresh_cross|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 4
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['up']['feature']['ma_kind'] == 'SMA'
+    assert by_outcome['up']['feature']['ma_period'] == '20'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+
+    row, variant = _q(grid, 'B|moving_averages|EMA21|fresh_cross|1x10')
+    defs = bind_master_question(row, variant)
+    assert {d['source_outcome']: d for d in defs}['up']['feature']['ma_kind'] == 'EMA'
+
+
+def test_evaluate_rsi_floor(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|rsi_floor|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 16  # 6 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # all gains in window -> RSI 100 -> code 3 (high_band)
+    closes = [50.0 + 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['high_band'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['below_extreme'], bars, setup, last).answer == 'NO'
+    # all losses -> RSI 0 -> code 0 (below_extreme)
+    closes = [50.0 - 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['below_extreme'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['high_band'], bars, setup, last).answer == 'NO'
+    # alternating +/- with one extra loss -> min RSI ~41.7 -> code 2 (mid_band 40-50)
+    changes = [1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, 1, -1]
+    closes = [50.0]
+    for ch in changes:
+        closes.append(closes[-1] + 0.1 * ch)
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['mid_band'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['low_band'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['high_band'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_rsi_ceiling(grid):
+    row, variant = _q(grid, 'B|overbought_oversold|RSI6|rsi_ceiling|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 16
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    closes = [50.0 + 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['above_extreme'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['low_band'], bars, setup, last).answer == 'NO'
+    closes = [50.0 - 0.1 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['low_band'], bars, setup, last).answer == 'YES'
+
+
+def test_evaluate_fresh_cross(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|fresh_cross|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 30  # 20 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # flat then rising through the MA -> up
+    closes = [100.0] * 20 + [101.0 + i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # rising then falling back below -> both
+    closes = [100.0] * 20 + [101.0 + i for i in range(5)] + [99.0 - i for i in range(5)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['both'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'NO'
+    # flat then falling -> down
+    closes = [100.0] * 20 + [99.0 - i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'YES'
+    # perfectly flat -> no crossings -> none
+    closes = [100.0] * span
+    bars = _bars_from_closes(closes)
     assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
 
 
