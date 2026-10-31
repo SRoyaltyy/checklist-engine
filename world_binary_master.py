@@ -229,20 +229,26 @@ def _osc_series(feature, close, high, low):
         series, known = _native_rsi_series(close, period)
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'STOCH':
+        import talib
         period = int(feature['osc_period'])
         slow = int(feature['osc_slow'])
-        t0 = period - 1
-        raw = np.empty(len(close) - t0, dtype=np.float64)
-        for t in range(t0, len(close)):
+        if len(close) < period:
+            return None
+        # Registered STOCH14_3_3_k / I028_default_k includes the native
+        # slow-D warmup even though this facet reads K against a constant.
+        series, _ = talib.STOCH(np.asarray(high, dtype=np.float64),
+                               np.asarray(low, dtype=np.float64),
+                               np.asarray(close, dtype=np.float64),
+                               fastk_period=period, slowk_period=slow,
+                               slowk_matype=0, slowd_period=3, slowd_matype=0)
+        known = ~np.isnan(series)
+        for t in range(period - 1, len(close)):
             hh = float(high[t - period + 1:t + 1].max())
             ll = float(low[t - period + 1:t + 1].min())
             if hh == ll:
-                return None
-            raw[t - t0] = 100.0 * (close[t] - ll) / (hh - ll)
-        if len(raw) < slow:
-            return None
-        kernel = np.ones(slow) / slow
-        series = np.convolve(raw, kernel, mode='valid')
+                # Preserve undefined raw %K as a separate mask across each
+                # slow-K value that consumes it; do not edit native zeros.
+                known[t:min(t + slow, len(close))] = False
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'WILLR':
         import talib
@@ -2117,13 +2123,13 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
-        recursive_osc = (feature['recipe'] in (
+        native_osc = (feature['recipe'] in (
             'native_osc_cross_v1', 'native_osc_zone_share_v1',
             'native_osc_swing_speed_v1', 'native_extreme_position_v1')
-            and feature['osc_kind'] in ('RSI', 'MACD'))
+            and feature['osc_kind'] in ('RSI', 'MACD', 'STOCH'))
         recursive_rsi = feature['recipe'] in (
             'native_rsi_floor_v1', 'native_rsi_ceiling_v1', 'native_hl_base_breakout_v1')
-        if recursive_osc or recursive_rsi or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
+        if native_osc or recursive_rsi or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
             # Required facet/history groups must be present; an old halt/IPO
