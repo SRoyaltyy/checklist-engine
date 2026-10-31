@@ -171,6 +171,10 @@ def build(root):
 
     storage = pack_csv(csv_path)
     canonical_rows = len(bound)
+    mirror_defs = [q for q, _ in bound.values()
+                   if q['feature'].get('ratio_band_contract') == 'LITERAL_CLOSED_INTERVAL_V2']
+    inverted = [q for q in mirror_defs
+                if float(q['feature']['ratio_band_lower']) > float(q['feature']['ratio_band_upper'])]
     report = dict(
         canonical_questions=len(source.questions), oat_variants=sum(
             int(r['versions_one_at_a_time']) for r in source.questions.values()),
@@ -185,6 +189,15 @@ def build(root):
         ladder_add_on_rows=len(ladder),
         ladder_source_rows=len(reviewed['source']),
         ladder_alias_rows=len(reviewed['aliases']),
+        ratio_band_binding=dict(
+            contract='LITERAL_CLOSED_INTERVAL_V2',
+            bound_definitions=len(mirror_defs),
+            inverted_interval_definitions=len(inverted),
+            inverted_hi_rungs=sorted({q['feature']['ratio_band_upper'] for q in inverted}, key=float),
+            inverted_interval_handling='NOT_EVALUABLE:INVERTED_LITERAL_RATIO_BAND',
+            registered_cutoffs_edited=False,
+            note='All registered OAT variants retained; invalid intervals are not usable questions. '
+                 'Their domain/rulings remain unresolved; this is not a question-quality gate PASS.'),
         ladder_review_artifacts={name: digest(root / 'docs' / name)
                                  for name in (LADDER_ALIASES, LADDER_REVIEW)},
         dedupe_by_computed_meaning=verify_ladder_dedupe(root, reviewed),

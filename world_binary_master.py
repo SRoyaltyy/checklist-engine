@@ -18,7 +18,7 @@ from numbers import Integral, Real
 import math
 import numpy as np
 
-from world_binary_questions import evaluate_binary
+from world_binary_questions import BinaryAnswer, evaluate_binary
 from world_question_grid import canonical_number, identity
 from world_binary_price import bind_price_question as _bind_gpt_price
 from world_binary_price import evaluate_price as _eval_gpt_price
@@ -1659,13 +1659,21 @@ def _measure(recipe, candles, feature=None):
     raise NotImplementedError('unbound canonical master feature: ' + recipe)
 
 
-def _apply_transform(value, transform):
+def _apply_transform(value, transform, feature=None):
     if value is None:
         return None
     if transform == 'identity':
         return value
     if transform == 'abs':
         return abs(value)
+    if transform == 'closed_band_margin':
+        # Compare the raw ratio against the two published literal bounds.
+        # Taking a binary reciprocal of the measurement can round differently
+        # from the decimal-canonical reciprocal cutoff, leaving an endpoint
+        # unclassified. A signed distance preserves both literal endpoints.
+        low = np.float64(feature['ratio_band_lower'])
+        high = np.float64(feature['ratio_band_upper'])
+        return float(min(np.float64(value) - low, high - np.float64(value)))
     if transform == 'mirror_min':
         with np.errstate(all='ignore'):
             return float(min(np.float64(value), np.float64(1.0) / np.float64(value)))
@@ -2441,7 +2449,8 @@ NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 
                  '(dry_up_at_low), or a zero baseline mean with zero window mean (vs_own_past). '
                  'Swing/segment facets add: a non-contiguous OAT scalar pairing '
                  '(swing_mid_lo != swing_low_edge+1), no complete cross-zone swing in the window '
-                 '(both *_none outcomes answer NO; the question is still evaluable), or a zero '
+                 '(both *_none outcomes answer NO; the question is still evaluable), an inverted literal '
+                 'ratio interval (registered hi < 1 so 1/hi > hi; retained, never reordered), or a zero '
                  'decline-leg mean with zero rally-leg mean (all three segment recipes).')
 KNOWABLE = ('Uses only native candles with available_from <= setup date D and end < D '
             '(last completed candle = D-1); D open is execution only. Bars are strict '
@@ -2458,6 +2467,16 @@ def _ratio_thresholds(spec, v):
     high = canonical_number(v)
     low = canonical_number(str(Decimal(1) / Decimal(v)))
     return high, low
+
+
+def _closed_band_binding(extra, transform, operator, threshold, high, low):
+    """Version the literal-interval contract; never change a registered dial."""
+    extra = dict(extra, ratio_band_contract='LITERAL_CLOSED_INTERVAL_V2',
+                 ratio_band_lower=low, ratio_band_upper=high)
+    if transform == 'mirror_min':
+        return extra, 'closed_band_margin', '>=', '0', (
+            ';min(ratio-' + low + ',' + high + '-ratio)')
+    return extra, transform, operator, threshold, ''
 
 
 def _definition(spec, timeframe, lookback, outcome, transform, operator, threshold,
@@ -2556,7 +2575,8 @@ def _bind_facet(tree_row, variant, spec):
                 threshold = low if spec['mirror'] else high
             extra = dict(feature_extra)
             extra['ratio_key'] = spec['feature_key_by_outcome'][outcome]
-            suffix = (';mirror_min' if transform == 'mirror_min' else '')
+            extra, transform, operator, threshold, suffix = _closed_band_binding(
+                extra, transform, operator, threshold, high, low)
             suffix += ';' + extra['ratio_key']
             result.append(_definition(spec, timeframe, lookback, outcome, transform,
                                       operator, threshold, 'continuous', variant.variant_id,
@@ -2578,9 +2598,13 @@ def _bind_facet(tree_row, variant, spec):
             threshold = low if spec['mirror'] else high
         suffix = (';mirror_min' if transform == 'mirror_min'
                   else ';abs' if transform == 'abs' else '')
+        extra = feature_extra
+        if spec['mirror']:
+            extra, transform, operator, threshold, suffix = _closed_band_binding(
+                extra, transform, operator, threshold, high, low)
         result.append(_definition(spec, timeframe, lookback, outcome, transform,
                                   operator, threshold, 'continuous', variant.variant_id,
-                                  variant.source_question_id, suffix, feature_extra))
+                                  variant.source_question_id, suffix, extra))
     return result
 
 
@@ -2649,6 +2673,13 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
     """
     feature = definition['feature']
     if feature['recipe'] in _MASTER_RECIPES:
+        if (feature.get('ratio_band_contract') == 'LITERAL_CLOSED_INTERVAL_V2'
+                and float(feature['ratio_band_lower']) > float(feature['ratio_band_upper'])):
+            # Some registered OAT hi rungs are below 1, so lo=1/hi > hi.
+            # Keep those variants in the inventory, but an inverted interval
+            # has no defined three-way partition. Do not swap/cap its cutoffs
+            # or invent a priority between simultaneously true outer buckets.
+            return BinaryAnswer('NOT_EVALUABLE', 'INVERTED_LITERAL_RATIO_BAND')
         extra = _EXTRA_PRIOR.get(feature['recipe'], 0)
         if feature['recipe'] == 'native_volume_vs_own_past_v1':
             extra = int(feature['baseline_bars'])  # baked S_baseline_bars dial
@@ -2714,7 +2745,7 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
         raw = measured
         if 'ratio_key' in feature:
             raw = None if measured is None else measured[feature['ratio_key']]
-        value = None if raw is None else _apply_transform(raw, feature['transform'])
+        value = None if raw is None else _apply_transform(raw, feature['transform'], feature)
         return evaluate_binary(value, definition['comparator'],
                                definition['comparison_threshold'],
                                feature_kind=definition['feature_kind'])

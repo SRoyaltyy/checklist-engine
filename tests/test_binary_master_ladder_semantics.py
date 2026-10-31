@@ -110,8 +110,12 @@ def test_duplicate_source_ids_fail_before_aliasing(tmp_path):
         review_ladders(tmp_path)
 
 
-def test_committed_export_changes_only_four_verified_alias_rows(tmp_path):
-    """Authenticate the old package, then compare every retained CSV row."""
+def test_committed_ladder_export_changes_only_four_verified_alias_rows(tmp_path):
+    """Authenticate the old package, then compare every retained ladder row.
+
+    BOUND definitions have independent versioned formula revisions; this proof
+    is specific to the unchanged ladder source and its four reviewed aliases.
+    """
     def blob(path):
         return subprocess.check_output(['git', 'show', BASE + ':' + path], cwd=ROOT)
 
@@ -131,17 +135,19 @@ def test_committed_export_changes_only_four_verified_alias_rows(tmp_path):
     current = unpack_csv(Path(ROOT) / 'docs')
     reviewed = review_ladders(ROOT)
     aliases = {r['source_question_id'] for r in reviewed['aliases']}
-    checked = removed = bound = 0
+    checked = removed = 0
     with prior.open(encoding='utf-8', newline='') as old, current.open(encoding='utf-8', newline='') as new:
         previous, actual = csv.DictReader(old), csv.DictReader(new)
         assert previous.fieldnames == actual.fieldnames
+        actual_ladders = iter(r for r in actual if r['definition_status'] == 'LADDER_ADDON')
         for row in previous:
+            if row['definition_status'] != 'LADDER_ADDON':
+                continue
             if row['question_id'] in aliases:
                 assert row['definition_status'] == 'LADDER_ADDON'
                 removed += 1
                 continue
-            assert next(actual) == row
+            assert next(actual_ladders) == row
             checked += 1
-            bound += row['definition_status'] == 'BOUND'
-        assert next(actual, None) is None
-    assert (checked, removed, bound) == (65552, 4, 62876)
+        assert next(actual_ladders, None) is None
+    assert (checked, removed) == (2676, 4)
