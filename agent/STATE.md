@@ -9,11 +9,11 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 11:39: reads work, writes do not. All three puts from 11:31 400'd; STATE and the workflow came back unchanged. Cause: put sends only b, while read needed b+branch+ref before it worked. v2.6 aliases every put parameter and logs the Worker body.
+2026-10-31 11:47: doorman put returns {"error":"path is required"} for both POST and GET. Reads are fine. v2.7 sends a JSON body with path/content/branch plus the query aliases.
 
-Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError on those three. Confirm from agent/TEST_LOG.txt before changing any code.
+Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
 
-Workflow written whole from the real file, preserving deps, build and artifact steps; Unit tests now tees to agent/TEST_LOG.txt and commits it on failure.
+Workflow written whole from the real file; deps, build and artifact steps preserved; Unit tests tees to agent/TEST_LOG.txt and commits it on failure.
 
 web_scrape still exhausted. Only the seven READS files are readable.
 
