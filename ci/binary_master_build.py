@@ -15,6 +15,7 @@ from pathlib import Path
 from world_question_grid import CanonicalGrid, GRID, QUESTIONS, TREE, ROOT
 from world_binary_master import (FACETS, NOT_EVALUABLE, KNOWABLE, VIEWPORT,
                                  bind_master_question)
+from ci.binary_master_storage import MANIFEST as STORAGE_MANIFEST, pack_csv
 
 LADDERS = 'docs/BINARY_LADDERS_V1.csv'
 MASTER_CSV = 'BINARY_MASTER_V1.csv'
@@ -133,6 +134,7 @@ def build(root):
             writer.writerow(master_row(bound[qid][0], bound[qid][1]))
         writer.writerows(ladder)
 
+    storage = pack_csv(csv_path)
     canonical_rows = len(bound)
     report = dict(
         canonical_questions=len(source.questions), oat_variants=sum(
@@ -149,10 +151,15 @@ def build(root):
         dedupe_by_computed_meaning='PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER',
         master_total_rows=canonical_rows + len(ladder),
         csv_sha256=digest(csv_path),
+        csv_storage=dict(manifest=STORAGE_MANIFEST, format=storage['format'],
+                         raw_bytes=storage['csv_bytes'],
+                         compressed_bytes=sum(c['compressed_bytes'] for c in storage['chunks']),
+                         chunk_count=len(storage['chunks'])),
         source_fingerprints={p: digest(root / p) for p in (GRID, QUESTIONS, TREE, LADDERS)},
         code_fingerprints={p: digest(Path(__file__).resolve().parent.parent / p) for p in
                            ('world_binary_master.py', 'world_binary_price.py',
-                            'world_binary_questions.py', 'ci/binary_master_build.py')},
+                            'world_binary_questions.py', 'ci/binary_master_build.py',
+                            'ci/binary_master_storage.py')},
         answer_generation='NOT_RUN', chart_gate='NOT_PASSED', mining='NOT_RUN',
         condition_docs={'not_evaluable_condition': NOT_EVALUABLE,
                         'knowable_at_setup_open': KNOWABLE,
