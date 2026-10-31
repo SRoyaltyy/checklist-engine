@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-10-31T10:26:42.645Z",
-  "set_at": "2026-10-31T10:26:42.645Z",
-  "reason": "heartbeat: interval elapsed"
+  "id": "2026-10-31T10:42:43.021Z",
+  "set_at": "2026-10-31T10:42:43.021Z",
+  "reason": "run 41193103387 failed (outside-event-calendar)"
 }
