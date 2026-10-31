@@ -14,6 +14,7 @@ from world_binary_price import bind_price_question
 from world_question_grid import CanonicalGrid, GRID, QUESTIONS, TREE, ROOT
 from world_binary_questions import literal_threshold
 from ci.binary_master_build import LADDERS, MASTER_CSV, REPORT, build
+from ci.ladder_semantic_review import SCALAR_PROOF, DICTIONARY, SETTINGS
 
 
 @pytest.fixture(scope='module')
@@ -2150,7 +2151,7 @@ def test_evaluate_stack_flip(grid):
 
 
 def _stage_root(tmp_path):
-    for rel in (GRID, QUESTIONS, TREE, LADDERS):
+    for rel in (GRID, QUESTIONS, TREE, LADDERS, SCALAR_PROOF, DICTIONARY, SETTINGS):
         src = Path(ROOT) / rel
         dst = tmp_path / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
@@ -2167,8 +2168,8 @@ def test_emitter_smoke_and_determinism(tmp_path):
     assert report1['master_total_rows'] == (
         report1['bound_unique_binary_definitions'] + report1['ladder_add_on_rows'])
     assert report1['ladder_source_rows'] == 2680
-    assert report1['ladder_add_on_rows'] == 2676
-    assert report1['ladder_alias_rows'] == 4
+    assert report1['ladder_add_on_rows'] == 2664
+    assert report1['ladder_alias_rows'] == 16
     assert report1['ladder_source_rows'] == report1['ladder_add_on_rows'] + report1['ladder_alias_rows']
     for name in ('world_binary_price.py','world_binary_questions.py'):
         assert report1['code_fingerprints'][name] == hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
@@ -2191,14 +2192,14 @@ def test_emitter_smoke_and_determinism(tmp_path):
         assert r['not_evaluable_condition']
     assert report1['unbound_oat_variants'] > 0
     assert (tmp_path / 'docs' / REPORT).exists()
-    # A reviewed spelling rule proves four aliases. Text uniqueness alone
+    # Explicitly reviewed scalar rules prove 16 aliases. Text uniqueness alone
     # cannot certify remaining semantic or cross-master dedupe.
     verdict = report1['dedupe_by_computed_meaning']
     assert verdict['within_ladders']['status'] == 'PARTIAL_SEMANTIC_REVIEW'
     assert verdict['within_ladders']['rows_total'] == 2680
     assert verdict['within_ladders']['raw_text_duplicate_pairs'] == 0
-    assert verdict['within_ladders']['verified_alias_rows'] == 4
-    assert verdict['within_ladders']['unreviewed_source_rows'] == 2660
+    assert verdict['within_ladders']['verified_alias_rows'] == 16
+    assert verdict['within_ladders']['unreviewed_source_rows'] == 2600
     assert verdict['within_ladders']['source_rows_deleted'] == 0
     assert verdict['ladder_vs_master']['status'] == 'REVIEW_ASSIGNED_GPT'
     assert verdict['within_master']['status'] == 'DONE_BY_CONSTRUCTION'

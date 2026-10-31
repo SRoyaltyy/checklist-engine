@@ -108,7 +108,7 @@ def test_legacy_mirror_transform_remains_available():
 
 
 def test_package_revision_is_limited_to_versioned_mirror_definitions(tmp_path):
-    """Authenticate the prior package and compare every unaffected row exactly."""
+    """Historical revision proof stays pinned as later ladder work progresses."""
     base = '6dcfced3263533afc13f518258d5eec24451db96'
     def blob(path):
         return subprocess.check_output(['git', 'show', base + ':' + path], cwd=ROOT)
@@ -125,6 +125,22 @@ def test_package_revision_is_limited_to_versioned_mirror_definitions(tmp_path):
             digest.update(raw)
             stream.write(raw)
     assert digest.hexdigest() == manifest['csv_sha256']
+    revision = '1095a1aca85bd35f26837dfd49b35e1d26c543e3'
+    def revised_blob(path):
+        return subprocess.check_output(['git', 'show', revision + ':' + path], cwd=ROOT)
+    revised_manifest = json.loads(revised_blob('docs/BINARY_MASTER_V1_STORAGE.json'))
+    assert revised_manifest['csv_sha256'] == 'ee088c514a52046e556b5ea0e2a58f061ca900d9548a7a10b505be48f8a29b3e'
+    revised = tmp_path / 'revised.csv'
+    digest = hashlib.sha256()
+    with revised.open('wb') as stream:
+        for part in revised_manifest['chunks']:
+            packed = revised_blob('docs/' + part['path'])
+            assert hashlib.sha256(packed).hexdigest() == part['sha256']
+            raw = gzip.decompress(packed)
+            assert len(raw) == part['raw_bytes']
+            digest.update(raw)
+            stream.write(raw)
+    assert digest.hexdigest() == revised_manifest['csv_sha256']
     recipes = {s['recipe'] for _, s in SPECS}
     def inventory(path):
         unchanged = hashlib.sha256()
@@ -141,10 +157,10 @@ def test_package_revision_is_limited_to_versioned_mirror_definitions(tmp_path):
                     count += 1
         return unchanged.hexdigest(), count, changed
     old_digest, old_count, old_rows = inventory(prior)
-    new_digest, new_count, new_rows = inventory(unpack_csv(Path(ROOT) / 'docs'))
+    new_digest, new_count, new_rows = inventory(revised)
     assert (new_digest, new_count) == (old_digest, old_count)
     assert old_rows.keys() == new_rows.keys() and len(old_rows) > 100
-    report = json.loads((Path(ROOT) / 'docs/BINARY_MASTER_V1_REPORT.json').read_bytes())
+    report = json.loads(revised_blob('docs/BINARY_MASTER_V1_REPORT.json'))
     assert report['ratio_band_binding']['bound_definitions'] == len(new_rows) == 2994
     assert report['ratio_band_binding']['inverted_interval_definitions'] == 888
     assert report['ratio_band_binding']['registered_cutoffs_edited'] is False

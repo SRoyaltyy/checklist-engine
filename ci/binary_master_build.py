@@ -17,6 +17,7 @@ from world_binary_master import (FACETS, NOT_EVALUABLE, KNOWABLE, VIEWPORT,
                                  bind_master_question)
 from ci.binary_master_storage import MANIFEST as STORAGE_MANIFEST, pack_csv
 from ci.ladder_semantic_review import (ALIASES as LADDER_ALIASES, REVIEW as LADDER_REVIEW,
+                                      SCALAR_PROOF, DICTIONARY, SETTINGS,
                                       review_ladders, write_review)
 
 LADDERS = 'docs/BINARY_LADDERS_V1.csv'
@@ -207,7 +208,8 @@ def build(root):
                          raw_bytes=storage['csv_bytes'],
                          compressed_bytes=sum(c['compressed_bytes'] for c in storage['chunks']),
                          chunk_count=len(storage['chunks'])),
-        source_fingerprints={p: digest(root / p) for p in (GRID, QUESTIONS, TREE, LADDERS)},
+        source_fingerprints={p: digest(root / p) for p in
+                             (GRID, QUESTIONS, TREE, LADDERS, SCALAR_PROOF, DICTIONARY, SETTINGS)},
         code_fingerprints={p: digest(Path(__file__).resolve().parent.parent / p) for p in
                            ('world_binary_master.py', 'world_binary_price.py',
                             'world_binary_questions.py', 'ci/binary_master_build.py',
