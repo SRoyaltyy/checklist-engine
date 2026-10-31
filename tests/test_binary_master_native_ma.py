@@ -11,7 +11,7 @@ import pandas as pd
 import pytest
 
 from world_binary_master import (NativeBar, _ma_series, _measure,
-                                 _native_ma_history, bind_master_question,
+                                 _native_indicator_history, bind_master_question,
                                  evaluate_master)
 from world_question_grid import CanonicalGrid, ROOT
 
@@ -61,7 +61,7 @@ def definitions(grid, facet, span='1x10'):
 def test_full_native_series_bit_matches_frozen_field_on_every_candle_size(frozen, k, kind):
     prices = np.repeat(np.r_[np.full(70, 1000.), np.full(25, 100.), [101., 102., 103.]], k)
     bars, dates = bars_from_prices(prices)
-    history = _native_ma_history(bars, dates[-1].date(), len(prices) - 1, k)
+    history = _native_indicator_history(bars, dates[-1].date(), len(prices) - 1, k)
     native, values = reference(frozen, bars, dates, k)
     assert [b.end for b in history] == list(native.date.dt.date)
     assert [b.available_from for b in history] == list(native.available_from.dt.date)
@@ -71,7 +71,7 @@ def test_full_native_series_bit_matches_frozen_field_on_every_candle_size(frozen
     # A partial current bucket and a supplied future suffix must not alter
     # state at an earlier cut. Compare to an independently truncated source.
     cut = 70 * k + k // 2 - 1
-    shorter = _native_ma_history(bars, dates[cut + 1].date(), cut, k)
+    shorter = _native_indicator_history(bars, dates[cut + 1].date(), cut, k)
     prefix_native, prefix_values = reference(frozen, {i: b for i, b in bars.items() if i <= cut}, dates, k)
     assert [b.end for b in shorter] == list(prefix_native.date.dt.date)
     actual_prefix = _ma_series(dict(ma_kind=kind, ma_period='21'), np.array([b.close for b in shorter]))
@@ -90,7 +90,7 @@ def test_current_ema21_counterexample_uses_native_state_and_last_n_only(frozen, 
     assert answers == dict(up='NO', down='NO', both='NO', none='YES')
     # The older down-cross at the 1000 -> 100 transition must not count in N.
     count = definitions(grid, 'cross_count')[0]['feature']
-    history = _native_ma_history(bars, dates[-1].date(), 97, 1)
+    history = _native_indicator_history(bars, dates[-1].date(), 97, 1)
     assert _measure('native_ma_cross_count_v1', history, count) == 0
     slope = definitions(grid, 'slope')[0]['feature']
     n = slope['lookback']
@@ -103,7 +103,7 @@ def test_old_partial_ipo_halt_groups_match_frozen_initialization(frozen):
     del bars[0]                 # partial initial 3-session bucket
     del bars[34]                # old partial halt bucket, outside the facet
     native, values = reference(frozen, bars, dates, 3)
-    history = _native_ma_history(bars, dates[-1].date(), 299, 3)
+    history = _native_indicator_history(bars, dates[-1].date(), 299, 3)
     assert [b.end for b in history] == list(native.date.dt.date)
     actual = _ma_series(dict(ma_kind='EMA', ma_period='21'), np.array([b.close for b in history]))
     assert np.array_equal(actual.view(np.uint64), values['EMA21'][20:].view(np.uint64))

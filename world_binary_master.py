@@ -144,7 +144,7 @@ def _ma_series(feature, close):
     return getattr(talib, kind)(np.asarray(close, dtype=np.float64), timeperiod=period)[period - 1:]
 
 
-def _native_ma_history(bars, setup_date, expected_slot, candle_days):
+def _native_indicator_history(bars, setup_date, expected_slot, candle_days):
     """Complete native groups from supplied history, aligned to shared slots.
 
     As in frozen world_timeframes.completed_candles, omit partial IPO/halt
@@ -177,13 +177,41 @@ def _native_ma_history(bars, setup_date, expected_slot, candle_days):
     return history or None
 
 
-def _ema_series(values, period):
-    alpha = 2.0 / (period + 1)
-    out = np.empty(len(values) - period + 1, dtype=np.float64)
-    out[0] = float(values[:period].mean(dtype=np.float64))
-    for j in range(period, len(values)):
-        out[j - period + 1] = alpha * values[j] + (1 - alpha) * out[j - period]
-    return out
+def _native_rsi_series(close, period):
+    """Registered RSI values plus the definition's exact 0/0 known mask.
+
+    Never rewrite the native field values. The nonnegative Wilder states are
+    tracked only to distinguish a genuine zero RSI from an undefined flat
+    state; no epsilon or handwritten RSI value is used.
+    """
+    import talib
+    close = np.asarray(close, dtype=np.float64)
+    values = talib.RSI(close, timeperiod=period)
+    known = ~np.isnan(values)
+    if len(close) <= period:
+        return values, known
+    gain = loss = 0.0
+    for i in range(1, period + 1):
+        change = float(close[i] - close[i - 1])
+        if change < 0:
+            loss -= change
+        else:
+            gain += change
+    gain /= period
+    loss /= period
+    known[period] &= gain != 0 or loss != 0
+    for i in range(period + 1, len(close)):
+        gain *= period - 1
+        loss *= period - 1
+        change = float(close[i] - close[i - 1])
+        if change < 0:
+            loss -= change
+        else:
+            gain += change
+        gain /= period
+        loss /= period
+        known[i] &= gain != 0 or loss != 0
+    return values, known
 
 
 def _osc_series(feature, close, high, low):
@@ -191,32 +219,14 @@ def _osc_series(feature, close, high, low):
     and its comparison line, as equal-length float arrays covering the LAST
     len(series) fetched bars. The line is the definitional constant
     (midline for RSI/Stoch/WillR/ROC) or the MACD signal series.
-    None -> NOT_EVALUABLE (a zero 14-bar range or flat RSI is undefined,
-    never invented)."""
+    Returns values, comparison line, and a separate per-bar known mask.
+    Undefined RSI 0/0 is masked without editing native numeric values.
+    """
     kind = feature['osc_kind']
+    known = None
     if kind == 'RSI':
         period = int(feature['osc_period'])
-        changes = np.diff(close)
-        if len(changes) < period:
-            return None
-        gains = np.maximum(changes, 0.0)
-        losses = np.maximum(-changes, 0.0)
-        avg_g = float(gains[:period].mean(dtype=np.float64))
-        avg_l = float(losses[:period].mean(dtype=np.float64))
-
-        def rsi(ag, al):
-            if al == 0:
-                return 100.0 if ag > 0 else None
-            return 100.0 - 100.0 / (1.0 + ag / al)
-
-        vals = [rsi(avg_g, avg_l)]
-        for j in range(period, len(changes)):
-            avg_g = (avg_g * (period - 1) + gains[j]) / period
-            avg_l = (avg_l * (period - 1) + losses[j]) / period
-            vals.append(rsi(avg_g, avg_l))
-        if any(v is None for v in vals):
-            return None
-        series = np.asarray(vals, dtype=np.float64)
+        series, known = _native_rsi_series(close, period)
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'STOCH':
         period = int(feature['osc_period'])
@@ -262,16 +272,17 @@ def _osc_series(feature, close, high, low):
         series = (close[period:] / base - 1.0) * 100.0
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'MACD':
-        fast = _ema_series(close, int(feature['osc_fast']))
-        slow = _ema_series(close, int(feature['osc_slow']))
-        macd = fast[-len(slow):] - slow     # bars slow_p-1 .. end
-        if len(macd) < int(feature['osc_signal']):
-            return None
-        line = _ema_series(macd, int(feature['osc_signal']))
-        series = macd[-len(line):]
+        import talib
+        series, line, _ = talib.MACD(np.asarray(close, dtype=np.float64),
+                                    fastperiod=int(feature['osc_fast']),
+                                    slowperiod=int(feature['osc_slow']),
+                                    signalperiod=int(feature['osc_signal']))
     else:
         raise NotImplementedError('unregistered oscillator kind: ' + kind)
-    return series, line
+    if known is None:
+        known = ~np.isnan(series)
+    known = known & ~np.isnan(line)
+    return series, line, known
 
 
 def _split_segments(close):
@@ -283,32 +294,11 @@ def _split_segments(close):
 
 
 def _rsi_at(close, period, idx):
-    """Wilder RSI(period) at absolute bar idx, seeded with the simple average
-    of the first `period` changes (same seeding as the L3 RSI recipes).
-    Needs idx >= period; None when the seeding window is all-flat (0/0)."""
-    changes = np.diff(close[:idx + 1])
-    if len(changes) < period:
+    """Registered native RSI at idx; the exact undefined state stays unknown."""
+    if idx < period:
         return None
-    gains = np.maximum(changes, 0.0)
-    losses = np.maximum(-changes, 0.0)
-    ag = float(gains[:period].mean(dtype=np.float64))
-    al = float(losses[:period].mean(dtype=np.float64))
-    if al == 0:
-        if ag == 0:
-            return None
-        val = 100.0
-    else:
-        val = 100.0 - 100.0 / (1.0 + ag / al)
-    for j in range(period, len(changes)):
-        ag = (ag * (period - 1) + gains[j]) / period
-        al = (al * (period - 1) + losses[j]) / period
-        if al == 0:
-            if ag == 0:
-                return None
-            val = 100.0
-        else:
-            val = 100.0 - 100.0 / (1.0 + ag / al)
-    return val
+    values, known = _native_rsi_series(close[:idx + 1], period)
+    return float(values[idx]) if known[idx] else None
 
 
 def _measure(recipe, candles, feature=None):
@@ -480,34 +470,16 @@ def _measure(recipe, candles, feature=None):
                     'middle': bool(not at_price_low and not start and not end),
                     'end': bool(not at_price_low and not start and end)}
         if recipe in ('native_rsi_floor_v1', 'native_rsi_ceiling_v1'):
-            # Wilder RSI(period) seeded with the simple average of the first
-            # `period` changes over the fetched warmup, then smoothed forward
-            # (all bars <= D-1). Window = last lookback candles. The three
+            # Native RSI state uses supplied history (all bars <= D-1).
+            # Window = last lookback candles. The three
             # baked thresholds partition the window extreme into 4 codes
             # (floor: count of thresholds with extreme >= t; ceiling: > t).
             period = int(feature['rsi_period'])
-            changes = np.diff(close)
-            if len(changes) < period:
+            values, known = _native_rsi_series(close, period)
+            lookback = int(feature['lookback'])
+            if lookback < 1 or len(values) < lookback or not known[-lookback:].all():
                 return None
-            gains = np.maximum(changes, 0.0)
-            losses = np.maximum(-changes, 0.0)
-            avg_g = float(gains[:period].mean(dtype=np.float64))
-            avg_l = float(losses[:period].mean(dtype=np.float64))
-            values = []
-
-            def rsi(ag, al):
-                if al == 0:
-                    return 100.0 if ag > 0 else None
-                return 100.0 - 100.0 / (1.0 + ag / al)
-
-            values.append(rsi(avg_g, avg_l))
-            for j in range(period, len(changes)):
-                avg_g = (avg_g * (period - 1) + gains[j]) / period
-                avg_l = (avg_l * (period - 1) + losses[j]) / period
-                values.append(rsi(avg_g, avg_l))
-            lookback = len(values)                  # window bars
-            if lookback < 1 or any(v is None for v in values):
-                return None
+            values = values[-lookback:]
             thresholds = sorted(float(feature[k]) for k in ('rsi_t1', 'rsi_t2', 'rsi_t3'))
             if recipe == 'native_rsi_floor_v1':
                 extreme = min(values)
@@ -554,8 +526,8 @@ def _measure(recipe, candles, feature=None):
             osc = _osc_series(feature, close, high, low)
             if osc is None:
                 return None
-            series, line_series = osc
-            if len(series) < lb + 1:
+            series, line_series, known = osc
+            if len(series) < lb + 1 or not known[-(lb + 1):].all():
                 return None
             a = series[-(lb + 1):]
             b = line_series[-(lb + 1):]
@@ -632,8 +604,8 @@ def _measure(recipe, candles, feature=None):
             osc = _osc_series(feature, close, high, low)
             if osc is None:
                 return None
-            series, _line = osc
-            if len(series) < lb:
+            series, _line, known = osc
+            if len(series) < lb or not known[-lb:].all():
                 return None
             win = series[-lb:]
             zh = float(feature['zone_high'])
@@ -785,8 +757,8 @@ def _measure(recipe, candles, feature=None):
             osc = _osc_series(feature, close, high, low)
             if osc is None:
                 return None
-            series, _line = osc
-            if len(series) < lb:
+            series, _line, known = osc
+            if len(series) < lb or not known[-lb:].all():
                 return None
             win = series[-lb:]
             zh = float(feature['zone_high'])
@@ -1223,8 +1195,8 @@ def _measure(recipe, candles, feature=None):
             osc = _osc_series(feature, close, high, low)
             if osc is None:
                 return None
-            series, _line = osc
-            if len(series) < lb:
+            series, _line, known = osc
+            if len(series) < lb or not known[-lb:].all():
                 return None
             win = series[-lb:]
             i_max = int(np.argmax(win))
@@ -2145,19 +2117,28 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
             extra = int(feature['osc_warmup'])               # oscillator seed warmup
         if feature['recipe'] == 'native_shock_v1':
             extra = int(feature['baseline_bars'])            # median-range baseline
-        if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
+        recursive_osc = (feature['recipe'] in (
+            'native_osc_cross_v1', 'native_osc_zone_share_v1',
+            'native_osc_swing_speed_v1', 'native_extreme_position_v1')
+            and feature['osc_kind'] in ('RSI', 'MACD'))
+        recursive_rsi = feature['recipe'] in (
+            'native_rsi_floor_v1', 'native_rsi_ceiling_v1', 'native_hl_base_breakout_v1')
+        if recursive_osc or recursive_rsi or feature['recipe'] in ('native_ma_cross_v1', 'native_ma_slope_v1',
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
-            if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1'):
+            if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1',
+                                     'native_osc_cross_v1'):
                 required += 1
+            if feature['recipe'] == 'native_hl_base_breakout_v1':
+                required += _EXTRA_PRIOR[feature['recipe']]
             if feature['recipe'] == 'native_ma30_side_streak_v1':
                 required += int(feature['long_history_bars'])
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
-            candles = None if window is None else _native_ma_history(
+            candles = None if window is None else _native_indicator_history(
                 bars, setup_date, expected_slot, feature['candle_days'])
         else:
             lookback = feature['lookback'] + extra
