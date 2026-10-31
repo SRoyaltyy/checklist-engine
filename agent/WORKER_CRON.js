@@ -44,7 +44,7 @@ async function wakeRead(env) {
 async function wakeWrite(env, payload, sha) {
   const body = {
     message: "agent: wake flag",
-    content: btoa(JSON.stringify(payload, null, 2)),
+
     branch: WAKE_BRANCH,
   };
   if (sha) body.sha = sha;
