@@ -365,9 +365,9 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of, cpi_cancellatio
     frame["days_since_fomc"] = frame["date"].map(since_fomc).to_numpy()
     # Forward counts run on the whole session index, so a release still ahead of
     # the row but already announced is counted.
-    to_cpi = pd.Series(_distance(sessions, cpi_forward, True), index=sessions)
+    to_cpi = pd.Series(forward_release_distance(cpi_schedule, sessions, as_of), index=sessions)
     since_cpi = pd.Series(_distance(sessions, cpi, False), index=sessions)
-    to_jobs = pd.Series(_distance(sessions, jobs_forward, True), index=sessions)
+    to_jobs = pd.Series(forward_release_distance(jobs_schedule, sessions, as_of), index=sessions)
     since_jobs = pd.Series(_distance(sessions, jobs, False), index=sessions)
     frame["days_to_cpi"] = frame["date"].map(to_cpi).to_numpy()
     frame["days_since_cpi"] = frame["date"].map(since_cpi).to_numpy()
