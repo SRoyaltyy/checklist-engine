@@ -735,6 +735,111 @@ def test_evaluate_fresh_cross(grid):
     assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
 
 
+def test_bind_batch6_variants(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|slope|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 3
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['up']['feature']['ma_kind'] == 'SMA'
+    assert by_outcome['up']['feature']['ma_period'] == '20'
+    assert by_outcome['up']['comparison_threshold'] == '1'      # C091 default
+    assert by_outcome['up']['comparator'] == '>'
+    assert by_outcome['down']['comparison_threshold'] == '-1'
+    assert by_outcome['down']['comparator'] == '<'
+    assert by_outcome['flat']['comparator'] == '<='
+    assert by_outcome['flat']['feature']['transform'] == 'abs'
+    assert all(d['feature_kind'] == 'continuous' for d in defs)
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings).get('C091_slope__pct1') == '0.5')
+    defs2 = {d['source_outcome']: d for d in bind_master_question(row, changed)}
+    assert defs2['up']['comparison_threshold'] == '0.5'
+    assert defs2['down']['comparison_threshold'] == '-0.5'
+
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|cross_event|1x10')
+    defs = bind_master_question(row, variant)
+    assert len(defs) == 4
+    by_outcome = {d['source_outcome']: d for d in defs}
+    assert by_outcome['up']['feature']['osc_kind'] == 'RSI'
+    assert by_outcome['up']['feature']['cross_line'] == '50'
+    assert by_outcome['up']['feature']['osc_warmup'] == '15'
+    assert all(d['feature_kind'] == 'boolean' for d in defs)
+
+    row, variant = _q(grid, 'B|momentum|MACD12_26_9|cross_event|1x10')
+    by_outcome = {d['source_outcome']: d for d in bind_master_question(row, variant)}
+    assert by_outcome['up']['feature']['cross_line'] == 'signal'
+    assert by_outcome['up']['feature']['osc_warmup'] == '34'
+
+    row, variant = _q(grid, 'B|momentum|ROC20|cross_event|1x10')
+    by_outcome = {d['source_outcome']: d for d in bind_master_question(row, variant)}
+    assert by_outcome['up']['feature']['cross_line'] == '0'
+    assert by_outcome['up']['feature']['osc_warmup'] == '21'
+
+
+def test_evaluate_slope(grid):
+    row, variant = _q(grid, 'B|moving_averages|SMA20|slope|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 30  # 20 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # steadily rising: window MA rises ~5% -> up
+    closes = [100.0 + 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'NO'
+    # steadily falling -> down
+    closes = [100.0 - 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'NO'
+    # flat -> slope 0 <= 1 -> flat
+    closes = [100.0] * span
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'NO'
+
+
+def test_evaluate_cross_event(grid):
+    # RSI14 midline cross: 15 warmup bars all losses, then 10 window bars all gains
+    row, variant = _q(grid, 'B|overbought_oversold|RSI14|cross_event|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 25  # 15 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    closes = [100.0 - 0.5 * i for i in range(15)] + [92.5 + 1.0 * i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'NO'
+    # all losses: RSI pinned at 0 -> none
+    closes = [100.0 - 0.5 * i for i in range(span)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+
+    # ROC20 midline (0) cross: 21 warmup bars drifting down (ROC < 0), then a
+    # strong window rise pushing ROC through 0 upwards
+    row, variant = _q(grid, 'B|momentum|ROC20|cross_event|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 31  # 21 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    closes = [100.0 - 0.2 * i for i in range(21)] + [95.8 + 0.5 * i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'NO'
+
+    # MACD vs signal: bind + full evaluation path returns a strict answer
+    row, variant = _q(grid, 'B|momentum|MACD12_26_9|cross_event|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 44  # 34 warmup + 10 window
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    closes = [100.0 - 0.3 * i for i in range(34)] + [89.8 + 1.0 * i for i in range(10)]
+    bars = _bars_from_closes(closes)
+    for outcome in ('up', 'down', 'both', 'none'):
+        assert evaluate_master(defs[outcome], bars, setup, last).answer in ('YES', 'NO')
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel
