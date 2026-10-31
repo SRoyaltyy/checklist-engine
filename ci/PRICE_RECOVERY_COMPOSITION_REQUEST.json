@@ -14,7 +14,7 @@
   "parent": {
     "release": "compact-world-build-measured-v1-41078405278-1",
     "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
-    "sha256": null
+    "sha256": "1d49218cc593a28d5940a216dfd263648f13d0302dcc5af2e603d6587b9383cc"
   },
   "replacement": {
     "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
