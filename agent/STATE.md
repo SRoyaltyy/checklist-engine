@@ -5,6 +5,5 @@ The next wake remembers nothing except what is written here.
 
 - Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. PR #96.
 - Hold: no merge until James passes it.
-- Gantt row: matches none. Nearest: [4 Questions / v1 master → strict YES/NO].
-  Macro calendar is deferred to v2 by the 2026-10-30 22:40 scope cut.
+- Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
