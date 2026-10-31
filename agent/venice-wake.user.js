@@ -44,7 +44,7 @@
   function fire(state) {
     const text =
       `[wake ${state.id}] ${state.reason}\n\n` +
-      `Read agent/JOURNAL.md and agent/QUEUE.jsonl on ${BRANCH}, then continue. Do not merge.`;
+      `Check what changed on the repo, then continue. Do not merge.`;
     const box = composer();
     if (!box) return;
     if (box.tagName === "TEXTAREA") {
