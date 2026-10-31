@@ -1,76 +1,82 @@
-calendar flags; unit tests gate the build and the log survives any failure
-
+yaml
+# calendar flags; unit tests gate the build and the log survives any failure
 name: outside-event-calendar
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-contents: write
+  contents: write
 
 concurrency:
-group: outside-event-calendar-${{ github.ref }}
-cancel-in-progress: false
+  group: outside-event-calendar-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-build:
-runs-on: ubuntu-latest
-timeout-minutes: 20
-steps:
-- uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
 
-- name: Start the log
-    if: always()
-    run: |
-      mkdir -p agent
-      {
-        echo "run_id: ${{ github.run_id }}"
-        echo "ref: ${{ github.ref_name }}"
-        echo "sha: ${{ github.sha }}"
-        echo "----"
-      } > agent/TEST_LOG.txt
+      - name: Start the log
+        if: always()
+        run: |
+          mkdir -p agent
+          {
+            echo "run_id: ${{ github.run_id }}"
+            echo "ref: ${{ github.ref_name }}"
+            echo "sha: ${{ github.sha }}"
+            echo "----"
+          } > agent/TEST_LOG.txt
 
-  - name: Record the python version
-    if: always()
-    run: |
-      echo "python: $(python3 -V 2>&1)" >> agent/TEST_LOG.txt
-      echo "pip: $(python3 -m pip -V 2>&1)" >> agent/TEST_LOG.txt
+      - name: Record the python version
+        if: always()
+        run: |
+          echo "python: $(python3 -V 2>&1)" >> agent/TEST_LOG.txt
+          echo "pip: $(python3 -m pip -V 2>&1)" >> agent/TEST_LOG.txt
 
-  - uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-  - name: Install the calendar dependencies
-    run: |
-      set -x
-      python -m pip install --upgrade pip >> agent/TEST_LOG.txt 2>&1
-      python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2" >> agent/TEST_LOG.txt 2>&1
+      - name: Install the calendar dependencies
+        run: |
+          set -x
+          python -m pip install --upgrade pip >> agent/TEST_LOG.txt 2>&1
+          python -m pip install "numpy>=2,<3" "pandas>=2.2,<3" "pyarrow>=18" "pytest>=8,<10" "exchange_calendars==4.13.2" >> agent/TEST_LOG.txt 2>&1
 
-  - name: Unit tests
-    run: |
-      set +e
-      python -m pytest tests/test_outside_calendar.py -q --tb=long -p no:cacheprovider 2>&1 | tee -a agent/TEST_LOG.txt
-      code=${PIPESTATUS[0]}
-      echo "exit_code=$code" >> agent/TEST_LOG.txt
-      exit $code
+      - name: Unit tests
+        run: |
+          set +e
+          python -m pytest tests/test_outside_calendar.py -q --tb=long -p no:cacheprovider 2>&1 | tee -a agent/TEST_LOG.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> agent/TEST_LOG.txt
+          exit $code
 
-  - name: Commit the log on failure
-    if: failure()
-    run: |
-      git config user.name "venice-wake"
-      git config user.email "venice@users.noreply.github.com"
-      git add -f agent/TEST_LOG.txt
-      git commit -m "ci: failure log for run ${{ github.run_id }}" || exit 0
-      git push origin HEAD:${{ github.ref_name }} || exit 0
+      - name: Commit the log on failure
+        if: failure()
+        run: |
+          git config user.name "venice-wake"
+          git config user.email "venice@users.noreply.github.com"
+          git add -f agent/TEST_LOG.txt
+          git commit -m "ci: failure log for run ${{ github.run_id }}" || exit 0
+          for attempt in 1 2 3; do
+            git push origin HEAD:${{ github.ref_name }} && exit 0
+            sleep 3
+            git pull --rebase --autostash origin ${{ github.ref_name }} || true
+          done
+          echo "log push failed after three attempts"
+          exit 0
 
-  - name: Build the calendar flags
-    env:
-      GH_TOKEN: ${{ github.token }}
-    run: python -m ci.outside_event_calendar --out outside-calendar-out --publish
+      - name: Build the calendar flags
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m ci.outside_event_calendar --out outside-calendar-out --publish
 
-  - uses: actions/upload-artifact@v4
-    if: always()
-    with:
-      name: outside-event-calendar-proof
-      path: outside-calendar-out/OUTSIDE_EVENT_CALENDAR_PROOF.json
-      if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: outside-event-calendar-proof
+          path: outside-calendar-out/OUTSIDE_EVENT_CALENDAR_PROOF.json
+          if-no-files-found: ignore
