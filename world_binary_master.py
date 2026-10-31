@@ -1448,6 +1448,116 @@ def _measure(recipe, candles, feature=None):
             return {'mostly_above': share >= 0.6,
                     'mostly_below': share <= 0.4,
                     'mixed': 0.4 < share < 0.6}
+        if recipe == 'native_efficiency_v1':
+            # Chop ratio over the window's native candle closes (inverse
+            # Kaufman ER): path = sum|C_i - C_{i-1}| across the window
+            # (one prior close anchors the first difference); net = |C_last
+            # - C_first|. smooth = chop <= C302 edge, choppy = chop >= C303
+            # edge, mid otherwise (both baked dials; exact partition; a
+            # degenerate pairing with choppy < smooth leaves mid empty ->
+            # NOT_EVALUABLE). net == 0 with path > 0 -> chop = inf ->
+            # choppy (KNOWN infinity per ratio rule); a flat window (path
+            # and net both 0) is 0/0 -> NOT_EVALUABLE, never invented.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1:
+                return None
+            win = close[-(lb + 1):]
+            path = float(np.abs(np.diff(win)).sum(dtype=np.float64))
+            net = abs(float(win[-1] - win[0]))
+            if net == 0.0:
+                if path == 0.0:
+                    return None
+                chop = math.inf
+            else:
+                chop = path / net
+            s = float(feature['chop_smooth_edge'])
+            c = float(feature['chop_choppy_edge'])
+            if c < s:
+                return None      # degenerate dial pairing: mid band empty
+            return {'smooth': chop <= s,
+                    'mid': (chop > s) and (chop < c),
+                    'choppy': chop >= c}
+        if recipe == 'native_skew_v1':
+            # Skewness of the window's per-bar returns r_i = C_i/C_{i-1} - 1
+            # (lookback returns from lookback+1 closes): g1 = m3 / m2**1.5,
+            # the Fisher-Pearson coefficient (documented; no bias
+            # correction, amendable). pos = g1 > +0.5, neg = g1 < -0.5,
+            # neutral otherwise (documented 0.5 constant; no dial registered
+            # on this family; same standing as the trend 5% constant). A
+            # zero-variance return window is undefined -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1 or lb < 3:
+                return None
+            win = close[-(lb + 1):]
+            with np.errstate(all='ignore'):
+                r = win[1:] / win[:-1] - 1.0
+            if not np.isfinite(r).all():
+                return None
+            rbar = float(r.mean(dtype=np.float64))
+            dev = r - rbar
+            m2 = float((dev * dev).sum(dtype=np.float64)) / len(r)
+            if m2 == 0.0:
+                return None
+            m3 = float((dev * dev * dev).sum(dtype=np.float64)) / len(r)
+            g1 = m3 / m2 ** 1.5
+            return {'pos': g1 > 0.5, 'neg': g1 < -0.5,
+                    'neutral': abs(g1) <= 0.5}
+        if recipe == 'native_autocorr_v1':
+            # Lag-1 autocorrelation of the window's per-bar returns
+            # (Pearson of r_1..r_{n-1} vs r_2..r_n over n = lookback
+            # returns). trending = rho > +0.2, mean_reverting = rho < -0.2,
+            # none otherwise (documented 0.2 constant, about a 2/sqrt(n)
+            # band at typical window lengths; no dial registered; amendable
+            # like the trend 5% constant). Zero variance on either side
+            # leaves rho undefined -> NOT_EVALUABLE, never invented.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1 or lb < 3:
+                return None
+            win = close[-(lb + 1):]
+            with np.errstate(all='ignore'):
+                r = win[1:] / win[:-1] - 1.0
+            if not np.isfinite(r).all():
+                return None
+            a = r[:-1]
+            b = r[1:]
+            da = a - float(a.mean(dtype=np.float64))
+            db = b - float(b.mean(dtype=np.float64))
+            va = float((da * da).sum(dtype=np.float64))
+            vb = float((db * db).sum(dtype=np.float64))
+            if va == 0.0 or vb == 0.0:
+                return None
+            rho = float((da * db).sum(dtype=np.float64)) / math.sqrt(va * vb)
+            return {'trending': rho > 0.2, 'mean_reverting': rho < -0.2,
+                    'none': abs(rho) <= 0.2}
+        if recipe == 'native_stack_flip_v1':
+            # Golden/death cross of the group's documented convention pair
+            # SMA50 vs SMA200 (registered native TA-Lib SMAs over the
+            # supplied prefix; the comparison uses their common range from
+            # the SMA200 warmup onward). The LATEST cross in the window
+            # decides (exit_os latest-event precedent; the prior common
+            # bar anchors the first check): golden = SMA50 crossed above
+            # SMA200; death = crossed below; none = no cross in the window.
+            lb = int(feature['lookback'])
+            import talib
+            close64 = np.asarray(close, dtype=np.float64)
+            fast = talib.SMA(close64, timeperiod=int(feature['ma_fast']))
+            slow = talib.SMA(close64, timeperiod=int(feature['ma_slow']))
+            p_slow = int(feature['ma_slow'])
+            if len(close64) < p_slow:
+                return None
+            d = fast[p_slow - 1:] - slow[p_slow - 1:]
+            if len(d) < lb + 1 or not np.isfinite(d[-(lb + 1):]).all():
+                return None
+            win = d[-(lb + 1):]
+            events = []
+            for k in range(1, len(win)):
+                if win[k - 1] <= 0 and win[k] > 0:
+                    events.append('golden')
+                elif win[k - 1] >= 0 and win[k] < 0:
+                    events.append('death')
+            return {'golden': bool(events and events[-1] == 'golden'),
+                    'death': bool(events and events[-1] == 'death'),
+                    'none': not events}
         if recipe == 'native_maxvol_wick_v1':
             # Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -2229,6 +2339,56 @@ FACETS = {
         outcome_spec={'mostly_above': ('boolean', '=', 'one'),
                       'mostly_below': ('boolean', '=', 'one'),
                       'mixed': ('boolean', '=', 'one')}),
+    # ---- batch 18: return-path statistics + MA golden/death cross.
+    # efficiency is dial-exact (C302/C303 chop edges); skew (0.5) and
+    # autocorr (0.2) carry documented constants with no dial registered,
+    # same standing as the trend 5% constant; stack_flip uses the
+    # documented golden/death convention pair SMA50/SMA200 with the
+    # latest-cross rule (exit_os precedent). None of these families was in
+    # the parts 1-4 ruling queue. ----
+    'efficiency': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_efficiency_v1',
+        unit='window_chop_ratio_bucket',
+        outcomes=('smooth', 'mid', 'choppy'),
+        cutoff_id=None,
+        baked_cutoff_ids=('C302_efficiency__scalar2',
+                          'C303_efficiency__scalar5'),
+        baked_map={'C302_efficiency__scalar2': 'chop_smooth_edge',
+                   'C303_efficiency__scalar5': 'chop_choppy_edge'},
+        outcome_spec={'smooth': ('boolean', '=', 'one'),
+                      'mid': ('boolean', '=', 'one'),
+                      'choppy': ('boolean', '=', 'one')}),
+    'skew': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_skew_v1',
+        unit='window_return_skewness_bucket',
+        outcomes=('pos', 'neg', 'neutral'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'pos': ('boolean', '=', 'one'),
+                      'neg': ('boolean', '=', 'one'),
+                      'neutral': ('boolean', '=', 'one')}),
+    'autocorr': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_autocorr_v1',
+        unit='window_return_lag1_autocorr_bucket',
+        outcomes=('trending', 'mean_reverting', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'trending': ('boolean', '=', 'one'),
+                      'mean_reverting': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'stack_flip': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
+        recipe='native_stack_flip_v1',
+        unit='window_sma50_sma200_cross_latest',
+        outcomes=('golden', 'death', 'none'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        l3_map={'MA_group(10/20/50/200)': {'ma_fast': '50',
+                                           'ma_slow': '200'}},
+        outcome_spec={'golden': ('boolean', '=', 'one'),
+                      'death': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -2434,7 +2594,9 @@ _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49,
                 'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49,
-                'native_hl_base_breakout_v1': 30}
+                'native_hl_base_breakout_v1': 30,
+                'native_efficiency_v1': 1, 'native_skew_v1': 1,
+                'native_autocorr_v1': 1}
 _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_inside_outside_seq_v1', 'native_volume_dry_up_at_low_v1',
                         'native_max_vol_position_v1', 'native_volume_spike_v1',
@@ -2449,7 +2611,9 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_run_structure_v1', 'native_weekly_trend_v1',
                         'native_weekly_stack_v1', 'native_extreme_position_v1',
                         'native_exit_os_v1', 'native_series_trend_v1',
-                        'native_distance_route_v1', 'native_above_share_v1'}
+                        'native_distance_route_v1', 'native_above_share_v1',
+                        'native_efficiency_v1', 'native_skew_v1',
+                        'native_autocorr_v1', 'native_stack_flip_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -2489,12 +2653,13 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1',
                                  'native_path_dir_v1', 'native_distance_route_v1',
-                                 'native_above_share_v1'):
+                                 'native_above_share_v1', 'native_stack_flip_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
             if feature['recipe'] in ('native_ma_cross_v1', 'native_ma_cross_count_v1',
-                                     'native_osc_cross_v1', 'native_exit_os_v1'):
+                                     'native_osc_cross_v1', 'native_exit_os_v1',
+                                     'native_stack_flip_v1'):
                 required += 1
             if feature['recipe'] == 'native_hl_base_breakout_v1':
                 required += _EXTRA_PRIOR[feature['recipe']]
