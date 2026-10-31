@@ -1,5 +1,3 @@
-Copy code
-@@BODY
 State - read first on every wake
 
 If this file is stale, fix it before doing anything else.
