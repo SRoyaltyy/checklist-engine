@@ -13,3 +13,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 09:56 | ledger/4 | forward_release_distance added, per-row, heap walk | aba211b6 | not run
 2026-10-31 10:02 | audit | RSI/MACD and Stochastic merges audited; row 1 corrected to 71.6% on the build-only denominator | n/a | n/a
 2026-10-31 10:02 | infra | STATE.md resume file added | 7a4766ea | n/a
+2026-10-31 10:12 | ledger/5 | _month_end_sessions and _later_weekday_in_month added; is_month_end reads the full index | 0e25f55a, b04a5dd1 | not run
+2026-10-31 10:12 | audit | wake repeated sha 30dfc519, no new main commit; freshness window 20min > heartbeat 15min causes duplicates | n/a | n/a
