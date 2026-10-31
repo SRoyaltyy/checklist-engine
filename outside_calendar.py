@@ -298,6 +298,25 @@ def _distance(sessions, events, forward):
     return out
 
 
+def _month_end_sessions(sessions):
+    """Last session of every month, on the full index.
+
+    Computed on the whole session index, not on the rows built so far,
+    so a half-finished month is not labelled month-end and then relabelled
+    later.
+    """
+    index = pd.DatetimeIndex(pd.to_datetime(sessions))
+    frame = pd.DataFrame({"date": index})
+    return pd.DatetimeIndex(frame.groupby(frame["date"].dt.to_period("M"))["date"].max())
+
+
+def _later_weekday_in_month(day, sessions):
+    """True when a later session exists in the same month."""
+    index = pd.DatetimeIndex(pd.to_datetime(sessions))
+    month = pd.Period(pd.Timestamp(day), freq="M")
+    return bool(((index > pd.Timestamp(day)) & (index.to_period("M") == month)).any())
+
+
 def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of, cpi_cancellations=None, jobs_cancellations=None):
     """One row per completed session. Forward counts read an announced schedule."""
     sessions = pd.DatetimeIndex(pd.to_datetime(sessions)).sort_values().unique()
