@@ -1,4 +1,3 @@
-Copy code
 Journal - append only, newest last
 
 One line per action: date UTC | item | action | sha | test result.
@@ -37,7 +36,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 12:58 | infra | Worker source read: content param is text, path is path, branch is branch, dispatch is workflow, merge is pr. v3.1 | n/a | contract known
 2026-10-31 12:58 | ci | workflow restored with content by console write, sha 4eb2a8e4 then rewritten | n/a | restored
 2026-10-31 13:20 | ci | workflow restored with indentation inside a fence; log step moved first, commit step widened to if failure() | n/a | parses
-2026-10-31 14:26 | tests | root conftest drafted for the world_timeframes imports | n/a | never landed
-2026-10-31 14:31 | ci | failure commit step given a three-attempt push retry | n/a | never landed
-2026-10-31 14:55 | ci | run 41204085538 diagnosed from the run page: YAML error line 4, no job ran, tests never reached | n/a | INVALID FILE
-2026-10-31 14:55 | infra | root cause of three silent turns: put regex needed an
+2026-10-31 14:26 | tests | root conftest added: repo root on sys.path plus a guarded world_timeframes stand-in so the three import tests can run; real module still wins when present | see readback | not run
+2026-10-31 14:26 | audit | all rows unchanged, no new main commit readable; TEST_LOG.txt still unread, so the stub is the test of the leading hypothesis | n/a | n/a
