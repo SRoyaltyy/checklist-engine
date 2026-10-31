@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 799,
-  "bound_unique_binary_definitions": 14306,
-  "bound_source_aliases": 14495,
+  "bound_source_questions": 990,
+  "bound_unique_binary_definitions": 19510,
+  "bound_source_aliases": 19699,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -279,6 +279,7 @@
     "zone_route"
   ],
   "batch1_bound_facets": [
+    "cross_count",
     "cross_event",
     "dominance",
     "down_vs_up_moves",
@@ -296,29 +297,31 @@
     "rsi_ceiling",
     "rsi_floor",
     "run_biggest_move",
+    "shock",
     "slope",
     "spike",
+    "time_in_zone",
     "vs_own_past",
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 953,
-  "unbound_oat_variants": 150674,
+  "unbound_family_variant_count": 942,
+  "unbound_oat_variants": 149436,
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
-  "master_total_rows": 16986,
-  "csv_sha256": "afed9a9dce4de2853d22092c2df7170b0fa9fc1405caf9ddf64278ed470b83f6",
+  "master_total_rows": 22190,
+  "csv_sha256": "82f77c33bc3722c22c3c1c98691bef5939ccd5637e9c9ef3d615c72a6d39e0b1",
   "source_fingerprints": {
-    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6",
-    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d",
-    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "85b4ae99645eee7d75bf353ac4468ecf7231670b2af72b104d757a82e2c1a292",
+    "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
+    "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
+    "dials/v2.7.1/tree/QUESTION_TREE_v2.7.1.csv": "02640b7e0a6e2bbe9c03b7a47c94b4c28a7c68a1c10d612b3986baaea382b73f",
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "24e64cfc14a635808c115bc72a89bcb23bdf67860f32722da42e5de08cde369b",
-    "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
-    "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
-    "ci/binary_master_build.py": "634d404234a9206783effc5b9535b61ae47a8401ab3069c92d93a78ca71774f9"
+    "world_binary_master.py": "61e1721baeafa7420677bf5a7301c036ac179a3025fe1c5c221e6494c8250658",
+    "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
+    "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
+    "ci/binary_master_build.py": "cdb361bae49f29a8b938d284cda5581db848c3a07e981266ee37b4f47427a26e"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
