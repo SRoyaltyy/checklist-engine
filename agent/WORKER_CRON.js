@@ -58,10 +58,7 @@ async function wakeDecide(env) {
   const now = Date.now();
   const wake = await wakeRead(env);
 
-  if (wake.pending && wake.set_at) {
-    const age = (now - Date.parse(wake.set_at)) / 60000;
-    if (age < WAKE_THROTTLE_MIN) return;
-  }
+
 
   const reasons = [];
 
