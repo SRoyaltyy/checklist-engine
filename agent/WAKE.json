@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-10-31T15:14:42.723Z",
-  "set_at": "2026-10-31T15:14:42.723Z",
-  "reason": "main moved b7693dde; run 41213696372 failed (.github/workflows/outside_event_calendar.yml)"
+  "id": "2026-10-31T15:30:42.385Z",
+  "set_at": "2026-10-31T15:30:42.385Z",
+  "reason": "main moved aaca5f03; run 41215172580 failed (.github/workflows/outside_event_calendar.yml)"
 }
