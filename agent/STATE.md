@@ -9,11 +9,11 @@ Hold: no merge until James passes it.
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 11:47: doorman put returns {"error":"path is required"} for both POST and GET. Reads are fine. v2.7 sends a JSON body with path/content/branch plus the query aliases.
+2026-10-31 11:52: doorman put takes path from the JSON body and content from the c query parameter. A v2.7 put returned 200 with no content and truncated the workflow file to zero bytes; v2.8 sends both and refuses empty writes. Confirm the workflow is not empty before dispatching.
 
 Likely cause of run 41193103387: three tests import world_timeframes, which is neither installed nor in the repo. Expect ModuleNotFoundError. Confirm from agent/TEST_LOG.txt before editing code.
 
-Workflow written whole from the real file; deps, build and artifact steps preserved; Unit tests tees to agent/TEST_LOG.txt and commits it on failure.
+Workflow carries deps, unit tests with the tee, the failure commit, the build and the artifact steps.
 
 web_scrape still exhausted. Only the seven READS files are readable.
 
