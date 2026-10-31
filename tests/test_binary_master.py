@@ -2188,6 +2188,14 @@ def test_emitter_smoke_and_determinism(tmp_path):
         assert r['not_evaluable_condition']
     assert report1['unbound_oat_variants'] > 0
     assert (tmp_path / 'docs' / REPORT).exists()
+    # Ladder dedupe verdict: within-ladders verified unique on computed meaning;
+    # cross-dedupe stays a documented GPT review (free-text features).
+    verdict = report1['dedupe_by_computed_meaning']
+    assert verdict['within_ladders']['status'] == 'DONE'
+    assert verdict['within_ladders']['rows_total'] == 2680
+    assert verdict['within_ladders']['duplicates_found'] == 0
+    assert verdict['ladder_vs_master']['status'] == 'REVIEW_ASSIGNED_GPT'
+    assert verdict['within_master']['status'] == 'DONE_BY_CONSTRUCTION'
 
 
 def test_scalar_feature_ids_distinguish_components_of_one_native_recipe(grid):

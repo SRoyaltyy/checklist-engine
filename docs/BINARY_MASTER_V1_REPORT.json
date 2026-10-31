@@ -334,7 +334,24 @@
   "unbound_family_variant_count": 896,
   "unbound_oat_variants": 145408,
   "ladder_add_on_rows": 2680,
-  "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
+  "dedupe_by_computed_meaning": {
+    "within_ladders": {
+      "status": "DONE",
+      "meaning_key": "item_id + feature + comparator + threshold",
+      "rows_total": 2680,
+      "duplicates_found": 0,
+      "duplicate_pairs": [],
+      "rows_dropped": 0
+    },
+    "ladder_vs_master": {
+      "status": "REVIEW_ASSIGNED_GPT",
+      "note": "ladder features are free text; name-level matching insufficient (Gap size in ATR names ATR14 but measures gaps). Per-item semantic review assigned to GPT (James 00:15/00:30). All rows kept as definition_status=LADDER_ADDON, excluded from BOUND counts."
+    },
+    "within_master": {
+      "status": "DONE_BY_CONSTRUCTION",
+      "note": "bound defs keyed by question_id = semantic identity hash; batch-5 fix includes the outcome label; aliases share feature_id."
+    }
+  },
   "master_total_rows": 65556,
   "csv_sha256": "918494ae8f46deb33e83de9930bde8c66f804a0081b7aae68e654d6c3eae1c26",
   "csv_storage": {
@@ -354,7 +371,7 @@
     "world_binary_master.py": "26eeb1e8db28d4f54303691ab33bf4bc464b50cffe5f71414b6d28839b055a39",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
-    "ci/binary_master_build.py": "f1ee99c7386a2d9edb63d5a29dc80b7d46b8cd266c1ef6b0b986622ea84bfc9c",
+    "ci/binary_master_build.py": "6562d6aee3b097642ea95fb6d2f8e29d82e2fbbcb8750aa8e2eb9ef3c69c51a8",
     "ci/binary_master_storage.py": "e887470e06da9aba27d640eef9316e02a44abe9c4cde5eeb620d01cedc4015f9"
   },
   "answer_generation": "NOT_RUN",
