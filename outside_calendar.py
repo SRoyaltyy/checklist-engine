@@ -1,3 +1,4 @@
+# @@CUT
 """Scheduled market calendar flags. No prices.
 
 FOMC days come from the Federal Reserve's public calendar. CPI and jobs-report
@@ -7,7 +8,7 @@ NYSE session calendar. A row on day D does not read prices. A release dated
 after D is not flagged on D. Candle rows repeat the end session's facts.
 They are not a count or an average of the sessions inside the candle.
 
-Scheduled events come from a dated announcement ledger, not from the previous release. A release is announced on the publication date of the annual schedule that names it, an unscheduled Fed meeting is announced on the day it is called, and a cancellation is its own record with its own announcement date. Forward counts filter per row, so each row reads only what was public on that row's date.
+Scheduled events come from a dated announcement ledger, not from the previous release. A release is announced on the publication date of the annual schedule that names it, an unscheduled Fed meeting is announced on the day it is called, and a cancellation is its own record with its own announcement date. Forward counts filter per row, so each row reads only what was public on that row's date. Every day count is a count of sessions, never of calendar days.
 """
 
 from __future__ import annotations
@@ -169,10 +170,16 @@ def schedule_published(year):
 
     The BLS publishes a year in one block on the first weekday of the
     preceding July, so every date in that year is knowable from then.
+    Accepts either a year or any timestamp inside that year, because the
+    historical parser has only a date to hand.
     """
+    if isinstance(year, pd.Timestamp):
+        year = year.year
+    else:
+        year = int(year)
     day = pd.Timestamp(year=year - 1, month=SCHEDULE_PUBLISH_MONTH, day=SCHEDULE_PUBLISH_DAY)
     while day.dayofweek > 4:
-        day += pd.Timedelta(days=1)
+        day = day + pd.offsets.Day(1)
     return day
 
 
@@ -187,10 +194,7 @@ def _cancellation_rows(cancellations, announced=None):
 
 
 def release_schedule(dates, cancellations=None):
-    """Key every release to the date it became public.
-
-
-    """
+    """Key every release to the date it became public."""
     ordered = pd.DatetimeIndex(pd.to_datetime(dates)).sort_values().unique()
     rows = []
     for day in ordered:
@@ -211,16 +215,20 @@ def forward_releases(schedule, as_of):
 
 
 def forward_release_distance(schedule, sessions, as_of):
-    """Days from each session to the next release announced by it.
+    """Sessions from each session to the next release announced by it.
 
     Filtered per row, not once at the build date: a release announced
     after a row must not be visible to that row. A cancelled date drops
     out once its cancellation has been announced.
+
+    Counted in sessions, not calendar days, so it matches the opex and
+    FOMC counts. A release landing on a non-session maps to the next one.
     """
     sessions = pd.DatetimeIndex(pd.to_datetime(sessions)).sort_values()
     out = np.full(len(sessions), np.nan)
     if schedule.empty:
         return out
+    positions = {pd.Timestamp(day): index for index, day in enumerate(sessions)}
     rows = schedule.copy()
     rows["announced"] = pd.to_datetime(rows["announced"])
     rows["scheduled"] = pd.to_datetime(rows["scheduled"])
@@ -240,7 +248,13 @@ def forward_release_distance(schedule, sessions, as_of):
         while heap and (heap[0] <= day or not status.get(heap[0], False)):
             heapq.heappop(heap)
         if heap:
-            out[index] = float((pd.Timestamp(heap[0]) - pd.Timestamp(day)).days)
+            target = pd.Timestamp(heap[0])
+            if target in positions:
+                out[index] = float(positions[target] - index)
+                continue
+            later = sessions[sessions >= target]
+            if len(later):
+                out[index] = float(positions[pd.Timestamp(later[0])] - index)
     return out
 
 
