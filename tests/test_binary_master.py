@@ -1452,6 +1452,50 @@ def test_evaluate_hl_base_breakout(grid):
     assert evaluate_master(defs20['none'], bars, setup20, last20).answer == 'NO'
 
 
+def test_bind_batch12_variants(grid):
+    row, variant = _q(grid, 'B|extremes|new_highs_lows|high_then_low|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 2          # {high_first,low_first}; the family has no dials
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+    assert all(d['comparison_threshold'] == '1' for d in defs.values())
+
+
+def test_evaluate_high_then_low(grid):
+    row, variant = _q(grid, 'B|extremes|new_highs_lows|high_then_low|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 10  # window only; the recipe needs no warmup or prior candle
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    # peak at idx 4 (window high 104.6), trough at idx 9 (window low 99.0)
+    win_hf = [(100.0, 100.6, 99.6, 100.2), (101.0, 101.6, 100.6, 101.2),
+              (102.0, 102.6, 101.6, 102.2), (103.0, 103.6, 102.6, 103.2),
+              (104.0, 104.6, 103.6, 104.2), (103.8, 104.2, 103.0, 103.2),
+              (103.0, 103.4, 102.2, 102.4), (102.2, 102.6, 101.4, 101.6),
+              (101.4, 101.8, 100.6, 100.8), (100.6, 101.0, 99.0, 99.4)]
+    bars = _bars_hl(win_hf)
+    assert evaluate_master(defs['high_first'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['low_first'], bars, setup, last).answer == 'NO'
+    # trough at idx 4 (window low 95.0), peak at idx 9 (window high 105.0)
+    win_lf = [(100.0, 100.4, 99.4, 99.8), (99.0, 99.4, 98.4, 98.8),
+              (98.0, 98.4, 97.4, 97.8), (97.0, 97.4, 96.4, 96.8),
+              (96.0, 96.4, 95.0, 95.4), (96.2, 97.0, 96.0, 96.6),
+              (97.0, 97.8, 96.8, 97.4), (98.0, 98.8, 97.8, 98.4),
+              (99.0, 99.8, 98.8, 99.4), (100.0, 105.0, 99.8, 104.6)]
+    bars = _bars_hl(win_lf)
+    assert evaluate_master(defs['low_first'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['high_first'], bars, setup, last).answer == 'NO'
+    # tie: idx 5 is simultaneously the window max high (105.0) and the window
+    # min low (95.0) -> documented same_bar rule: counts as high_first
+    quiet = (100.0, 100.5, 99.5, 100.0)
+    win_tie = [quiet] * 5 + [(99.0, 105.0, 95.0, 96.0)] + [quiet] * 4
+    bars = _bars_hl(win_tie)
+    assert evaluate_master(defs['high_first'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['low_first'], bars, setup, last).answer == 'NO'
+    # missing window -> NOT_EVALUABLE
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS):
         src = Path(ROOT) / rel

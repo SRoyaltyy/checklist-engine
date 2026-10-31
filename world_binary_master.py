@@ -1060,6 +1060,20 @@ def _measure(recipe, candles, feature=None):
                 return None
             out[direction + '_' + band + ('_extreme' if extreme else '_not')] = True
             return out
+        if recipe == 'native_high_then_low_v1':
+            # Sequence facet: which came first, the window high or the window
+            # low? First-occurrence index of the window max high vs the window
+            # min low (numpy argmax/argmin take the FIRST occurrence). A bar
+            # that is simultaneously both (tie, e.g. an outside spike in a
+            # flat window) counts as high_first — documented, the answer set
+            # {high_first,low_first} has no same_bar outcome.
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            w0 = len(candles) - lb
+            i_h = int(np.argmax(high[w0:]))
+            i_l = int(np.argmin(low[w0:]))
+            return {'high_first': i_h <= i_l, 'low_first': i_l < i_h}
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1649,6 +1663,14 @@ FACETS = {
                                      for d in ('up', 'down')
                                      for b in ('lt5', 'b5_20', 'gt20')
                                      for r in ('extreme', 'not')) + ('none',)}),
+    'high_then_low': dict(
+        binding='mixed', l1_l3=(('extremes', 'new_highs_lows'),),
+        recipe='native_high_then_low_v1',
+        unit='window_high_low_first_occurrence_order',
+        outcomes=('high_first', 'low_first'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'high_first': ('boolean', '=', 'one'),
+                      'low_first': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -1866,7 +1888,7 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_ma30_side_streak_v1',
                         'native_osc_swing_speed_v1',
                         'native_absorption_day_v1', 'native_capitulation_bar_v1',
-                        'native_hl_base_breakout_v1'}
+                        'native_hl_base_breakout_v1', 'native_high_then_low_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
