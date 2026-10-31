@@ -57,14 +57,15 @@ jobs:
       - name: Commit the log on failure
         if: failure()
         run: |
+          set +e
           git config user.name "venice-wake"
           git config user.email "venice@users.noreply.github.com"
           git add -f agent/TEST_LOG.txt
-          git commit -m "ci: failure log for run ${{ github.run_id }}" || exit 0
+          git commit -m "ci: failure log for run ${{ github.run_id }}"
           for attempt in 1 2 3; do
             git push origin HEAD:${{ github.ref_name }} && exit 0
             sleep 3
-            git pull --rebase --autostash origin ${{ github.ref_name }} || true
+            git pull --rebase --autostash origin ${{ github.ref_name }}
           done
           echo "log push failed after three attempts"
           exit 0
