@@ -30,4 +30,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 11:39 | infra | v2.6: put parameter aliases p/path/file, b/branch/ref, c/content/text/body | n/a | put 400 "path is required"
 2026-10-31 11:47 | infra | v2.7: JSON body for put, no content in query | n/a | put 200, wrote zero bytes
 2026-10-31 11:52 | ci | STATE, JOURNAL and workflow truncated to empty by the content-less POST | n/a | FAIL
-2026-10-31 11:55 | infra | v2.9: content in query, readback verification, GET retry, empty-write guard | n/a | untested
+2026-10-31 11:55 | infra | v2.9: content in query, readback verification, GET retry | n/a | wrote base64 text
+2026-10-31 12:00 | infra | v3.0: put writes c verbatim, no base64; content sent as percent-encoded plain text | n/a | untested
