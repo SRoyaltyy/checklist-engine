@@ -1,6 +1,6 @@
-run_id: 41218800219
+run_id: 41224135017
 ref: venice/calendar-announce-ledger
-sha: ab56f4f1856c96f5b0eb1f03166251cbac7773fa
+sha: f310e26e7b13230496c2d085d87627c223160e87
 ----
 Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages (26.2.2)
 Collecting numpy<3,>=2
@@ -37,18 +37,18 @@ Collecting six>=1.6 (from python-dateutil>=2.8.2->pandas<3,>=2.2)
   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
 Downloading exchange_calendars-4.13.2-py3-none-any.whl (213 kB)
 Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 72.6 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 151.8 MB/s  0:00:00
 Downloading pandas-2.3.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 43.1 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 364.6 MB/s  0:00:00
 Downloading pytest-9.2.0-py3-none-any.whl (411 kB)
 Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (53.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 53.9/53.9 MB 141.4 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 53.9/53.9 MB 310.3 MB/s  0:00:00
 Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Downloading korean_lunar_calendar-0.4.0-py3-none-any.whl (11 kB)
 Downloading packaging-26.3-py3-none-any.whl (129 kB)
 Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 250.9 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 234.7 MB/s  0:00:00
 Downloading pyluach-2.3.0-py3-none-any.whl (25 kB)
 Downloading python_dateutil-3.0.0-py2.py3-none-any.whl (94 kB)
 Downloading pytz-2026.6-py2.py3-none-any.whl (506 kB)
@@ -58,114 +58,6 @@ Downloading tzdata-2026.6-py2.py3-none-any.whl (348 kB)
 Installing collected packages: pytz, tzdata, toolz, six, pyluach, pygments, pyarrow, pluggy, packaging, numpy, korean_lunar_calendar, iniconfig, python-dateutil, pytest, pandas, exchange_calendars
 
 Successfully installed exchange_calendars-4.13.2 iniconfig-2.3.1 korean_lunar_calendar-0.4.0 numpy-2.5.4 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pyarrow-26.0.0 pygments-2.21.0 pyluach-2.3.0 pytest-9.2.0 python-dateutil-3.0.0 pytz-2026.6 six-1.17.0 toolz-1.2.0 tzdata-2026.6
-F............FF....                                                      [100%]
-=================================== FAILURES ===================================
-______ test_historical_parser_skips_cancelled_and_keeps_notation_separate ______
-
-    def test_historical_parser_skips_cancelled_and_keeps_notation_separate():
->       frame = cal.parse_fomc_historical(HISTORICAL, 2020)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_outside_calendar.py:31: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-html = '\n<h5>March 15 (unscheduled) Meeting - 2020</h5>\n<h5>March 17-18 (cancelled) Meeting - 2020</h5>\n<h5>March 19 (notation vote) - 2020</h5>\n<h5>April 28-29 Meeting - 2020</h5>\n'
-year = 2020
-
-    def parse_fomc_historical(html, year):
-        """Headings such as 'March 15 (unscheduled) Meeting - 2020'. Cancelled meetings are skipped."""
-        rows = []
-        for raw in re.findall(r"<h5[^>]*>(.*?)</h5>", html, flags=re.S):
-            heading = _clean(raw)
-            if str(year) not in heading:
-                continue
-            if "cancelled" in heading.lower():
-                continue
-            match = re.search(
-                r"(January|February|March|April|May|June|July|August|September|October|November|December)"
-                r"\s+(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?",
-                heading,
-            )
-            if not match:
-                continue
-            kind = "notation" if "notation" in heading.lower() else "meeting" if "meeting" in heading.lower() else ""
-            if not kind:
-                continue
-            unscheduled = "unscheduled" in heading.lower()
-            month = _month_number(match.group(1))
-            start = int(match.group(2))
-            end = int(match.group(3) or start)
-            first = pd.Timestamp(year=int(year), month=month, day=start)
-            # An emergency meeting is called on the day, so that day is the announcement.
->           announced = first if unscheduled else schedule_published(first)
-                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-outside_calendar.py:127: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-year = Timestamp('2020-03-19 00:00:00')
-
-    def schedule_published(year):
-        """The date a whole year's release schedule became public.
-    
-        The BLS publishes a year in one block on the first weekday of the
-        preceding July, so every date in that year is knowable from then.
-        """
->       day = pd.Timestamp(year=year - 1, month=SCHEDULE_PUBLISH_MONTH, day=SCHEDULE_PUBLISH_DAY)
-                                ^^^^^^^^
-
-outside_calendar.py:173: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
->   ???
-
-pandas/_libs/tslibs/timestamps.pyx:492: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
->   ???
-E   TypeError: Addition/subtraction of integers and integer-arrays with Timestamp is no longer supported.  Instead of adding/subtracting `n`, use `n * obj.freq`
-
-pandas/_libs/tslibs/timestamps.pyx:465: TypeError
-_____ test_a_forward_count_sees_a_release_announced_after_the_previous_one _____
-
-    def test_a_forward_count_sees_a_release_announced_after_the_previous_one():
-        # The Codex reproduction: at a 2024-02-15 cutoff the forward counts collapsed
-        # because they read only releases that had already happened.
-        sessions = pd.bdate_range("2024-01-02", periods=80)
-        cpi = pd.to_datetime(["2024-01-11", "2024-02-13", "2024-03-12", "2024-04-10"])
-        jobs = pd.to_datetime(["2024-01-05", "2024-02-02", "2024-03-08", "2024-04-05"])
-        panel = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, jobs, "2024-02-15")
-        row = panel.set_index("date").loc[pd.Timestamp("2024-02-14")]
-        # 2024-03-12 was announced on 2024-02-13, so it is public one day later.
-        expected = len(pd.bdate_range("2024-02-14", "2024-03-12")) - 1
->       assert row.days_to_cpi == expected
-E       assert np.float64(27.0) == 19
-E        +  where np.float64(27.0) = is_fomc                           False\nis_fomc_notation                  False\nis_cpi                            Fals...ays_since_jobs                     8.0\navailable_from      2024-02-14 00:00:00\nName: 2024-02-14 00:00:00, dtype: object.days_to_cpi
-
-tests/test_outside_calendar.py:206: AssertionError
-___________ test_a_cancelled_release_is_dropped_once_it_is_announced ___________
-
-    def test_a_cancelled_release_is_dropped_once_it_is_announced():
-        sessions = pd.bdate_range("2024-01-02", periods=80)
-        cpi = pd.to_datetime(["2024-01-11", "2024-02-13", "2024-03-12"])
-        cancelled = pd.to_datetime(["2024-03-12"])
-        plain = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, [], "2024-02-15")
-        dropped = cal.build_calendar(sessions, pd.DataFrame(columns=["date", "kind"]), cpi, [], "2024-02-15", cpi_cancellations=cancelled)
-        day = pd.Timestamp("2024-02-14")
->       assert plain.set_index("date").loc[day, "days_to_cpi"] == 19
-E       assert np.float64(27.0) == 19
-
-tests/test_outside_calendar.py:217: AssertionError
-=============================== warnings summary ===============================
-tests/test_outside_calendar.py: 52 warnings
-  /home/runner/work/checklist-engine/checklist-engine/outside_calendar.py:175: DeprecationWarning: The 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. This includes implicit conversion of bare integers (e.g. `+ 1`). Please use a specific unit instead.
-    day += pd.Timedelta(days=1)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-FAILED tests/test_outside_calendar.py::test_historical_parser_skips_cancelled_and_keeps_notation_separate - TypeError: Addition/subtraction of integers and integer-arrays with Timestamp is no longer supported.  Instead of adding/subtracting `n`, use `n * obj.freq`
-FAILED tests/test_outside_calendar.py::test_a_forward_count_sees_a_release_announced_after_the_previous_one - assert np.float64(27.0) == 19
- +  where np.float64(27.0) = is_fomc                           False\nis_fomc_notation                  False\nis_cpi                            Fals...ays_since_jobs                     8.0\navailable_from      2024-02-14 00:00:00\nName: 2024-02-14 00:00:00, dtype: object.days_to_cpi
-FAILED tests/test_outside_calendar.py::test_a_cancelled_release_is_dropped_once_it_is_announced - assert np.float64(27.0) == 19
-3 failed, 16 passed, 52 warnings in 1.17s
-exit_code=1
+...................                                                      [100%]
+19 passed in 1.27s
+exit_code=0
