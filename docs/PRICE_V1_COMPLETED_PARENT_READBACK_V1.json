@@ -1,0 +1,27 @@
+{
+  "status": "PASS_AUTHENTICATED_COMPLETED_PARENT_RECEIPT_NOT_WORLD",
+  "observed_at": "2026-10-31T16:41:32.091313+00:00",
+  "run": 41078405278,
+  "source_commit": "64f603de862adc81e6cd7e50e849cd7a684bf6bb",
+  "attempt": 1,
+  "parent": {
+    "release": "compact-world-build-measured-v1-41078405278-1",
+    "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
+    "sha256": "1d49218cc593a28d5940a216dfd263648f13d0302dcc5af2e603d6587b9383cc",
+    "bytes": 7501108
+  },
+  "completed": 8389,
+  "excluded": 50,
+  "failed_parts": [
+    6
+  ],
+  "excluded_by_reason": {
+    "SHARD_RESULT_UNVERIFIED": 50
+  },
+  "storage_gate": "PASS_PRICE_RESERVATION_ONLY_NOT_WORLD",
+  "measured_price_dependency_bytes": 25447459201,
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED",
+  "composition_enabled": false,
+  "scope": "Producer/job/release metadata, receipt body hash, exact cohort/provenance/accounting inputs only. No market recalculation, full payload-body audit or full-world/PIT acceptance. Explicit composition must bind this actual SHA from current main."
+}
