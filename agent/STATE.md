@@ -4,16 +4,13 @@ Lane: calendar announce ledger (#52). Branch: venice/calendar-announce-ledger. P
 
 Gantt row: matches none. Nearest: [4 Questions/v1 master].
 
-2026-10-31 16:35: two real bugs found and fixed in outside_calendar.py. (1) schedule_published was called with a Timestamp and did year-1, which pandas now rejects; it coerces to an int year. (2) forward_release_distance returned calendar days while every other count returns sessions; it now returns session counts. 16 of 19 tests were already passing, so the conftest stub worked and the candle logic is sound.
+2026-10-31 16:50: GREEN. Run 41221144242 on main completed success against the lane branch. 19 tests pass, including the six leak-trap tests James ordered. The two real defects it surfaced are fixed: schedule_published coerces a Timestamp instead of subtracting from it, and forward_release_distance returns session counts instead of calendar days.
 
-Also fixed: the script deduped @@DISPATCH on the workflow name alone, so only the first dispatch ever fired. It now includes the block position.
+Dispatch by console only from now on. The script's @@DISPATCH dedupe swallows every dispatch after the first, and two patches to it did not take. The working call is:
+fetch('...op=dispatch&workflow=outside_event_calendar.yml') with no branch param, which lands on main, whose workflow checks the lane branch out.
 
-Check the log tail for the current run. Three failures remain to confirm or clear: the Timestamp TypeError, and two 27.0 == 19 counts.
+Next: append the run id to METHODOLOGY.md §0c with the Gantt row tag, then ask James to re-review #96.
 
-Main runs on the main branch workflow which checks the lane branch out; the branch workflow is stale and unused. Dispatch on main, read the log from the branch.
+put takes path, branch, text. Every put body starts with @@BODY or # @@CUT. Read the repo log, never the 403 job log.
 
-put takes path, branch, text. dispatch takes workflow, merge takes pr, runs takes branch. Auth is k. Every put body starts with @@BODY or # @@CUT.
-
-web_scrape exhausted. Job logs are 403, so read the repo log.
-
-Main dfa98272.
+Main 737e87a.
