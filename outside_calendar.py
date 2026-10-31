@@ -327,8 +327,6 @@ def build_calendar(sessions, fomc, cpi_dates, jobs_dates, as_of, cpi_cancellatio
     notations = session_or_next(fomc.loc[fomc.kind == "notation", "date"], sessions)
     cpi_schedule = release_schedule(cpi_dates, cpi_cancellations)
     jobs_schedule = release_schedule(jobs_dates, jobs_cancellations)
-    cpi_forward = session_or_next(forward_releases(cpi_schedule, as_of), sessions)
-    jobs_forward = session_or_next(forward_releases(jobs_schedule, as_of), sessions)
     cpi = session_or_next(pd.to_datetime(cpi_dates), sessions)
     jobs = session_or_next(pd.to_datetime(jobs_dates), sessions)
     # The Fed page lists meetings before they happen. Count toward those.
