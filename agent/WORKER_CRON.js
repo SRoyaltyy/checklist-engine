@@ -67,12 +67,14 @@ async function wakeDecide(env) {
 
   const reasons = [];
 
+  let head = wake.last_main_sha || null;
   const commits = await wakeGh(env, `/repos/${WAKE_REPO}/commits?sha=main&per_page=1`);
   if (commits.ok) {
     const rows = await commits.json();
-    const when = rows[0] && rows[0].commit && rows[0].commit.committer && rows[0].commit.committer.date;
-    if (when && (now - Date.parse(when)) / 60000 < WAKE_FRESH_COMMIT_MIN) {
-      reasons.push(`main moved ${rows[0].sha.slice(0, 8)}`);
+    const sha = rows[0] && rows[0].sha;
+    if (sha && sha !== wake.last_main_sha) {
+      head = sha;
+      reasons.push(`main moved ${sha.slice(0, 8)}`);
     }
   }
 
