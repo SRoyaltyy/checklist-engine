@@ -264,17 +264,19 @@ def _osc_series(feature, close, high, low):
         if len(close) < period:
             return None
         t0 = period - 1
+        range_known = np.ones(len(close) - t0, dtype=bool)
         for t in range(t0, len(close)):
             hh = float(high[t - period + 1:t + 1].max())
             ll = float(low[t - period + 1:t + 1].min())
             if hh == ll:
-                return None
+                range_known[t - t0] = False
         # Match the registered negative-valued WILLR field, including the
         # native operation order. Keep the declared zero-range NI policy.
         series = talib.WILLR(np.asarray(high, dtype=np.float64),
                              np.asarray(low, dtype=np.float64),
                              np.asarray(close, dtype=np.float64),
                              timeperiod=period)[t0:]
+        known = range_known & ~np.isnan(series)
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'ROC':
         period = int(feature['osc_period'])
