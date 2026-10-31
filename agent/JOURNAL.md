@@ -27,8 +27,11 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 11:24 | infra | userscript v2.3: doorman reads inlined into the wake body, write blocks parsed from replies | n/a | reads work
 2026-10-31 11:31 | infra | v2.4: key alias, cooldown bypass on manual wake, no silent returns | n/a | works
 2026-10-31 11:31 | ci | outside_event_calendar.yml rewritten with pytest tee and failure commit | n/a | put 400
-2026-10-31 11:39 | infra | v2.6: put parameter aliases p/path/file, b/branch/ref, c/content/text/body | n/a | put 400 "path is required"
-2026-10-31 11:47 | infra | v2.7: JSON body for put, no content in query | n/a | put 200, wrote zero bytes
+2026-10-31 11:39 | infra | v2.6: put aliases p/path/file, b/branch/ref, c/content/text/body | n/a | put 400
+2026-10-31 11:47 | infra | v2.7: JSON body for put, no content in query | n/a | put 200, zero bytes
 2026-10-31 11:52 | ci | STATE, JOURNAL and workflow truncated to empty by the content-less POST | n/a | FAIL
-2026-10-31 11:55 | infra | v2.9: content in query, readback verification, GET retry | n/a | wrote base64 text
-2026-10-31 12:00 | infra | v3.0: put writes c verbatim, no base64; content sent as percent-encoded plain text | n/a | untested
+2026-10-31 11:55 | infra | v2.9: content in query, readback verification | n/a | wrote base64
+2026-10-31 12:00 | infra | v3.0: plain text instead of base64 | n/a | zero bytes
+2026-10-31 12:34 | ci | five runs died on the zero-byte workflow: 41198235471, 41198595221, 41199358550, 41200533563, 41201733751 | n/a | FAIL
+2026-10-31 12:58 | infra | Worker source read: content param is text, path is path, branch is branch, dispatch is workflow, merge is pr. v3.1 | n/a | contract known
+2026-10-31 12:58 | ci | workflow restored with content by console write, sha 4eb2a8e4 then rewritten | n/a | restored
