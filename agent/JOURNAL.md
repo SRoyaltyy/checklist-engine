@@ -27,4 +27,5 @@ This is the memory that survives compaction. Write the line in the same turn as 
 2026-10-31 11:24 | infra | userscript v2.3: doorman reads inlined into the wake body, write blocks parsed from replies | n/a | reads work
 2026-10-31 11:31 | infra | v2.4: key alias, cooldown bypass on manual wake, no silent returns | n/a | works
 2026-10-31 11:31 | ci | outside_event_calendar.yml rewritten with pytest tee and failure commit | n/a | put 400
-2026-10-31 11:39 | infra | v2.6: put parameter aliases (p/path/file, b/branch/ref, c/content/text/body); POST still first, GET fallback | n/a | untested
+2026-10-31 11:39 | infra | v2.6: put parameter aliases p/path/file, b/branch/ref, c/content/text/body | n/a | put 400 "path is required"
+2026-10-31 11:47 | infra | v2.7: JSON body for put with path, content, branch; query aliases retained as fallback | n/a | untested
