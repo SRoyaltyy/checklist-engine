@@ -97,3 +97,49 @@ def test_zero_range_remains_not_evaluable(grid, derivative):
     source, setup, last = bars(prices, high=prices, low=prices)
     for definition in definitions(grid, derivative, 'native_osc_zone_share_v1'):
         assert evaluate_master(definition, source, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_unused_unknown_anchor_does_not_invalidate_a_defined_zone_window(frozen, grid):
+    prices = np.full(25, 100.)
+    high = np.r_[np.full(14, 100.), np.full(11, 110.)]
+    low = np.r_[np.full(14, 100.), np.full(11, 90.)]
+    actual, _, known = _osc_series(dict(osc_kind='WILLR', osc_period='14', cross_line='-50'),
+                                   prices, high, low)
+    native = frozen.parameter_variants(prices, high, low, prices, np.ones(25))['WILLR14'][13:]
+    assert np.array_equal(actual.view(np.uint64), native.view(np.uint64))
+    assert actual[0] == 0. and not known[0]  # native zero for undefined range
+    assert known[1:].all() and (actual[1:] == -50.).all()
+    source, setup, _ = bars(prices, high, low)
+    dates = pd.bdate_range('2020-01-01', periods=26)
+    for recipe in ('native_osc_zone_share_v1', 'native_osc_cross_v1'):
+        defs = definitions(grid, 'WilliamsR14', recipe)
+        at23 = {d['source_outcome']: evaluate_master(d, source, dates[24].date(), 23).answer for d in defs}
+        at24 = {d['source_outcome']: evaluate_master(d, source, setup, 24).answer for d in defs}
+        if recipe == 'native_osc_zone_share_v1':
+            assert at23 == dict(mostly_high='NO', mostly_low='NO', mostly_mid='YES', mixed='NO')
+            assert at24 == at23
+        else:
+            assert set(at23.values()) == {'NOT_EVALUABLE'}  # cross uses the anchor
+            assert at24 == dict(up='NO', down='NO', both='NO', none='YES')
+
+
+@pytest.mark.parametrize('price,winner', [(110., 'mostly_high'), (90., 'mostly_low')])
+def test_defined_zero_and_minus_hundred_remain_known(grid, price, winner):
+    prices = np.full(50, price)
+    source, setup, last = bars(prices, np.full(50, 110.), np.full(50, 90.))
+    answers = {d['source_outcome']: evaluate_master(d, source, setup, last).answer
+               for d in definitions(grid, 'WilliamsR14', 'native_osc_zone_share_v1')}
+    assert answers[winner] == 'YES' and sum(a == 'YES' for a in answers.values()) == 1
+
+
+def test_path_direction_uses_the_same_window_scoped_native_mask(grid):
+    prices = np.full(80, 100.)
+    high = np.r_[np.full(14, 100.), np.full(66, 110.)]
+    low = np.r_[np.full(14, 100.), np.full(66, 90.)]
+    source, setup, last = bars(prices, high, low)
+    defs = definitions(grid, 'WilliamsR14', 'native_path_dir_v1')
+    answers = {d['source_outcome']: evaluate_master(d, source, setup, last).answer for d in defs}
+    assert answers == dict(rising='NO', falling='NO', flat='YES')
+    # A zero-range value that actually belongs to the last N path remains NI.
+    flat, setup, last = bars(prices, high=prices, low=prices)
+    assert all(evaluate_master(d, flat, setup, last).answer == 'NOT_EVALUABLE' for d in defs)

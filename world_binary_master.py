@@ -222,6 +222,23 @@ def _native_rsi_series(close, period):
     return values, known
 
 
+def _native_williams_r_series(high, low, close, period):
+    """Native values with zero-range missingness scoped to each output bar."""
+    import talib
+    if len(close) < period:
+        return None
+    t0 = period - 1
+    range_known = np.ones(len(close) - t0, dtype=bool)
+    for t in range(t0, len(close)):
+        hh = float(high[t - period + 1:t + 1].max())
+        ll = float(low[t - period + 1:t + 1].min())
+        range_known[t - t0] = hh != ll
+    values = talib.WILLR(np.asarray(high, dtype=np.float64),
+                         np.asarray(low, dtype=np.float64),
+                         np.asarray(close, dtype=np.float64), timeperiod=period)[t0:]
+    return values, range_known & ~np.isnan(values)
+
+
 def _osc_series(feature, close, high, low):
     """Oscillator series per the L3 derivative (documented seeding per kind)
     and its comparison line, as equal-length float arrays covering the LAST
@@ -259,22 +276,10 @@ def _osc_series(feature, close, high, low):
                 known[t:min(t + slow, len(close))] = False
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'WILLR':
-        import talib
-        period = int(feature['osc_period'])
-        if len(close) < period:
+        native = _native_williams_r_series(high, low, close, int(feature['osc_period']))
+        if native is None:
             return None
-        t0 = period - 1
-        for t in range(t0, len(close)):
-            hh = float(high[t - period + 1:t + 1].max())
-            ll = float(low[t - period + 1:t + 1].min())
-            if hh == ll:
-                return None
-        # Match the registered negative-valued WILLR field, including the
-        # native operation order. Keep the declared zero-range NI policy.
-        series = talib.WILLR(np.asarray(high, dtype=np.float64),
-                             np.asarray(low, dtype=np.float64),
-                             np.asarray(close, dtype=np.float64),
-                             timeperiod=period)[t0:]
+        series, known = native
         line = np.full(series.shape, float(feature['cross_line']))
     elif kind == 'ROC':
         period = int(feature['osc_period'])
@@ -339,22 +344,10 @@ def _path_series(feature, candles, high, low, close):
                 # slow-K value that consumes it; do not edit native zeros.
                 known[t:min(t + slow, len(close))] = False
     elif kind == 'WILLR':
-        import talib
-        period = int(feature['osc_period'])
-        if len(close) < period:
+        native = _native_williams_r_series(high, low, close, int(feature['osc_period']))
+        if native is None:
             return None
-        t0 = period - 1
-        for t in range(t0, len(close)):
-            hh = float(high[t - period + 1:t + 1].max())
-            ll = float(low[t - period + 1:t + 1].min())
-            if hh == ll:
-                return None
-        # Match the registered negative-valued WILLR field (zero-range bars
-        # stay the declared NI policy, as in _osc_series).
-        series = talib.WILLR(np.asarray(high, dtype=np.float64),
-                             np.asarray(low, dtype=np.float64),
-                             np.asarray(close, dtype=np.float64),
-                             timeperiod=period)[t0:]
+        series, known = native
     elif kind == 'ROC':
         period = int(feature['osc_period'])
         if len(close) <= period:
