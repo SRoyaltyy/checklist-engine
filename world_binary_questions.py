@@ -17,7 +17,7 @@ ANSWER_SET = ('NO', 'YES')
 SEMANTICS = 'STRICT_BINARY_V1'
 COMPARATORS = {'>': operator.gt, '>=': operator.ge, '=': operator.eq,
                '!=': operator.ne, '<=': operator.le, '<': operator.lt}
-FEATURE_KINDS = ('continuous', 'integer_count', 'category_code', 'boolean')
+FEATURE_KINDS = ('continuous', 'integer_count', 'signed_integer', 'category_code', 'boolean')
 _LITERAL = re.compile(r'[+-]?(?:(?:0|[1-9][0-9]*)(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?\Z')
 
 

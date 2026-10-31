@@ -36,8 +36,12 @@ units, warm-up, window, tie and anchor-confirmation rules.
 The v3 CSV adds `feature_id`, `feature_expression`, `feature_kind`, `feature_unit`,
 `comparator`, `comparison_threshold` and conditional `feature_categories`.
 The expression fully expands the measurement and its registered settings.
-Kinds are continuous, integer_count, category_code and boolean. Units are
-explicit: candle counts differ from sums of candle-body sizes.
+Kinds are continuous, integer_count, signed_integer, category_code and boolean.
+`integer_count` is nonnegative; `signed_integer` permits negative differences
+while retaining exact integer comparisons. A longest-up minus longest-down
+streak is a signed integer, rather than a nonnegative count. This is a predicate
+value type, not a new market-data inventory item. Units are explicit: candle
+counts differ from sums of candle-body sizes.
 
 Comparators are exactly `>`, `>=`, `=`, `!=`, `<=`, `<`. The comparison threshold
 is a literal number, never `ATR * 0.5` or `q80`; expose normalized distance as the
@@ -48,6 +52,12 @@ The fixed `answer_set` is `["NO","YES"]`.
 Ladder rungs/opposite predicates can share a feature ID. Reusing that ID for a
 different expression/input/PIT rule/kind/unit/codebook fails. Numerically equal
 cutoff spellings such as0 and0.0 cannot inflate the question count.
+
+The master CSV exports `feature_id` for each bound scalar. Components of a
+multi-output recipe have distinct typed expressions and feature IDs; for example,
+the inside-run count cannot share its cache identity with the `none` boolean.
+The underlying recipe can still be computed once before selecting components.
+Ladder add-ons keep this field blank until their scalar bindings are reviewed.
 
 A legacy bull_div/bear_div/none result is a categorical **feature**. It needs an
 explicit JSON codebook, e.g. `{"0":"none","1":"bull_div","2":"bear_div"}`,

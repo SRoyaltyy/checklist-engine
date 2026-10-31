@@ -134,7 +134,7 @@ def bind_price_question(tree_row, variant):
         semantic = dict(feature=scalar, comparator=operator, comparison_threshold=threshold)
         expression=scalar['recipe']+'('+str(timeframe)+'d,N='+str(lookback)+')'+(';abs' if outcome == 'flat' else '')
         result.append(dict(question_id='BM1-'+identity(semantic), feature_id='BF1-'+identity(scalar),
-            feature=scalar, feature_expression=expression,feature_kind='integer_count' if kind=='run_structure' else 'continuous',formula=f'({expression}) {operator} {threshold}',
+            feature=scalar, feature_expression=expression,feature_kind='signed_integer' if kind=='run_structure' else 'continuous',formula=f'({expression}) {operator} {threshold}',
             answer_set=['NO','YES'], comparator=operator, comparison_threshold=threshold,
             feature_unit='native_candle_count_difference' if kind=='run_structure' else 'fraction', source_question_id=variant.source_question_id,
             source_variant_id=variant.variant_id, source_outcome=outcome,
@@ -151,12 +151,14 @@ def evaluate_price(definition, bars, setup_date, expected_slot):
     value = measurement(kind, bars, setup_date, expected_slot, feature['lookback'])
     if value is not None and feature['transform'] == 'abs':
         value = abs(value)
-    return evaluate_binary(value, definition['comparator'], definition['comparison_threshold'])
+    return evaluate_binary(value, definition['comparator'], definition['comparison_threshold'],
+                           feature_kind=definition['feature_kind'])
 
 
 def evaluate_v1_price(definition,bars,setup_date,expected_slot,*,ticker,pit_eligible):
     """Production-cohort entry point; excluded/unknown rows never become NO."""
     from world_replay_quarantine import v1_eligible
     if v1_eligible(ticker,pit_eligible) is not True:
-        return evaluate_binary(None,definition['comparator'],definition['comparison_threshold'],known=False)
+        return evaluate_binary(None,definition['comparator'],definition['comparison_threshold'],
+                               feature_kind=definition['feature_kind'],known=False)
     return evaluate_price(definition,bars,setup_date,expected_slot)
