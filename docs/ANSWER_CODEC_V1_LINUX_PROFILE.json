@@ -1,0 +1,101 @@
+{
+  "source": "GITHUB_ACTIONS_STDOUT_JSON",
+  "repository": "SRoyaltyy/checklist-engine",
+  "run_id": 41157358438,
+  "job_id": 124406984539,
+  "source_commit": "1d96551a4b1aa6649f03d58511c3af2d369dae88",
+  "merged_commit": "4138e4c155cfdb2b9129cdd1d1f27d9d8e979efc",
+  "linux_tests_passed": 51,
+  "artifact": {
+    "id": 13025807825,
+    "zip_sha256_reported_by_actions": "e073ff3a93d0d17cd713d95dfc90a43310720abeb820f1d3fe2836bf8dd3b42f",
+    "zip_independently_downloaded": false
+  },
+  "scope": "Synthetic codec compatibility and timing only; not full-stock performance",
+  "profile": {
+    "status": "PASS_EXACT_V1_COMPATIBILITY",
+    "dtype_cases": 10,
+    "results": [
+      {
+        "rows": 9,
+        "questions": 128,
+        "cells": 1152,
+        "compressed_bytes": 387,
+        "identical_compressed_bytes_and_metadata": true,
+        "identical_decoded_frame": true,
+        "timings": {
+          "legacy": {
+            "encode_seconds": 0.06754565299999626,
+            "decode_seconds": 0.008556456000000878
+          },
+          "current": {
+            "encode_seconds": 0.004578603000005899,
+            "decode_seconds": 0.0044861209999993434
+          }
+        },
+        "encode_speedup": 14.75245899238463,
+        "decode_speedup": 1.9073172569358094
+      },
+      {
+        "rows": 1024,
+        "questions": 128,
+        "cells": 131072,
+        "compressed_bytes": 30385,
+        "identical_compressed_bytes_and_metadata": true,
+        "identical_decoded_frame": true,
+        "timings": {
+          "legacy": {
+            "encode_seconds": 0.08194223299999948,
+            "decode_seconds": 0.01149758799999745
+          },
+          "current": {
+            "encode_seconds": 0.005127155000003825,
+            "decode_seconds": 0.0052379019999975185
+          }
+        },
+        "encode_speedup": 15.98200815070704,
+        "decode_speedup": 2.1950750510419814
+      },
+      {
+        "rows": 4096,
+        "questions": 128,
+        "cells": 524288,
+        "compressed_bytes": 121385,
+        "identical_compressed_bytes_and_metadata": true,
+        "identical_decoded_frame": true,
+        "timings": {
+          "legacy": {
+            "encode_seconds": 0.12008955700000001,
+            "decode_seconds": 0.019144079000000147
+          },
+          "current": {
+            "encode_seconds": 0.007561072000001445,
+            "decode_seconds": 0.007825744000001578
+          }
+        },
+        "encode_speedup": 15.882609899757211,
+        "decode_speedup": 2.4462950743081153
+      },
+      {
+        "rows": 16384,
+        "questions": 128,
+        "cells": 2097152,
+        "compressed_bytes": 485637,
+        "identical_compressed_bytes_and_metadata": true,
+        "identical_decoded_frame": true,
+        "timings": {
+          "legacy": {
+            "encode_seconds": 0.2607863309999985,
+            "decode_seconds": 0.049724980999997115
+          },
+          "current": {
+            "encode_seconds": 0.01769668699999727,
+            "decode_seconds": 0.018310415999998497
+          }
+        },
+        "encode_speedup": 14.736449313933095,
+        "decode_speedup": 2.7156663726264436
+      }
+    ]
+  }
+}
