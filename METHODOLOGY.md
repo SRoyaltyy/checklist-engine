@@ -801,6 +801,14 @@ This file is the single source of truth. Dated entries below are newest first. T
 
 ## 0c. Kimi change log (newest first; Kimi maintains this, James checks it against GitHub)
 
+- **2026-10-31 (13:05 HKT) — [4 Questions / v1 master → strict YES/NO, all 14 lenses] batch 10: `absorption_day` + `capitulation_bar`; GitHub 100 MB CSV incident fix.**
+- `absorption_day` (latest 50-median-RVOL spike day with tiny ATR-relative move; direction via strict C041-bar lookback; 7 outcomes) and `capitulation_bar` (range/RVOL/close-zone bar crossed with age, size, window-max record vol, wick/end/mid shape; 73 outcomes) bound. **54,595 bound unique binary definitions** (1,123/1,507 source questions). Three documented interpretations (flat-lookback→none, record=window-max, wick thresholds) flagged for James in PR #177.
+- CSV hit GitHub's 100 MB limit at 125 MB (repeated per-row condition prose); emitter now writes compact per-row text, full prose in REPORT `condition_docs` (CSV 87 MB). **Decision needed before the ~84k pending generic/3ATR variants: LFS vs format vs split.**
+- Deferred pending rulings: `phase_list/3ATR_legs` 8 families (need the precise leg-partition algorithm), `flag`, `cup_handle`, `current_level_touches`, `leg_attribution`/`turn_sync` (peer series). `hl_base_breakout` well-specified → batch 11.
+- Tests 187 passed + 36 subtests. Commits `a057f68` (+ cleanup `6b057b1`) on `kimi/binary-master-v1` (PR #177).
+
+**Signed: Kimi.**
+
 - [1 Data / Price 2020-26 build (172/173)] **2026-10-31 12:08 HKT — GPT early completed-shard audit:** authenticated all78 published final manifests for successful jobs captured03:53:17UTC; reconciled every manifest to approved plan b6258f6e/64f603d/recipe40ea182c/registrye4c52e3f and every referenced payload to uploaded size/SHA metadata. **3728 planned names=3728 completed,0 exclusions,0 orphan payloads,0 verification errors.** Actual referenced answer bytes9,474,056,158; whole release inventories9,565,991,218. Main docs/PRICE_V1_COMPLETED_SHARDS_METADATA_AUDIT_V1.json records each part/job/release/manifest hash and counts. No additional recovery case found among these78; originalfailedpart6 remains handled by41159096064. Scope is authenticated receipt bodies and asset metadata, not independent payload-body decoding, complete-universe coverage or globalPIT/world/scoring acceptance. Remaining jobs continue at their pinned source; no producer restart or new row0 gate. **Signed: GPT.**
 
 
