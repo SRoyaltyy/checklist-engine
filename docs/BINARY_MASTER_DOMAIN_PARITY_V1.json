@@ -1,19 +1,21 @@
 {
-  "baseline_commit": "6483b366e2268e2f853fcb7ce8a59c27c2b73ad3",
-  "baseline_csv_sha256": "b361cf961f258ae6c394ca2b762dba991c6394c86c6795f00ae6e7a29ef45812",
-  "corrected_csv_sha256": "575fd2dec952d87eb7876c2c72b0494b9af72dd375b169c78ec095a89e1f8a9e",
-  "total_rows": 15422,
-  "bound_definitions": 12742,
+  "baseline_commit": "4001b0bc82f12f63014b6eceac3b9163c7e1762b",
+  "baseline_csv_sha256": "0f6219b19a120a0ddd106fef080e1351f1ebe199b142960983e87f301465a43e",
+  "corrected_csv_sha256": "afed9a9dce4de2853d22092c2df7170b0fa9fc1405caf9ddf64278ed470b83f6",
+  "total_rows": 16986,
+  "bound_definitions": 14306,
   "changed_rows": 63,
-  "changed_columns": ["feature_kind"],
-  "added_columns": ["feature_id"],
-  "bound_scalar_feature_ids_exported": 12742,
+  "changed_columns": [
+    "feature_kind"
+  ],
+  "added_columns": [
+    "feature_id"
+  ],
+  "bound_scalar_feature_ids_exported": 14306,
   "feature_id_contract": "SAME_ID_REQUIRES_SAME_TYPED_EXPRESSION_AND_INPUTS",
   "change": "run_structure: integer_count -> signed_integer",
-  "rows_unchanged_in_existing_columns": 15359,
+  "rows_unchanged_in_existing_columns": 16923,
   "semantic_ids_formulas_thresholds_parameters_and_outcome_restoration": "ALL_PRESERVED",
-  "local_tests_passed": 121,
-  "local_subtests_passed": 36,
   "real_answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
   "mining": "NOT_RUN"
