@@ -1074,6 +1074,55 @@ def _measure(recipe, candles, feature=None):
             i_h = int(np.argmax(high[w0:]))
             i_l = int(np.argmin(low[w0:]))
             return {'high_first': i_h <= i_l, 'low_first': i_l < i_h}
+        if recipe == 'native_intraday_change_mean_v1':
+            # Mean intraday body fraction across the window, in PERCENT:
+            # mean((C-O)/O)*100. Band dial C001 is a percent threshold.
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            w0 = len(candles) - lb
+            frac = (close[w0:] - opened[w0:]) / opened[w0:]
+            return float(frac.mean(dtype=np.float64) * 100.0)
+        if recipe == 'native_interday_change_total_v1':
+            # Total close-to-close change across the window, in PERCENT:
+            # (C[last]/C[first] - 1)*100, anchored at the first window close.
+            # Band dial C002 is a percent threshold.
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            w0 = len(candles) - lb
+            first = float(close[w0])
+            last = float(close[-1])
+            if not np.isfinite(first) or first <= 0:
+                return None
+            return (last / first - 1.0) * 100.0
+        if recipe == 'native_run_structure_v1':
+            # Longest same-colour body run in the window: green (C>O) vs red
+            # (C<O). A doji (C==O) breaks any run (documented). equal covers
+            # ties including both-zero (all-doji window).
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            w0 = len(candles) - lb
+            body = close[w0:] - opened[w0:]
+            best = {1: 0, -1: 0}
+            run = 0
+            sign = 0
+            for b in body:
+                s = 1 if b > 0 else -1 if b < 0 else 0
+                if s == 0:
+                    run = 0
+                    sign = 0
+                    continue
+                if s == sign:
+                    run += 1
+                else:
+                    sign = s
+                    run = 1
+                if run > best[sign]:
+                    best[sign] = run
+            g, r = best[1], best[-1]
+            return {'green_longer': g > r, 'red_longer': r > g, 'equal': g == r}
         if recipe == 'native_maxvol_wick_v1':
             # candles[0] is the prior candle (TR base). Window's max-volume
             # bar: long lower wick (> v*ATR14) = bull, else long upper wick =
@@ -1671,6 +1720,29 @@ FACETS = {
         cutoff_id=None, baked_cutoff_ids=(), baked_map={},
         outcome_spec={'high_first': ('boolean', '=', 'one'),
                       'low_first': ('boolean', '=', 'one')}),
+    'intraday_change': dict(
+        binding='band', mirror=False, l1_l3=(('candles', 'OHLC'),),
+        recipe='native_intraday_change_mean_v1',
+        unit='mean_intraday_body_fraction_pct',
+        outcomes=('up', 'down', 'flat'), cutoff_id='C001_intraday_change__pct1',
+        transform_by_outcome={'up': 'identity', 'down': 'identity', 'flat': 'abs'},
+        comparator_by_outcome={'up': '>', 'down': '<', 'flat': '<='}),
+    'interday_change': dict(
+        binding='band', mirror=False, l1_l3=(('candles', 'OHLC'),),
+        recipe='native_interday_change_total_v1',
+        unit='window_close_to_close_change_pct',
+        outcomes=('up', 'down', 'flat'), cutoff_id='C002_interday_change__pct5',
+        transform_by_outcome={'up': 'identity', 'down': 'identity', 'flat': 'abs'},
+        comparator_by_outcome={'up': '>', 'down': '<', 'flat': '<='}),
+    'run_structure': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_run_structure_v1',
+        unit='longest_same_colour_body_run_comparison',
+        outcomes=('green_longer', 'red_longer', 'equal'),
+        cutoff_id=None, baked_cutoff_ids=(), baked_map={},
+        outcome_spec={'green_longer': ('boolean', '=', 'one'),
+                      'red_longer': ('boolean', '=', 'one'),
+                      'equal': ('boolean', '=', 'one')}),
 }
 
 def _iter_specs():
@@ -1888,7 +1960,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_ma30_side_streak_v1',
                         'native_osc_swing_speed_v1',
                         'native_absorption_day_v1', 'native_capitulation_bar_v1',
-                        'native_hl_base_breakout_v1', 'native_high_then_low_v1'}
+                        'native_hl_base_breakout_v1', 'native_high_then_low_v1',
+                        'native_run_structure_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):

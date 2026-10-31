@@ -182,10 +182,21 @@ def test_evaluate_wick_body(grid):
     assert evaluate_master(defs['lower_dominant'], bars, setup, last_slot).answer == 'NO'
 
 
-def test_master_falls_back_to_gpt_binders(grid):
-    row = grid.tree['B|candles|OHLC|intraday_change|1x3']
-    variant = next(grid.variants(row['question_id']))
-    assert bind_master_question(row, variant) == bind_price_question(row, variant)
+def test_master_no_longer_falls_back_to_gpt_binders(grid):
+    # Batch 13 bound intraday_change/interday_change/run_structure natively, so
+    # no canonical qid reaches the GPT fallback anymore. Master must bind these
+    # families itself, and the GPT binder module must still work standalone.
+    for facet in ('intraday_change', 'interday_change', 'run_structure'):
+        qid = sorted(q for q in grid.tree if q.split('|')[3] == facet
+                     and q.startswith('B|candles|OHLC|'))[0]
+        row = grid.tree[qid]
+        variant = next(grid.variants(row['question_id']))
+        master_defs = bind_master_question(row, variant)
+        assert master_defs, f'{facet}: master returned no binding'
+        assert all('source_outcome' in d for d in master_defs)
+        gpt_defs = bind_price_question(row, variant)
+        assert gpt_defs, f'{facet}: GPT binder module broken'
+        assert all('source_outcome' in d for d in gpt_defs)
 
 
 def test_unbound_family_raises(grid):
@@ -1494,6 +1505,93 @@ def test_evaluate_high_then_low(grid):
     # missing window -> NOT_EVALUABLE
     for d in defs.values():
         assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_bind_batch13_variants(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|intraday_change|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3          # {up,down,flat} on the C001 percent band
+    assert defs['up']['comparison_threshold'] == '1'
+    assert defs['down']['comparison_threshold'] == '-1'
+    changed = next(v for v in grid.variants(row['question_id'])
+                   if dict(v.settings)['C001_intraday_change__pct1'] != '1')
+    defs2 = _by_outcome(bind_master_question(row, changed))
+    v2 = dict(changed.settings)['C001_intraday_change__pct1']
+    assert defs2['up']['comparison_threshold'] != '1'
+    assert defs2['flat']['comparison_threshold'] == defs2['up']['comparison_threshold']
+    row, variant = _q(grid, 'B|candles|OHLC|interday_change|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3
+    assert defs['up']['comparison_threshold'] == '5'
+    row, variant = _q(grid, 'B|candles|OHLC|run_structure|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    assert len(defs) == 3
+    assert all(d['feature_kind'] == 'boolean' for d in defs.values())
+
+
+_GREEN = (100.0, 100.6, 99.8, 100.4)
+_RED = (100.4, 100.6, 99.8, 100.0)
+_DOJI = (100.0, 100.2, 99.8, 100.0)
+
+
+def test_evaluate_run_structure(grid):
+    row, variant = _q(grid, 'B|candles|OHLC|run_structure|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    span = 10
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    bars = _bars_hl([_GREEN] * 6 + [_RED] * 4)
+    assert evaluate_master(defs['green_longer'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['red_longer'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['equal'], bars, setup, last).answer == 'NO'
+    bars = _bars_hl([_RED] * 6 + [_GREEN] * 4)
+    assert evaluate_master(defs['red_longer'], bars, setup, last).answer == 'YES'
+    # alternating single bars -> both longest runs length 1 -> equal
+    bars = _bars_hl([_GREEN, _RED] * 5)
+    assert evaluate_master(defs['equal'], bars, setup, last).answer == 'YES'
+    # doji breaks runs; 2-runs on both sides -> equal
+    bars = _bars_hl([_GREEN, _GREEN, _DOJI, _RED, _RED, _DOJI,
+                     _GREEN, _GREEN, _RED, _RED])
+    assert evaluate_master(defs['equal'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['green_longer'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_intraday_interday_change(grid):
+    span = 10
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|candles|OHLC|intraday_change|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))  # C001 = 1 (%)
+    up2 = (100.0, 102.0, 99.8, 102.0)
+    dn2 = (100.0, 100.2, 97.8, 98.0)
+    up_half = (100.0, 100.7, 99.8, 100.5)
+    bars = _bars_hl([up2] * 10)
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'NO'
+    bars = _bars_hl([dn2] * 10)
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'YES'
+    bars = _bars_hl([up_half] * 10)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+    row, variant = _q(grid, 'B|candles|OHLC|interday_change|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))  # C002 = 5 (%)
+    rising = [(100.0 + i, 100.9 + i, 99.5 + i, 100.8 + i) for i in range(10)]
+    bars = _bars_hl(rising)   # first close 100.8 -> last 109.8: ~+8.9%
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'NO'
+    drifting = [(100.0 + 0.3 * i, 100.9 + 0.3 * i, 99.5 + 0.3 * i,
+                 100.6 + 0.3 * i) for i in range(10)]  # ~+2.7% -> flat
+    bars = _bars_hl(drifting)
+    assert evaluate_master(defs['flat'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['up'], bars, setup, last).answer == 'NO'
+    falling = [(109.0 - i, 109.9 - i, 107.5 - i, 108.0 - i) for i in range(10)]
+    bars = _bars_hl(falling)  # ~-8.3%
+    assert evaluate_master(defs['down'], bars, setup, last).answer == 'YES'
 
 
 def _stage_root(tmp_path):

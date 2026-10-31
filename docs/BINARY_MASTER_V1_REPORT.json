@@ -102,6 +102,8 @@
     "inside_old_range",
     "inside_outside",
     "insider_count",
+    "interday_change",
+    "intraday_change",
     "kijun_tests",
     "landmark_age",
     "landmark_count",
@@ -203,6 +205,7 @@
     "run_history",
     "run_length",
     "run_multiple",
+    "run_structure",
     "run_unusual",
     "score_flip",
     "score_price_divergence",
@@ -294,6 +297,8 @@
     "high_then_low",
     "hl_base_breakout",
     "inside_outside",
+    "interday_change",
+    "intraday_change",
     "last_green_vs_red",
     "ma30_side_streak",
     "max_vol_position",
@@ -304,6 +309,7 @@
     "rsi_ceiling",
     "rsi_floor",
     "run_biggest_move",
+    "run_structure",
     "segment_compare",
     "shock",
     "slope",
@@ -318,7 +324,14 @@
   "ladder_add_on_rows": 2680,
   "dedupe_by_computed_meaning": "PENDING_LADDER_VS_MASTER_AND_WITHIN_MASTER",
   "master_total_rows": 61489,
-  "csv_sha256": "808f29e14447f949329f112997d8271e203336e1cbb53a021e628f122938ec1c",
+  "csv_sha256": "beebaa8f271675a6c7893e8b3bfda8bcc633b84b52aa29b73a8c9eada209947c",
+  "csv_storage": {
+    "manifest": "BINARY_MASTER_V1_STORAGE.json",
+    "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
+    "raw_bytes": 98478037,
+    "compressed_bytes": 11404220,
+    "chunk_count": 12
+  },
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
     "dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv": "6241fc462c74db1902103c8fbbff4b5c52f4feebea8ab2f00aba87e6ba985769",
@@ -326,11 +339,11 @@
     "docs/BINARY_LADDERS_V1.csv": "1717284345a3bea700578c44a6d3a367e3473a782374b394b2df4c38a032f275"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "a2dc9ebc575d3f11498bef8bfb6fb5f1152269f7d74e98316255a7af31be378f",
-    "world_binary_price.py": "1c52b6f89fde01686d7b91398e5aad8de8b30712b2a047a16e655e879e66881c",
-    "world_binary_questions.py": "2a23e00f1e6c401ea6507757c95aa602b8e6e0bc8975e3d46cbe3aacbd8ecd3b",
-    "ci/binary_master_build.py": "d6d2a69584af805d80ca48c65559a7f931dde8b7de9675d632df2ea4a0d9e135",
-    "ci/binary_master_storage.py": "704cc7fb2ec7a9b31f4ad3bb5bd699d0b3ab2fc472030aa2a0cbb601ac2bd581"
+    "world_binary_master.py": "fe229c3dcdd1dcb862180d8e10965e727fbb50dfaa8071d5e89f9856e3242e3f",
+    "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
+    "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
+    "ci/binary_master_build.py": "f1ee99c7386a2d9edb63d5a29dc80b7d46b8cd266c1ef6b0b986622ea84bfc9c",
+    "ci/binary_master_storage.py": "e887470e06da9aba27d640eef9316e02a44abe9c4cde5eeb620d01cedc4015f9"
   },
   "answer_generation": "NOT_RUN",
   "chart_gate": "NOT_PASSED",
@@ -340,12 +353,5 @@
     "knowable_at_setup_open": "Uses only native candles with available_from <= setup date D and end < D (last completed candle = D-1); D open is execution only. Bars are strict FIXED_SHARED_SESSION_CALENDAR_V1 slot groups; no day-D candle.",
     "viewport_drawing": "Purple recolour of the D-1 native candle if YES; ratio/scalar value printed on the item pane header; no circles.",
     "csv_note": "CSV rows carry compact condition text with a reference to world_binary_master; full prose is this report field and the module constants."
-  },
-  "csv_storage": {
-    "manifest": "BINARY_MASTER_V1_STORAGE.json",
-    "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 98491183,
-    "compressed_bytes": 11418852,
-    "chunk_count": 12
   }
 }
