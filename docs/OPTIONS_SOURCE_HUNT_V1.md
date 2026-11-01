@@ -1,5 +1,8 @@
 # OPTIONS_SOURCE_HUNT_V1
 
+> Superseded for OI-focus status by [`docs/OPTIONS_SOURCE_HUNT_V2.md`](OPTIONS_SOURCE_HUNT_V2.md) (2026-11-01). Keep this file as the 2026-10-30 baseline.
+
+
 Box-tested 2026-10-30 HKT (James / Grok Bot). Inventory FINAL; this hunt is download/source status only. Questions still open.
 
 ## Goal fields

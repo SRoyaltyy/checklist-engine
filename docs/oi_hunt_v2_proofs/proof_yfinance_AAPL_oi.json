@@ -1,0 +1,43 @@
+{
+  "source": "yfinance_option_chain",
+  "fetched_at_utc": "2026-11-01T02:09:00.901642+00:00",
+  "symbol": "AAPL",
+  "expiries_sampled": [
+    "2026-11-04",
+    "2026-11-06",
+    "2026-11-13",
+    "2026-11-20"
+  ],
+  "per_expiry": [
+    {
+      "expiration": "2026-11-04",
+      "calls_oi": 39702,
+      "puts_oi": 24716,
+      "calls_n": 44,
+      "puts_n": 36
+    },
+    {
+      "expiration": "2026-11-06",
+      "calls_oi": 63350,
+      "puts_oi": 98254,
+      "calls_n": 69,
+      "puts_n": 70
+    },
+    {
+      "expiration": "2026-11-13",
+      "calls_oi": 27464,
+      "puts_oi": 17022,
+      "calls_n": 51,
+      "puts_n": 57
+    },
+    {
+      "expiration": "2026-11-20",
+      "calls_oi": 346346,
+      "puts_oi": 277605,
+      "calls_n": 94,
+      "puts_n": 84
+    }
+  ],
+  "fields_include_openInterest": true,
+  "note": "LIVE only via Yahoo; no historical options method on Ticker."
+}

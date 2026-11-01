@@ -1,0 +1,28 @@
+[
+  {
+    "name": "finra_cnms_sample",
+    "status": 200,
+    "head": "Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market\r\n20261029|A|511423.702645|1090|1000128.599576|B,Q,N\r\n20261029|AA|499330.486273|1258|17364"
+  },
+  {
+    "name": "finra_si_oct",
+    "error": "403:HTTP Error 403: Forbidden"
+  },
+  {
+    "name": "etf_com",
+    "error": "403:HTTP Error 403: Forbidden"
+  },
+  {
+    "name": "ici_etf_flows",
+    "error": "403:HTTP Error 403: Forbidden"
+  },
+  {
+    "name": "nasdaq_dark_ats",
+    "error": "500:HTTP Error 500: Internal Server Error"
+  },
+  {
+    "name": "finra_ats_otc",
+    "status": 200,
+    "head": "issueSymbolIdentifier,issueName,firmCRDNumber,MPID,marketParticipantName,tierIdentifier,tierDescription,summaryStartDate,totalWeeklyTradeCount,totalWe"
+  }
+]
