@@ -32,3 +32,13 @@ Money-flow family means **order/capital flow**, not Chaikin/Twiggs (those are pr
 - Large vs small order flow, block/dark-pool prints at stock-day grain: **no free history found**.
 - ETF fund-flow history: no free bulk CSV proven from the box.
 - Upload refreshed `finra_shvol_2026.parquet` to release/Drive (large; not committed to git).
+
+## Recheck 2026-11-01 HKT (James — short, no rabbit hole)
+
+Tied to `docs/OPTIONS_SOURCE_HUNT_V2.md` / proofs `docs/oi_hunt_v2_proofs/moneyflow_recheck.json`.
+
+- FINRA CNMS daily short volume still HTTP 200 (sample 2026-10-29).
+- FINRA SI `shrt20261015.csv` still 403 (not published / gated).
+- ETF.com fund-flows and ICI ETF stats pages 403 from box — still no free bulk ETF-flow CSV.
+- FINRA OTC `weeklySummary` API still 200 (ATS/OTC weekly flavor only — not a stock-day dark-pool panel).
+- Large vs small order flow and block prints: still **no free history**. Futu/Webull remain AUTH REQUIRED.

@@ -1,0 +1,355 @@
+{
+  "probed_at_utc": "2026-11-01T02:04:44.413366+00:00",
+  "probed_at_hkt_note": "box clock is Asia/Hong_Kong",
+  "count": 35,
+  "results": [
+    {
+      "name": "yahoo_options_live_AAPL",
+      "url": "https://query2.finance.yahoo.com/v7/finance/options/AAPL",
+      "status": 401,
+      "elapsed_s": 0.07,
+      "ctype": "application/json;charset=utf-8",
+      "len": 89,
+      "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"Unauthorized\",\"description\":\"Invalid Crumb\"}}}",
+      "ok": false
+    },
+    {
+      "name": "yahoo_options_date_epoch",
+      "url": "https://query2.finance.yahoo.com/v7/finance/options/AAPL?date=1609459200",
+      "status": 401,
+      "elapsed_s": 0.1,
+      "ctype": "application/json;charset=utf-8",
+      "len": 89,
+      "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"Unauthorized\",\"description\":\"Invalid Crumb\"}}}",
+      "ok": false
+    },
+    {
+      "name": "yahoo_chart_AAPL",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=5d",
+      "status": 200,
+      "elapsed_s": 0.1,
+      "ctype": "application/json;charset=utf-8",
+      "len": 1731,
+      "head": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeName\":\"NMS\",\"fullExchangeName\":\"NasdaqGS\",\"instrumentType\":\"EQUITY\",\"firstTradeDate\":345479400,\"regularMarketTime\":1793390401,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":344.63,\"regularMarketChangePercent\":-1.227,\"fulldayPrice\":344.63,\"fulldayCha",
+      "ok": true
+    },
+    {
+      "name": "yahoo_crumb_need",
+      "url": "https://query1.finance.yahoo.com/v7/finance/quote?symbols=AAPL",
+      "status": 401,
+      "elapsed_s": 0.1,
+      "ctype": "application/json;charset=utf-8",
+      "len": 157,
+      "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"Unauthorized\",\"description\":\"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback\"}}}",
+      "ok": false
+    },
+    {
+      "name": "nasdaq_options_chain",
+      "url": "https://api.nasdaq.com/api/quote/AAPL/option-chain?assetclass=stocks&limit=10",
+      "status": 200,
+      "elapsed_s": 1.75,
+      "ctype": "application/json; charset=utf-8",
+      "len": 6502,
+      "head": "{\"data\":{\"totalRecord\":460,\"lastTrade\":\"LAST TRADE: $344.63 (AS OF OCT 30, 2026)\",\"table\":{\"asOf\":null,\"headers\":{\"expiryDate\":\"Exp. Date\",\"c_Last\":\"Last\",\"c_Change\":\"Change\",\"c_Bid\":\"Bid\",\"c_Ask\":\"Ask\",\"c_Volume\":\"Volume\",\"c_Openinterest\":\"Open Int.\",\"strike\":\"Strike\",\"p_Last\":\"Last\",\"p_Change\":\"Change\",\"p_Bid\":\"Bid\",\"p_Ask\":\"Ask\",\"p_Volume\":\"Volume\",\"p_Openinterest\":\"Open Int.\"},\"rows\":[{\"expiry",
+      "ok": true
+    },
+    {
+      "name": "nasdaq_option_chain_alt",
+      "url": "https://api.nasdaq.com/api/quote/AAPL/info?assetclass=stocks",
+      "status": 200,
+      "elapsed_s": 2.17,
+      "ctype": "application/json; charset=utf-8",
+      "len": 1353,
+      "head": "{\"data\":{\"symbol\":\"AAPL\",\"companyName\":\"Apple Inc. Common Stock\",\"stockType\":\"Common Stock\",\"exchange\":\"NASDAQ-GS\",\"isNasdaqListed\":true,\"isNasdaq100\":true,\"isHeld\":false,\"primaryData\":{\"lastSalePrice\":\"$344.63\",\"netChange\":\"-4.28\",\"percentageChange\":\"-1.23%\",\"deltaIndicator\":\"down\",\"lastTradeTimestamp\":\"Oct 30, 2026\",\"isRealTime\":false,\"bidPrice\":\"N/A\",\"askPrice\":\"N/A\",\"bidSize\":\"N/A\",\"askSize\":\"",
+      "ok": true
+    },
+    {
+      "name": "occ_volume_stats",
+      "url": "https://marketdata.theocc.com/volume-query",
+      "status": null,
+      "elapsed_s": 25.69,
+      "error": "TimeoutError: The read operation timed out",
+      "ok": false
+    },
+    {
+      "name": "occ_daily_volume",
+      "url": "https://marketdata.theocc.com/daily-volume",
+      "status": 404,
+      "elapsed_s": 19.21,
+      "ctype": "text/html; charset=iso-8859-1",
+      "len": 600,
+      "head": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.cre",
+      "ok": false
+    },
+    {
+      "name": "occ_series_search",
+      "url": "https://marketdata.theocc.com/series-search",
+      "status": 200,
+      "elapsed_s": 4.5,
+      "ctype": "",
+      "len": 0,
+      "head": "",
+      "ok": true
+    },
+    {
+      "name": "cboe_delayed_equity_opt",
+      "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/AAPL.json",
+      "status": 200,
+      "elapsed_s": 0.13,
+      "ctype": "application/json",
+      "len": 8000,
+      "head": "{\"timestamp\": \"2026-10-31 23:18:57\", \"data\": {\"options\": [{\"option\": \"AAPL261104C00275000\", \"bid\": 68.2, \"bid_size\": 167.0, \"ask\": 71.55, \"ask_size\": 52.0, \"iv\": 0.8289, \"open_interest\": 3.0, \"volume\": 10.0, \"delta\": 0.99, \"gamma\": 0.0008, \"vega\": 0.0108, \"theta\": -0.0694, \"rho\": 0.0223, \"theo\": 69.8864, \"change\": -5.515, \"open\": 73.6, \"high\": 73.6, \"low\": 69.0, \"tick\": \"up\", \"last_trade_price\": 6",
+      "ok": true
+    },
+    {
+      "name": "cboe_delayed_SPX",
+      "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/_SPX.json",
+      "status": 200,
+      "elapsed_s": 0.09,
+      "ctype": "application/json",
+      "len": 8000,
+      "head": "{\"timestamp\": \"2026-10-31 22:24:26\", \"data\": {\"options\": [{\"option\": \"SPX261120C00400000\", \"bid\": 7176.9, \"bid_size\": 0.0, \"ask\": 7197.4, \"ask_size\": 0.0, \"iv\": 4.0563, \"open_interest\": 2510.0, \"volume\": 2.0, \"delta\": 1.0, \"gamma\": 0.0, \"vega\": 0.0023, \"theta\": -0.0164, \"rho\": 0.2318, \"theo\": 7181.5888, \"change\": -75.98, \"open\": 7224.71, \"high\": 7224.77, \"low\": 7224.71, \"tick\": \"up\", \"last_trade_p",
+      "ok": true
+    },
+    {
+      "name": "cboe_market_stats_json",
+      "url": "https://cdn.cboe.com/data/us/options/market_statistics/daily/2026-10-28.json",
+      "status": 403,
+      "elapsed_s": 0.12,
+      "ctype": "application/xml",
+      "len": 243,
+      "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>HCS6VXMTRKSS0BY2</RequestId><HostId>vpuNmo/SibkHw7FU031b0xrizuoLDoCXUzC3rrrlDAaEOpJbmERyEefp+2D5wY0rjdUjq1JrqDE=</HostId></Error>",
+      "ok": false
+    },
+    {
+      "name": "barchart_options",
+      "url": "https://www.barchart.com/stocks/quotes/AAPL/options",
+      "status": 202,
+      "elapsed_s": 1.08,
+      "ctype": "text/html; charset=UTF-8",
+      "len": 0,
+      "head": "",
+      "ok": true
+    },
+    {
+      "name": "marketwatch_options",
+      "url": "https://www.marketwatch.com/investing/stock/aapl/options",
+      "status": 200,
+      "elapsed_s": 1.41,
+      "ctype": "text/html; charset=utf-8",
+      "len": 8000,
+      "head": "\n\n\n<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n        <title>AAPL | Apple Inc. Options | MarketWatch</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n            <meta name=\"robots\" content=\"noarchive, nocache, noodp\">\n\n\n<link rel=\"dns-prefetch\" href=\"//sts.wsj.n",
+      "ok": true
+    },
+    {
+      "name": "finviz_quote",
+      "url": "https://finviz.com/quote.ashx?t=AAPL",
+      "status": 200,
+      "elapsed_s": 0.24,
+      "ctype": "text/html; charset=utf-8",
+      "len": 8000,
+      "head": "<!DOCTYPE html>\n<html lang=\"en\" class=\" dark\">\n<head>\n<title>AAPL - Apple Inc Stock Price and Quote</title>\n<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=1024\"><meta name=\"description\" content=\"AAPL - Apple Inc - Stock screener for investors and traders, financial visualizations.\">\n\r\n            <link rel=\"preload\" href=\"/fonts/ibm-plex-sans-latin-normal.woff2\" as=\"font\" type=\"font/wo",
+      "ok": true
+    },
+    {
+      "name": "optionistics_hist",
+      "url": "https://www.optionistics.com/quotes/stock-option-chains/AAPL",
+      "status": 200,
+      "elapsed_s": 0.94,
+      "ctype": "text/html; charset=utf-8",
+      "len": 8000,
+      "head": "<!DOCTYPE html>\n<html lang=\"en\" class=\"\">\n    <head>\n        <meta charset=\"utf-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n        \n                            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n                j=d.createElement(s),dl=l!='",
+      "ok": true
+    },
+    {
+      "name": "marketchameleon",
+      "url": "https://marketchameleon.com/Overview/AAPL/IV/",
+      "status": 200,
+      "elapsed_s": 0.17,
+      "ctype": "text/html",
+      "len": 8000,
+      "head": "<HTML>\r\n<HEAD>\r\n      <style>\r\ntable {\r\n  border-collapse: collapse;\r\n}\r\n         table, th, td {\r\n            border: .5px solid black;\r\n         }\r\n      </style>\r\n  <TITLE>Market Chameleon</TITLE>\r\n\n                                <script>!function(a){var e=\"https://s.go-mpulse.net/boomerang/\",t=\"addEventListener\";if(\"False\"==\"True\")a.BOOMR_config=a.BOOMR_config||{},a.BOOMR_config.PageParams=a.",
+      "ok": true
+    },
+    {
+      "name": "unusualwhales_public",
+      "url": "https://api.unusualwhales.com/api/stock/AAPL/options-volume",
+      "status": 401,
+      "elapsed_s": 0.07,
+      "ctype": "application/json",
+      "len": 399,
+      "head": "{\"code\":\"authentication_required\",\"message\":\"No API token was provided. Requests to this API require an API token in the Authorization header, using the Bearer scheme.\",\"reason\":\"missing_token\",\"request_id\":\"GOPJiJTCEzr7dioG_2cD\",\"token_url\":\"https://unusualwhales.com/dashboard/api\",\"retryable\":fals",
+      "ok": false
+    },
+    {
+      "name": "polygon_aggs_free",
+      "url": "https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2024-01-01/2024-01-10",
+      "status": 401,
+      "elapsed_s": 1.58,
+      "ctype": "application/json",
+      "len": 101,
+      "head": "{\"status\":\"ERROR\",\"request_id\":\"75cbb97e92acfcdcd3b92e7b3dd215f7\",\"error\":\"API Key was not provided\"}",
+      "ok": false
+    },
+    {
+      "name": "tradier_sandbox_expiries",
+      "url": "https://sandbox.tradier.com/v1/markets/options/expirations?symbol=AAPL",
+      "status": 401,
+      "elapsed_s": 1.93,
+      "ctype": "plain/text",
+      "len": 20,
+      "head": "Invalid access token",
+      "ok": false
+    },
+    {
+      "name": "alphavantage_hist_opts",
+      "url": "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AAPL",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "ctype": "application/json",
+      "len": 189,
+      "head": "{\n    \"Error Message\": \"the parameter apikey is invalid or missing. Please claim your free API key on (https://www.alphavantage.co/support/#api-key). It should take less than 20 seconds.\"\n}",
+      "ok": true
+    },
+    {
+      "name": "tiingo_meta",
+      "url": "https://api.tiingo.com/tiingo/daily/AAPL",
+      "status": 403,
+      "elapsed_s": 0.05,
+      "ctype": "application/json",
+      "len": 34,
+      "head": "{\"detail\":\"Please supply a token\"}",
+      "ok": false
+    },
+    {
+      "name": "fred_search_oi",
+      "url": "https://api.stlouisfed.org/fred/series/search?search_text=open+interest+options&file_type=json",
+      "status": 400,
+      "elapsed_s": 2.07,
+      "ctype": "application/json; charset=UTF-8",
+      "len": 162,
+      "head": "{\"error_code\":400,\"error_message\":\"Bad Request.  Variable api_key is not set.  Read https:\\/\\/fred.stlouisfed.org\\/docs\\/api\\/api_key.html for more information.\"}",
+      "ok": false
+    },
+    {
+      "name": "huggingface_datasets_search",
+      "url": "https://huggingface.co/api/datasets?search=options+open+interest&limit=10",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "ctype": "application/json; charset=utf-8",
+      "len": 2,
+      "head": "[]",
+      "ok": true
+    },
+    {
+      "name": "kaggle_datasets_search_page",
+      "url": "https://www.kaggle.com/datasets?search=options+open+interest",
+      "status": 200,
+      "elapsed_s": 1.18,
+      "ctype": "text/html; charset=utf-8",
+      "len": 5699,
+      "head": "\r\n\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n\r\n<head>\r\n  <title>Find Open Datasets for AI and Research | Kaggle</title>\r\n  <meta charset=\"utf-8\" />\r\n    <meta name=\"robots\" content=\"index, follow\" />\r\n  <meta name=\"description\" content=\"Browse and download hundreds of thousands of open datasets for AI research, model training, and analysis. Join a community of millions of researchers, developers, and bu",
+      "ok": true
+    },
+    {
+      "name": "zenodo_search",
+      "url": "https://zenodo.org/api/records?q=options%20open%20interest%20stock&size=5",
+      "status": 200,
+      "elapsed_s": 0.72,
+      "ctype": "application/json",
+      "len": 8000,
+      "head": "{\"hits\": {\"hits\": [{\"created\": \"2025-03-03T08:52:43.810003+00:00\", \"modified\": \"2025-03-04T08:51:37.791315+00:00\", \"id\": 14959092, \"conceptrecid\": \"14959091\", \"doi\": \"10.5281/zenodo.14959092\", \"conceptdoi\": \"10.5281/zenodo.14959091\", \"doi_url\": \"https://doi.org/10.5281/zenodo.14959092\", \"metadata\": {\"title\": \"Estimation of Aggregate Expectations of Economic Agents by Using Derivatives\", \"doi\": \"10",
+      "ok": true
+    },
+    {
+      "name": "figshare_search",
+      "url": "https://api.figshare.com/v2/articles/search?search_for=options+open+interest&page_size=5",
+      "status": 404,
+      "elapsed_s": 0.37,
+      "ctype": "text/plain; charset=UTF-8",
+      "len": 122,
+      "head": "404 Not Found\n\nThe resource could not be found.\n\n\npredicate mismatch for view ArticlesPublicView (request_method = POST)\n\n",
+      "ok": false
+    },
+    {
+      "name": "nasdaq_data_link_search",
+      "url": "https://data.nasdaq.com/api/v3/datasets.json?query=options+open+interest",
+      "status": 403,
+      "elapsed_s": 1.3,
+      "ctype": "text/html",
+      "len": 600,
+      "head": "<html style=\"height:100%\"><head><META NAME=\"ROBOTS\" CONTENT=\"NOINDEX, NOFOLLOW\"><meta name=\"format-detection\" content=\"telephone=no\"><meta name=\"viewport\" content=\"initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\"><script type=\"text/javascript\" src=\"/_Incapsula_Resourc",
+      "ok": false
+    },
+    {
+      "name": "cboe_datashop",
+      "url": "https://datashop.cboe.com/",
+      "status": 200,
+      "elapsed_s": 0.15,
+      "ctype": "text/html; charset=utf-8",
+      "len": 8000,
+      "head": "<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"html-home-page\"><head><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\r\n            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\r\n            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\r\n            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f",
+      "ok": true
+    },
+    {
+      "name": "orats_data_api",
+      "url": "https://api.orats.io/datav2/hist/cores?ticker=AAPL",
+      "status": 401,
+      "elapsed_s": 1.38,
+      "ctype": "application/json",
+      "len": 26,
+      "head": "{\"message\":\"Unauthorized\"}",
+      "ok": false
+    },
+    {
+      "name": "ivolatility_home",
+      "url": "https://www.ivolatility.com/",
+      "status": 200,
+      "elapsed_s": 1.84,
+      "ctype": "text/html",
+      "len": 8000,
+      "head": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  \n  <script src=\"./common/scripts/gtm.js\"></script>\n  \n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <link rel=\"icon\" type=\"image/x-icon\" href=\"assets/icons/favicon.ico\">\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"./common.css\">\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"./styles.css\">\n  <script ",
+      "ok": true
+    },
+    {
+      "name": "yahoo_query1_options",
+      "url": "https://query1.finance.yahoo.com/v7/finance/options/AAPL",
+      "status": 401,
+      "elapsed_s": 0.1,
+      "ctype": "application/json;charset=utf-8",
+      "len": 89,
+      "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"Unauthorized\",\"description\":\"Invalid Crumb\"}}}",
+      "ok": false
+    },
+    {
+      "name": "investing_options",
+      "url": "https://www.investing.com/equities/apple-computer-inc-options",
+      "status": 403,
+      "elapsed_s": 0.03,
+      "ctype": "text/html; charset=UTF-8",
+      "len": 600,
+      "head": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal",
+      "ok": false
+    },
+    {
+      "name": "stockanalysis_options",
+      "url": "https://stockanalysis.com/stocks/aapl/options/",
+      "status": 404,
+      "elapsed_s": 0.16,
+      "ctype": "text/html",
+      "len": 600,
+      "head": "<!doctype html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n\t\t<!--12qhfyh--><!--[0--><link rel=\"preconnect\" href=\"https://securepubads.g.doubleclick.net\"/> <link rel=\"preconnect\" href=\"https://u5.investingchannel.com\"/>",
+      "ok": false
+    },
+    {
+      "name": "yahoo_download_hist",
+      "url": "https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=1609459200&period2=1609545600&interval=1d&events=history",
+      "status": 401,
+      "elapsed_s": 0.11,
+      "ctype": "application/json;charset=utf-8",
+      "len": 97,
+      "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"unauthorized\",\"description\":\"User is not logged in\"}}}",
+      "ok": false
+    }
+  ]
+}
