@@ -22,7 +22,10 @@ export default {
     if (head.status === 401 || head.status === 403) {
       return json({ ok: false, stage: "auth", status: head.status, body: (await head.text()).slice(0, 300) }, 400);
     }
-    const put = await fetch(api, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}`, "Content-Type": "application/javascript+module" }, body: src });
+    const form = new FormData();
+    form.set("metadata", JSON.stringify({ main_module: "worker.js" }));
+    form.set("worker.js", new File([src], "worker.js", { type: "application/javascript+module" }));
+    const put = await fetch(api, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}` }, body: form });
     const body = (await put.text()).slice(0, 400);
     return json({ ok: put.ok, status: put.status, acct, script, body }, put.ok ? 200 : 400);
   },
