@@ -261,6 +261,7 @@
     busy = true;
     store('vrb.fail', '0');
     store('vrb.halt', '0');
+    lastFailSeen = 0;
     var gen = num('vrb.gen') + 1;
     store('vrb.gen', String(gen));
     paint();
