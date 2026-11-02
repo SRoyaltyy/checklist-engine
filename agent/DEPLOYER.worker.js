@@ -1,6 +1,3 @@
-// venice-deployer — deploys venice-doorman from the public repo so a broken
-// doorman can still be replaced. Secrets: CF_TOKEN, DEPLOY_KEY.
-// Vars: CF_ACCOUNT, SCRIPT_NAME, GITHUB_REPO.
 const json = (d, s = 200) => new Response(JSON.stringify(d, null, 2), { status: s, headers: { "Content-Type": "application/json" } });
 
 export default {
