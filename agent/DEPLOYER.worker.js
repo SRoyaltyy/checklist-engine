@@ -25,7 +25,7 @@ export default {
     if (head.status === 401 || head.status === 403) {
       return json({ ok: false, stage: "auth", status: head.status, body: (await head.text()).slice(0, 300) }, 400);
     }
-    const put = await fetch(api, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}`, "Content-Type": "application/javascript" }, body: src });
+    const put = await fetch(api, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}`, "Content-Type": "application/javascript+module" }, body: src });
     const body = (await put.text()).slice(0, 400);
     return json({ ok: put.ok, status: put.status, acct, script, body }, put.ok ? 200 : 400);
   },
