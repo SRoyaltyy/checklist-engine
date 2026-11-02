@@ -231,4 +231,10 @@ export default {
           if (!merged.ok) throw new Error(`merge failed: ${merged.status}`);
           return reply({ ok: true, sha: merged.body.sha });
         }
+        case "deploy": {
+          if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
+          const r = await fetch(`${env.DEPLOYER}?k=${env.DEPLOY_KEY}&op=deploy&branch=${encodeURIComponent(branch)}`);
+          const body = (await r.text()).slice(0, 400);
+          return reply({ ok: r.ok, status: r.status, body }, r.ok ? 200 : 400);
+        }
 @@APPEND@@
