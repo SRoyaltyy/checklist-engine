@@ -279,7 +279,7 @@
     });
   }
 
-  var lastFailSeen = 0;
+  var lastFailSeen = 0, failPrimed = false;
 
   function healthTick() {
     if (load('vrb.halt') === '1') return;
