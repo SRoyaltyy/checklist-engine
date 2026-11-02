@@ -30,4 +30,17 @@
         ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
     });
   }
+
+  function gmPost(url, body) {
+    return new Promise(function (res) {
+      GM_xmlhttpRequest({ method: 'POST', url: url, data: body, timeout: 60000,
+        headers: { 'Content-Type': 'text/plain' },
+        onload: function (r) { res({ ok: r.status >= 200 && r.status < 300, status: r.status, text: r.responseText || '' }); },
+        onerror: function () { res({ ok: false, status: 0, text: '' }); },
+        ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
+    });
+  }
+
+  function readUrl(p) { return W + 'read&branch=' + BR + '&path=' + encodeURIComponent(p); }
+  function putUrl(p) { return W + 'put&branch=' + BR + '&path=' + encodeURIComponent(p); }
 @@APPEND@@
