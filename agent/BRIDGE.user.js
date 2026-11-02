@@ -444,5 +444,17 @@
 
   document.body.appendChild(badge);
   paint();
-  setTimeout(tick, 4000);
+  var pendingGen = num('vrb.bootPending');
+  if (pendingGen) {
+    phase = 'boot';
+    store('vrb.bootPending', '0');
+    paint();
+    waitFor(function () { return composer() !== null; }, 30000).then(function (ok) {
+      if (!ok) { halt('composer missing after reload'); return; }
+      ensureAgentic();
+      setTimeout(function () { composeBootstrap(pendingGen); }, 2500);
+    });
+  } else {
+    setTimeout(tick, 4000);
+  }
 }());
