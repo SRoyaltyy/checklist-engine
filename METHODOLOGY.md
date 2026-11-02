@@ -1,5 +1,7 @@
 # Methodology: the checklist scanner
 
+> **Active task lists now live in `TODO.md` (one section per agent). Read your section there first.**
+
 ## Latest owner clarification — 2026-10-25 23:03 HKT (Codex taking over Kimi's role)
 
 Cyrus supplied the Grok Bot conversation and restated the objective: a probability scanner for **each individual combination** built from the complete market world state, using all listed data types and indicators, the full ~20k–26k question framework plus history across all specified timeframes, evaluated under every registered exit rule. This clarification takes precedence over conflicting older instructions below.
