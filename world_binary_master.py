@@ -586,6 +586,23 @@ def _legs_3atr(close_w, atr_w, leg_atr, leg_min_bars, base_min_bars,
     return merged
 
 
+def _bollinger20_2(close):
+    """Ruling part 3 constants: SMA20 +/- 2 x population-sigma20 of closes
+    (TA-Lib STDDEV is the population std). Returns (mid, upper, lower,
+    pctB) full-length arrays; known only from bar 19 (bandwidth exactly
+    zero -> %B undefined -> masked unknown)."""
+    import talib
+    close = np.asarray(close, dtype=np.float64)
+    mid = talib.SMA(close, timeperiod=20)
+    sd2 = talib.STDDEV(close, timeperiod=20, nbdev=2)
+    upper = mid + sd2
+    lower = mid - sd2
+    width = upper - lower
+    pctb = (close - lower) / width
+    known = ~np.isnan(mid) & (width > 0)
+    return mid, upper, lower, pctb, known
+
+
 def _legs_window(feature, candles, high, low, close):
     """Window slice + ATR for the 3ATR_legs block. The facet window is the
     LAST lookback candles of the full fetched prefix; ATR14 is the
@@ -1433,6 +1450,125 @@ def _measure(recipe, candles, feature=None):
             followed = any(float(close[j]) > base_c
                            for j in range(t + 1, min(t + 1 + ft, len(candles))))
             return {'yes': followed, 'no': not followed, 'no_new_high': False}
+        if recipe in ('native_bb_reentry_v1', 'native_bb_band_walk_v1',
+                      'native_bb_pctb_path_v1', 'native_bb_time_upper_v1'):
+            # Ruling part 3 #9-#12 (approved 2026-11-01): Bollinger20,2 on
+            # closes (SMA20 +/- 2 x population sigma20; %B close-basis).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 20:
+                return None
+            mid, upper, lower, pctb, known = _bollinger20_2(close)
+            wk = slice(len(candles) - lb, len(candles))
+            if not known[wk].all():
+                return None
+            c_w = close[wk]
+            u_w = upper[wk]
+            l_w = lower[wk]
+            p_w = pctb[wk]
+            if recipe == 'native_bb_reentry_v1':
+                # Excursion = a close beyond a band; from_below = some bar
+                # closed < lower and a LATER bar closes back inside; the
+                # most recent completed reentry decides; an excursion that
+                # never re-entered is not a reentry (none). Reentry into
+                # [lower, upper] inclusive.
+                last = 'none'
+                outside = 0  # 0 in/just-reentered, -1 below, +1 above
+                for i in range(lb):
+                    if c_w[i] < l_w[i]:
+                        outside = -1
+                    elif c_w[i] > u_w[i]:
+                        outside = 1
+                    elif outside == -1:
+                        last = 'from_below'
+                        outside = 0
+                    elif outside == 1:
+                        last = 'from_above'
+                        outside = 0
+                return {'from_below': last == 'from_below',
+                        'from_above': last == 'from_above',
+                        'none': last == 'none'}
+            if recipe == 'native_bb_band_walk_v1':
+                # A run of >= C109 consecutive closes >= upper band -> upper
+                # (precedence if both, documented); mirror lower; else none.
+                need = int(feature['run_min'])
+                best_up = best_dn = cur_up = cur_dn = 0
+                for i in range(lb):
+                    cur_up = cur_up + 1 if c_w[i] >= u_w[i] else 0
+                    cur_dn = cur_dn + 1 if c_w[i] <= l_w[i] else 0
+                    best_up = max(best_up, cur_up)
+                    best_dn = max(best_dn, cur_dn)
+                up = best_up >= need
+                dn = best_dn >= need
+                return {'upper': up, 'lower': dn and not up, 'none': not up and not dn}
+            if recipe == 'native_bb_pctb_path_v1':
+                d = float(p_w[-1] - p_w[0])
+                return {'rising': d > 0.05, 'falling': d < -0.05,
+                        'flat': abs(d) <= 0.05}
+            # native_bb_time_upper_v1: share of window bars with %B > C110;
+            # upper >= 2/3, lower <= 1/3, else balanced (documented
+            # constants; the two thresholds cannot overlap).
+            line = float(feature['pctb_line'])
+            share = float((p_w > line).sum(dtype=np.float64)) / lb
+            return {'upper': share >= 2.0 / 3.0, 'lower': share <= 1.0 / 3.0,
+                    'balanced': 1.0 / 3.0 < share < 2.0 / 3.0}
+        if recipe == 'native_donchian_fail_shape_v1':
+            # Ruling part 3 #13: channel = highest high / lowest low of the
+            # PRIOR 20 bars (current bar excluded). A failed break ABOVE
+            # (bear) = high > prior-20 high with the close back inside
+            # (same_day = the breaking bar itself; multi_day = >= C118
+            # consecutive closes beyond the channel followed by a close
+            # back inside). Mirror below = bull. The latest failed break in
+            # the window decides; none = no failed break.
+            lb = int(feature['lookback'])
+            need = int(feature['multi_min'])
+            if need < 1:
+                return None
+            if len(candles) < lb + 20:
+                return None
+            last = 'none'
+            run_up = run_dn = 0  # consecutive closes beyond the channel
+            for i in range(len(candles) - lb, len(candles)):
+                u20 = float(high[i - 20:i].max())
+                l20 = float(low[i - 20:i].min())
+                # Multi-day failure matures at the re-entry bar; a matured
+                # run outranks a fresh same-day break on the same bar
+                # (documented): same-day checks first, multi checks last.
+                if high[i] > u20 and close[i] <= u20:
+                    last = 'bear_same_day'
+                if low[i] < l20 and close[i] >= l20:
+                    last = 'bull_same_day'
+                if run_up >= need and close[i] <= u20:
+                    last = 'bear_multi_day'
+                if run_dn >= need and close[i] >= l20:
+                    last = 'bull_multi_day'
+                run_up = run_up + 1 if close[i] > u20 else 0
+                run_dn = run_dn + 1 if close[i] < l20 else 0
+            out = {o: False for o in ('bull_same_day', 'bull_multi_day',
+                                      'bear_same_day', 'bear_multi_day', 'none')}
+            out[last] = True
+            return out
+        if recipe == 'native_atr_range_max_position_v1':
+            # Ruling part 3 #14: tertile position of the window's
+            # widest-range bar (ties -> first occurrence).
+            lb = int(feature['lookback'])
+            rng = (high - low)[-lb:]
+            i = int(np.argmax(rng))
+            frac = i / (lb - 1) if lb > 1 else 0.0
+            return {'start': frac < 1.0 / 3.0,
+                    'middle': 1.0 / 3.0 <= frac < 2.0 / 3.0,
+                    'end': frac >= 2.0 / 3.0}
+        if recipe == 'native_atr_vol_direction_link_v1':
+            # Ruling part 3 #15: sum of ranges of down bars (body < 0) vs up
+            # bars (body > 0); doji bars (body == 0) count into neither.
+            # down_vol when down_sum > 1.25 x up_sum; mirror 0.8; else
+            # neutral (documented band constants).
+            lb = int(feature['lookback'])
+            rng = (high - low)[-lb:]
+            b = body[-lb:]
+            up = float(rng[b > 0].sum(dtype=np.float64))
+            dn = float(rng[b < 0].sum(dtype=np.float64))
+            return {'down_vol': dn > 1.25 * up, 'up_vol': up > 1.25 * dn,
+                    'neutral': dn <= 1.25 * up and up <= 1.25 * dn}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -2992,6 +3128,69 @@ FACETS = {
         outcome_spec={'yes': ('boolean', '=', 'one'),
                       'no': ('boolean', '=', 'one'),
                       'no_new_high': ('boolean', '=', 'one')}),
+    'reentry': dict(
+        binding='mixed', l1_l3=(('range_position', 'Bollinger20_2'),),
+        recipe='native_bb_reentry_v1',
+        unit='most_recent_completed_reentry_into_bollinger20_2',
+        outcomes=('from_below', 'from_above', 'none'), cutoff_id=None,
+        outcome_spec={'from_below': ('boolean', '=', 'one'),
+                      'from_above': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'band_walk': dict(
+        binding='mixed', l1_l3=(('range_position', 'Bollinger20_2'),),
+        recipe='native_bb_band_walk_v1',
+        unit='longest_run_of_closes_outside_bollinger20_2_band',
+        outcomes=('upper', 'lower', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C109_band_walk__bars3',),
+        baked_map={'C109_band_walk__bars3': 'run_min'},
+        outcome_spec={'upper': ('boolean', '=', 'one'),
+                      'lower': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'pctb_path': dict(
+        binding='mixed', l1_l3=(('range_position', 'Bollinger20_2'),),
+        recipe='native_bb_pctb_path_v1',
+        unit='pctb_change_across_window_bollinger20_2',
+        outcomes=('rising', 'falling', 'flat'), cutoff_id=None,
+        outcome_spec={'rising': ('boolean', '=', 'one'),
+                      'falling': ('boolean', '=', 'one'),
+                      'flat': ('boolean', '=', 'one')}),
+    'time_upper': dict(
+        binding='mixed', l1_l3=(('range_position', 'Bollinger20_2'),),
+        recipe='native_bb_time_upper_v1',
+        unit='share_of_window_closes_above_pctb_line',
+        outcomes=('upper', 'lower', 'balanced'), cutoff_id=None,
+        baked_cutoff_ids=('C110_time_upper__scalar0p5',),
+        baked_map={'C110_time_upper__scalar0p5': 'pctb_line'},
+        outcome_spec={'upper': ('boolean', '=', 'one'),
+                      'lower': ('boolean', '=', 'one'),
+                      'balanced': ('boolean', '=', 'one')}),
+    'fail_shape': dict(
+        binding='mixed', l1_l3=(('range_position', 'Donchian20'),),
+        recipe='native_donchian_fail_shape_v1',
+        unit='donchian20_breakout_fail_shape_by_maturity',
+        outcomes=('bull_same_day', 'bull_multi_day', 'bear_same_day',
+                  'bear_multi_day', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C118_fail_shape__scalar2',),
+        baked_map={'C118_fail_shape__scalar2': 'multi_min'},
+        outcome_spec={o: ('boolean', '=', 'one') for o in
+                      ('bull_same_day', 'bull_multi_day', 'bear_same_day',
+                       'bear_multi_day', 'none')}),
+    'range_max_position': dict(
+        binding='mixed', l1_l3=(('volatility', 'ATR14'),),
+        recipe='native_atr_range_max_position_v1',
+        unit='window_tercile_of_widest_range_bar',
+        outcomes=('start', 'middle', 'end'), cutoff_id=None,
+        outcome_spec={'start': ('boolean', '=', 'one'),
+                      'middle': ('boolean', '=', 'one'),
+                      'end': ('boolean', '=', 'one')}),
+    'vol_direction_link': dict(
+        binding='mixed', l1_l3=(('volatility', 'ATR14'),),
+        recipe='native_atr_vol_direction_link_v1',
+        unit='down_vs_up_day_total_volume_balance_over_window',
+        outcomes=('down_vol', 'up_vol', 'neutral'), cutoff_id=None,
+        outcome_spec={'down_vol': ('boolean', '=', 'one'),
+                      'up_vol': ('boolean', '=', 'one'),
+                      'neutral': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -3777,6 +3976,9 @@ EXACT_PARTITION_FACETS = {
     # batch 22 (ruling part 2 #4-#8): extremes, gaps, magnet, follow-through
     'touch_52w', 'new_extreme', 'gap_side', 'gap_age', 'partial_fill',
     'magnet', 'follow_through',
+    # batch 23 (ruling part 3 #9-#15): Bollinger/Donchian/ATR partitions
+    'reentry', 'band_walk', 'pctb_path', 'time_upper',
+    'fail_shape', 'range_max_position', 'vol_direction_link',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -4018,7 +4220,12 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_touch_52w_v1', 'native_new_extreme_v1',
                         'native_gap_side_v1', 'native_gap_count_v1',
                         'native_gap_age_v1', 'native_partial_fill_v1',
-                        'native_magnet_v1', 'native_follow_through_v1'}
+                        'native_magnet_v1', 'native_follow_through_v1',
+                        'native_bb_reentry_v1', 'native_bb_band_walk_v1',
+                        'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
+                        'native_donchian_fail_shape_v1',
+                        'native_atr_range_max_position_v1',
+                        'native_atr_vol_direction_link_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -4077,7 +4284,10 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_touch_52w_v1', 'native_new_extreme_v1',
                                  'native_gap_side_v1', 'native_gap_count_v1',
                                  'native_gap_age_v1', 'native_partial_fill_v1',
-                                 'native_follow_through_v1'):
+                                 'native_follow_through_v1',
+                                 'native_bb_reentry_v1', 'native_bb_band_walk_v1',
+                                 'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
+                                 'native_donchian_fail_shape_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -4127,6 +4337,10 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += int(feature['scan_bars']) + 1  # the t-1 edge bar
             if feature['recipe'] == 'native_follow_through_v1':
                 required += 252  # documented new-high history constant (no dial registered)
+            if feature['recipe'] in ('native_bb_reentry_v1', 'native_bb_band_walk_v1',
+                                     'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
+                                     'native_donchian_fail_shape_v1'):
+                required += 20  # Bollinger SMA20/stddev seed or Donchian20 channel
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(

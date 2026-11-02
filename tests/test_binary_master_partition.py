@@ -33,7 +33,11 @@ HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
                 'follow_through',
                 # talib-heavy cross-L3 facets (batches 19-20): capped the
                 # same way; the partition logic is dial/timeframe-agnostic
-                'speed', 'time_in_zone', 'price_divergence', 'vs_own_past'}
+                'speed', 'time_in_zone', 'price_divergence', 'vs_own_past',
+                # batch 23 (Bollinger/Donchian/ATR): talib STDDEV/SMA heavy
+                'reentry', 'band_walk', 'pctb_path', 'time_upper',
+                'fail_shape', 'range_max_position',
+                'vol_direction_link'}
 HEAVY_ROW_CAP = 8
 HEAVY_TAPES = 4
 DEFAULT_ROW_CAP = 16
