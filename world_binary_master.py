@@ -446,6 +446,169 @@ def _rsi_at(close, period, idx):
     return float(values[idx]) if known[idx] else None
 
 
+def _legs_3atr(close_w, atr_w, leg_atr, leg_min_bars, base_min_bars,
+               retest_tol, break_atr, shock_max_bars):
+    """Ruling part 1 (approved 2026-11-01): close-based zigzag leg partition
+    on the WINDOW closes with per-bar ATR14 (Wilder, seeded on the full
+    fetched prefix). A leg closes at the running-extreme bar when a close
+    reverses from that extreme by >= leg_atr x ATR14 at the reversal bar;
+    the new leg starts at the extreme bar in the reversal direction. The
+    first reversal fixes the initial drift as the first leg.
+
+    Labels, priority order, first match wins:
+      shock_up/shock_down - leg with <= shock_max_bars bars (registered
+        dial extends the ruling's single bar; documented) whose net move
+        is >= leg_atr x ATR14 at the extreme bar;
+      base - net |move| < break_atr x ATR14 at the extreme bar AND bar
+        count >= base_min_bars (the registered 1-ATR dial doubles as the
+        base move cap; the registered base-min dial supersedes the
+        ruling's 5-bar parenthetical);
+      retest_high/retest_low - a leg that comes back to within
+        +/- retest_tol x ATR14 of the prior opposite-direction leg's
+        extreme without closing beyond it (up leg: no close below the
+        reference low; down leg: no close above the reference high);
+      break_up/break_down - a leg whose extreme close closes beyond the
+        prior same-direction leg's extreme by > break_atr x ATR14
+        (registered dial supersedes the ruling's 0.5-ATR parenthetical);
+      up_run/down_run - any remaining leg.
+
+    A completed leg shorter than leg_min_bars that is not a shock is
+    merged into the FOLLOWING leg (single deterministic left-to-right
+    pass; the reversal is treated as not matured). The leg in progress
+    at D-1 is included as the last leg.
+
+    Returns a list of leg dicts (keys: start, end, direction, n, size
+    (ATRs at the extreme bar), extreme, label) or None when a window
+    ATR is unknown/non-positive (never divide by a zero ATR).
+    """
+    m = len(close_w)
+    if m < 2:
+        return None
+    atr_w = np.asarray(atr_w, dtype=np.float64)
+    if not np.isfinite(atr_w).all() or (atr_w <= 0).any():
+        return None
+    thr = leg_atr * atr_w
+    raw = []  # (start, end, direction) completed legs, in order
+    start = 0
+    hi = lo = 0
+    direction = 0
+    for i in range(1, m):
+        if direction == 0:
+            if close_w[i] - close_w[lo] >= thr[i]:
+                if lo > start:
+                    raw.append((start, lo, -1))
+                direction = 1
+                start = lo
+                hi = i
+            elif close_w[hi] - close_w[i] >= thr[i]:
+                if hi > start:
+                    raw.append((start, hi, 1))
+                direction = -1
+                start = hi
+                lo = i
+            else:
+                if close_w[i] >= close_w[hi]:
+                    hi = i
+                if close_w[i] <= close_w[lo]:
+                    lo = i
+        elif direction == 1:
+            if close_w[i] >= close_w[hi]:
+                hi = i
+            elif close_w[hi] - close_w[i] >= thr[i]:
+                raw.append((start, hi, 1))
+                direction = -1
+                start = hi
+                lo = i
+        else:
+            if close_w[i] <= close_w[lo]:
+                lo = i
+            elif close_w[i] - close_w[lo] >= thr[i]:
+                raw.append((start, lo, -1))
+                direction = 1
+                start = lo
+                hi = i
+    raw.append((start, m - 1, direction if direction != 0 else 0))
+
+    def _mk(start, end, direction):
+        if direction >= 0:
+            e = int(np.argmax(close_w[start:end + 1])) + start
+        else:
+            e = int(np.argmin(close_w[start:end + 1])) + start
+        size = abs(float(close_w[e]) - float(close_w[start])) / float(atr_w[e])
+        return dict(start=start, end=end, direction=direction, n=end - start + 1,
+                    size=size, extreme=float(close_w[e]))
+
+    legs = [_mk(s, e, d) for s, e, d in raw]
+
+    def _label(leg, prev):
+        d = leg['direction']
+        seg = close_w[leg['start']:leg['end'] + 1]
+        if leg['n'] <= shock_max_bars and leg['size'] >= leg_atr:
+            return ('shock_up' if d >= 0 else 'shock_down')
+        if (abs(float(close_w[leg['end']]) - float(close_w[leg['start']]))
+                < break_atr * float(atr_w[leg['end']])
+                and leg['n'] >= base_min_bars):
+            return 'base'
+        opp = [l for l in prev if l['direction'] == -d]
+        if opp:
+            ref = opp[-1]['extreme']
+            tol = retest_tol * float(atr_w[leg['end']])
+            if d >= 0:
+                if float(seg.min()) >= ref and float(seg.min()) <= ref + tol:
+                    return 'retest_high'
+            else:
+                if float(seg.max()) <= ref and float(seg.max()) >= ref - tol:
+                    return 'retest_low'
+        same = [l for l in prev if l['direction'] == d]
+        if same:
+            ref = same[-1]['extreme']
+            if d >= 0 and float(seg.max()) > ref + break_atr * float(atr_w[leg['end']]):
+                return 'break_up'
+            if d < 0 and float(seg.min()) < ref - break_atr * float(atr_w[leg['end']]):
+                return 'break_down'
+        return 'up_run' if d >= 0 else 'down_run'
+
+    labeled = []
+    for leg in legs:
+        leg['label'] = _label(leg, labeled)
+        labeled.append(leg)
+    # merge short non-shock completed legs into the following leg
+    merged = []
+    for leg in labeled:
+        if (merged and leg is not labeled[-1] and leg['n'] < leg_min_bars
+                and not leg['label'].startswith('shock')):
+            nxt = merged.pop()
+            combined = _mk(leg['start'], nxt['end'], nxt['direction'])
+            combined['label'] = _label(combined, merged)
+            merged.append(combined)
+        else:
+            merged.append(leg)
+    return merged
+
+
+def _legs_window(feature, candles, high, low, close):
+    """Window slice + ATR for the 3ATR_legs block. The facet window is the
+    LAST lookback candles of the full fetched prefix; ATR14 is the
+    registered Wilder series over the whole prefix. Returns (legs, win
+    slice indices) or (None, None) when the window ATR is unusable."""
+    lb = int(feature['lookback'])
+    if len(candles) < lb + 16:
+        # 15 aggregated bars seed ATR14 on the recipe's own stream + 1
+        # prior aggregated close (first window bar's shock move).
+        return None, None
+    atr = _native_atr_series(high, low, close)
+    if not np.isfinite(atr[-lb:]).all():
+        return None, None
+    legs = _legs_3atr(close[-lb:], atr[-lb:],
+                      float(feature['leg_atr']), int(feature['leg_min_bars']),
+                      int(feature['base_min_bars']), float(feature['retest_tol_atr']),
+                      float(feature['break_atr']), int(feature['shock_max_bars']))
+    if legs is None:
+        return None, None
+    return legs, slice(len(candles) - lb, len(candles))
+
+
+
 def _measure(recipe, candles, feature=None):
     """Return the binary64 measurement or None (NOT_EVALUABLE)."""
     opened = _strict_positive([b.open for b in candles], 'native open')
@@ -871,6 +1034,227 @@ def _measure(recipe, candles, feature=None):
             return {'bull': bool(d_p < 0.0 < d_i),
                     'bear': bool(d_i < 0.0 < d_p),
                     'none': bool(d_p * d_i > 0.0)}
+        if recipe in ('native_legs_last_phase_v1', 'native_legs_phase_count_v1',
+                      'native_legs_phase_seq3_v1', 'native_legs_len_vs_prev_v1',
+                      'native_legs_size_vs_prev_v1', 'native_legs_speed_vs_prev_v1',
+                      'native_legs_vol_vs_prev_v1'):
+            # Ruling part 1 (approved 2026-11-01): all eight families read
+            # one shared 3ATR leg partition of the window.
+            legs, _win = _legs_window(feature, candles, high, low, close)
+            if legs is None:
+                return None
+            if recipe == 'native_legs_last_phase_v1':
+                out = {k: False for k in ('shock_up', 'shock_down', 'base',
+                                          'retest_high', 'retest_low', 'break_up',
+                                          'break_down', 'up_run', 'down_run')}
+                out[legs[-1]['label']] = True
+                return out
+            if recipe == 'native_legs_phase_count_v1':
+                return len(legs)
+            if recipe == 'native_legs_phase_seq3_v1':
+                out = {a + b + c: False for a in 'ud' for b in 'ud' for c in 'ud'}
+                out['none'] = False
+                if len(legs) < 3:
+                    out['none'] = True
+                else:
+                    seq = ''.join('u' if l['direction'] >= 0 else 'd'
+                                  for l in legs[-3:])
+                    out[seq] = True
+                return out
+            if len(legs) < 2:
+                return None  # no previous leg to compare against
+            last, prev = legs[-1], legs[-2]
+            if recipe == 'native_legs_len_vs_prev_v1':
+                hi = float(feature['ratio_high'])
+                lo = float(feature['ratio_low'])
+                if hi <= lo:
+                    return None
+                ratio = last['n'] / prev['n']
+            elif recipe == 'native_legs_size_vs_prev_v1':
+                hi = float(feature['ratio_high'])
+                lo = float(feature['ratio_low'])
+                if hi <= lo:
+                    return None
+                ratio = last['size'] / prev['size'] if prev['size'] > 0 else None
+                if ratio is None:
+                    return None
+            elif recipe == 'native_legs_speed_vs_prev_v1':
+                hi = lo = None
+                s_last = last['size'] / last['n']
+                s_prev = prev['size'] / prev['n']
+                return {'faster': bool(s_last > s_prev),
+                        'slower': bool(s_last < s_prev),
+                        'equal': bool(s_last == s_prev)}
+            else:  # native_legs_vol_vs_prev_v1
+                vols = _nonnegative([b.volume for b in candles], 'native volume')
+                if vols is None:
+                    return None
+                off = len(candles) - int(feature['lookback'])
+                v_last = float(vols[off + last['start']:off + last['end'] + 1]
+                               .mean(dtype=np.float64))
+                v_prev = float(vols[off + prev['start']:off + prev['end'] + 1]
+                               .mean(dtype=np.float64))
+                if v_prev <= 0:
+                    return None
+                return v_last / v_prev
+            if ratio >= hi:
+                return {'longer': True, 'shorter': False, 'similar': False}
+            if ratio <= lo:
+                return {'longer': False, 'shorter': True, 'similar': False}
+            return {'longer': False, 'shorter': False, 'similar': True}
+        if recipe == 'native_legs_pump_fade_cycles_v1':
+            # A pump_fade cycle = an up leg immediately followed by a down
+            # leg whose size (ATRs) is at least fade_pct (C405) percent of
+            # the up leg's size. Counts adjacent pairs in the window.
+            legs, _win = _legs_window(feature, candles, high, low, close)
+            if legs is None:
+                return None
+            fade = float(feature['fade_pct']) / 100.0
+            n = 0
+            for a, b in zip(legs, legs[1:]):
+                if a['direction'] >= 0 > b['direction'] and \
+                        b['size'] >= fade * a['size']:
+                    n += 1
+            return n
+        if recipe == 'native_flag_v1':
+            # Ruling part 1 #2 (approved 2026-11-01): strict flag. Pole = a
+            # run of <= 5 consecutive bars whose close-to-close changes all
+            # share one strict sign, net move >= pole_atr x ATR14 (the
+            # registered S_leg_atr dial). Flag = the >= 3 bars immediately
+            # after the pole, each range entirely inside the pole band
+            # [pole start close, pole extreme] (bull), each range <= the
+            # previous bar's range (contracting; the first flag bar
+            # compares to the pole's last bar), no flag bar closing more
+            # than max_retrace_pct of the pole back from the extreme, and
+            # the flag's deepest close retrace at least min_retrace_pct of
+            # the pole (C017 - documented construction: the ruling text
+            # fixed only the 50% cap). bull/bear requires the pattern to
+            # complete at D-1 (the last window bar is a flag bar); a flag
+            # still forming (< 3 bars) answers none.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 16:
+                return None
+            atr = _native_atr_series(high, low, close)
+            if not np.isfinite(atr[-lb:]).all():
+                return None
+            c_all = close
+            h_w = high[-lb:]
+            l_w = low[-lb:]
+            c_w = close[-lb:]
+            pole_atr = float(feature['pole_atr'])
+            min_r = float(feature['min_retrace_pct']) / 100.0
+            max_r = float(feature['max_retrace_pct']) / 100.0
+            if max_r < min_r:
+                return None
+
+            def _flag_dir(up):
+                sgn = 1.0 if up else -1.0
+                best = None
+                for klen in range(1, 6):        # pole length 1..5
+                    for pend in range(klen - 1, lb - 3):  # >= 3 flag bars after
+                        pstart = pend - klen + 1
+                        absprev = len(candles) - lb + pstart - 1
+                        if absprev < 0:
+                            continue
+                        ch = np.diff(c_all[absprev:len(candles) - lb + pend + 1])
+                        if not (np.sign(ch) == sgn).all():
+                            continue
+                        pole_start = float(c_all[absprev])
+                        seg = c_w[pstart:pend + 1]
+                        extreme = float(seg.max()) if up else float(seg.min())
+                        pole = abs(extreme - pole_start)
+                        atr_at = float(atr[len(candles) - lb + pend])
+                        if not pole >= pole_atr * atr_at:
+                            continue
+                        lo_band = min(pole_start, extreme)
+                        hi_band = max(pole_start, extreme)
+                        fb = slice(pend + 1, lb)
+                        if fb.stop - fb.start < 3:
+                            continue
+                        prev_range = float(h_w[pend] - l_w[pend])
+                        ok = True
+                        deepest = 0.0
+                        for j in range(fb.start, fb.stop):
+                            if not (l_w[j] >= lo_band and h_w[j] <= hi_band):
+                                ok = False
+                                break
+                            rng = float(h_w[j] - l_w[j])
+                            if not rng <= prev_range:
+                                ok = False
+                                break
+                            prev_range = rng
+                            retr = (extreme - float(c_w[j])) * sgn
+                            if retr > max_r * pole:
+                                ok = False
+                                break
+                            deepest = max(deepest, retr)
+                        if ok and deepest >= min_r * pole:
+                            best = (klen, pend)
+                            break
+                    if best is not None:
+                        break
+                return best is not None
+
+            bull = _flag_dir(True)
+            bear = _flag_dir(False)
+            return {'bull': bull, 'bear': bear, 'none': not bull and not bear}
+        if recipe == 'native_cup_handle_v1':
+            # Ruling part 1 #3 (approved 2026-11-01): strict cup-and-handle
+            # over the window. Cup: window length >= min_window_bars (C011);
+            # the window low sits inside the middle middle_band_pct (C012)
+            # of the window (fraction position in [(100-p)/2, (100+p)/2]);
+            # the highest closes of the left and right quarters are within
+            # 0.5 x ATR14 of each other; cup depth (lip - low) >=
+            # min_depth_pct (C008) of the lip price. Handle: after the
+            # right-lip bar, a pullback of >= handle_min_bars (registered
+            # S_pivot_k_min = the ruling's >= 2 bars) whose lowest close is
+            # at or above the 50%-depth level (handle depth <= 50% of cup
+            # depth, ruling constant) and whose retrace is at least
+            # min_handle_pct (C009) of the cup depth. yes only when both
+            # verify; every failed check answers no (only missing data is
+            # NE).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 16:
+                return None
+            atr = _native_atr_series(high, low, close)
+            if not np.isfinite(atr[-lb:]).all():
+                return None
+            if lb < int(feature['min_window_bars']) or lb < 8:
+                return {'yes': False, 'no': True}
+            h_w = high[-lb:]
+            l_w = low[-lb:]
+            c_w = close[-lb:]
+            low_i = int(np.argmin(l_w))
+            frac = low_i / (lb - 1)
+            band = float(feature['middle_band_pct']) / 100.0
+            if not ((1.0 - band) / 2.0 <= frac <= (1.0 + band) / 2.0):
+                return {'yes': False, 'no': True}
+            q = lb // 4
+            if q < 1:
+                return {'yes': False, 'no': True}
+            left = c_w[:q]
+            right = c_w[lb - q:]
+            lip_l = float(left.max())
+            lip_r_i = lb - q + int(np.argmax(right))
+            lip_r = float(c_w[lip_r_i])
+            if abs(lip_l - lip_r) > 0.5 * float(atr[len(candles) - lb + lip_r_i]):
+                return {'yes': False, 'no': True}
+            lip = max(lip_l, lip_r)
+            cup_low = float(l_w[low_i])
+            if lip <= 0:
+                return None
+            depth = lip - cup_low
+            if not depth >= float(feature['min_depth_pct']) / 100.0 * lip:
+                return {'yes': False, 'no': True}
+            handle = c_w[lip_r_i + 1:]
+            if len(handle) < int(feature['handle_min_bars']):
+                return {'yes': False, 'no': True}
+            lowest = float(handle.min())
+            if lowest < lip - 0.5 * depth:
+                return {'yes': False, 'no': True}
+            if not lip - lowest >= float(feature['min_handle_pct']) / 100.0 * depth:
+                return {'yes': False, 'no': True}
+            return {'yes': True, 'no': False}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -2193,6 +2577,156 @@ FACETS = {
                           'typical': ('boolean', '=', 'one'),
                           'unusual_down': ('boolean', '=', 'one')}),
     ],
+    # ---- batch 21 (ruling part 1, approved 2026-11-01): the 3ATR_legs
+    # block (8 families on one shared close-based zigzag partition) plus
+    # strict flag and cup_handle. All leg rows bake the six registered leg
+    # dials; documented deviations from the ruling parentheticals: the
+    # registered S_break_atr_1 (1 ATR) supersedes the ruling's 0.5-ATR
+    # break distance and doubles as the base move cap, the registered
+    # S_base_min_bars_10 (10) supersedes the 5-bar base minimum, and
+    # S_shock_max_bars (3) extends the single-bar shock to <= 3 bars.
+    # Short non-shock completed legs merge into the following leg. ----
+    'last_phase': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_last_phase_v1', unit='label_of_last_3atr_leg',
+        outcomes=('shock_up', 'shock_down', 'base', 'retest_high', 'retest_low',
+                  'break_up', 'break_down', 'up_run', 'down_run'), cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('shock_up', 'shock_down', 'base', 'retest_high',
+                                'retest_low', 'break_up', 'break_down', 'up_run',
+                                'down_run')}),
+    'phase_count': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_phase_count_v1', unit='count_of_3atr_legs_in_window',
+        outcomes=('within', 'exceeds'), cutoff_id='C348_phase_count__scalar6',
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars'},
+        outcome_spec={'within': ('integer_count', '<=', 'cutoff'),
+                      'exceeds': ('integer_count', '>', 'cutoff')}),
+    'phase_seq3': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_phase_seq3_v1', unit='direction_sequence_of_last_3_legs',
+        outcomes=tuple(a + b + c for a in 'ud' for b in 'ud' for c in 'ud') + ('none',),
+        cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(a + b + c for a in 'ud' for b in 'ud'
+                                     for c in 'ud') + ('none',)}),
+    'len_vs_prev': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_len_vs_prev_v1', unit='last_leg_bar_count_over_prev_leg',
+        outcomes=('longer', 'shorter', 'similar'), cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars',
+                          'C370_len_vs_prev__scalar0p5', 'C371_len_vs_prev__scalar2'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars',
+                   'C370_len_vs_prev__scalar0p5': 'ratio_low',
+                   'C371_len_vs_prev__scalar2': 'ratio_high'},
+        outcome_spec={'longer': ('boolean', '=', 'one'),
+                      'shorter': ('boolean', '=', 'one'),
+                      'similar': ('boolean', '=', 'one')}),
+    'size_vs_prev': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_size_vs_prev_v1', unit='last_leg_size_atrs_over_prev_leg',
+        outcomes=('longer', 'shorter', 'similar'), cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars',
+                          'C379_size_vs_prev__scalar0p5', 'C380_size_vs_prev__scalar2'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars',
+                   'C379_size_vs_prev__scalar0p5': 'ratio_low',
+                   'C380_size_vs_prev__scalar2': 'ratio_high'},
+        outcome_spec={'longer': ('boolean', '=', 'one'),
+                      'shorter': ('boolean', '=', 'one'),
+                      'similar': ('boolean', '=', 'one')}),
+    'speed_vs_prev': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_speed_vs_prev_v1', unit='last_leg_atrs_per_bar_over_prev',
+        outcomes=('faster', 'slower', 'equal'), cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars'},
+        outcome_spec={'faster': ('boolean', '=', 'one'),
+                      'slower': ('boolean', '=', 'one'),
+                      'equal': ('boolean', '=', 'one')}),
+    'vol_vs_prev': dict(
+        binding='band', mirror=True, l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_vol_vs_prev_v1', unit='last_leg_mean_volume_over_prev_leg',
+        outcomes=('heavier', 'lighter', 'similar'), cutoff_id='S_ratio_band_1p3',
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars'},
+        transform_by_outcome={'heavier': 'identity', 'lighter': 'identity',
+                              'similar': 'mirror_min'},
+        comparator_by_outcome={'heavier': '>', 'lighter': '<', 'similar': '>='}),
+    'pump_fade_cycles': dict(
+        binding='mixed', l1_l3=(('phase_list', '3ATR_legs'),),
+        recipe='native_legs_pump_fade_cycles_v1', unit='count_of_pump_then_fade_leg_pairs',
+        outcomes=('within', 'exceeds'), cutoff_id='C406_pump_fade_cycles__scalar2',
+        baked_cutoff_ids=('S_leg_atr', 'S_leg_min_bars', 'S_base_min_bars_10',
+                          'S_retest_tol_atr', 'S_break_atr_1', 'S_shock_max_bars',
+                          'C405_pump_fade_cycles__pct50'),
+        baked_map={'S_leg_atr': 'leg_atr', 'S_leg_min_bars': 'leg_min_bars',
+                   'S_base_min_bars_10': 'base_min_bars',
+                   'S_retest_tol_atr': 'retest_tol_atr',
+                   'S_break_atr_1': 'break_atr', 'S_shock_max_bars': 'shock_max_bars',
+                   'C405_pump_fade_cycles__pct50': 'fade_pct'},
+        outcome_spec={'within': ('integer_count', '<=', 'cutoff'),
+                      'exceeds': ('integer_count', '>', 'cutoff')}),
+    'flag': dict(
+        binding='mixed',
+        recipe='native_flag_v1', unit='strict_flag_completed_at_d_minus_1',
+        outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('S_leg_atr', 'C017_flag__pct25', 'C018_flag__pct50',
+                          'S_pivot_k_min', 'S_pivot_k_divisor'),
+        baked_map={'S_leg_atr': 'pole_atr', 'C017_flag__pct25': 'min_retrace_pct',
+                   'C018_flag__pct50': 'max_retrace_pct',
+                   'S_pivot_k_min': 'pivot_k_min_ctx',
+                   'S_pivot_k_divisor': 'pivot_k_divisor_ctx'},
+        outcome_spec={'bull': ('boolean', '=', 'one'),
+                      'bear': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'cup_handle': dict(
+        binding='mixed',
+        recipe='native_cup_handle_v1', unit='strict_cup_and_handle_in_window',
+        outcomes=('yes', 'no'), cutoff_id=None,
+        baked_cutoff_ids=('C008_cup_handle__pct3', 'C009_cup_handle__pct15',
+                          'C011_cup_handle__scalar20', 'C012_cup_handle__pct50',
+                          'S_pivot_k_min', 'S_pivot_k_divisor'),
+        baked_map={'C008_cup_handle__pct3': 'min_depth_pct',
+                   'C009_cup_handle__pct15': 'min_handle_pct',
+                   'C011_cup_handle__scalar20': 'min_window_bars',
+                   'C012_cup_handle__pct50': 'middle_band_pct',
+                   'S_pivot_k_min': 'handle_min_bars',
+                   'S_pivot_k_divisor': 'pivot_k_divisor_ctx'},
+        outcome_spec={'yes': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -2972,6 +3506,9 @@ EXACT_PARTITION_FACETS = {
     'speed',
     # batch 20 (ruling part 6 #48/#49): zone-share and divergence partitions
     'price_divergence',
+    # batch 21 (ruling part 1): 3ATR leg partitions, flag, cup_handle
+    'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev', 'size_vs_prev',
+    'speed_vs_prev', 'vol_vs_prev', 'pump_fade_cycles', 'flag', 'cup_handle',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -3205,7 +3742,11 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_autocorr_v1', 'native_stack_flip_v1',
                         'native_speed_v1', 'native_vs_own_past_v1',
                         'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1',
-                        'native_time_in_zone_v1', 'native_price_divergence_v1'}
+                        'native_time_in_zone_v1', 'native_price_divergence_v1',
+                        'native_legs_last_phase_v1', 'native_legs_phase_seq3_v1',
+                        'native_legs_len_vs_prev_v1', 'native_legs_size_vs_prev_v1',
+                        'native_legs_speed_vs_prev_v1',
+                        'native_flag_v1', 'native_cup_handle_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -3255,7 +3796,12 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_above_share_v1', 'native_stack_flip_v1',
                                  'native_speed_v1', 'native_vs_own_past_v1',
                                  'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1',
-                                 'native_time_in_zone_v1', 'native_price_divergence_v1'):
+                                 'native_time_in_zone_v1', 'native_price_divergence_v1',
+                                 'native_legs_last_phase_v1', 'native_legs_phase_count_v1',
+                                 'native_legs_phase_seq3_v1', 'native_legs_len_vs_prev_v1',
+                                 'native_legs_size_vs_prev_v1', 'native_legs_speed_vs_prev_v1',
+                                 'native_legs_vol_vs_prev_v1', 'native_legs_pump_fade_cycles_v1',
+                                 'native_flag_v1', 'native_cup_handle_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -3283,6 +3829,19 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                     required += int(feature['percentile_bars'])
             if feature['recipe'] == 'native_price_divergence_v1':
                 required += int(feature['series_warmup']) + 1
+            if feature['recipe'] in ('native_legs_last_phase_v1',
+                                     'native_legs_phase_count_v1',
+                                     'native_legs_phase_seq3_v1',
+                                     'native_legs_len_vs_prev_v1',
+                                     'native_legs_size_vs_prev_v1',
+                                     'native_legs_speed_vs_prev_v1',
+                                     'native_legs_vol_vs_prev_v1',
+                                     'native_legs_pump_fade_cycles_v1',
+                                     'native_flag_v1', 'native_cup_handle_v1'):
+                # 15 aggregated bars seed ATR14 on the recipe's own stream +
+                # 1 prior aggregated close (first window bar's shock/pole
+                # base close).
+                required += 16
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(

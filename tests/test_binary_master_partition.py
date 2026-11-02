@@ -22,6 +22,16 @@ CRAFTED = 3
 RANDOM_TAPES = 3
 TOTAL_TAPES = CRAFTED + RANDOM_TAPES
 
+# batch 21 (3ATR legs/flag/cup_handle): pure-python partition scans with up
+# to 9 defs per row; the property is dial- and timeframe-agnostic, so these
+# facets get fewer rows and tapes (same rationale as the per-sub-spec cap).
+HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
+                'size_vs_prev', 'speed_vs_prev', 'vol_vs_prev',
+                'pump_fade_cycles', 'flag', 'cup_handle'}
+HEAVY_ROW_CAP = 8
+HEAVY_TAPES = 4
+DEFAULT_ROW_CAP = 16
+
 
 def _tape_bars(closes, volumes, slot0=100):
     bars = {}
@@ -143,8 +153,9 @@ def test_exact_partition_property(grid, tapes):
         # ~0.25 s/def), so 20 spread rows per sub-spec bound the runtime
         # while every outcome set stays covered on multiple timeframes
         rows = []
+        cap = HEAVY_ROW_CAP if facet in HEAVY_FACETS else DEFAULT_ROW_CAP
         for spec in by_facet[facet]:
-            rows.extend(_rows_for(grid, facet, spec)[:20])
+            rows.extend(_rows_for(grid, facet, spec)[:cap])
         yes_here = 0
         checked = 0
         for qid, row in rows:
@@ -155,7 +166,7 @@ def test_exact_partition_property(grid, tapes):
             # very wide outcome sets (capitulation_bar 73): one daily row and
             # four tapes only — the partition logic is timeframe-agnostic and
             # each evaluation recomputes heavy talib series (~0.25 s/def)
-            use_tapes = tapes
+            use_tapes = tapes[:HEAVY_TAPES] if facet in HEAVY_FACETS else tapes
             if len(defs) > 20:
                 if row['L2_timeframe'] != '1x10':
                     continue
