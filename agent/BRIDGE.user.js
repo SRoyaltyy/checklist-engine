@@ -264,6 +264,7 @@
     lastFailSeen = 0;
     var gen = num('vrb.gen') + 1;
     store('vrb.gen', String(gen));
+    store('vrb.bootPending', String(gen));
     paint();
     console.log('[bridge] escalate -> gen ' + gen + ' (' + reason + ')');
     clickNewChat();
