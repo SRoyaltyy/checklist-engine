@@ -179,4 +179,39 @@
         });
       });
     }
+
+  function waitFor(fn, ms) {
+    return new Promise(function (res) {
+      var t0 = Date.now();
+      (function poll() {
+        if (fn()) return res(true);
+        if (Date.now() - t0 > ms) return res(false);
+        setTimeout(poll, 500);
+      }());
+    });
+  }
+
+  function clickNewChat() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('button, [role="button"], a'));
+    var i;
+    for (i = 0; i < els.length; i++) {
+      if (els[i].offsetParent === null) continue;
+      if (/new chat|new conversation|start new/i.test(labelOf(els[i]))) { els[i].click(); return true; }
+    }
+    location.href = location.origin + '/';
+    return false;
+  }
+
+  function ensureAgentic() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('[aria-label], [title], [data-testid]'));
+    var i, e;
+    for (i = 0; i < els.length; i++) {
+      e = els[i];
+      if (e.offsetParent === null) continue;
+      if (!/agent/i.test(labelOf(e))) continue;
+      if (e.getAttribute('aria-checked') === 'true' || e.getAttribute('aria-pressed') === 'true') return 'on';
+      if (e.getAttribute('aria-checked') === 'false' || e.getAttribute('aria-pressed') === 'false') { e.click(); return 'toggled'; }
+    }
+    return 'unknown';
+  }
 @@APPEND@@
