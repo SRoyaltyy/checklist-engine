@@ -137,13 +137,13 @@
   }
 
   function wake(reason, force) {
-    if (busy) return;
-    if (load('vrb.paused') === '1') return;
-    if (!force && Date.now() - num('vrb.cool') < COOL) return;
+    if (busy) return false;
+    if (load('vrb.paused') === '1') return false;
+    if (!force && Date.now() - num('vrb.cool') < COOL) return false;
     var el = composer();
-    if (!el) return;
-    if (valueOf(el).trim().length > 0) return;
-    busy = true; paint();
+    if (!el) return false;
+    if (valueOf(el).trim().length > 0) return false;
+    busy = true; paint(); return true;
     var chunks = [], i = 0;
     function step() {
       if (i >= READS.length) return finish();
