@@ -51,7 +51,7 @@ async function editFile(env, branch, path, find, replace, message) {
 async function wakeRead(env) {
   const got = await gh(env, `/contents/${WAKE_PATH}?ref=${encodeURIComponent(env.WAKE_BRANCH)}`);
   if (!got.ok) return { pending: false, sha: null };
-  let parsed = {};
+  let parsed = /** @type {any} */ ({});
   try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
   return { ...parsed, sha: got.body.sha };
 }
