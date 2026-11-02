@@ -641,6 +641,21 @@ def _ichimoku(high, low, close):
     return tenkan, kijun, s_a, s_b
 
 
+def _donchian20_channel(high, low):
+    """Ruling part 4 constants: channel at bar t = highest high / lowest low
+    of the PRIOR 20 bars, current bar excluded (identical to fail_shape
+    #13). Returns (upper, lower) full-length arrays; NaN for bars 0..19."""
+    n = len(low)
+    upper = np.full(n, np.nan)
+    lower = np.full(n, np.nan)
+    high = np.asarray(high, dtype=np.float64)
+    low = np.asarray(low, dtype=np.float64)
+    for t in range(20, n):
+        upper[t] = high[t - 20:t].max()
+        lower[t] = low[t - 20:t].min()
+    return upper, lower
+
+
 def _legs_window(feature, candles, high, low, close):
     """Window slice + ATR for the 3ATR_legs block. The facet window is the
     LAST lookback candles of the full fetched prefix; ATR14 is the
@@ -1817,6 +1832,125 @@ def _measure(recipe, candles, feature=None):
             s1 = _side(lb - 1)
             return {'improving': s0 < 0 < s1, 'worsening': s1 < 0 < s0,
                     'same': not (s0 < 0 < s1) and not (s1 < 0 < s0)}
+        if recipe in ('native_donchian_time_top_v1',
+                      'native_donchian_midline_cross_v1',
+                      'native_donchian_failed_break_v1'):
+            # Ruling part 4 #27-#29 (approved 2026-11-01): Donchian20
+            # channel (prior 20 bars, current excluded; identical to
+            # fail_shape #13). The HiLo_window L3 rows consume the same
+            # documented channel (flagged for James in the PR comment).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 20:
+                return None
+            upper, lower = _donchian20_channel(high, low)
+            wk = slice(len(candles) - lb, len(candles))
+            u_w = upper[wk]
+            l_w = lower[wk]
+            if not (np.isfinite(u_w).all() and np.isfinite(l_w).all()):
+                return None
+            c_w = close[wk]
+            if recipe == 'native_donchian_time_top_v1':
+                # Per window bar, its close's tertile inside that bar's own
+                # prior-20 channel; top third = close >= lower + 2/3 x
+                # (upper - lower). Share in top third: most >= 2/3,
+                # some >= 1/3, else none (documented constants).
+                width = u_w - l_w
+                if (width <= 0).any():
+                    return None
+                top = c_w >= l_w + (2.0 / 3.0) * width
+                share = float(top.sum(dtype=np.float64)) / lb
+                return {'most': share >= 2.0 / 3.0,
+                        'some': 1.0 / 3.0 <= share < 2.0 / 3.0,
+                        'none': share < 1.0 / 3.0}
+            mid = (u_w + l_w) / 2.0
+            if recipe == 'native_donchian_midline_cross_v1':
+                # Crosses of the channel midline within the window; a cross
+                # = strict side change between consecutive bars (<=0 to >0
+                # up, >=0 to <0 down). Both = both directions crossed in
+                # the window; up/down = only that direction crossed (the
+                # last close is then necessarily on that side); none = no
+                # cross (documented gap_side-convention reading of the
+                # ruling's "standard both/none logic").
+                diff = c_w - mid
+                crossed_up = crossed_down = False
+                for i in range(1, lb):
+                    if diff[i - 1] <= 0 < diff[i]:
+                        crossed_up = True
+                    elif diff[i - 1] >= 0 > diff[i]:
+                        crossed_down = True
+                return {'up': crossed_up and not crossed_down,
+                        'down': crossed_down and not crossed_up,
+                        'both': crossed_up and crossed_down,
+                        'none': not crossed_up and not crossed_down}
+            # native_donchian_failed_break_v1: bull_trap = a window bar
+            # printed high > prior-20 upper AND closed back inside the
+            # channel; bear_trap mirror; the LATEST trap decides; the
+            # ruling reads the trap as a same-bar event (documented).
+            last = 'none'
+            for i in range(lb):
+                if high[wk][i] > u_w[i] and c_w[i] <= u_w[i]:
+                    last = 'bull_trap'
+                if low[wk][i] < l_w[i] and c_w[i] >= l_w[i]:
+                    last = 'bear_trap'
+            return {'bull_trap': last == 'bull_trap',
+                    'bear_trap': last == 'bear_trap',
+                    'none': last == 'none'}
+        if recipe == 'native_tail_event_v1':
+            # Ruling part 4 #30: ret[t] = C/C_prev - 1 over the window;
+            # sigma = population std of the PRIOR 60 completed returns
+            # before the window (the window is not its own reference,
+            # documented). up = some window bar ret > +C304 x sigma, down =
+            # some bar ret < -C304 x sigma; if both fire the largest |ret|
+            # decides; none otherwise. Fewer than 60 prior returns -> NE.
+            lb = int(feature['lookback'])
+            mult = float(feature['sigma_mult'])
+            if mult <= 0:
+                return None
+            if len(candles) < lb + 61:
+                return None
+            ret = close[1:] / close[:-1] - 1.0
+            prior = ret[len(ret) - lb - 60:len(ret) - lb]
+            if not np.isfinite(prior).all():
+                return None
+            sigma = float(prior.std(dtype=np.float64))
+            w = ret[len(ret) - lb:]
+            if not np.isfinite(w).all():
+                return None
+            if sigma <= 0:
+                return None
+            hi = w > mult * sigma
+            lo = w < -mult * sigma
+            if hi.any() and not lo.any():
+                pick = 'up'
+            elif lo.any() and not hi.any():
+                pick = 'down'
+            elif hi.any() and lo.any():
+                pick = 'up' if np.abs(w[hi]).max() >= np.abs(w[lo]).max() else 'down'
+            else:
+                pick = 'none'
+            return {'up': pick == 'up', 'down': pick == 'down',
+                    'none': pick == 'none'}
+        if recipe == 'native_extreme_count_v1':
+            # Ruling part 4 #31 (new_highs_lows L3 only): a "new high" bar =
+            # high exceeds every earlier bar in the trailing 252-bar
+            # history ending at that bar (same reference as
+            # follow_through #8); count such bars in the window; buckets
+            # {0} | [1, C131] | [C131+1, inf) = zero | low_band | high_band
+            # (cross_count naming precedent).
+            lb = int(feature['lookback'])
+            edge = int(feature['count_edge'])
+            if edge < 1:
+                return None
+            if len(candles) < lb + 252:
+                return None
+            hist = 252
+            news = []
+            for t in range(len(candles) - lb, len(candles)):
+                if high[t] > high[t - hist:t].max():
+                    news.append(t)
+            n = len(news)
+            return {'zero': n == 0, 'low_band': 1 <= n <= edge,
+                    'high_band': n > edge}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -3545,6 +3679,59 @@ FACETS = {
         outcome_spec={'improving': ('boolean', '=', 'one'),
                       'worsening': ('boolean', '=', 'one'),
                       'same': ('boolean', '=', 'one')}),
+    # ---- batch 25 (ruling part 4 #27-#31, approved 2026-11-01): Donchian
+    # remainder, tail events, new-high/low counts. ----
+    'time_top': dict(
+        binding='mixed',
+        l1_l3=(('range_position', 'Donchian20'),
+               ('range_position', 'HiLo_window')),
+        recipe='native_donchian_time_top_v1',
+        unit='share_of_window_closes_in_top_tertile_of_prior_20_channel',
+        outcomes=('most', 'some', 'none'), cutoff_id=None,
+        outcome_spec={'most': ('boolean', '=', 'one'),
+                      'some': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'midline_cross': dict(
+        binding='mixed',
+        l1_l3=(('range_position', 'Donchian20'),
+               ('range_position', 'HiLo_window')),
+        recipe='native_donchian_midline_cross_v1',
+        unit='channel_midline_cross_directions_in_window',
+        outcomes=('up', 'down', 'both', 'none'), cutoff_id=None,
+        outcome_spec={'up': ('boolean', '=', 'one'),
+                      'down': ('boolean', '=', 'one'),
+                      'both': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'failed_break': dict(
+        binding='mixed',
+        l1_l3=(('range_position', 'Donchian20'),
+               ('range_position', 'HiLo_window')),
+        recipe='native_donchian_failed_break_v1',
+        unit='latest_same_bar_failed_channel_break_trap',
+        outcomes=('bull_trap', 'bear_trap', 'none'), cutoff_id=None,
+        outcome_spec={'bull_trap': ('boolean', '=', 'one'),
+                      'bear_trap': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'tail_event': dict(
+        binding='mixed', l1_l3=(('return_path', 'daily_returns'),),
+        recipe='native_tail_event_v1',
+        unit='window_return_tail_beyond_prior_60_return_sigma',
+        outcomes=('up', 'down', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C304_tail_event__sigma3',),
+        baked_map={'C304_tail_event__sigma3': 'sigma_mult'},
+        outcome_spec={'up': ('boolean', '=', 'one'),
+                      'down': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'count': dict(
+        binding='mixed', l1_l3=(('extremes', 'new_highs_lows'),),
+        recipe='native_extreme_count_v1',
+        unit='count_of_252_history_new_high_bars_in_window',
+        outcomes=('zero', 'low_band', 'high_band'), cutoff_id=None,
+        baked_cutoff_ids=('C131_count__scalar2',),
+        baked_map={'C131_count__scalar2': 'count_edge'},
+        outcome_spec={'zero': ('boolean', '=', 'one'),
+                      'low_band': ('boolean', '=', 'one'),
+                      'high_band': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -4337,6 +4524,8 @@ EXACT_PARTITION_FACETS = {
     'adx_slope', 'di_cross', 'peak_turn', 'time_trending',
     'trend_strength_route', 'tk_cross', 'cloud_twist', 'cloud_route',
     'time_above', 'kijun_tests', 'chikou_route',
+    # batch 25 (ruling part 4 #27-#31): Donchian remainder, tails, counts
+    'time_top', 'midline_cross', 'failed_break', 'tail_event', 'count',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -4592,7 +4781,11 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_ichimoku_cloud_route_v1',
                         'native_ichimoku_time_above_v1',
                         'native_ichimoku_kijun_tests_v1',
-                        'native_ichimoku_chikou_route_v1'}
+                        'native_ichimoku_chikou_route_v1',
+                        'native_donchian_time_top_v1',
+                        'native_donchian_midline_cross_v1',
+                        'native_donchian_failed_break_v1',
+                        'native_tail_event_v1', 'native_extreme_count_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -4663,7 +4856,11 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_ichimoku_cloud_route_v1',
                                  'native_ichimoku_time_above_v1',
                                  'native_ichimoku_kijun_tests_v1',
-                                 'native_ichimoku_chikou_route_v1'):
+                                 'native_ichimoku_chikou_route_v1',
+                                 'native_donchian_time_top_v1',
+                                 'native_donchian_midline_cross_v1',
+                                 'native_donchian_failed_break_v1',
+                                 'native_tail_event_v1', 'native_extreme_count_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -4729,6 +4926,14 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                      'native_ichimoku_kijun_tests_v1',
                                      'native_ichimoku_chikou_route_v1'):
                 required += 78  # 52 senkouB seed + 26 projection offset
+            if feature['recipe'] in ('native_donchian_time_top_v1',
+                                     'native_donchian_midline_cross_v1',
+                                     'native_donchian_failed_break_v1'):
+                required += 20  # Donchian20 channel
+            if feature['recipe'] == 'native_tail_event_v1':
+                required += 61  # 60 prior completed returns (+1 price bar)
+            if feature['recipe'] == 'native_extreme_count_v1':
+                required += 252  # documented new-high history constant
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(

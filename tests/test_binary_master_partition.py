@@ -38,18 +38,21 @@ HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
                 'reentry', 'band_walk', 'pctb_path', 'time_upper',
                 'fail_shape', 'range_max_position',
                 'vol_direction_link'}
-HEAVY_ROW_CAP = 7
+HEAVY_ROW_CAP = 6
 HEAVY_TAPES = 4
-# batch 24 (ADX/DI + Ichimoku): the most expensive scans; capped harder
-# (the partition property is per-row over defs - row/tape count only sets
-# how many dial/timeframe combos sample it).
+# batch 24 (ADX/DI + Ichimoku) and batch 25 (Donchian remainder/tails/
+# counts): the most expensive scans; capped harder (the partition
+# property is per-row over defs - row/tape count only sets how many
+# dial/timeframe combos sample it).
 ULTRA_HEAVY_FACETS = {'adx_slope', 'di_cross', 'peak_turn', 'time_trending',
                       'trend_strength_route', 'tk_cross', 'cloud_twist',
                       'cloud_route', 'time_above', 'kijun_tests',
-                      'chikou_route'}
-ULTRA_ROW_CAP = 5
+                      'chikou_route',
+                      'time_top', 'midline_cross', 'failed_break',
+                      'tail_event', 'count'}
+ULTRA_ROW_CAP = 4
 ULTRA_TAPES = 2
-DEFAULT_ROW_CAP = 16
+DEFAULT_ROW_CAP = 10
 
 
 def _tape_bars(closes, volumes, slot0=100):
