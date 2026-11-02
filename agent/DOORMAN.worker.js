@@ -127,4 +127,17 @@ export default {
           if (!made.ok) throw new Error(`ref failed: ${made.status}`);
           return reply({ ok: true, sha: made.body.object.sha });
         }
+        case "read": {
+          if (!path) throw new Error("path is required");
+          const file = await readFile(env, branch, path);
+          if (p.get("b64") === "1") return reply({ ok: true, base64: file.base64, sha: file.sha });
+          return reply({ ok: true, text: file.text, sha: file.sha });
+        }
+        case "list": {
+          const dir = path || p.get("dir") || "";
+          const got = await gh(env, `/contents/${dir}?ref=${encodeURIComponent(branch)}`);
+          if (!got.ok) throw new Error(`list ${dir} failed: ${got.status}`);
+          const items = Array.isArray(got.body) ? got.body : [got.body];
+          return reply({ ok: true, entries: items.map((i) => ({ name: i.name, path: i.path, type: i.type, size: i.size })) });
+        }
 @@APPEND@@
