@@ -155,4 +155,11 @@ export default {
           if (!got.ok) throw new Error(`diff failed: ${got.status}`);
           return reply({ ok: true, diff: String(got.text).slice(0, 200000) });
         }
+        case "search": {
+          const q = p.get("q") || (bodyJson && bodyJson.q);
+          if (!q) throw new Error("q is required");
+          const got = await ghRoot(env, `/search/code?q=${encodeURIComponent(q + " repo:" + repo(env))}&per_page=${Math.min(Number(p.get("limit") || 20), 100)}`);
+          if (!got.ok) throw new Error(`search failed: ${got.status}`);
+          return reply({ ok: true, total: got.body.total_count, hits: (got.body.items || []).map((i) => ({ path: i.path, name: i.name })) });
+        }
 @@APPEND@@
