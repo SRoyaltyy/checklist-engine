@@ -285,6 +285,7 @@
     if (load('vrb.halt') === '1') return;
     var text = document.body.innerText || '';
     var hits = (text.match(/Response failed/gi) || []).length;
+    if (!failPrimed) { lastFailSeen = hits; failPrimed = true; }
     if (hits > lastFailSeen) {
       store('vrb.fail', String(num('vrb.fail') + (hits - lastFailSeen)));
       lastFailSeen = hits;
