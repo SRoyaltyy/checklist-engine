@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 2348,
-  "bound_unique_binary_definitions": 75989,
-  "bound_source_aliases": 78014,
+  "bound_source_questions": 2637,
+  "bound_unique_binary_definitions": 82585,
+  "bound_source_aliases": 84610,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -311,6 +311,7 @@
     "maxvol_wick",
     "osc_swing_speed",
     "path_dir",
+    "price_divergence",
     "pullback_vs_run_volume",
     "red_green_balance",
     "rsi_ceiling",
@@ -332,8 +333,8 @@
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 862,
-  "unbound_oat_variants": 141037,
+  "unbound_family_variant_count": 845,
+  "unbound_oat_variants": 139184,
   "ladder_add_on_rows": 2664,
   "ladder_source_rows": 2680,
   "ladder_alias_rows": 16,
@@ -379,14 +380,14 @@
       "note": "bound defs keyed by question_id = semantic identity hash; batch-5 fix includes the outcome label; aliases share feature_id."
     }
   },
-  "master_total_rows": 78653,
-  "csv_sha256": "bbe901ab377b07de95ae3548f09130222ada96babac25cd3d04c46053a6d4866",
+  "master_total_rows": 85249,
+  "csv_sha256": "71a7105301bec382043e8398f74836739d6a3945bc14ad577c97ed99718a474b",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 125823047,
-    "compressed_bytes": 15312544,
-    "chunk_count": 15
+    "raw_bytes": 136592423,
+    "compressed_bytes": 16804358,
+    "chunk_count": 17
   },
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
@@ -398,7 +399,7 @@
     "dictionary/INDICATOR_SETTINGS.json": "015aae37cd549ab6297407b501534d2143a02c70c0b482ac330c6b9b570ad610"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "37abd204e629d8bb6dcf9e9099cba13f1f46f8404ec5a139320d6db1ce61441f",
+    "world_binary_master.py": "a4efef8c8bfde518fcca76a2d6f1261b1d6fabb361aca8b65e352b74d9ecdd31",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "fd5d525c39604d5a9b208523b03458c9d8ef018e0122036e7262c5aa4aad0b5f",

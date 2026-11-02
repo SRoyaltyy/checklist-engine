@@ -771,6 +771,106 @@ def _measure(recipe, candles, feature=None):
                     'mostly_low': winner == 'mostly_low',
                     'mostly_mid': winner == 'mostly_mid',
                     'mixed': winner == 'mixed'}
+        if recipe == 'native_time_in_zone_v1':
+            # Ruling part 6 #48 (approved 2026-11-01): share of window bars of
+            # the L3 series in its high/low/mid zone; a category wins when its
+            # share is strictly above the baked majority_pct dial, precedence
+            # high > low > mid (batch-5 osc_zone_share precedent — an exact
+            # partition at every rung, including sub-50), else mixed.
+            # zone_kind 'band' (MFI14): constant/dial cutoffs, value exactly
+            # on a cutoff counts into the outer zone (win >= zh / win <= zl).
+            # zone_kind 'percentile' (MACD/ROC/AD/OBV): each bar is classified
+            # against its own trailing `percentile_bars` history (leak-proof,
+            # data <= that bar): high = share(history <= v) >= 0.8, low =
+            # share(history >= v) >= 0.8 (documented 80/20 constants), mid
+            # between. Zero-variance history -> percentile undefined -> NE;
+            # a window bar without a full trailing history -> NE (truncated).
+            lb = int(feature['lookback'])
+            pct = float(feature['majority_pct'])
+            gs = _generic_series(feature, candles, high, low, close)
+            if gs is None:
+                return None
+            series, known = gs
+            if feature['zone_kind'] == 'band':
+                zh = float(feature['zone_high'])
+                zl = float(feature['zone_low'])
+                if not zh > zl:
+                    return None
+                if len(series) < lb or not known[-lb:].all():
+                    return None
+                win = np.asarray(series[-lb:], dtype=np.float64)
+                hi = float((win >= zh).sum(dtype=np.float64)) * 100.0 / lb
+                lo = float((win <= zl).sum(dtype=np.float64)) * 100.0 / lb
+            else:
+                hist_n = int(feature['percentile_bars'])
+                need = lb + hist_n - 1
+                if len(series) < need or not known[-need:].all():
+                    return None
+                s = np.asarray(series[-need:], dtype=np.float64)
+                hi = lo = 0.0
+                for t in range(hist_n - 1, need):
+                    hist = s[t - hist_n + 1:t + 1]
+                    if float(hist.max()) == float(hist.min()):
+                        return None
+                    v = s[t]
+                    if float((hist <= v).mean(dtype=np.float64)) >= 0.8:
+                        hi += 1.0
+                    elif float((hist >= v).mean(dtype=np.float64)) >= 0.8:
+                        lo += 1.0
+                hi = hi * 100.0 / lb
+                lo = lo * 100.0 / lb
+            mid = 100.0 - hi - lo
+            if hi > pct:
+                winner = 'mostly_high'
+            elif lo > pct:
+                winner = 'mostly_low'
+            elif mid > pct:
+                winner = 'mostly_mid'
+            else:
+                winner = 'mixed'
+            return {'mostly_high': winner == 'mostly_high',
+                    'mostly_low': winner == 'mostly_low',
+                    'mostly_mid': winner == 'mostly_mid',
+                    'mixed': winner == 'mixed'}
+        if recipe == 'native_price_divergence_v1':
+            # Ruling part 6 #49 (approved 2026-11-01): strict endpoint-change
+            # divergence. dP = C_last - C_first over the window; dI = I_last -
+            # I_first of the native L3 series (MACD reads the MACD LINE via
+            # _osc_series; up_down_volume reads net up-minus-down volume over
+            # the window). bear = dP > 0 & dI < 0; bull = dP < 0 & dI > 0;
+            # none = same sign both sides; either change exactly 0 ->
+            # NOT_EVALUABLE (never invented). Short/unknown history -> NE.
+            lb = int(feature['lookback'])
+            if feature['series_kind'] == 'UPDOWN_NET':
+                vols = _nonnegative([b.volume for b in candles], 'native volume')
+                if vols is None or len(vols) < lb:
+                    return None
+                body = close[-lb:] - opened[-lb:]
+                up = float(vols[-lb:][body > 0].sum(dtype=np.float64))
+                dn = float(vols[-lb:][body < 0].sum(dtype=np.float64))
+                d_i = up - dn
+            else:
+                if feature['series_kind'] == 'MACD_LINE':
+                    osc = _osc_series(dict(feature, osc_kind='MACD'), close, high, low)
+                    if osc is None:
+                        return None
+                    series, _line, known = osc
+                else:
+                    gs = _generic_series(feature, candles, high, low, close)
+                    if gs is None:
+                        return None
+                    series, known = gs
+                if len(series) < lb or not known[-lb:].all():
+                    return None
+                win = np.asarray(series[-lb:], dtype=np.float64)
+                d_i = float(win[-1] - win[0])
+            p_win = np.asarray(close[-lb:], dtype=np.float64)
+            d_p = float(p_win[-1] - p_win[0])
+            if d_p == 0.0 or d_i == 0.0:
+                return None
+            return {'bull': bool(d_p < 0.0 < d_i),
+                    'bear': bool(d_i < 0.0 < d_p),
+                    'none': bool(d_p * d_i > 0.0)}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -2253,34 +2353,147 @@ FACETS = {
                       'mid_late': ('boolean', '=', 'one'),
                       'big_early': ('boolean', '=', 'one'),
                       'big_late': ('boolean', '=', 'one')}),
-    'time_in_zone': dict(
-        binding='mixed',
-        l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
-               ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
-               ('overbought_oversold', 'Stoch14_3'),
-               ('overbought_oversold', 'WilliamsR14')),
-        recipe='native_osc_zone_share_v1', unit='window_zone_share_majority_bucket',
-        outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
-        baked_cutoff_ids=('S_majority_share_pct',),
-        baked_map={'S_majority_share_pct': 'majority_pct'},
-        l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
-                         'osc_warmup': '7', 'zone_high': '70', 'zone_low': '30'},
-                'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
-                          'osc_warmup': '13', 'zone_high': '70', 'zone_low': '30'},
-                'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
-                          'osc_warmup': '15', 'zone_high': '70', 'zone_low': '30'},
-                'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
-                          'osc_warmup': '25', 'zone_high': '70', 'zone_low': '30'},
-                'Stoch14_3': {'osc_kind': 'STOCH', 'osc_period': '14', 'osc_slow': '3',
-                              'cross_line': '50', 'osc_warmup': '16',
-                              'zone_high': '80', 'zone_low': '20'},
-                'WilliamsR14': {'osc_kind': 'WILLR', 'osc_period': '14',
-                                'cross_line': '-50', 'osc_warmup': '14',
-                                'zone_high': '-20', 'zone_low': '-80'}},
-        outcome_spec={'mostly_high': ('boolean', '=', 'one'),
-                      'mostly_low': ('boolean', '=', 'one'),
-                      'mostly_mid': ('boolean', '=', 'one'),
-                      'mixed': ('boolean', '=', 'one')}),
+    # ---- batch 20 (ruling part 6 #48/#49, approved 2026-11-01): LIST of
+    # sub-specs. Sub-spec 1 is the batch 5-7 oscillator-zone-share family
+    # (canonical per-oscillator zones). Sub-specs 2-4 extend time_in_zone to
+    # trend/volume series: percentile-kind rows classify each window bar
+    # against its own trailing history (documented 252-bar constant for
+    # MACD/ROC; the S_baseline_bars dial for AD/OBV), band-kind MFI14 uses
+    # the S_osc_zone dials. Same majority-share partition as sub-spec 1. ----
+    'time_in_zone': [
+        dict(
+            binding='mixed',
+            l1_l3=(('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+                   ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+                   ('overbought_oversold', 'Stoch14_3'),
+                   ('overbought_oversold', 'WilliamsR14')),
+            recipe='native_osc_zone_share_v1', unit='window_zone_share_majority_bucket',
+            outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
+            baked_cutoff_ids=('S_majority_share_pct',),
+            baked_map={'S_majority_share_pct': 'majority_pct'},
+            l3_map={'RSI6': {'osc_kind': 'RSI', 'osc_period': '6', 'cross_line': '50',
+                             'osc_warmup': '7', 'zone_high': '70', 'zone_low': '30'},
+                    'RSI12': {'osc_kind': 'RSI', 'osc_period': '12', 'cross_line': '50',
+                              'osc_warmup': '13', 'zone_high': '70', 'zone_low': '30'},
+                    'RSI14': {'osc_kind': 'RSI', 'osc_period': '14', 'cross_line': '50',
+                              'osc_warmup': '15', 'zone_high': '70', 'zone_low': '30'},
+                    'RSI24': {'osc_kind': 'RSI', 'osc_period': '24', 'cross_line': '50',
+                              'osc_warmup': '25', 'zone_high': '70', 'zone_low': '30'},
+                    'Stoch14_3': {'osc_kind': 'STOCH', 'osc_period': '14', 'osc_slow': '3',
+                                  'cross_line': '50', 'osc_warmup': '16',
+                                  'zone_high': '80', 'zone_low': '20'},
+                    'WilliamsR14': {'osc_kind': 'WILLR', 'osc_period': '14',
+                                    'cross_line': '-50', 'osc_warmup': '14',
+                                    'zone_high': '-20', 'zone_low': '-80'}},
+            outcome_spec={'mostly_high': ('boolean', '=', 'one'),
+                          'mostly_low': ('boolean', '=', 'one'),
+                          'mostly_mid': ('boolean', '=', 'one'),
+                          'mixed': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_time_in_zone_v1',
+            unit='window_zone_share_majority_bucket_percentile_zones',
+            outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
+            baked_cutoff_ids=('S_majority_share_pct',),
+            baked_map={'S_majority_share_pct': 'majority_pct'},
+            const_extra={'percentile_bars': '252'},
+            l1_l3=(('momentum', 'MACD12_26_9'), ('momentum', 'ROC20')),
+            l3_map={'MACD12_26_9': {'series_kind': 'MACD_HIST', 'osc_fast': '12',
+                                    'osc_slow': '26', 'osc_signal': '9',
+                                    'series_warmup': '33', 'zone_kind': 'percentile'},
+                    'ROC20': {'series_kind': 'ROC', 'osc_period': '20',
+                              'series_warmup': '20', 'zone_kind': 'percentile'}},
+            outcome_spec={'mostly_high': ('boolean', '=', 'one'),
+                          'mostly_low': ('boolean', '=', 'one'),
+                          'mostly_mid': ('boolean', '=', 'one'),
+                          'mixed': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_time_in_zone_v1',
+            unit='window_zone_share_majority_bucket_percentile_zones',
+            outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
+            baked_cutoff_ids=('S_majority_share_pct', 'S_baseline_bars',
+                              'S_osc_zone_high', 'S_osc_zone_low'),
+            baked_map={'S_majority_share_pct': 'majority_pct',
+                       'S_baseline_bars': 'percentile_bars',
+                       'S_osc_zone_high': 'zone_high_ctx',
+                       'S_osc_zone_low': 'zone_low_ctx'},
+            l1_l3=(('volume', 'AD_line'), ('volume', 'OBV')),
+            l3_map={'AD_line': {'series_kind': 'AD', 'series_warmup': '0',
+                                'zone_kind': 'percentile'},
+                    'OBV': {'series_kind': 'OBV', 'series_warmup': '0',
+                            'zone_kind': 'percentile'}},
+            outcome_spec={'mostly_high': ('boolean', '=', 'one'),
+                          'mostly_low': ('boolean', '=', 'one'),
+                          'mostly_mid': ('boolean', '=', 'one'),
+                          'mixed': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_time_in_zone_v1',
+            unit='window_zone_share_majority_bucket_band_zones',
+            outcomes=('mostly_high', 'mostly_low', 'mostly_mid', 'mixed'), cutoff_id=None,
+            baked_cutoff_ids=('S_majority_share_pct', 'S_osc_zone_high',
+                              'S_osc_zone_low', 'S_baseline_bars'),
+            baked_map={'S_majority_share_pct': 'majority_pct',
+                       'S_osc_zone_high': 'zone_high',
+                       'S_osc_zone_low': 'zone_low',
+                       'S_baseline_bars': 'baseline_bars_ctx'},
+            l1_l3=(('volume', 'MFI14'),),
+            l3_map={'MFI14': {'series_kind': 'MFI', 'osc_period': '14',
+                              'series_warmup': '13', 'zone_kind': 'band'}},
+            outcome_spec={'mostly_high': ('boolean', '=', 'one'),
+                          'mostly_low': ('boolean', '=', 'one'),
+                          'mostly_mid': ('boolean', '=', 'one'),
+                          'mixed': ('boolean', '=', 'one')}),
+    ],
+    # ---- batch 20 (ruling part 6 #49, approved 2026-11-01): strict
+    # endpoint-change price/indicator divergence. bull = price down while
+    # indicator up; bear = price up while indicator down; none = same sign;
+    # either endpoint change exactly 0 -> NE. MACD reads the MACD LINE
+    # (documented; the _B19 map carries the histogram for speed templates);
+    # up_down_volume reads net up-minus-down volume over the window. ----
+    'price_divergence': [
+        dict(
+            binding='mixed', recipe='native_price_divergence_v1',
+            unit='endpoint_change_price_vs_indicator_divergence',
+            outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+            l1_l3=(('momentum', 'MACD12_26_9'), ('momentum', 'ROC20'),
+                   ('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+                   ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+                   ('overbought_oversold', 'Stoch14_3'),
+                   ('overbought_oversold', 'WilliamsR14'),
+                   ('volume', 'up_down_volume')),
+            l3_map={'MACD12_26_9': {'series_kind': 'MACD_LINE', 'osc_fast': '12',
+                                    'osc_slow': '26', 'osc_signal': '9',
+                                    'series_warmup': '33'},
+                    'ROC20': {'series_kind': 'ROC', 'osc_period': '20',
+                              'series_warmup': '20'},
+                    'RSI6': {'series_kind': 'RSI', 'osc_period': '6', 'series_warmup': '6'},
+                    'RSI12': {'series_kind': 'RSI', 'osc_period': '12', 'series_warmup': '12'},
+                    'RSI14': {'series_kind': 'RSI', 'osc_period': '14', 'series_warmup': '14'},
+                    'RSI24': {'series_kind': 'RSI', 'osc_period': '24', 'series_warmup': '24'},
+                    'Stoch14_3': {'series_kind': 'STOCH', 'osc_period': '14',
+                                  'osc_slow': '3', 'series_warmup': '16'},
+                    'WilliamsR14': {'series_kind': 'WILLR', 'osc_period': '14',
+                                    'series_warmup': '13'},
+                    'up_down_volume': {'series_kind': 'UPDOWN_NET', 'series_warmup': '0'}},
+            outcome_spec={'bull': ('boolean', '=', 'one'),
+                          'bear': ('boolean', '=', 'one'),
+                          'none': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_price_divergence_v1',
+            unit='endpoint_change_price_vs_indicator_divergence',
+            outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+            baked_cutoff_ids=('S_baseline_bars', 'S_osc_zone_high', 'S_osc_zone_low'),
+            baked_map={'S_baseline_bars': 'baseline_bars_ctx',
+                       'S_osc_zone_high': 'zone_high_ctx',
+                       'S_osc_zone_low': 'zone_low_ctx'},
+            l1_l3=(('volume', 'AD_line'), ('volume', 'MFI14'), ('volume', 'OBV')),
+            l3_map={'AD_line': {'series_kind': 'AD', 'series_warmup': '0'},
+                    'MFI14': {'series_kind': 'MFI', 'osc_period': '14',
+                              'series_warmup': '13'},
+                    'OBV': {'series_kind': 'OBV', 'series_warmup': '0'}},
+            outcome_spec={'bull': ('boolean', '=', 'one'),
+                          'bear': ('boolean', '=', 'one'),
+                          'none': ('boolean', '=', 'one')}),
+    ],
     'full_stack_streak': dict(
         binding='mixed',
         l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
@@ -2757,6 +2970,8 @@ EXACT_PARTITION_FACETS = {
     'efficiency', 'skew', 'autocorr', 'stack_flip',
     # batch 19 (ruling parts 6-8): cross-L3 speed partition
     'speed',
+    # batch 20 (ruling part 6 #48/#49): zone-share and divergence partitions
+    'price_divergence',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -2989,7 +3204,8 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_efficiency_v1', 'native_skew_v1',
                         'native_autocorr_v1', 'native_stack_flip_v1',
                         'native_speed_v1', 'native_vs_own_past_v1',
-                        'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1'}
+                        'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1',
+                        'native_time_in_zone_v1', 'native_price_divergence_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -3038,7 +3254,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_path_dir_v1', 'native_distance_route_v1',
                                  'native_above_share_v1', 'native_stack_flip_v1',
                                  'native_speed_v1', 'native_vs_own_past_v1',
-                                 'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1'):
+                                 'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1',
+                                 'native_time_in_zone_v1', 'native_price_divergence_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -3060,6 +3277,12 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += int(feature['history_bars']) + 1
             if feature['recipe'] == 'native_updown_vs_past_v1':
                 required += 250  # documented baseline constant (no dial registered)
+            if feature['recipe'] == 'native_time_in_zone_v1':
+                required += int(feature['series_warmup'])
+                if feature['zone_kind'] == 'percentile':
+                    required += int(feature['percentile_bars'])
+            if feature['recipe'] == 'native_price_divergence_v1':
+                required += int(feature['series_warmup']) + 1
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(
