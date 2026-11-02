@@ -1,4 +1,5 @@
-const json = (d, s = 200) => new Response(JSON.stringify(d, null, 2), { status: s, headers: { "Content-Type": "application/json" } });
+const V = 4;
+const json = (d, s = 200) => new Response(JSON.stringify({ v: V, ...d }, null, 2), { status: s, headers: { "Content-Type": "application/json" } });
 
 export default {
   async fetch(request, env) {
