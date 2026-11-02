@@ -219,4 +219,16 @@ export default {
           if (!listed.ok) throw new Error(`runs failed: ${listed.status}`);
           return reply({ ok: true, runs: (listed.body.workflow_runs || []).map((r) => ({ id: r.id, name: r.name, status: r.status, conclusion: r.conclusion, sha: r.head_sha })) });
         }
+        case "dispatch": {
+          const workflow = p.get("workflow") || (bodyJson && bodyJson.workflow);
+          if (!workflow) throw new Error("workflow is required");
+          const sent = await gh(env, `/actions/workflows/${workflow}/dispatches`, { method: "POST", body: JSON.stringify({ ref: branch }) });
+          if (!sent.ok) throw new Error(`dispatch failed: ${sent.status}`);
+          return reply({ ok: true });
+        }
+        case "merge": {
+          const merged = await gh(env, `/pulls/${p.get("pr")}/merge`, { method: "PUT", body: JSON.stringify({ merge_method: p.get("method") || "merge" }) });
+          if (!merged.ok) throw new Error(`merge failed: ${merged.status}`);
+          return reply({ ok: true, sha: merged.body.sha });
+        }
 @@APPEND@@
