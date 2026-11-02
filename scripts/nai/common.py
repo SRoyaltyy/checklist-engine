@@ -7,7 +7,34 @@ COMPOSED = ("compact-world-build-composed-v1-41221028803-1", "COMPACT_WORLD_BUIL
 _last = [0.0]
 
 
+_route = {}
+
+
+def _relay(url):
+    import urllib.parse
+    relay = os.environ.get("PRIMARY_ACTION_RELAY_URL", "").strip()
+    if not relay:
+        return None
+    b = urllib.parse.urlsplit(relay)
+    q = [(k, v) for k, v in urllib.parse.parse_qsl(b.query, keep_blank_values=True) if k != "url"] + [("url", url)]
+    return urllib.parse.urlunsplit((b.scheme, b.netloc, b.path or "/", urllib.parse.urlencode(q), ""))
+
+
 def get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300):
+    """GET (SEC: direct first; on 403 falls back to the repo's existing SEC relay secret, never logged)."""
+    sec = "sec.gov" in url.split("/")[2]
+    if sec and _route.get("sec") == "relay" and _relay(url):
+        return _get(_relay(url), dest, pace, tries, ua, timeout, shown=url)
+    try:
+        return _get(url, dest, pace, 1 if sec else tries, ua, timeout)
+    except Exception as e:
+        if sec and "403" in str(e) and _relay(url):
+            _route["sec"] = "relay"; print("SEC direct 403 from runner -> using relay", flush=True)
+            return _get(_relay(url), dest, pace, tries, ua, timeout, shown=url)
+        raise
+
+
+def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None):
     """GET with polite pacing (<=~7 req/s) and exponential backoff. Streams to dest if given."""
     for i in range(tries):
         wait = pace - (time.time() - _last[0])
@@ -28,13 +55,13 @@ def get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300):
                     return dest
                 return r.read()
         except urllib.error.HTTPError as e:
-            if e.code == 404:
-                raise
+            if e.code in (404, 403) and i >= 1:
+                raise RuntimeError(f"HTTP {e.code} {shown or url}")
             err = e
         except Exception as e:  # network
             err = e
         time.sleep(min(60, 2 ** i))
-    raise RuntimeError(f"GET failed {url}: {err}")
+    raise RuntimeError(f"GET failed {shown or url}: {err}")
 
 
 def gh(*args, check=True):
