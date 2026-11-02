@@ -15,8 +15,18 @@ export default {
     if (!got.ok) return json({ ok: false, error: "source " + got.status }, 400);
     const src = await got.text();
     if (!src || src.length < 500) return json({ ok: false, error: "source too short" }, 400);
-    const put = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT}/workers/scripts/${env.SCRIPT_NAME}`, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}`, "Content-Type": "application/javascript" }, body: src });
+    const acct = String(env.CF_ACCOUNT || "").trim();
+    const script = String(env.SCRIPT_NAME || "").trim();
+    const api = `https://api.cloudflare.com/client/v4/accounts/${acct}/workers/scripts/${encodeURIComponent(script)}`;
+    const head = await fetch(api, { headers: { Authorization: `Bearer ${env.CF_TOKEN}` } });
+    if (head.status === 404) {
+      return json({ ok: false, stage: "probe", acct, script, len_acct: acct.length, len_script: script.length, body: (await head.text()).slice(0, 300) }, 400);
+    }
+    if (head.status === 401 || head.status === 403) {
+      return json({ ok: false, stage: "auth", status: head.status, body: (await head.text()).slice(0, 300) }, 400);
+    }
+    const put = await fetch(api, { method: "PUT", headers: { Authorization: `Bearer ${env.CF_TOKEN}`, "Content-Type": "application/javascript" }, body: src });
     const body = (await put.text()).slice(0, 400);
-    return json({ ok: put.ok, status: put.status, body }, put.ok ? 200 : 400);
+    return json({ ok: put.ok, status: put.status, acct, script, body }, put.ok ? 200 : 400);
   },
 };
