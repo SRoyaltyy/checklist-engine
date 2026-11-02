@@ -413,8 +413,7 @@
       var reason = (flag && flag.reason) || '';
       var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
       if (sha && sha === load('vrb.sha')) return;
-      wake(reason || 'heartbeat', false);
-      if (sha) store('vrb.sha', sha);
+      if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
     });
   }
 
