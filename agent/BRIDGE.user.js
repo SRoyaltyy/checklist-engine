@@ -277,4 +277,34 @@
       }, 2500);
     });
   }
+
+  var lastFailSeen = 0;
+
+  function healthTick() {
+    if (load('vrb.halt') === '1') return;
+    var text = document.body.innerText || '';
+    var hits = (text.match(/Response failed/gi) || []).length;
+    if (hits > lastFailSeen) {
+      store('vrb.fail', String(num('vrb.fail') + (hits - lastFailSeen)));
+      lastFailSeen = hits;
+      awaiting = 0;
+      paint();
+    }
+    if (num('vrb.fail') >= FAIL_LIMIT && !busy) { escalate('response failed x' + num('vrb.fail')); return; }
+    if (awaiting && Date.now() - awaiting > STUCK_MS) {
+      if (msgNodes() <= nodesAt) {
+        store('vrb.fail', String(num('vrb.fail') + 1));
+        awaiting = 0; paint();
+        if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
+      } else { awaiting = 0; }
+    }
+    if (awaiting && msgNodes() > nodesAt) {
+      awaiting = 0;
+      if (phase === 'boot') {
+        phase = 'work'; bootTries = 0; store('vrb.fail', '0'); paint();
+        console.log('[bridge] bootstrap answered, resuming');
+        setTimeout(function () { wake('post-bootstrap resume', true); }, 3000);
+      } else if (num('vrb.fail')) { store('vrb.fail', '0'); paint(); }
+    }
+  }
 @@APPEND@@
