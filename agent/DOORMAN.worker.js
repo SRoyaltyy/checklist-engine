@@ -204,4 +204,9 @@ export default {
           const sha = await editFile(env, branch, path, find, String(replace ?? ""), message);
           return reply({ ok: true, sha });
         }
+        case "pr": {
+          const created = await gh(env, `/pulls`, { method: "POST", body: JSON.stringify({ title: p.get("title"), head: branch, base: p.get("base") || "main", body: p.get("body") || "" }) });
+          if (!created.ok) throw new Error(`pr failed: ${created.status}`);
+          return reply({ ok: true, number: created.body.number, url: created.body.html_url });
+        }
 @@APPEND@@
