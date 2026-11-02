@@ -92,4 +92,28 @@
     for (i = sibs.length - 1; i >= 0; i--) { b = sibs[i]; if (b !== attach && !b.disabled && !/attach|dictate|close/i.test(labelOf(b))) return b; }
     return null;
   }
+
+  function valueOf(el) { return el.tagName === 'TEXTAREA' ? el.value : el.textContent; }
+
+  function fill(el, text) {
+    el.focus();
+    if (el.tagName === 'TEXTAREA') {
+      var setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
+      setter.call(el, text);
+    } else { el.textContent = text; }
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function submit(el) {
+    var b = sendButton();
+    if (b) { b.click(); return 'click'; }
+    var kinds = ['keydown', 'keypress', 'keyup'], i;
+    for (i = 0; i < kinds.length; i++) {
+      el.dispatchEvent(new KeyboardEvent(kinds[i], { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+    }
+    return 'enter';
+  }
+
+  function msgNodes() { return document.querySelectorAll('[data-message-id], [data-testid*="message"], [class*="message"]').length; }
 @@APPEND@@
