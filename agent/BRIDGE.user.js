@@ -307,4 +307,43 @@
       } else if (num('vrb.fail')) { store('vrb.fail', '0'); paint(); }
     }
   }
+
+  var fired = {};
+  try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
+
+  function hash(s) {
+    var h = 5381, i;
+    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+  }
+
+  function mark(h) {
+    fired[h] = 1;
+    var keys = Object.keys(fired), i;
+    if (keys.length > 2000) {
+      var trimmed = {};
+      for (i = keys.length - 2000; i < keys.length; i++) trimmed[keys[i]] = 1;
+      fired = trimmed;
+    }
+    store('vrb.fired', JSON.stringify(fired));
+  }
+
+  var CHROME = /^(?:```[a-z0-9+#._-]*|yaml|yml|json|python|py|bash|sh|js|javascript|md|markdown|text|txt|Copy code|Copy|Copied)$/;
+
+  function cleanBody(raw) {
+    var lines = raw.replace(/\r/g, '').split('\n');
+    var guard = 0;
+    while (lines.length && guard++ < 12) {
+      var head = lines[0].trim();
+      if (head === '' || head.indexOf('@@BODY') === 0 || CHROME.test(head)) { lines.shift(); continue; }
+      break;
+    }
+    guard = 0;
+    while (lines.length && guard++ < 12) {
+      var foot = lines[lines.length - 1].trim();
+      if (foot === '' || CHROME.test(foot)) { lines.pop(); continue; }
+      break;
+    }
+    return lines.join('\n').replace(/\s+$/, '') + '\n';
+  }
 @@APPEND@@
