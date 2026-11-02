@@ -53,7 +53,7 @@ async function wakeRead(env) {
   if (!got.ok) return { pending: false, sha: null };
   let parsed = /** @type {any} */ ({});
   try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
-  return { ...parsed, sha: got.body.sha };
+  return /** @type {any} */ ({ ...parsed, sha: got.body.sha });
 }
 
 async function wakeWrite(env, payload, sha) {
