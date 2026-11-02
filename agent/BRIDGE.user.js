@@ -303,7 +303,7 @@
         if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
       } else { awaiting = 0; }
     }
-    if (awaiting && msgNodes() > nodesAt) {
+    if (awaiting && msgNodes() >= nodesAt + 2) {
       awaiting = 0;
       if (phase === 'boot') {
         phase = 'work'; bootTries = 0; store('vrb.fail', '0'); paint();
