@@ -47,4 +47,45 @@ async function editFile(env, branch, path, find, replace, message) {
   if (hits !== 1) throw new Error(`find matched ${hits} times, need exactly 1`);
   return writeFile(env, branch, path, current.text.replace(find, replace), message, false);
 }
+async function wakeRead(env) {
+  const got = await gh(env, `/contents/${WAKE_PATH}?ref=${encodeURIComponent(env.WAKE_BRANCH)}`);
+  if (!got.ok) return { pending: false, sha: null };
+  let parsed = {};
+  try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
+  return { ...parsed, sha: got.body.sha };
+}
+
+async function wakeWrite(env, payload, sha) {
+  const body = { message: "agent: wake flag", content: enc(JSON.stringify(payload, null, 2)), branch: env.WAKE_BRANCH };
+  if (sha) body.sha = sha;
+  const put = await gh(env, `/contents/${WAKE_PATH}`, { method: "PUT", body: JSON.stringify(body) });
+  if (!put.ok) throw new Error(`wake write failed: ${put.status}`);
+}
+
+async function wakeDecide(env) {
+  const now = Date.now();
+  const wake = await wakeRead(env);
+  if (wake.pending && wake.set_at) {
+    const age = (now - Date.parse(wake.set_at)) / 60000;
+    if (age < WAKE_HEARTBEAT_MIN) return;
+  }
+  const reasons = [];
+  const commits = await gh(env, `/commits?sha=main&per_page=1`);
+  if (commits.ok && Array.isArray(commits.body) && commits.body[0]) {
+    const when = commits.body[0].commit?.committer?.date;
+    if (when && (now - Date.parse(when)) / 60000 < WAKE_FRESH_COMMIT_MIN) reasons.push(`main moved ${commits.body[0].sha.slice(0, 8)}`);
+  }
+  const runs = await gh(env, `/actions/runs?branch=${encodeURIComponent(env.WAKE_BRANCH)}&per_page=5`);
+  if (runs.ok && runs.body.workflow_runs) {
+    for (const run of runs.body.workflow_runs) {
+      if (run.conclusion === "failure") {
+        if ((now - Date.parse(run.created_at)) / 60000 < WAKE_FRESH_FAIL_MIN) reasons.push(`run ${run.id} failed (${run.name})`);
+        break;
+      }
+    }
+  }
+  if (!reasons.length) reasons.push("heartbeat: interval elapsed");
+  const stamp = new Date(now).toISOString();
+  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
+}
 @@APPEND@@
