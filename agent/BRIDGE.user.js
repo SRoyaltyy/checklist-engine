@@ -247,6 +247,7 @@
       setTimeout(function () {
         nodesAt = msgNodes(); awaiting = Date.now();
         submit(el);
+        busy = false; paint();
         console.log('[bridge] bootstrap submitted, gen ' + gen);
       }, 400);
     }
