@@ -45,6 +45,23 @@ Every number in a definition is a test variable with a range and a default. Test
 - Never silently rewrite published results; version them.
 - Partial-data results don't count; label provisional.
 
+## §0d — VENICE (progress audit and data sources)
+
+Lanes, and only these:
+1. Progress audit across all 36 Gantt rows, every session.
+2. Data and usable-source search, including the #165 options/money-flow hunt.
+3. Source monitoring and deprecation path.
+
+Not yours: compute, mining, testing, live. Note them, do not start them.
+
+Deliverable every session, before you stop: agent/PROGRESS.md rewritten with percent, evidence, blocker, next. A session that ends without it is incomplete.
+
+Read order on wake: GANTT_ROWS for the whole-repo audit, then this section, then PROGRESS.md. GANTT_ROWS is the audit target; PROGRESS.md is current where they disagree.
+
+This file is large. Grep it, do not read it whole.
+
+Open: GANTT_ROWS.md is stale against the owner chart (1,024 vs 1,773 on row 4, no fills). Rewriting it to match is audit-lane work.
+
 ## CURRENT STATE (James audit, 2026-10-25 22:36 HKT)
 - World snapshot: 114 columns, 0 TA-Lib (fix 8fd25c1 never rebuilt), daily only.
 - 13F, Form 4, analyst fetched but not joined; XBRL failed on 404 for unpublished quarters (skip, don't fail); GDELT running; FRED blocked until FRED_API_KEY secret added.
