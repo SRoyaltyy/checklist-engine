@@ -243,6 +243,7 @@
       var el = composer();
       if (!el) { halt('no composer after new chat'); return; }
       fill(el, links.join('\n'));
+      store('vrb.bootPending', '0');
       setTimeout(function () {
         nodesAt = msgNodes(); awaiting = Date.now();
         submit(el);
