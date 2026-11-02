@@ -13,4 +13,38 @@ async function gh(env, path, init = {}) {
   let body; try { body = JSON.parse(text); } catch { body = text; }
   return { ok: res.ok, status: res.status, body, text };
 }
+async function ghRoot(env, path, init = {}) {
+  const res = await fetch(`https://api.github.com${path}`, { ...init, headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": "venice-doorman", ...(init.headers || {}) } });
+  const text = await res.text();
+  let body; try { body = JSON.parse(text); } catch { body = text; }
+  return { ok: res.ok, status: res.status, body, text };
+}
+
+async function readFile(env, branch, path) {
+  const got = await gh(env, `/contents/${path}?ref=${encodeURIComponent(branch)}`);
+  if (!got.ok) throw new Error(`read ${path} failed: ${got.status}`);
+  if (typeof got.body.content === "string" && got.body.encoding === "base64") {
+    return { text: dec(got.body.content), base64: got.body.content, sha: got.body.sha };
+  }
+  const blob = await gh(env, `/git/blobs/${got.body.sha}`);
+  if (!blob.ok) throw new Error(`read ${path} failed: ${blob.status}`);
+  return { text: dec(blob.body.content), base64: blob.body.content, sha: got.body.sha };
+}
+
+async function writeFile(env, branch, path, text, message, isBase64) {
+  const body = { message: message || `doorman: ${path}`, content: isBase64 ? String(text).replace(/\n/g, "") : enc(text), branch };
+  const head = await gh(env, `/contents/${path}?ref=${encodeURIComponent(branch)}`);
+  if (head.ok) body.sha = head.body.sha;
+  const put = await gh(env, `/contents/${path}`, { method: "PUT", body: JSON.stringify(body) });
+  if (!put.ok) throw new Error(`write ${path} failed: ${put.status} ${JSON.stringify(put.body).slice(0, 300)}`);
+  return put.body.commit.sha;
+}
+
+async function editFile(env, branch, path, find, replace, message) {
+  if (!find) throw new Error("find is empty");
+  const current = await readFile(env, branch, path);
+  const hits = current.text.split(find).length - 1;
+  if (hits !== 1) throw new Error(`find matched ${hits} times, need exactly 1`);
+  return writeFile(env, branch, path, current.text.replace(find, replace), message, false);
+}
 @@APPEND@@
