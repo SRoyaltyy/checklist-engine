@@ -251,4 +251,30 @@
     }
     step();
   }
+
+  function escalate(reason) {
+    if (phase === 'boot') {
+      bootTries++;
+      if (bootTries > BOOT_MAX) { halt('bootstrap failed ' + bootTries + 'x: ' + reason); return; }
+    }
+    phase = 'boot';
+    busy = true;
+    store('vrb.fail', '0');
+    store('vrb.halt', '0');
+    var gen = num('vrb.gen') + 1;
+    store('vrb.gen', String(gen));
+    paint();
+    console.log('[bridge] escalate -> gen ' + gen + ' (' + reason + ')');
+    clickNewChat();
+    waitFor(function () { return composer() !== null; }, 45000).then(function (ok) {
+      if (!ok) { halt('composer never appeared'); return; }
+      console.log('[bridge] agentic mode: ' + ensureAgentic());
+      setTimeout(function () {
+        var el = composer();
+        if (!el) { halt('composer vanished'); return; }
+        if (valueOf(el).trim().length > 0) { el.textContent = ''; }
+        composeBootstrap(gen);
+      }, 2500);
+    });
+  }
 @@APPEND@@
