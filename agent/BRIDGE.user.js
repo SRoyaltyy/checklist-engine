@@ -413,4 +413,32 @@
       if (sha) store('vrb.sha', sha);
     });
   }
-@@APPEND@@
+
+  var timer = null;
+  var observer = new MutationObserver(function () {
+    clearTimeout(timer);
+    timer = setTimeout(scan, 900);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+  var tickTimer = setInterval(tick, POLL);
+  var healthTimer = setInterval(healthTick, 5000);
+
+  window.__vrb = { stop: function () {
+    clearInterval(tickTimer); clearInterval(healthTimer);
+    clearTimeout(timer); observer.disconnect();
+    if (badge.parentElement) badge.remove();
+  } };
+
+  gm(readUrl('agent/BRIDGE_GEN.json')).then(function (r) {
+    if (!r.ok) return;
+    try {
+      var g = JSON.parse(unwrap(r.text)).gen;
+      if (g && g > num('vrb.gen')) { store('vrb.gen', String(g)); paint(); }
+    } catch (e) {}
+  });
+
+  document.body.appendChild(badge);
+  paint();
+  setTimeout(tick, 4000);
+}());
