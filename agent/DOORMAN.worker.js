@@ -209,4 +209,9 @@ export default {
           if (!created.ok) throw new Error(`pr failed: ${created.status}`);
           return reply({ ok: true, number: created.body.number, url: created.body.html_url });
         }
+        case "pr-edit": {
+          const edited = await gh(env, `/pulls/${p.get("pr")}`, { method: "PATCH", body: JSON.stringify({ body: p.get("body") || "" }) });
+          if (!edited.ok) throw new Error(`pr-edit failed: ${edited.status}`);
+          return reply({ ok: true });
+        }
 @@APPEND@@
