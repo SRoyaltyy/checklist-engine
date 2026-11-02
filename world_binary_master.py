@@ -603,6 +603,44 @@ def _bollinger20_2(close):
     return mid, upper, lower, pctb, known
 
 
+def _adx_di14(high, low, close):
+    """Ruling part 3 constants: ADX14 / +DI14 / -DI14 (Wilder, talib).
+    Returns full-length arrays; NaN during the seed warmup."""
+    import talib
+    h = np.asarray(high, dtype=np.float64)
+    l = np.asarray(low, dtype=np.float64)
+    c = np.asarray(close, dtype=np.float64)
+    return (talib.ADX(h, l, c, timeperiod=14),
+            talib.PLUS_DI(h, l, c, timeperiod=14),
+            talib.MINUS_DI(h, l, c, timeperiod=14))
+
+
+_ICHIMOKU_OFFSET = 26  # senkou/chikou projection offset (documented constant)
+
+
+def _ichimoku(high, low, close):
+    """Ruling part 3 constants: tenkan 9 / kijun 26 / senkou A,B 52 on the
+    full prefix (HH+LL)/2 midlines. Returns (tenkan, kijun, senkouA,
+    senkouB) full-length arrays; NaN during the seed warmup (tenkan from
+    bar 8, kijun/senkouA from bar 25, senkouB from bar 51)."""
+    n = len(close)
+    tenkan = np.full(n, np.nan)
+    kijun = np.full(n, np.nan)
+    s_a = np.full(n, np.nan)
+    s_b = np.full(n, np.nan)
+    high = np.asarray(high, dtype=np.float64)
+    low = np.asarray(low, dtype=np.float64)
+    for t in range(n):
+        if t >= 8:
+            tenkan[t] = (high[t - 8:t + 1].max() + low[t - 8:t + 1].min()) / 2.0
+        if t >= 25:
+            kijun[t] = (high[t - 25:t + 1].max() + low[t - 25:t + 1].min()) / 2.0
+            s_a[t] = (tenkan[t] + kijun[t]) / 2.0
+        if t >= 51:
+            s_b[t] = (high[t - 51:t + 1].max() + low[t - 51:t + 1].min()) / 2.0
+    return tenkan, kijun, s_a, s_b
+
+
 def _legs_window(feature, candles, high, low, close):
     """Window slice + ATR for the 3ATR_legs block. The facet window is the
     LAST lookback candles of the full fetched prefix; ATR14 is the
@@ -1569,6 +1607,216 @@ def _measure(recipe, candles, feature=None):
             dn = float(rng[b < 0].sum(dtype=np.float64))
             return {'down_vol': dn > 1.25 * up, 'up_vol': up > 1.25 * dn,
                     'neutral': dn <= 1.25 * up and up <= 1.25 * dn}
+        if recipe in ('native_adx_slope_v1', 'native_adx_di_cross_v1',
+                      'native_adx_peak_turn_v1', 'native_adx_time_trending_v1',
+                      'native_adx_trend_strength_route_v1'):
+            # Ruling part 3 #16-#20 (approved 2026-11-01): ADX14/+DI/-DI
+            # Wilder 14 (talib; warmup 27 registered for the ADX14 series).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 27:
+                return None
+            adx, pdi, mdi = _adx_di14(high, low, close)
+            wk = slice(len(candles) - lb, len(candles))
+            a_w = adx[wk]
+            p_w = pdi[wk]
+            m_w = mdi[wk]
+            if not (np.isfinite(a_w).all() and np.isfinite(p_w).all()
+                    and np.isfinite(m_w).all()):
+                return None
+            if recipe == 'native_adx_slope_v1':
+                # ADX last minus first over the window; flat when |d| <= 1.0
+                # point (documented constant, no dial).
+                d = float(a_w[-1] - a_w[0])
+                return {'rising': d > 1.0, 'falling': d < -1.0,
+                        'flat': abs(d) <= 1.0}
+            if recipe == 'native_adx_di_cross_v1':
+                # Latest +DI/-DI cross in the window decides; bull when the
+                # latest cross is +DI up AND +DI > -DI at D-1; mirror bear;
+                # a tie at D-1 is none (documented). A cross is a strict
+                # nonzero sign change between consecutive bars.
+                diff = p_w - m_w
+                last = None
+                for i in range(1, lb):
+                    if diff[i - 1] < 0 < diff[i]:
+                        last = 'bull'
+                    elif diff[i - 1] > 0 > diff[i]:
+                        last = 'bear'
+                if last is None or diff[-1] == 0:
+                    return {'bull': False, 'bear': False, 'none': True}
+                bull = last == 'bull' and diff[-1] > 0
+                bear = last == 'bear' and diff[-1] < 0
+                return {'bull': bull, 'bear': bear,
+                        'none': not bull and not bear}
+            if recipe == 'native_adx_peak_turn_v1':
+                # The most recent strict local ADX maximum scanning back
+                # from D-2 (first occurrence); yes when it is followed by
+                # >= 2 strictly declining ADX bars ending at D-1.
+                yes = False
+                for t in range(len(a_w) - 2, 0, -1):
+                    if a_w[t] > a_w[t - 1] and a_w[t] > a_w[t + 1]:
+                        seg = a_w[t:]
+                        yes = (len(seg) - 1 >= 2
+                               and all(seg[j] > seg[j + 1]
+                                       for j in range(len(seg) - 1)))
+                        break
+                return {'yes': yes, 'no': not yes}
+            if recipe == 'native_adx_time_trending_v1':
+                # Share of window bars with ADX > C238; most >= 2/3,
+                # some >= 1/3, else none (documented constants).
+                line = float(feature['adx_line'])
+                share = float((a_w > line).sum(dtype=np.float64)) / lb
+                return {'most': share >= 2.0 / 3.0,
+                        'some': 1.0 / 3.0 <= share < 2.0 / 3.0,
+                        'none': share < 1.0 / 3.0}
+            # native_adx_trend_strength_route_v1: zone of the FIRST and
+            # LAST window bar's ADX as a start->end pair; trending when
+            # ADX > C236, weak when ADX < C237, else mid; C237 >= C236 is
+            # an inverted dial pairing -> NE (documented).
+            hi = float(feature['trend_line'])
+            lo = float(feature['weak_line'])
+            if lo >= hi:
+                return None
+
+            def _zone(v):
+                if v > hi:
+                    return 'trending'
+                if v < lo:
+                    return 'weak'
+                return 'mid'
+
+            pair = _zone(float(a_w[0])) + '_' + _zone(float(a_w[-1]))
+            out = {z0 + '_' + z1: False
+                   for z0 in ('trending', 'mid', 'weak')
+                   for z1 in ('trending', 'mid', 'weak')}
+            out[pair] = True
+            return out
+        if recipe in ('native_ichimoku_tk_cross_v1',
+                      'native_ichimoku_cloud_twist_v1',
+                      'native_ichimoku_cloud_route_v1',
+                      'native_ichimoku_time_above_v1',
+                      'native_ichimoku_kijun_tests_v1',
+                      'native_ichimoku_chikou_route_v1'):
+            # Ruling part 3 #21-#26: Ichimoku 9/26/52 with the 26-bar
+            # projection offset. Warmup = 78 = 52 senkouB seed + 26 offset
+            # (documented); the cloud visible at window bar t is senkou
+            # A,B computed at t-26.
+            lb = int(feature['lookback'])
+            off = _ICHIMOKU_OFFSET
+            if len(candles) < lb + 52 + off:
+                return None
+            tenkan, kijun, s_a, s_b = _ichimoku(high, low, close)
+            ws = len(candles) - lb
+            t_w = tenkan[ws:]
+            k_w = kijun[ws:]
+            c_a = s_a[ws - off:len(candles) - off]
+            c_b = s_b[ws - off:len(candles) - off]
+            if not (np.isfinite(t_w).all() and np.isfinite(k_w).all()
+                    and np.isfinite(c_a).all() and np.isfinite(c_b).all()):
+                return None
+            close_w = close[ws:]
+            high_w = high[ws:]
+            low_w = low[ws:]
+            if recipe == 'native_ichimoku_tk_cross_v1':
+                # Latest tenkan/kijun cross in the window decides; bull =
+                # tenkan above kijun at D-1 after the latest cross; mirror
+                # bear; a tie at D-1 is none (documented).
+                diff = t_w - k_w
+                last = None
+                for i in range(1, lb):
+                    if diff[i - 1] < 0 < diff[i]:
+                        last = 'bull'
+                    elif diff[i - 1] > 0 > diff[i]:
+                        last = 'bear'
+                if last is None or diff[-1] == 0:
+                    return {'bull': False, 'bear': False, 'none': True}
+                bull = last == 'bull' and diff[-1] > 0
+                bear = last == 'bear' and diff[-1] < 0
+                return {'bull': bull, 'bear': bear,
+                        'none': not bull and not bear}
+            if recipe == 'native_ichimoku_cloud_twist_v1':
+                # Latest senkou A/B cross within the cloud span visible at
+                # D-1 (source bars ws-26 .. len-1-26) decides; bull = A
+                # above B after it; mirror bear; a tie at D-1 is none.
+                d = c_a - c_b
+                last = None
+                for i in range(1, lb):
+                    if d[i - 1] < 0 < d[i]:
+                        last = 'bull'
+                    elif d[i - 1] > 0 > d[i]:
+                        last = 'bear'
+                if last is None or d[-1] == 0:
+                    return {'bull': False, 'bear': False, 'none': True}
+                bull = last == 'bull' and d[-1] > 0
+                bear = last == 'bear' and d[-1] < 0
+                return {'bull': bull, 'bear': bear,
+                        'none': not bull and not bear}
+            cloud_top = np.maximum(c_a, c_b)
+            cloud_bot = np.minimum(c_a, c_b)
+            if recipe == 'native_ichimoku_cloud_route_v1':
+                # Close vs cloud (above top / inside / below bottom) at the
+                # window's first and last bar as a start->end pair.
+                def _pos(i):
+                    if close_w[i] > cloud_top[i]:
+                        return 'above'
+                    if close_w[i] < cloud_bot[i]:
+                        return 'below'
+                    return 'inside'
+
+                pair = _pos(0) + '_' + _pos(lb - 1)
+                out = {p0 + '_' + p1: False
+                       for p0 in ('above', 'inside', 'below')
+                       for p1 in ('above', 'inside', 'below')}
+                out[pair] = True
+                return out
+            if recipe == 'native_ichimoku_time_above_v1':
+                # Share of window closes above the cloud top; most >= 2/3,
+                # some >= 1/3, else none (documented constants).
+                share = float((close_w > cloud_top).sum(dtype=np.float64)) / lb
+                return {'most': share >= 2.0 / 3.0,
+                        'some': 1.0 / 3.0 <= share < 2.0 / 3.0,
+                        'none': share < 1.0 / 3.0}
+            if recipe == 'native_ichimoku_kijun_tests_v1':
+                # A test = a window bar whose range straddles the kijun;
+                # from above = support test, held when the next 3 closes
+                # stay >= kijun, else broke; mirror from below = resistance
+                # test. A test whose 3-bar forward window runs past D-1 is
+                # unknowable and not counted (documented). The most recent
+                # counted test decides; no test -> none.
+                last = 'none'
+                for i in range(lb):
+                    if not (low_w[i] <= k_w[i] <= high_w[i]):
+                        continue
+                    if i + 3 > lb - 1:
+                        continue
+                    if close_w[i] >= k_w[i]:
+                        held = all(close_w[i + j] >= k_w[i + j]
+                                   for j in (1, 2, 3))
+                        last = 'support_held' if held else 'broke'
+                    else:
+                        held = all(close_w[i + j] <= k_w[i + j]
+                                   for j in (1, 2, 3))
+                        last = 'resistance_held' if held else 'broke'
+                out = {o: False for o in ('support_held', 'resistance_held',
+                                          'broke', 'none')}
+                out[last] = True
+                return out
+            # native_ichimoku_chikou_route_v1: chikou vs the price 26 bars
+            # back, close-vs-close (documented); improving = chikou side
+            # below->above across the window, mirror worsening, same = no
+            # side change (a tie at either end counts as same).
+            back = close[ws - off:len(candles) - off]
+
+            def _side(i):
+                if close_w[i] > back[i]:
+                    return 1
+                if close_w[i] < back[i]:
+                    return -1
+                return 0
+
+            s0 = _side(0)
+            s1 = _side(lb - 1)
+            return {'improving': s0 < 0 < s1, 'worsening': s1 < 0 < s0,
+                    'same': not (s0 < 0 < s1) and not (s1 < 0 < s0)}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -3191,6 +3439,112 @@ FACETS = {
         outcome_spec={'down_vol': ('boolean', '=', 'one'),
                       'up_vol': ('boolean', '=', 'one'),
                       'neutral': ('boolean', '=', 'one')}),
+    # ---- batch 24 (ruling part 3 #16-#26, approved 2026-11-01): ADX14/DI
+    # and Ichimoku families on the standard constants (ADX/DI Wilder 14;
+    # Ichimoku 9/26/52 with the 26-bar projection offset). ----
+    'adx_slope': dict(
+        binding='mixed', l1_l3=(('momentum', 'ADX14'),),
+        recipe='native_adx_slope_v1',
+        unit='adx14_change_across_window',
+        outcomes=('rising', 'falling', 'flat'), cutoff_id=None,
+        outcome_spec={'rising': ('boolean', '=', 'one'),
+                      'falling': ('boolean', '=', 'one'),
+                      'flat': ('boolean', '=', 'one')}),
+    'di_cross': dict(
+        binding='mixed', l1_l3=(('momentum', 'ADX14'),),
+        recipe='native_adx_di_cross_v1',
+        unit='latest_plus_di_minus_di_cross_confirmed_at_d_minus_1',
+        outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+        outcome_spec={'bull': ('boolean', '=', 'one'),
+                      'bear': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'peak_turn': dict(
+        binding='mixed', l1_l3=(('momentum', 'ADX14'),),
+        recipe='native_adx_peak_turn_v1',
+        unit='most_recent_adx_local_peak_followed_by_two_declining_bars',
+        outcomes=('yes', 'no'), cutoff_id=None,
+        outcome_spec={'yes': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one')}),
+    'time_trending': dict(
+        binding='mixed', l1_l3=(('momentum', 'ADX14'),),
+        recipe='native_adx_time_trending_v1',
+        unit='share_of_window_bars_with_adx_above_line',
+        outcomes=('most', 'some', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C238_time_trending__scalar25',),
+        baked_map={'C238_time_trending__scalar25': 'adx_line'},
+        outcome_spec={'most': ('boolean', '=', 'one'),
+                      'some': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'trend_strength_route': dict(
+        binding='mixed', l1_l3=(('momentum', 'ADX14'),),
+        recipe='native_adx_trend_strength_route_v1',
+        unit='adx_strength_zone_start_to_end_pair',
+        outcomes=tuple(z0 + '_' + z1
+                       for z0 in ('trending', 'mid', 'weak')
+                       for z1 in ('trending', 'mid', 'weak')),
+        cutoff_id=None,
+        baked_cutoff_ids=('C236_trend_strength_route__scalar25',
+                          'C237_trend_strength_route__scalar15'),
+        baked_map={'C236_trend_strength_route__scalar25': 'trend_line',
+                   'C237_trend_strength_route__scalar15': 'weak_line'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(z0 + '_' + z1
+                                     for z0 in ('trending', 'mid', 'weak')
+                                     for z1 in ('trending', 'mid', 'weak'))}),
+    'tk_cross': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_tk_cross_v1',
+        unit='latest_tenkan_kijun_cross_confirmed_at_d_minus_1',
+        outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+        outcome_spec={'bull': ('boolean', '=', 'one'),
+                      'bear': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'cloud_twist': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_cloud_twist_v1',
+        unit='latest_senkou_a_b_twist_in_visible_cloud_span',
+        outcomes=('bull', 'bear', 'none'), cutoff_id=None,
+        outcome_spec={'bull': ('boolean', '=', 'one'),
+                      'bear': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'cloud_route': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_cloud_route_v1',
+        unit='close_vs_cloud_position_start_to_end_pair',
+        outcomes=tuple(p0 + '_' + p1
+                       for p0 in ('above', 'inside', 'below')
+                       for p1 in ('above', 'inside', 'below')),
+        cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(p0 + '_' + p1
+                                     for p0 in ('above', 'inside', 'below')
+                                     for p1 in ('above', 'inside', 'below'))}),
+    'time_above': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_time_above_v1',
+        unit='share_of_window_closes_above_cloud_top',
+        outcomes=('most', 'some', 'none'), cutoff_id=None,
+        outcome_spec={'most': ('boolean', '=', 'one'),
+                      'some': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'kijun_tests': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_kijun_tests_v1',
+        unit='most_recent_kijun_straddle_test_outcome',
+        outcomes=('support_held', 'resistance_held', 'broke', 'none'),
+        cutoff_id=None,
+        outcome_spec={'support_held': ('boolean', '=', 'one'),
+                      'resistance_held': ('boolean', '=', 'one'),
+                      'broke': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'chikou_route': dict(
+        binding='mixed', l1_l3=(('momentum', 'Ichimoku'),),
+        recipe='native_ichimoku_chikou_route_v1',
+        unit='chikou_side_change_across_window',
+        outcomes=('improving', 'worsening', 'same'), cutoff_id=None,
+        outcome_spec={'improving': ('boolean', '=', 'one'),
+                      'worsening': ('boolean', '=', 'one'),
+                      'same': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -3979,6 +4333,10 @@ EXACT_PARTITION_FACETS = {
     # batch 23 (ruling part 3 #9-#15): Bollinger/Donchian/ATR partitions
     'reentry', 'band_walk', 'pctb_path', 'time_upper',
     'fail_shape', 'range_max_position', 'vol_direction_link',
+    # batch 24 (ruling part 3 #16-#26): ADX/DI and Ichimoku partitions
+    'adx_slope', 'di_cross', 'peak_turn', 'time_trending',
+    'trend_strength_route', 'tk_cross', 'cloud_twist', 'cloud_route',
+    'time_above', 'kijun_tests', 'chikou_route',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -4225,7 +4583,16 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
                         'native_donchian_fail_shape_v1',
                         'native_atr_range_max_position_v1',
-                        'native_atr_vol_direction_link_v1'}
+                        'native_atr_vol_direction_link_v1',
+                        'native_adx_slope_v1', 'native_adx_di_cross_v1',
+                        'native_adx_peak_turn_v1', 'native_adx_time_trending_v1',
+                        'native_adx_trend_strength_route_v1',
+                        'native_ichimoku_tk_cross_v1',
+                        'native_ichimoku_cloud_twist_v1',
+                        'native_ichimoku_cloud_route_v1',
+                        'native_ichimoku_time_above_v1',
+                        'native_ichimoku_kijun_tests_v1',
+                        'native_ichimoku_chikou_route_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -4287,7 +4654,16 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_follow_through_v1',
                                  'native_bb_reentry_v1', 'native_bb_band_walk_v1',
                                  'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
-                                 'native_donchian_fail_shape_v1'):
+                                 'native_donchian_fail_shape_v1',
+                                 'native_adx_slope_v1', 'native_adx_di_cross_v1',
+                                 'native_adx_peak_turn_v1', 'native_adx_time_trending_v1',
+                                 'native_adx_trend_strength_route_v1',
+                                 'native_ichimoku_tk_cross_v1',
+                                 'native_ichimoku_cloud_twist_v1',
+                                 'native_ichimoku_cloud_route_v1',
+                                 'native_ichimoku_time_above_v1',
+                                 'native_ichimoku_kijun_tests_v1',
+                                 'native_ichimoku_chikou_route_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -4341,6 +4717,18 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                      'native_bb_pctb_path_v1', 'native_bb_time_upper_v1',
                                      'native_donchian_fail_shape_v1'):
                 required += 20  # Bollinger SMA20/stddev seed or Donchian20 channel
+            if feature['recipe'] in ('native_adx_slope_v1', 'native_adx_di_cross_v1',
+                                     'native_adx_peak_turn_v1',
+                                     'native_adx_time_trending_v1',
+                                     'native_adx_trend_strength_route_v1'):
+                required += 27  # registered ADX14/DI Wilder seed warmup
+            if feature['recipe'] in ('native_ichimoku_tk_cross_v1',
+                                     'native_ichimoku_cloud_twist_v1',
+                                     'native_ichimoku_cloud_route_v1',
+                                     'native_ichimoku_time_above_v1',
+                                     'native_ichimoku_kijun_tests_v1',
+                                     'native_ichimoku_chikou_route_v1'):
+                required += 78  # 52 senkouB seed + 26 projection offset
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(

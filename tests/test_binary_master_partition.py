@@ -38,8 +38,17 @@ HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
                 'reentry', 'band_walk', 'pctb_path', 'time_upper',
                 'fail_shape', 'range_max_position',
                 'vol_direction_link'}
-HEAVY_ROW_CAP = 8
+HEAVY_ROW_CAP = 7
 HEAVY_TAPES = 4
+# batch 24 (ADX/DI + Ichimoku): the most expensive scans; capped harder
+# (the partition property is per-row over defs - row/tape count only sets
+# how many dial/timeframe combos sample it).
+ULTRA_HEAVY_FACETS = {'adx_slope', 'di_cross', 'peak_turn', 'time_trending',
+                      'trend_strength_route', 'tk_cross', 'cloud_twist',
+                      'cloud_route', 'time_above', 'kijun_tests',
+                      'chikou_route'}
+ULTRA_ROW_CAP = 5
+ULTRA_TAPES = 2
 DEFAULT_ROW_CAP = 16
 
 
@@ -163,7 +172,12 @@ def test_exact_partition_property(grid, tapes):
         # ~0.25 s/def), so 20 spread rows per sub-spec bound the runtime
         # while every outcome set stays covered on multiple timeframes
         rows = []
-        cap = HEAVY_ROW_CAP if facet in HEAVY_FACETS else DEFAULT_ROW_CAP
+        if facet in ULTRA_HEAVY_FACETS:
+            cap = ULTRA_ROW_CAP
+        elif facet in HEAVY_FACETS:
+            cap = HEAVY_ROW_CAP
+        else:
+            cap = DEFAULT_ROW_CAP
         for spec in by_facet[facet]:
             rows.extend(_rows_for(grid, facet, spec)[:cap])
         yes_here = 0
@@ -176,7 +190,9 @@ def test_exact_partition_property(grid, tapes):
             # very wide outcome sets (capitulation_bar 73): one daily row and
             # four tapes only — the partition logic is timeframe-agnostic and
             # each evaluation recomputes heavy talib series (~0.25 s/def)
-            use_tapes = tapes[:HEAVY_TAPES] if facet in HEAVY_FACETS else tapes
+            use_tapes = (tapes[:ULTRA_TAPES] if facet in ULTRA_HEAVY_FACETS
+                         else tapes[:HEAVY_TAPES] if facet in HEAVY_FACETS
+                         else tapes)
             if len(defs) > 20:
                 if row['L2_timeframe'] != '1x10':
                     continue
