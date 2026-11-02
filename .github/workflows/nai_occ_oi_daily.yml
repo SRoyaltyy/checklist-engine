@@ -1,0 +1,20 @@
+name: nai-occ-oi-daily
+on:
+  workflow_dispatch:
+    inputs:
+      limit: {description: 'test: only first N names (0=all)', default: '0'}
+      probe: {description: 'run source probe first', default: 'true'}
+  schedule: [{cron: '30 13 * * 2-6'}]
+permissions: {contents: write}
+concurrency: {group: nai-occ-oi, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env: {GH_TOKEN: '${{ github.token }}', OCC_LIMIT: '${{ inputs.limit }}'}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pyarrow pandas
+      - if: inputs.probe == 'true'
+        run: python scripts/nai/oi_probe.py
+      - run: python scripts/nai/occ_oi_daily.py

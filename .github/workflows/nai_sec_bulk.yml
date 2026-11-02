@@ -1,0 +1,17 @@
+name: nai-sec-bulk
+on:
+  workflow_dispatch:
+    inputs:
+      identity_only: {description: 'only tickers map', default: ''}
+  schedule: [{cron: '17 22 * * 6'}]
+permissions: {contents: write}
+concurrency: {group: nai-sec-bulk, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env: {PRIMARY_ACTION_RELAY_URL: '${{ secrets.PRIMARY_ACTION_RELAY_URL }}', GH_TOKEN: '${{ github.token }}', IDENTITY_ONLY: '${{ inputs.identity_only }}'}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pyarrow pandas
+      - run: df -h . && python scripts/nai/sec_bulk.py

@@ -1,0 +1,291 @@
+{
+  "format": "DOLT_OPTIONS_COVERAGE_V6",
+  "status": "SOURCE_COVERAGE_EVALUATION_ONLY",
+  "gantt_row": "[1 Data / Options + money-flow source hunt (#165)]",
+  "observed_at_hkt": "2026-11-01T09:55:00+08:00",
+  "database": {
+    "box_path": "/workspace/options_moneyflow_dl/dolt/options",
+    "remote": "https://doltremoteapi.dolthub.com/post-no-preference/options",
+    "head_commit": "v0pv41betm39v1duuma05gjqjbtn4b7t",
+    "head_message": "volatility_history 2026-10-28 update",
+    "approx_size_on_disk": "8.3G"
+  },
+  "retained_universe": {
+    "count": 8439,
+    "definition": "ACCEPTED_PRICE_INVENTORY_V6.csv (8447) minus REPLAY_QUARANTINE_V1.csv (8: ABX,AMTD,CATO,FEIM,HHS,JHI,NKTR,OCGN); matches PRICE_GATE_EX_QUARANTINE_V1.json v1_names=8439 and PRICE_V1_COMPOSED_PUBLIC_READBACK_V1.json completed=8439",
+    "authority_docs": [
+      "docs/ACCEPTED_PRICE_INVENTORY_V6.csv",
+      "docs/REPLAY_QUARANTINE_V1.csv",
+      "docs/PRICE_GATE_EX_QUARANTINE_V1.json",
+      "docs/PRICE_V1_COMPOSED_PUBLIC_READBACK_V1.json"
+    ],
+    "composer_run": 41221028803
+  },
+  "schema": {
+    "tables": [
+      "volatility_history",
+      "option_chain"
+    ],
+    "volatility_history_columns": [
+      "date",
+      "act_symbol",
+      "hv_current",
+      "hv_week_ago",
+      "hv_month_ago",
+      "hv_year_high",
+      "hv_year_high_date",
+      "hv_year_low",
+      "hv_year_low_date",
+      "iv_current",
+      "iv_week_ago",
+      "iv_month_ago",
+      "iv_year_high",
+      "iv_year_high_date",
+      "iv_year_low",
+      "iv_year_low_date"
+    ],
+    "option_chain_columns": [
+      "date",
+      "act_symbol",
+      "expiration",
+      "strike",
+      "call_put",
+      "bid",
+      "ask",
+      "vol",
+      "delta",
+      "gamma",
+      "theta",
+      "vega",
+      "rho"
+    ],
+    "open_interest_column_present": false,
+    "open_interest_note": "Neither volatility_history nor option_chain has an open-interest / OI column. Chain has bid/ask/vol(IV)/greeks only. Single-stock OI history remains a separate gap."
+  },
+  "table_spans": {
+    "volatility_history": {
+      "min_date": "2019-02-09",
+      "max_date": "2026-10-28",
+      "nrows": 1981258,
+      "nsym_source": 2342
+    },
+    "option_chain": {
+      "min_date": "2019-02-09",
+      "max_date": "2026-10-28",
+      "nrows": 121294318,
+      "nsym_source": 2333
+    }
+  },
+  "dense_enough_rule": {
+    "window": "calendar years 2020 through 2026 inclusive",
+    "volatility_history": "a retained name is dense-enough if it has >= 100 session-rows in volatility_history in at least 4 of those 7 years",
+    "option_chain": "a retained name is dense-enough if it has at least one option_chain row in at least 4 of those 7 years (presence-years; distinct session-day density not computed for chain in V6)",
+    "rationale": "VH full years in this clone typically show ~150-160 session-rows; 100 is a simple floor (~40% of a ~252-day year). Chain density uses multi-year presence because per-symbol per-year distinct-date export was too heavy for this pass."
+  },
+  "overlap_vs_retained_8439": {
+    "volatility_history_any_row": {
+      "count": 1808,
+      "pct": 21.4243
+    },
+    "option_chain_any_row": {
+      "count": 1801,
+      "pct": 21.3414
+    },
+    "both_tables_any_row": {
+      "count": 1801,
+      "pct": 21.3414
+    },
+    "either_table_any_row": {
+      "count": 1808,
+      "pct": 21.4243
+    },
+    "volatility_history_dense_enough": {
+      "count": 1308,
+      "pct": 15.4995
+    },
+    "option_chain_dense_enough": {
+      "count": 1395,
+      "pct": 16.5304
+    }
+  },
+  "per_year_2020_2026": {
+    "2020": {
+      "volatility_history": {
+        "source_symbols": 1723,
+        "source_nrows": 248989,
+        "matched_retained": 1313,
+        "retained_presence_pct": 15.5587,
+        "dense_retained_nrows_ge_100": 1255
+      },
+      "option_chain": {
+        "source_symbols": 1723,
+        "source_nrows": 12817668,
+        "matched_retained": 1313,
+        "retained_presence_pct": 15.5587
+      }
+    },
+    "2021": {
+      "volatility_history": {
+        "source_symbols": 1597,
+        "source_nrows": 231413,
+        "matched_retained": 1258,
+        "retained_presence_pct": 14.907,
+        "dense_retained_nrows_ge_100": 1212
+      },
+      "option_chain": {
+        "source_symbols": 1597,
+        "source_nrows": 14664190,
+        "matched_retained": 1258,
+        "retained_presence_pct": 14.907
+      }
+    },
+    "2022": {
+      "volatility_history": {
+        "source_symbols": 1605,
+        "source_nrows": 230773,
+        "matched_retained": 1310,
+        "retained_presence_pct": 15.5232,
+        "dense_retained_nrows_ge_100": 1266
+      },
+      "option_chain": {
+        "source_symbols": 1605,
+        "source_nrows": 14082796,
+        "matched_retained": 1310,
+        "retained_presence_pct": 15.5232
+      }
+    },
+    "2023": {
+      "volatility_history": {
+        "source_symbols": 1644,
+        "source_nrows": 221222,
+        "matched_retained": 1408,
+        "retained_presence_pct": 16.6844,
+        "dense_retained_nrows_ge_100": 1318
+      },
+      "option_chain": {
+        "source_symbols": 1635,
+        "source_nrows": 14352823,
+        "matched_retained": 1401,
+        "retained_presence_pct": 16.6015
+      }
+    },
+    "2024": {
+      "volatility_history": {
+        "source_symbols": 1622,
+        "source_nrows": 280818,
+        "matched_retained": 1446,
+        "retained_presence_pct": 17.1347,
+        "dense_retained_nrows_ge_100": 1387
+      },
+      "option_chain": {
+        "source_symbols": 1612,
+        "source_nrows": 16167068,
+        "matched_retained": 1438,
+        "retained_presence_pct": 17.0399
+      }
+    },
+    "2025": {
+      "volatility_history": {
+        "source_symbols": 1606,
+        "source_nrows": 397529,
+        "matched_retained": 1477,
+        "retained_presence_pct": 17.5021,
+        "dense_retained_nrows_ge_100": 1442
+      },
+      "option_chain": {
+        "source_symbols": 1599,
+        "source_nrows": 23667966,
+        "matched_retained": 1470,
+        "retained_presence_pct": 17.4191
+      }
+    },
+    "2026": {
+      "volatility_history": {
+        "source_symbols": 1638,
+        "source_nrows": 323216,
+        "matched_retained": 1555,
+        "retained_presence_pct": 18.4264,
+        "dense_retained_nrows_ge_100": 1498
+      },
+      "option_chain": {
+        "source_symbols": 1628,
+        "source_nrows": 23844794,
+        "matched_retained": 1548,
+        "retained_presence_pct": 18.3434
+      }
+    }
+  },
+  "pit_status": "UNVERIFIED",
+  "pit_note": "No point-in-time as-of / revision audit was run against this clone. Do not treat rows as PIT-safe for answers or mining.",
+  "gaps_and_blockers": [
+    "No open-interest column in either table; single-stock OI history 2020-2026 still missing from free sources.",
+    "Retained-universe presence tops out around ~18% in any year (source universe is ~1.6k\u20131.7k symbols vs 8439 retained).",
+    "PIT unverified.",
+    "Large/small order flow, block/dark-pool prints, ETF fund flows not in this Dolt DB.",
+    "PR #165 CBOE index histories are on main; this coverage only evaluates the post-no-preference/options Dolt clone."
+  ],
+  "sample_matched_retained": [
+    "A",
+    "AA",
+    "AAL",
+    "AAMI",
+    "AAOI",
+    "AAON",
+    "AAP",
+    "AAPL",
+    "AAT",
+    "ABBV",
+    "ABCB",
+    "ABEV",
+    "ABG",
+    "ABM",
+    "ABNB",
+    "ABR",
+    "ABT",
+    "ACAD",
+    "ACGL",
+    "ACHC",
+    "ACI",
+    "ACIW",
+    "ACLS",
+    "ACM",
+    "ACMR",
+    "ACN",
+    "ACT",
+    "ADAM",
+    "ADBE",
+    "ADC"
+  ],
+  "sample_unmatched_retained": [
+    "AAA",
+    "AAAU",
+    "AACG",
+    "AADR",
+    "AAME",
+    "AAPB",
+    "AAPD",
+    "AAPR",
+    "AAPU",
+    "AAPX",
+    "AAPY",
+    "AAUC",
+    "AAVM",
+    "AAXJ",
+    "AB",
+    "ABAT",
+    "ABCL",
+    "ABCS",
+    "ABEO",
+    "ABEQ",
+    "ABFL",
+    "ABLD",
+    "ABLG",
+    "ABLV",
+    "ABOS",
+    "ABOT",
+    "ABSI",
+    "ABTC",
+    "ABTS",
+    "ABUS"
+  ]
+}

@@ -34,3 +34,7 @@ includes the six archived older filing pages missed by V1. Neither those pages
 nor current undated symbol lists establish historical ticker assignments.
 Only GitHub-published source files are read; live SEC access stays held. The
 running price world 40621517496 is not restarted, cancelled or reseeded.
+
+## Retained-cohort ticker join (measured)
+
+See [`SEC_RETAINED_IDENTITY_MAP_V1.md`](SEC_RETAINED_IDENTITY_MAP_V1.md): of the price retained **8,439** names, **3,996 (47.35%)** have a UNIQUE CIK with shares-filed dated association from existing archives; **4,419** remain `NO_CIK`; formal ticker valid_from/to ledger is still **0**. Provider requests: 0. Gantt `[1 Data / SEC / analyst / sector history]` ~**18%** amber.
