@@ -162,4 +162,32 @@ export default {
           if (!got.ok) throw new Error(`search failed: ${got.status}`);
           return reply({ ok: true, total: got.body.total_count, hits: (got.body.items || []).map((i) => ({ path: i.path, name: i.name })) });
         }
+        case "grep": {
+          const q = p.get("q") || (bodyJson && bodyJson.q);
+          if (!q) throw new Error("q is required");
+          const limit = Math.min(Number(p.get("limit") || 40), 200);
+          const scope = p.get("path") || (bodyJson && bodyJson.path) || "";
+          const ref = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
+          if (!ref.ok) throw new Error(`grep ref failed: ${ref.status}`);
+          const tree = await gh(env, `/git/trees/${ref.body.object.sha}?recursive=1`);
+          if (!tree.ok) throw new Error(`grep tree failed: ${tree.status}`);
+          const textish = /\.(py|md|json|jsonl|yml|yaml|txt|csv|ts|js|cfg|toml|ini)$/i;
+          const all = (tree.body.tree || []).filter((n) => n.type === "blob" && textish.test(n.path) && (scope ? n.path === scope || n.path.startsWith(scope.replace(/\/$/, "") + "/") : true));
+          const blobs = all.slice(0, 40);
+          const needle = q.toLowerCase();
+          const hits = [];
+          for (const n of blobs) {
+            if (hits.length >= limit) break;
+            const r = await gh(env, `/git/blobs/${n.sha}`);
+            if (!r.ok) continue;
+            const lines = dec(r.body.content).split("\n");
+            for (let k = 0; k < lines.length; k += 1) {
+              if (lines[k].toLowerCase().includes(needle)) {
+                hits.push({ path: n.path, line: k + 1, text: lines[k].trim().slice(0, 200) });
+                if (hits.length >= limit) break;
+              }
+            }
+          }
+          return reply({ ok: true, candidates: all.length, scanned: blobs.length, truncated: all.length > blobs.length, hits });
+        }
 @@APPEND@@
