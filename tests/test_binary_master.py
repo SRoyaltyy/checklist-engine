@@ -28,14 +28,9 @@ def _iter_specs():
             yield facet, spec
 
 
-def _l1_l3(facet):
-    entry = FACETS[facet]
-    spec = entry[0] if isinstance(entry, list) else entry
-    return spec['l1_l3'][0]
-
-
-def _first_variant(grid, facet):
-    l1, l3 = _l1_l3(facet)
+def _first_variant(grid, facet, spec=None):
+    l1, l3 = (spec or (FACETS[facet][0] if isinstance(FACETS[facet], list)
+                       else FACETS[facet]))['l1_l3'][0]
     qid = next(q for q in sorted(grid.questions)
                if q.split('|')[1:4] == [l1, l3, facet])
     return grid.tree[qid], next(grid.variants(qid))
@@ -58,7 +53,7 @@ def test_batch1_facets_have_exactly_one_registered_cutoff(grid):
 
 def test_bind_default_and_changed_variants(grid):
     for facet, spec in _iter_specs():
-        row, variant = _first_variant(grid, facet)
+        row, variant = _first_variant(grid, facet, spec)
         defs = bind_master_question(row, variant)
         assert len(defs) == len(spec['outcomes'])
         for d in defs:
@@ -75,10 +70,16 @@ def test_bind_default_and_changed_variants(grid):
         defs2 = bind_master_question(row, changed)
         if {d['comparison_threshold'] for d in defs} == {d['comparison_threshold'] for d in defs2}:
             # all-boolean/code facets carry dials inside the feature (baked map);
-            # the changed variant must differ in at least one baked feature value
-            assert spec.get('baked_map'), facet
-            assert any({d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
-                       for key in spec['baked_map'].values())
+            # a changed variant must differ somewhere unless every dial is
+            # accounted for (_bind_facet's allowed-set check) and inert by
+            # design (e.g. path_dir t-stat rows register baseline/zone ctx
+            # dials the measurement legitimately ignores).
+            accounted = ({spec['cutoff_id']} | set(spec.get('baked_cutoff_ids') or ())) - {None}
+            assert accounted, facet
+            keys = list((spec.get('baked_map') or {}).values())
+            if keys:
+                assert any({d['feature'][key] for d in defs} != {d['feature'][key] for d in defs2}
+                           for key in keys)
 
 
 def test_ratio_mirror_threshold_is_exact_reciprocal(grid):
@@ -476,12 +477,15 @@ def test_evaluate_vs_own_past(grid):
              100 if i < 250 else 50) for i in range(span)]
     bars = _bars_hlv(spec)
     assert evaluate_master(defs['low'], bars, setup, last).answer == 'YES'
-    # dollar_volume|vs_own_past registers only S_baseline_bars (no ratio dial)
-    # -> stays honestly unbound this batch (counted by the emitter, not skipped)
-    import pytest as _pytest
+    # dollar_volume|vs_own_past: batch 19 binds it (ruling part 7 #51) with
+    # only S_baseline_bars baked; same mean-ratio measurement
     row2, variant2 = _q(grid, 'B|volume|dollar_volume|vs_own_past|1x10')
-    with _pytest.raises(NotImplementedError):
-        bind_master_question(row2, variant2)
+    defs2 = _by_outcome(bind_master_question(row2, variant2))
+    spec = [(10 + i * 0.01, 10.2 + i * 0.01, 9.8 + i * 0.01, 10.1 + i * 0.01,
+             100 if i < 250 else 200) for i in range(span)]
+    bars = _bars_hlv(spec)
+    assert evaluate_master(defs2['high'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs2['low'], bars, setup, last).answer == 'NO'
 
 
 def test_bind_batch4_spike(grid):

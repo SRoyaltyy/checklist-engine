@@ -378,6 +378,58 @@ def _path_series(feature, candles, high, low, close):
     return series, known
 
 
+def _generic_series(feature, candles, high, low, close):
+    """Per-bar L3 series for the approved cross-L3 template facets (ruling
+    parts 6-8, James/Cyrus 2026-11-01). One resolver so speed / vs_own_past /
+    later route-stage-shock blocks read the same registered series.
+
+    series_kind (l3_map, per L3):
+      CLOSE      closes
+      DAILY_RET  per-bar close-to-close return (length len(close)-1)
+      MA         registered _ma_series (ma_kind/ma_period)
+      ATR14      registered _native_atr_series
+      DOLLAR     close * share volume
+      ADX14      talib.ADX(14) registered values
+      path kinds RSI/STOCH/WILLR/ROC/MACD_HIST/AD/OBV/MFI via _path_series
+                 (path_kind + osc_* params; cumulative AD/OBV read through the
+                 same registered values as path_dir)
+    Returns (series, known mask); None when the registered inputs are
+    unusable. Series length may be shorter than len(close) (DAILY_RET,
+    MA, ROC, WILLR); the last-N-values window discipline of path_dir
+    applies: the window is the LAST lookback KNOWN series values.
+    """
+    kind = feature['series_kind']
+    if kind == 'CLOSE':
+        return close, np.ones(len(close), dtype=bool)
+    if kind == 'DAILY_RET':
+        base = close[:-1]
+        if (base <= 0).any():
+            return None
+        return close[1:] / base - 1.0, np.ones(len(close) - 1, dtype=bool)
+    if kind == 'MA':
+        ma = _ma_series(feature, close)
+        if ma is None:
+            return None
+        return ma, np.ones(len(ma), dtype=bool)
+    if kind == 'ATR14':
+        series = _native_atr_series(high, low, close)
+        return series, ~np.isnan(series)
+    if kind == 'DOLLAR':
+        vols = _nonnegative([b.volume for b in candles], 'native volume')
+        if vols is None:
+            return None
+        return close * vols, np.ones(len(close), dtype=bool)
+    if kind == 'ADX14':
+        import talib
+        series = talib.ADX(np.asarray(high, dtype=np.float64),
+                           np.asarray(low, dtype=np.float64),
+                           np.asarray(close, dtype=np.float64),
+                           timeperiod=14)
+        return series, ~np.isnan(series)
+    feature = dict(feature, path_kind=kind)
+    return _path_series(feature, candles, high, low, close)
+
+
 def _split_segments(close):
     """Split a window at its FIRST lowest close (argmin; on a plateau the
     earliest lowest bar). The pivot bar belongs to BOTH legs: the decline
@@ -1360,6 +1412,141 @@ def _measure(recipe, candles, feature=None):
             return {'expanding': slope > 5.0,
                     'contracting': slope < -5.0,
                     'flat': abs(slope) <= 5.0}
+        if recipe == 'native_speed_v1':
+            # Ruling part 7 #50 (approved 2026-11-01): speed = the L3 series'
+            # last third vs its first third (thirds by bar count, k = lb//3;
+            # lb < 3 -> NOT_EVALUABLE). Multiplicative band exactly as ruled:
+            # speeding = last > v x first, slowing = last < first / v,
+            # steady otherwise (v = S_ratio_band_1p5 dial where registered,
+            # else the documented 1.25 constant). first-third mean exactly 0
+            # -> NOT_EVALUABLE (documented 0-anchor rule). Cumulative lines
+            # (AD/OBV) read per-bar deltas (speed_mode='change').
+            lb = int(feature['lookback'])
+            k = lb // 3
+            if k < 1:
+                return None
+            gs = _generic_series(feature, candles, high, low, close)
+            if gs is None:
+                return None
+            series, known = gs
+            need = lb + (feature.get('speed_mode') == 'change')
+            if len(series) < need or not known[-need:].all():
+                return None
+            win = np.asarray(series[-need:], dtype=np.float64)
+            if not np.isfinite(win).all():
+                return None
+            seg = np.diff(win) if feature.get('speed_mode') == 'change' else win
+            m_first = float(seg[:k].mean(dtype=np.float64))
+            m_last = float(seg[-k:].mean(dtype=np.float64))
+            if m_first <= 0.0:
+                # Ruled NE case is m_first == 0; a NEGATIVE anchor also makes
+                # the multiplicative band ambiguous (both speeding and slowing
+                # can fire: m_last in (v*m_first, m_first/v)). NE on m_first
+                # <= 0 keeps the exact partition; flagged for James in the
+                # batch notes as a documented amendment to the ruling.
+                return None
+            v = float(feature['speed_band'])
+            if v < 1.0:
+                # Sub-1 band rungs invert the multiplicative partition
+                # (speeding = m_last > v*m_first and slowing = m_last <
+                # m_first/v overlap). Inverted-band precedent: the variant
+                # stays in the inventory but is never usable -> NE.
+                return None
+            speeding = bool(m_last > v * m_first)
+            slowing = bool(m_last < m_first / v)
+            return {'speeding': speeding, 'slowing': slowing,
+                    'steady': bool(not speeding and not slowing)}
+        if recipe == 'native_vs_own_past_v1':
+            # Ruling part 7 #51 (approved 2026-11-01): r = window mean of the
+            # L3 series / mean of the S_baseline_bars series values STRICTLY
+            # BEFORE the window (leak-proof: nothing on/after the window).
+            # high = r >= 1.5, low = r <= 2/3, normal between (documented
+            # constants; these rows register no ratio-band dial). Ratio rule:
+            # zero baseline mean with positive window mean = +inf (high);
+            # 0/0 -> NOT_EVALUABLE. Truncated baseline -> NOT_EVALUABLE.
+            lb = int(feature['lookback'])
+            base_n = int(feature['baseline_bars'])
+            gs = _generic_series(feature, candles, high, low, close)
+            if gs is None:
+                return None
+            series, known = gs
+            need = lb + base_n
+            if len(series) < need or not known[-need:].all():
+                return None
+            win_mean = float(np.asarray(series[-lb:], dtype=np.float64).mean(dtype=np.float64))
+            base_mean = float(np.asarray(series[-need:-lb], dtype=np.float64).mean(dtype=np.float64))
+            if base_mean == 0.0:
+                if win_mean > 0.0:
+                    r = math.inf
+                else:
+                    return None
+            else:
+                r = win_mean / base_mean
+            return {'high': bool(r >= 1.5), 'normal': bool(2.0 / 3.0 < r < 1.5),
+                    'low': bool(r <= 2.0 / 3.0)}
+        if recipe == 'native_drawdown_vs_past_v1':
+            # Ruling part 7 #51 drawdown variant (approved 2026-11-01):
+            # depth_t = (runningmax_close_t - C_t) / runningmax_close_t over
+            # the prefix; current depth at D-1 vs the distribution of the
+            # S_long_history_bars daily depths STRICTLY BEFORE the current
+            # bar. unusual = share(history <= current) >= 0.9 (>= 90th pct);
+            # small = NOT unusual AND share(history >= current) >= 0.1
+            # (at/below the 10th pct; the NOT-guard keeps the exact partition
+            # on constant history, where both shares are 1). Truncated
+            # history -> NOT_EVALUABLE.
+            h = int(feature['history_bars'])
+            c = np.asarray(close, dtype=np.float64)
+            run_max = np.maximum.accumulate(c)
+            depth = (run_max - c) / run_max
+            if len(depth) < h + 1:
+                return None
+            current = float(depth[-1])
+            hist = depth[-(h + 1):-1]
+            if not np.isfinite(hist).all():
+                return None
+            share_le = float((hist <= current).mean(dtype=np.float64))
+            share_ge = float((hist >= current).mean(dtype=np.float64))
+            unusual = share_le >= 0.9
+            small = (not unusual) and share_ge >= 0.1
+            return {'unusual': bool(unusual), 'typical': bool(not unusual and not small),
+                    'small': bool(small)}
+        if recipe == 'native_updown_vs_past_v1':
+            # Ruling part 7 #51 up_down_volume variant (approved 2026-11-01):
+            # per-bar up volume (body > 0) and down volume (body < 0);
+            # r = window up-share / baseline up-share over the documented
+            # 250 bars STRICTLY before the window (row registers no baseline
+            # dial; constant per ruling family precedent). unusual_up =
+            # r >= 1.5, unusual_down = r <= 2/3, typical between. Denominator
+            # zero follows the ratio rule (positive numerator -> +inf ->
+            # unusual_up; 0/0 -> NOT_EVALUABLE).
+            lb = int(feature['lookback'])
+            base_n = 250
+            vols = _nonnegative([b.volume for b in candles], 'native volume')
+            if vols is None:
+                return None
+            if len(vols) < lb + base_n:
+                return None
+            body = np.asarray(close, dtype=np.float64) - np.asarray(opened, dtype=np.float64)
+            up = np.where(body > 0, vols, 0.0)
+            down = np.where(body < 0, vols, 0.0)
+            win_up = float(up[-lb:].sum(dtype=np.float64))
+            win_dn = float(down[-lb:].sum(dtype=np.float64))
+            base_up = float(up[-(lb + base_n):-lb].sum(dtype=np.float64))
+            base_dn = float(down[-(lb + base_n):-lb].sum(dtype=np.float64))
+            win_denom = win_up + win_dn
+            base_denom = base_up + base_dn
+            if win_denom == 0.0 or base_denom == 0.0:
+                return None
+            sw = win_up / win_denom
+            sb = base_up / base_denom
+            if sb == 0.0:
+                r = math.inf if sw > 0.0 else None
+                if r is None:
+                    return None
+            else:
+                r = sw / sb
+            return {'unusual_up': bool(r >= 1.5), 'typical': bool(2.0 / 3.0 < r < 1.5),
+                    'unusual_down': bool(r <= 2.0 / 3.0)}
         if recipe == 'native_path_dir_v1':
             # OLS slope t-statistic of the L3 path series across the window:
             # rising = t > +v, falling = t < -v, flat = |t| <= v with v the
@@ -1683,6 +1870,38 @@ def _apply_transform(value, transform, feature=None):
 # facet -> spec. binding 'band': ratio/scalar band (mirror or signed thresholds).
 # binding 'bool3': three mutually exclusive boolean outcomes, no registered cutoff.
 # binding 'mixed': per-outcome declarations (boolean events + one cutoff rung).
+_B19_SERIES_MAP = {
+    # Registered/certified per-L3 series for the batch-19 cross-L3 templates
+    # (ruling parts 6-8, approved 2026-11-01). series_warmup is a conservative
+    # candle lower bound; each measurement re-checks the known mask.
+    'MACD12_26_9': {'series_kind': 'MACD_HIST', 'osc_fast': '12', 'osc_slow': '26',
+                    'osc_signal': '9', 'series_warmup': '33'},
+    'ROC20': {'series_kind': 'ROC', 'osc_period': '20', 'series_warmup': '20'},
+    'RSI6': {'series_kind': 'RSI', 'osc_period': '6', 'series_warmup': '6'},
+    'RSI12': {'series_kind': 'RSI', 'osc_period': '12', 'series_warmup': '12'},
+    'RSI14': {'series_kind': 'RSI', 'osc_period': '14', 'series_warmup': '14'},
+    'RSI24': {'series_kind': 'RSI', 'osc_period': '24', 'series_warmup': '24'},
+    'Stoch14_3': {'series_kind': 'STOCH', 'osc_period': '14', 'osc_slow': '3',
+                  'series_warmup': '16'},
+    'WilliamsR14': {'series_kind': 'WILLR', 'osc_period': '14', 'series_warmup': '13'},
+    'ADX14': {'series_kind': 'ADX14', 'series_warmup': '27'},
+    'EMA21': {'series_kind': 'MA', 'ma_kind': 'EMA', 'ma_period': '21',
+              'series_warmup': '20'},
+    'SMA20': {'series_kind': 'MA', 'ma_kind': 'SMA', 'ma_period': '20',
+              'series_warmup': '19'},
+    'SMA50': {'series_kind': 'MA', 'ma_kind': 'SMA', 'ma_period': '50',
+              'series_warmup': '49'},
+    'SMA200': {'series_kind': 'MA', 'ma_kind': 'SMA', 'ma_period': '200',
+               'series_warmup': '199'},
+    'ATR14': {'series_kind': 'ATR14', 'series_warmup': '13'},
+    'daily_returns': {'series_kind': 'DAILY_RET', 'series_warmup': '1'},
+    'AD_line': {'series_kind': 'AD', 'series_warmup': '0', 'speed_mode': 'change'},
+    'OBV': {'series_kind': 'OBV', 'series_warmup': '0', 'speed_mode': 'change'},
+    'MFI14': {'series_kind': 'MFI', 'osc_period': '14', 'series_warmup': '13'},
+    'dollar_volume': {'series_kind': 'DOLLAR', 'series_warmup': '0'},
+}
+
+
 FACETS = {
     'red_green_balance': dict(
         binding='band', mirror=True,
@@ -1763,7 +1982,57 @@ FACETS = {
                       'middle': ('boolean', '=', 'one'),
                       'at_price_low': ('boolean', '=', 'one'),
                       'end': ('boolean', '=', 'one')}),
-    'vs_own_past': dict(
+    # ---- batch 19 (ruling parts 6-8 approval 2026-11-01): cross-L3
+    # speed + vs_own_past on every L3 with a registered/certified series.
+    # Held out: SPY_VIX + vs_SPY/vs_sector_peers/vs_theme_peers (cross-asset
+    # plumbing held for Cyrus), VWAP_anchored (anchor ruling), squeeze
+    # (binds with the part-3 squeeze constants). ----
+    'speed': [
+        dict(
+            binding='mixed', recipe='native_speed_v1',
+            unit='mean_last_third_vs_first_third_of_l3_series',
+            outcomes=('speeding', 'slowing', 'steady'), cutoff_id=None,
+            baked_cutoff_ids=('S_ratio_band_1p5',),
+            baked_map={'S_ratio_band_1p5': 'speed_band'},
+            l1_l3=(('momentum', 'MACD12_26_9'), ('momentum', 'ROC20'),
+                   ('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+                   ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+                   ('overbought_oversold', 'Stoch14_3'),
+                   ('overbought_oversold', 'WilliamsR14')),
+            l3_map=_B19_SERIES_MAP,
+            outcome_spec={'speeding': ('boolean', '=', 'one'),
+                          'slowing': ('boolean', '=', 'one'),
+                          'steady': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_speed_v1',
+            unit='mean_last_third_vs_first_third_of_l3_series',
+            outcomes=('speeding', 'slowing', 'steady'), cutoff_id=None,
+            baked_cutoff_ids=('S_baseline_bars', 'S_osc_zone_high', 'S_osc_zone_low',
+                              'S_ratio_band_1p5'),
+            baked_map={'S_baseline_bars': 'baseline_bars_ctx',
+                       'S_osc_zone_high': 'zone_high_ctx',
+                       'S_osc_zone_low': 'zone_low_ctx',
+                       'S_ratio_band_1p5': 'speed_band'},
+            l1_l3=(('volume', 'AD_line'), ('volume', 'MFI14'), ('volume', 'OBV')),
+            l3_map=_B19_SERIES_MAP,
+            outcome_spec={'speeding': ('boolean', '=', 'one'),
+                          'slowing': ('boolean', '=', 'one'),
+                          'steady': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_speed_v1',
+            unit='mean_last_third_vs_first_third_of_l3_series',
+            outcomes=('speeding', 'slowing', 'steady'), cutoff_id=None,
+            const_extra={'speed_band': '1.25'},
+            l1_l3=(('momentum', 'ADX14'), ('moving_averages', 'EMA21'),
+                   ('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+                   ('moving_averages', 'SMA200'), ('return_path', 'daily_returns'),
+                   ('volatility', 'ATR14'), ('volume', 'dollar_volume')),
+            l3_map=_B19_SERIES_MAP,
+            outcome_spec={'speeding': ('boolean', '=', 'one'),
+                          'slowing': ('boolean', '=', 'one'),
+                          'steady': ('boolean', '=', 'one')}),
+    ],
+    'vs_own_past': [dict(
         binding='band', mirror=True,
         l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_vs_own_past_v1',
@@ -1774,6 +2043,56 @@ FACETS = {
         volume_source_by_l3={'RVOL20': 'volume'},
         transform_by_outcome={'high': 'identity', 'normal': 'mirror_min', 'low': 'identity'},
         comparator_by_outcome={'high': '>', 'normal': '>=', 'low': '<'}),
+        dict(
+            binding='mixed', recipe='native_vs_own_past_v1',
+            unit='window_mean_over_prior_baseline_mean_of_l3_series',
+            outcomes=('high', 'normal', 'low'), cutoff_id=None,
+            baked_cutoff_ids=('S_baseline_bars', 'S_osc_zone_high', 'S_osc_zone_low'),
+            baked_map={'S_baseline_bars': 'baseline_bars',
+                       'S_osc_zone_high': 'zone_high_ctx',
+                       'S_osc_zone_low': 'zone_low_ctx'},
+            l1_l3=(('momentum', 'MACD12_26_9'), ('momentum', 'ROC20'),
+                   ('overbought_oversold', 'RSI6'), ('overbought_oversold', 'RSI12'),
+                   ('overbought_oversold', 'RSI14'), ('overbought_oversold', 'RSI24'),
+                   ('overbought_oversold', 'Stoch14_3'),
+                   ('overbought_oversold', 'WilliamsR14'),
+                   ('volume', 'AD_line'), ('volume', 'MFI14'), ('volume', 'OBV')),
+            l3_map=_B19_SERIES_MAP,
+            outcome_spec={'high': ('boolean', '=', 'one'),
+                          'normal': ('boolean', '=', 'one'),
+                          'low': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_vs_own_past_v1',
+            unit='window_mean_over_prior_baseline_mean_of_l3_series',
+            outcomes=('high', 'normal', 'low'), cutoff_id=None,
+            baked_cutoff_ids=('S_baseline_bars',),
+            baked_map={'S_baseline_bars': 'baseline_bars'},
+            l1_l3=(('volatility', 'ATR14'), ('volume', 'dollar_volume')),
+            l3_map=_B19_SERIES_MAP,
+            outcome_spec={'high': ('boolean', '=', 'one'),
+                          'normal': ('boolean', '=', 'one'),
+                          'low': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_drawdown_vs_past_v1',
+            unit='current_drawdown_depth_vs_prior_depth_distribution',
+            outcomes=('unusual', 'typical', 'small'), cutoff_id=None,
+            baked_cutoff_ids=('S_long_history_bars',),
+            baked_map={'S_long_history_bars': 'history_bars'},
+            l1_l3=(('extremes', 'drawdown'),),
+            l3_map={'drawdown': {'series_kind': 'CLOSE', 'series_warmup': '0'}},
+            outcome_spec={'unusual': ('boolean', '=', 'one'),
+                          'typical': ('boolean', '=', 'one'),
+                          'small': ('boolean', '=', 'one')}),
+        dict(
+            binding='mixed', recipe='native_updown_vs_past_v1',
+            unit='window_up_volume_share_over_baseline_up_volume_share',
+            outcomes=('unusual_up', 'typical', 'unusual_down'), cutoff_id=None,
+            l1_l3=(('volume', 'up_down_volume'),),
+            l3_map={'up_down_volume': {'series_kind': 'CLOSE', 'series_warmup': '0'}},
+            outcome_spec={'unusual_up': ('boolean', '=', 'one'),
+                          'typical': ('boolean', '=', 'one'),
+                          'unusual_down': ('boolean', '=', 'one')}),
+    ],
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -2436,6 +2755,8 @@ EXACT_PARTITION_FACETS = {
     'weekly_trend', 'weekly_stack', 'extreme_position', 'exit_os', 'trend',
     'path_dir', 'distance_route', 'above_share',
     'efficiency', 'skew', 'autocorr', 'stack_flip',
+    # batch 19 (ruling parts 6-8): cross-L3 speed partition
+    'speed',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -2534,6 +2855,11 @@ def _bind_facet(tree_row, variant, spec):
         feature_extra['volume_source'] = spec['volume_source_by_l3'][tree_row['L3_derivative']]
     if 'l3_map' in spec:
         feature_extra.update(spec['l3_map'][tree_row['L3_derivative']])
+    if 'const_extra' in spec:
+        # documented constants for rows registering no dial (precedent: the
+        # trend 5% / weekly 1% / skew 0.5 documented constants)
+        feature_extra = dict(feature_extra)
+        feature_extra.update(spec['const_extra'])
 
     if spec['binding'] == 'bool3':
         return [_definition(spec, timeframe, lookback, outcome, 'identity', '=', '1',
@@ -2661,7 +2987,9 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_exit_os_v1', 'native_series_trend_v1',
                         'native_distance_route_v1', 'native_above_share_v1',
                         'native_efficiency_v1', 'native_skew_v1',
-                        'native_autocorr_v1', 'native_stack_flip_v1'}
+                        'native_autocorr_v1', 'native_stack_flip_v1',
+                        'native_speed_v1', 'native_vs_own_past_v1',
+                        'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -2708,7 +3036,9 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_ma_cross_count_v1', 'native_full_stack_streak_v1',
                                  'native_ma30_side_streak_v1', 'native_weekly_stack_v1',
                                  'native_path_dir_v1', 'native_distance_route_v1',
-                                 'native_above_share_v1', 'native_stack_flip_v1'):
+                                 'native_above_share_v1', 'native_stack_flip_v1',
+                                 'native_speed_v1', 'native_vs_own_past_v1',
+                                 'native_drawdown_vs_past_v1', 'native_updown_vs_past_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -2722,6 +3052,14 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += _EXTRA_PRIOR[feature['recipe']]  # 50-bar volume-median baseline
             if feature['recipe'] == 'native_ma30_side_streak_v1':
                 required += int(feature['long_history_bars'])
+            if feature['recipe'] == 'native_speed_v1':
+                required += int(feature['series_warmup']) + 1
+            if feature['recipe'] == 'native_vs_own_past_v1':
+                required += int(feature['baseline_bars']) + int(feature['series_warmup'])
+            if feature['recipe'] == 'native_drawdown_vs_past_v1':
+                required += int(feature['history_bars']) + 1
+            if feature['recipe'] == 'native_updown_vs_past_v1':
+                required += 250  # documented baseline constant (no dial registered)
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(

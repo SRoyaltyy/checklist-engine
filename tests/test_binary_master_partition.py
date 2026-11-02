@@ -138,7 +138,13 @@ def test_exact_partition_property(grid, tapes):
     total_yes = 0
     family_yes = {}
     for facet in sorted(EXACT_PARTITION_FACETS):
-        rows = [r for spec in by_facet[facet] for r in _rows_for(grid, facet, spec)]
+        # per-sub-spec row cap: the partition logic is dial- and
+        # timeframe-agnostic (each evaluation recomputes heavy talib series,
+        # ~0.25 s/def), so 20 spread rows per sub-spec bound the runtime
+        # while every outcome set stays covered on multiple timeframes
+        rows = []
+        for spec in by_facet[facet]:
+            rows.extend(_rows_for(grid, facet, spec)[:20])
         yes_here = 0
         checked = 0
         for qid, row in rows:
