@@ -297,7 +297,7 @@
     }
     if (num('vrb.fail') >= FAIL_LIMIT && !busy) { escalate('response failed x' + num('vrb.fail')); return; }
     if (awaiting && Date.now() - awaiting > STUCK_MS) {
-      if (msgNodes() <= nodesAt) {
+      if (msgNodes() < nodesAt + 2) {
         store('vrb.fail', String(num('vrb.fail') + 1));
         awaiting = 0; paint();
         if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
