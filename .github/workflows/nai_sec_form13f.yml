@@ -1,0 +1,15 @@
+name: nai-sec-form13f
+on:
+  workflow_dispatch: {}
+  schedule: [{cron: '41 23 6 * *'}]
+permissions: {contents: write}
+concurrency: {group: nai-sec-form13f, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env: {GH_TOKEN: '${{ github.token }}'}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pyarrow pandas
+      - run: python scripts/nai/sec_datasets.py form13f
