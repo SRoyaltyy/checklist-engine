@@ -1951,6 +1951,225 @@ def _measure(recipe, candles, feature=None):
             n = len(news)
             return {'zero': n == 0, 'low_band': 1 <= n <= edge,
                     'high_band': n > edge}
+        if recipe in ('native_pattern_1d_mix_v1', 'native_pattern_2d_mix_v1',
+                      'native_pattern_3d_seen_v1'):
+            # Ruling part 4 #32 (approved 2026-11-01): strict numeric candle
+            # patterns, all ratios of the bar's own range/body. Zero-range
+            # bars match nothing (documented). Dominant family = the most
+            # matching bars/pairs/triples; tie precedence bull > bear >
+            # indecision/trend > none, first-in-listed-order inside a
+            # precedence class (documented).
+            lb = int(feature['lookback'])
+            if len(candles) < lb:
+                return None
+            wk = slice(len(candles) - lb, len(candles))
+            o_w = opened[wk]
+            h_w = high[wk]
+            l_w = low[wk]
+            c_w = close[wk]
+            rng = h_w - l_w
+            abody = np.abs(c_w - o_w)
+            if recipe == 'native_pattern_1d_mix_v1':
+                if lb < 1:
+                    return None
+                pos = rng > 0
+                counts = dict.fromkeys(
+                    ('hammer', 'shooting_star', 'doji', 'spinning_top',
+                     'marubozu'), 0)
+                for i in range(lb):
+                    if not pos[i]:
+                        continue
+                    b = float(abody[i])
+                    up = float(h_w[i] - max(o_w[i], c_w[i]))
+                    dn = float(min(o_w[i], c_w[i]) - l_w[i])
+                    r = float(rng[i])
+                    if b <= 0.10 * r:
+                        counts['doji'] += 1
+                    elif up >= 2.0 * b and dn >= 2.0 * b:
+                        counts['spinning_top'] += 1
+                    if dn >= 2.0 * b and up <= b:
+                        counts['hammer'] += 1
+                    if up >= 2.0 * b and dn <= b:
+                        counts['shooting_star'] += 1
+                    if b >= 0.90 * r:
+                        counts['marubozu'] += 1
+                order = ('hammer', 'shooting_star', 'doji', 'spinning_top',
+                         'marubozu')
+                best = max(order, key=lambda k: (counts[k], -order.index(k)))
+                out = {k: False for k in order}
+                if counts[best] > 0:
+                    out[best] = True
+                    out['none'] = False
+                    return out
+                out['none'] = True
+                return out
+            if recipe == 'native_pattern_2d_mix_v1':
+                if lb < 2:
+                    return None
+                pos = rng > 0
+                counts = dict.fromkeys(
+                    ('bull_engulf', 'piercing', 'bull_harami',
+                     'bear_engulf', 'dark_cloud', 'bear_harami'), 0)
+                for i in range(1, lb):
+                    if not (pos[i] and pos[i - 1]):
+                        continue
+                    o1, c1 = float(o_w[i - 1]), float(c_w[i - 1])
+                    o2, c2 = float(o_w[i]), float(c_w[i])
+                    b1, b2 = abs(c1 - o1), abs(c2 - o2)
+                    l1, h1 = float(l_w[i - 1]), float(h_w[i - 1])
+                    if b1 > 0 and c1 < o1 and c2 > o2 and o2 <= c1 and c2 >= o1:
+                        counts['bull_engulf'] += 1
+                    if b1 > 0 and c1 > o1 and c2 < o2 and o2 >= c1 and c2 <= o1:
+                        counts['bear_engulf'] += 1
+                    if b1 >= 2.0 * b2:
+                        lo1, hi1 = min(o1, c1), max(o1, c1)
+                        if min(o2, c2) > lo1 and max(o2, c2) < hi1:
+                            if c1 > o1:
+                                counts['bull_harami'] += 1
+                            elif c1 < o1:
+                                counts['bear_harami'] += 1
+                    mid1 = (o1 + c1) / 2.0
+                    if c1 < o1 and o2 < l1 and c2 > mid1 and c2 < o1:
+                        counts['piercing'] += 1
+                    if c1 > o1 and o2 > h1 and c2 < mid1 and c2 > o1:
+                        counts['dark_cloud'] += 1
+                order = ('bull_engulf', 'piercing', 'bull_harami',
+                         'bear_engulf', 'dark_cloud', 'bear_harami')
+                best = max(order, key=lambda k: (counts[k], -order.index(k)))
+                out = {k: False for k in order}
+                if counts[best] > 0:
+                    out[best] = True
+                    out['none'] = False
+                    return out
+                out['none'] = True
+                return out
+            # native_pattern_3d_seen_v1: matched at the LAST bar of the
+            # triple; position = that bar vs the window midpoint (early =
+            # first half, documented). Morning/evening star read the median
+            # |body| of the window as the bar-1 size reference.
+            if lb < 3:
+                return None
+            pos = rng > 0
+            med_body = float(np.median(abody))
+            mid_idx = lb / 2.0
+            counts = dict.fromkeys(
+                ('tws', 'morning_star', 'tbc', 'evening_star'), 0)
+            last_at = dict.fromkeys(
+                ('tws', 'morning_star', 'tbc', 'evening_star'), -1)
+            for i in range(2, lb):
+                if not (pos[i] and pos[i - 1] and pos[i - 2]):
+                    continue
+                bodies = [float(c_w[j] - o_w[j]) for j in (i - 2, i - 1, i)]
+                o1, c1 = float(o_w[i - 2]), float(c_w[i - 2])
+                o2, c2 = float(o_w[i - 1]), float(c_w[i - 1])
+                o3, c3 = float(o_w[i]), float(c_w[i])
+                b1 = abs(bodies[0])
+                if (bodies[0] > 0 and bodies[1] > 0 and bodies[2] > 0
+                        and c_w[i - 1] > c_w[i - 2] and c3 > c_w[i - 1]
+                        and min(o1, c1) <= o2 <= max(o1, c1)
+                        and min(o2, c2) <= o3 <= max(o2, c2)):
+                    counts['tws'] += 1
+                    last_at['tws'] = i
+                if (bodies[0] < 0 and bodies[1] < 0 and bodies[2] < 0
+                        and c_w[i - 1] < c_w[i - 2] and c3 < c_w[i - 1]
+                        and min(o1, c1) <= o2 <= max(o1, c1)
+                        and min(o2, c2) <= o3 <= max(o2, c2)):
+                    counts['tbc'] += 1
+                    last_at['tbc'] = i
+                if (bodies[0] < 0 and b1 >= med_body
+                        and abs(bodies[1]) <= 0.5 * b1 and o2 < c1
+                        and bodies[2] > 0 and c3 > (o1 + c1) / 2.0):
+                    counts['morning_star'] += 1
+                    last_at['morning_star'] = i
+                if (bodies[0] > 0 and b1 >= med_body
+                        and abs(bodies[1]) <= 0.5 * b1 and o2 > c1
+                        and bodies[2] < 0 and c3 < (o1 + c1) / 2.0):
+                    counts['evening_star'] += 1
+                    last_at['evening_star'] = i
+            order = ('tws', 'morning_star', 'tbc', 'evening_star')
+            best = max(order, key=lambda k: (counts[k], -order.index(k)))
+            out = {k + '_' + side: False
+                   for k in ('three_white_soldiers', 'morning_star',
+                             'three_black_crows', 'evening_star')
+                   for side in ('early', 'late')}
+            out['none'] = False
+            if counts[best] > 0:
+                name = {'tws': 'three_white_soldiers',
+                        'morning_star': 'morning_star',
+                        'tbc': 'three_black_crows',
+                        'evening_star': 'evening_star'}[best]
+                # position reads the LAST occurrence of the dominant
+                # pattern (most recent decides, documented precedent);
+                # early = last bar before the window midpoint
+                side = ('early' if last_at[best] < mid_idx else 'late')
+                out[name + '_' + side] = True
+                return out
+            out['none'] = True
+            return out
+        if recipe == 'native_close_location_route_v1':
+            # Ruling part 4 #33: location = (C-L)/(H-L); zero-range bars
+            # excluded (documented; all-zero-range -> NE). mostly-class:
+            # share of near_high bars > 1/2 -> near_high, share of
+            # near_low > 1/2 -> near_low, else mixed. route: mean location
+            # second half minus first half: improving > +0.10, worsening
+            # < -0.10, else steady (documented 0.10).
+            lb = int(feature['lookback'])
+            if lb < 2:
+                return None
+            wk = slice(len(candles) - lb, len(candles))
+            h_w = high[wk]
+            l_w = low[wk]
+            c_w = close[wk]
+            rng = h_w - l_w
+            pos = rng > 0
+            if not pos.any():
+                return None
+            loc = np.where(pos, (c_w - l_w) / np.where(pos, rng, 1.0), 0.0)
+            n_pos = float(pos.sum())
+            nh = float(((loc >= 2.0 / 3.0) & pos).sum()) / n_pos
+            nl = float(((loc <= 1.0 / 3.0) & pos).sum()) / n_pos
+            if nh > 0.5:
+                cls = 'near_high'
+            elif nl > 0.5:
+                cls = 'near_low'
+            else:
+                cls = 'mixed'
+            half = lb // 2
+            if half < 1 or lb - half < 1:
+                return None
+            if not pos[:half].any() or not pos[half:].any():
+                return None  # a half with only zero-range bars has no location
+            m1 = float(loc[:half][pos[:half]].mean(dtype=np.float64))
+            m2 = float(loc[half:][pos[half:]].mean(dtype=np.float64))
+            d = m2 - m1
+            route = ('improving' if d > 0.10
+                     else 'worsening' if d < -0.10 else 'steady')
+            key = cls + '_' + route
+            out = {c0 + '_' + r0: False
+                   for c0 in ('near_high', 'near_low', 'mixed')
+                   for r0 in ('improving', 'worsening', 'steady')}
+            out[key] = True
+            return out
+        if recipe == 'native_size_vs_chart_v1':
+            # Ruling part 4 #34: mean |body| window vs mean |body| prior
+            # 252 completed bars (documented "all prior history"
+            # convention); larger > S_ratio_band_1p25 x, smaller < 1/band
+            # (mirror), else similar. Warmup 252 -> NE.
+            lb = int(feature['lookback'])
+            band = float(feature['ratio_band'])
+            if band < 1.0:
+                return None
+            if len(candles) < lb + 252:
+                return None
+            abody = np.abs(close - opened)
+            w_mean = float(abody[-lb:].mean(dtype=np.float64))
+            p_mean = float(abody[-lb - 252:-lb].mean(dtype=np.float64))
+            if not (np.isfinite(w_mean) and np.isfinite(p_mean)) or p_mean <= 0:
+                return None
+            return {'larger': w_mean > band * p_mean,
+                    'similar': w_mean <= band * p_mean
+                    and w_mean >= p_mean / band,
+                    'smaller': w_mean < p_mean / band}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -3732,6 +3951,69 @@ FACETS = {
         outcome_spec={'zero': ('boolean', '=', 'one'),
                       'low_band': ('boolean', '=', 'one'),
                       'high_band': ('boolean', '=', 'one')}),
+    # ---- batch 26 (ruling part 4 #32-#34, approved 2026-11-01): candle
+    # pattern mixes, close-location route, size vs chart. ----
+    'pattern_1d_mix': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_pattern_1d_mix_v1',
+        unit='dominant_one_bar_pattern_in_window',
+        outcomes=('hammer', 'shooting_star', 'doji', 'spinning_top',
+                  'marubozu', 'none'), cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('hammer', 'shooting_star', 'doji',
+                                'spinning_top', 'marubozu', 'none')}),
+    'pattern_2d_mix': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_pattern_2d_mix_v1',
+        unit='dominant_two_bar_pattern_in_window',
+        outcomes=('bull_engulf', 'piercing', 'bull_harami',
+                  'bear_engulf', 'dark_cloud', 'bear_harami', 'none'),
+        cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('bull_engulf', 'piercing', 'bull_harami',
+                                'bear_engulf', 'dark_cloud', 'bear_harami',
+                                'none')}),
+    'pattern_3d_seen': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_pattern_3d_seen_v1',
+        unit='dominant_three_bar_pattern_and_window_position',
+        outcomes=tuple(k + '_' + side
+                       for k in ('three_white_soldiers', 'morning_star',
+                                 'three_black_crows', 'evening_star')
+                       for side in ('early', 'late')) + ('none',),
+        cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(k + '_' + side
+                                     for k in ('three_white_soldiers',
+                                               'morning_star',
+                                               'three_black_crows',
+                                               'evening_star')
+                                     for side in ('early', 'late'))
+                      + ('none',)}),
+    'close_location_route': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_close_location_route_v1',
+        unit='close_location_majority_class_and_second_half_route',
+        outcomes=tuple(c0 + '_' + r0
+                       for c0 in ('near_high', 'near_low', 'mixed')
+                       for r0 in ('improving', 'worsening', 'steady')),
+        cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(c0 + '_' + r0
+                                     for c0 in ('near_high', 'near_low',
+                                                'mixed')
+                                     for r0 in ('improving', 'worsening',
+                                                'steady'))}),
+    'size_vs_chart': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_size_vs_chart_v1',
+        unit='window_body_size_vs_prior_252_mean',
+        outcomes=('larger', 'similar', 'smaller'), cutoff_id=None,
+        baked_cutoff_ids=('S_ratio_band_1p25',),
+        baked_map={'S_ratio_band_1p25': 'ratio_band'},
+        outcome_spec={'larger': ('boolean', '=', 'one'),
+                      'similar': ('boolean', '=', 'one'),
+                      'smaller': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -4526,6 +4808,9 @@ EXACT_PARTITION_FACETS = {
     'time_above', 'kijun_tests', 'chikou_route',
     # batch 25 (ruling part 4 #27-#31): Donchian remainder, tails, counts
     'time_top', 'midline_cross', 'failed_break', 'tail_event', 'count',
+    # batch 26 (ruling part 4 #32-#34): patterns, location route, size
+    'pattern_1d_mix', 'pattern_2d_mix', 'pattern_3d_seen',
+    'close_location_route', 'size_vs_chart',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -4785,7 +5070,11 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_donchian_time_top_v1',
                         'native_donchian_midline_cross_v1',
                         'native_donchian_failed_break_v1',
-                        'native_tail_event_v1', 'native_extreme_count_v1'}
+                        'native_tail_event_v1', 'native_extreme_count_v1',
+                        'native_pattern_1d_mix_v1', 'native_pattern_2d_mix_v1',
+                        'native_pattern_3d_seen_v1',
+                        'native_close_location_route_v1',
+                        'native_size_vs_chart_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -4860,7 +5149,8 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_donchian_time_top_v1',
                                  'native_donchian_midline_cross_v1',
                                  'native_donchian_failed_break_v1',
-                                 'native_tail_event_v1', 'native_extreme_count_v1'):
+                                 'native_tail_event_v1', 'native_extreme_count_v1',
+                                 'native_size_vs_chart_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -4934,6 +5224,11 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += 61  # 60 prior completed returns (+1 price bar)
             if feature['recipe'] == 'native_extreme_count_v1':
                 required += 252  # documented new-high history constant
+            if feature['recipe'] == 'native_size_vs_chart_v1':
+                required += 252  # documented "all prior history" convention
+            # pattern_1d/2d/3d_mix and close_location_route: window-only,
+            # they stay on the simple path (extra 0, like batch 23's
+            # range_max_position/vol_direction_link)
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(
