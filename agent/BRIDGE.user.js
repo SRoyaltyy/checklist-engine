@@ -399,4 +399,18 @@
       }(m[1]));
     }
   }
+
+  function tick() {
+    if (load('vrb.paused') === '1' || load('vrb.halt') === '1' || phase === 'boot') return;
+    gm(readUrl('agent/WAKE.json')).then(function (r) {
+      if (!r.ok) return;
+      var flag;
+      try { flag = JSON.parse(unwrap(r.text)); } catch (e) { return; }
+      var reason = (flag && flag.reason) || '';
+      var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
+      if (sha && sha === load('vrb.sha')) return;
+      wake(reason || 'heartbeat', false);
+      if (sha) store('vrb.sha', sha);
+    });
+  }
 @@APPEND@@
