@@ -140,4 +140,10 @@ export default {
           const items = Array.isArray(got.body) ? got.body : [got.body];
           return reply({ ok: true, entries: items.map((i) => ({ name: i.name, path: i.path, type: i.type, size: i.size })) });
         }
+        case "commits": {
+          const limit = Math.min(Number(p.get("limit") || 20), 100);
+          const got = await gh(env, `/commits?sha=${encodeURIComponent(branch)}&per_page=${limit}`);
+          if (!got.ok) throw new Error(`commits failed: ${got.status}`);
+          return reply({ ok: true, commits: (Array.isArray(got.body) ? got.body : []).map((c) => ({ sha: c.sha, short: String(c.sha).slice(0, 8), message: (c.commit.message || "").split("\n")[0], date: c.commit.author.date })) });
+        }
 @@APPEND@@
