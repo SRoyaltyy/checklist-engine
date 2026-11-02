@@ -22,12 +22,18 @@ CRAFTED = 3
 RANDOM_TAPES = 3
 TOTAL_TAPES = CRAFTED + RANDOM_TAPES
 
-# batch 21 (3ATR legs/flag/cup_handle): pure-python partition scans with up
-# to 9 defs per row; the property is dial- and timeframe-agnostic, so these
-# facets get fewer rows and tapes (same rationale as the per-sub-spec cap).
+# batch 21 (3ATR legs/flag/cup_handle) and batch 22 (gap/extreme families):
+# pure-python partition scans with several defs per row; the property is
+# dial- and timeframe-agnostic, so these facets get fewer rows and tapes
+# (same rationale as the per-sub-spec cap).
 HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
                 'size_vs_prev', 'speed_vs_prev', 'vol_vs_prev',
-                'pump_fade_cycles', 'flag', 'cup_handle'}
+                'pump_fade_cycles', 'flag', 'cup_handle',
+                'new_extreme', 'gap_side', 'gap_age', 'partial_fill',
+                'follow_through',
+                # talib-heavy cross-L3 facets (batches 19-20): capped the
+                # same way; the partition logic is dial/timeframe-agnostic
+                'speed', 'time_in_zone', 'price_divergence', 'vs_own_past'}
 HEAVY_ROW_CAP = 8
 HEAVY_TAPES = 4
 DEFAULT_ROW_CAP = 16

@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 2807,
-  "bound_unique_binary_definitions": 99007,
-  "bound_source_aliases": 101032,
+  "bound_source_questions": 2922,
+  "bound_unique_binary_definitions": 102401,
+  "bound_source_aliases": 104426,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -298,9 +298,13 @@
     "extreme_position",
     "flag",
     "flip",
+    "follow_through",
     "fresh_cross",
     "full_stack_streak",
+    "gap_age",
+    "gap_count",
     "gap_down",
+    "gap_side",
     "gap_up",
     "high_then_low",
     "hl_base_breakout",
@@ -311,9 +315,12 @@
     "last_phase",
     "len_vs_prev",
     "ma30_side_streak",
+    "magnet",
     "max_vol_position",
     "maxvol_wick",
+    "new_extreme",
     "osc_swing_speed",
+    "partial_fill",
     "path_dir",
     "phase_count",
     "phase_seq3",
@@ -335,6 +342,7 @@
     "spike",
     "stack_flip",
     "time_in_zone",
+    "touch_52w",
     "trend",
     "vol_vs_prev",
     "vs_own_past",
@@ -343,8 +351,8 @@
     "wick_body"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 835,
-  "unbound_oat_variants": 134815,
+  "unbound_family_variant_count": 827,
+  "unbound_oat_variants": 134063,
   "ladder_add_on_rows": 2664,
   "ladder_source_rows": 2680,
   "ladder_alias_rows": 16,
@@ -390,14 +398,14 @@
       "note": "bound defs keyed by question_id = semantic identity hash; batch-5 fix includes the outcome label; aliases share feature_id."
     }
   },
-  "master_total_rows": 101671,
-  "csv_sha256": "bb130e5a53b365c3b592ad7b140dd5528d5cfc81acc939fdf2df02e2191dcfe6",
+  "master_total_rows": 105065,
+  "csv_sha256": "0223f8649b2256124a5b308fd674d36ee954c6dc10464ffe815fc78ad91fff0c",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 163436795,
-    "compressed_bytes": 20630656,
-    "chunk_count": 20
+    "raw_bytes": 168611043,
+    "compressed_bytes": 21503200,
+    "chunk_count": 21
   },
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
@@ -409,7 +417,7 @@
     "dictionary/INDICATOR_SETTINGS.json": "015aae37cd549ab6297407b501534d2143a02c70c0b482ac330c6b9b570ad610"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "282f014b1c4581d281f2eb121ef92df9f0a4fd71bc5fd99af3108accf5a7b15b",
+    "world_binary_master.py": "71d526e1ca3f4ed13ca87d0677a93538f02432193053be91cd0e8019909b4ab3",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "fd5d525c39604d5a9b208523b03458c9d8ef018e0122036e7262c5aa4aad0b5f",

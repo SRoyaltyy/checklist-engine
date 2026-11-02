@@ -1255,6 +1255,184 @@ def _measure(recipe, candles, feature=None):
             if not lip - lowest >= float(feature['min_handle_pct']) / 100.0 * depth:
                 return {'yes': False, 'no': True}
             return {'yes': True, 'no': False}
+        if recipe == 'native_touch_52w_v1':
+            # Ruling part 2 #4 (approved 2026-11-01): window high >= the max
+            # high of the trailing hist_bars (C212, default 252) completed
+            # sessions ending D-1 INCLUDING the window -> high (precedence
+            # over low when one window spans both, documented); mirror low;
+            # else none. Fewer than hist_bars of history -> NE.
+            lb = int(feature['lookback'])
+            hist = int(feature['hist_bars'])
+            if len(candles) < hist:
+                return None
+            ref_h = high[-hist:]
+            ref_l = low[-hist:]
+            win_h = float(high[-lb:].max())
+            win_l = float(low[-lb:].min())
+            hi = win_h >= float(ref_h.max())
+            lo = win_l <= float(ref_l.min())
+            if hi:
+                return {'high': True, 'low': False, 'none': False}
+            if lo:
+                return {'high': False, 'low': True, 'none': False}
+            return {'high': False, 'low': False, 'none': True}
+        if recipe == 'native_new_extreme_v1':
+            # Ruling part 2 #5: window high > max high of the ref_bars (C128,
+            # default 60) completed bars immediately BEFORE the window; both
+            # can fire. Fewer ref bars -> NE (a truncated reference silently
+            # weakens "new extreme").
+            lb = int(feature['lookback'])
+            ref = int(feature['ref_bars'])
+            if len(candles) < lb + ref:
+                return None
+            pre_h = high[-lb - ref:-lb]
+            pre_l = low[-lb - ref:-lb]
+            hi = float(high[-lb:].max()) > float(pre_h.max())
+            lo = float(low[-lb:].min()) < float(pre_l.min())
+            return {'high': hi, 'low': lo, 'both': hi and lo,
+                    'none': not hi and not lo}
+        if recipe == 'native_magnet_v1':
+            # Ruling part 2 #7: round levels {$1,$5,$10,$50,$100,$500} plus
+            # {$0.10,$0.50} when the window mean close < $1. yes when >=
+            # min_touches (C296) window closes sit within tol_pct (C297) of
+            # ANY SINGLE level (per-level max, levels checked independently).
+            lb = int(feature['lookback'])
+            win = close[-lb:]
+            mean_c = float(win.mean(dtype=np.float64))
+            levels = [1.0, 5.0, 10.0, 50.0, 100.0, 500.0]
+            if mean_c < 1.0:
+                levels += [0.10, 0.50]
+            need = int(feature['min_touches'])
+            tol = float(feature['tol_pct']) / 100.0
+            best = 0
+            for lv in levels:
+                hits = int((np.abs(win / lv - 1.0) <= tol).sum())
+                best = max(best, hits)
+            return {'yes': best >= need, 'no': best < need}
+        if recipe in ('native_gap_side_v1', 'native_gap_count_v1',
+                      'native_gap_age_v1', 'native_partial_fill_v1'):
+            # Ruling part 2 #6: gap-up at t = open[t] > high[t-1]; it stays
+            # OPEN while every subsequent low through D-1 stays > high[t-1]
+            # (traded back through the edge = closed). Mirror for gap-down
+            # (open[t] < low[t-1]; closed when a later high >= low[t-1]).
+            # Scan the trailing scan_bars bars of the fetched prefix.
+            lb = int(feature['lookback'])
+            scan = int(feature['scan_bars'])
+            if len(candles) < lb + scan + 1:
+                return None
+            seg = slice(len(candles) - scan - 1, len(candles))
+            o_s = opened[seg]
+            h_s = high[seg]
+            l_s = low[seg]
+            n_s = len(o_s)
+            suf_lo = np.minimum.accumulate(l_s[::-1])[::-1]  # suffix min of lows
+            suf_hi = np.maximum.accumulate(h_s[::-1])[::-1]  # suffix max of highs
+            ups = []    # t (relative to seg) of still-open gap-ups
+            dns = []
+            gap_all = []  # (t, side) of every gap, open or closed
+            for t in range(1, n_s):
+                if o_s[t] > h_s[t - 1]:
+                    gap_all.append((t, 1))
+                    if suf_lo[t] > h_s[t - 1]:
+                        ups.append(t)
+                elif o_s[t] < l_s[t - 1]:
+                    gap_all.append((t, -1))
+                    if suf_hi[t] < l_s[t - 1]:
+                        dns.append(t)
+            if recipe == 'native_gap_side_v1':
+                ab = bool(ups)
+                bl = bool(dns)
+                return {'above': ab and not bl, 'below': bl and not ab,
+                        'both': ab and bl, 'none': not ab and not bl}
+            if recipe == 'native_gap_count_v1':
+                many = int(feature['count_many'])
+                if many < 2:
+                    return None
+                out = {}
+                for side, gaps in (('above', ups), ('below', dns)):
+                    n = len(gaps)
+                    out[side + '_0'] = n == 0
+                    out[side + '_1'] = n == 1
+                    out[side + '_many'] = n >= many
+                return out
+            if recipe == 'native_gap_age_v1':
+                # Age of the most RECENT currently-open gap (either side),
+                # bucketed by S_osc_zone_low (young edge) and C293 (old edge).
+                if not ups and not dns:
+                    return {'fresh': False, 'mid': False, 'old': False, 'none': True}
+                latest = max((ups or [0])[-1], (dns or [0])[-1])
+                age = len(o_s) - 1 - latest
+                lo = int(feature['age_low'])
+                hi = int(feature['age_high'])
+                if hi < lo:
+                    return None
+                return {'fresh': age < lo, 'mid': lo <= age <= hi,
+                        'old': age > hi, 'none': False}
+            # native_partial_fill_v1: the SINGLE most recent gap (either
+            # side) in the scan, regardless of open/closed. fill% = how far
+            # price retraced into the gap from its edge, capped [0,1]; a
+            # closed gap (traded back through the edge) = filled. No gap in
+            # the scan -> NE (documented: no referent).
+            if not gap_all:
+                return None
+            t, side = gap_all[-1]
+            lo_p = float(feature['fill_low_pct'])
+            hi_p = float(feature['fill_high_pct'])
+            if hi_p < lo_p:
+                return None
+            if side > 0:
+                denom = float(o_s[t] - h_s[t - 1])
+                retr = float(o_s[t] - suf_lo[t])
+            else:
+                denom = float(l_s[t - 1] - o_s[t])
+                retr = float(suf_hi[t] - o_s[t])
+            filled = (side > 0 and suf_lo[t] <= h_s[t - 1]) or \
+                     (side < 0 and suf_hi[t] >= l_s[t - 1])
+            fill = 1.0 if filled else (min(1.0, retr / denom) if denom > 0 else None)
+            if fill is None:
+                return None
+            if fill >= 1.0:
+                bucket = 'filled'
+            elif fill <= lo_p / 100.0:
+                bucket = 'low'
+            elif fill <= hi_p / 100.0:
+                bucket = 'mid'
+            else:
+                bucket = 'high'
+            out = {}
+            for s in ('above', 'below'):
+                for b in ('low', 'mid', 'high', 'filled'):
+                    out[s + '_' + b] = (s == ('above' if side > 0 else 'below')
+                                        and b == bucket)
+            return out
+        if recipe == 'native_follow_through_v1':
+            # Ruling part 2 #8: a new-high bar t has high[t] strictly above
+            # every prior high of the trailing 252-bar history ending t-1
+            # (documented 252 constant; no dial registered). yes = after the
+            # LATEST such bar in the window, some bar within the next
+            # ft_bars (C135) closes higher than that bar's close (bars past
+            # D-1 are unknowable and simply absent, documented); no = new
+            # high without a higher close within ft_bars; no_new_high = no
+            # new-high bar in the window. Fewer than 252 bars -> NE.
+            lb = int(feature['lookback'])
+            hist = 252
+            ft = int(feature['ft_bars'])
+            if len(candles) < lb + hist:
+                return None
+            highs = high
+            news = []
+            for t in range(len(candles) - lb, len(candles)):
+                if t < hist:
+                    continue
+                if highs[t] > highs[t - hist:t].max():
+                    news.append(t)
+            if not news:
+                return {'yes': False, 'no': False, 'no_new_high': True}
+            t = news[-1]
+            base_c = float(close[t])
+            followed = any(float(close[j]) > base_c
+                           for j in range(t + 1, min(t + 1 + ft, len(candles))))
+            return {'yes': followed, 'no': not followed, 'no_new_high': False}
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -2727,6 +2905,93 @@ FACETS = {
                    'S_pivot_k_divisor': 'pivot_k_divisor_ctx'},
         outcome_spec={'yes': ('boolean', '=', 'one'),
                       'no': ('boolean', '=', 'one')}),
+    # ---- batch 22 (ruling part 2 #4-#8, approved 2026-11-01): extremes,
+    # unfilled-gap, magnet and follow-through families. Scan/history
+    # lengths consume the registered dials where present; rows with no
+    # scan dial carry the documented 252 constant (precedent:
+    # native_updown_vs_past_v1). ----
+    'touch_52w': dict(
+        binding='mixed', l1_l3=(('extremes', '52w_range'),),
+        recipe='native_touch_52w_v1', unit='window_extreme_reaches_trailing_high_or_low',
+        outcomes=('high', 'low', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C212_touch_52w__scalar252',),
+        baked_map={'C212_touch_52w__scalar252': 'hist_bars'},
+        outcome_spec={'high': ('boolean', '=', 'one'),
+                      'low': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'new_extreme': dict(
+        binding='mixed', l1_l3=(('extremes', 'new_highs_lows'),),
+        recipe='native_new_extreme_v1', unit='window_extreme_exceeds_pre_window_reference',
+        outcomes=('high', 'low', 'both', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C128_new_extreme__bars60',),
+        baked_map={'C128_new_extreme__bars60': 'ref_bars'},
+        outcome_spec={'high': ('boolean', '=', 'one'),
+                      'low': ('boolean', '=', 'one'),
+                      'both': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'gap_side': dict(
+        binding='mixed', l1_l3=(('support_resistance', 'unfilled_gaps'),),
+        recipe='native_gap_side_v1', unit='currently_open_gap_side_in_scan',
+        outcomes=('above', 'below', 'both', 'none'), cutoff_id=None,
+        const_extra={'scan_bars': '252'},
+        outcome_spec={'above': ('boolean', '=', 'one'),
+                      'below': ('boolean', '=', 'one'),
+                      'both': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'gap_count': dict(
+        binding='mixed', l1_l3=(('support_resistance', 'unfilled_gaps'),),
+        recipe='native_gap_count_v1', unit='open_gap_count_by_side_bucket',
+        outcomes=('above_0', 'above_1', 'above_many',
+                  'below_0', 'below_1', 'below_many'), cutoff_id=None,
+        baked_cutoff_ids=('S_count_many',),
+        baked_map={'S_count_many': 'count_many'},
+        const_extra={'scan_bars': '252'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('above_0', 'above_1', 'above_many',
+                                'below_0', 'below_1', 'below_many')}),
+    'gap_age': dict(
+        binding='mixed', l1_l3=(('support_resistance', 'unfilled_gaps'),),
+        recipe='native_gap_age_v1', unit='age_of_most_recent_open_gap_bucket',
+        outcomes=('fresh', 'mid', 'old', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('S_osc_zone_low', 'C293_gap_age__scalar60',
+                          'C294_gap_age__bars60'),
+        baked_map={'S_osc_zone_low': 'age_low', 'C293_gap_age__scalar60': 'age_high',
+                   'C294_gap_age__bars60': 'scan_bars'},
+        outcome_spec={'fresh': ('boolean', '=', 'one'),
+                      'mid': ('boolean', '=', 'one'),
+                      'old': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'partial_fill': dict(
+        binding='mixed', l1_l3=(('support_resistance', 'unfilled_gaps'),),
+        recipe='native_partial_fill_v1', unit='fill_bucket_of_most_recent_gap_by_side',
+        outcomes=tuple(s + '_' + b for s in ('above', 'below')
+                       for b in ('low', 'mid', 'high', 'filled')), cutoff_id=None,
+        baked_cutoff_ids=('C283_partial_fill__pct25', 'C284_partial_fill__scalar25',
+                          'C285_partial_fill__pct75'),
+        baked_map={'C283_partial_fill__pct25': 'fill_low_pct',
+                   'C284_partial_fill__scalar25': 'scan_bars',
+                   'C285_partial_fill__pct75': 'fill_high_pct'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in tuple(s + '_' + b for s in ('above', 'below')
+                                     for b in ('low', 'mid', 'high', 'filled'))}),
+    'magnet': dict(
+        binding='mixed', l1_l3=(('support_resistance', 'round_numbers(merged price level)'),),
+        recipe='native_magnet_v1', unit='window_closes_clustered_at_round_level',
+        outcomes=('yes', 'no'), cutoff_id=None,
+        baked_cutoff_ids=('C296_magnet__scalar3', 'C297_magnet__pct1'),
+        baked_map={'C296_magnet__scalar3': 'min_touches',
+                   'C297_magnet__pct1': 'tol_pct'},
+        outcome_spec={'yes': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one')}),
+    'follow_through': dict(
+        binding='mixed', l1_l3=(('extremes', 'new_highs_lows'),),
+        recipe='native_follow_through_v1', unit='new_high_follow_through_within_bars',
+        outcomes=('yes', 'no', 'no_new_high'), cutoff_id=None,
+        baked_cutoff_ids=('C135_follow_through__bars3',),
+        baked_map={'C135_follow_through__bars3': 'ft_bars'},
+        outcome_spec={'yes': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one'),
+                      'no_new_high': ('boolean', '=', 'one')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -3509,6 +3774,9 @@ EXACT_PARTITION_FACETS = {
     # batch 21 (ruling part 1): 3ATR leg partitions, flag, cup_handle
     'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev', 'size_vs_prev',
     'speed_vs_prev', 'vol_vs_prev', 'pump_fade_cycles', 'flag', 'cup_handle',
+    # batch 22 (ruling part 2 #4-#8): extremes, gaps, magnet, follow-through
+    'touch_52w', 'new_extreme', 'gap_side', 'gap_age', 'partial_fill',
+    'magnet', 'follow_through',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -3746,7 +4014,11 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_legs_last_phase_v1', 'native_legs_phase_seq3_v1',
                         'native_legs_len_vs_prev_v1', 'native_legs_size_vs_prev_v1',
                         'native_legs_speed_vs_prev_v1',
-                        'native_flag_v1', 'native_cup_handle_v1'}
+                        'native_flag_v1', 'native_cup_handle_v1',
+                        'native_touch_52w_v1', 'native_new_extreme_v1',
+                        'native_gap_side_v1', 'native_gap_count_v1',
+                        'native_gap_age_v1', 'native_partial_fill_v1',
+                        'native_magnet_v1', 'native_follow_through_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -3801,7 +4073,11 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_legs_phase_seq3_v1', 'native_legs_len_vs_prev_v1',
                                  'native_legs_size_vs_prev_v1', 'native_legs_speed_vs_prev_v1',
                                  'native_legs_vol_vs_prev_v1', 'native_legs_pump_fade_cycles_v1',
-                                 'native_flag_v1', 'native_cup_handle_v1'):
+                                 'native_flag_v1', 'native_cup_handle_v1',
+                                 'native_touch_52w_v1', 'native_new_extreme_v1',
+                                 'native_gap_side_v1', 'native_gap_count_v1',
+                                 'native_gap_age_v1', 'native_partial_fill_v1',
+                                 'native_follow_through_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -3842,6 +4118,15 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 # 1 prior aggregated close (first window bar's shock/pole
                 # base close).
                 required += 16
+            if feature['recipe'] == 'native_touch_52w_v1':
+                required += int(feature['hist_bars'])
+            if feature['recipe'] == 'native_new_extreme_v1':
+                required += int(feature['ref_bars'])
+            if feature['recipe'] in ('native_gap_side_v1', 'native_gap_count_v1',
+                                     'native_gap_age_v1', 'native_partial_fill_v1'):
+                required += int(feature['scan_bars']) + 1  # the t-1 edge bar
+            if feature['recipe'] == 'native_follow_through_v1':
+                required += 252  # documented new-high history constant (no dial registered)
             window = _tf_window(bars, setup_date, expected_slot,
                                 required, feature['candle_days'])
             candles = None if window is None else _native_indicator_history(
