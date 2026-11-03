@@ -114,4 +114,17 @@ export default {
       switch (op) {
         case "ops":
           return reply({ ok: true, ops: ["branch", "ref", "read", "list", "commits", "diff", "search", "grep", "put", "edit", "pr", "pr-edit", "runs", "dispatch", "merge", "deploy"] });
+        case "branch": {
+          const got = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
+          if (!got.ok) throw new Error(`branch failed: ${got.status}`);
+          return reply({ ok: true, sha: got.body.object.sha });
+        }
+        case "ref": {
+          const base = p.get("base") || "main";
+          const got = await gh(env, `/git/ref/heads/${encodeURIComponent(base)}`);
+          if (!got.ok) throw new Error(`base ref failed: ${got.status}`);
+          const made = await gh(env, `/git/refs`, { method: "POST", body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: got.body.object.sha }) });
+          if (!made.ok) throw new Error(`ref failed: ${made.status}`);
+          return reply({ ok: true, sha: made.body.object.sha });
+        }
 @@MORE@@
