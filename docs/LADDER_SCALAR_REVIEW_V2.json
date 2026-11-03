@@ -1,0 +1,218 @@
+{
+  "version": "REVIEWED_DEFAULT_SCALARS_V2",
+  "items": [
+    {
+      "item_id": "I028",
+      "item_name": "Stochastic(14,3,3)",
+      "default_annotation": "fastk=14,slowk=3,slowd=3",
+      "parameters": {
+        "fastk": 14,
+        "slowk": 3,
+        "slowd": 3
+      },
+      "selected_scalar": "slowK",
+      "unit": "stochastic_points",
+      "dictionary_definition": "%K_raw = 100\u00d7(C - LL14)/(HH14 - LL14); slowK = SMA3(%K_raw); value used = slowK (talib.STOCH output[0]); slowD = SMA3(slowK) is not used. Zones 20/80, cross 50.",
+      "definition_sha256": "a322a185687d7bae3734edab604de02f72c5389230110f937694d201a6d15361",
+      "source_pair": [
+        "I028-L09",
+        "I028-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I029",
+      "item_name": "Williams %R(14)",
+      "default_annotation": "period=14",
+      "parameters": {
+        "period": 14
+      },
+      "selected_scalar": "WilliamsR",
+      "unit": "WilliamsR_points",
+      "dictionary_definition": "%R = -100\u00d7(HH14 - C)/(HH14 - LL14). Zones -80/-20, cross -50.",
+      "definition_sha256": "045d7ea72fd8dc85f8a6c48376a418763238ec6741477e115368c2fa1658273d",
+      "source_pair": [
+        "I029-L09",
+        "I029-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I036",
+      "item_name": "CCI(20)",
+      "default_annotation": "period=20",
+      "parameters": {
+        "period": 20
+      },
+      "selected_scalar": "CCI",
+      "unit": "CCI_points",
+      "dictionary_definition": "(TP - SMA20(TP))/(0.015\u00d7meanAbsDev20), TP=(H+L+C)/3",
+      "definition_sha256": "241845ac2900713fb00c8022c03b9ea4a0b6f6868c88dd6c83982c75a4a0a8d3",
+      "source_pair": [
+        "I036-L09",
+        "I036-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I037",
+      "item_name": "CMO(14)",
+      "default_annotation": "period=14",
+      "parameters": {
+        "period": 14
+      },
+      "selected_scalar": "CMO",
+      "unit": "CMO_points",
+      "dictionary_definition": "100\u00d7(sumUp-sumDn)/(sumUp+sumDn) over 14",
+      "definition_sha256": "288fd25e0032dc3de4439f70028f25b40876cc014c2e1991c100cf179c26c73b",
+      "source_pair": [
+        "I037-L09",
+        "I037-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I043",
+      "item_name": "Fisher(9)",
+      "default_annotation": "period=9",
+      "parameters": {
+        "period": 9
+      },
+      "selected_scalar": "Fisher",
+      "unit": "Fisher_transform",
+      "dictionary_definition": "0.5ln((1+x)/(1-x)), x = 0.66(norm pos in 9-bar range - .5)+.67x_{-1}, clamp \u00b10.999",
+      "definition_sha256": "272f6d08aa039cb037fd6e4689c33d5a40bbb9b4e510feee66d12a723e1f6f9a",
+      "source_pair": [
+        "I043-L09",
+        "I043-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I048",
+      "item_name": "RVI(10)",
+      "default_annotation": "period=10",
+      "parameters": {
+        "period": 10
+      },
+      "selected_scalar": "relative_vigor",
+      "unit": "ratio",
+      "dictionary_definition": "Relative Vigor: SMA10 of sym-weighted (C-O) / sym-weighted (H-L)",
+      "definition_sha256": "a62cd931f17e8ff2be4d79520bb11ffcb75bb05316a49d063e5a463545456d79",
+      "source_pair": [
+        "I048-L09",
+        "I048-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I049",
+      "item_name": "Relative Volatility Index(10,14)",
+      "default_annotation": "std_period=10,rma_period=14",
+      "parameters": {
+        "std_period": 10,
+        "rma_period": 14
+      },
+      "selected_scalar": "relative_volatility",
+      "unit": "RSI_points",
+      "dictionary_definition": "RSI formula on stdev10 split by up/down closes, RMA14",
+      "definition_sha256": "553dd878c2ebf9c9eb9cbb75cbb38c36485518d853a2b1f78143e38fa230ec80",
+      "source_pair": [
+        "I049-L09",
+        "I049-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I051",
+      "item_name": "SMI(10,3,3)",
+      "default_annotation": "range_period=10,smooth1=3,smooth2=3",
+      "parameters": {
+        "range_period": 10,
+        "smooth1": 3,
+        "smooth2": 3
+      },
+      "selected_scalar": "SMI",
+      "unit": "SMI_points",
+      "dictionary_definition": "100\u00d7EMA3(EMA3(C - mid10))/(0.5\u00d7EMA3(EMA3(HH10-LL10)))",
+      "definition_sha256": "543dcc9d21dd83f0b82795f285a91cc49dd3fac5fe29b4e6e05aab7827b22fc2",
+      "source_pair": [
+        "I051-L09",
+        "I051-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I055",
+      "item_name": "Ultimate Osc(7,14,28)",
+      "default_annotation": "period1=7,period2=14,period3=28",
+      "parameters": {
+        "period1": 7,
+        "period2": 14,
+        "period3": 28
+      },
+      "selected_scalar": "ultimate_oscillator",
+      "unit": "oscillator_points",
+      "dictionary_definition": "weighted 4:2:1 of BP/TR sums, BP=C-min(L,C_{-1})",
+      "definition_sha256": "dee6815df6316500e8b1780daa4699505e368c7e29412f5a726b8c6229e9b726",
+      "source_pair": [
+        "I055-L09",
+        "I055-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I056",
+      "item_name": "Connors RSI(3,2,100)",
+      "default_annotation": "price_rsi=3,streak_rsi=2,rank=100",
+      "parameters": {
+        "price_rsi": 3,
+        "streak_rsi": 2,
+        "rank": 100
+      },
+      "selected_scalar": "Connors_RSI",
+      "unit": "RSI_points",
+      "dictionary_definition": "mean(RSI3(C), RSI2(streak), PercentRank100(ROC1))",
+      "definition_sha256": "bedde11ef9298627c91c1463a69196522e34cab115f0195461375c457142cdab",
+      "source_pair": [
+        "I056-L09",
+        "I056-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I058",
+      "item_name": "Choppiness(14)",
+      "default_annotation": "period=14",
+      "parameters": {
+        "period": 14
+      },
+      "selected_scalar": "choppiness",
+      "unit": "choppiness_points",
+      "dictionary_definition": "100\u00d7log10(sum ATR1 over 14/(HH14-LL14))/log10(14)",
+      "definition_sha256": "4e97e9294a44bab14b9c1e1d9f75b43f8ccb0b768005dd0b4643db53d0cb7704",
+      "source_pair": [
+        "I058-L09",
+        "I058-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    },
+    {
+      "item_id": "I084",
+      "item_name": "MFI(14)",
+      "default_annotation": "period=14",
+      "parameters": {
+        "period": 14
+      },
+      "selected_scalar": "MFI",
+      "unit": "MFI_points",
+      "dictionary_definition": "TP=(H+L+C)/3; raw MF=TP\u00d7V; MFI=100-100/(1+sumPosMF14/sumNegMF14). Zones 20/80.",
+      "definition_sha256": "376256a61fd440c1f0ce1d57f8416a570aeb2e634d910aad3e980689be11ad56",
+      "source_pair": [
+        "I084-L09",
+        "I084-L05"
+      ],
+      "scope": "declaration equivalence only; no execution or quality approval"
+    }
+  ]
+}

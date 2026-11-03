@@ -79,7 +79,7 @@ def generate(root, out):
                   native_bar_definition='FIXED_SHARED_SESSION_CALENDAR_V1; legacy rolling-offset artifacts unchanged',
                   source_fingerprints={p:dict(raw_sha256=digest(root/p),
                       lf_sha256=hashlib.sha256((root/p).read_bytes().replace(b'\r\n',b'\n')).hexdigest()) for p in (GRID,QUESTIONS,TREE)},
-                  code_fingerprints={p:digest(root/p) for p in ('world_question_grid.py','world_binary_price.py','ci/binary_canonical_plan.py')},
+                  code_fingerprints={p:digest(root/p) for p in ('world_question_grid.py','world_binary_price.py','world_binary_questions.py','ci/binary_canonical_plan.py')},
                   artifact_fingerprints={p.name:digest(p) for p in (plan,definitions,alias_file,missing,lenses)})
     (out/'BINARY_CANONICAL_PLAN_V1.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     return report
