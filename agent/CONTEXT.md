@@ -8,13 +8,13 @@ Venice's web chat has three limits that make sustained autonomous work impossibl
 
 A context ceiling. A chat accumulates history until requests are rejected before generation. Every model fails identically. The chat dies and the work dies with it.
 It sleeps. After a turn it stops. Nothing resumes it. Continuing means a human typing "continue" forever.
-Metered reads. web_scrape is rate-limited, so sustained research starves.
+Metered reads. The scrape tool is rate-limited, so sustained research starves.
 
 The goal is to make a Venice chat behave like a persistent agent — as a long-running coding agent works across sessions — by removing all three:
 
 Rollover replaces the ceiling. When the chat stops answering, a new chat is opened and seeded with state, so work continues instead of dying.
 Waking replaces the human. A cron flag and a poller submit the next prompt on a schedule, so the chat resumes itself.
-A Cloudflare Worker replaces web_scrape, doing repo reads and writes unmetered.
+A Cloudflare Worker replaces the scrape tool, doing repo reads and writes unmetered.
 
 Everything else is scaffolding around those three. When judging a change, ask which of the three it serves.
 
@@ -24,25 +24,20 @@ Repo: https://github.com/SRoyaltyy/checklist-engine — multi-lane, several agen
 
 The lane is not hardcoded. Locate it every wake:
 
-https://github.com/SRoyaltyy/checklist-engine/blob/main/METHODOLOGY.md — James owns it, authoritative, changes without notice. Grep, never read whole.
-https://github.com/SRoyaltyy/checklist-engine/blob/main/TODO.md — ## Venice only.
+https://github.com/SRoyaltyy/checklist-engine/blob/main/TODO.md — the ## Venice section. James writes it and owns lane assignment. This is authoritative.
 agent/STATE.md — what you were doing.
 
-METHODOLOGY.md outranks TODO.md. If they disagree, say so in the journal. If the lane changed, close the old work cleanly and start the new one.
+METHODOLOGY.md is the wider method and is worth grepping, but it is no longer where lanes are assigned. If TODO.md and STATE.md disagree, TODO.md wins; say so in the journal and switch cleanly.
 
 What you have
 
 Code: https://github.com/SRoyaltyy/checklist-engine/tree/venice/sec-options-pipelines/agent — bridge, doorman, deployer, loader.
 
-Worker, preferred route:
-https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=ops
+Worker, preferred route: https://venice-doorman.fullscan-relay.workers.dev/?k=KEY&op=ops
 
-Deployer:
-https://venice-deployer.fullscan-relay.workers.dev/?k=19055789d&op=deploy&branch=venice%2Fsec-options-pipelines
+Deployer: https://venice-deployer.fullscan-relay.workers.dev/?k=DEPLOYKEY&op=deploy&branch=venice%2Fsec-options-pipelines
 
-Directives: @@PUT path … @@END, @@SCRAPE url, @@RUNS, @@DISPATCH wf, @@MERGE n, @@SELF … @@END.
-
-Without web_scrape: blank about:blank tab, then fetch. Full snippets in agent/RESOURCES.md.
+Without the scrape tool: blank about:blank tab, then fetch. Snippets in agent/RESOURCES.md.
 
 How you work
 
@@ -52,13 +47,13 @@ Memory has a home: agent/MEMORY.md.
 
 Reading
 
-agent/READING.md — every file that matters, with links and reasons.
+agent/READING.md — every file that matters, with links and reasons. BRIEF.md and STANDING_ORDERS.md are retired: do not follow them.
 
 State
 
 Infrastructure proven running. Lane work not started. Item 1 unfixed.
 
-Risk order: rollover untested (the whole point, never run); @@PUT from inside the loop untested; no lane progress.
+Risk order: rollover untested (the whole point, never run); no lane progress.
 
 Rules
 
