@@ -174,3 +174,43 @@ def test_prefix_availability_mismatch_is_measured_even_with_no_common_rows():
     left, right, differences = align_prefix(expected, rebuilt)
     assert len(left) == len(right) == 0
     assert differences[0]['different_cells'] == 2
+
+
+@pytest.mark.parametrize('present', [True, False])
+def test_finalizer_recovers_uploaded_proof_without_chunk_receipt_and_publishes_partial_honestly(tmp_path, monkeypatch, present):
+    import ci.price_full_cohort_pit as pit
+    from ci import release_assets as io
+    plan, _, stock = stock_fixture()
+    plan.update(smoke_parts=[{'tickers': ['ONE']}], work_parts=[], source_commit='commit', composition={})
+    source = tmp_path / 'source.gz'
+    pit.write_gzip(source, stock)
+    raw = source.read_bytes()
+    asset_name = b'ONE'.hex() + '.pit.json.gz'
+    monkeypatch.setenv('GITHUB_REPOSITORY', 'SRoyaltyy/checklist-engine')
+    monkeypatch.setenv('GITHUB_RUN_ID', '123')
+    monkeypatch.setenv('GITHUB_RUN_ATTEMPT', '1')
+    monkeypatch.setattr(pit, 'read_plan', lambda *args: plan)
+    monkeypatch.setattr(pit, 'create_release', lambda *args: None)
+    monkeypatch.setattr(io, 'asset_index', lambda tag: {asset_name: {'digest': 'sha256:' + sha(raw), 'size': len(raw)}} if present else {})
+    def download(tag, name, directory):
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / name
+        path.write_bytes(raw)
+        return path
+    monkeypatch.setattr(io, 'download_asset', download)
+    published = []
+    monkeypatch.setattr(io, 'publish_assets', lambda tag, *paths: published.extend(p.name for p in paths))
+    monkeypatch.setattr(io, 'gh_retry', lambda *args: None)
+    root = tmp_path / 'final'
+    root.mkdir()
+    if present:
+        pit.finalize(root, 'price-full-cohort-pit-v1-123-1-inputs', 'pin')
+    else:
+        with pytest.raises(ValueError, match='unmeasured'):
+            pit.finalize(root, 'price-full-cohort-pit-v1-123-1-inputs', 'pin')
+    report = json.loads((root / 'PRICE_FULL_COHORT_PIT_MEASURED_V1.json').read_bytes())
+    assert report['measurement'] == ('MEASURED' if present else 'PARTIAL_NOT_MEASURED_FULL_COHORT')
+    assert report['measured_names'] == int(present)
+    assert report['scoring_gate'] == 'CLOSED'
+    assert 'PRICE_FULL_COHORT_PIT_MEASURED_V1.json' in published
+    assert not list((root / 'stock').glob('*.gz'))
