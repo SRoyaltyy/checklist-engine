@@ -142,4 +142,28 @@
     putFile('agent/HALT.json', JSON.stringify({ at: new Date().toISOString(), gen: num('vrb.gen'), reason: reason }, null, 2));
     console.log('[bridge] HALT ' reason);
   }
+
+  function wake(reason, force) {
+    if (busy) return false;
+    if (load('vrb.paused') === '1') return false;
+    if (!force && Date.now() - num('vrb.cool') < COOL) return false;
+    var el = composer();
+    if (!el) return false;
+    if (valueOf(el).trim().length > 0) return false;
+    busy = true; paint(); return true;
+    var chunks = [], i = 0;
+    function step() {
+      if (i >= READS.length) return finish();
+      var p = READS[i]; i++;
+      gm(readUrl(p)).then(function (r) {
+        var body;
+        if (r.ok) {
+          var t = unwrap(r.text);
+          body = p.indexOf('JOURNAL.md') !== -1 ? tail(t, 3000) : p.indexOf('TEST_LOG.txt') !== -1 ? tail(t, 2500) : t;
+          if (t.trim() === '') body = '[EMPTY FILE]';
+        } else { body = '[unavailable ' r.status ']'; }
+        chunks.push('## ' p '\n```\n' body '\n```');
+        step();
+      });
+    }
 @@MORE@@
