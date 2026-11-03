@@ -233,5 +233,24 @@ export default {
         }
         case "deploy": {
           if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
-          let base = String(env.DEPLOYER).replace(/\s /g, "") ...
+          let base = String(env.DEPLOYER).replace(/\s+/g, "")`.replace(/\/+$/, ""));
+          if (!/^https?:/\/\/.test(base)) base = "https://" + base;
+          const key = String(env.DEPLOY_KEY || "").trim();
+          const r = await fetch(`${base}?k=${key}&op=deploy&branch=${encodeURIComponent(branch)}`);
+          const body = (await r.text()).slice(0, 400);
+          return reply({ ok: r.ok, status: r.status, body }, r.ok ? 200 : 400);
+        }
+        default:
+          return reply({ ok: false, error: `unknown op ${op}` }, 400);
+      }
+    } catch (err) {
+      return reply({ ok: false, op, error: String(err.message || err) }, 400);
+    }
+  },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(wakeDecide(env));
+  },
+};
+@@MORE@@.replace(/\s /g, "") ...
 @@MORE@@
