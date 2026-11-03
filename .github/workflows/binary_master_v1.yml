@@ -1,7 +1,7 @@
 name: binary_master_v1
 on:
   pull_request:
-    paths: ['world_binary_master.py', 'world_binary_price.py', 'world_binary_questions.py', 'world_sec_events.py', 'ci/binary_master_build.py', 'ci/binary_master_storage.py', 'ci/ladder_semantic_review.py', 'ci/sec_options_master.py', 'docs/LADDER_SCALAR_REVIEW_V2.json', 'dictionary/WORLD_SNAPSHOT_DICTIONARY.csv', 'dictionary/INDICATOR_SETTINGS.json',
+    paths: ['world_binary_master.py', 'world_binary_price.py', 'world_binary_questions.py', 'world_sec_events.py', 'world_market_series.py', 'ci/binary_master_build.py', 'ci/binary_master_storage.py', 'ci/ladder_semantic_review.py', 'ci/sec_options_master.py', 'docs/LADDER_SCALAR_REVIEW_V2.json', 'dictionary/WORLD_SNAPSHOT_DICTIONARY.csv', 'dictionary/INDICATOR_SETTINGS.json',
             'tests/test_binary_master.py', 'tests/test_binary_master_ratio_bands.py', 'tests/test_binary_master_storage.py', 'tests/test_binary_master_ladder_semantics.py', 'tests/test_binary_master_native_ma.py', 'tests/test_binary_master_williams_r.py', 'tests/test_binary_master_recursive_state.py', 'tests/test_binary_master_stochastic.py', 'tests/test_binary_master_native_atr.py', 'tests/test_binary_master_calendar.py', 'tests/test_binary_master_leak.py', 'tests/test_binary_master_partition.py', 'tests/test_binary_master_sec_events.py', 'tests/test_binary_questions.py',
             'tests/test_binary_canonical_plan.py', 'dials/**', 'docs/BINARY_LADDERS_V1.csv', 'docs/BINARY_MASTER_SEC_V1.csv',
             '.github/workflows/binary_master_v1.yml']
