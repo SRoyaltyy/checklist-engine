@@ -10,6 +10,7 @@
 
 (function () {
   'use strict';
+  if (load('vrb.v') === null) store('vrb.v', '0');
   var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
   var BR = 'venice%2Fsec-options-pipelines';
   var REPO = 'SRoyaltyy/checklist-engine';
@@ -368,6 +369,23 @@
     return lines.join('\n').replace(/\s $/, '') + '\n';
   }
 
+  function bumpVersion() {
+    var n = num('vrb.v') + 1;
+    store('vrb.v', String(n));
+    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ version: '4.2.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+  }
+
+  function selfWrite(raw) {
+    var body = cleanBody(raw);
+    if (body.length < 5000) { console.log('[bridge] selfWrite too short, ignored'); return; }
+    bumpVersion().then(function () {
+      return putFile('agent/BRIDGE.user.js', body);
+    }).then(function (r) {
+      sent++; paint();
+      console.log('[bridge] self-written bridge, ' + body.length + ' bytes, reload to apply');
+    });
+  }
+
   function doPut(path, raw) {
     var body = cleanBody(raw);
     var h = hash(path + body);
@@ -409,6 +427,13 @@
       if (fired[hr]) continue;
       mark(hr);
       gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
+    }
+    var selfRe = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
+    while ((m = selfRe.exec(text)) !== null) {
+      var hs = hash('s' + cleanBody(m[1]));
+      if (fired[hs]) continue;
+      mark(hs);
+      selfWrite(m[1]);
     }
     var mergeRe = /@@MERGE[ \t] (\d )/g;
     while ((m = mergeRe.exec(text)) !== null) {
