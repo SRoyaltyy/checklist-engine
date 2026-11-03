@@ -252,5 +252,3 @@ export default {
     ctx.waitUntil(wakeDecide(env));
   },
 };
-@@MORE@@.replace(/\s /g, "") ...
-@@MORE@@
