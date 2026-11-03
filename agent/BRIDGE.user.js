@@ -366,4 +366,21 @@
     mark(h);
     putFile(path, body).then(function () { sent++; paint(); });
   }
+
+  function scan() {
+    var text = document.body.innerText || '';
+    var m;
+    var strict = /@@PUT[ \t] (\S )[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
+    var covered = {};
+    while ((m = strict.exec(text)) !== null) {
+      covered[hash(m[1] + cleanBody(m[2]))] = 1;
+      doPut(m[1], m[2]);
+    }
+    var loose = /@@PUT[ \t] (\S )[ \t]*\r?\n([\s\S]*?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
+    while ((m = loose.exec(text)) !== null) {
+      var b2 = cleanBody(m[2]);
+      if (covered[hash(m[1] + b2)]) continue;
+      console.log('[bridge] UNTERMINATED @@PUT ' m[1]);
+      doPut(m[1], m[2]);
+    }
 @@MORE@@
