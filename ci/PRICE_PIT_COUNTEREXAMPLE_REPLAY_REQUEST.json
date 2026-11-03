@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "execute": true,
+  "execute": false,
   "scope": "Diagnostic only: repeat the unchanged full-run worker in two clean default-runtime processes for each of three observed finite packet counterexamples; reported signatures only, not full-world acceptance. Full cohort measurement continues separately.",
   "repetitions": 2,
   "worker_commit": "8003fb7906c3bf86d88612495664e597de1c65ae",
