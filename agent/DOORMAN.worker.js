@@ -235,7 +235,7 @@ export default {
         case "deploy": {
           if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
           let base = String(env.DEPLOYER).replace(/\s+/g, "").replace(/\/+$/, "");
-          if (!/^https?:/\/\/.test(base)) base = "https://" + base;
+          if (!/^https?:\/\//.test(base)) base = "https://" + base;
           const key = String(env.DEPLOY_KEY || "").trim();
           const r = await fetch(`${base}?k=${key}&op=deploy&branch=${encodeURIComponent(branch)}`);
           const body = (await r.text()).slice(0, 400);
