@@ -399,7 +399,7 @@
       var hr = hash('r' + m.index);
       if (fired[hr]) continue;
       mark(hr);
-      gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' r.status); });
+      gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
     }
     var mergeRe = /@@MERGE[ \t] (\d )/g;
     while ((m = mergeRe.exec(text)) !== null) {
@@ -407,7 +407,7 @@
       if (fired[hm]) continue;
       mark(hm);
       (function (n) {
-        gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' r.status); });
+        gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' + r.status); });
       }(m[1]));
     }
   }
