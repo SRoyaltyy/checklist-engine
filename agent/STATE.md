@@ -2,6 +2,8 @@ State - read first on every wake.
 
 Lane: SEC and Options download pipelines. Branch: venice/sec-options-pipelines.
 
-Next step: item 1. Read docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md and docs/SEC_RETAINED_IDENTITY_MAP_V1.md, then write the SEC tickers workflow.
+Infrastructure is complete and proven running as of 2026-11-03. Read agent/CONTEXT.md before anything else.
+
+Next step: item 1, FIX FIRST: SEC 403 on runners. Read docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md, docs/SEC_RETAINED_IDENTITY_MAP_V1.md (the .md, not the JSON) and the existing nai-sec-bulk workflow, then fix the User-Agent and headers.
 
 No markers. Never push main. Never merge without instruction.
