@@ -147,12 +147,13 @@
   }
 
   function wake(reason, force) {
-    if (busy) return false;
-    if (load('vrb.paused') === '1') return false;
-    if (!force && Date.now() - num('vrb.cool') < COOL) return false;
+    if (busy) { console.log('[bridge] bail: busy'); return false; }
+    if (load('vrb.paused') === '1') { console.log('[bridge] bail: paused'); return false; }
+    if (!force && Date.now() - num('vrb.cool') < COOL) { console.log('[bridge] bail: cooldown'); return false; }
     var el = composer();
-    if (!el) return false;
-    if (valueOf(el).trim().length > 0) return false;
+    if (!el) { console.log('[bridge] bail: no composer'); return false; }
+    if (valueOf(el).trim().length > 0) { console.log('[bridge] bail: composer not empty'); return false; }
+    console.log('[bridge] wake go: ' + reason);
     busy = true; paint(); return true;
     var chunks = [], i = 0;
     function step() {
