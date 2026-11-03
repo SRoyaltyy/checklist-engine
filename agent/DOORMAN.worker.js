@@ -226,4 +226,12 @@ export default {
           if (!sent.ok) throw new Error(`dispatch failed: ${sent.status}`);
           return reply({ ok: true });
         }
+        case "merge": {
+          const merged = await gh(env, `/pulls/${p.get("pr")}/merge`, { method: "PUT", body: JSON.stringify({ merge_method: p.get("method") || "merge" }) });
+          if (!merged.ok) throw new Error(`merge failed: ${merged.status}`);
+          return reply({ ok: true, sha: merged.body.sha });
+        }
+        case "deploy": {
+          if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
+          let base = String(env.DEPLOYER).replace(/\s /g, "") ...
 @@MORE@@
