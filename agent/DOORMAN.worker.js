@@ -88,4 +88,16 @@ async function wakeDecide(env) {
   const stamp = new Date(now).toISOString();
   await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
 }
+export default {
+  async fetch(request, env) {
+    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
+    const p = new URL(request.url).searchParams;
+    const op = p.get("op") || "ops";
+    if (env.DOORMAN_KEY && p.get("k") !== env.DOORMAN_KEY) return reply({ ok: false, error: "bad key" }, 401);
+    let bodyText = "", bodyJson = null;
+    if (request.method === "POST") {
+      bodyText = await request.text();
+      const type = request.headers.get("content-type") || "";
+      if (type.includes("application/json")) { try { bodyJson = JSON.parse(bodyText); } catch { bodyJson = null; } }
+    }
 @@MORE@@
