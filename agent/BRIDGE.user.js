@@ -40,4 +40,12 @@
         ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
     });
   }
+
+  function readUrl(p) { return W + 'read&branch=' + BR + '&path=' + encodeURIComponent(p); }
+  function putUrl(p) { return W + 'put&branch=' + BR + '&path=' + encodeURIComponent(p); }
+
+  function unwrap(raw) {
+    try { var o = JSON.parse(raw); if (o && typeof o.text === 'string') return o.text; } catch (e) {} 
+    return raw;
+  }
 @@MORE@@
