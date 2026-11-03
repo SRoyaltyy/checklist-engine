@@ -15,7 +15,9 @@
   var REPO = 'SRoyaltyy/checklist-engine';
   var POLL = 30000, COOL = 240000, FAIL_LIMIT = 2, STUCK_MS = 150000, BOOT_MAX = 2;
   var READS = ['agent/BRIEF.md', 'agent/STANDING_ORDERS.md', 'agent/QUEUE.jsonl', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/JOURNAL.md', 'agent/TEST_LOG.txt', 'agent/GANTT_ROWS.md', 'agent/WAKE.json'];
-  var BOOT_READS = ['agent/PROGRESS.md', 'agent/JOURNAL.md', 'agent/STATE.md', 'agent/QUEUE.jsonl', 'agent/GANTT_ROWS.md', 'agent/DOORMAN.worker.js', 'agent/DEPLOYER.worker.js'];
+  var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
+  var BUDGET = 120000;
+  var BOOT_READS = ['agent/PROGRESS.md', 'agent/JOURNAL.md', 'agent/STATE.md', 'agent/QUEUE.jsonl', 'agent/GANTT_ROWS.md', 'agent/DOORMAN.worker.js', 'agent/DEPLOYER.worker.js', 'agent/COMPACT.md'];
   var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0;
 
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -153,8 +155,9 @@
     busy = true; paint(); return true;
     var chunks = [], i = 0;
     function step() {
-      if (i >= READS.length) return finish();
-      var p = READS[i]; i++;
+      var set = load('vrb.compact') === '1' ? COMPACT_READS : READS;
+      if (i >= set.length) return finish();
+      var p = set[i]; i++;
       gm(readUrl(p)).then(function (r) {
         var body;
         if (r.ok) {
@@ -176,6 +179,12 @@
           var tpl = pr.ok ? unwrap(pr.text) : '';
           var body = tpl.trim() ? tpl.replace('{{TIME}}', stamp).replace('{{REASON}}', reason) : '[wake ' stamp '] ' reason '\n\n[WAKE_PROMPT.md unavailable]';
           var full = body + '\n\n## TODO.md Venice lane from main\n' + lane + '\n\n' + chunks.join('\n\n');
+          if (full.length > BUDGET && load('vrb.compact') !== '1') {
+            store('vrb.compact', '1');
+            full = 'COMPACT TURN. Previous payload ' + full.length + ' chars, over budget. Write agent/COMPACT.md via @@PUT in under 6000 chars: state, done, next, risks, file map. Then stop.\n\n' + full;
+          } else if (load('vrb.compact') === '1') {
+            store('vrb.compact', '0');
+          }
           fill(el, full);
           setTimeout(function () {
             nodesAt = msgNodes(); awaiting = Date.now();
