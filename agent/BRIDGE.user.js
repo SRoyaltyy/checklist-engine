@@ -373,7 +373,7 @@
   function bumpVersion() {
     var n = num('vrb.v') + 1;
     store('vrb.v', String(n));
-    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ version: '4.2.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.2.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
   }
 
   function selfWrite(raw) {
