@@ -24,16 +24,3 @@ Infrastructure complete and proven running. Lane work not started.
 Wake fires, fills the composer, submits.
 Compaction, self-write and scrape ops exist and parse, none yet exercised in anger.
 Rollover never tested.
-@@PUT from inside the loop never tested — treat the first real write as a test.
-The three known-weak points
-Rollover untested. Everything up to a dead chat is proven; the recovery path is not. This is the single biggest risk.
-No lane progress yet. Item 1 is unfixed. Nothing has been committed by the loop.
-Bootstrap is thin. BRIEF.md, STANDING_ORDERS.md, QUEUE.jsonl, TEST_LOG.txt, GANTT_ROWS.md were missing from this branch at first and returned 400 until copied in. If they 400 again, that is why.
-Reading order for a new chat
-agent/STATE.md — where the work stands
-agent/PROGRESS.md — the lane rows
-TODO.md on main, ## Venice section only — the actual orders
-agent/INFRA.md — how the machinery works
-agent/RECOVERY.md — only if something is broken
-
-Do not read METHODOLOGY.md whole; it is 587 KB. Grep it.
