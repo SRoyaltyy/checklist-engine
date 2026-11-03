@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "execute": true,
+  "scope": "Full retained_8439 #203 price cohort; all 22 native timeframes and 1044 produced fields, two predeclared prefix cuts, setup-day alignment and actual published diagnostic-packet reconciliation. No vendor downloads, source mutation, canonical-definition claim or scoring approval.",
+  "source_plan": {
+    "release": "compact-world-build-v1-41078405278-1-inputs",
+    "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+    "sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c"
+  },
+  "composition": {
+    "release": "compact-world-build-composed-v1-41221028803-1",
+    "asset": "COMPACT_WORLD_BUILD_COMPOSED.json",
+    "sha256": "84dc8205c12e9112e083d425e45af63d5b64b2bff3324c40a6ce7be4dde498c1"
+  },
+  "registry": {
+    "release": "compact-world-build-v1-41078405278-1-inputs",
+    "asset": "DIAGNOSTIC_REGISTRIES.json",
+    "sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2"
+  },
+  "prefix_cuts": ["2023-01-03", "2025-01-02"],
+  "smoke_names": ["DJCO", "BPOP"],
+  "worker_seconds": 1200,
+  "shard_budget_seconds": 16800
+}
