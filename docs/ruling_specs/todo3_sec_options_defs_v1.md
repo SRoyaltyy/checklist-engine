@@ -87,17 +87,16 @@ ending D-1 (or last available publication < D 09:30 ET).
 
 ## 4. Binding path into the master
 
-- New SEC/options FACETS + recipes in `world_binary_master.py`, bound through
-  `bind_master_question` → BOUND rows appended to `docs/BINARY_MASTER_V1.csv`.
-  Pre-existing rows must survive verbatim and in relative order (subsequence
-  contract enforced by `ad0ead01`).
-- Existing LADDER_ADDON rows for these items stay untouched; scalar ladder
-  binding is a separate later step (needs per-item scalar review, like RSI).
-- `data_group = 8 Non-price data`; blocks per WAR_ROOM: E (Form 4), F (short
-  interest), M (13F), N (single-stock options), plus C26 sector row and I201
-  market-wide options.
-- Every definition carries `knowable_at_setup_open` citing C29; leak tests must
-  cover SEC acceptance-date joins (acceptance < D 09:30 ET, never period end).
+**Decision (2026-11-03, pending James review):** standalone emitter first.
+`test_binary_canonical_plan.py` pins the sealed v2.7 grid totals (15,093
+questions / 232 cutoffs / 154,667 OAT variants), and grid extension is a
+QUESTION_TREE_v3 decision. So SEC/options strict definitions emit to
+`docs/BINARY_MASTER_SEC_V1.csv` via `ci/sec_options_master.py` in the exact
+26-column BINARY_MASTER_V1 schema (`question_id` prefix `BS1-`), measurements
+in `world_sec_events.py`; a future v3 merge into the master is a mechanical
+append. First family implemented as the pattern: **I187 Form 4** (28 defs:
+days_since / count / cluster / net_dollars / max_trade). Pre-existing master
+rows are untouched.
 
 ## 5. Validation plan
 

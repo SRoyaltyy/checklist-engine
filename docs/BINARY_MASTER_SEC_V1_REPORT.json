@@ -1,0 +1,16 @@
+{
+  "csv": "BINARY_MASTER_SEC_V1.csv",
+  "csv_sha256": "c2d4f73a98d9bd627f69090cdbcc2453ebf3a21905612a11f838bada6058ca72",
+  "rows": 28,
+  "blocks": [
+    "E SEC Form 4 (I187)"
+  ],
+  "facets": [
+    "form4_cluster",
+    "form4_count",
+    "form4_days_since",
+    "form4_max_trade",
+    "form4_net_dollars"
+  ],
+  "status": "DEFINITIONS_ONLY_NO_ANSWERS"
+}
