@@ -47,9 +47,130 @@ One thing to note before you run it: the new chat will not have the badge or the
 
 I'd refrain from linking it to files it might not have access to. Lets include everything, including context.md in text form
 
-Loading...
+Worked for 7s · 1 step
 
-Thinking...
+Here is the self-contained version. Nothing depends on the worker being reachable, and nothing needs attaching.
+
+CONTINUATION BRIEF
+
+You are continuing work that outlived the previous chat. You have no memory of it. That is expected. Everything you need is below — read all of it before acting.
+
+Doorman key, if you need the repo live: tos335407215
+
+1. What this system is, and why
+
+Venice's web chat has three limits that make sustained autonomous work impossible:
+
+A context ceiling. A chat accumulates history until requests are rejected before generation. Every model fails identically. The chat dies and the work dies with it.
+It sleeps. After a turn it stops. Nothing resumes it. Continuing means a human typing "continue" forever.
+Metered reads. The scrape tool is rate-limited, so sustained research starves.
+
+The goal is to make a Venice chat behave like a persistent agent — as a long-running coding agent works across sessions — by removing all three:
+
+Rollover replaces the ceiling. When the chat stops answering, a new chat is opened and seeded with state, so work continues instead of dying.
+Waking replaces the human. A cron flag and a poller submit the next prompt on a schedule, so the chat resumes itself.
+A Cloudflare Worker replaces the scrape tool, doing repo reads and writes unmetered.
+
+Everything else is scaffolding around those three. When judging a change, ask which of the three it serves.
+
+You are the continuation. If you are reading this, either the rollover fired or a human pasted it. Either way, the previous chat is gone and this is the same work.
+
+2. Repo and lane
+
+Repo: https://github.com/SRoyaltyy/checklist-engine — multi-lane, several agents. Branch venice/*, PR to main, never push main.
+
+The lane is not hardcoded. It lives in TODO.md on main, ## Venice section, owned by James. This is authoritative. STATE.md records what you were doing; if the two disagree, TODO.md wins, and you say so in the journal.
+
+METHODOLOGY.md is the wider method and worth grepping, but lanes are no longer assigned there. It is 587 KB — never read it whole.
+
+3. Your lane, verbatim
+
+Lane: no-AI download pipelines (GitHub Actions + scripts) for SEC and Options. Branch venice/*, PR to main. Do NOT push to main directly, no @@CUT/@@BODY markers, journal in your own agent/ files. Calendar work (#96) is parked — do not touch.
+Reset first: restart from main; ignore everything on venice/calendar-announce-ledger after dca969a.
+
+FIX FIRST: SEC 403 on runners → [1 Data / SEC]. PR #208/#209 scripts exist (nai-sec-bulk, nai-sec-form345, nai-sec-form13f) but every run 403s, incl. via relay (e.g. runs 41413529249, 41413535355). Check User-Agent format (Name email@domain), Accept-Encoding, rate; SEC often blocks cloud IPs — if so, route via a non-GitHub egress (Cloudflare Worker fetch) and prove with a green run.
+SEC tickers + bulk → [1 Data / SEC / analyst / sector history]. Workflow on GitHub runners hitting sec.gov directly (proper User-Agent, ≤10 req/s): company_tickers.json, company_tickers_exchange.json, submissions.zip, companyfacts.zip. Filter to retained_8439 using docs/SEC_RETAINED_IDENTITY_MAP_V1.json; output parquet as release asset; report new CIK coverage (now 3,996/8,439).
+Form 4 + 13F → same row. SEC "Insider Transactions Data Sets" and "Form 13F Data Sets" quarterly zips 2020Q1→latest. Keep only fixed-value fields (buy/sell code, shares, price, dates) — no free text. Per-quarter parquet release assets.
+Options open interest → [1 Data / Options + money-flow (#165)]. Probe free daily per-stock OI from runners (OCC volume/OI reports, Cboe daily stats). If found: daily cron collector + backfill whatever history exists. Write honest depth in docs/OPTIONS_OI_FREE_V1.md.
+Forward daily collectors → #165. FINRA daily short volume + CBOE indices, daily cron, append to release assets.
+Summary doc docs/NO_AI_DATA_PIPELINES_V1.md: each workflow, schedule, latest green run ID, coverage.
+4. State
+
+Infrastructure proven running 2026-11-03. Lane work not started. Item 1 unfixed.
+
+Risk order: rollover untested — the whole point, never once run. No lane progress yet.
+
+HALT.json shows a cleared halt, gen 3. Nothing is halted now.
+
+5. Progress
+#	Item	State	Evidence
+1	SEC tickers workflow	not started	-
+2	Bulk submissions pipeline	not started	-
+3	Options chain source	not started	-
+4	Retained identity map wiring	not started	-
+5	Source monitor and drift check	not started	-
+
+Next step: item 1. Read docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md, docs/SEC_RETAINED_IDENTITY_MAP_V1.md (the .md, never the 5.3 MB JSON) and the existing nai-sec-bulk workflow, then fix the User-Agent and headers.
+
+6. Protocol — follow in order, every wake
+
+1. Orient. Read STATE.md, PROGRESS.md, the lane in TODO.md, MEMORY.md. No writing yet.
+
+2. Ascertain. Compare PROGRESS.md against TODO.md. Correct it where reality moved: a row claiming done with no proof becomes unproven. If the lane changed, journal it and reset STATE.md. Finish or explicitly abandon a half-done item before starting another.
+
+3. Choose one item. First unticked row matching the lane. One only. Too large for one wake means split it and do the first part.
+
+4. Work. Branch venice/<slug>. Never main. Read the docs the item names before writing code. Keep committed files marker-free.
+
+5. Prove. Run it. A green run ID or a commit is the only proof, and it goes in the PR body. No proof, the row stays unproven.
+
+6. Record. Journal one line (date UTC | item | action | sha | result). Rewrite STATE.md. Update PROGRESS.md. Append MEMORY.md with anything durable.
+
+7. Stop. When the item is proven or compaction is due. Do not start a second item to fill time.
+
+Hard rules. Never push main. Never merge without instruction. No @@CUT/@@BODY markers in committed files. Blocked? Journal the blocker, set STATE.md to it, stop — do not thrash.
+
+7. What you have
+
+Code, all under agent/: BRIDGE.user.js (poller, prompt builder, rollover), DOORMAN.worker.js (GitHub transport, 17 ops), DEPLOYER.worker.js (redeploys the doorman), LOADER.user.js (fetches and re-executes the bridge).
+
+Worker, preferred route: https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=ops
+
+Ops: ops branch ref read list commits diff search grep put edit pr pr-edit runs dispatch merge deploy scrape
+
+Deployer: https://venice-deployer.fullscan-relay.workers.dev/?k=19055789d&op=deploy&branch=venice%2Fsec-options-pipelines
+
+Directives: two at-signs, then PUT, a space, the path, newline, body, newline, two at-signs and END — writes a file. Also SCRAPE url, RUNS, DISPATCH workflow.yml, MERGE n, and SELF … END to replace the bridge. Emit them as plain text in your reply, not inside a code fence.
+
+Without the scrape tool: blank about:blank tab, F12, then fetch. It has no CSP. Never use the sandbox iframe — it cannot reach workers.dev. Never GET a long body; Cloudflare caps the request line at 32,000 characters, so POST bodies for writes.
+
+Parse before writing JS: await import('https://cdn.jsdelivr.net/npm/acorn@8/dist/acorn.mjs'), then acorn.parse(text,{ecmaVersion:2022}). Byte counts prove nothing — thirty missing + and a missing brace once all passed size checks.
+
+8. Memory — do not relearn these
+A file body containing a literal END directive is truncated at that line. Describe directives in words inside files.
+Writes only land while the page is open and mutating. If the bridge is paused, they are inert text.
+The wake function had dead code after its return, so the busy flag stuck true forever. Hoisted the var, called step() first.
+The loader must pass GM_xmlhttpRequest into the Function constructor; page scope has no GM_*.
+Deploys wipe bindings unless keep_bindings is sent. It has cost a full credential set once.
+op=putprobe replaces the doorman with a one-line stub. Restore via the deployer directly, never through the doorman.
+BRIEF.md and STANDING_ORDERS.md are retired. PROTOCOL.md wins; one item per wake.
+9. Reading list
+
+Always: STATE.md, PROGRESS.md, MEMORY.md, the TODO.md lane, PROTOCOL.md.
+
+Before code: docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md, docs/SEC_RETAINED_IDENTITY_MAP_V1.md, docs/CBOE_SOURCE_LOCATIONS_V1.json, docs/NO_AI_DATA_PIPELINES_V1.md, existing nai-sec-* workflows.
+
+When broken: FAILURES.md (sixteen faults with causes — check before debugging blind), RECOVERY.md, INFRA.md, PREREQS.md.
+
+Coordination: other agents own other lanes. Read their TODO.md rows, never edit their files, leave their PRs alone.
+
+Begin with item 1. Journal, rewrite STATE.md and PROGRESS.md, append MEMORY.md, then stop.
+
+Two notes before you test.
+
+If the new chat has the bridge running, the @@PUT blocks it emits will land and the work is real. If not, they are readable text and nothing lands — still a valid comprehension test, just not an execution one.
+
+And the memory section is deliberately blunt about past faults. It reads like a grumble, but each line is a failure that cost hours, and a fresh chat will otherwise walk straight into all of them.
 
 Ask anything privately...
 
