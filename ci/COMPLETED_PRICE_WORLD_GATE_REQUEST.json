@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "execute": true,
+  "execute": false,
   "scope": "Run the world gate on the actual completed #203 retained-price rebuild; metadata full cohort, semantic/PIT/eligibility proofs retain their actual scopes. No producer rerun or new market calculation.",
   "sources": {
     "plan": {
