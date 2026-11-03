@@ -51,6 +51,17 @@ def test_independent_lookup_catches_forward_alignment_and_late_source():
     assert check['native_end_not_before_availability'] == 2
 
 
+def test_listing_without_completed_native_candles_keeps_all_queries_missing():
+    query = pd.date_range('2024-01-01', periods=3).as_unit('ns')
+    native = pd.DataFrame(columns=['date'])
+    full = pd.DataFrame(columns=['x', 'y', 'available_from'])
+    coverage, check = aligned_coverage(query, native, full, ['x', 'y'], 'monthly', align_features)
+    assert check['cells'] == 6 and check['different_cells'] == 0
+    assert all(r['known'] == 0 and r['missing'] == 3 and r['known_without_source'] == 0 for r in coverage)
+    answers = diagnostic_answers(full, query, 'monthly', align_features)
+    assert answers.shape == (3, 6) and answers.isna().all().all()
+
+
 def test_vectorized_replay_matches_the_original_per_series_predicates():
     dates = pd.date_range('2024-01-01', periods=40).as_unit('ns')
     full = pd.DataFrame(dict(x=np.sin(np.arange(40)), y=np.arange(40, dtype=float), available_from=dates))
