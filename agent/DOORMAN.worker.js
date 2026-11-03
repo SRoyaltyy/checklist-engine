@@ -9,4 +9,9 @@ const dec = (b64) => { const r = atob(String(b64 || "").replace(/\n/g, "")); con
 const reply = (d, s = 200) => new Response(JSON.stringify(d, null, 2), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
 function repo(env) { if (!env.GITHUB_REPO) throw new Error("GITHUB_REPO unset"); return env.GITHUB_REPO; }
 async function gh(env, path, init = {}) {
+  const res = await fetch(`https://api.github.com/repos/${repo(env)}${path}`, { ...init, headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json", "User-Agent": "venice-doorman", ...(init.headers || {}) } });
+  const text = await res.text();
+  let body; try { body = JSON.parse(text); } catch { body = text; }
+  return { ok: res.ok, status: res.status, body, text };
+}
 @@MORE@@
