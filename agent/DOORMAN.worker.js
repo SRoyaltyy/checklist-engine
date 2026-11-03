@@ -75,4 +75,17 @@ async function wakeDecide(env) {
     const when = commits.body[0].commit?.committer?.date;
     if (when && (now - Date.parse(when)) / 60000 < WAKE_FRESH_COMMIT_MIN) reasons.push(`main moved ${commits.body[0].sha.slice(0, 8)}`);
   }
+  const runs = await gh(env, `/actions/runs?branch=${encodeURIComponent(env.WAKE_BRANCH)}&per_page=5`);
+  if (runs.ok && runs.body.workflow_runs) {
+    for (const run of runs.body.workflow_runs) {
+      if (run.conclusion === "failure") {
+        if ((now - Date.parse(run.created_at)) / 60000 < WAKE_FRESH_FAIL_MIN) reasons.push(`run ${run.id} failed (${run.name})`);
+        break;
+      }
+    }
+  }
+  if (!reasons.length) reasons.push("heartbeat: interval elapsed");
+  const stamp = new Date(now).toISOString();
+  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
+}
 @@MORE@@
