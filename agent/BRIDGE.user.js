@@ -92,4 +92,23 @@
     for (i = sibs.length - 1; i >= 0; i--) { b = sibs[i]; if (b !== attach && !b.disabled && !/attach|dictate|close/i.test(labelOf(b))) return b; }
     return null;
   }
+
+  function valueOf(el) { return el.tagName === 'TEXTAREA' ? el.value : el.textContent; }
+
+  function fill(el, text) {
+    el.focus();
+    if (el.tagName === 'TEXTAREA') {
+      var setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
+      setter.call(el, text);
+    } else {
+      var done = false;
+      try {
+        document.execCommand('selectAll', false, null);
+        done = document.execCommand('insertText', false, text);
+      } catch (e) { done = false; }
+      if (!done || valueOf(el).length < text.length * 0.8) el.textContent = text;
+    }
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 @@MORE@@
