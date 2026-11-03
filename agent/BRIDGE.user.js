@@ -130,8 +130,7 @@
   function paint() {
     if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
     var paused = load('vrb.paused') === '1';
-    badge.textContent = (paused ? 'PAUSED' : 
-		(phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (num('vrb.fail') ? '| f' + num('vrb.fail') : '');
+    badge.textContent = (paused ? 'PAUSED' :  (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (num('vrb.fail') ? '| f' + num('vrb.fail') : '');
     badge.style.background = paused ? '#8b949e' : 
 		phase === 'boot' ? '#9e6a03' : '#238636';
   }
