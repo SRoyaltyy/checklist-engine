@@ -1,6 +1,5 @@
 {
-"halted": false,
-"cleared_at": "2026-11-03T00:00:00.000Z",
-"was": "bootstrap failed 3x, gen 3, 06:15 UTC",
-"note": "Cleared by hand. A halt sets vrb.halt in localStorage and stops retries; it does not block a wake by itself. Clear with localStorage.removeItem('vrb.halt') then reload."
+  "at": "2026-11-03T09:26:22.832Z",
+  "gen": 7,
+  "reason": "bootstrap failed 3x:  response failed x15"
 }
