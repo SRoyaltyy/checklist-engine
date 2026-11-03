@@ -237,13 +237,33 @@ def test_scalar_alias_revision_preserves_all_other_rows(tmp_path):
     with prior.open(encoding='utf-8', newline='') as old, current.open(encoding='utf-8', newline='') as new:
         previous, actual = csv.DictReader(old), csv.DictReader(new)
         assert previous.fieldnames == actual.fieldnames
+        pending = None  # rows of the current master not yet consumed
+
+        def take():
+            nonlocal pending
+            if pending is not None:
+                row, pending = pending, None
+                return row
+            return next(actual, None)
+
         for row in previous:
             if row['question_id'] in removed_ids:
                 assert row['definition_status'] == 'LADDER_ADDON'
                 removed += 1
                 continue
-            assert next(actual) == row
+            # Batches after the base commit may append new definitions (the
+            # master is sorted by content-hash question ID, so new rows can
+            # interleave); every pre-existing row must survive verbatim and
+            # in its original relative order — a subsequence of the current
+            # master, never rewritten or reordered.
+            while True:
+                current_row = take()
+                assert current_row is not None, f"row vanished from master: {row['question_id']}"
+                if current_row == row:
+                    break
             checked += 1
             bound += row['definition_status'] == 'BOUND'
-        assert next(actual, None) is None
+    # 12 reviewed scalar aliases fold into their -L05 canonicals; all 65,540
+    # remaining pre-existing rows (62,876 BOUND + 2,664 LADDER_ADDON) must be
+    # preserved verbatim. Later batches append definitions on top.
     assert (checked, removed, bound) == (65540, 12, 62876)
