@@ -77,4 +77,19 @@
     for (i = list.length - 1; i >= 0; i--) { if (list[i].offsetParent !== null) return list[i]; }
     return null;
   }
+
+  function sendButton() {
+    var btns = Array.prototype.slice.call(document.querySelectorAll('button, [role="button"]'));
+    var i, b;
+    for (i = 0; i < btns.length; i++) { if (/send|submit/i.test(labelOf(btns[i]))) return btns[i]; }
+    var attach = null;
+    for (i = 0; i < btns.length; i++) { if (/attach/i.test(labelOf(btns[i]))) attach = btns[i]; }
+    if (!attach || !attach.parentElement) return null;
+    var sibs = Array.prototype.slice.call(attach.parentElement.querySelectorAll('button, [role="button"]'));
+    var silent = [];
+    for (i = 0; i < sibs.length; i++) { b = sibs[i]; if (b === attach || b.disabled) continue; if (labelOf(b) === '') silent.push(b); }
+    if (silent.length) return silent[silent.length - 1];
+    for (i = sibs.length - 1; i >= 0; i--) { b = sibs[i]; if (b !== attach && !b.disabled && !/attach|dictate|close/i.test(labelOf(b))) return b; }
+    return null;
+  }
 @@MORE@@
