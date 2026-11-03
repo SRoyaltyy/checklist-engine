@@ -186,4 +186,26 @@
         });
       });
     }
+
+  function waitFor(fn, ms) {
+    return new Promise(function (res) {
+      var t0 = Date.now();
+      (function poll() {
+        if (fn()) return res(true);
+        if (Date.now() - t0 > ms) return res(false);
+        setTimeout(poll, 500);
+      }());
+    });
+  }
+
+  function clickNewChat() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('button, [role="button"], a'));
+    var i;
+    for (i = 0; i < els.length; i++) {
+      if (els[i].offsetParent === null) continue;
+      if (/new chat|new conversation|start new/i.test(labelOf(els[i]))) { els[i].click(); return true; }
+    }
+    location.href = location.origin + '/';
+    return false;
+  }
 @@MORE@@
