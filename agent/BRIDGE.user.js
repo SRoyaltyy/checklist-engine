@@ -310,4 +310,16 @@
         if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
       } else { awaiting = 0; }
     }
+    if (awaiting && msgNodes() >= nodesAt + 2) {
+      awaiting = 0;
+      if (phase === 'boot') {
+        phase = 'work'; bootTries = 0; store('vrb.fail', '0'); paint();
+        console.log('[bridge] bootstrap answered, resuming');
+        setTimeout(function () { wake('post-bootstrap resume', true); }, 3000);
+      } else if (num('vrb.fail')) { store('vrb.fail', '0'); paint(); }
+    }
+  }
+
+  var fired = {};
+  try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
 @@MORE@@
