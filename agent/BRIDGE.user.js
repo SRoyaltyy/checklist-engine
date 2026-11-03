@@ -424,4 +424,20 @@
       if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
     });
   }
+
+  var timer = null;
+  var observer = new MutationObserver(function () {
+    clearTimeout(timer);
+    timer = setTimeout(scan, 900);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+  var tickTimer = setInterval(tick, POLL);
+  var healthTimer = setInterval(healthTick, 5000);
+
+  window.__vrb = { stop: function () {
+    clearInterval(tickTimer); clearInterval(healthTimer);
+    clearTimeout(timer); observer.disconnect();
+    if (badge.parentElement) badge.remove();
+  } };
 @@MORE@@
