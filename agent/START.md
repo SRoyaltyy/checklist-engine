@@ -24,7 +24,3 @@ Then
 Follow agent/PROTOCOL.md. One item per wake. Branch venice/*, PR to main, never push main. No markers in committed files. Proof is a green run ID or a commit, and it goes in the PR.
 
 Write with:
-
-Copy code
-@@PUT path
-body
