@@ -1,7 +1,7 @@
 {
   "csv": "BINARY_MASTER_SEC_V1.csv",
-  "csv_sha256": "b82a0a46b86540cb93f880c6cccef77552dc793ad7326fe305d3a0cdad6ed48a",
-  "rows": 104,
+  "csv_sha256": "f5368ece768b583ac0123d78ba7a182d8f1e995f555c6ae9bbf5ae9754f14ce7",
+  "rows": 114,
   "blocks": [
     "E SEC Form 4 (I187)",
     "F FINRA short volume (I189)",
@@ -10,6 +10,7 @@
     "I Dividends (I196)",
     "J FINRA short interest (I188)",
     "K Sector membership (C26)",
+    "L SEC XBRL fundamentals (I192)",
     "M SEC 13F holdings (I199)",
     "N CBOE market-wide options (I201)"
   ],
@@ -47,7 +48,11 @@
     "si_percentile",
     "si_tercile_state_change",
     "vix_level",
-    "vix_term_structure"
+    "vix_term_structure",
+    "xbrl_margin_expanded",
+    "xbrl_pb",
+    "xbrl_pe",
+    "xbrl_revenue_growth"
   ],
   "status": "DEFINITIONS_ONLY_NO_ANSWERS"
 }

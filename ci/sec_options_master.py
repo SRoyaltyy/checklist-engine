@@ -35,6 +35,8 @@ BLOCK_FORM4 = 'E SEC Form 4 (I187)'
 BLOCK_SECTOR = 'K Sector membership (C26)'
 BLOCK_SHORTINT = 'J FINRA short interest (I188)'
 BLOCK_SHARES = 'H Shares outstanding (I193)'
+BLOCK_XBRL = 'L SEC XBRL fundamentals (I192)'
+RECIPE_XBRL = 'sec_xbrl'
 BLOCK_DIV = 'I Dividends (I196)'
 RECIPE_SECTOR = 'sec_sector'
 RECIPE_SHORTINT = 'finra_si'
@@ -367,6 +369,47 @@ def dividend_definitions():
     return rows
 
 
+def xbrl_definitions():
+    """I192 SEC XBRL fundamentals: ratio/growth facets over fact points already
+    PIT-selected by world_sec_facts (filed strictly < D, statuses propagate;
+    non-VALUE -> NOT_EVALUABLE, never partially imputed). Price input = raw
+    D-1 close, never adjusted. Only 3,996/8,439 tickers have CIK coverage ->
+    outside coverage is NE, never NO."""
+    rows = []
+    recipe, block, source = RECIPE_XBRL, BLOCK_XBRL, 'I192'
+    for t in (10, 15, 20, 30):
+        expr = 'sec_xbrl_pe_v1()'
+        rows.append(_row(
+            'xbrl_pe', expr, 'continuous', 'price_over_diluted_eps_ttm',
+            '>=', t, expr,
+            f'P/E (raw D-1 close / diluted EPS TTM) >= {t}; NE on non-positive EPS '
+            'or any non-VALUE fact status', f'pe_ge{t}',
+            recipe=recipe, block=block, source=source))
+    for t in (1, 3, 5):
+        expr = 'sec_xbrl_pb_v1()'
+        rows.append(_row(
+            'xbrl_pb', expr, 'continuous', 'price_over_book_value_per_share',
+            '>=', t, expr,
+            f'P/B (raw D-1 close / book value per share) >= {t}; NE on non-positive book '
+            'value or any non-VALUE fact status', f'pb_ge{t}',
+            recipe=recipe, block=block, source=source))
+    for t in (0, 10):
+        expr = 'sec_xbrl_revenue_growth_yoy_v1()'
+        rows.append(_row(
+            'xbrl_revenue_growth', expr, 'continuous', 'revenue_ttm_yoy_change_percent',
+            '>=', t, expr,
+            f'revenue (TTM) grew >= {t}% year over year; NE on zero/negative prior base '
+            'or any non-VALUE fact status', f'rev_growth_ge{t}',
+            recipe=recipe, block=block, source=source))
+    expr = 'sec_xbrl_margin_expanded_yoy_v1()'
+    rows.append(_row(
+        'xbrl_margin_expanded', expr, 'boolean', 'net_margin_expanded_vs_prior_ttm',
+        '=', 1, expr,
+        'net margin (NI/revenue, TTM) of the current period exceeds the prior period',
+        'margin_expanded', recipe=recipe, block=block, source=source))
+    return rows
+
+
 def short_volume_definitions():
     """I189 FINRA daily short volume: per-session short/total ratio facets."""
     rows = []
@@ -477,7 +520,8 @@ def build(root=ROOT):
     root = Path(root)
     rows = (form4_definitions() + analyst_definitions() + holdings13f_definitions()
             + short_interest_definitions() + sector_definitions() + shares_definitions()
-            + dividend_definitions() + short_volume_definitions() + cboe_definitions())
+            + dividend_definitions() + xbrl_definitions()
+            + short_volume_definitions() + cboe_definitions())
     ids = [r['question_id'] for r in rows]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate question_id in SEC definitions')

@@ -171,10 +171,11 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
             sec_options_master.BLOCK_CBOE, sec_options_master.BLOCK_ANALYST,
             sec_options_master.BLOCK_13F, sec_options_master.BLOCK_SECTOR,
             sec_options_master.BLOCK_SHORTINT, sec_options_master.BLOCK_SHARES,
-            sec_options_master.BLOCK_DIV} <= blocks
+            sec_options_master.BLOCK_DIV, sec_options_master.BLOCK_XBRL} <= blocks
     # every emitted recipe is implemented
     import world_sec_events as wse
     import world_market_series as wms
+    import world_sec_ratios as wsr
     implemented = {'sec_form4_days_since_last_v1': wse.days_since_last,
                    'sec_form4_count_v1': wse.count_in_window,
                    'sec_form4_net_dollars_v1': wse.net_dollars,
@@ -199,6 +200,10 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
                    'sec_shares_out_event_within_v1': wse.shares_out_event_within,
                    'sec_div_days_since_ex_v1': wse.days_since_ex_dividend_v1,
                    'sec_div_dps_changed_v1': wse.dps_changed_v1,
+                   'sec_xbrl_pe_v1': wsr.pe_ratio_v1,
+                   'sec_xbrl_pb_v1': wsr.pb_ratio_v1,
+                   'sec_xbrl_revenue_growth_yoy_v1': wsr.revenue_growth_yoy_v1,
+                   'sec_xbrl_margin_expanded_yoy_v1': wsr.margin_expanded_yoy_v1,
                    'finra_short_ratio_v1': wms.finra_short_ratio_v1,
                    'finra_short_ratio_mean_v1': wms.finra_short_ratio_mean_v1,
                    'finra_short_ratio_percentile_v1': wms.finra_short_ratio_percentile_v1,
@@ -497,3 +502,39 @@ def test_dividend_days_since_ex_and_dps_change():
     assert dps_changed_v1(same, D) is False
     assert dps_changed_v1(obs[:1], D) is None
     assert days_since_ex_dividend_v1([], sessions, D) is None
+
+
+# ---- I192 XBRL fundamentals ---------------------------------------------------
+
+from world_sec_ratios import (margin_expanded_yoy_v1, pb_ratio_v1, pe_ratio_v1,
+                              revenue_growth_yoy_v1)
+
+
+def _pt(value, status='VALUE'):
+    return dict(value=value, status=status)
+
+
+def test_xbrl_pe_pb_and_status_propagation():
+    assert pe_ratio_v1(_pt(2.0), 30.0) == 15.0
+    assert pe_ratio_v1(_pt(2.0), dict(value=30.0, status='VALUE')) == 15.0
+    assert pe_ratio_v1(_pt(-1.0), 30.0) is None   # negative EPS -> NE
+    assert pe_ratio_v1(_pt(2.0), -30.0) is None   # non-positive price -> NE
+    # any non-VALUE status propagates: never partially imputed
+    for status in ('CONFLICTING_VALUES_SAME_FILED_DATE', 'MULTIPLE_VALID_PERIOD_STARTS',
+                   'NO_KNOWN_FACT'):
+        assert pe_ratio_v1(_pt(2.0, status), 30.0) is None
+    assert pb_ratio_v1(_pt(1_000_000.0), _pt(500_000.0), 6.0) == 3.0
+    assert pb_ratio_v1(_pt(-500.0), _pt(100.0), 6.0) is None  # negative book value
+    assert pb_ratio_v1(_pt(1_000_000.0), _pt(0.0), 6.0) is None  # zero shares
+
+
+def test_xbrl_growth_and_margin():
+    assert revenue_growth_yoy_v1(_pt(110.0), _pt(100.0)) == 10.0
+    assert revenue_growth_yoy_v1(_pt(90.0), _pt(100.0)) == -10.0
+    assert revenue_growth_yoy_v1(_pt(110.0), _pt(-100.0)) is None  # negative base
+    assert revenue_growth_yoy_v1(_pt(110.0), _pt(0.0)) is None
+    assert margin_expanded_yoy_v1(_pt(20.0), _pt(100.0), _pt(10.0), _pt(100.0)) is True
+    assert margin_expanded_yoy_v1(_pt(5.0), _pt(100.0), _pt(10.0), _pt(100.0)) is False
+    assert margin_expanded_yoy_v1(_pt(20.0, 'NO_KNOWN_FACT'), _pt(100.0),
+                                  _pt(10.0), _pt(100.0)) is None
+    assert margin_expanded_yoy_v1(_pt(20.0), _pt(0.0), _pt(10.0), _pt(100.0)) is None
