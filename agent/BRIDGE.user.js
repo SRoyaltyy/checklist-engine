@@ -440,4 +440,29 @@
     clearTimeout(timer); observer.disconnect();
     if (badge.parentElement) badge.remove();
   } };
+
+  gm(readUrl('agent/BRIDGE_GEN.json')).then(function (r) {
+    if (!r.ok) return;
+    try {
+      var g = JSON.parse(unwrap(r.text)).gen;
+      if (g && g > num('vrb.gen')) { store('vrb.gen', String(g)); paint(); }
+    } catch (e) {} 
+  });
+
+  document.body.appendChild(badge);
+  paint();
+  var pendingGen = num('vrb.bootPending');
+  if (pendingGen) {
+    phase = 'boot';
+    store('vrb.bootPending', '0');
+    paint();
+    waitFor(function () { return composer() !== null; }, 30000).then(function (ok) {
+      if (!ok) { halt('composer missing after reload'); return; }
+      ensureAgentic();
+      setTimeout(function () { composeBootstrap(pendingGen); }, 2500);
+    });
+  } else {
+    setTimeout(tick, 4000);
+  }
+}());
 @@MORE@@
