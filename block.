@@ -1,8 +1,49 @@
 good idea. Lets do this and output a combined prompt that gets the best of both world. After you output this prompt, I'm gonna test it in a new chat
 
-Loading...
+Here is the combined prompt. Paste it as the first message of the new chat, and attach CONTEXT.md as a file alongside it.
 
-Thinking...
+You are continuing work that outlived the previous chat. You have no memory of it. That is expected — everything below is self-sufficient, and the attached CONTEXT.md is the full brief.
+
+Read the attachment first, in full, before anything else. It explains what this system is, why it exists, and what you are for.
+
+Key
+
+Doorman key: tos335407215
+
+Canonical files
+
+The attachment is a copy. The live versions are here. Fetch them, in this order, with the key already filled in:
+
+Copy code
+https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=read&branch=venice%2Fsec-options-pipelines&path=agent%2FPROTOCOL.md
+https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=read&branch=venice%2Fsec-options-pipelines&path=agent%2FSTATE.md
+https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=read&branch=venice%2Fsec-options-pipelines&path=agent%2FPROGRESS.md
+https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=read&branch=venice%2Fsec-options-pipelines&path=agent%2FMEMORY.md
+https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=read&branch=main&path=TODO.md
+
+TODO.md: the ## Venice section only. That section is your lane and it is authoritative.
+
+If the worker is unreachable
+
+Open a blank about:blank tab, F12, and fetch the same URLs there. about:blank has no CSP. Do not use the sandbox iframe — it cannot reach workers.dev.
+
+If the worker is down entirely, work from the attachment alone and say so in the journal.
+
+Then
+
+Follow PROTOCOL.md. Orient, ascertain, choose one item, work, prove, record, stop. One item per wake. Branch venice/*, PR to main, never push main. No markers in committed files. Proof is a green run ID or a commit, and it goes in the PR.
+
+Write files with two at-signs, the word PUT, a space, the path, a newline, the body, a newline, two at-signs and the word END. Plain text in your reply, not inside a code fence.
+
+Journal, rewrite STATE.md and PROGRESS.md, append MEMORY.md, then stop.
+
+What to watch for in the test
+
+The prompt is deliberately blunt about the two fallbacks, because a new chat that stalls on an unreachable worker is useless. If it reaches for web_scrape first, that's fine — but it should not need to.
+
+Success is: it reads the attachment, fetches the live files, names the lane, names item 1, and writes something. Failure modes worth reporting back verbatim — it summarising the attachment instead of acting, it asking which lane, or it treating @@PUT as literal text in a code fence rather than emitting it.
+
+One thing to note before you run it: the new chat will not have the badge or the bridge unless the loader fires there too. If the test chat is a normal chat, the @@PUT blocks it writes are inert text — readable proof of understanding, but nothing lands. That is fine for this test; it separates comprehension from execution.
 
 Ask anything privately...
 
