@@ -124,7 +124,7 @@ def test_numerical_spelling_and_large_decimal_precision_are_not_rounded():
 @pytest.mark.parametrize('close,outcome',[
     ((100.,101.,102.,101.),'green_longer'),((100.,99.,98.,99.),'red_longer'),
     ((100.,101.,100.,101.),'equal'),((100.,100.,100.,100.),'equal')])
-def test_close_streaks_use_n_changes_not_body_colours_and_keep_integer_counts(catalog,close,outcome):
+def test_close_streaks_use_n_changes_not_body_colours_and_keep_signed_integer_difference(catalog,close,outcome):
     qid='B|candles|OHLC|run_structure|1x3';variant=next(catalog.variants(qid))
     assert not variant.settings
     definitions=bind_price_question(catalog.tree[qid],variant)
@@ -132,7 +132,11 @@ def test_close_streaks_use_n_changes_not_body_colours_and_keep_integer_counts(ca
     answer={q['source_outcome']:evaluate_price(q,b,date(2024,1,6),3).answer for q in definitions}
     assert answer[outcome]=='YES' and list(answer.values()).count('YES')==1
     assert type(measurement('run_structure',b,date(2024,1,6),3,3)) is int
-    assert all(q['feature_kind']=='integer_count' and q['comparison_threshold']=='0' for q in definitions)
+    assert all(q['feature_kind']=='signed_integer' and q['comparison_threshold']=='0' for q in definitions)
+    from world_binary_questions import evaluate_binary
+    value=measurement('run_structure',b,date(2024,1,6),3,3)
+    assert {q['source_outcome']:evaluate_binary(value,q['comparator'],q['comparison_threshold'],
+            feature_kind=q['feature_kind']).answer for q in definitions}==answer
     b={k:replace(v,open=None) for k,v in b.items()}
     assert evaluate_price(next(q for q in definitions if q['source_outcome']==outcome),b,date(2024,1,6),3).answer=='YES'
     del b[0]
@@ -153,3 +157,10 @@ def test_plan_keeps_pending_stages_and_unbound_families_visible(tmp_path):
     bound=next(r for r in coverage if r['implemented_lenses'])
     assert bound['implemented_lenses']=='absolute|threshold' and bound['implemented_count']=='1'
     assert len(json.loads(bound['pending_lenses_json']))==12
+
+
+def test_price_adapter_enforces_the_declared_measurement_type(catalog):
+    definition=definitions(catalog)[0][0]
+    definition=dict(definition,feature_kind='integer_count')
+    with pytest.raises(ValueError,match='discrete feature must be an integer'):
+        evaluate_price(definition,bars(),date(2024,1,6),2)

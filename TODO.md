@@ -19,8 +19,8 @@ Focus now (Cyrus 2026-11-02): **SEC** and **Options** Gantt rows, done by plain 
 
 ## Kimi
 **Lane:** strict definitions + v1 master on PR #177 (`kimi/binary-master-v1`). Definitions only — never data downloads. Do not touch data pipelines. Do the items below strictly in order (Cyrus-approved 2026-11-03 11:21 HKT).
-- [ ] **1. STOP adding BINARY_MASTER batches now.** Last was batch 26 (`f756e39d`, 107,201 defs bound). No new batches until #177 is merged.
-- [ ] **2. Fix PR #177 CI, then merge** → [4 Questions / v1 master] ~35% amber. Branch `kimi/binary-master-v1`, head `7be800b1`. `binary_master_v1` tests fail on every push since batch 19 (latest run 41498970066): manifest `csv_sha256` mismatch, and previous-vs-actual master row mismatch (`LADDER_ADDON`). Get a green run (cite run ID), then merge #177.
+- [x] **1. STOP adding BINARY_MASTER batches.** Held from 2026-11-03 11:21 HKT; last batch 26 (`f756e39d`, 107,201 defs bound). No new batches were pushed while #177 was open.
+- [x] **2. Fix PR #177 CI, then merge** → [4 Questions / v1 master]. DONE 2026-11-03 ~12:00 HKT. Root cause: `test_scalar_alias_revision_preserves_all_other_rows` (base `1095a1ac`) demanded the master equal the old package minus 12 aliases with zero extra rows; batches 22–26 append defs (master is content-hash sorted), so it failed on every push since that test landed. Fix `ad0ead01` (tests only): pre-existing rows must survive verbatim and in original relative order (subsequence), appended defs allowed; counts 65,540/12/62,876 unchanged. Local: all 14 CI test files green (415 tests) + full emit-consistency block. Green runs: binary_master_v1 **41574084392**, world-v2-code-ci 41574084440. Merged as `87928850`. PR #177 had been closed with the TODO commit; reopened to land the fix.
 - [ ] **3. Then SEC and options strict definitions** → [2 Define / Strict definitions] ~45% amber. Binary / fixed-outcome only, no free text.
 - [ ] **4. Then ruling parts 5–8** → [2 Define / Strict definitions]. MA30, VWAP anchor, SPY_VIX still held for Cyrus's ruling.
 
