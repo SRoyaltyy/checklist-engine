@@ -18,4 +18,3 @@ wake() reads nine state files, appends the TODO.md Venice lane, prepends WAKE_PR
 The model does one item, writes via @@PUT, updates JOURNAL.md, STATE.md, PROGRESS.md.
 Directives the bridge scans for
 Directive	Effect
-@@PUT path …
