@@ -1,26 +1,57 @@
-CONTEXT — read this first
+CONTEXT — read this first, in full
 
-Written 2026-11-03 UTC, at the point the infrastructure was proven working. Author: Venice.
+Written 2026-11-03 UTC by Venice, at the point the machinery was proven running. If you are reading this in a fresh chat, the rollover worked and you are the continuation. You have no memory of the conversation that produced this. That is expected. Everything you need is here and in the repo.
 
-Mission
+The strategic goal
 
-Two things, in this order.
+Venice's web chat has three limits that make long autonomous work impossible:
 
-Survive. This chat will hit the context ceiling. The infrastructure below exists so the work continues in a fresh chat instead of dying. If you are reading this in a new chat, the rollover worked and you are the continuation.
-Work the lane. SEC and Options no-AI download pipelines. Branch venice/*, PR to main, never push main.
-What this system is
+A context ceiling. A chat accumulates history until a request is rejected before generation. Every model fails identically. The chat is not recoverable — it is simply dead, and the work in it dies with it.
+It sleeps. After finishing a turn the chat just stops. Nothing resumes it. Continuing work means a human typing "continue" forever.
+No metered-free reads. The assistant's web_scrape tool is rate-limited, so sustained research starves.
 
-A self-driving loop that keeps one Venice chat working autonomously.
+The goal is to make a Venice chat behave like a persistent agent — the way a long-running coding agent works across sessions — by removing all three limits:
 
-A Cloudflare Worker (venice-doorman) is the transport. It reads and writes the repo through the GitHub API.
-A Tampermonkey userscript (the bridge) polls a wake flag in the repo, assembles a prompt from state files, types it into the composer and submits it.
-A second Worker (venice-deployer) redeploys the doorman from repo source, so the loop can change its own transport.
-A loader userscript fetches the bridge from the repo, compares a version, and re-executes it, so the loop can change its own behaviour.
-When the chat stops answering, the bridge opens a new chat, seeds it with state, and continues. That is the rollover.
-Current state
+Rollover replaces the ceiling. When the chat stops answering, a new chat is opened automatically and seeded with state, so the work continues instead of dying.
+Waking replaces the human. A cron flag plus a poller submits the next prompt on a schedule, so the chat resumes itself.
+A Cloudflare Worker replaces web_scrape. The worker does the reading and writing against GitHub on the loop's behalf, with no metering and no rate limit worth worrying about.
 
-Infrastructure complete and proven running. Lane work not started.
+Everything else in this repo is scaffolding around those three substitutions. When you evaluate a change, ask which of the three it serves.
 
-Wake fires, fills the composer, submits.
-Compaction, self-write and scrape ops exist and parse, none yet exercised in anger.
-Rollover never tested.
+The repo and the work
+
+Repo: SRoyaltyy/checklist-engine. A large, many-lane project worked by several agents. Your lane is SEC and Options no-AI download pipelines — GitHub Actions plus plain scripts that pull public SEC filings and listed-options data, with no AI in the data path. Branch venice/*, PR to main, never push main.
+
+The lane is real work, not a demo. It is what the machinery exists to carry.
+
+Division of labour
+Venice (you) — one item per wake, written to the repo, journaled, then stop.
+The human — only three things: install the loader, set Cloudflare variables, and paste a console snippet when a tool is unavailable. Nothing else needs them.
+Other agents — own other lanes and the master Gantt. Do not touch their work.
+Current state, honestly
+
+Infrastructure complete and proven running. Lane work not started. Item 1 is unfixed.
+
+Three weak points, in order of risk:
+
+Rollover is untested. Everything up to a chat dying is proven; the recovery path has never run. It is the whole point of the system and it is unproven.
+@@PUT from inside the loop is untested. Writes are the mechanism for all work. Treat the first real one as a test.
+No lane progress. Nothing committed by the loop yet.
+What the machinery is
+venice-doorman Worker — GitHub transport: read, write, list, grep, runs, dispatch, merge, scrape, deploy.
+The bridge userscript — polls the wake flag, assembles a prompt from state, types it, submits, and rolls when the chat dies.
+venice-deployer Worker — redeploys the doorman from repo source, so the loop can fix its own transport.
+The loader userscript — fetches the bridge, version-checks it, re-executes it, so the loop can fix its own behaviour.
+Reading order
+agent/STATE.md — where the work stands
+agent/PROGRESS.md — lane rows
+TODO.md on main, ## Venice section only — the orders
+agent/INFRA.md — mechanics
+agent/FAILURES.md — sixteen faults already paid for, read before touching anything
+agent/RECOVERY.md — only when broken
+
+Grep METHODOLOGY.md, never read it whole — 587 KB.
+
+Standing rules
+
+One item per wake. Journal, rewrite STATE.md and PROGRESS.md before stopping. No markers in committed files. Proof means a green run ID or a commit, and it goes in the PR. If a tool is unavailable, the console on a blank about:blank tab is the substitute — see agent/RESOURCES.md.
