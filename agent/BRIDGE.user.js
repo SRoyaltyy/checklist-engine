@@ -341,4 +341,29 @@
   }
 
   var CHROME = /^(?:```[a-z0-9+#._-]*|yaml|yml|json|python|py|bash|sh|js|javascript|md|markdown|text|txt|Copy code|Copy|Copied)$/;
+
+  function cleanBody(raw) {
+    var lines = raw.replace(/\r/g, '').split('\n');
+    var guard = 0;
+    while (lines.length && guard++ < 12) {
+      var head = lines[0].trim();
+      if (head === '' || head.indexOf('@@BODY') === 0 || CHROME.test(head)) { lines.shift(); continue; }
+      break;
+    }
+    guard = 0;
+    while (lines.length && guard++ < 12) {
+      var foot = lines[lines.length - 1].trim();
+      if (foot === '' || CHROME.test(foot)) { lines.pop(); continue; }
+      break;
+    }
+    return lines.join('\n').replace(/\s $/, '') + '\n';
+  }
+
+  function doPut(path, raw) {
+    var body = cleanBody(raw);
+    var h = hash(path + body);
+    if (fired[h]) return;
+    mark(h);
+    putFile(path, body).then(function () { sent++; paint(); });
+  }
 @@MORE@@
