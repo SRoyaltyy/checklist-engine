@@ -234,4 +234,30 @@
         step();
       });
     }
+    function finish() {
+      var links = [
+        '[bootstrap gen ' gen ' ' new Date().toISOString() ']',
+        'The previous chat hit the context ceiling. This chat continues it. Do not reconcile; state below is authoritative.',
+        '',
+        'Repo: https://github.com/' + REPO,
+        'Lane: https://github.com/' + REPO '/blob/main/TODO.md',
+        'Progress: https://github.com/' + REPO '/blob/' + decodeURIComponent(BR) '/agent/PROGRESS.md',
+        '',
+        chunks.join('\n\n'),
+        '',
+        'Read TODO.md Venice section from main, then PROGRESS.md. Do the first unticked item. Branch venice/*, PR to main, no markers. Journal and rewrite PROGRESS.md before stopping.'
+      ];
+      var el = composer();
+      if (!el) { halt('no composer after new chat'); return; }
+      fill(el, links.join('\n'));
+      store('vrb.bootPending', '0');
+      setTimeout(function () {
+        nodesAt = msgNodes(); awaiting = Date.now();
+        submit(el);
+        busy = false; paint();
+        console.log('[bridge] bootstrap submitted, gen ' gen);
+      }, 400);
+    }
+    step();
+  }
 @@MORE@@
