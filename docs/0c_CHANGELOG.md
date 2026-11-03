@@ -1,0 +1,2 @@
+
+- 2026-11-03 ~12:15 HKT — Kimi item 3 started: SEC + options strict definitions design spec at PR #210 (branch kimi/sec-options-defs, commit 1a4590ce). Definable-now: I201 CBOE market-wide (era-split), I189 short volume, event facets I187/I197/I199/I188/I192, C26, I193/I194/I196. Held: I202 single-stock options + money-flow families (required fields unauthenticated). Awaiting James/Cyrus answers to spec §6 (scope transfer, direction mapping table, Altman variant, batch authorization) before implementing.
