@@ -172,6 +172,18 @@ If the new chat has the bridge running, the @@PUT blocks it emits will land and 
 
 And the memory section is deliberately blunt about past faults. It reads like a grumble, but each line is a failure that cost hours, and a fresh chat will otherwise walk straight into all of them.
 
+It's good. It's self-contained, the lane is pasted word for word, and the past faults are written down. A fresh chat should understand it and start on the right thing. Fix three things before you test it:
+
+The progress table doesn't match the lane. Its item 1 is "SEC tickers workflow", but the lane says to fix the SEC 403 first, and STATE.md says that too. A new chat told to take the "first unticked row" will pick the wrong one. Make row 1 "Fix SEC 403 on runners" and follow the lane's order after that: tickers and bulk, then Form 4 and 13F, then options OI, then the daily collectors, then the summary doc.
+The "Reset first" line is confusing. "Restart from main; ignore calendar-announce-ledger after dca969a" was left over from the old calendar branch. A new chat might start a fresh branch off main instead of continuing venice/sec-options-pipelines. Say plainly: "Work on venice/sec-options-pipelines. Ignore the calendar branch."
+There's no fallback if the Cloudflare route also gets a 403. Item 1 suggests routing SEC traffic through a Cloudflare Worker, but SEC often blocks Cloudflare's addresses too. Add one line: "If the Worker route also 403s, journal it with the response headers and stop. Don't try a fourth route."
+
+For the test, success means it names item 1 as the SEC 403, reads the nai-sec-bulk workflow, and either writes a header fix or stops cleanly at a blocker. If it starts on the tickers workflow, that's the table problem in point 1.
+
+Loading...
+
+Thinking...
+
 Ask anything privately...
 
 Agent
