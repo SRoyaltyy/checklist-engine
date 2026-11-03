@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "execute": true,
+  "execute": false,
   "scope": "Full retained_8439 #203 price cohort; all 22 native timeframes and 1044 produced fields, two predeclared prefix cuts, setup-day alignment and actual published diagnostic-packet reconciliation. No vendor downloads, source mutation, canonical-definition claim or scoring approval.",
   "source_plan": {
     "release": "compact-world-build-v1-41078405278-1-inputs",
