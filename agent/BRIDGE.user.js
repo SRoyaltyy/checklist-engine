@@ -133,4 +133,13 @@
     badge.textContent = (paused ? 'PAUSED' :  (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (num('vrb.fail') ? '| f' + num('vrb.fail') : '');
     badge.style.background = paused ? '#8b949e' :  phase === 'boot' ? '#9e6a03' : '#238636';
   }
+
+  badge.addEventListener('click', function () { store('vrb.paused', load('vrb.paused') === '1' ? '0' : '1'); paint(); });
+  badge.addEventListener('dblclick', function () { store('vrb.fail', '0'); wake('manual', true); });
+
+  function halt(reason) {
+    store('vrb.halt', '1'); store('vrb.paused', '1'); paint();
+    putFile('agent/HALT.json', JSON.stringify({ at: new Date().toISOString(), gen: num('vrb.gen'), reason: reason }, null, 2));
+    console.log('[bridge] HALT ' reason);
+  }
 @@MORE@@
