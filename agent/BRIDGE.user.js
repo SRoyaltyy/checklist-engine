@@ -111,4 +111,16 @@
     el.dispatchEvent(new Event('input', { bubbles: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
+
+  function submit(el) {
+    var b = sendButton();
+    if (b) { b.click(); return 'click'; }
+    var kinds = ['keydown', 'keypress', 'keyup'], i;
+    for (i = 0; i < kinds.length; i++) {
+      el.dispatchEvent(new KeyboardEvent(kinds[i], { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+    }
+    return 'enter';
+  }
+
+  function msgNodes() { return document.querySelectorAll('[data-message-id], [data-testid*="message"], [class*="message"]').length; }
 @@MORE@@
