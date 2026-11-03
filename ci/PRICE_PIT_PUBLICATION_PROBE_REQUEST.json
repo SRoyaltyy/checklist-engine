@@ -1,5 +1,7 @@
 {
   "execute": true,
+  "attempt": 2,
+  "source_anchor_ref": "refs/heads/codex/price-pit-run-41578885310-source",
   "target_tag": "price-full-cohort-pit-v1-41578885310-1-034",
   "target_commit": "8003fb7906c3bf86d88612495664e597de1c65ae",
   "failed_job_id": 125730370756,
