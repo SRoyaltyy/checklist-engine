@@ -31,4 +31,13 @@ async function readFile(env, branch, path) {
   if (!blob.ok) throw new Error(`read ${path} failed: ${blob.status}`);
   return { text: dec(blob.body.content), base64: blob.body.content, sha: got.body.sha };
 }
+
+async function writeFile(env, branch, path, text, message, isBase64) {
+  const body = { message: message || `doorman: ${path}`, content: isBase64 ? String(text).replace(/\n/g, "") : enc(text), branch };
+  const head = await gh(env, `/contents/${path}?ref=${encodeURIComponent(branch)}`);
+  if (head.ok) body.sha = head.body.sha;
+  const put = await gh(env, `/contents/${path}`, { method: "PUT", body: JSON.stringify(body) });
+  if (!put.ok) throw new Error(`write ${path} failed: ${put.status} ${JSON.stringify(put.body).slice(0, 300)}`);
+  return put.body.commit.sha;
+}
 @@MORE@@
