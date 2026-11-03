@@ -62,4 +62,17 @@ async function wakeWrite(env, payload, sha) {
   const put = await gh(env, `/contents/${WAKE_PATH}`, { method: "PUT", body: JSON.stringify(body) });
   if (!put.ok) throw new Error(`wake write failed: ${put.status}`);
 }
+async function wakeDecide(env) {
+  const now = Date.now();
+  const wake = await wakeRead(env);
+  if (wake.pending && wake.set_at) {
+    const age = (now - Date.parse(wake.set_at)) / 60000;
+    if (age < WAKE_HEARTBEAT_MIN) return;
+  }
+  const reasons = [];
+  const commits = await gh(env, `/commits?sha=main&per_page=1`);
+  if (commits.ok && Array.isArray(commits.body) && commits.body[0]) {
+    const when = commits.body[0].commit?.committer?.date;
+    if (when && (now - Date.parse(when)) / 60000 < WAKE_FRESH_COMMIT_MIN) reasons.push(`main moved ${commits.body[0].sha.slice(0, 8)}`);
+  }
 @@MORE@@
