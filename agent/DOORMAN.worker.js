@@ -55,4 +55,11 @@ async function wakeRead(env) {
   try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
   return /** @type {any} */ ({ ...parsed, sha: got.body.sha });
 }
+
+async function wakeWrite(env, payload, sha) {
+  const body = { message: "agent: wake flag", content: enc(JSON.stringify(payload, null, 2)), branch: env.WAKE_BRANCH };
+  if (sha) body.sha = sha;
+  const put = await gh(env, `/contents/${WAKE_PATH}`, { method: "PUT", body: JSON.stringify(body) });
+  if (!put.ok) throw new Error(`wake write failed: ${put.status}`);
+}
 @@MORE@@
