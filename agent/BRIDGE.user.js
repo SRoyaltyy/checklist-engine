@@ -322,4 +322,23 @@
 
   var fired = {};
   try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
+
+  function hash(s) {
+    var h = 5381, i;
+    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+  }
+
+  function mark(h) {
+    fired[h] = 1;
+    var keys = Object.keys(fired), i;
+    if (keys.length > 2000) {
+      var trimmed = {};
+      for (i = keys.length - 2000; i < keys.length; i++) trimmed[keys[i]] = 1;
+      fired = trimmed;
+    }
+    store('vrb.fired', JSON.stringify(fired));
+  }
+
+  var CHROME = /^(?:```[a-z0-9+#._-]*|yaml|yml|json|python|py|bash|sh|js|javascript|md|markdown|text|txt|Copy code|Copy|Copied)$/;
 @@MORE@@
