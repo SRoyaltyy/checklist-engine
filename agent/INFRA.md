@@ -56,4 +56,3 @@ If the reason carries an unseen sha, composer empty, not paused, past 240 s cool
 Reads nine state files, appends the TODO.md Venice lane, prepends WAKE_PROMPT.md, fills, submits.
 Directives the bridge executes
 Directive	Effect
-@@PUT path …
