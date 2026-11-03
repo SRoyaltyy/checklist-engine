@@ -57,13 +57,13 @@
       var got = unwrap(back.text || '');
       var tol = Math.max(40, Math.floor(content.length * 0.01));
       var ok = back.ok && got.length > 0 && Math.abs(got.length - content.length) <= tol;
-      console.log('[bridge] put ' path ' -> ' status ', readback ' got.length '/' content.length (ok ? ' OK' : ' MISMATCH'));
+      console.log('[bridge] put ' + path + ' -> ' + status + ', readback ' + got.length + '/' + content.length (ok ? ' OK' : ' MISMATCH'));
       return { ok: ok, status: status };
     });
   }
 
   function putFile(path, content) {
-    if (!content) { console.log('[bridge] empty write to ' path); return Promise.resolve({ ok: false, status: -1 }); }
+    if (!content) { console.log('[bridge] empty write to ' + path); return Promise.resolve({ ok: false, status: -1 }); }
     return gmPost(putUrl(path), content).then(function (r) { return readback(path, content, r.status); });
   }
 
@@ -143,7 +143,7 @@
   function halt(reason) {
     store('vrb.halt', '1'); store('vrb.paused', '1'); paint();
     putFile('agent/HALT.json', JSON.stringify({ at: new Date().toISOString(), gen: num('vrb.gen'), reason: reason }, null, 2));
-    console.log('[bridge] HALT ' reason);
+    console.log('[bridge] HALT ' + reason);
   }
 
   function wake(reason, force) {
@@ -165,8 +165,8 @@
           var t = unwrap(r.text);
           body = p.indexOf('JOURNAL.md') !== -1 ? tail(t, 3000) : p.indexOf('TEST_LOG.txt') !== -1 ? tail(t, 2500) : t;
           if (t.trim() === '') body = '[EMPTY FILE]';
-        } else { body = '[unavailable ' r.status ']'; }
-        chunks.push('## ' p '\n```\n' body '\n```');
+        } else { body = '[unavailable ' + r.status + ']'; }
+        chunks.push('## ' + p + '\n```\n' + body + '\n```');
         step();
       });
     }
@@ -175,10 +175,10 @@
       gm(W + 'read&branch=main&path=TODO.md').then(function (todo) {
         var t = todo.ok ? unwrap(todo.text) : '';
         var hit = t.match(/##\s*Venice[\s\S]*?(?=\n##\s|$)/);
-        var lane = hit ? hit[0] : '[TODO.md Venice section unavailable ' todo.status ']';
+        var lane = hit ? hit[0] : '[TODO.md Venice section unavailable ' + todo.status + ']';
         gm(readUrl('agent/WAKE_PROMPT.md')).then(function (pr) {
           var tpl = pr.ok ? unwrap(pr.text) : '';
-          var body = tpl.trim() ? tpl.replace('{{TIME}}', stamp).replace('{{REASON}}', reason) : '[wake ' stamp '] ' reason '\n\n[WAKE_PROMPT.md unavailable]';
+          var body = tpl.trim() ? tpl.replace('{{TIME}}', stamp).replace('{{REASON}}', reason) : '[wake ' + stamp + '] ' + reason + '\n\n[WAKE_PROMPT.md unavailable]';
           var full = body + '\n\n## TODO.md Venice lane from main\n' + lane + '\n\n' + chunks.join('\n\n');
           if (full.length > BUDGET && load('vrb.compact') !== '1') {
             store('vrb.compact', '1');
@@ -197,6 +197,7 @@
       });
     }
 
+  }
   function waitFor(fn, ms) {
     return new Promise(function (res) {
       var t0 = Date.now();
@@ -238,20 +239,20 @@
       if (i >= BOOT_READS.length) return finish();
       var p = BOOT_READS[i]; i++;
       gm(readUrl(p)).then(function (r) {
-        var body = r.ok ? unwrap(r.text) : '[unavailable ' r.status ']';
+        var body = r.ok ? unwrap(r.text) : '[unavailable ' + r.status + ']';
         if (r.ok && body.trim() === '') body = '[EMPTY FILE]';
-        chunks.push('## ' p '\n```\n' body '\n```');
+        chunks.push('## ' + p + '\n```\n' + body + '\n```');
         step();
       });
     }
     function finish() {
       var links = [
-        '[bootstrap gen ' gen ' ' new Date().toISOString() ']',
+        '[bootstrap gen ' + gen + ' ' + new Date().toISOString() + ']',
         'The previous chat hit the context ceiling. This chat continues it. Do not reconcile; state below is authoritative.',
         '',
         'Repo: https://github.com/' + REPO,
-        'Lane: https://github.com/' + REPO '/blob/main/TODO.md',
-        'Progress: https://github.com/' + REPO '/blob/' + decodeURIComponent(BR) '/agent/PROGRESS.md',
+        'Lane: https://github.com/' + REPO + '/blob/main/TODO.md',
+        'Progress: https://github.com/' + REPO + '/blob/' + decodeURIComponent(BR) + '/agent/PROGRESS.md',
         '',
         chunks.join('\n\n'),
         '',
@@ -265,7 +266,7 @@
         nodesAt = msgNodes(); awaiting = Date.now();
         submit(el);
         busy = false; paint();
-        console.log('[bridge] bootstrap submitted, gen ' gen);
+        console.log('[bridge] bootstrap submitted, gen ' + gen);
       }, 400);
     }
     step();
@@ -274,7 +275,7 @@
   function escalate(reason) {
     if (phase === 'boot') {
       bootTries++;
-      if (bootTries > BOOT_MAX) { halt('bootstrap failed ' bootTries 'x:  ' reason); return; }
+      if (bootTries > BOOT_MAX) { halt('bootstrap failed ' + bootTries + 'x:  ' + reason); return; }
     }
     phase = 'boot';
     busy = true;
@@ -285,11 +286,11 @@
     store('vrb.gen', String(gen));
     store('vrb.bootPending', String(gen));
     paint();
-    console.log('[bridge] escalate -> gen ' gen ' - ( ' reason ')');
+    console.log('[bridge] escalate -> gen ' + gen + ' - ( ' + reason + ')');
     clickNewChat();
     waitFor(function () { return composer() !== null; }, 45000).then(function (ok) {
       if (!ok) { halt('composer never appeared'); return; }
-      console.log('[bridge] agentic mode:  ' ensureAgentic());
+      console.log('[bridge] agentic mode:  ' + ensureAgentic());
       setTimeout(function () {
         var el = composer();
         if (!el) { halt('composer vanished'); return; }
@@ -366,7 +367,7 @@
       if (foot === '' || CHROME.test(foot)) { lines.pop(); continue; }
       break;
     }
-    return lines.join('\n').replace(/\s $/, '') + '\n';
+    return lines.join('\n').replace(/\s+$/, '') + '\n';
   }
 
   function bumpVersion() {
@@ -397,27 +398,27 @@
   function scan() {
     var text = document.body.innerText || '';
     var m;
-    var strict = /@@PUT[ \t] (\S )[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
+    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
     var covered = {};
     while ((m = strict.exec(text)) !== null) {
       covered[hash(m[1] + cleanBody(m[2]))] = 1;
       doPut(m[1], m[2]);
     }
-    var loose = /@@PUT[ \t] (\S )[ \t]*\r?\n([\s\S]*?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
+    var loose = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
     while ((m = loose.exec(text)) !== null) {
       var b2 = cleanBody(m[2]);
       if (covered[hash(m[1] + b2)]) continue;
-      console.log('[bridge] UNTERMINATED @@PUT ' m[1]);
+      console.log('[bridge] UNTERMINATED @@PUT ' + m[1]);
       doPut(m[1], m[2]);
     }
-    var dispRe = /@@DISPATCH[ \t] (\S )/g;
+    var dispRe = /@@DISPATCH[ \t]+(\S+)/g;
     while ((m = dispRe.exec(text)) !== null) {
       var hd = hash('d' + m[1] + m.index);
       if (fired[hd]) continue;
       mark(hd);
       (function (wf) {
         gm(W + 'dispatch&branch=' + BR + '&workflow=' + encodeURIComponent(wf)).then(function (r) {
-          sent++; paint(); console.log('[bridge] dispatch ' r.status);
+          sent++; paint(); console.log('[bridge] dispatch ' + r.status);
         });
       }(m[1]));
     }
@@ -435,7 +436,7 @@
       mark(hs);
       selfWrite(m[1]);
     }
-    var mergeRe = /@@MERGE[ \t] (\d )/g;
+    var mergeRe = /@@MERGE[ \t]+(\d+)/g;
     while ((m = mergeRe.exec(text)) !== null) {
       var hm = hash('m' + m[1]);
       if (fired[hm]) continue;
