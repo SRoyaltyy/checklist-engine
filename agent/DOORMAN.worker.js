@@ -204,4 +204,14 @@ export default {
           const sha = await editFile(env, branch, path, find, String(replace ?? ""), message);
           return reply({ ok: true, sha });
         }
+        case "pr": {
+          const created = await gh(env, `/pulls`, { method: "POST", body: JSON.stringify({ title: p.get("title"), head: branch, base: p.get("base") || "main", body: p.get("body") || "" }) });
+          if (!created.ok) throw new Error(`pr failed: ${created.status}`);
+          return reply({ ok: true, number: created.body.number, url: created.body.html_url });
+        }
+        case "pr-edit": {
+          const edited = await gh(env, `/pulls/${p.get("pr")}`, { method: "PATCH", body: JSON.stringify({ body: p.get("body") || "" }) });
+          if (!edited.ok) throw new Error(`pr-edit failed: ${edited.status}`);
+          return reply({ ok: true });
+        }
 @@MORE@@
