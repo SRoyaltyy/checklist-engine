@@ -413,7 +413,7 @@
       console.log('[bridge] UNTERMINATED @@PUT ' + m[1]);
       doPut(m[1], m[2]);
     }
-    var dispRe = /@@DISPATCH[ \t]+(\S+)/g;
+    var dispRe = /@@DISPATCH[ \t]+([A-Za-z0-9_.\-]+)/g;
     while ((m = dispRe.exec(text)) !== null) {
       var hd = hash('d' + m[1] + m.index);
       if (fired[hd]) continue;
