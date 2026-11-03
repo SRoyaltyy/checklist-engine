@@ -40,4 +40,12 @@ async function writeFile(env, branch, path, text, message, isBase64) {
   if (!put.ok) throw new Error(`write ${path} failed: ${put.status} ${JSON.stringify(put.body).slice(0, 300)}`);
   return put.body.commit.sha;
 }
+
+async function editFile(env, branch, path, find, replace, message) {
+  if (!find) throw new Error("find is empty");
+  const current = await readFile(env, branch, path);
+  const hits = current.text.split(find).length - 1;
+  if (hits !== 1) throw new Error(`find matched ${hits} times, need exactly 1`);
+  return writeFile(env, branch, path, current.text.replace(find, replace), message, false);
+}
 @@MORE@@
