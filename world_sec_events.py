@@ -122,3 +122,68 @@ def max_trade_dollars(events, sessions, setup_date, window, source='form4',
     if not pool:
         return None
     return max(float(e['dollars']) for e in pool)
+
+
+def net_direction_count(events, sessions, setup_date, window, source):
+    """upgrades - downgrades (bullish count - bearish count) over the last
+    `window` completed sessions; non-directional actions contribute 0.
+    Evaluable (0) even when empty; source 'analyst' or 'form4'."""
+    win = set(_window_sessions(sessions, setup_date, window))
+    total = 0
+    for e in _matching(usable_events(events, setup_date), source):
+        if e['session'] not in win:
+            continue
+        direction = event_direction(source, e['action'])
+        if direction == 'bullish':
+            total += 1
+        elif direction == 'bearish':
+            total -= 1
+    return total
+
+
+def last_pt_change_pct(events, sessions, setup_date):
+    """pt_change_pct of the latest usable analyst action (signed, percent).
+    NE when no usable analyst event or it carries no price-target change."""
+    pool = _matching(usable_events(events, setup_date), 'analyst')
+    if not pool:
+        return None
+    latest = max(pool, key=lambda e: (e['session'], e['public_dt']))
+    if latest.get('pt_change_pct') is None:
+        return None
+    return float(latest['pt_change_pct'])
+
+
+def _filing_observations(events, sessions, setup_date):
+    """Usable 13F observations (one per filing), ordered by session."""
+    pool = [e for e in usable_events(events, setup_date)
+            if e['source'] == '13f' and e['session'] < setup_date]
+    return sorted(pool, key=lambda e: (e['session'], e['public_dt']))
+
+
+def filers_13f_v1(events, sessions, setup_date):
+    """Filer count of the latest usable 13F filing. NE when none usable."""
+    obs = _filing_observations(events, sessions, setup_date)
+    if not obs:
+        return None
+    return len(obs[-1]['filers'])
+
+
+def shares_change_pct_13f_v1(events, sessions, setup_date):
+    """Total-shares quarter-over-quarter change % between the latest two usable
+    13F filings. NE when fewer than two usable filings."""
+    obs = _filing_observations(events, sessions, setup_date)
+    if len(obs) < 2:
+        return None
+    prev, latest = float(obs[-2]['shares']), float(obs[-1]['shares'])
+    if prev == 0:
+        return None
+    return (latest - prev) / prev * 100.0
+
+
+def new_filer_13f_v1(events, sessions, setup_date):
+    """True when the latest usable 13F filing contains a filer absent from the
+    previous usable filing. NE when fewer than two usable filings."""
+    obs = _filing_observations(events, sessions, setup_date)
+    if len(obs) < 2:
+        return None
+    return not obs[-1]['filers'] <= obs[-2]['filers']

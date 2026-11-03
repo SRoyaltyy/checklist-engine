@@ -168,7 +168,8 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
             'vix_level', 'vix_term_structure', 'cboe_skew'} <= facets
     blocks = {row['block'] for row in rows}
     assert {sec_options_master.BLOCK_FORM4, sec_options_master.BLOCK_SHORTVOL,
-            sec_options_master.BLOCK_CBOE} <= blocks
+            sec_options_master.BLOCK_CBOE, sec_options_master.BLOCK_ANALYST,
+            sec_options_master.BLOCK_13F} <= blocks
     # every emitted recipe is implemented
     import world_sec_events as wse
     import world_market_series as wms
@@ -177,6 +178,14 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
                    'sec_form4_net_dollars_v1': wse.net_dollars,
                    'sec_form4_cluster_v1': wse.insider_cluster,
                    'sec_form4_max_trade_v1': wse.max_trade_dollars,
+                   'sec_analyst_days_since_last_v1': wse.days_since_last,
+                   'sec_analyst_count_v1': wse.count_in_window,
+                   'sec_analyst_net_direction_v1': wse.net_direction_count,
+                   'sec_analyst_last_pt_change_pct_v1': wse.last_pt_change_pct,
+                   'sec_13f_days_since_last_v1': wse.days_since_last,
+                   'sec_13f_filers_v1': wse.filers_13f_v1,
+                   'sec_13f_shares_change_pct_v1': wse.shares_change_pct_13f_v1,
+                   'sec_13f_new_filer_v1': wse.new_filer_13f_v1,
                    'finra_short_ratio_v1': wms.finra_short_ratio_v1,
                    'finra_short_ratio_mean_v1': wms.finra_short_ratio_mean_v1,
                    'finra_short_ratio_percentile_v1': wms.finra_short_ratio_percentile_v1,
@@ -316,3 +325,71 @@ def test_vix_level_term_structure_and_skew():
     assert vix_term_structure_state_v1(contango, sessions, D) == 'contango'
     missing_3m = [dict(_cboe(sessions[-1]), vix3m=None)]
     assert vix_term_structure_state_v1(missing_3m, sessions, D) is None
+
+
+# ---- I197 analyst actions + I199 13F -----------------------------------------
+
+from world_sec_events import (filers_13f_v1, last_pt_change_pct,
+                              net_direction_count, new_filer_13f_v1,
+                              shares_change_pct_13f_v1)
+
+
+def _anev(session, action, pt=None, public_hour=10):
+    e = _ev(session, _public(session, public_hour), action=action, insider='n1',
+            source='analyst')
+    e['pt_change_pct'] = pt
+    return e
+
+
+def test_analyst_net_direction_and_neutral_counting():
+    sessions = _sessions(40)
+    t1, t2, t3 = sessions[-10], sessions[-8], sessions[-3]
+    events = [_anev(t1, 'upgrade'), _anev(t2, 'downgrade'),
+              _anev(t3, 'reiterate'), _anev(t3, 'initiate')]
+    assert net_direction_count(events, sessions, D, 30, 'analyst') == 0
+    # non-directional actions contribute 0 but are still counted as events
+    from world_sec_events import count_in_window
+    assert count_in_window(events, sessions, D, 30, source='analyst') == 4
+    assert count_in_window(events, sessions, D, 30, source='analyst',
+                           direction='bullish') == 1
+    assert net_direction_count([], sessions, D, 30, 'analyst') == 0  # evaluable zero
+
+
+def test_analyst_pt_change_uses_latest_usable_only():
+    sessions = _sessions(40)
+    t1, t2 = sessions[-6], sessions[-2]
+    events = [_anev(t1, 'upgrade', pt=12.0), _anev(t2, 'downgrade', pt=-7.5)]
+    assert last_pt_change_pct(events, sessions, D) == -7.5
+    no_pt = [_anev(t2, 'reiterate', pt=None)]
+    assert last_pt_change_pct(no_pt, sessions, D) is None
+    assert last_pt_change_pct([], sessions, D) is None
+
+
+def _13f(session, filers, shares, public_hour=18):
+    e = _ev(session, _public(session, public_hour), insider='13f', source='13f')
+    e['filers'] = frozenset(filers)
+    e['shares'] = shares
+    return e
+
+
+def test_13f_filers_and_qoq_change():
+    sessions = _sessions(80)
+    q1, q2 = sessions[-70], sessions[-45]
+    events = [_13f(q1, {'a', 'b', 'c'}, 1000), _13f(q2, {'a', 'b', 'c', 'd'}, 1250)]
+    assert filers_13f_v1(events, sessions, D) == 4
+    assert shares_change_pct_13f_v1(events, sessions, D) == 25.0
+    assert new_filer_13f_v1(events, sessions, D) is True
+    # only one usable filing -> QoQ change and new-filer are NE
+    assert shares_change_pct_13f_v1(events[:1], sessions, D) is None
+    assert new_filer_13f_v1(events[:1], sessions, D) is None
+    assert filers_13f_v1([], sessions, D) is None
+    # same filer set -> no new filer
+    same = [_13f(q1, {'a', 'b'}, 1000), _13f(q2, {'a', 'b'}, 900)]
+    assert new_filer_13f_v1(same, sessions, D) is False
+    assert shares_change_pct_13f_v1(same, sessions, D) == -10.0
+
+
+def test_13f_filing_after_cutoff_is_invisible():
+    sessions = _sessions(40)
+    late = [_13f(D, {'a'}, 1000, public_hour=10)]  # filed D 10:00 ET -> invisible
+    assert filers_13f_v1(late, sessions, D) is None

@@ -32,9 +32,13 @@ VIEWPORT_CSV = ('CONCRETE event marker: event date, days_since (trading days), d
                 'no free text, no circles.')
 
 BLOCK_FORM4 = 'E SEC Form 4 (I187)'
+BLOCK_ANALYST = 'G Analyst actions (I197)'
+BLOCK_13F = 'M SEC 13F holdings (I199)'
 BLOCK_SHORTVOL = 'F FINRA short volume (I189)'
 BLOCK_CBOE = 'N CBOE market-wide options (I201)'
 RECIPE_FORM4 = 'sec_form4'
+RECIPE_ANALYST = 'sec_analyst'
+RECIPE_13F = 'sec_13f'
 RECIPE_FINRA = 'finra_short'
 RECIPE_CBOE = 'cboe_market'
 
@@ -135,6 +139,109 @@ def form4_definitions():
                 '>=', t, expr,
                 f'largest single P event in the last {window} sessions >= {t} USD',
                 f'max_trade_w{window}_ge{t}'))
+    return rows
+
+
+def analyst_definitions():
+    """I197 analyst actions: event facets reusing the fixed direction table
+    (upgrade=bullish, downgrade=bearish; initiate/reiterate/PT-only counted,
+    not directional)."""
+    rows = []
+    recipe, block, source = RECIPE_ANALYST, BLOCK_ANALYST, 'I197'
+    for direction in _DIRECTIONS:
+        for n in (5, 10, 20):
+            expr = f'sec_analyst_days_since_last_v1(direction={direction})'
+            rows.append(_row(
+                'analyst_days_since', expr, 'integer_count',
+                'trading_days_since_last_' + direction + '_action',
+                '<=', n, expr,
+                f'latest {direction} analyst action <= {n} trading days before D',
+                f'days_since_{direction}_le{n}',
+                recipe=recipe, block=block, source=source))
+        for k in (1, 2):
+            expr = f'sec_analyst_count_v1(direction={direction},window=30)'
+            rows.append(_row(
+                'analyst_count', expr, 'integer_count',
+                f'count_{direction}_actions_last_30_sessions',
+                '>=', k, expr,
+                f'>={k} {direction} analyst actions in the last 30 completed sessions',
+                f'count_{direction}_w30_ge{k}',
+                recipe=recipe, block=block, source=source,
+                extra_feature=dict(direction=direction, window=30)))
+    for k in (1, 2, 3):
+        expr = 'sec_analyst_net_direction_v1(window=30)'
+        rows.append(_row(
+            'analyst_net_direction', expr, 'signed_integer',
+            'upgrades_minus_downgrades_last_30_sessions',
+            '>=', k, expr,
+            f'upgrades - downgrades over the last 30 sessions >= {k} '
+            '(non-directional actions contribute 0)',
+            f'net_dir_w30_ge{k}',
+            recipe=recipe, block=block, source=source, extra_feature=dict(window=30)))
+    expr = 'sec_analyst_last_pt_change_pct_v1()'
+    rows.append(_row(
+        'analyst_pt_change', expr, 'continuous', 'last_action_pt_change_percent',
+        '>=', 5, expr,
+        'latest usable analyst action raised the price target by >= 5%',
+        'pt_change_ge5', recipe=recipe, block=block, source=source))
+    rows.append(_row(
+        'analyst_pt_change', expr, 'continuous', 'last_action_pt_change_percent',
+        '>=', 10, expr,
+        'latest usable analyst action raised the price target by >= 10%',
+        'pt_change_ge10', recipe=recipe, block=block, source=source))
+    rows.append(_row(
+        'analyst_pt_change', expr, 'continuous', 'last_action_pt_change_percent',
+        '<=', -5, expr,
+        'latest usable analyst action cut the price target by >= 5%',
+        'pt_change_le-5', recipe=recipe, block=block, source=source))
+    return rows
+
+
+def holdings13f_definitions():
+    """I199 13F holdings: quarterly position reports. NO direction mapping
+    (spec section 2) — changes are quantitative only. Usable only if the
+    filing's public timestamp (SEC acceptance) is < D 09:30 ET; the 45-day
+    quarter-end lag is a data property enforced by the pipeline."""
+    rows = []
+    recipe, block, source = RECIPE_13F, BLOCK_13F, 'I199'
+    for n in (10, 20):
+        expr = 'sec_13f_days_since_last_v1()'
+        rows.append(_row(
+            '13f_days_since', expr, 'integer_count', 'trading_days_since_latest_filing',
+            '<=', n, expr,
+            f'latest usable 13F filing <= {n} trading days before D (filing accepted '
+            '< D 09:30 ET)', f'days_since_filing_le{n}',
+            recipe=recipe, block=block, source=source))
+    for k in (5, 10, 20):
+        expr = 'sec_13f_filers_v1()'
+        rows.append(_row(
+            '13f_filers', expr, 'integer_count', 'filer_count_latest_filing',
+            '>=', k, expr,
+            f'>= {k} distinct filers hold the stock in the latest usable 13F filing',
+            f'filers_ge{k}', recipe=recipe, block=block, source=source))
+    expr = 'sec_13f_shares_change_pct_v1()'
+    rows.append(_row(
+        '13f_shares_change', expr, 'continuous', 'total_shares_qoq_change_percent',
+        '>=', 10, expr,
+        'aggregate 13F shares held rose >= 10% between the latest two usable filings',
+        'shares_chg_ge10', recipe=recipe, block=block, source=source))
+    rows.append(_row(
+        '13f_shares_change', expr, 'continuous', 'total_shares_qoq_change_percent',
+        '>=', 25, expr,
+        'aggregate 13F shares held rose >= 25% between the latest two usable filings',
+        'shares_chg_ge25', recipe=recipe, block=block, source=source))
+    rows.append(_row(
+        '13f_shares_change', expr, 'continuous', 'total_shares_qoq_change_percent',
+        '<=', -10, expr,
+        'aggregate 13F shares held fell >= 10% between the latest two usable filings',
+        'shares_chg_le-10', recipe=recipe, block=block, source=source))
+    expr = 'sec_13f_new_filer_v1()'
+    rows.append(_row(
+        '13f_new_filer', expr, 'boolean', 'new_filer_in_latest_filing',
+        '=', 1, expr,
+        'the latest usable 13F filing contains at least one filer absent from the '
+        'previous usable filing', 'new_filer',
+        recipe=recipe, block=block, source=source))
     return rows
 
 
@@ -246,7 +353,8 @@ def cboe_definitions():
 
 def build(root=ROOT):
     root = Path(root)
-    rows = (form4_definitions() + short_volume_definitions() + cboe_definitions())
+    rows = (form4_definitions() + analyst_definitions() + holdings13f_definitions()
+            + short_volume_definitions() + cboe_definitions())
     ids = [r['question_id'] for r in rows]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate question_id in SEC definitions')
