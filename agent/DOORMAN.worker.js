@@ -62,6 +62,7 @@ async function wakeWrite(env, payload, sha) {
   const put = await gh(env, `/contents/${WAKE_PATH}`, { method: "PUT", body: JSON.stringify(body) });
   if (!put.ok) throw new Error(`wake write failed: ${put.status}`);
 }
+
 async function wakeDecide(env) {
   const now = Date.now();
   const wake = await wakeRead(env);
