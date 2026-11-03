@@ -45,6 +45,12 @@ Success is: it reads the attachment, fetches the live files, names the lane, nam
 
 One thing to note before you run it: the new chat will not have the badge or the bridge unless the loader fires there too. If the test chat is a normal chat, the @@PUT blocks it writes are inert text — readable proof of understanding, but nothing lands. That is fine for this test; it separates comprehension from execution.
 
+I'd refrain from linking it to files it might not have access to. Lets include everything, including context.md in text form
+
+Loading...
+
+Thinking...
+
 Ask anything privately...
 
 Agent
