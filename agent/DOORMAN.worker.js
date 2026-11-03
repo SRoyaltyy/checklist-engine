@@ -176,4 +176,18 @@ export default {
           const blobs = all.slice(0, 40);
           const needle = q.toLowerCase();
           const hits = [];
+          for (const n of blobs) {
+            if (hits.length >= limit) break;
+            const r = await gh(env, `/git/blobs/${n.sha}`);
+            if (!r.ok) continue;
+            const lines = dec(r.body.content).split("\n");
+            for (let k = 0; k < lines.length; k += 1) {
+              if (lines[k].toLowerCase().includes(needle)) {
+                hits.push({ path: n.path, line: k + 1, text: lines[k].trim().slice(0, 200) });
+                if (hits.length >= limit) break;
+              }
+            }
+          }
+          return reply({ ok: true, candidates: all.length, scanned: blobs.length, truncated: all.length > blobs.length, hits });
+        }
 @@MORE@@
