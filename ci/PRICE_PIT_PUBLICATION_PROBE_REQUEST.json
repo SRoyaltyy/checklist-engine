@@ -1,5 +1,5 @@
 {
-  "execute": true,
+  "execute": false,
   "attempt": 2,
   "source_anchor_ref": "refs/heads/codex/price-pit-run-41578885310-source",
   "target_tag": "price-full-cohort-pit-v1-41578885310-1-034",
