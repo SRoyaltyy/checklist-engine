@@ -290,4 +290,24 @@
   }
 
   var lastFailSeen = 0, failPrimed = false;
+
+  function healthTick() {
+    if (load('vrb.halt') === '1') return;
+    var text = document.body.innerText || '';
+    var hits = (text.match(/Response failed/gi) || []).length;
+    if (!failPrimed) { lastFailSeen = hits; failPrimed = true; }
+    if (hits > lastFailSeen) {
+      store('vrb.fail', String(num('vrb.fail') + (hits - lastFailSeen)));
+      lastFailSeen = hits;
+      awaiting = 0;
+      paint();
+    }
+    if (num('vrb.fail') >= FAIL_LIMIT && !busy) { escalate('response failed x' + num('vrb.fail')); return; }
+    if (awaiting && Date.now() - awaiting > STUCK_MS) {
+      if (msgNodes() < nodesAt + 2) {
+        store('vrb.fail', String(num('vrb.fail') + 1));
+        awaiting = 0; paint();
+        if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
+      } else { awaiting = 0; }
+    }
 @@MORE@@
