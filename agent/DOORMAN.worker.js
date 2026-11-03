@@ -48,4 +48,11 @@ async function editFile(env, branch, path, find, replace, message) {
   if (hits !== 1) throw new Error(`find matched ${hits} times, need exactly 1`);
   return writeFile(env, branch, path, current.text.replace(find, replace), message, false);
 }
+async function wakeRead(env) {
+  const got = await gh(env, `/contents/${WAKE_PATH}?ref=${encodeURIComponent(env.WAKE_BRANCH)}`);
+  if (!got.ok) return { pending: false, sha: null };
+  let parsed = /** @type {any} */ ({});
+  try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
+  return /** @type {any} */ ({ ...parsed, sha: got.body.sha });
+}
 @@MORE@@
