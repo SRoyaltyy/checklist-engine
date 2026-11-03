@@ -221,4 +221,17 @@
     }
     return 'unknown';
   }
+
+  function composeBootstrap(gen) {
+    var chunks = [], i = 0;
+    function step() {
+      if (i >= BOOT_READS.length) return finish();
+      var p = BOOT_READS[i]; i++;
+      gm(readUrl(p)).then(function (r) {
+        var body = r.ok ? unwrap(r.text) : '[unavailable ' r.status ']';
+        if (r.ok && body.trim() === '') body = '[EMPTY FILE]';
+        chunks.push('## ' p '\n```\n' body '\n```');
+        step();
+      });
+    }
 @@MORE@@
