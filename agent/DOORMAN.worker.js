@@ -14,4 +14,10 @@ async function gh(env, path, init = {}) {
   let body; try { body = JSON.parse(text); } catch { body = text; }
   return { ok: res.ok, status: res.status, body, text };
 }
+async function ghRoot(env, path, init = {}) {
+  const res = await fetch(`https://api.github.com${path}`, { ...init, headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": "venice-doorman", ...(init.headers || {}) } });
+  const text = await res.text();
+  let body; try { body = JSON.parse(text); } catch { body = text; }
+  return { ok: res.ok, status: res.status, body, text };
+}
 @@MORE@@
