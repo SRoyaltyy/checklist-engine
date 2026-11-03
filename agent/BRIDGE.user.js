@@ -401,4 +401,27 @@
       mark(hr);
       gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' r.status); });
     }
+    var mergeRe = /@@MERGE[ \t] (\d )/g;
+    while ((m = mergeRe.exec(text)) !== null) {
+      var hm = hash('m' + m[1]);
+      if (fired[hm]) continue;
+      mark(hm);
+      (function (n) {
+        gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' r.status); });
+      }(m[1]));
+    }
+  }
+
+  function tick() {
+    if (load('vrb.paused') === '1' || load('vrb.halt') === '1' || phase === 'boot') return;
+    gm(readUrl('agent/WAKE.json')).then(function (r) {
+      if (!r.ok) return;
+      var flag;
+      try { flag = JSON.parse(unwrap(r.text)); } catch (e) { return; }
+      var reason = (flag && flag.reason) || '';
+      var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
+      if (sha && sha === load('vrb.sha')) return;
+      if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
+    });
+  }
 @@MORE@@
