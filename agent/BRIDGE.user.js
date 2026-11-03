@@ -58,4 +58,11 @@
       return { ok: ok, status: status };
     });
   }
+
+  function putFile(path, content) {
+    if (!content) { console.log('[bridge] empty write to ' path); return Promise.resolve({ ok: false, status: -1 }); }
+    return gmPost(putUrl(path), content).then(function (r) { return readback(path, content, r.status); });
+  }
+
+  function tail(s, n) { return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
 @@MORE@@
