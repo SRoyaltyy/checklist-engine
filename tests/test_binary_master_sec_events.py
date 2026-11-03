@@ -144,10 +144,12 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
     for row in rows:
         assert row['definition_status'] == 'BOUND'
         assert row['data_group'] == sec_options_master.DATA_GROUP
-        assert row['source_question_id'] == 'I187'
         assert row['expression'] == 'CONCRETE'
         # strict contract: literal thresholds only, formula matches its own parts
-        float(row['comparison_threshold'])
+        if row['feature_kind'] == 'category_code':
+            assert row['comparison_threshold']  # fixed-set code, not numeric
+        else:
+            float(row['comparison_threshold'])
         formula = row['formula']
         assert formula.startswith('(') and formula.endswith(
             ' ' + row['comparator'] + ' ' + row['comparison_threshold'])
@@ -160,13 +162,157 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
              'outcome': row['source_outcome']})
     facets = {row['facet'] for row in rows}
     assert {'form4_days_since', 'form4_count', 'form4_net_dollars', 'form4_cluster',
-            'form4_max_trade'} <= facets
-    # every emitted recipe is implemented in world_sec_events
+            'form4_max_trade', 'short_volume_ratio', 'short_volume_ratio_mean',
+            'short_volume_ratio_percentile', 'short_volume_ratio_state_change',
+            'cboe_pc_volume_ratio', 'cboe_pc_oi_ratio', 'cboe_pc_ratio_percentile',
+            'vix_level', 'vix_term_structure', 'cboe_skew'} <= facets
+    blocks = {row['block'] for row in rows}
+    assert {sec_options_master.BLOCK_FORM4, sec_options_master.BLOCK_SHORTVOL,
+            sec_options_master.BLOCK_CBOE} <= blocks
+    # every emitted recipe is implemented
     import world_sec_events as wse
+    import world_market_series as wms
     implemented = {'sec_form4_days_since_last_v1': wse.days_since_last,
                    'sec_form4_count_v1': wse.count_in_window,
                    'sec_form4_net_dollars_v1': wse.net_dollars,
                    'sec_form4_cluster_v1': wse.insider_cluster,
-                   'sec_form4_max_trade_v1': wse.max_trade_dollars}
+                   'sec_form4_max_trade_v1': wse.max_trade_dollars,
+                   'finra_short_ratio_v1': wms.finra_short_ratio_v1,
+                   'finra_short_ratio_mean_v1': wms.finra_short_ratio_mean_v1,
+                   'finra_short_ratio_percentile_v1': wms.finra_short_ratio_percentile_v1,
+                   'finra_short_ratio_cross_median_v1': wms.finra_short_ratio_cross_median_v1,
+                   'cboe_put_call_volume_ratio_v1': wms.cboe_put_call_volume_ratio_v1,
+                   'cboe_put_call_oi_ratio_v1': wms.cboe_put_call_oi_ratio_v1,
+                   'cboe_pc_ratio_percentile_v1': wms.cboe_pc_ratio_percentile_v1,
+                   'vix_level_v1': wms.vix_level_v1,
+                   'vix_term_structure_state_v1': wms.vix_term_structure_state_v1,
+                   'cboe_skew_v1': wms.cboe_skew_v1}
     used = {row['feature_expression'].split('(')[0] for row in rows}
     assert used <= set(implemented)
+
+
+# ---- I189 FINRA short volume -------------------------------------------------
+
+from world_market_series import (cboe_pc_ratio_percentile_v1,
+                                 cboe_put_call_oi_ratio_v1,
+                                 cboe_put_call_volume_ratio_v1, cboe_skew_v1,
+                                 cboe_era, finra_short_ratio_cross_median_v1,
+                                 finra_short_ratio_mean_v1,
+                                 finra_short_ratio_percentile_v1,
+                                 finra_short_ratio_v1, vix_level_v1,
+                                 vix_term_structure_state_v1)
+
+
+def _rec(session, short_vol, total_vol, public_hour=18):
+    return dict(session=session, public_dt=datetime.combine(session, datetime.min.time())
+                + timedelta(hours=public_hour), short_vol=short_vol, total_vol=total_vol)
+
+
+def _shortvol_series(ratios, sessions):
+    return [_rec(s, round(r * 1000), 1000) for s, r in zip(sessions[-len(ratios):], ratios)]
+
+
+def test_finra_ratio_pit_and_ne_rules():
+    sessions = _sessions(40)
+    assert finra_short_ratio_v1([], sessions, D) is None
+    recs = [_rec(sessions[-1], 500, 1000)]
+    assert finra_short_ratio_v1(recs, sessions, D) == 0.5
+    # zero total volume -> NE, never a fake 0 or division error
+    assert finra_short_ratio_v1([_rec(sessions[-1], 0, 0)], sessions, D) is None
+    # published after the open -> invisible at D -> NE
+    late = [dict(session=D, public_dt=datetime.combine(D, datetime.min.time())
+                 + timedelta(hours=10), short_vol=500, total_vol=1000)]
+    assert finra_short_ratio_v1(late, sessions, D) is None
+
+
+def test_finra_mean_and_percentile_need_full_history():
+    sessions = _sessions(80)
+    recs = _shortvol_series([0.4] * 4, sessions)
+    assert finra_short_ratio_mean_v1(recs, sessions, D, 5) is None  # only 4 usable
+    recs = _shortvol_series([0.4] * 5, sessions)
+    assert finra_short_ratio_mean_v1(recs, sessions, D, 5) == 0.4
+    recs = _shortvol_series([0.5] * 58 + [0.6], sessions)
+    assert finra_short_ratio_percentile_v1(recs, sessions, D, 60) is None  # only 59 usable
+    recs = _shortvol_series([0.5] * 60 + [0.6], sessions)
+    pct = finra_short_ratio_percentile_v1(recs, sessions, D, 60)
+    assert pct == 1.0  # 0.6 is the max of the window
+
+
+def test_finra_median_cross_state_change():
+    sessions = _sessions(80)
+    flat = [0.5] * 70
+    spike = [0.5] * 70 + [0.9, 0.9, 0.9, 0.9, 0.9]
+    assert finra_short_ratio_cross_median_v1(_shortvol_series(flat, sessions), sessions, D, 60, 5) is False
+    assert finra_short_ratio_cross_median_v1(_shortvol_series(spike, sessions), sessions, D, 60, 5) is True
+    # a cross 6 sessions ago is outside the `within` window
+    older = [0.5] * 65 + [0.9] + [0.5] * 5
+    assert finra_short_ratio_cross_median_v1(_shortvol_series(older, sessions), sessions, D, 60, 5) is False
+
+
+# ---- I201 CBOE market-wide ---------------------------------------------------
+
+def _cboe(session, call_vol=1000, put_vol=800, call_oi=5000, put_oi=4000,
+          vix=15.0, vix3m=16.0, skew=120.0, group='equity', public_hour=18):
+    return dict(session=session, group=group,
+                public_dt=datetime.combine(session, datetime.min.time()) + timedelta(hours=public_hour),
+                call_vol=call_vol, put_vol=put_vol, call_oi=call_oi, put_oi=put_oi,
+                vix=vix, vix3m=vix3m, skew=skew)
+
+
+def test_cboe_ratios_raw_counts_and_zero_call_ne():
+    sessions = _sessions(10)
+    recs = [_cboe(sessions[-1], call_vol=1000, put_vol=800)]
+    assert cboe_put_call_volume_ratio_v1(recs, sessions, D) == 0.8
+    assert cboe_put_call_oi_ratio_v1(recs, sessions, D) == 0.8
+    zero_call = [_cboe(sessions[-1], call_vol=0, put_vol=800)]
+    assert cboe_put_call_volume_ratio_v1(zero_call, sessions, D) is None
+    # group filter: equity questions never read index-group records
+    idx_only = [dict(_cboe(sessions[-1]), group='index')]
+    assert cboe_put_call_volume_ratio_v1(idx_only, sessions, D, group='equity') is None
+    assert cboe_put_call_volume_ratio_v1(idx_only, sessions, D, group='index') is not None
+
+
+def test_cboe_era_split_percentile_never_crosses_boundary():
+    from world_market_series import CBOE_0DTE_FLAG_DATE, CBOE_ERA_BREAK
+
+    def weekdays_around(anchor, before, after):
+        out, cur = [], anchor - timedelta(days=before + 3)
+        while len(out) < before + after:
+            if cur.weekday() < 5:
+                out.append(cur)
+            cur += timedelta(days=1)
+        return out
+
+    # sessions spanning all three eras; D is well after the 0DTE flag
+    sessions = (weekdays_around(CBOE_ERA_BREAK, 6, 4)
+                + weekdays_around(CBOE_0DTE_FLAG_DATE, 6, 4))
+    D2 = sessions[-1] + timedelta(days=3)
+    sessions = [s for s in sessions if s < D2]
+    while (D2.weekday() >= 5) or D2 in sessions:
+        D2 += timedelta(days=1)
+    recs = [_cboe(s) for s in sessions]
+    assert cboe_era(sessions[0]) == 'pre_2019_10_07'
+    assert cboe_era(sessions[-1]) == 'post_2022_0dte'
+    # current era (post_2022_0dte) has far fewer than 252 usable sessions -> NE,
+    # even though the full history spans three eras (they must NOT be pooled)
+    assert cboe_pc_ratio_percentile_v1(recs, sessions + [D2], D2, 252) is None
+    # within-era percentile works when the current era has enough history:
+    # D3 sits ~16 months after the 0DTE flag so 300 sessions fit in-era
+    D3 = date(2024, 3, 1)
+    long_recent = [D3 - timedelta(days=d) for d in range(430, 0, -1)
+                   if (D3 - timedelta(days=d)).weekday() < 5][:300]
+    assert all(cboe_era(s) == 'post_2022_0dte' for s in long_recent)
+    recs2 = [_cboe(s) for s in long_recent]
+    assert cboe_pc_ratio_percentile_v1(recs2, long_recent + [D3], D3, 252) == 1.0
+
+
+def test_vix_level_term_structure_and_skew():
+    sessions = _sessions(10)
+    recs = [_cboe(sessions[-1], vix=22.0, vix3m=20.0, skew=135.0)]
+    assert vix_level_v1(recs, sessions, D) == 22.0
+    assert vix_term_structure_state_v1(recs, sessions, D) == 'backwardation'
+    assert cboe_skew_v1(recs, sessions, D) == 135.0
+    contango = [dict(_cboe(sessions[-1]), vix=14.0, vix3m=16.0)]
+    assert vix_term_structure_state_v1(contango, sessions, D) == 'contango'
+    missing_3m = [dict(_cboe(sessions[-1]), vix3m=None)]
+    assert vix_term_structure_state_v1(missing_3m, sessions, D) is None

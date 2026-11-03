@@ -32,7 +32,11 @@ VIEWPORT_CSV = ('CONCRETE event marker: event date, days_since (trading days), d
                 'no free text, no circles.')
 
 BLOCK_FORM4 = 'E SEC Form 4 (I187)'
+BLOCK_SHORTVOL = 'F FINRA short volume (I189)'
+BLOCK_CBOE = 'N CBOE market-wide options (I201)'
 RECIPE_FORM4 = 'sec_form4'
+RECIPE_FINRA = 'finra_short'
+RECIPE_CBOE = 'cboe_market'
 
 # Facet x dial grid for the Form 4 group (spec todo3_sec_options_defs_v1.md section 3).
 # Thresholds literal; windows in trading days ending D-1.
@@ -47,8 +51,9 @@ _DIRECTIONS = ('bullish', 'bearish')
 
 
 def _row(facet, feature_expression, feature_kind, feature_unit, comparator, threshold,
-         formula_expr, yes, outcome, extra_feature=None):
-    feature = dict(recipe=RECIPE_FORM4, expression=feature_expression, kind=feature_kind,
+         formula_expr, yes, outcome, recipe=RECIPE_FORM4, block=BLOCK_FORM4,
+         source='I187', extra_feature=None):
+    feature = dict(recipe=recipe, expression=feature_expression, kind=feature_kind,
                    unit=feature_unit)
     if extra_feature:
         feature.update(extra_feature)
@@ -59,14 +64,14 @@ def _row(facet, feature_expression, feature_kind, feature_unit, comparator, thre
         'feature_id': 'BSF1-' + identity(feature),
         'definition_status': 'BOUND',
         'data_group': DATA_GROUP,
-        'block': BLOCK_FORM4,
+        'block': block,
         'facet': facet,
-        'source_question_id': 'I187',
+        'source_question_id': source,
         'source_variant_id': '',
         'source_outcome': outcome,
         'timeframe_days': 1,
         'lookback_bars': '',
-        'feature_recipe': RECIPE_FORM4,
+        'feature_recipe': recipe,
         'feature_expression': feature_expression,
         'feature_kind': feature_kind,
         'feature_unit': feature_unit,
@@ -133,9 +138,115 @@ def form4_definitions():
     return rows
 
 
+def short_volume_definitions():
+    """I189 FINRA daily short volume: per-session short/total ratio facets."""
+    rows = []
+    recipe, block, source = RECIPE_FINRA, BLOCK_SHORTVOL, 'I189'
+    for t in (0.45, 0.5, 0.55):
+        expr = 'finra_short_ratio_v1()'
+        rows.append(_row(
+            'short_volume_ratio', expr, 'continuous', 'short_volume_over_total_volume_latest_session',
+            '>=', t, expr,
+            f'latest usable session short/total volume ratio >= {t}', f'ratio_ge{t}',
+            recipe=recipe, block=block, source=source))
+    for window in (5,):
+        for t in (0.45, 0.5, 0.55):
+            expr = f'finra_short_ratio_mean_v1(window={window})'
+            rows.append(_row(
+                'short_volume_ratio_mean', expr, 'continuous',
+                f'mean_short_ratio_last_{window}_sessions',
+                '>=', t, expr,
+                f'mean short/total ratio over the last {window} usable sessions >= {t}',
+                f'mean_w{window}_ge{t}',
+                recipe=recipe, block=block, source=source, extra_feature=dict(window=window)))
+    for lookback in (60,):
+        for t in (0.8, 0.9):
+            expr = f'finra_short_ratio_percentile_v1(lookback={lookback})'
+            rows.append(_row(
+                'short_volume_ratio_percentile', expr, 'continuous',
+                f'short_ratio_percentile_last_{lookback}_sessions',
+                '>=', t, expr,
+                f'latest short ratio is in the top {round((1-t)*100)}% of its own last '
+                f'{lookback} usable sessions (percentile in [0,1])',
+                f'pct_l{lookback}_ge{t}',
+                recipe=recipe, block=block, source=source, extra_feature=dict(lookback=lookback)))
+    expr = 'finra_short_ratio_cross_median_v1(lookback=60,within=5)'
+    rows.append(_row(
+        'short_volume_ratio_state_change', expr, 'boolean',
+        'short_ratio_crossed_above_60session_median_within_5_sessions',
+        '=', 1, expr,
+        'short/total ratio crossed above the median of the prior 60 usable sessions at any '
+        'point within the last 5 sessions',
+        'cross_median_60_within5', recipe=recipe, block=block, source=source,
+        extra_feature=dict(lookback=60, within=5)))
+    return rows
+
+
+def cboe_definitions():
+    """I201 CBOE market-wide options: put/call ratios (raw counts, equity and
+    total groups), era-split percentile, VIX level/term structure, SKEW."""
+    rows = []
+    recipe, block, source = RECIPE_CBOE, BLOCK_CBOE, 'I201'
+    for group in ('equity', 'total'):
+        for t in (0.7, 0.8, 0.9, 1.0):
+            expr = f'cboe_put_call_volume_ratio_v1(group={group})'
+            rows.append(_row(
+                'cboe_pc_volume_ratio', expr, 'continuous',
+                f'put_call_volume_ratio_latest_session_{group}',
+                '>=', t, expr,
+                f'latest usable session put/call VOLUME ratio ({group} group, raw counts) >= {t}',
+                f'pc_vol_{group}_ge{t}',
+                recipe=recipe, block=block, source=source, extra_feature=dict(group=group)))
+    for t in (0.7, 0.9, 1.1):
+        expr = 'cboe_put_call_oi_ratio_v1(group=equity)'
+        rows.append(_row(
+            'cboe_pc_oi_ratio', expr, 'continuous',
+            'put_call_open_interest_ratio_latest_session_equity',
+            '>=', t, expr,
+            f'latest usable session put/call OPEN INTEREST ratio (equity group, raw counts) >= {t}',
+            f'pc_oi_equity_ge{t}',
+            recipe=recipe, block=block, source=source, extra_feature=dict(group='equity')))
+    for lookback in (252,):
+        for t in (0.8, 0.9):
+            expr = f'cboe_pc_ratio_percentile_v1(lookback={lookback},group=equity)'
+            rows.append(_row(
+                'cboe_pc_ratio_percentile', expr, 'continuous',
+                'pc_volume_ratio_percentile_current_era_only',
+                '>=', t, expr,
+                f'latest equity put/call volume ratio is in the top {round((1-t)*100)}% of its '
+                f'own last {lookback} usable sessions WITHIN THE CURRENT CBOE ERA '
+                '(never crosses the 2019-10-07 definition break or the post-2022 0DTE flag)',
+                f'pc_pct_l{lookback}_ge{t}',
+                recipe=recipe, block=block, source=source,
+                extra_feature=dict(lookback=lookback, group='equity')))
+    for t in (12, 20, 30):
+        expr = 'vix_level_v1()'
+        rows.append(_row(
+            'vix_level', expr, 'continuous', 'vix_close_latest_session',
+            '>=', t, expr,
+            f'latest usable VIX close >= {t}', f'vix_ge{t}',
+            recipe=recipe, block=block, source=source))
+    for state in ('backwardation', 'contango'):
+        expr = 'vix_term_structure_state_v1()'
+        rows.append(_row(
+            'vix_term_structure', expr, 'category_code', 'vix_vs_vix3m_state_fixed_set',
+            '=', state, expr,
+            f'VIX term structure state = {state} (contango: VIX < VIX3M; backwardation: '
+            'VIX >= VIX3M; fixed two-outcome set)',
+            f'term_{state}', recipe=recipe, block=block, source=source))
+    for t in (120, 130, 140):
+        expr = 'cboe_skew_v1()'
+        rows.append(_row(
+            'cboe_skew', expr, 'continuous', 'skew_index_latest_session',
+            '>=', t, expr,
+            f'latest usable CBOE SKEW index level >= {t}', f'skew_ge{t}',
+            recipe=recipe, block=block, source=source))
+    return rows
+
+
 def build(root=ROOT):
     root = Path(root)
-    rows = form4_definitions()
+    rows = (form4_definitions() + short_volume_definitions() + cboe_definitions())
     ids = [r['question_id'] for r in rows]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate question_id in SEC definitions')

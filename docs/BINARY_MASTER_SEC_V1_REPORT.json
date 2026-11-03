@@ -1,16 +1,28 @@
 {
   "csv": "BINARY_MASTER_SEC_V1.csv",
-  "csv_sha256": "c2d4f73a98d9bd627f69090cdbcc2453ebf3a21905612a11f838bada6058ca72",
-  "rows": 28,
+  "csv_sha256": "52ad45a37a4130e168a11d89113fc3d08dcd417b7e4ab5f0904be1ae59aa8f05",
+  "rows": 58,
   "blocks": [
-    "E SEC Form 4 (I187)"
+    "E SEC Form 4 (I187)",
+    "F FINRA short volume (I189)",
+    "N CBOE market-wide options (I201)"
   ],
   "facets": [
+    "cboe_pc_oi_ratio",
+    "cboe_pc_ratio_percentile",
+    "cboe_pc_volume_ratio",
+    "cboe_skew",
     "form4_cluster",
     "form4_count",
     "form4_days_since",
     "form4_max_trade",
-    "form4_net_dollars"
+    "form4_net_dollars",
+    "short_volume_ratio",
+    "short_volume_ratio_mean",
+    "short_volume_ratio_percentile",
+    "short_volume_ratio_state_change",
+    "vix_level",
+    "vix_term_structure"
   ],
   "status": "DEFINITIONS_ONLY_NO_ANSWERS"
 }
