@@ -54,9 +54,6 @@
     });
   }
 
-  get('agent/BRIDGE.user.js').then(function (raw);
-  });
-
   get('agent/BRIDGE.user.js').then(function (raw) {
     var src = unwrap(raw);
     if (src && src.length > 500 && boot(src)) return;
