@@ -20,4 +20,15 @@ async function ghRoot(env, path, init = {}) {
   let body; try { body = JSON.parse(text); } catch { body = text; }
   return { ok: res.ok, status: res.status, body, text };
 }
+
+async function readFile(env, branch, path) {
+  const got = await gh(env, `/contents/${path}?ref=${encodeURIComponent(branch)}`);
+  if (!got.ok) throw new Error(`read ${path} failed: ${got.status}`);
+  if (typeof got.body.content === "string" && got.body.encoding === "base64") {
+    return { text: dec(got.body.content), base64: got.body.content, sha: got.body.sha };
+  }
+  const blob = await gh(env, `/git/blobs/${got.body.sha}`);
+  if (!blob.ok) throw new Error(`read ${path} failed: ${blob.status}`);
+  return { text: dec(blob.body.content), base64: blob.body.content, sha: got.body.sha };
+}
 @@MORE@@
