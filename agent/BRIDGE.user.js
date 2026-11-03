@@ -208,4 +208,17 @@
     location.href = location.origin + '/';
     return false;
   }
+
+  function ensureAgentic() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('[aria-label], [title], [data-testid]'));
+    var i, e;
+    for (i = 0; i < els.length; i++) {
+      e = els[i];
+      if (e.offsetParent === null) continue;
+      if (!/agent/i.test(labelOf(e))) continue;
+      if (e.getAttribute('aria-checked') === 'true' || e.getAttribute('aria-pressed') === 'true') return 'on';
+      if (e.getAttribute('aria-checked') === 'false' || e.getAttribute('aria-pressed') === 'false') { e.click(); return 'toggled'; }
+    }
+    return 'unknown';
+  }
 @@MORE@@
