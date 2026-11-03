@@ -166,4 +166,24 @@
         step();
       });
     }
+    function finish() {
+      var stamp = new Date().toISOString();
+      gm(W + 'read&branch=main&path=TODO.md').then(function (todo) {
+        var t = todo.ok ? unwrap(todo.text) : '';
+        var hit = t.match(/##\s*Venice[\s\S]*?(?=\n##\s|$)/);
+        var lane = hit ? hit[0] : '[TODO.md Venice section unavailable ' todo.status ']';
+        gm(readUrl('agent/WAKE_PROMPT.md')).then(function (pr) {
+          var tpl = pr.ok ? unwrap(pr.text) : '';
+          var body = tpl.trim() ? tpl.replace('{{TIME}}', stamp).replace('{{REASON}}', reason) : '[wake ' stamp '] ' reason '\n\n[WAKE_PROMPT.md unavailable]';
+          var full = body + '\n\n## TODO.md Venice lane from main\n' + lane + '\n\n' + chunks.join('\n\n');
+          fill(el, full);
+          setTimeout(function () {
+            nodesAt = msgNodes(); awaiting = Date.now();
+            submit(el);
+            store('vrb.cool', String(Date.now()));
+            busy = false; paint();
+          }, 250);
+        });
+      });
+    }
 @@MORE@@
