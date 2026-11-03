@@ -197,6 +197,7 @@
       });
     }
 
+    step();
   }
   function waitFor(fn, ms) {
     return new Promise(function (res) {
