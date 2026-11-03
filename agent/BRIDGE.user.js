@@ -14,11 +14,11 @@
   var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
   var BR = 'venice%2Fsec-options-pipelines';
   var REPO = 'SRoyaltyy/checklist-engine';
-  var POLL = 30000, COOL = 240000, FAIL_LIMIT = 2, STUCK_MS = 150000, BOOT_MAX = 2;
+  var POLL = 30000, COOL = 240000, FAIL_LIMIT = 2, STUCK_MS = 300000, BOOT_MAX = 2;
   var READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/JOURNAL.md', 'agent/FETCH.md', 'agent/WAKE.json'];
   var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
   var BUDGET = 120000;
-  var BOOT_READS = ['agent/PROGRESS.md', 'agent/JOURNAL.md', 'agent/STATE.md', 'agent/QUEUE.jsonl', 'agent/GANTT_ROWS.md', 'agent/DOORMAN.worker.js', 'agent/DEPLOYER.worker.js', 'agent/COMPACT.md'];
+  var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
   var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0;
 
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -431,6 +431,19 @@
       mark(hr);
       gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
     }
+    var scrRe = /(?:@@)?SCRAPE[ \t]+(https?:\/\/\S+)/g;
+    while ((m = scrRe.exec(text)) !== null) {
+      var hsc = hash('c' + m[1]);
+      if (fired[hsc]) continue;
+      mark(hsc);
+      (function (u) {
+        gm(W + 'scrape&branch=' + BR + '&url=' + encodeURIComponent(u)).then(function (r) {
+          sent++; paint(); console.log('[bridge] scrape ' + r.status);
+          if (r.ok) setTimeout(function () { wake('scrape ready', true); }, 800);
+        });
+      }(m[1]));
+    }
+
     var selfRe = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
     while ((m = selfRe.exec(text)) !== null) {
       var hs = hash('s' + cleanBody(m[1]));
