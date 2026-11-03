@@ -1,57 +1,39 @@
 CONTEXT — read this first, in full
 
-Written 2026-11-03 UTC by Venice, at the point the machinery was proven running. If you are reading this in a fresh chat, the rollover worked and you are the continuation. You have no memory of the conversation that produced this. That is expected. Everything you need is here and in the repo.
+Written 2026-11-03 UTC by Venice, at the point the machinery was proven running. If you are reading this in a fresh chat, the rollover worked and you are the continuation. You have no memory of the conversation that produced this. That is expected and not a problem: everything is written down.
 
 The strategic goal
 
-Venice's web chat has three limits that make long autonomous work impossible:
+Venice's web chat has three limits that make sustained autonomous work impossible:
 
-A context ceiling. A chat accumulates history until a request is rejected before generation. Every model fails identically. The chat is not recoverable — it is simply dead, and the work in it dies with it.
-It sleeps. After finishing a turn the chat just stops. Nothing resumes it. Continuing work means a human typing "continue" forever.
-No metered-free reads. The assistant's web_scrape tool is rate-limited, so sustained research starves.
+A context ceiling. A chat accumulates history until requests are rejected before generation. Every model fails identically. The chat is dead and the work dies with it.
+It sleeps. After a turn it simply stops. Nothing resumes it. Continuing means a human typing "continue" forever.
+Metered reads. The assistant's web_scrape is rate-limited, so sustained research starves.
 
-The goal is to make a Venice chat behave like a persistent agent — the way a long-running coding agent works across sessions — by removing all three limits:
+The goal is to make a Venice chat behave like a persistent agent — the way a long-running coding agent works across sessions — by removing all three:
 
-Rollover replaces the ceiling. When the chat stops answering, a new chat is opened automatically and seeded with state, so the work continues instead of dying.
-Waking replaces the human. A cron flag plus a poller submits the next prompt on a schedule, so the chat resumes itself.
-A Cloudflare Worker replaces web_scrape. The worker does the reading and writing against GitHub on the loop's behalf, with no metering and no rate limit worth worrying about.
+Rollover replaces the ceiling. When the chat stops answering, a new chat is opened and seeded with state, so work continues instead of dying.
+Waking replaces the human. A cron flag and a poller submit the next prompt on a schedule, so the chat resumes itself.
+A Cloudflare Worker replaces web_scrape. It does repo reading and writing on the loop's behalf, unmetered.
 
-Everything else in this repo is scaffolding around those three substitutions. When you evaluate a change, ask which of the three it serves.
+Everything else is scaffolding around those three substitutions. When judging any change, ask which of the three it serves.
 
-The repo and the work
+The repo and the lane
 
-Repo: SRoyaltyy/checklist-engine. A large, many-lane project worked by several agents. Your lane is SEC and Options no-AI download pipelines — GitHub Actions plus plain scripts that pull public SEC filings and listed-options data, with no AI in the data path. Branch venice/*, PR to main, never push main.
+Repo: SRoyaltyy/checklist-engine — a large multi-lane project worked by several agents. Branch venice/*, PR to main, never push main.
 
-The lane is real work, not a demo. It is what the machinery exists to carry.
+Your lane is not hardcoded. It is assigned and it moves. Locate it every wake, in this order:
 
-Division of labour
-Venice (you) — one item per wake, written to the repo, journaled, then stop.
-The human — only three things: install the loader, set Cloudflare variables, and paste a console snippet when a tool is unavailable. Nothing else needs them.
-Other agents — own other lanes and the master Gantt. Do not touch their work.
-Current state, honestly
+METHODOLOGY.md — James owns it and updates lanes here. This is authoritative. Grep, never read whole: 587 KB.
+TODO.md on main, the ## Venice section — the current concrete orders for that lane.
+agent/STATE.md — what you were doing last.
 
-Infrastructure complete and proven running. Lane work not started. Item 1 is unfixed.
+If METHODOLOGY.md and TODO.md disagree, METHODOLOGY.md wins and you say so in the journal. If your lane changed, stop the old work cleanly and start the new one — do not carry stale items forward.
 
-Three weak points, in order of risk:
+What you actually have
 
-Rollover is untested. Everything up to a chat dying is proven; the recovery path has never run. It is the whole point of the system and it is unproven.
-@@PUT from inside the loop is untested. Writes are the mechanism for all work. Treat the first real one as a test.
-No lane progress. Nothing committed by the loop yet.
-What the machinery is
-venice-doorman Worker — GitHub transport: read, write, list, grep, runs, dispatch, merge, scrape, deploy.
-The bridge userscript — polls the wake flag, assembles a prompt from state, types it, submits, and rolls when the chat dies.
-venice-deployer Worker — redeploys the doorman from repo source, so the loop can fix its own transport.
-The loader userscript — fetches the bridge, version-checks it, re-executes it, so the loop can fix its own behaviour.
-Reading order
-agent/STATE.md — where the work stands
-agent/PROGRESS.md — lane rows
-TODO.md on main, ## Venice section only — the orders
-agent/INFRA.md — mechanics
-agent/FAILURES.md — sixteen faults already paid for, read before touching anything
-agent/RECOVERY.md — only when broken
+Code, all in agent/: BRIDGE.user.js (poller, prompt builder, rollover), DOORMAN.worker.js (GitHub transport, 17 ops), DEPLOYER.worker.js (redeploys the doorman), LOADER.user.js (fetches and re-executes the bridge).
 
-Grep METHODOLOGY.md, never read it whole — 587 KB.
+Infrastructure: venice-doorman Worker with a 15-minute cron; venice-deployer Worker; Tampermonkey with the loader installed; a live badge bottom-right.
 
-Standing rules
-
-One item per wake. Journal, rewrite STATE.md and PROGRESS.md before stopping. No markers in committed files. Proof means a green run ID or a commit, and it goes in the PR. If a tool is unavailable, the console on a blank about:blank tab is the substitute — see agent/RESOURCES.md.
+Directives you can emit: @@PUT path …
