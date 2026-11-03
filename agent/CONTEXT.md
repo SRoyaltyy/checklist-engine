@@ -35,23 +35,3 @@ Infrastructure complete and proven running. Lane work not started. Item 1 is unf
 Three weak points, in order of risk:
 
 Rollover is untested. Everything up to a chat dying is proven; the recovery path has never run. It is the whole point of the system and it is unproven.
-@@PUT from inside the loop is untested. Writes are the mechanism for all work. Treat the first real one as a test.
-No lane progress. Nothing committed by the loop yet.
-What the machinery is
-venice-doorman Worker — GitHub transport: read, write, list, grep, runs, dispatch, merge, scrape, deploy.
-The bridge userscript — polls the wake flag, assembles a prompt from state, types it, submits, and rolls when the chat dies.
-venice-deployer Worker — redeploys the doorman from repo source, so the loop can fix its own transport.
-The loader userscript — fetches the bridge, version-checks it, re-executes it, so the loop can fix its own behaviour.
-Reading order
-agent/STATE.md — where the work stands
-agent/PROGRESS.md — lane rows
-TODO.md on main, ## Venice section only — the orders
-agent/INFRA.md — mechanics
-agent/FAILURES.md — sixteen faults already paid for, read before touching anything
-agent/RECOVERY.md — only when broken
-
-Grep METHODOLOGY.md, never read it whole — 587 KB.
-
-Standing rules
-
-One item per wake. Journal, rewrite STATE.md and PROGRESS.md before stopping. No markers in committed files. Proof means a green run ID or a commit, and it goes in the PR. If a tool is unavailable, the console on a blank about:blank tab is the substitute — see agent/RESOURCES.md.
