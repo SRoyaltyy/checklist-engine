@@ -114,7 +114,7 @@ export default {
     try {
       switch (op) {
         case "ops":
-          return reply({ ok: true, ops: ["branch", "ref", "read", "list", "commits", "diff", "search", "grep", "put", "edit", "pr", "pr-edit", "runs", "dispatch", "merge", "deploy"] });
+          return reply({ ok: true, ops: ["branch", "ref", "read", "list", "commits", "diff", "search", "grep", "put", "edit", "pr", "pr-edit", "runs", "dispatch", "merge", "deploy", "scrape"] });
         case "branch": {
           const got = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
           if (!got.ok) throw new Error(`branch failed: ${got.status}`);
@@ -240,6 +240,23 @@ export default {
           const r = await fetch(`${base}?k=${key}&op=deploy&branch=${encodeURIComponent(branch)}`);
           const body = (await r.text()).slice(0, 400);
           return reply({ ok: r.ok, status: r.status, body }, r.ok ? 200 : 400);
+        }
+        case "scrape": {
+          const u = p.get("url") || (bodyJson && bodyJson.url);
+          if (!u) throw new Error("url is required");
+          const dest = p.get("path") || "agent/FETCH.md";
+          const got = await fetch(u, { headers: { "User-Agent": "Mozilla/5.0 venice-doorman" } });
+          const raw = await got.text();
+          const stripped = raw
+            .replace(/<script[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, String.fromCharCode(34))
+            .replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+          const body = "# FETCH " + u + "\n\nfetched " + new Date().toISOString() + " status " + got.status + "\n\n" + stripped.slice(0, 60000) + "\n";
+          const sha = await writeFile(env, branch, dest, body, message, false);
+          return reply({ ok: got.ok, status: got.status, bytes: body.length, path: dest, sha });
         }
         default:
           return reply({ ok: false, error: `unknown op ${op}` }, 400);
