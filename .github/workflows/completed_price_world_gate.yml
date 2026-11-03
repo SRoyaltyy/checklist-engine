@@ -1,0 +1,79 @@
+name: completed-price-world-gate
+on:
+  push:
+    branches: [codex/price-world-gate-full-cohort]
+    paths: ['ci/COMPLETED_PRICE_WORLD_GATE_REQUEST.json']
+  pull_request:
+    paths: ['ci/completed_price_world_gate.py', 'ci/COMPLETED_PRICE_WORLD_GATE_REQUEST.json',
+            'tests/test_completed_price_world_gate.py', '.github/workflows/completed_price_world_gate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: completed-price-world-gate-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pytest
+      - run: python -m pytest tests/test_completed_price_world_gate.py -q
+      - id: request
+        run: |
+          python - <<'PY'
+          import json, os
+          r = json.load(open('ci/COMPLETED_PRICE_WORLD_GATE_REQUEST.json'))
+          assert type(r['execute']) is bool
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write('execute=' + str(r['execute']).lower() + '\n')
+          PY
+  audit:
+    if: github.event_name != 'pull_request' && needs.verify.outputs.execute == 'true'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: git fetch --depth=1 origin 64f603de862adc81e6cd7e50e849cd7a684bf6bb
+      - name: Audit the completed rebuild and evaluate every world prerequisite
+        id: gate
+        continue-on-error: true
+        run: python -m ci.completed_price_world_gate --directory completed-price-gate
+      - name: Publish the actual verdict, including failing checks
+        if: always()
+        run: |
+          tag="completed-price-world-gate-v1-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" --draft --target "$GITHUB_SHA" --title "$tag" --notes 'Read-only completed-price world gate. Actual verdict and precise incomplete checks are in the receipt; not a producer rerun or scoring approval.'
+          gh release upload "$tag" completed-price-gate/COMPLETED_PRICE_WORLD_GATE_V1.json ci/COMPLETED_PRICE_WORLD_GATE_REQUEST.json
+          gh release edit "$tag" --draft=false
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: completed-price-world-gate-${{ github.run_id }}
+          path: completed-price-gate/COMPLETED_PRICE_WORLD_GATE_V1.json
+          if-no-files-found: error
+      - name: Enforce the world verdict
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          r = json.load(open('completed-price-gate/COMPLETED_PRICE_WORLD_GATE_V1.json'))
+          assert r['world_gate'] == 'PROVEN', r.get('failing_checks', [])
+          PY

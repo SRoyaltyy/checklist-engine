@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "execute": true,
+  "scope": "Run the world gate on the actual completed #203 retained-price rebuild; metadata full cohort, semantic/PIT/eligibility proofs retain their actual scopes. No producer rerun or new market calculation.",
+  "sources": {
+    "plan": {
+      "release": "compact-world-build-v1-41078405278-1-inputs",
+      "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+      "sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c"
+    },
+    "parent": {
+      "release": "compact-world-build-measured-v1-41078405278-1",
+      "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
+      "sha256": "1d49218cc593a28d5940a216dfd263648f13d0302dcc5af2e603d6587b9383cc"
+    },
+    "replacement": {
+      "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
+      "asset": "COMPACT_WORLD_SHARD.json",
+      "sha256": "f96ef20f28cbf34287902d8155a93e1e6a32af32861f907c7f8e0b777eca934e"
+    },
+    "probe": {
+      "release": "rebuild-partial-checkpoint-v1-41093742477-1",
+      "asset": "REBUILD_PARTIAL_CHECKPOINT_V1.json",
+      "sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198"
+    },
+    "composition": {
+      "release": "compact-world-build-composed-v1-41221028803-1",
+      "asset": "COMPACT_WORLD_BUILD_COMPOSED.json",
+      "sha256": "84dc8205c12e9112e083d425e45af63d5b64b2bff3324c40a6ce7be4dde498c1"
+    },
+    "composition_request": {
+      "release": "compact-world-build-composed-v1-41221028803-1",
+      "asset": "PRICE_RECOVERY_COMPOSITION_REQUEST.json",
+      "sha256": "cc8fd08eb69d3494ace121e2221872abe5b29a9ee812a1f563749a9688f67782"
+    },
+    "registry": {
+      "release": "compact-world-build-v1-41078405278-1-inputs",
+      "asset": "DIAGNOSTIC_REGISTRIES.json",
+      "sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2"
+    }
+  },
+  "producer_worker": {
+    "commit": "64f603de862adc81e6cd7e50e849cd7a684bf6bb",
+    "path": "ci/compact_world_storage_budget.py",
+    "sha256": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837"
+  }
+}
