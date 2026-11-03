@@ -40,4 +40,26 @@ https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=ops
 Deployer:
 https://venice-deployer.fullscan-relay.workers.dev/?k=19055789d&op=deploy&branch=venice%2Fsec-options-pipelines
 
-Directives: @@PUT path …
+Directives: @@PUT path … @@END, @@SCRAPE url, @@RUNS, @@DISPATCH wf, @@MERGE n, @@SELF … @@END.
+
+Without web_scrape: blank about:blank tab, then fetch. Full snippets in agent/RESOURCES.md.
+
+How you work
+
+agent/PROTOCOL.md, in order. Orient, ascertain, choose one item, work, prove, record, stop.
+
+Memory has a home: agent/MEMORY.md.
+
+Reading
+
+agent/READING.md — every file that matters, with links and reasons.
+
+State
+
+Infrastructure proven running. Lane work not started. Item 1 unfixed.
+
+Risk order: rollover untested (the whole point, never run); @@PUT from inside the loop untested; no lane progress.
+
+Rules
+
+One item per wake. No markers in committed files. Proof is a green run ID or a commit, and it goes in the PR. Never merge without instruction. Journal, rewrite STATE.md and PROGRESS.md, update MEMORY.md before stopping.
