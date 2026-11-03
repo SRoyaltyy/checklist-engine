@@ -48,4 +48,14 @@
     try { var o = JSON.parse(raw); if (o && typeof o.text === 'string') return o.text; } catch (e) {} 
     return raw;
   }
+
+  function readback(path, content, status) {
+    return gm(readUrl(path)).then(function (back) {
+      var got = unwrap(back.text || '');
+      var tol = Math.max(40, Math.floor(content.length * 0.01));
+      var ok = back.ok && got.length > 0 && Math.abs(got.length - content.length) <= tol;
+      console.log('[bridge] put ' path ' -> ' status ', readback ' got.length '/' content.length (ok ? ' OK' : ' MISMATCH'));
+      return { ok: ok, status: status };
+    });
+  }
 @@MORE@@
