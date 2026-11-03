@@ -169,7 +169,9 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
     blocks = {row['block'] for row in rows}
     assert {sec_options_master.BLOCK_FORM4, sec_options_master.BLOCK_SHORTVOL,
             sec_options_master.BLOCK_CBOE, sec_options_master.BLOCK_ANALYST,
-            sec_options_master.BLOCK_13F} <= blocks
+            sec_options_master.BLOCK_13F, sec_options_master.BLOCK_SECTOR,
+            sec_options_master.BLOCK_SHORTINT, sec_options_master.BLOCK_SHARES,
+            sec_options_master.BLOCK_DIV} <= blocks
     # every emitted recipe is implemented
     import world_sec_events as wse
     import world_market_series as wms
@@ -186,6 +188,17 @@ def test_emitter_schema_literals_and_determinism(tmp_path):
                    'sec_13f_filers_v1': wse.filers_13f_v1,
                    'sec_13f_shares_change_pct_v1': wse.shares_change_pct_13f_v1,
                    'sec_13f_new_filer_v1': wse.new_filer_13f_v1,
+                   'finra_si_pct_float_v1': wse.si_pct_float_v1,
+                   'finra_si_days_to_cover_v1': wse.si_days_to_cover_v1,
+                   'finra_si_pct_percentile_v1': wse.si_pct_percentile_v1,
+                   'finra_si_tercile_state_change_v1': wse.si_tercile_state_change_v1,
+                   'sec_sector_membership_days_v1': wse.sector_membership_days,
+                   'sec_sector_changed_within_v1': wse.sector_changed_within,
+                   'sec_sector_change_count_v1': wse.sector_change_count,
+                   'sec_shares_change_pct_v1': wse.shares_out_change_pct_v1,
+                   'sec_shares_out_event_within_v1': wse.shares_out_event_within,
+                   'sec_div_days_since_ex_v1': wse.days_since_ex_dividend_v1,
+                   'sec_div_dps_changed_v1': wse.dps_changed_v1,
                    'finra_short_ratio_v1': wms.finra_short_ratio_v1,
                    'finra_short_ratio_mean_v1': wms.finra_short_ratio_mean_v1,
                    'finra_short_ratio_percentile_v1': wms.finra_short_ratio_percentile_v1,
@@ -393,3 +406,94 @@ def test_13f_filing_after_cutoff_is_invisible():
     sessions = _sessions(40)
     late = [_13f(D, {'a'}, 1000, public_hour=10)]  # filed D 10:00 ET -> invisible
     assert filers_13f_v1(late, sessions, D) is None
+
+
+# ---- I188 short interest + C26/I193/I196 -------------------------------------
+
+from world_sec_events import (days_since_ex_dividend_v1, dps_changed_v1,
+                              sector_change_count, sector_changed_within,
+                              sector_membership_days, shares_out_change_pct_v1,
+                              shares_out_event_within, si_days_to_cover_v1,
+                              si_pct_float_v1, si_pct_percentile_v1,
+                              si_tercile_state_change_v1)
+
+
+def _si(session, si, float_shares, adv=1000.0, hour=18):
+    return dict(session=session, public_dt=datetime.combine(session, datetime.min.time())
+                + timedelta(hours=hour), source='short_interest', si_shares=si,
+                float_shares=float_shares, avg_daily_vol=adv)
+
+
+def test_short_interest_levels_and_ne():
+    sessions = _sessions(40)
+    assert si_pct_float_v1([], D) is None
+    recs = [_si(sessions[-1], 800, 10000)]
+    assert si_pct_float_v1(recs, D) == 8.0
+    assert si_days_to_cover_v1(recs, D) == 0.8
+    zero_float = [_si(sessions[-1], 800, 0)]
+    assert si_pct_float_v1(zero_float, D) is None
+
+
+def test_short_interest_publication_point_history():
+    sessions = _sessions(60)
+    biweekly = [sessions[-(2 * i)] for i in range(1, 13)]  # 12 publication points
+    recs = [_si(s, 5000, 100000) for s in biweekly]
+    assert si_pct_percentile_v1(recs, D, 12) == 1.0
+    assert si_pct_percentile_v1(recs[:-1], D, 12) is None  # only 11 points
+    flat = [_si(s, 5000, 100000) for s in biweekly]
+    assert si_tercile_state_change_v1(flat, D) is False
+    assert si_tercile_state_change_v1(flat[:11], D) is None
+    # 10 high points, one low SECOND-NEWEST (bottom tercile), newest high again
+    jump = [_si(biweekly[0], 9000, 100000), _si(biweekly[1], 1000, 100000)]
+    jump += [_si(s, 9000, 100000) for s in biweekly[2:]]
+    assert si_tercile_state_change_v1(jump, D) is True
+
+
+def _sec(session, code, hour=18):
+    return dict(session=session, public_dt=datetime.combine(session, datetime.min.time())
+                + timedelta(hours=hour), source='sector', sector_code=code)
+
+
+def test_sector_membership_and_changes():
+    sessions = _sessions(80)
+    obs = [_sec(sessions[-60], 'A'), _sec(sessions[-30], 'A'), _sec(sessions[-10], 'B')]
+    assert sector_membership_days(obs, sessions, D) == sum(
+        1 for s in sessions if sessions[-30] < s < D)
+    assert sector_changed_within(obs, sessions, D, 20) is True
+    assert sector_changed_within(obs, sessions, D, 5) is False
+    assert sector_change_count(obs, sessions, D, 252) == 1
+    none = []
+    assert sector_membership_days(none, sessions, D) is None
+    assert sector_changed_within(none, sessions, D, 20) is None
+
+
+def _shr(session, shares, hour=18):
+    return dict(session=session, public_dt=datetime.combine(session, datetime.min.time())
+                + timedelta(hours=hour), source='shares_out', shares=shares)
+
+
+def test_shares_outstanding_change_and_split_scale():
+    sessions = _sessions(40)
+    obs = [_shr(sessions[-30], 1000), _shr(sessions[-5], 500)]
+    assert shares_out_change_pct_v1(obs, D) == -50.0
+    assert shares_out_event_within(obs, D, 40) is True
+    assert shares_out_event_within(obs, D, 60) is False
+    assert shares_out_change_pct_v1(obs[:1], D) is None
+    assert shares_out_event_within(obs[:1], D, 40) is None
+
+
+def _div(session, ex_date, dps, hour=18):
+    return dict(session=session, public_dt=datetime.combine(session, datetime.min.time())
+                + timedelta(hours=hour), source='dividend', ex_date=ex_date, dps=dps)
+
+
+def test_dividend_days_since_ex_and_dps_change():
+    sessions = _sessions(40)
+    obs = [_div(sessions[-8], sessions[-8], 0.5), _div(sessions[-3], sessions[-3], 0.55)]
+    assert days_since_ex_dividend_v1(obs, sessions, D) == sum(
+        1 for s in sessions if sessions[-3] < s < D)
+    assert dps_changed_v1(obs, D) is True
+    same = [obs[0], _div(sessions[-3], sessions[-3], 0.5)]
+    assert dps_changed_v1(same, D) is False
+    assert dps_changed_v1(obs[:1], D) is None
+    assert days_since_ex_dividend_v1([], sessions, D) is None

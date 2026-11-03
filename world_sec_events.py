@@ -187,3 +187,163 @@ def new_filer_13f_v1(events, sessions, setup_date):
     if len(obs) < 2:
         return None
     return not obs[-1]['filers'] <= obs[-2]['filers']
+
+
+# ---- I188 FINRA short interest (bi-weekly settlement publications) -----------
+
+def _obs(records, setup_date, source):
+    pool = [r for r in usable_events(records, setup_date)
+            if r['source'] == source and r['session'] < setup_date]
+    return sorted(pool, key=lambda r: (r['session'], r['public_dt']))
+
+
+def si_pct_float_v1(records, setup_date):
+    """Short interest as % of float, latest usable publication. NE when no
+    usable publication or the float is zero."""
+    obs = _obs(records, setup_date, 'short_interest')
+    if not obs or float(obs[-1]['float_shares']) == 0:
+        return None
+    return float(obs[-1]['si_shares']) / float(obs[-1]['float_shares']) * 100.0
+
+
+def si_days_to_cover_v1(records, setup_date):
+    """Short interest / average daily volume, latest usable publication.
+    NE when no usable publication or ADV is missing/zero."""
+    obs = _obs(records, setup_date, 'short_interest')
+    if not obs:
+        return None
+    adv = obs[-1].get('avg_daily_vol')
+    if adv is None or float(adv) == 0:
+        return None
+    return float(obs[-1]['si_shares']) / float(adv)
+
+
+def si_pct_percentile_v1(records, setup_date, lookback):
+    """Percentile of the latest SI% within the last `lookback` PUBLICATION
+    POINTS (own history, [0,1]). NE when fewer than `lookback` usable
+    publications or a zero float occurs in them."""
+    obs = _obs(records, setup_date, 'short_interest')
+    if len(obs) < lookback:
+        return None
+    window = obs[-lookback:]
+    values = []
+    for r in window:
+        if float(r['float_shares']) == 0:
+            return None
+        values.append(float(r['si_shares']) / float(r['float_shares']))
+    latest = values[-1]
+    return sum(1 for x in values if x <= latest) / len(values)
+
+
+def si_tercile_state_change_v1(records, setup_date):
+    """True when the SI% tercile (by percentile within the prior 11 publication
+    points) moved across the 1/3 or 2/3 boundary between the last two usable
+    publications. NE when fewer than 12 usable publications."""
+    obs = _obs(records, setup_date, 'short_interest')
+    if len(obs) < 12:
+        return None
+    def tercile(idx_end):
+        window = obs[idx_end - 11:idx_end]
+        vals = []
+        for r in window:
+            if float(r['float_shares']) == 0:
+                return None
+            vals.append(float(r['si_shares']) / float(r['float_shares']))
+        latest = vals[-1]
+        pct = sum(1 for x in vals if x <= latest) / len(vals)
+        return 0 if pct <= 1 / 3 else (2 if pct >= 2 / 3 else 1)
+    prev, latest_t = tercile(len(obs) - 1), tercile(len(obs))
+    if prev is None or latest_t is None:
+        return None
+    return (prev < 1 < latest_t) or (prev > 1 > latest_t) or prev != latest_t and 1 in (prev, latest_t)
+
+
+# ---- C26 sector membership (SEC SIC/GICS filed <= D-1) -----------------------
+
+def sector_membership_days(records, sessions, setup_date):
+    """Trading days the current sector code has been in force: sessions after
+    the most recent usable publication whose sector_code differs from the
+    latest usable one. NE when no usable publication."""
+    obs = _obs(records, setup_date, 'sector')
+    if not obs:
+        return None
+    current = obs[-1]['sector_code']
+    change = None
+    for o in reversed(obs[:-1]):
+        if o['sector_code'] != current:
+            change = o['session']
+            break
+    start = change if change is not None else obs[0]['session']
+    return sum(1 for s in sessions if start < s < setup_date)
+
+
+def sector_changed_within(records, sessions, setup_date, within):
+    """True when the sector code most recently changed within the last
+    `within` sessions. Evaluable (False) with a single usable publication."""
+    obs = _obs(records, setup_date, 'sector')
+    if not obs:
+        return None
+    current = obs[-1]['sector_code']
+    # the current code began at its FIRST publication in the trailing same-code
+    # run (not at the last publication of the previous code)
+    first_of_current = obs[0]['session']
+    for i in range(len(obs) - 1, 0, -1):
+        if obs[i - 1]['sector_code'] != current:
+            first_of_current = obs[i]['session']
+            break
+    days = sum(1 for s in sessions if first_of_current < s < setup_date)
+    return days <= within
+
+
+def sector_change_count(records, sessions, setup_date, window):
+    """Number of sector-code transitions among usable publications whose
+    session is within the last `window` sessions. NE when no usable
+    publication in the window."""
+    obs = [o for o in _obs(records, setup_date, 'sector')
+           if o['session'] in set(_window_sessions(sessions, setup_date, window))]
+    if not obs:
+        return None
+    return sum(1 for a, b in zip(obs, obs[1:]) if a['sector_code'] != b['sector_code'])
+
+
+# ---- I193 shares outstanding (SEC dei) ---------------------------------------
+
+def shares_out_change_pct_v1(records, setup_date):
+    """Change % of shares outstanding between the latest two usable dei
+    records. NE when fewer than two usable records or the prior value is 0."""
+    obs = _obs(records, setup_date, 'shares_out')
+    if len(obs) < 2 or float(obs[-2]['shares']) == 0:
+        return None
+    return (float(obs[-1]['shares']) - float(obs[-2]['shares'])) / float(obs[-2]['shares']) * 100.0
+
+
+def shares_out_event_within(records, setup_date, threshold_pct):
+    """True when a shares-outstanding change with |%| >= threshold occurred
+    between the two latest usable records. NE when <2 usable records."""
+    if len(_obs(records, setup_date, 'shares_out')) < 2:
+        return None
+    change = shares_out_change_pct_v1(records, setup_date)
+    return abs(change) >= threshold_pct
+
+
+# ---- I196 dividends ----------------------------------------------------------
+
+def days_since_ex_dividend_v1(records, sessions, setup_date):
+    """Trading days since the most recent usable ex-dividend date (event day
+    = 0). NE when no usable dividend record."""
+    obs = _obs(records, setup_date, 'dividend')
+    if not obs:
+        return None
+    last = max(o['ex_date'] for o in obs)
+    if last >= setup_date:
+        return None
+    return sum(1 for s in sessions if last < s < setup_date)
+
+
+def dps_changed_v1(records, setup_date):
+    """True when the dividend per share of the latest usable record differs
+    from the previous usable record. NE when fewer than two usable records."""
+    obs = _obs(records, setup_date, 'dividend')
+    if len(obs) < 2:
+        return None
+    return float(obs[-1]['dps']) != float(obs[-2]['dps'])

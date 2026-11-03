@@ -32,6 +32,14 @@ VIEWPORT_CSV = ('CONCRETE event marker: event date, days_since (trading days), d
                 'no free text, no circles.')
 
 BLOCK_FORM4 = 'E SEC Form 4 (I187)'
+BLOCK_SECTOR = 'K Sector membership (C26)'
+BLOCK_SHORTINT = 'J FINRA short interest (I188)'
+BLOCK_SHARES = 'H Shares outstanding (I193)'
+BLOCK_DIV = 'I Dividends (I196)'
+RECIPE_SECTOR = 'sec_sector'
+RECIPE_SHORTINT = 'finra_si'
+RECIPE_SHARES = 'sec_shares'
+RECIPE_DIV = 'sec_dividend'
 BLOCK_ANALYST = 'G Analyst actions (I197)'
 BLOCK_13F = 'M SEC 13F holdings (I199)'
 BLOCK_SHORTVOL = 'F FINRA short volume (I189)'
@@ -245,6 +253,120 @@ def holdings13f_definitions():
     return rows
 
 
+def short_interest_definitions():
+    """I188 FINRA short interest: bi-weekly settlement publications; the
+    SETTLEMENT->PUBLICATION lag is explicit (only publications with
+    public_dt < D 09:30 ET are usable, never period end)."""
+    rows = []
+    recipe, block, source = RECIPE_SHORTINT, BLOCK_SHORTINT, 'I188'
+    for t in (5, 10, 20):
+        expr = 'finra_si_pct_float_v1()'
+        rows.append(_row(
+            'si_pct_float', expr, 'continuous', 'short_interest_pct_of_float_latest_publication',
+            '>=', t, expr,
+            f'short interest >= {t}% of float in the latest usable publication',
+            f'si_pct_ge{t}', recipe=recipe, block=block, source=source))
+    for t in (3, 5, 10):
+        expr = 'finra_si_days_to_cover_v1()'
+        rows.append(_row(
+            'si_days_to_cover', expr, 'continuous', 'short_interest_over_avg_daily_volume',
+            '>=', t, expr,
+            f'days to cover >= {t} in the latest usable publication',
+            f'dtc_ge{t}', recipe=recipe, block=block, source=source))
+    for t in (0.8, 0.9):
+        expr = 'finra_si_pct_percentile_v1(lookback=12)'
+        rows.append(_row(
+            'si_percentile', expr, 'continuous', 'si_pct_percentile_last_12_publications',
+            '>=', t, expr,
+            f'latest SI% of float is in the top {round((1-t)*100)}% of its own last 12 '
+            'publication points', f'si_pct_l12_ge{t}',
+            recipe=recipe, block=block, source=source, extra_feature=dict(lookback=12)))
+    expr = 'finra_si_tercile_state_change_v1()'
+    rows.append(_row(
+        'si_tercile_state_change', expr, 'boolean', 'si_tercile_crossed_third_or_two_thirds',
+        '=', 1, expr,
+        'SI% tercile (percentile within the prior 11 publication points) crossed the 1/3 '
+        'or 2/3 boundary between the last two usable publications',
+        'si_tercile_change', recipe=recipe, block=block, source=source))
+    return rows
+
+
+def sector_definitions():
+    """C26 sector membership from SEC SIC/GICS records filed <= D-1."""
+    rows = []
+    recipe, block, source = RECIPE_SECTOR, BLOCK_SECTOR, 'C26'
+    for t in (20, 60):
+        expr = 'sec_sector_membership_days_v1()'
+        rows.append(_row(
+            'sector_membership_days', expr, 'integer_count',
+            'trading_days_current_sector_code_in_force',
+            '>=', t, expr,
+            f'current sector code has been in force for >= {t} trading days '
+            '(single usable publication = the code is new: answers 0)', f'sector_days_ge{t}',
+            recipe=recipe, block=block, source=source))
+    for t in (5, 20):
+        expr = f'sec_sector_changed_within_v1(within={t})'
+        rows.append(_row(
+            'sector_state_change', expr, 'boolean',
+            f'sector_code_changed_within_last_{t}_sessions',
+            '=', 1, expr,
+            f'the sector code most recently changed within the last {t} sessions',
+            f'sector_changed_w{t}', recipe=recipe, block=block, source=source,
+            extra_feature=dict(within=t)))
+    expr = 'sec_sector_change_count_v1(window=252)'
+    rows.append(_row(
+        'sector_change_count', expr, 'integer_count', 'sector_code_transitions_last_252_sessions',
+        '>=', 1, expr,
+        '>= 1 sector-code transition among usable publications in the last 252 sessions',
+        'sector_changes_ge1', recipe=recipe, block=block, source=source,
+        extra_feature=dict(window=252)))
+    return rows
+
+
+def shares_definitions():
+    """I193 shares outstanding (SEC dei): change % between latest two usable
+    records; large jumps are the split/dilution event facet."""
+    rows = []
+    recipe, block, source = RECIPE_SHARES, BLOCK_SHARES, 'I193'
+    for t in (1, 40):
+        expr = 'sec_shares_change_pct_v1()'
+        rows.append(_row(
+            'shares_change_pct', expr, 'continuous',
+            'shares_outstanding_change_pct_latest_two_records',
+            '>=', t, expr,
+            f'shares outstanding changed >= +{t}% between the latest two usable dei records',
+            f'shares_chg_ge{t}', recipe=recipe, block=block, source=source))
+    expr = 'sec_shares_out_event_within_v1(threshold_pct=40)'
+    rows.append(_row(
+        'shares_split_event', expr, 'boolean', 'large_shares_jump_between_latest_two_records',
+        '=', 1, expr,
+        'a >= 40% shares-outstanding change (split/dilution scale) occurred between the '
+        'latest two usable dei records',
+        'shares_jump_40', recipe=recipe, block=block, source=source,
+        extra_feature=dict(threshold_pct=40)))
+    return rows
+
+
+def dividend_definitions():
+    """I196 dividends: ex-dividend recency and per-share change."""
+    rows = []
+    recipe, block, source = RECIPE_DIV, BLOCK_DIV, 'I196'
+    for t in (30, 60, 90):
+        expr = 'sec_div_days_since_ex_v1()'
+        rows.append(_row(
+            'div_days_since_ex', expr, 'integer_count', 'trading_days_since_latest_ex_dividend',
+            '<=', t, expr,
+            f'latest usable ex-dividend date is <= {t} trading days before D (event day = 0)',
+            f'days_since_ex_le{t}', recipe=recipe, block=block, source=source))
+    expr = 'sec_div_dps_changed_v1()'
+    rows.append(_row(
+        'div_dps_changed', expr, 'boolean', 'dps_changed_vs_previous_record',
+        '=', 1, expr,
+        'dividend per share of the latest usable record differs from the previous usable record',
+        'dps_changed', recipe=recipe, block=block, source=source))
+    return rows
+
+
 def short_volume_definitions():
     """I189 FINRA daily short volume: per-session short/total ratio facets."""
     rows = []
@@ -354,7 +476,8 @@ def cboe_definitions():
 def build(root=ROOT):
     root = Path(root)
     rows = (form4_definitions() + analyst_definitions() + holdings13f_definitions()
-            + short_volume_definitions() + cboe_definitions())
+            + short_interest_definitions() + sector_definitions() + shares_definitions()
+            + dividend_definitions() + short_volume_definitions() + cboe_definitions())
     ids = [r['question_id'] for r in rows]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate question_id in SEC definitions')
