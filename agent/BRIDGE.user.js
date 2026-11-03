@@ -65,4 +65,16 @@
   }
 
   function tail(s, n) { return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
+
+  function labelOf(el) {
+    return ((el.getAttribute('aria-label') || '') + ' ' + (el.getAttribute('title') || '') + ' ' + (el.getAttribute('data-testid') || '')).trim();
+  }
+
+  function composer() {
+    var list = Array.prototype.slice.call(document.querySelectorAll('textarea, [contenteditable="true"], div[role="textbox"]'));
+    var i;
+    for (i = 0; i < list.length; i++) { if (list[i].offsetParent === null) continue; if (/message|chat|ask/i.test(labelOf(list[i]))) return list[i]; }
+    for (i = list.length - 1; i >= 0; i--) { if (list[i].offsetParent !== null) return list[i]; }
+    return null;
+  }
 @@MORE@@
