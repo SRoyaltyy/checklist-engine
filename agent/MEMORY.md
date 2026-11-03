@@ -1,5 +1,4 @@
 MEMORY — durable notes
-
 Append only. Things a future wake must not have to rediscover.
 
 2026-11-03 — write path
