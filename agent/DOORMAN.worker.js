@@ -190,4 +190,18 @@ export default {
           }
           return reply({ ok: true, candidates: all.length, scanned: blobs.length, truncated: all.length > blobs.length, hits });
         }
+        case "put": {
+          if (!path) throw new Error("path is required");
+          const text = pick("text");
+          if (text === undefined || text === null) throw new Error("text is required");
+          const sha = await writeFile(env, branch, path, text, message, p.get("b64") === "1");
+          return reply({ ok: true, sha });
+        }
+        case "edit": {
+          if (!path) throw new Error("path is required");
+          const find = pick("find");
+          const replace = p.get("replace") ?? p.get("repl") ?? (bodyJson && bodyJson.replace) ?? bodyText;
+          const sha = await editFile(env, branch, path, find, String(replace ?? ""), message);
+          return reply({ ok: true, sha });
+        }
 @@MORE@@
