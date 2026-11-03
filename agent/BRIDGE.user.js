@@ -383,4 +383,22 @@
       console.log('[bridge] UNTERMINATED @@PUT ' m[1]);
       doPut(m[1], m[2]);
     }
+    var dispRe = /@@DISPATCH[ \t] (\S )/g;
+    while ((m = dispRe.exec(text)) !== null) {
+      var hd = hash('d' + m[1] + m.index);
+      if (fired[hd]) continue;
+      mark(hd);
+      (function (wf) {
+        gm(W + 'dispatch&branch=' + BR + '&workflow=' + encodeURIComponent(wf)).then(function (r) {
+          sent++; paint(); console.log('[bridge] dispatch ' r.status);
+        });
+      }(m[1]));
+    }
+    var runsRe = /@@RUNS/g;
+    while ((m = runsRe.exec(text)) !== null) {
+      var hr = hash('r' + m.index);
+      if (fired[hr]) continue;
+      mark(hr);
+      gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' r.status); });
+    }
 @@MORE@@
