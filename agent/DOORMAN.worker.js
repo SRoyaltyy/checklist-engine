@@ -162,4 +162,14 @@ export default {
           if (!got.ok) throw new Error(`search failed: ${got.status}`);
           return reply({ ok: true, total: got.body.total_count, hits: (got.body.items || []).map((i) => ({ path: i.path, name: i.name })) });
         }
+        case "grep": {
+          const q = p.get("q") || (bodyJson && bodyJson.q);
+          if (!q) throw new Error("q is required");
+          const limit = Math.min(Number(p.get("limit") || 40), 200);
+          const scope = p.get("path") || (bodyJson && bodyJson.path) || "";
+          const ref = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
+          if (!ref.ok) throw new Error(`grep ref failed: ${ref.status}`);
+          const tree = await gh(env, `/git/trees/${ref.body.object.sha}?recursive=1`);
+          if (!tree.ok) throw new Error(`grep tree failed: ${tree.status}`);
+          const textish = /\.(py|md|json|jsonl|yml|yaml|txt|csv|ts|js|cfg|toml|ini)$/i;
 @@MORE@@
