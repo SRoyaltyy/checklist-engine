@@ -18,10 +18,11 @@ Focus now (Cyrus 2026-11-02): **SEC** and **Options** Gantt rows, done by plain 
 - [ ] **Summary doc** `docs/NO_AI_DATA_PIPELINES_V1.md`: each workflow, schedule, latest green run ID, coverage.
 
 ## Kimi
-**Lane:** strict definitions + v1 master on PR #177 (`kimi/binary-master-v1`). Do not touch data pipelines.
-- [ ] Implement James-approved parts 1–8 (MA30, VWAP anchor, SPY_VIX still held for Cyrus) → [2 Define / Strict definitions].
-- [ ] Resume binds: 1,773 → more of 15,093 → [4 Questions / v1 master → strict YES/NO].
-- [ ] Get #177 mergeable (rebase on main, CI green).
+**Lane:** strict definitions + v1 master on PR #177 (`kimi/binary-master-v1`). Definitions only — never data downloads. Do not touch data pipelines. Do the items below strictly in order (Cyrus-approved 2026-11-03 11:21 HKT).
+- [ ] **1. STOP adding BINARY_MASTER batches now.** Last was batch 26 (`f756e39d`, 107,201 defs bound). No new batches until #177 is merged.
+- [ ] **2. Fix PR #177 CI, then merge** → [4 Questions / v1 master] ~35% amber. Branch `kimi/binary-master-v1`, head `7be800b1`. `binary_master_v1` tests fail on every push since batch 19 (latest run 41498970066): manifest `csv_sha256` mismatch, and previous-vs-actual master row mismatch (`LADDER_ADDON`). Get a green run (cite run ID), then merge #177.
+- [ ] **3. Then SEC and options strict definitions** → [2 Define / Strict definitions] ~45% amber. Binary / fixed-outcome only, no free text.
+- [ ] **4. Then ruling parts 5–8** → [2 Define / Strict definitions]. MA30, VWAP anchor, SPY_VIX still held for Cyrus's ruling.
 
 ## GPT
 **Lane:** price world + world gate. Do not touch SEC/options or definitions.
@@ -33,3 +34,6 @@ Focus now (Cyrus 2026-11-02): **SEC** and **Options** Gantt rows, done by plain 
 - [ ] Review + merge Venice pipeline PRs; regenerate Gantt from main artifacts.
 - [ ] Merge viewport #163 once checked.
 - [ ] Get Cyrus's ruling on MA30 / VWAP anchor / SPY_VIX.
+
+
+</cursor_untrusted_data_1337>
