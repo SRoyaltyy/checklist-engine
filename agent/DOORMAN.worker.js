@@ -159,7 +159,7 @@ export default {
         case "search": {
           const q = p.get("q") || (bodyJson && bodyJson.q);
           if (!q) throw new Error("q is required");
-          const got = await ghRoot(env, `/search/code?q=${encodeURIComponent(q  " repo:"  repo(env))}&per_page=${Math.min(Number(p.get("limit") || 20), 100)}`);
+          const got = await ghRoot(env, `/search/code?q=${encodeURIComponent(q + " repo:" + repo(env))}&per_page=${Math.min(Number(p.get("limit") || 20), 100)}`);
           if (!got.ok) throw new Error(`search failed: ${got.status}`);
           return reply({ ok: true, total: got.body.total_count, hits: (got.body.items || []).map((i) => ({ path: i.path, name: i.name })) });
         }
@@ -234,7 +234,7 @@ export default {
         }
         case "deploy": {
           if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
-          let base = String(env.DEPLOYER).replace(/\s+/g, "")`.replace(/\/+$/, ""));
+          let base = String(env.DEPLOYER).replace(/\s+/g, "").replace(/\/+$/, "");
           if (!/^https?:/\/\/.test(base)) base = "https://" + base;
           const key = String(env.DEPLOY_KEY || "").trim();
           const r = await fetch(`${base}?k=${key}&op=deploy&branch=${encodeURIComponent(branch)}`);
