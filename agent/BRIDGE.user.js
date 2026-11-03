@@ -154,8 +154,8 @@
     if (!el) { console.log('[bridge] bail: no composer'); return false; }
     if (valueOf(el).trim().length > 0) { console.log('[bridge] bail: composer not empty'); return false; }
     console.log('[bridge] wake go: ' + reason);
-    busy = true; paint(); return true;
     var chunks = [], i = 0;
+    busy = true; paint(); step(); return true;
     function step() {
       var set = load('vrb.compact') === '1' ? COMPACT_READS : READS;
       if (i >= set.length) return finish();
