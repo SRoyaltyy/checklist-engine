@@ -123,4 +123,7 @@
   }
 
   function msgNodes() { return document.querySelectorAll('[data-message-id], [data-testid*="message"], [class*="message"]').length; }
+
+  var badge = document.createElement('div');
+  badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#238636;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9';
 @@MORE@@
