@@ -21,4 +21,13 @@
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function num(k) { return Number(load(k) || 0); }
+
+  function gm(url) {
+    return new Promise(function (res) {
+      GM_xmlhttpRequest({ method: 'GET', url: url, timeout: 25000,
+        onload: function (r) { res({ ok: r.status >= 200 && r.status < 300, status: r.status, text: r.responseText || '' }); },
+        onerror: function () { res({ ok: false, status: 0, text: '' }); },
+        ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
+    });
+  }
 @@MORE@@
