@@ -25,10 +25,11 @@ Focus now (Cyrus 2026-11-02): **SEC** and **Options** Gantt rows, done by plain 
 - [ ] **4. Then ruling parts 5–8** → [2 Define / Strict definitions]. MA30, VWAP anchor, SPY_VIX still held for Cyrus's ruling.
 
 ## GPT
-**Lane:** price world + world gate. Do not touch SEC/options or definitions.
-- [ ] Full-cohort price PIT measurement (currently UNMEASURED; scoring_gate CLOSED) → [0 World gate full cohort].
-- [ ] `available_from` on every column + leak-trap fixes → [2 Define / available_from].
-
+**Lane:** price world + world gate. Do not touch SEC/options downloads (Venice) or definitions/#177 (Kimi). Do the items below strictly in order (Cyrus-approved 2026-11-03 11:35 HKT). Base: #203 price rebuild (done Oct 31); world_gate still NOT_PROVEN.
+- [ ] **1. Prove world_gate on the #203 price rebuild** → [0 World gate full cohort]. Run the world_gate check against the rebuilt price world on a GitHub runner; commit its result file (PROVEN or the exact failing checks) to main. Done = run ID + result file on main.
+- [ ] **2. Full-cohort price PIT measurement** → [0 World gate full cohort] (currently UNMEASURED; scoring_gate CLOSED). Measure point-in-time coverage for the full retained_8439 cohort; commit the measurement report to main. Done = run ID + report on main showing MEASURED and the scoring_gate state.
+- [ ] **3. `available_from` on every price-world column + leak-trap fixes** → [2 Define / available_from], feeds [4 Questions / v1 master] ~35% amber. Columns only, not definitions. Done = merged PR + green leak-trap test run ID.
+- [ ] **4. Publish the price-world join keys/dates the SEC (~18% amber) and Options+money-flow (~12% amber) rows will join on** (ticker↔CIK date ranges, trading calendar), read-only for Venice. Done = doc + file on main. Do not download SEC/options data.
 ## James
 **Lane:** coordination, this file, Gantt, reviews/merges, rulings. No competing implementation PRs.
 - [ ] Review + merge Venice pipeline PRs; regenerate Gantt from main artifacts.
