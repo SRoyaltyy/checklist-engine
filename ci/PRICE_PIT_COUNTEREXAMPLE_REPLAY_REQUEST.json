@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "execute": true,
+  "scope": "Diagnostic only: repeat the unchanged full-run worker in two clean default-runtime processes for each of three observed finite packet counterexamples; reported signatures only, not full-world acceptance. Full cohort measurement continues separately.",
+  "repetitions": 2,
+  "worker_commit": "8003fb7906c3bf86d88612495664e597de1c65ae",
+  "worker_lf_sha256": "d48f918fe27bbdab5df56d4408d74284deba47406b323a138dfd459fa3cddbc2",
+  "plan": {
+    "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
+    "asset": "PRICE_FULL_COHORT_PIT_PLAN_V1.json",
+    "sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d"
+  },
+  "observed_proofs": [
+    {"ticker": "AQMS", "release": "price-full-cohort-pit-v1-41578885310-1-003", "asset": "41514d53.pit.json.gz", "sha256": "59cf49a9a2971d97b1fcc41926580429368a0fe36437e1ef38f4d1ca0598d8b3"},
+    {"ticker": "AZIO", "release": "price-full-cohort-pit-v1-41578885310-1-004", "asset": "415a494f.pit.json.gz", "sha256": "844f0cd3b24fb6348ee862d0034e2eaf884fd34f7dc0dc71350069ea5c101389"},
+    {"ticker": "BYRN", "release": "price-full-cohort-pit-v1-41578885310-1-005", "asset": "4259524e.pit.json.gz", "sha256": "55711b5aab9cf64b764dba7a0b4274f7f89ff127a83bfd44d0cf7fa935f4ca0d"}
+  ]
+}
