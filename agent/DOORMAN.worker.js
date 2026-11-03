@@ -172,4 +172,8 @@ export default {
           const tree = await gh(env, `/git/trees/${ref.body.object.sha}?recursive=1`);
           if (!tree.ok) throw new Error(`grep tree failed: ${tree.status}`);
           const textish = /\.(py|md|json|jsonl|yml|yaml|txt|csv|ts|js|cfg|toml|ini)$/i;
+          const all = (tree.body.tree || []).filter((n) => n.type === "blob" && textish.test(n.path) && (scope ? n.path === scope || n.path.startsWith(scope.replace(/\/$/, "") + "/") : true));
+          const blobs = all.slice(0, 40);
+          const needle = q.toLowerCase();
+          const hits = [];
 @@MORE@@
