@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venice Bridge Loader
 // @namespace    venice.local
-// @version      1.6
+// @version      1.8
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
@@ -19,7 +19,7 @@
 
   var mine = document.createElement('div');
   mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9;';
-  mine.textContent = 'LOAD v1.6';
+  mine.textContent = 'LOAD v1.8';
   function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
   function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
   function hide() { if (mine.parentElement) mine.remove(); }
@@ -29,6 +29,24 @@
     s = String(s);
     for (i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
     return h.toString(36) + '.' + s.length.toString(36);
+  }
+
+  function patch(src) {
+    var out = String(src), n = 0;
+    if (out.indexOf("wake(reason || 'heartbeat', false)") !== -1) {
+      out = out.replace("wake(reason || 'heartbeat', false)", "wake(reason || 'heartbeat', true)");
+      n++;
+    }
+    if (out.indexOf('@version 5.1') !== -1) {
+      out = out.replace('@version 5.1', '@version 5.4');
+      n++;
+    }
+    if (out.indexOf("var text = document.body.innerText || ''") !== -1) {
+      out = out.replace("var text = document.body.innerText || ''", "var text = (document.body.innerText || '').slice(-20000)");
+      n++;
+    }
+    if (n) console.log('[loader] patched ' + n + ' spot(s)');
+    return out;
   }
 
   function get(p) {
@@ -76,7 +94,7 @@
   }
 
   function boot(rawSrc, tag, version, retry) {
-    var src = sanitize(rawSrc);
+    var src = patch(sanitize(rawSrc));
     if (version && badList().indexOf(version) !== -1) {
       say('SKIP BAD ' + version, '#9e6a03');
       return false;
@@ -97,7 +115,7 @@
       if (!retry) {
         say('UNHEALTHY, RETRY', '#9e6a03');
         console.log('[loader] build ' + (version || tag) + ' unhealthy, one retry');
-        boot(src, tag, version, true);
+        boot(rawSrc, tag, version, true);
         return;
       }
       say('UNHEALTHY, ROLLBACK', '#d1242f');
@@ -112,7 +130,7 @@
   }
 
   function adopt(src, tag) {
-    var v = hash(src);
+    var v = hash(patch(src));
     if (v === GM_getValue(VER, '')) return false;
     if (badList().indexOf(v) !== -1) { say('SKIP BAD', '#9e6a03'); return false; }
     if (boot(src, tag, v)) { GM_setValue(KEY, src); GM_setValue(VER, v); return true; }
@@ -123,7 +141,7 @@
     get('agent/BRIDGE.user.js').then(function (raw) {
       var src = unwrap(raw);
       if (!src || src.length < 500) return;
-      adopt(src, hash(src));
+      adopt(src, hash(patch(src)));
     });
   }
 
