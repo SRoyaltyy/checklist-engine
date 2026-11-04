@@ -1,1 +1,1 @@
-{ "sha": "4.8.0", "note": "loader 1.2 injects GM_xmlhttpRequest; enable the loader and disable the bridge, then updates are fully autonomous" }
+{ "sha": "4.9.0", "note": "loader 1.4 sanitises Copy code and fence lines before eval; bridge 4.9 strips them anywhere when writing" }
