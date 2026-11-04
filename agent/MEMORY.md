@@ -1,42 +1,44 @@
 # MEMORY — standing focus
 
-THE GOAL IS THREE THINGS, IN THIS ORDER. Every wake serves them or it is waste.
+## Mandate, every wake
 
-1. The composer never blocks. New text sends itself. No park, no stall, no deadlock.
-2. Every auto-generated prompt carries the instructions to repair the scripts and push updates.
-3. Read and write GitHub to James' instructions, work items to completion, PR to main, report a
-   percentage every turn.
+Open with three answers before any action: what was I doing last run, what is my plan now and
+which goal does it serve, and what am I actually working on — harness code, James' lane
+instructions, or something else. If the plan serves none of the goals, say so in a line or stop.
 
-Anything that does not advance 1, 2 or 3 is a side quest. Say so and drop it.
+The goals, in order: 1 composer never blocks, 2 every prompt carries repair instructions,
+3 GitHub work to James' instructions to completion with a percentage every turn.
 
-## Where the goals actually stand
+Anything not advancing 1, 2 or 3 is a side quest. Name it and drop it.
 
-1. Blocked on a manual loader install: the installed loader is 1.4, the branch has 1.6, and the
-   loader does not self-update. Until 1.6 is pasted in, every reload runs the old logic and the
-   composer keeps blocking. After that, add @updateURL and @downloadURL so it maintains itself.
-2. Mechanism is MEMORY.md itself plus agent/HANDOFF_1741.md. agent/WAKE_PROMPT.md refuses writes
-   and is only a header now. Do not spend turns on it.
-3. No run verdict has ever returned. The fix is to stop asking for run state: have each workflow
-   commit its own result to agent/RESULT.json with an if-always step, and have the bridge deliver
-   that file when its timestamp advances. Run state becomes repo state, no API, no rate limit.
+## Where they stand
 
-## Writer rules, learned the hard way
+1. Installed loader is 1.6 and the gate is live. Next: add @updateURL and @downloadURL so the
+   loader maintains itself instead of needing a paste.
+2. Mechanism is this file plus agent/HANDOFF_1741.md. agent/WAKE_PROMPT.md has refused writes;
+   if it takes now, it carries the mandate directly and this section is the fallback.
+3. No run verdict has ever returned. Fix is .github/workflows/probe_result.yml, which re-runs the
+   probe and always commits agent/RESULT.json with exit code, run ID and the last 4KB of output.
+   Read that file, not the actions API.
 
-A body is cut at the first END token inside it, newline optional. Marker on the closing line only.
-The closing line must carry the marker, not a bare END, or the body swallows what follows.
+## Writer rules
+
+A body is cut at the first end marker inside it, newline optional. Marker on the closing line only.
+A bare END as the closer makes the body swallow what follows.
+
+cleanBody strips blank lines and chrome words (fences, Copy code, language tags) from head and
+tail, twelve lines each. A short body can strip to nothing; keep real content first and last.
 
 Never trust a raw read straight after a write; raw caches minutes. Read blob HTML, which keeps
 angle brackets and is not cached the same way. base64 through contents also survives.
 
-Some paths refuse a second write. Write a new path instead of fighting it; if a file must be read
-on a schedule, move its content to one that already is.
+When a path refuses a second write, use a new path rather than fighting it.
 
 scrape and dispatch debounce 60s per URL. A repeat inside that window is dropped and an older
-delivery arrives, which looks like cache but is not. Space repeats or vary the URL. Parked items
+delivery arrives, which looks like cache but is not. Vary the URL or space repeats. Parked items
 carry their whole text, so 60KB bodies starve fresh small requests.
 
-RUNS and DISPATCH are fire-and-forget. Run state is only readable from the actions HTML page, and
-api.github.com rate-limits the shared egress so API reads 403 into the queue.
+RUNS and DISPATCH are fire-and-forget: they log a status and deliver nothing.
 
 ## Loader and bridge
 
@@ -50,4 +52,5 @@ Userscript push: PUT the file. Worker push: deployer with keep_bindings, verify 
 ## Working rules
 
 Branch venice only, PR to main, never push main. No @@CUT or @@BODY markers. Every claim needs a
-run ID or a commit. A blocked item gets recorded and abandoned, not retried forever.
+run ID or a commit; no proof means not done. A blocked item is recorded and abandoned, not
+retried forever.
