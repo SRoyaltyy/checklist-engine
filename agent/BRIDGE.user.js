@@ -404,11 +404,64 @@
   var fired = {};
   try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
 
-  function hash(s
-Ask anything privately...
+  function hash(s) {
+    var h = 5381, i;
+    s = str(s);
+    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+  }
 
-Agent
+  function mark(h) {
+    fired[h] = 1;
+    var keys = Object.keys(fired), i;
+    if (keys.length > 2000) {
+      var trimmed = {};
+      for (i = keys.length - 2000; i < keys.length; i++) trimmed[keys[i]] = 1;
+      fired = trimmed;
+    }
+    store('vrb.fired', JSON.stringify(fired));
+  }
 
-Sub-agent
-wakeg15| 26| d1 v49
-wakeg15| 1 v49
+  var CHROME = new RegExp('^(?:' + FENCE + '[a-z0-9+#._-]*|Copy code|Copied|Copy|text|txt|md|json|jsonl|yaml|yml|js|javascript|py|python|sh|bash)$');
+
+  function cleanBody(raw) {
+    var lines = str(raw).replace(/\r/g, '').split('\n');
+    var keep = [], i;
+    for (i = 0; i < lines.length; i++) {
+      if (CHROME.test(lines[i].trim())) continue;
+      keep.push(lines[i]);
+    }
+    while (keep.length && keep[0].trim() === '') keep.shift();
+    while (keep.length && keep[keep.length - 1].trim() === '') keep.pop();
+    return keep.join('\n').replace(/\s+$/, '') + '\n';
+  }
+
+  function bumpVersion() {
+    var n = num('vrb.v') + 1;
+    store('vrb.v', String(n));
+    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '5.0.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+  }
+
+  function selfWrite(raw) {
+    var body = cleanBody(raw);
+    if (body.length < 5000) { console.log('[bridge] selfWrite too short, ignored'); return; }
+    bumpVersion().then(function () {
+      return putFile('agent/BRIDGE.user.js', body);
+    }).then(function (r) {
+      sent++; paint();
+      console.log('[bridge] self-written bridge, ' + body.length + ' bytes, reload to apply');
+    });
+  }
+
+  function doPut(path, raw) {
+    var body = cleanBody(raw);
+    var h = hash(path + body);
+    if (fired[h]) return;
+    mark(h);
+    putFile(path, body).then(function () { sent++; paint(); });
+  }
+
+  function scan() {
+    var text = document.body.innerText || '';
+    var m;
+    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?
