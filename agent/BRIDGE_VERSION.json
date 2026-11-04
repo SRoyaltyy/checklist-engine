@@ -1,1 +1,1 @@
-{ "sha": "4.5.0", "note": "body fenced so markdown cannot eat asterisks; no literal backticks in file; badge v45" }
+{ "sha": "4.2.0", "note": "scrape delivered as its own capped message; escalation cooldown and fail-counter rebase stop new-chat spam" }
