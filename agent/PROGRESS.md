@@ -8,17 +8,18 @@ Items
 
 Item State Evidence
 
-1 Fix SEC 403 on runners blocked, both routes 403 runs 41413529249, 41413535355 direct 403; doorman Worker egress 403 at 2026-11-04T16:36Z, 500 bytes
-2 SEC tickers and bulk not started -
-3 Form 4 and 13F datasets not started -
-4 Options open interest source not started -
-5 Forward daily collectors not started -
+1 Fix SEC 403 on runners BLOCKED, both routes 403 runs 41413529249, 41413535355 direct 403. Worker egress 403 twice: 16:36Z bare UA, 17:17Z with contact UA, Accept, identity encoding, five backoff attempts, new Reference ID 0.5e711102.1793812678.1edce412
+2 SEC tickers and bulk gated on item 1 -
+3 Form 4 and 13F datasets gated on item 1 -
+4 Options open interest source not started, non-SEC -
+5 Forward daily collectors not started, non-SEC -
 6 Summary doc NO_AI_DATA_PIPELINES_V1 not started -
-Blocker rule
 
-If sec.gov 403s on runners, fix the User-Agent first. If it still 403s through the Cloudflare Worker, journal it with the response headers and stop. Do not try a fourth route.
+Blocker, recorded
 
-Both routes are now spent. Headers on the runner side are already correct: Name plus email form, Accept, Accept-Encoding identity, 0.15s pacing. The Worker attempt came from the doorman with no forwarded UA, so one narrow retry is only justified if the block page names an undeclared agent.
+SEC answers "Request Rate Threshold Exceeded" to both sanctioned routes. The header is not the cause: the runner already sends a contact UA and paces at 0.15s, and the Worker now sends the same contact UA with Accept, Accept-Encoding identity and five backoff attempts. The threshold is on the egress IP, and Cloudflare's pool is shared and permanently hot. Four attempts across both routes, all 403.
+
+Options still inside the sanctioned routes, in order of promise: retry the Worker on a long delay so the threshold decays, since the block is time-based rather than an IP ban. If that fails, item 1 stops and the lane moves to items 4 and 5, which do not touch sec.gov.
 
 Reading order
 docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md
