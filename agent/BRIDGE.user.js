@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venice Repo Bridge
 // @namespace    venice.local
-// @version      4.8
+// @version      4.9
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @connect      venice-doorman.fullscan-relay.workers.dev
@@ -153,7 +153,7 @@
   function paint() {
     if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
     var paused = load('vrb.paused') === '1';
-    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v48';
+    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v49';
     badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
   }
 
@@ -422,29 +422,24 @@
     store('vrb.fired', JSON.stringify(fired));
   }
 
-  var CHROME = new RegExp('^(?:' + FENCE + '[a-z0-9+#._-]*)$');
+  var CHROME = new RegExp('^(?:' + FENCE + '[a-z0-9+#._-]*|Copy code|Copied|Copy|text|txt|md|json|jsonl|yaml|yml|js|javascript|py|python|sh|bash)$');
 
   function cleanBody(raw) {
     var lines = str(raw).replace(/\r/g, '').split('\n');
-    var guard = 0;
-    while (lines.length && guard++ < 12) {
-      var head = lines[0].trim();
-      if (head === '' || head.indexOf('@@BODY') === 0 || CHROME.test(head)) { lines.shift(); continue; }
-      break;
+    var keep = [], i;
+    for (i = 0; i < lines.length; i++) {
+      if (CHROME.test(lines[i].trim())) continue;
+      keep.push(lines[i]);
     }
-    guard = 0;
-    while (lines.length && guard++ < 12) {
-      var foot = lines[lines.length - 1].trim();
-      if (foot === '' || CHROME.test(foot)) { lines.pop(); continue; }
-      break;
-    }
-    return lines.join('\n').replace(/\s+$/, '') + '\n';
+    while (keep.length && keep[0].trim() === '') keep.shift();
+    while (keep.length && keep[keep.length - 1].trim() === '') keep.pop();
+    return keep.join('\n').replace(/\s+$/, '') + '\n';
   }
 
   function bumpVersion() {
     var n = num('vrb.v') + 1;
     store('vrb.v', String(n));
-    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.8.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.9.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
   }
 
   function selfWrite(raw) {
