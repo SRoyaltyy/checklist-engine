@@ -1,0 +1,9 @@
+Hmm, BRIDGE.user.js appears in URLs (raw.githubusercontent.../agent/BRIDGE.user.js) but @@PUT agent/BRIDGE.user.js? In the runbook inside WAKE_PROMPT.md I wrote "Userscript push: PUT the file..." no @@.
+
+But MEMORY.md content includes "agent/WAKE_PROMPT.md is stuck" etc.
+
+Wait — the wake message inlined MEMORY.md and WAKE_PROMPT.md contents, plus the TODO lane. Those don't contain @@PUT.
+
+Hmm, but the messages DO contain @@PUT ... from earlier turns, still on the page. The scan runs over document.body.innerText — the whole conversation. So old directives re-match each scan. fired dedupes by hash, but the loose pass logs UNTERMINATED before dedupe check? No: if (covered[...]) continue; console.log('UNTERMINATED ...') — logs then doPut which dedupes internally.
+
+So UNTERMINATED is logged every scan for each stale directive whose strict match failed. Why does strict fail? Because the fenced body's closing
