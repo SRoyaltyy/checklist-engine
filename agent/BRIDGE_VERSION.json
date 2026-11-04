@@ -1,3 +1,1 @@
-{
-  "sha": "4.2.0"
-}
+{ "sha": "4.2.0", "note": "scrape delivered as its own capped message; escalation cooldown and fail-counter rebase stop new-chat spam" }
