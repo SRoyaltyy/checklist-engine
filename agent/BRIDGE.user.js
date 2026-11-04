@@ -158,6 +158,7 @@ function deliverScrape(url, raw) {
 }
 function wake(reason, force) {
   if (busy) { console.log('[bridge] bail: busy'); return false; }
+  if (generating()) { console.log('[bridge] bail: generating'); return false; }
   if (load('vrb.paused') === '1') { console.log('[bridge] bail: paused'); return false; }
   if (!force && Date.now() - num('vrb.cool') < COOL) { console.log('[bridge] bail: cooldown'); return false; }
   var el = composer();
