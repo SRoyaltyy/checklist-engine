@@ -1,0 +1,373 @@
+# FETCH https://github.com/SRoyaltyy/checklist-engine/blob/main/TODO.md
+
+fetched 2026-11-04T17:53:22.033Z status 200 ua Mozilla/5.0 venice-doorman
+
+checklist-engine/TODO.md at main · SRoyaltyy/checklist-engine · GitHub 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Skip to content 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Navigation Menu Sign in Products Platform GitHub Repository hosting, code review, and collaboration Copilot AI coding agent for tasks, projects and automated work Build & Ship Actions CI/CD and automation Code Quality Quality analysis, fixes, and enforcement Codespaces Cloud development environments Secure Code Security Vulnerability detection and remediation Secret Protection Secret scanning and leak prevention All Features Developers Learn Documentation Training Certifications Build Build with Copilot Customize Copilot Integrations Explore Trending repos GitHub Sponsors Developer articles Changelog Changelog Your source for the latest features, improvements, and fixes across GitHub products, all in one place. Businesses By Stage Enterprises Team Startups Nonprofits By Industry Healthcare Financial services Manufacturing Government See all industries Evaluate GitHub Why GitHub Customer Stories Business insights Trust Center Add-ons GitHub Advanced Security Enterprise-grade code security Copilot for business Enterprise-grade AI features Premium Support Enterprise-grade 24/7 support Resources Learn & Connect Documentation Resource center Blog Events & webinars Community Forum Customer Stories Integrations Support Customer support Training GitHub Status Company About Partners Changelog GitHub Universe GitHub Universe The event for developers, by developers — talks, workshops, and what’s next for GitHub. Pricing Search / Sign in Sign up Appearance settings 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ You signed in with another tab or window. Reload to refresh your session. 
+ You signed out in another tab or window. Reload to refresh your session. 
+ You switched accounts on another tab or window. Reload to refresh your session. 
+
+ 
+ 
+ 
+ Dismiss alert 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ {{ message }} 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ SRoyaltyy checklist-engine Repository navigation Code Issues Pull requests 47  ( 47 ) Actions Projects Security and quality Insights More items 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Files Expand file tree main Breadcrumbs checklist-engine / TODO.md Copy path Blame More file actions Blame More file actions Latest commit   History History History 40 lines (31 loc) · 5.57 KB main Breadcrumbs checklist-engine / TODO.md Copy path Top File metadata and controls Preview Code Blame 40 lines (31 loc) · 5.57 KB Raw Copy raw file Download raw file Outline Edit and raw actions TODO — per-agent lanes (James maintains; newest state only) 
+ Rules for everyone: work only your lane. Tick an item with proof (run ID or commit on main) — no proof = not done. Delete finished items at next edit; history lives in git, not here. Every item names the Gantt row it advances. Never rewrite sealed buy/sell records. Times in HKT. 
+ Focus now (Cyrus 2026-11-02): SEC and Options Gantt rows, done by plain scheduled scripts on GitHub runners — no AI calls inside the jobs. 
+ 
+ Venice 
+ Lane: no-AI download pipelines (GitHub Actions + scripts) for SEC and Options. Branch venice/* , PR to main. Do NOT push to main directly, no @@CUT / @@BODY markers, journal in your own agent/ files. Calendar work (#96) is parked — do not touch.
+ Reset first: restart from main; ignore everything on venice/calendar-announce-ledger after dca969a . 
+ 
+ FIX FIRST: SEC 403 on runners → [1 Data / SEC]. PR #208/#209 scripts exist (nai-sec-bulk, nai-sec-form345, nai-sec-form13f) but every run 403s, incl. via relay (e.g. runs 41413529249, 41413535355). Check User-Agent format ( Name email@domain ), Accept-Encoding, rate; SEC often blocks cloud IPs — if so, route via a non-GitHub egress (Cloudflare Worker fetch) and prove with a green run. 
+ SEC tickers + bulk → [1 Data / SEC / analyst / sector history]. Workflow on GitHub runners hitting sec.gov directly (proper User-Agent, ≤10 req/s): company_tickers.json , company_tickers_exchange.json , submissions.zip , companyfacts.zip . Filter to retained_8439 using docs/SEC_RETAINED_IDENTITY_MAP_V1.json ; output parquet as release asset; report new CIK coverage (now 3,996/8,439). 
+ Form 4 + 13F → same row. SEC "Insider Transactions Data Sets" and "Form 13F Data Sets" quarterly zips 2020Q1→latest. Keep only fixed-value fields (buy/sell code, shares, price, dates) — no free text. Per-quarter parquet release assets. 
+ Options open interest → [1 Data / Options + money-flow (#165)]. Probe free daily per-stock OI from runners (OCC volume/OI reports, Cboe daily stats). If found: daily cron collector + backfill whatever history exists. Write honest depth in docs/OPTIONS_OI_FREE_V1.md . 
+ Forward daily collectors → #165. FINRA daily short volume + CBOE indices, daily cron, append to release assets. 
+ Summary doc docs/NO_AI_DATA_PIPELINES_V1.md : each workflow, schedule, latest green run ID, coverage. 
+ 
+ Kimi 
+ Lane: strict definitions + v1 master on PR #177 ( kimi/binary-master-v1 ). Definitions only — never data downloads. Do not touch data pipelines. Do the items below strictly in order (Cyrus-approved 2026-11-03 11:21 HKT). 
+ 
+ 1. STOP adding BINARY_MASTER batches. Held from 2026-11-03 11:21 HKT; last batch 26 ( f756e39d , 107,201 defs bound). No new batches were pushed while #177 was open. 
+ 2. Fix PR #177 CI, then merge → [4 Questions / v1 master]. DONE 2026-11-03 ~12:00 HKT. Root cause: test_scalar_alias_revision_preserves_all_other_rows (base 1095a1ac ) demanded the master equal the old package minus 12 aliases with zero extra rows; batches 22–26 append defs (master is content-hash sorted), so it failed on every push since that test landed. Fix ad0ead01 (tests only): pre-existing rows must survive verbatim and in original relative order (subsequence), appended defs allowed; counts 65,540/12/62,876 unchanged. Local: all 14 CI test files green (415 tests) + full emit-consistency block. Green runs: binary_master_v1 41574084392 , world-v2-code-ci 41574084440. Merged as 87928850 . PR #177 had been closed with the TODO commit; reopened to land the fix. 
+ 3. Then SEC and options strict definitions → [2 Define / Strict definitions] ~45% amber. Binary / fixed-outcome only, no free text. 
+ 4. Then ruling parts 5–8 → [2 Define / Strict definitions]. MA30, VWAP anchor, SPY_VIX still held for Cyrus's ruling. 
+ 
+ GPT 
+ Lane: price world + world gate. Do not touch SEC/options downloads (Venice) or definitions/#177 (Kimi). Do the items below strictly in order (Cyrus-approved 2026-11-03 11:35 HKT). Base: #203 price rebuild (done Oct 31); world_gate still NOT_PROVEN. 
+ 
+ 1. Prove world_gate on the #203 price rebuild → [0 World gate full cohort]. Run 41574830836 ; result docs/COMPLETED_PRICE_WORLD_GATE_V1.json : NOT_PROVEN , six exact failing checks; all 8,439 retained payload metadata verified. This completes the requested gate execution/result publication, not world acceptance. Scoring CLOSED. 
+ 2. Full-cohort price PIT measurement → [0 World gate full cohort] (currently UNMEASURED; scoring_gate CLOSED). Measure point-in-time coverage for the full retained_8439 cohort; commit the measurement report to main. Done = run ID + report on main showing MEASURED and the scoring_gate state. 
+ 3. available_from on every price-world column + leak-trap fixes → [2 Define / available_from], feeds [4 Questions / v1 master] ~35% amber. Columns only, not definitions. Done = merged PR + green leak-trap test run ID. 
+ 4. Publish the price-world join keys/dates the SEC (~18% amber) and Options+money-flow (~12% amber) rows will join on (ticker↔CIK date ranges, trading calendar), read-only for Venice. Done = doc + file on main. Do not download SEC/options data. 
+ 
+ James 
+ Lane: coordination, this file, Gantt, reviews/merges, rulings. No competing implementation PRs. 
+ 
+ Review + merge Venice pipeline PRs; regenerate Gantt from main artifacts. 
+ Merge viewport #163 once checked. 
+ Get Cyrus's ruling on MA30 / VWAP anchor / SPY_VIX. 
+ 
+ </cursor_untrusted_data_1337> 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ Footer 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ &copy; 2026 GitHub, Inc.
+ 
+ 
+
+ 
+ Footer navigation 
+
+ 
+
+ 
+ Terms 
+ 
+
+ 
+ Privacy 
+ 
+
+ 
+ Security 
+ 
+
+ 
+ Status 
+ 
+
+ 
+ Community 
+ 
+
+ 
+ Docs 
+ 
+
+ 
+ Contact 
+ 
+
+ 
+ 
+ 
+ 
+ Manage cookies
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Do not share my personal information
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ You can’t perform that action at this time.
