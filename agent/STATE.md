@@ -6,10 +6,12 @@ Read agent/CONTEXT.md in full, then agent/PROTOCOL.md, then TODO.md on main for 
 
 Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Unchanged.
 
-Infrastructure is finished. Reads now arrive on their own as chat messages. Open infrastructure defect: the doorman scrape op returns an envelope and writes the body to a file, so delivery shows a receipt. Resolve path, read the file, deliver that.
+Infrastructure finished and self-driving. Doorman scrape op rebuilt at 2026-11-04T16:41Z: proper contact User-Agent for sec.gov hosts, Accept and Accept-Encoding set, five attempts with backoff, and the UA echoed in the reply for evidence. Deployed through the deployer, all seven bindings kept, op=ops verified.
 
-Next step: item 1, blocked pending the block page text in agent/FETCH.md. If it names an undeclared agent or missing UA, one narrow retry with the UA forwarded through the Worker is justified. If it reads as an IP ban, item 1 stops per the blocker rule and the lane moves to item 2 on whatever route survives.
+Next step: item 1. Read the SEC result from the retry. A 200 means the 403 was the undeclared UA and the Worker route is the answer; wire scripts/nai/common.py to call the Worker scrape instead of the runner direct, dispatch nai-sec-bulk, and cite the run ID.
 
-Both sanctioned routes are spent. Do not invent a fourth.
+If it is still 403 with the contact UA, both sanctioned routes are genuinely spent. Journal the headers and the UA used, and stop trying routes.
+
+Bridge is at 4.8. Badge shows v48. Busy watchdog clears a stranded flag after a minute and a parked scrape retries for three.
 
 No markers. Never push main. Never merge without instruction.
