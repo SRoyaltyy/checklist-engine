@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Repo Bridge
 // @namespace venice.local
-// @version 4.4
+// @version 4.2
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @connect venice-doorman.fullscan-relay.workers.dev
@@ -14,18 +14,16 @@ if (load('vrb.v') === null) store('vrb.v', '0');
 var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
 var BR = 'venice%2Fsec-options-pipelines';
 var REPO = 'SRoyaltyy/checklist-engine';
-var POLL = 30000, COOL = 240000, DEAD_LIMIT = 3, STUCK_MS = 300000, BOOT_MAX = 2, ESC_COOL = 90000, SCRAPE_MAX = 12000;
+var POLL = 30000, COOL = 240000, FAIL_LIMIT = 2, STUCK_MS = 300000, BOOT_MAX = 2, ESC_COOL = 90000, SCRAPE_MAX = 12000;
 var READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/JOURNAL.md', 'agent/FETCH.md', 'agent/WAKE.json'];
 var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
 var BUDGET = 120000;
 var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
-var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
-var runsN = 0, dispN = 0;
+var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0;
 
 function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function num(k) { return Number(load(k) || 0); }
-function str(v) { return v == null ? '' : (typeof v === 'string' ? v : String(v)); }
 
 function gm(url) {
 return new Promise(function (res) {
@@ -38,7 +36,7 @@ ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
 
 function gmPost(url, body) {
 return new Promise(function (res) {
-GM_xmlhttpRequest({ method: 'POST', url: url, data: str(body), timeout: 60000,
+GM_xmlhttpRequest({ method: 'POST', url: url, data: body, timeout: 60000,
 headers: { 'Content-Type': 'text/plain' },
 onload: function (r) { res({ ok: r.status >= 200 && r.status < 300, status: r.status, text: r.responseText || '' }); },
 onerror: function () { res({ ok: false, status: 0, text: '' }); },
@@ -51,33 +49,27 @@ function putUrl(p) { return W + 'put&branch=' + BR + '&path=' + encodeURICompone
 
 function unwrap(raw) {
 try { var o = JSON.parse(raw); if (o && typeof o.text === 'string') return o.text; } catch (e) {}
-return str(raw);
+return raw;
 }
 
 function readback(path, content, status) {
-content = str(content);
 return gm(readUrl(path)).then(function (back) {
 var got = unwrap(back.text || '');
 var tol = Math.max(40, Math.floor(content.length * 0.01));
 var ok = back.ok && got.length > 0 && Math.abs(got.length - content.length) <= tol;
 console.log('[bridge] put ' + path + ' -> ' + status + ', readback ' + got.length + '/' + content.length + (ok ? ' OK' : ' MISMATCH'));
 return { ok: ok, status: status };
-}).catch(function (e) {
-console.log('[bridge] readback threw for ' + path + ': ' + e);
-return { ok: false, status: status };
 });
 }
 
 function putFile(path, content) {
-content = str(content);
 if (!content) { console.log('[bridge] empty write to ' + path); return Promise.resolve({ ok: false, status: -1 }); }
 return gmPost(putUrl(path), content).then(function (r) { return readback(path, content, r.status); });
 }
 
-function tail(s, n) { s = str(s); return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
+function tail(s, n) { return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
 
 function headTail(s, n) {
-s = str(s);
 if (s.length <= n) return s;
 var half = Math.floor(n / 2);
 return s.slice(0, half) + '\n\n[... ' + (s.length - n) + ' chars trimmed ...]\n\n' + s.slice(-half);
@@ -113,7 +105,6 @@ return null;
 function valueOf(el) { return el.tagName === 'TEXTAREA' ? el.value : el.textContent; }
 
 function fill(el, text) {
-text = str(text);
 el.focus();
 if (el.tagName === 'TEXTAREA') {
 var setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
@@ -141,9 +132,6 @@ return 'enter';
 }
 
 function msgNodes() { return document.querySelectorAll('[data-message-id], [data-testid*="message"], [class*="message"]').length; }
-function currentFails() { return (document.body.innerText.match(/Response failed/gi) || []).length; }
-
-function armed() { nodesAt = msgNodes(); awaiting = Date.now(); failsAtSubmit = currentFails(); }
 
 var badge = document.createElement('div');
 badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#238636;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9';
@@ -151,12 +139,12 @@ badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;
 function paint() {
 if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
 var paused = load('vrb.paused') === '1';
-badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + ' v44';
+badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (num('vrb.fail') ? '| f' + num('vrb.fail') : '');
 badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
 }
 
 badge.addEventListener('click', function () { store('vrb.paused', load('vrb.paused') === '1' ? '0' : '1'); paint(); });
-badge.addEventListener('dblclick', function () { dead = 0; awaiting = 0; wake('manual', true); });
+badge.addEventListener('dblclick', function () { store('vrb.fail', '0'); wake('manual', true); });
 
 function halt(reason) {
 store('vrb.halt', '1'); store('vrb.paused', '1'); paint();
@@ -167,7 +155,7 @@ console.log('[bridge] HALT ' + reason);
 function deliverScrape(url, raw) {
 if (busy) { console.log('[bridge] scrape parked: busy'); return false; }
 if (load('vrb.paused') === '1') { console.log('[bridge] scrape parked: paused, left in FETCH.md'); return false; }
-if (load('vrb.halt') === '1') { console.log('[bridge] scrape parked: halted'); return false; }
+if (load('vrb.halt') === '1') return false;
 var el = composer();
 if (!el) { console.log('[bridge] scrape parked: no composer'); return false; }
 if (valueOf(el).trim().length > 0) { console.log('[bridge] scrape parked: composer busy, left in FETCH.md'); return false; }
@@ -177,7 +165,7 @@ var msg = 'SCRAPE RESULT ' + url + '\n<<<\n' + body + '\n>>>\n\nAct on the resul
 busy = true; paint();
 fill(el, msg);
 setTimeout(function () {
-armed();
+nodesAt = msgNodes(); awaiting = Date.now();
 submit(el);
 store('vrb.cool', String(Date.now()));
 busy = false; paint();
@@ -229,7 +217,7 @@ store('vrb.compact', '0');
 }
 fill(el, full);
 setTimeout(function () {
-armed();
+nodesAt = msgNodes(); awaiting = Date.now();
 submit(el);
 store('vrb.cool', String(Date.now()));
 busy = false; paint();
@@ -308,7 +296,7 @@ if (!el) { halt('no composer after new chat'); return; }
 fill(el, links.join('\n'));
 store('vrb.bootPending', '0');
 setTimeout(function () {
-armed();
+nodesAt = msgNodes(); awaiting = Date.now();
 submit(el);
 busy = false; paint();
 console.log('[bridge] bootstrap submitted, gen ' + gen);
@@ -316,6 +304,10 @@ console.log('[bridge] bootstrap submitted, gen ' + gen);
 }
 step();
 }
+
+var lastFailSeen = 0, failPrimed = false;
+
+function currentFails() { return (document.body.innerText.match(/Response failed/gi) || []).length; }
 
 function escalate(reason) {
 if (Date.now() - num('vrb.lastEsc') < ESC_COOL) { console.log('[bridge] escalate suppressed (cooldown): ' + reason); return; }
@@ -326,8 +318,9 @@ if (bootTries > BOOT_MAX) { halt('bootstrap failed ' + bootTries + 'x: ' + reaso
 }
 phase = 'boot';
 busy = true;
-dead = 0; awaiting = 0; failsAtSubmit = currentFails();
+store('vrb.fail', '0');
 store('vrb.halt', '0');
+lastFailSeen = currentFails();
 var gen = num('vrb.gen') + 1;
 store('vrb.gen', String(gen));
 store('vrb.bootPending', String(gen));
@@ -348,23 +341,32 @@ composeBootstrap(gen);
 
 function healthTick() {
 if (load('vrb.halt') === '1') return;
-if (awaiting) {
-if (msgNodes() >= nodesAt + 2) {
-awaiting = 0; dead = 0; failsAtSubmit = currentFails(); paint();
+var hits = currentFails();
+if (!failPrimed) { lastFailSeen = hits; failPrimed = true; }
+if (hits > lastFailSeen) {
+store('vrb.fail', String(num('vrb.fail') + (hits - lastFailSeen)));
+lastFailSeen = hits;
+awaiting = 0;
+paint();
+} else if (hits < lastFailSeen) {
+lastFailSeen = hits;
+}
+if (num('vrb.fail') >= FAIL_LIMIT && !busy) { escalate('response failed x' + num('vrb.fail')); return; }
+if (awaiting && Date.now() - awaiting > STUCK_MS) {
+if (msgNodes() < nodesAt + 2) {
+store('vrb.fail', String(num('vrb.fail') + 1));
+awaiting = 0; paint();
+if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
+} else { awaiting = 0; }
+}
+if (awaiting && msgNodes() >= nodesAt + 2) {
+awaiting = 0;
 if (phase === 'boot') {
-phase = 'work'; bootTries = 0;
+phase = 'work'; bootTries = 0; store('vrb.fail', '0'); lastFailSeen = currentFails(); paint();
 console.log('[bridge] bootstrap answered, resuming');
 setTimeout(function () { wake('post-bootstrap resume', true); }, 3000);
+} else if (num('vrb.fail')) { store('vrb.fail', '0'); paint(); }
 }
-return;
-}
-var fresh = currentFails() - failsAtSubmit;
-if (fresh > 0) { dead += fresh; awaiting = 0; failsAtSubmit = currentFails(); paint(); }
-else if (Date.now() - awaiting > STUCK_MS) { dead++; awaiting = 0; paint(); }
-} else {
-failsAtSubmit = currentFails();
-}
-if (dead >= DEAD_LIMIT && !busy) { escalate(dead + ' consecutive unanswered'); return; }
 }
 
 var fired = {};
@@ -372,7 +374,6 @@ try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
 
 function hash(s) {
 var h = 5381, i;
-s = str(s);
 for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
 return h.toString(36);
 }
@@ -391,7 +392,7 @@ store('vrb.fired', JSON.stringify(fired));
 var CHROME = /^(?:```[a-z0-9+#._-]*|yaml|yml|json|python|py|bash|sh|js|javascript|md|markdown|text|txt|Copy code|Copy|Copied)$/;
 
 function cleanBody(raw) {
-var lines = str(raw).replace(/\r/g, '').split('\n');
+var lines = raw.replace(/\r/g, '').split('\n');
 var guard = 0;
 while (lines.length && guard++ < 12) {
 var head = lines[0].trim();
@@ -410,7 +411,7 @@ return lines.join('\n').replace(/\s+$/, '') + '\n';
 function bumpVersion() {
 var n = num('vrb.v') + 1;
 store('vrb.v', String(n));
-return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.4.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.2.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
 }
 
 function selfWrite(raw) {
@@ -435,120 +436,4 @@ putFile(path, body).then(function () { sent++; paint(); });
 function scan() {
 var text = document.body.innerText || '';
 var m;
-var strict = /@@PUT[ \t]+(\S+)[ \t]\r?\n([\s\S]?)\r?\n?@@END\b/g;
-var covered = {};
-while ((m = strict.exec(text)) !== null) {
-covered[hash(m[1] + cleanBody(m[2]))] = 1;
-doPut(m[1], m[2]);
-}
-var loose = /@@PUT[ \t]+(\S+)[ \t]\r?\n([\s\S]?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
-while ((m = loose.exec(text)) !== null) {
-var b2 = cleanBody(m[2]);
-if (covered[hash(m[1] + b2)]) continue;
-console.log('[bridge] UNTERMINATED @@PUT ' + m[1]);
-doPut(m[1], m[2]);
-}
-var dispRe = /@@DISPATCH[ \t]+([A-Za-z0-9_.-]+)/g;
-while ((m = dispRe.exec(text)) !== null) {
-var hd = hash('d' + (dispN++) + m[1]);
-if (fired[hd]) continue;
-mark(hd);
-(function (wf) {
-gm(W + 'dispatch&branch=' + BR + '&workflow=' + encodeURIComponent(wf)).then(function (r) {
-sent++; paint(); console.log('[bridge] dispatch ' + r.status);
-});
-}(m[1]));
-}
-var runsRe = /@@RUNS/g;
-while ((m = runsRe.exec(text)) !== null) {
-var hr = hash('r' + (runsN++));
-if (fired[hr]) continue;
-mark(hr);
-gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
-}
-var scrRe = /(?:@@)?SCRAPE[ \t]+(https?://\S+)/g;
-while ((m = scrRe.exec(text)) !== null) {
-var hsc = hash('c' + m[1]);
-if (fired[hsc]) continue;
-mark(hsc);
-(function (u) {
-gm(W + 'scrape&branch=' + BR + '&url=' + encodeURIComponent(u)).then(function (r) {
-sent++; paint(); console.log('[bridge] scrape ' + r.status);
-if (r.ok) setTimeout(function () { deliverScrape(u, r.text); }, 800);
-});
-}(m[1]));
-}
-
-Copy code
-var selfRe = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
-while ((m = selfRe.exec(text)) !== null) {
-  var hs = hash('s' + cleanBody(m[1]));
-  if (fired[hs]) continue;
-  mark(hs);
-  selfWrite(m[1]);
-}
-var mergeRe = /@@MERGE[ \t]+(\d+)/g;
-while ((m = mergeRe.exec(text)) !== null) {
-  var hm = hash('m' + m[1]);
-  if (fired[hm]) continue;
-  mark(hm);
-  (function (n) {
-    gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' + r.status); });
-  }(m[1]));
-}
-
-}
-
-function tick() {
-if (load('vrb.paused') === '1' || load('vrb.halt') === '1' || phase === 'boot') return;
-gm(readUrl('agent/WAKE.json')).then(function (r) {
-if (!r.ok) return;
-var flag;
-try { flag = JSON.parse(unwrap(r.text)); } catch (e) { return; }
-var reason = (flag && flag.reason) || '';
-var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
-if (sha && sha === load('vrb.sha')) return;
-if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
-});
-}
-
-var timer = null;
-var observer = new MutationObserver(function () {
-clearTimeout(timer);
-timer = setTimeout(scan, 900);
-});
-observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-
-var tickTimer = setInterval(tick, POLL);
-var healthTimer = setInterval(healthTick, 5000);
-
-window.__vrb = { stop: function () {
-clearInterval(tickTimer); clearInterval(healthTimer);
-clearTimeout(timer); observer.disconnect();
-if (badge.parentElement) badge.remove();
-} };
-
-gm(readUrl('agent/BRIDGE_GEN.json')).then(function (r) {
-if (!r.ok) return;
-try {
-var g = JSON.parse(unwrap(r.text)).gen;
-if (g && g > num('vrb.gen')) { store('vrb.gen', String(g)); paint(); }
-} catch (e) {}
-});
-
-document.body.appendChild(badge);
-paint();
-var pendingGen = num('vrb.bootPending');
-if (pendingGen) {
-phase = 'boot';
-store('vrb.bootPending', '0');
-paint();
-waitFor(function () { return composer() !== null; }, 30000).then(function (ok) {
-if (!ok) { halt('composer missing after reload'); return; }
-ensureAgentic();
-setTimeout(function () { composeBootstrap(pendingGen); }, 2500);
-});
-} else {
-setTimeout(tick, 4000);
-}
-}());
+var strict = /@@PUT[ \t]+(\S+)[ \t]\r?\n([\s\S]?)\r?\n?
