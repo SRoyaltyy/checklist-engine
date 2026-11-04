@@ -1,1 +1,1 @@
-{ "sha": "4.3.0", "note": "rollover only after 3 consecutive unanswered submissions; baseline failure count rebased at every submit so old error text never counts" }
+{ "sha": "4.4.0", "note": "readback coerced and try-caught; badge shows v44 so the live build is identifiable" }
