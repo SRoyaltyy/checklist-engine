@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venice Bridge Loader
 // @namespace    venice.local
-// @version      1.3
+// @version      1.4
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
@@ -18,7 +18,7 @@
 
   var mine = document.createElement('div');
   mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9';
-  mine.textContent = 'LOAD v1.3';
+  mine.textContent = 'LOAD v1.4';
   function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
   function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
   function hide() { if (mine.parentElement) mine.remove(); }
@@ -37,12 +37,20 @@
     return raw;
   }
 
+  function sanitize(src) {
+    return String(src)
+      .replace(/^\s*Copy code\s*$/gm, '')
+      .replace(/^\s*Copied\s*$/gm, '')
+      .replace(/^\s*```[a-z0-9+#._-]*\s*$/gmi, '');
+  }
+
   function stopOld() {
     try { if (window.__vrb && window.__vrb.stop) window.__vrb.stop(); } catch (e) {}
     window.__vrb = null;
   }
 
-  function boot(src, tag) {
+  function boot(rawSrc, tag) {
+    var src = sanitize(rawSrc);
     stopOld();
     try {
       new Function('GM_xmlhttpRequest', src)(GM_xmlhttpRequest);
