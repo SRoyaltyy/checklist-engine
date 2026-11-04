@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venice Bridge Loader
 // @namespace    venice.local
-// @version      1.4
+// @version      1.5
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
@@ -14,11 +14,12 @@
   'use strict';
   var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
   var BR = 'venice%2Fsec-options-pipelines';
-  var KEY = 'vrb.lastgood', VER = 'vrb.version';
+  var KEY = 'vrb.lastgood', VER = 'vrb.version', BAD = 'vrb.bad';
+  var SETTLE_MS = 90000;
 
   var mine = document.createElement('div');
   mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9';
-  mine.textContent = 'LOAD v1.4';
+  mine.textContent = 'LOAD v1.5';
   function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
   function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
   function hide() { if (mine.parentElement) mine.remove(); }
@@ -49,23 +50,50 @@
     window.__vrb = null;
   }
 
-  function boot(rawSrc, tag) {
+  function badList() {
+    try { return JSON.parse(GM_getValue(BAD, '[]')) || []; } catch (e) { return []; }
+  }
+  function markBad(v) {
+    var l = badList();
+    if (l.indexOf(v) === -1) l.push(v);
+    GM_setValue(BAD, JSON.stringify(l.slice(-20)));
+  }
+
+  var settleTimer = null;
+  function cancelSettle() { if (settleTimer) { clearTimeout(settleTimer); settleTimer = null; } }
+
+  function healthy() {
+    return !!(window.__vrb && window.__vrb.stop);
+  }
+
+  function boot(rawSrc, tag, version) {
     var src = sanitize(rawSrc);
+    if (version && badList().indexOf(version) !== -1) {
+      say('SKIP BAD ' + version, '#9e6a03');
+      return false;
+    }
     stopOld();
+    cancelSettle();
     try {
       new Function('GM_xmlhttpRequest', src)(GM_xmlhttpRequest);
-      say('LOADED ' + (tag || ''), '#238636');
-      setTimeout(function () {
-        if (window.__vrb && window.__vrb.stop) hide();
-        else say('NO BRIDGE UI', '#d1242f');
-      }, 1500);
-      console.log('[loader] bridge started');
-      return true;
     } catch (e) {
       say('EVAL FAIL', '#d1242f');
       console.log('[loader] eval failed', e);
+      if (version) markBad(version);
       return false;
     }
+    say('LOADED ' + (tag || ''), '#238636');
+    settleTimer = setTimeout(function () {
+      if (healthy()) { hide(); return; }
+      say('UNHEALTHY, ROLLBACK', '#d1242f');
+      console.log('[loader] build ' + (version || tag) + ' unhealthy after ' + SETTLE_MS + 'ms, rolling back');
+      if (version) markBad(version);
+      var last = GM_getValue(KEY, '');
+      if (last) boot(last, 'lastgood', '');
+      else say('NO FALLBACK', '#d1242f');
+    }, SETTLE_MS);
+    console.log('[loader] bridge started');
+    return true;
   }
 
   function refresh() {
@@ -73,10 +101,11 @@
       var v = '';
       try { v = JSON.parse(unwrap(raw)).sha || ''; } catch (e) {}
       if (!v || v === GM_getValue(VER, '')) return;
-      get('agent/BRIDGE.user.js').then(function (raw) {
-        var src = unwrap(raw);
+      if (badList().indexOf(v) !== -1) return;
+      get('agent/BRIDGE.user.js').then(function (raw2) {
+        var src = unwrap(raw2);
         if (!src || src.length < 500) return;
-        if (boot(src, v)) { GM_setValue(KEY, src); GM_setValue(VER, v); }
+        if (boot(src, v, v)) { GM_setValue(KEY, src); GM_setValue(VER, v); }
       });
     });
   }
@@ -84,10 +113,14 @@
   show();
   get('agent/BRIDGE.user.js').then(function (raw) {
     var src = unwrap(raw);
-    if (src && src.length > 500 && boot(src, 'init')) return;
-    var last = GM_getValue(KEY, '');
-    if (last) { console.log('[loader] using last good'); boot(last, 'cached'); return; }
-    say('NO SOURCE', '#d1242f');
+    var v = '';
+    get('agent/BRIDGE_VERSION.json').then(function (raw2) {
+      try { v = JSON.parse(unwrap(raw2)).sha || ''; } catch (e) {}
+      if (src && src.length > 500 && boot(src, 'init', v)) { GM_setValue(KEY, src); GM_setValue(VER, v); return; }
+      var last = GM_getValue(KEY, '');
+      if (last) { console.log('[loader] using last good'); boot(last, 'cached', ''); return; }
+      say('NO SOURCE', '#d1242f');
+    });
   });
 
   setInterval(refresh, 60000);
