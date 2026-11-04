@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Repo Bridge
 // @namespace venice.local
-// @version 4.2
+// @version 4.3
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @connect venice-doorman.fullscan-relay.workers.dev
@@ -14,12 +14,12 @@ if (load('vrb.v') === null) store('vrb.v', '0');
 var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
 var BR = 'venice%2Fsec-options-pipelines';
 var REPO = 'SRoyaltyy/checklist-engine';
-var POLL = 30000, COOL = 240000, FAIL_LIMIT = 2, STUCK_MS = 300000, BOOT_MAX = 2, ESC_COOL = 90000, SCRAPE_MAX = 12000;
+var POLL = 30000, COOL = 240000, DEAD_LIMIT = 3, STUCK_MS = 300000, BOOT_MAX = 2, ESC_COOL = 90000, SCRAPE_MAX = 12000;
 var READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/JOURNAL.md', 'agent/FETCH.md', 'agent/WAKE.json'];
 var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
 var BUDGET = 120000;
 var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
-var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0;
+var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
 
 function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -132,6 +132,9 @@ return 'enter';
 }
 
 function msgNodes() { return document.querySelectorAll('[data-message-id], [data-testid*="message"], [class*="message"]').length; }
+function currentFails() { return (document.body.innerText.match(/Response failed/gi) || []).length; }
+
+function armed() { nodesAt = msgNodes(); awaiting = Date.now(); failsAtSubmit = currentFails(); }
 
 var badge = document.createElement('div');
 badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#238636;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9';
@@ -139,12 +142,12 @@ badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;
 function paint() {
 if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
 var paused = load('vrb.paused') === '1';
-badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (num('vrb.fail') ? '| f' + num('vrb.fail') : '');
+badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '');
 badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
 }
 
 badge.addEventListener('click', function () { store('vrb.paused', load('vrb.paused') === '1' ? '0' : '1'); paint(); });
-badge.addEventListener('dblclick', function () { store('vrb.fail', '0'); wake('manual', true); });
+badge.addEventListener('dblclick', function () { dead = 0; awaiting = 0; wake('manual', true); });
 
 function halt(reason) {
 store('vrb.halt', '1'); store('vrb.paused', '1'); paint();
@@ -165,7 +168,7 @@ var msg = 'SCRAPE RESULT ' + url + '\n<<<\n' + body + '\n>>>\n\nAct on the resul
 busy = true; paint();
 fill(el, msg);
 setTimeout(function () {
-nodesAt = msgNodes(); awaiting = Date.now();
+armed();
 submit(el);
 store('vrb.cool', String(Date.now()));
 busy = false; paint();
@@ -217,7 +220,7 @@ store('vrb.compact', '0');
 }
 fill(el, full);
 setTimeout(function () {
-nodesAt = msgNodes(); awaiting = Date.now();
+armed();
 submit(el);
 store('vrb.cool', String(Date.now()));
 busy = false; paint();
@@ -295,7 +298,7 @@ if (!el) { halt('no composer after new chat'); return; }
 fill(el, links.join('\n'));
 store('vrb.bootPending', '0');
 setTimeout(function () {
-nodesAt = msgNodes(); awaiting = Date.now();
+armed();
 submit(el);
 busy = false; paint();
 console.log('[bridge] bootstrap submitted, gen ' + gen);
@@ -303,10 +306,6 @@ console.log('[bridge] bootstrap submitted, gen ' + gen);
 }
 step();
 }
-
-var lastFailSeen = 0, failPrimed = false;
-
-function currentFails() { return (document.body.innerText.match(/Response failed/gi) || []).length; }
 
 function escalate(reason) {
 if (Date.now() - num('vrb.lastEsc') < ESC_COOL) { console.log('[bridge] escalate suppressed (cooldown): ' + reason); return; }
@@ -317,9 +316,8 @@ if (bootTries > BOOT_MAX) { halt('bootstrap failed ' + bootTries + 'x: ' + reaso
 }
 phase = 'boot';
 busy = true;
-store('vrb.fail', '0');
+dead = 0; awaiting = 0; failsAtSubmit = currentFails();
 store('vrb.halt', '0');
-lastFailSeen = currentFails();
 var gen = num('vrb.gen') + 1;
 store('vrb.gen', String(gen));
 store('vrb.bootPending', String(gen));
@@ -340,32 +338,23 @@ composeBootstrap(gen);
 
 function healthTick() {
 if (load('vrb.halt') === '1') return;
-var hits = currentFails();
-if (!failPrimed) { lastFailSeen = hits; failPrimed = true; }
-if (hits > lastFailSeen) {
-store('vrb.fail', String(num('vrb.fail') + (hits - lastFailSeen)));
-lastFailSeen = hits;
-awaiting = 0;
-paint();
-} else if (hits < lastFailSeen) {
-lastFailSeen = hits;
-}
-if (num('vrb.fail') >= FAIL_LIMIT && !busy) { escalate('response failed x' + num('vrb.fail')); return; }
-if (awaiting && Date.now() - awaiting > STUCK_MS) {
-if (msgNodes() < nodesAt + 2) {
-store('vrb.fail', String(num('vrb.fail') + 1));
-awaiting = 0; paint();
-if (num('vrb.fail') >= FAIL_LIMIT) escalate('stuck, no reply');
-} else { awaiting = 0; }
-}
-if (awaiting && msgNodes() >= nodesAt + 2) {
-awaiting = 0;
+if (awaiting) {
+if (msgNodes() >= nodesAt + 2) {
+awaiting = 0; dead = 0; failsAtSubmit = currentFails(); paint();
 if (phase === 'boot') {
-phase = 'work'; bootTries = 0; store('vrb.fail', '0'); lastFailSeen = currentFails(); paint();
+phase = 'work'; bootTries = 0;
 console.log('[bridge] bootstrap answered, resuming');
 setTimeout(function () { wake('post-bootstrap resume', true); }, 3000);
-} else if (num('vrb.fail')) { store('vrb.fail', '0'); paint(); }
 }
+return;
+}
+var fresh = currentFails() - failsAtSubmit;
+if (fresh > 0) { dead += fresh; awaiting = 0; failsAtSubmit = currentFails(); paint(); }
+else if (Date.now() - awaiting > STUCK_MS) { dead++; awaiting = 0; paint(); }
+} else {
+failsAtSubmit = currentFails();
+}
+if (dead >= DEAD_LIMIT && !busy) { escalate(dead + ' consecutive unanswered'); return; }
 }
 
 var fired = {};
@@ -410,7 +399,7 @@ return lines.join('\n').replace(/\s+$/, '') + '\n';
 function bumpVersion() {
 var n = num('vrb.v') + 1;
 store('vrb.v', String(n));
-return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.2.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.3.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
 }
 
 function selfWrite(raw) {
