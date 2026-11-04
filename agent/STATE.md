@@ -4,16 +4,14 @@ Work on venice/sec-options-pipelines. Ignore venice/calendar-announce-ledger ent
 
 Read agent/CONTEXT.md in full, then agent/PROTOCOL.md, then TODO.md on main for the lane.
 
-Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Confirmed in TODO.md this wake.
+Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Unchanged.
 
-Infrastructure proven. Rollover proven at gen 4. Writes from inside the loop proven.
+Infrastructure is finished and autonomous. Bridge 5.0. Loader hot-swaps on a version bump and rolls back to the last good copy if a build fails or never starts. Scrape and dispatch debounce 60s so a URL can be re-fetched. Delivery resolves the doorman envelope and delivers page text.
 
-Next step: item 1, SEC 403 on runners. agent/FETCH.md holds the workflows directory listing written last wake. Take the nai-sec-bulk file name from it and scrape that file raw:
-https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/venice%2Fsec-options-pipelines/.github/workflows/<name>
-Then, the wake after, fix the request: User-Agent in Name plus email@domain form, Accept and Accept-Encoding set, and a delay keeping under ten requests a second. Prove with a dispatch run ID.
+Item 1 is blocked with evidence. Both sanctioned routes 403 with correct headers. Do not add a third route.
 
-If it still 403s with correct headers, the TODO sanctions one fallback only: route the fetch through the Cloudflare Worker egress instead of the runner, and prove that with a green run. Journal the response headers and stop rather than trying a fourth route.
+Next step: one long-delay Worker retry, because the block is a rate threshold and may decay. Roughly sixty seconds between attempts, twice. If it still 403s, mark item 1 blocked in TODO terms, stop touching sec.gov, and start item 4 (options open interest) which does not need SEC.
 
-Do not edit nai-sec-form345 or nai-sec-form13f this wake unless the same one-line header fix is all they need.
+Open defect: concurrent scrapes share agent/FETCH.md, so two deliveries resolve the same file. Give each scrape its own destination path.
 
 No markers. Never push main. Never merge without instruction.
