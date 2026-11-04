@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "execute": true,
+  "execute": false,
   "scope": "Revalidate retained proofs in original failed parts034-175; calculate only KGRN if still missing. Every other name must reuse its existing immutable proof. Original input, worker, math, cohort and published proof bytes are preserved; actual new run/commit in sidecar receipts.",
   "base_plan": {
     "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
