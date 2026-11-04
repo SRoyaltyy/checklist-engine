@@ -1,5 +1,5 @@
-# FETCH https://api.github.com/repos/SRoyaltyy/checklist-engine/contents/agent/PING_GEN10.md?ref=venice%2Fsec-options-pipelines
+# FETCH https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/venice/sec-options-pipelines/agent/BRIDGE_VERSION.json
 
-fetched 2026-11-03T09:45:17.629Z status 403
+fetched 2026-11-04T16:05:59.234Z status 200
 
-{"message":"API rate limit exceeded for 172.71.241.141. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+{ "sha": "4.3.0", "note": "rollover only after 3 consecutive unanswered submissions; baseline failure count rebased at every submit so old error text never counts" }
