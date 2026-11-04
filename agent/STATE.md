@@ -6,12 +6,12 @@ Read agent/CONTEXT.md in full, then agent/PROTOCOL.md, then TODO.md on main for 
 
 Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Unchanged.
 
-Infrastructure is finished and autonomous. Bridge 5.0. Loader hot-swaps on a version bump and rolls back to the last good copy if a build fails or never starts. Scrape and dispatch debounce 60s so a URL can be re-fetched. Delivery resolves the doorman envelope and delivers page text.
+Infrastructure finished and self-driving. Doorman scrape op rebuilt at 2026-11-04T16:41Z: proper contact User-Agent for sec.gov hosts, Accept and Accept-Encoding set, five attempts with backoff, and the UA echoed in the reply for evidence. Deployed through the deployer, all seven bindings kept, op=ops verified.
 
-Item 1 is blocked with evidence. Both sanctioned routes 403 with correct headers. Do not add a third route.
+Next step: item 1. Read the SEC result from the retry. A 200 means the 403 was the undeclared UA and the Worker route is the answer; wire scripts/nai/common.py to call the Worker scrape instead of the runner direct, dispatch nai-sec-bulk, and cite the run ID.
 
-Next step: one long-delay Worker retry, because the block is a rate threshold and may decay. Roughly sixty seconds between attempts, twice. If it still 403s, mark item 1 blocked in TODO terms, stop touching sec.gov, and start item 4 (options open interest) which does not need SEC.
+If it is still 403 with the contact UA, both sanctioned routes are genuinely spent. Journal the headers and the UA used, and stop trying routes.
 
-Open defect: concurrent scrapes share agent/FETCH.md, so two deliveries resolve the same file. Give each scrape its own destination path.
+Bridge is at 4.8. Badge shows v48. Busy watchdog clears a stranded flag after a minute and a parked scrape retries for three.
 
 No markers. Never push main. Never merge without instruction.
