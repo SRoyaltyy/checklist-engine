@@ -1,0 +1,49 @@
+# FETCH https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/venice/sec-options-pipelines/agent/LOADER.user.js
+
+fetched 2026-11-04T17:46:04.112Z status 200 ua Mozilla/5.0 venice-doorman
+
+// ==UserScript==
+// @name Venice Bridge Loader
+// @namespace venice.local
+// @version 1.6
+// @match https://venice.ai/*
+// @grant GM_xmlhttpRequest
+// @grant GM_setValue
+// @grant GM_getValue
+// @connect venice-doorman.fullscan-relay.workers.dev
+// @run-at document-idle
+// ==/UserScript==
+
+(function () {
+ 'use strict';
+ var W = 'https://venice-doorman.fullscan-relay.workers.dev/?k=tos335407215&op=';
+ var BR = 'venice%2Fsec-options-pipelines';
+ var KEY = 'vrb.lastgood', VER = 'vrb.version', BAD = 'vrb.bad';
+ var SETTLE_MS = 120000;
+
+ var mine = document.createElement('div');
+ mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9;';
+ mine.textContent = 'LOAD v1.6';
+ function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
+ function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
+ function hide() { if (mine.parentElement) mine.remove(); }
+
+ function hash(s) {
+ var h = 5381, i;
+ s = String(s);
+ for (i = 0; i >> 0;
+ return h.toString(36) + '.' + s.length.toString(36);
+ }
+
+ function get(p) {
+ return new Promise(function (res) {
+ GM_xmlhttpRequest({ method: 'GET', timeout: 20000,
+ url: W + 'read&branch=' + BR + '&path=' + encodeURIComponent(p) + '&t=' + Date.now(),
+ onload: function (r) { res(r.status >= 200 && r.status 500 && adopt(src, 'init')) return;
+ var last = GM_getValue(KEY, '');
+ if (last) { console.log('[loader] using last good'); boot(last, 'cached', ''); return; }
+ say('NO SOURCE', '#d1242f');
+ });
+
+ setInterval(refresh, 60000);
+}());
