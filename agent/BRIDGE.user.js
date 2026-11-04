@@ -135,6 +135,7 @@ function sendScrape(url, text) {
 }
 function park(url, text, why) { parked = { url: url, text: text, at: Date.now() }; parkedTries = 0; paint(); console.log('[bridge] scrape parked (' + why + ')'); return false; }
 function retryTick() {
+  if (generating()) return;
   var el = composer();
   if (el && /^(SCRAPE RESULT|\[wake)/.test(valueOf(el).trim())) { console.log('[bridge] resend stranded'); armed(); submit(el); paint(); return; }
   if (!parked) return;
