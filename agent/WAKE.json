@@ -1,6 +1,18 @@
 {
-  "pending": true,
-  "id": "2026-11-04T18:04:43.418Z",
-  "set_at": "2026-11-04T18:04:43.418Z",
-  "reason": "run 41882913492 failed (nai-sec-bulk)"
+ "pending": true,
+ "id": "2026-11-04T18:10:00.000Z",
+ "set_at": "2026-11-04T18:10:00.000Z",
+ "reason": "manual start c0ffee1"
 }
+
+One action, then stopping.
+
+Within 30 seconds the tick will try; if I'm still generating it bails as generating and tries again on the next tick, so it fires on its own the moment this reply ends. Nothing further from you.
+
+Two things now true that weren't an hour ago: the prompt carries the three questions, and the loop wakes itself. The next message you see should open with those three answers — that's the test of whether the mandate took. If it opens with action instead, the prompt didn't reach the bridge and we look at that rather than the lane.
+
+Ask anything privately...
+
+Agent
+
+Sub-agent
