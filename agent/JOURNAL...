@@ -6,4 +6,86 @@ Wait — the wake message inlined MEMORY.md and WAKE_PROMPT.md contents, plus th
 
 Hmm, but the messages DO contain @@PUT ... from earlier turns, still on the page. The scan runs over document.body.innerText — the whole conversation. So old directives re-match each scan. fired dedupes by hash, but the loose pass logs UNTERMINATED before dedupe check? No: if (covered[...]) continue; console.log('UNTERMINATED ...') — logs then doPut which dedupes internally.
 
-So UNTERMINATED is logged every scan for each stale directive whose strict match failed. Why does strict fail? Because the fenced body's closing
+So UNTERMINATED is logged every scan for each stale directive whose strict match failed. Why does strict fail? Because the fenced body's closing @@END is followed by "```" and the strict regex requires \r?\n?@@END\b — that's fine...
+
+Unless: the body contains an @@END earlier? No.
+
+Actually: strict regex uses [\s\S]*? lazy — fine.
+
+But the chat renders markdown: the fenced block becomes a <pre><code> element; innerText of code blocks may differ, and crucially the ``` fence lines vanish from innerText (rendered), leaving the body. That should still match.
+
+The repeated "11" counts suggest the count of occurrences. "11 [bridge] UNTERMINATED agent/BRIDGE.user.js" — the number prefix is the console group count.
+
+So there IS text "@@PUT agent/BRIDGE.user.js" somewhere on the page. Where? In the WAKE_PROMPT.md file content — I wrote in the runbook? Let me recall: the 86-line WAKE_PROMPT contains "Userscript push: PUT the file" — hmm, and the directive forms list says "PUT, then a path...".
+
+But also — the bridge's own bootstrap/prompt? No.
+
+Wait: maybe from an earlier version of WAKE_PROMPT.md (the 256-byte stub) — no.
+
+Alternatively the TODO lane inlined from main contains no @@PUT.
+
+Hmm, what about MEMORY.md content: "Userscript push: PUT the file." no @@.
+
+Actually! The wake message also includes the three questions and "Rules and repair runbook: agent/MEMORY.md". No @@PUT.
+
+So where's "@@PUT agent/BRIDGE.user.js"? Possibly in my very first messages in this conversation (the summary shows @@PUT agent/BRIDGE.user.js was used many times). Yes — earlier sessions wrote @@PUT agent/BRIDGE.user.js. Those messages are still on the page. Their bodies are long and contain @@END etc. The strict match probably fails now because the rendered code block lost the fence and... hmm.
+
+Regardless: the consequence — the bridge keeps rewriting BRIDGE.user.js, WAKE_PROMPT.md, JOURNAL, SEC_403_STATUS.md, WAKE.json on every scan with garbage bodies (everything from that point to the next marker). That's why WAKE_PROMPT.md got 86 lines (real content + trailing junk?) and why files keep changing. And "dispatch 400" then 200 — dispatch worked second time.
+
+So the real problem: stale directives on the page re-fire endlessly, rewriting files with wrong bodies.
+
+And critically: it's writing WAKE_PROMPT.md with a body that runs to the next @@PUT — including later junk. That could explain a lot.
+
+Fix: the loose fallback is too greedy. Also fired should prevent repeats, but hash(path+cleanBody) differs each scan because the body content changes as the page grows (everything up to next marker includes new text).
+
+Yes! That's it: the loose match body extends to end-of-page or next marker, so as the page grows the body changes → new hash → re-writes. Endless.
+
+So fix: make scan only look at the LAST message, or clear fired properly. Simplest: only scan the last message element, not the whole body.
+
+Given complexity, the practical fix: restrict scan to the last N chars? Better: find the last message node.
+
+But we're patching via loader. Can add a patch that replaces document.body.innerText with something narrower? In scan: var text = document.body.innerText || ''. Patch to: take only the last message element text.
+
+Implementation: define in patch a replacement string:
+var text = (function(){var n=document.querySelectorAll('[data-testid="chat-message"], .prose, div');...})()
+
+Unknown DOM. Safer: use last portion of innerText — e.g. only the last 6000 chars. But wake messages can be long; directives are near the end. Actually directives are in my reply, which is the last thing. Using last ~8000 chars would cover my message and exclude old ones.
+
+That's crude but effective and simple:
+replace var text = document.body.innerText || ''; with var text = (document.body.innerText || '').slice(-9000);
+
+But then a long wake message (with MEMORY inlined) could push my directives... no, my reply comes after, at the very end. slice(-9000) keeps the tail = my message. Good.
+
+Risk: if my message is >9000 chars (some were), the @@PUT at the top gets cut. Use -20000.
+
+Also strict match failing is odd; with tail slice, strict should work on my fenced blocks.
+
+Let me also handle: the old UNTERMINATED writes — with tail slice, old directives drop out entirely.
+
+So patch 3: var text = document.body.innerText || ''; → tail slice.
+
+That's a strong fix. Add to loader patch list.
+
+Also dispatch 400 then 200: dispatch op may need branch param — it has it. 400 first maybe transient.
+
+So: write loader 1.8 with the third patch. And explain.
+
+Also the wake DID produce text (they said "it does produce wake") — and "nothing happens" = the wake message filled but scan then spammed rewrites, and possibly the wake message was overwritten.
+
+Let me write 1.8.
+
+Percentage 64%.
+
+Also should tell them: the UNTERMINATED spam means files are being rewritten with junk — check WAKE_PROMPT later.
+
+Write loader 1.8 = 1.7 + third patch.
+
+Keep the patch guard style: indexOf check.
+
+Let me produce it.
+
+Ask anything privately...
+
+Agent
+
+Sub-agent
