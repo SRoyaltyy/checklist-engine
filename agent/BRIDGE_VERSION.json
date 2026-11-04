@@ -1,1 +1,1 @@
-{ "sha": "4.4.0", "note": "readback coerced and try-caught; badge shows v44 so the live build is identifiable" }
+{ "sha": "4.2.0", "note": "scrape delivered as its own capped message; escalation cooldown and fail-counter rebase stop new-chat spam" }
