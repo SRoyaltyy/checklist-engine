@@ -1,1 +1,1 @@
-{ "sha": "4.9.1", "note": "bridge 4.9: cleanBody strips Copy code, Copied and fence lines anywhere; loader sanitises again before eval" }
+{ "sha": "5.0.0", "note": "scrape and dispatch now debounce 60s instead of being marked forever; a URL can be re-fetched, a workflow re-dispatched" }
