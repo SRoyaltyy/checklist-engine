@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Repo Bridge
 // @namespace venice.local
-// @version 4.3
+// @version 4.4
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @connect venice-doorman.fullscan-relay.workers.dev
@@ -20,10 +20,12 @@ var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 
 var BUDGET = 120000;
 var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
 var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
+var runsN = 0, dispN = 0;
 
 function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function num(k) { return Number(load(k) || 0); }
+function str(v) { return v == null ? '' : (typeof v === 'string' ? v : String(v)); }
 
 function gm(url) {
 return new Promise(function (res) {
@@ -36,7 +38,7 @@ ontimeout: function () { res({ ok: false, status: 0, text: '' }); } });
 
 function gmPost(url, body) {
 return new Promise(function (res) {
-GM_xmlhttpRequest({ method: 'POST', url: url, data: body, timeout: 60000,
+GM_xmlhttpRequest({ method: 'POST', url: url, data: str(body), timeout: 60000,
 headers: { 'Content-Type': 'text/plain' },
 onload: function (r) { res({ ok: r.status >= 200 && r.status < 300, status: r.status, text: r.responseText || '' }); },
 onerror: function () { res({ ok: false, status: 0, text: '' }); },
@@ -49,27 +51,33 @@ function putUrl(p) { return W + 'put&branch=' + BR + '&path=' + encodeURICompone
 
 function unwrap(raw) {
 try { var o = JSON.parse(raw); if (o && typeof o.text === 'string') return o.text; } catch (e) {}
-return raw;
+return str(raw);
 }
 
 function readback(path, content, status) {
+content = str(content);
 return gm(readUrl(path)).then(function (back) {
 var got = unwrap(back.text || '');
 var tol = Math.max(40, Math.floor(content.length * 0.01));
 var ok = back.ok && got.length > 0 && Math.abs(got.length - content.length) <= tol;
 console.log('[bridge] put ' + path + ' -> ' + status + ', readback ' + got.length + '/' + content.length + (ok ? ' OK' : ' MISMATCH'));
 return { ok: ok, status: status };
+}).catch(function (e) {
+console.log('[bridge] readback threw for ' + path + ': ' + e);
+return { ok: false, status: status };
 });
 }
 
 function putFile(path, content) {
+content = str(content);
 if (!content) { console.log('[bridge] empty write to ' + path); return Promise.resolve({ ok: false, status: -1 }); }
 return gmPost(putUrl(path), content).then(function (r) { return readback(path, content, r.status); });
 }
 
-function tail(s, n) { return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
+function tail(s, n) { s = str(s); return s.length <= n ? s : '[...trimmed...]\n' + s.slice(-n); }
 
 function headTail(s, n) {
+s = str(s);
 if (s.length <= n) return s;
 var half = Math.floor(n / 2);
 return s.slice(0, half) + '\n\n[... ' + (s.length - n) + ' chars trimmed ...]\n\n' + s.slice(-half);
@@ -105,6 +113,7 @@ return null;
 function valueOf(el) { return el.tagName === 'TEXTAREA' ? el.value : el.textContent; }
 
 function fill(el, text) {
+text = str(text);
 el.focus();
 if (el.tagName === 'TEXTAREA') {
 var setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
@@ -142,7 +151,7 @@ badge.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483647;
 function paint() {
 if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
 var paused = load('vrb.paused') === '1';
-badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '');
+badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + ' v44';
 badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
 }
 
@@ -158,7 +167,7 @@ console.log('[bridge] HALT ' + reason);
 function deliverScrape(url, raw) {
 if (busy) { console.log('[bridge] scrape parked: busy'); return false; }
 if (load('vrb.paused') === '1') { console.log('[bridge] scrape parked: paused, left in FETCH.md'); return false; }
-if (load('vrb.halt') === '1') return false;
+if (load('vrb.halt') === '1') { console.log('[bridge] scrape parked: halted'); return false; }
 var el = composer();
 if (!el) { console.log('[bridge] scrape parked: no composer'); return false; }
 if (valueOf(el).trim().length > 0) { console.log('[bridge] scrape parked: composer busy, left in FETCH.md'); return false; }
@@ -363,6 +372,7 @@ try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
 
 function hash(s) {
 var h = 5381, i;
+s = str(s);
 for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
 return h.toString(36);
 }
@@ -381,7 +391,7 @@ store('vrb.fired', JSON.stringify(fired));
 var CHROME = /^(?:```[a-z0-9+#._-]*|yaml|yml|json|python|py|bash|sh|js|javascript|md|markdown|text|txt|Copy code|Copy|Copied)$/;
 
 function cleanBody(raw) {
-var lines = raw.replace(/\r/g, '').split('\n');
+var lines = str(raw).replace(/\r/g, '').split('\n');
 var guard = 0;
 while (lines.length && guard++ < 12) {
 var head = lines[0].trim();
@@ -400,7 +410,7 @@ return lines.join('\n').replace(/\s+$/, '') + '\n';
 function bumpVersion() {
 var n = num('vrb.v') + 1;
 store('vrb.v', String(n));
-return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.3.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.4.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
 }
 
 function selfWrite(raw) {
@@ -440,7 +450,7 @@ doPut(m[1], m[2]);
 }
 var dispRe = /@@DISPATCH[ \t]+([A-Za-z0-9_.-]+)/g;
 while ((m = dispRe.exec(text)) !== null) {
-var hd = hash('d' + m[1] + m.index);
+var hd = hash('d' + (dispN++) + m[1]);
 if (fired[hd]) continue;
 mark(hd);
 (function (wf) {
@@ -451,7 +461,7 @@ sent++; paint(); console.log('[bridge] dispatch ' + r.status);
 }
 var runsRe = /@@RUNS/g;
 while ((m = runsRe.exec(text)) !== null) {
-var hr = hash('r' + m.index);
+var hr = hash('r' + (runsN++));
 if (fired[hr]) continue;
 mark(hr);
 gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
