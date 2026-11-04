@@ -1,13 +1,14 @@
+Copy code
 // ==UserScript==
 // @name         Venice Bridge Loader
 // @namespace    venice.local
-// @version     1.1
-// @match       https://venice.ai/*
-// @grant       GM_xmlhttpRequest
-// @grant       GM_setValue
-// @grant       GM_getValue
-// @connect     venice-doorman.fullscan-relay.workers.dev
-// @run-at      document-idle
+// @version      1.2
+// @match        https://venice.ai/*
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @connect      venice-doorman.fullscan-relay.workers.dev
+// @run-at       document-idle
 // ==/UserScript==
 
 (function () {
@@ -37,8 +38,11 @@
 
   function boot(src) {
     stopOld();
-    try { new Function(src)(); console.log('[loader] bridge started'); return true; }
-    catch (e) { console.log('[loader] eval failed', e); return false; }
+    try {
+      new Function('GM_xmlhttpRequest', src)(GM_xmlhttpRequest);
+      console.log('[loader] bridge started');
+      return true;
+    } catch (e) { console.log('[loader] eval failed', e); return false; }
   }
 
   function refresh() {
@@ -49,7 +53,7 @@
       get('agent/BRIDGE.user.js').then(function (raw) {
         var src = unwrap(raw);
         if (!src || src.length < 500) return;
-        GM_setValue(KEY, src); GM_setValue(VER, v); boot(src);
+        if (boot(src)) { GM_setValue(KEY, src); GM_setValue(VER, v); }
       });
     });
   }
