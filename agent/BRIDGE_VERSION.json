@@ -1,1 +1,1 @@
-{ "sha": "4.4.0", "note": "readback coerced and try-caught; badge shows v44 so the live build is identifiable" }
+{ "sha": "4.5.0", "note": "body fenced so markdown cannot eat asterisks; no literal backticks in file; badge v45" }
