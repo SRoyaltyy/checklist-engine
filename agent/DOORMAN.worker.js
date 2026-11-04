@@ -1,9 +1,11 @@
+Copy code
 // @ts-nocheck
 // venice-doorman — transport for repo actions plus a cron half that sets a wake flag.
 // Secrets: GITHUB_TOKEN, DOORMAN_KEY, DEPLOY_KEY. Vars: GITHUB_REPO, WAKE_BRANCH, DEPLOYER.
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST,OPTIONS", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Max-Age": "86400" };
 const WAKE_PATH = "agent/WAKE.json";
 const WAKE_HEARTBEAT_MIN = 15, WAKE_FRESH_COMMIT_MIN = 20, WAKE_FRESH_FAIL_MIN = 30;
+const SEC_UA = "checklist-engine research cyrus-checklist@users.noreply.github.com";
 const enc = (s) => { const b = new TextEncoder().encode(s); let o = ""; for (let i = 0; i < b.length; i += 8192) o += String.fromCharCode.apply(null, b.subarray(i, i + 8192)); return btoa(o); };
 const dec = (b64) => { const r = atob(String(b64 || "").replace(/\n/g, "")); const u = new Uint8Array(r.length); for (let i = 0; i < r.length; i += 1) u[i] = r.charCodeAt(i); return new TextDecoder().decode(u); };
 const reply = (d, s = 200) => new Response(JSON.stringify(d, null, 2), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
@@ -245,8 +247,19 @@ export default {
           const u = p.get("url") || (bodyJson && bodyJson.url);
           if (!u) throw new Error("url is required");
           const dest = p.get("path") || "agent/FETCH.md";
-          const got = await fetch(u, { headers: { "User-Agent": "Mozilla/5.0 venice-doorman" } });
-          const raw = await got.text();
+          const host = new URL(u).hostname;
+          const isSec = host === "sec.gov" || host.endsWith(".sec.gov");
+          const ua = p.get("ua") || (bodyJson && bodyJson.ua) || (isSec ? SEC_UA : "Mozilla/5.0 venice-doorman");
+          const headers = { "User-Agent": ua, "Accept": "*/*", "Accept-Encoding": "identity" };
+          let got = null, raw = "";
+          const tries = isSec ? 5 : 1;
+          for (let i = 0; i < tries; i += 1) {
+            got = await fetch(u, { headers });
+            raw = await got.text();
+            if (got.ok) break;
+            if (![403, 429, 500, 502, 503, 504].includes(got.status)) break;
+            await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
+          }
           const stripped = raw
             .replace(/<script[\s\S]*?<\/script>/gi, " ")
             .replace(/<style[\s\S]*?<\/style>/gi, " ")
@@ -254,9 +267,9 @@ export default {
             .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
             .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, String.fromCharCode(34))
             .replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
-          const body = "# FETCH " + u + "\n\nfetched " + new Date().toISOString() + " status " + got.status + "\n\n" + stripped.slice(0, 60000) + "\n";
+          const body = "# FETCH " + u + "\n\nfetched " + new Date().toISOString() + " status " + got.status + " ua " + ua + "\n\n" + stripped.slice(0, 60000) + "\n";
           const sha = await writeFile(env, branch, dest, body, message, false);
-          return reply({ ok: got.ok, status: got.status, bytes: body.length, path: dest, sha });
+          return reply({ ok: got.ok, status: got.status, ua: ua, bytes: body.length, path: dest, sha });
         }
         default:
           return reply({ ok: false, error: `unknown op ${op}` }, 400);
