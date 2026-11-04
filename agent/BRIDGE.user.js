@@ -2,7 +2,7 @@ Copy code
 // ==UserScript==
 // @name         Venice Repo Bridge
 // @namespace    venice.local
-// @version      4.9
+// @version      4.7
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @connect      venice-doorman.fullscan-relay.workers.dev
@@ -22,8 +22,8 @@ Copy code
   var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
   var BUDGET = 120000;
   var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
-  var busy = false, busyTicks = 0, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
-  var parked = null, parkedTries = 0;
+  var busy = false, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
+  var runsN = 0, dispN = 0, parked = null, parkedTries = 0;
 
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -154,12 +154,12 @@ Copy code
   function paint() {
     if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
     var paused = load('vrb.paused') === '1';
-    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v49';
+    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v47';
     badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
   }
 
   badge.addEventListener('click', function () { store('vrb.paused', load('vrb.paused') === '1' ? '0' : '1'); paint(); });
-  badge.addEventListener('dblclick', function () { dead = 0; awaiting = 0; busy = false; wake('manual', true); });
+  badge.addEventListener('dblclick', function () { dead = 0; awaiting = 0; wake('manual', true); });
 
   function halt(reason) {
     store('vrb.halt', '1'); store('vrb.paused', '1'); paint();
@@ -231,7 +231,6 @@ Copy code
     console.log('[bridge] wake go: ' + reason);
     var chunks = [], i = 0;
     busy = true; paint(); step(); return true;
-    function fail(why) { console.log('[bridge] wake aborted: ' + why); busy = false; paint(); }
     function step() {
       var set = load('vrb.compact') === '1' ? COMPACT_READS : READS;
       if (i >= set.length) return finish();
@@ -245,7 +244,7 @@ Copy code
         } else { body = '[unavailable ' + r.status + ']'; }
         chunks.push('## ' + p + '\n' + FENCE + '\n' + body + '\n' + FENCE);
         step();
-      }).catch(function (e) { fail('read ' + p + ' ' + e); });
+      });
     }
     function finish() {
       var stamp = new Date().toISOString();
@@ -253,7 +252,7 @@ Copy code
         var t = todo.ok ? unwrap(todo.text) : '';
         var hit = t.match(/##\s*Venice[\s\S]*?(?=\n##\s|$)/);
         var lane = hit ? hit[0] : '[TODO.md Venice section unavailable ' + todo.status + ']';
-        return gm(readUrl('agent/WAKE_PROMPT.md')).then(function (pr) {
+        gm(readUrl('agent/WAKE_PROMPT.md')).then(function (pr) {
           var tpl = pr.ok ? unwrap(pr.text) : '';
           var body = tpl.trim() ? tpl.replace('{{TIME}}', stamp).replace('{{REASON}}', reason) : '[wake ' + stamp + '] ' + reason + '\n\n[WAKE_PROMPT.md unavailable]';
           var full = body + '\n\n## TODO.md Venice lane from main\n' + lane + '\n\n' + chunks.join('\n\n');
@@ -271,7 +270,7 @@ Copy code
             busy = false; paint();
           }, 250);
         });
-      }).catch(function (e) { fail('finish ' + e); });
+      });
     }
 
     step();
@@ -306,10 +305,167 @@ Copy code
       e = els[i];
       if (e.offsetParent === null) continue;
       if (!/agent/i.test(labelOf(e))) continue;
-      if (e.getAttribute('aria-checked') === 'true' || e.getAttribute('
-Ask anything privately...
+      if (e.getAttribute('aria-checked') === 'true' || e.getAttribute('aria-pressed') === 'true') return 'on';
+      if (e.getAttribute('aria-checked') === 'false' || e.getAttribute('aria-pressed') === 'false') { e.click(); return 'toggled'; }
+    }
+    return 'unknown';
+  }
 
-Agent
+  function composeBootstrap(gen) {
+    var chunks = [], i = 0;
+    function step() {
+      if (i >= BOOT_READS.length) return finish();
+      var p = BOOT_READS[i]; i++;
+      gm(readUrl(p)).then(function (r) {
+        var body = r.ok ? unwrap(r.text) : '[unavailable ' + r.status + ']';
+        if (r.ok && body.trim() === '') body = '[EMPTY FILE]';
+        chunks.push('## ' + p + '\n' + FENCE + '\n' + body + '\n' + FENCE);
+        step();
+      });
+    }
+    function finish() {
+      var links = [
+        '[bootstrap gen ' + gen + ' ' + new Date().toISOString() + ']',
+        'The previous chat hit the context ceiling. This chat continues it. Do not reconcile; state below is authoritative.',
+        '',
+        'Repo: https://github.com/' + REPO,
+        'Lane: https://github.com/' + REPO + '/blob/main/TODO.md',
+        'Progress: https://github.com/' + REPO + '/blob/' + decodeURIComponent(BR) + '/agent/PROGRESS.md',
+        '',
+        chunks.join('\n\n'),
+        '',
+        'Read TODO.md Venice section from main, then PROGRESS.md. Do the first unticked item. Branch venice/*, PR to main, no markers. Journal and rewrite PROGRESS.md before stopping.'
+      ];
+      var el = composer();
+      if (!el) { halt('no composer after new chat'); return; }
+      fill(el, links.join('\n'));
+      store('vrb.bootPending', '0');
+      setTimeout(function () {
+        armed();
+        submit(el);
+        busy = false; paint();
+        console.log('[bridge] bootstrap submitted, gen ' + gen);
+      }, 400);
+    }
+    step();
+  }
 
-Sub-agent
-wakeg15| 29| d1 v45
+  function escalate(reason) {
+    if (Date.now() - num('vrb.lastEsc') < ESC_COOL) { console.log('[bridge] escalate suppressed (cooldown): ' + reason); return; }
+    store('vrb.lastEsc', String(Date.now()));
+    if (phase === 'boot') {
+      bootTries++;
+      if (bootTries > BOOT_MAX) { halt('bootstrap failed ' + bootTries + 'x: ' + reason); return; }
+    }
+    phase = 'boot';
+    busy = true;
+    dead = 0; awaiting = 0; failsAtSubmit = currentFails();
+    store('vrb.halt', '0');
+    var gen = num('vrb.gen') + 1;
+    store('vrb.gen', String(gen));
+    store('vrb.bootPending', String(gen));
+    paint();
+    console.log('[bridge] escalate -> gen ' + gen + ' - ( ' + reason + ')');
+    clickNewChat();
+    waitFor(function () { return composer() !== null; }, 45000).then(function (ok) {
+      if (!ok) { halt('composer never appeared'); return; }
+      console.log('[bridge] agentic mode: ' + ensureAgentic());
+      setTimeout(function () {
+        var el = composer();
+        if (!el) { halt('composer vanished'); return; }
+        if (valueOf(el).trim().length > 0) { el.textContent = ''; }
+        composeBootstrap(gen);
+      }, 2500);
+    });
+  }
+
+  function healthTick() {
+    if (load('vrb.halt') === '1') return;
+    if (awaiting) {
+      if (msgNodes() >= nodesAt + 2) {
+        awaiting = 0; dead = 0; failsAtSubmit = currentFails(); paint();
+        if (phase === 'boot') {
+          phase = 'work'; bootTries = 0;
+          console.log('[bridge] bootstrap answered, resuming');
+          setTimeout(function () { wake('post-bootstrap resume', true); }, 3000);
+        }
+        return;
+      }
+      var fresh = currentFails() - failsAtSubmit;
+      if (fresh > 0) { dead += fresh; awaiting = 0; failsAtSubmit = currentFails(); paint(); }
+      else if (Date.now() - awaiting > STUCK_MS) { dead++; awaiting = 0; paint(); }
+    } else {
+      failsAtSubmit = currentFails();
+    }
+    if (dead >= DEAD_LIMIT && !busy) { escalate(dead + ' consecutive unanswered'); return; }
+  }
+
+  var fired = {};
+  try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
+
+  function hash(s) {
+    var h = 5381, i;
+    s = str(s);
+    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+  }
+
+  function mark(h) {
+    fired[h] = 1;
+    var keys = Object.keys(fired), i;
+    if (keys.length > 2000) {
+      var trimmed = {};
+      for (i = keys.length - 2000; i < keys.length; i++) trimmed[keys[i]] = 1;
+      fired = trimmed;
+    }
+    store('vrb.fired', JSON.stringify(fired));
+  }
+
+  var CHROME = new RegExp('^(?:' + FENCE + '[a-z0-9+#._-]*)$');
+
+  function cleanBody(raw) {
+    var lines = str(raw).replace(/\r/g, '').split('\n');
+    var guard = 0;
+    while (lines.length && guard++ < 12) {
+      var head = lines[0].trim();
+      if (head === '' || head.indexOf('@@BODY') === 0 || CHROME.test(head)) { lines.shift(); continue; }
+      break;
+    }
+    guard = 0;
+    while (lines.length && guard++ < 12) {
+      var foot = lines[lines.length - 1].trim();
+      if (foot === '' || CHROME.test(foot)) { lines.pop(); continue; }
+      break;
+    }
+    return lines.join('\n').replace(/\s+$/, '') + '\n';
+  }
+
+  function bumpVersion() {
+    var n = num('vrb.v') + 1;
+    store('vrb.v', String(n));
+    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.7.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
+  }
+
+  function selfWrite(raw) {
+    var body = cleanBody(raw);
+    if (body.length < 5000) { console.log('[bridge] selfWrite too short, ignored'); return; }
+    bumpVersion().then(function () {
+      return putFile('agent/BRIDGE.user.js', body);
+    }).then(function (r) {
+      sent++; paint();
+      console.log('[bridge] self-written bridge, ' + body.length + ' bytes, reload to apply');
+    });
+  }
+
+  function doPut(path, raw) {
+    var body = cleanBody(raw);
+    var h = hash(path + body);
+    if (fired[h]) return;
+    mark(h);
+    putFile(path, body).then(function () { sent++; paint(); });
+  }
+
+  function scan() {
+    var text = document.body.innerText || '';
+    var m;
+    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?
