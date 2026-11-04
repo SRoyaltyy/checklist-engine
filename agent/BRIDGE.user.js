@@ -115,7 +115,13 @@ function halt(reason) {
   putFile('agent/HALT.json', JSON.stringify({ at: new Date().toISOString(), gen: num('vrb.gen'), reason: reason }, null, 2));
   console.log('[bridge] HALT ' + reason);
 }
+function generating() {
+  var b = Array.prototype.slice.call(document.querySelectorAll('button, [role="button"]')), i;
+  for (i = 0; i < b.length; i++) { if (b[i].offsetParent === null) continue; if (/stop/i.test(labelOf(b[i]))) return true; }
+  return false;
+}
 function sendScrape(url, text) {
+  if (generating()) return park(url, text, 'generating');
   var el = composer();
   if (!el) return park(url, text, 'no composer');
   if (valueOf(el).trim().length > 0) return park(url, text, 'composer busy');
