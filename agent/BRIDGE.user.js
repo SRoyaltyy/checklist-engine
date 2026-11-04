@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Venice Repo Bridge
 // @namespace    venice.local
-// @version      4.9
+// @version      5.0
 // @match        https://venice.ai/*
 // @grant        GM_xmlhttpRequest
 // @connect      venice-doorman.fullscan-relay.workers.dev
@@ -16,13 +16,13 @@
   var REPO = 'SRoyaltyy/checklist-engine';
   var FENCE = String.fromCharCode(96, 96, 96);
   var POLL = 30000, COOL = 240000, DEAD_LIMIT = 3, STUCK_MS = 300000, BOOT_MAX = 2, ESC_COOL = 90000, SCRAPE_MAX = 12000;
-  var RETRY_MS = 15000, RETRY_MAX = 12;
+  var RETRY_MS = 15000, RETRY_MAX = 12, REPEAT_MS = 60000;
   var READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/JOURNAL.md', 'agent/FETCH.md', 'agent/WAKE.json'];
   var COMPACT_READS = ['agent/COMPACT.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/QUEUE.jsonl', 'agent/WAKE_PROMPT.md'];
   var BUDGET = 120000;
   var BOOT_READS = ['agent/CONTEXT.md', 'agent/PROTOCOL.md', 'agent/STATE.md', 'agent/PROGRESS.md', 'agent/MEMORY.md', 'agent/COMPACT.md'];
   var busy = false, busyTicks = 0, sent = 0, phase = 'work', bootTries = 0, awaiting = 0, nodesAt = 0, dead = 0, failsAtSubmit = 0;
-  var parked = null, parkedTries = 0;
+  var parked = null, parkedTries = 0, lastScrape = {}, lastDisp = {};
 
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -153,7 +153,7 @@
   function paint() {
     if (load('vrb.halt') === '1') { badge.textContent = 'HALT'; badge.style.background = '#d1242f'; return; }
     var paused = load('vrb.paused') === '1';
-    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v49';
+    badge.textContent = (paused ? 'PAUSED' : (phase === 'boot' ? 'BOOTSTRAP' : 'wake')) + 'g' + num('vrb.gen') + (sent ? '| ' + sent : '') + (dead ? '| d' + dead : '') + (parked ? '| p' + parkedTries : '') + ' v50';
     badge.style.background = paused ? '#8b949e' : phase === 'boot' ? '#9e6a03' : '#238636';
   }
 
@@ -404,179 +404,11 @@
   var fired = {};
   try { fired = JSON.parse(load('vrb.fired') || '{}'); } catch (e) { fired = {}; }
 
-  function hash(s) {
-    var h = 5381, i;
-    s = str(s);
-    for (i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
-    return h.toString(36);
-  }
+  function hash(s
+Ask anything privately...
 
-  function mark(h) {
-    fired[h] = 1;
-    var keys = Object.keys(fired), i;
-    if (keys.length > 2000) {
-      var trimmed = {};
-      for (i = keys.length - 2000; i < keys.length; i++) trimmed[keys[i]] = 1;
-      fired = trimmed;
-    }
-    store('vrb.fired', JSON.stringify(fired));
-  }
+Agent
 
-  var CHROME = new RegExp('^(?:' + FENCE + '[a-z0-9+#._-]*|Copy code|Copied|Copy|text|txt|md|json|jsonl|yaml|yml|js|javascript|py|python|sh|bash)$');
-
-  function cleanBody(raw) {
-    var lines = str(raw).replace(/\r/g, '').split('\n');
-    var keep = [], i;
-    for (i = 0; i < lines.length; i++) {
-      if (CHROME.test(lines[i].trim())) continue;
-      keep.push(lines[i]);
-    }
-    while (keep.length && keep[0].trim() === '') keep.shift();
-    while (keep.length && keep[keep.length - 1].trim() === '') keep.pop();
-    return keep.join('\n').replace(/\s+$/, '') + '\n';
-  }
-
-  function bumpVersion() {
-    var n = num('vrb.v') + 1;
-    store('vrb.v', String(n));
-    return putFile('agent/BRIDGE_VERSION.json', JSON.stringify({ sha: '4.9.' + n, gen: num('vrb.gen'), at: new Date().toISOString() }, null, 2) + '\n');
-  }
-
-  function selfWrite(raw) {
-    var body = cleanBody(raw);
-    if (body.length < 5000) { console.log('[bridge] selfWrite too short, ignored'); return; }
-    bumpVersion().then(function () {
-      return putFile('agent/BRIDGE.user.js', body);
-    }).then(function (r) {
-      sent++; paint();
-      console.log('[bridge] self-written bridge, ' + body.length + ' bytes, reload to apply');
-    });
-  }
-
-  function doPut(path, raw) {
-    var body = cleanBody(raw);
-    var h = hash(path + body);
-    if (fired[h]) return;
-    mark(h);
-    putFile(path, body).then(function () { sent++; paint(); });
-  }
-
-  function scan() {
-    var text = document.body.innerText || '';
-    var m;
-    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
-    var covered = {};
-    while ((m = strict.exec(text)) !== null) {
-      covered[hash(m[1] + cleanBody(m[2]))] = 1;
-      doPut(m[1], m[2]);
-    }
-    var loose = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
-    while ((m = loose.exec(text)) !== null) {
-      var b2 = cleanBody(m[2]);
-      if (covered[hash(m[1] + b2)]) continue;
-      console.log('[bridge] UNTERMINATED @@PUT ' + m[1]);
-      doPut(m[1], m[2]);
-    }
-    var dispRe = /@@DISPATCH[ \t]+([A-Za-z0-9_.\-]+)/g;
-    while ((m = dispRe.exec(text)) !== null) {
-      var hd = hash('d' + m[1]);
-      if (fired[hd]) continue;
-      mark(hd);
-      (function (wf) {
-        gm(W + 'dispatch&branch=' + BR + '&workflow=' + encodeURIComponent(wf)).then(function (r) {
-          sent++; paint(); console.log('[bridge] dispatch ' + r.status);
-        });
-      }(m[1]));
-    }
-    var runsRe = /@@RUNS/g;
-    while ((m = runsRe.exec(text)) !== null) {
-      var hr = hash('r');
-      if (fired[hr]) continue;
-      mark(hr);
-      gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
-    }
-    var scrRe = /(?:@@)?SCRAPE[ \t]+(https?:\/\/\S+)/g;
-    while ((m = scrRe.exec(text)) !== null) {
-      var hsc = hash('c' + m[1]);
-      if (fired[hsc]) continue;
-      mark(hsc);
-      (function (u) {
-        gm(W + 'scrape&branch=' + BR + '&url=' + encodeURIComponent(u)).then(function (r) {
-          sent++; paint(); console.log('[bridge] scrape ' + r.status);
-          if (r.ok) setTimeout(function () { deliverScrape(u, r.text); }, 800);
-        });
-      }(m[1]));
-    }
-
-    var selfRe = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
-    while ((m = selfRe.exec(text)) !== null) {
-      var hs = hash('s' + cleanBody(m[1]));
-      if (fired[hs]) continue;
-      mark(hs);
-      selfWrite(m[1]);
-    }
-    var mergeRe = /@@MERGE[ \t]+(\d+)/g;
-    while ((m = mergeRe.exec(text)) !== null) {
-      var hm = hash('m' + m[1]);
-      if (fired[hm]) continue;
-      mark(hm);
-      (function (n) {
-        gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' + r.status); });
-      }(m[1]));
-    }
-  }
-
-  function tick() {
-    if (load('vrb.paused') === '1' || load('vrb.halt') === '1' || phase === 'boot') return;
-    gm(readUrl('agent/WAKE.json')).then(function (r) {
-      if (!r.ok) return;
-      var flag;
-      try { flag = JSON.parse(unwrap(r.text)); } catch (e) { return; }
-      var reason = (flag && flag.reason) || '';
-      var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
-      if (sha && sha === load('vrb.sha')) return;
-      if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
-    }).catch(function () {});
-  }
-
-  var timer = null;
-  var observer = new MutationObserver(function () {
-    clearTimeout(timer);
-    timer = setTimeout(scan, 900);
-  });
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-
-  var tickTimer = setInterval(tick, POLL);
-  var healthTimer = setInterval(healthTick, 5000);
-  var retryTimer = setInterval(retryTick, 5000);
-
-  window.__vrb = { stop: function () {
-    clearInterval(tickTimer); clearInterval(healthTimer); clearInterval(retryTimer);
-    clearTimeout(timer); observer.disconnect();
-    if (badge.parentElement) badge.remove();
-  } };
-
-  gm(readUrl('agent/BRIDGE_GEN.json')).then(function (r) {
-    if (!r.ok) return;
-    try {
-      var g = JSON.parse(unwrap(r.text)).gen;
-      if (g && g > num('vrb.gen')) { store('vrb.gen', String(g)); paint(); }
-    } catch (e) {}
-  }).catch(function () {});
-
-  document.body.appendChild(badge);
-  paint();
-  var pendingGen = num('vrb.bootPending');
-  if (pendingGen) {
-    phase = 'boot';
-    store('vrb.bootPending', '0');
-    paint();
-    waitFor(function () { return composer() !== null; }, 30000).then(function (ok) {
-      if (!ok) { halt('composer missing after reload'); return; }
-      ensureAgentic();
-      setTimeout(function () { composeBootstrap(pendingGen); }, 2500);
-    });
-  } else {
-    setTimeout(tick, 4000);
-  }
-}());
+Sub-agent
+wakeg15| 26| d1 v49
+wakeg15| 1 v49
