@@ -19,6 +19,9 @@ REQUEST = 'ci/PRICE_PIT_MISSING_RECOVERY_REQUEST.json'
 WORKER = '8003fb7906c3bf86d88612495664e597de1c65ae'
 WORKER_SHA = 'd48f918fe27bbdab5df56d4408d74284deba47406b323a138dfd459fa3cddbc2'
 PLAN_FILE = 'PRICE_FULL_COHORT_PIT_RECOVERY_PLAN_V1.json'
+RESUME_REPORT = dict(release='price-full-cohort-pit-v1-41655284751-2-measured',
+    asset='PRICE_FULL_COHORT_PIT_MEASURED_V1.json',
+    sha256='d4cce0a3134227dfff8374debda3276fdce9b6fcb784a1bcabbd1291a33fb30b')
 
 
 def validate_request(request):
@@ -29,6 +32,11 @@ def validate_request(request):
             or request['expected_selected_names'] != 6799 or request['expected_selected_query_rows'] != 10110205
             or request['reserved_release_ids'] != {'34': 432338603}):
         raise ValueError('recovery scope differs from the observed missing-only cohort')
+    if request.get('resume_report') is not None:
+        if request['resume_report'] != RESUME_REPORT or request.get('allowed_new_names') != ['KGRN']:
+            raise ValueError('resume scope differs from the authenticated one-name gap')
+    elif 'allowed_new_names' in request:
+        raise ValueError('new-measurement restriction requires its authenticated resume report')
     return request
 
 
@@ -70,6 +78,63 @@ def latest_receipt(inventory, run_id):
     return max(matches)[1]
 
 
+def validate_resume_report(report, base, allowed):
+    names = set(base['expected_names'])
+    retained = names - set(allowed)
+    expected_rows = sum(r['query_rows'] for r in base['references'] if r['ticker'] in retained)
+    if (report['measurement'] != 'PARTIAL_NOT_MEASURED_FULL_COHORT'
+            or report['plan_sha256'] != PLAN_SHA or report['inputs_release'] != INPUT_RELEASE
+            or str(report['run_id']) != '41655284751' or str(report['run_attempt']) != '2'
+            or report['expected_names'] != len(names) or report['measured_names'] != len(retained)
+            or report['expected_query_rows'] != base['expected_query_rows']
+            or report['measured_query_rows'] != expected_rows or report['unmeasured_names'] != allowed
+            or report['source_commit'] != base['source_commit'] or report['composition'] != base['composition']
+            or report['frozen_recipe'] != base['frozen_build_request']['corrected_recipe_fingerprint']
+            or report['scoring_gate'] != 'CLOSED'):
+        raise ValueError('resume report changes the frozen measurement or exact missing set')
+
+
+def ensure_recovery_release(item):
+    """A sealed absence is a creation-time observation, never a resume command."""
+    tag = original_tag(item['index'])
+    if item['tag'] != tag:
+        raise ValueError('recovery release namespace differs')
+    hint = item['existing_release_id']
+    if hint is not None:
+        io._RELEASE_IDS[(os.environ['GITHUB_REPOSITORY'], tag)] = hint
+    try:
+        release = io.release_info(tag)
+    except subprocess.CalledProcessError as exc:
+        if not re.search(r'\bHTTP\s+404\b', str(exc.stderr or '')):
+            raise
+        if hint is not None:
+            raise ValueError('sealed existing recovery release disappeared') from exc
+        io.gh_retry('release', 'create', tag, '--draft', '--target', WORKER, '--title', tag,
+            '--notes', f"Append-only missing PIT recovery; original part {item['index']}, actual recovery run {os.environ['GITHUB_RUN_ID']}. Source commit/worker/math unchanged; not scoring approval.")
+        release = io.release_info(tag)
+    if release['tag_name'] != tag or release['target_commitish'] != WORKER:
+        raise ValueError('recovery release identity differs')
+    return release
+
+
+def allow_new_measurement(request, ticker):
+    allowed = request.get('allowed_new_names')
+    if allowed is not None and ticker not in allowed:
+        raise ValueError('retained proof disappeared; refusing to remeasure a completed name')
+
+
+def publish_checkpoint(root, tag, state, paths, reused):
+    # Reused proof bytes are already durable. The final part receipt records
+    # their new validation without publishing thousands of redundant checkpoints.
+    if reused:
+        if paths:
+            raise ValueError('a reused proof cannot be republished')
+        return
+    checkpoint = root / f"recovery_{os.environ['GITHUB_RUN_ID']}_{os.environ['GITHUB_RUN_ATTEMPT']}_{len(state['records']) + len(state['unmeasured']):04d}.json"
+    checkpoint.write_bytes(encoded(state))
+    io.publish_assets(tag, *paths, checkpoint)
+
+
 def prepare(root):
     worker_unchanged()
     request = validate_request(json.loads((ROOT / REQUEST).read_bytes()))
@@ -79,6 +144,9 @@ def prepare(root):
     if repository != 'SRoyaltyy/checklist-engine':
         raise ValueError('wrong recovery repository')
     base = json.loads(checked(request['base_plan'], root / 'base').read_bytes())
+    if request.get('resume_report') is not None:
+        report = json.loads(checked(request['resume_report'], root / 'resume-report').read_bytes())
+        validate_resume_report(report, base, request['allowed_new_names'])
     run = json.loads(io.gh_retry('api', f'repos/{repository}/actions/runs/{request["original_run_id"]}'))
     if run['head_sha'] != WORKER or run['run_attempt'] != 1:
         raise ValueError('original run changed; audit its actual attempt before recovery')
@@ -153,14 +221,7 @@ def recover(root, inputs, pin, index):
         raise ValueError('recovery source part membership differs')
     refs = {r['ticker']: r for r in base['references']}
     tag = item['tag']
-    if item['existing_release_id'] is None:
-        io.gh_retry('release', 'create', tag, '--draft', '--target', WORKER, '--title', tag,
-            '--notes', f"Append-only missing PIT recovery; original part {index}, actual recovery run {os.environ['GITHUB_RUN_ID']}. Source commit/worker/math unchanged; not scoring approval.")
-    else:
-        io._RELEASE_IDS[(os.environ['GITHUB_REPOSITORY'], tag)] = item['existing_release_id']
-    release = io.release_info(tag)
-    if release['tag_name'] != tag or release['target_commitish'] != WORKER:
-        raise ValueError('recovery release identity differs')
+    release = ensure_recovery_release(item)
     inventory = io.asset_index(tag)
     io._DOWNLOAD_INVENTORIES[(os.environ['GITHUB_REPOSITORY'], tag)] = inventory
     state = dict(format='PRICE_FULL_COHORT_PIT_PART_RECOVERY_V1', index=index, release=tag,
@@ -174,12 +235,14 @@ def recover(root, inputs, pin, index):
         reference = refs[ticker]
         name = ticker.encode().hex() + '.pit.json.gz'
         publish = []
+        reused = False
         try:
             existing = inventory.get(name)
             if existing and existing['state'] == 'uploaded':
                 file = io.download_asset(tag, name, root / 'existing')
                 reused = True
             else:
+                allow_new_measurement(recovery['request'], ticker)
                 if existing and not (existing['state'] == 'starter' and existing['size'] == 0):
                     raise ValueError('existing immutable proof cannot be replaced')
                 if time.monotonic() - started > 16800 - 1200:
@@ -231,16 +294,16 @@ def recover(root, inputs, pin, index):
             state['unmeasured'].append(dict(ticker=ticker, reason=io.describe_failure(exc)[-4000:]))
             print('PIT_MISSING_RECOVERY_UNMEASURED', index, ticker, io.describe_failure(exc)[-4000:], flush=True)
             publish = []
-        checkpoint = root / f"recovery_{os.environ['GITHUB_RUN_ID']}_{os.environ['GITHUB_RUN_ATTEMPT']}_{len(state['records']) + len(state['unmeasured']):04d}.json"
-        checkpoint.write_bytes(encoded(state))
+            reused = False
         # Publication failures stop this part; uploaded stock bytes remain
         # durable and are validated/reused on any later missing-only recovery.
-        io.publish_assets(tag, *publish, checkpoint)
+        publish_checkpoint(root, tag, state, publish, reused)
     validate_state(state, part['tickers'])
     file = root / receipt_name()
     file.write_bytes(encoded(state))
     io.publish_assets(tag, file)
-    io.gh_retry('release', 'edit', tag, '--draft=false')
+    if release['draft']:
+        io.gh_retry('release', 'edit', tag, '--draft=false')
     if state['unmeasured']:
         raise ValueError('recovery retains explicit unmeasured names; no exclusions')
 

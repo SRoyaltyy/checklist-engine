@@ -1,7 +1,7 @@
 {
   "version": 1,
   "execute": true,
-  "scope": "Recover only missing proofs in observed failed original parts034-175; preserve original input/worker/math/cohort and every existing valid proof. Actual recovery run/commit in immutable sidecar receipts; no global rerun.",
+  "scope": "Revalidate retained proofs in original failed parts034-175; calculate only KGRN if still missing. Every other name must reuse its existing immutable proof. Original input, worker, math, cohort and published proof bytes are preserved; actual new run/commit in sidecar receipts.",
   "base_plan": {
     "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
     "asset": "PRICE_FULL_COHORT_PIT_PLAN_V1.json",
@@ -158,5 +158,12 @@
   "expected_selected_query_rows": 10110205,
   "reserved_release_ids": {
     "34": 432338603
-  }
+  },
+  "resume_report": {
+    "release": "price-full-cohort-pit-v1-41655284751-2-measured",
+    "asset": "PRICE_FULL_COHORT_PIT_MEASURED_V1.json",
+    "sha256": "d4cce0a3134227dfff8374debda3276fdce9b6fcb784a1bcabbd1291a33fb30b"
+  },
+  "allowed_new_names": ["KGRN"],
+  "resume_note": "Revalidate retained proofs in the original failed-part scope; calculate only the authenticated KGRN gap. Supersede the old controller whose sealed absence hint recreates an existing release. Frozen worker, inputs, math, retained cohort and published proof bytes are unchanged."
 }

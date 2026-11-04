@@ -10,7 +10,9 @@ permissions:
   actions: read
 concurrency:
   group: price-pit-missing-recovery-${{ github.event_name }}
-  cancel-in-progress: false
+  # One-time corrected request supersedes the queued controller with stale absence hints.
+  # Restore false after the corrected run has started and sealed its inputs.
+  cancel-in-progress: true
 env:
   PYTHONDONTWRITEBYTECODE: '1'
   PYTHONUNBUFFERED: '1'
