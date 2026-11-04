@@ -468,4 +468,119 @@ Copy code
   function scan() {
     var text = document.body.innerText || '';
     var m;
-    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?
+    var strict = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
+    var covered = {};
+    while ((m = strict.exec(text)) !== null) {
+      covered[hash(m[1] + cleanBody(m[2]))] = 1;
+      doPut(m[1], m[2]);
+    }
+    var loose = /@@PUT[ \t]+(\S+)[ \t]*\r?\n([\s\S]*?)(?=\r?\n@@END|\r?\n@@PUT|\r?\n@@DISPATCH|\r?\n@@RUNS|\r?\n@@MERGE|\r?\n@@DEPLOY|$)/g;
+    while ((m = loose.exec(text)) !== null) {
+      var b2 = cleanBody(m[2]);
+      if (covered[hash(m[1] + b2)]) continue;
+      console.log('[bridge] UNTERMINATED @@PUT ' + m[1]);
+      doPut(m[1], m[2]);
+    }
+    var dispRe = /@@DISPATCH[ \t]+([A-Za-z0-9_.\-]+)/g;
+    while ((m = dispRe.exec(text)) !== null) {
+      var hd = hash('d' + (dispN++) + m[1]);
+      if (fired[hd]) continue;
+      mark(hd);
+      (function (wf) {
+        gm(W + 'dispatch&branch=' + BR + '&workflow=' + encodeURIComponent(wf)).then(function (r) {
+          sent++; paint(); console.log('[bridge] dispatch ' + r.status);
+        });
+      }(m[1]));
+    }
+    var runsRe = /@@RUNS/g;
+    while ((m = runsRe.exec(text)) !== null) {
+      var hr = hash('r' + (runsN++));
+      if (fired[hr]) continue;
+      mark(hr);
+      gm(W + 'runs&branch=' + BR).then(function (r) { sent++; paint(); console.log('[bridge] runs ' + r.status); });
+    }
+    var scrRe = /(?:@@)?SCRAPE[ \t]+(https?:\/\/\S+)/g;
+    while ((m = scrRe.exec(text)) !== null) {
+      var hsc = hash('c' + m[1]);
+      if (fired[hsc]) continue;
+      mark(hsc);
+      (function (u) {
+        gm(W + 'scrape&branch=' + BR + '&url=' + encodeURIComponent(u)).then(function (r) {
+          sent++; paint(); console.log('[bridge] scrape ' + r.status);
+          if (r.ok) setTimeout(function () { deliverScrape(u, r.text); }, 800);
+        });
+      }(m[1]));
+    }
+
+    var selfRe = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
+    while ((m = selfRe.exec(text)) !== null) {
+      var hs = hash('s' + cleanBody(m[1]));
+      if (fired[hs]) continue;
+      mark(hs);
+      selfWrite(m[1]);
+    }
+    var mergeRe = /@@MERGE[ \t]+(\d+)/g;
+    while ((m = mergeRe.exec(text)) !== null) {
+      var hm = hash('m' + m[1]);
+      if (fired[hm]) continue;
+      mark(hm);
+      (function (n) {
+        gm(W + 'merge&pr=' + n).then(function (r) { sent++; paint(); console.log('[bridge] merge ' + r.status); });
+      }(m[1]));
+    }
+  }
+
+  function tick() {
+    if (load('vrb.paused') === '1' || load('vrb.halt') === '1' || phase === 'boot') return;
+    gm(readUrl('agent/WAKE.json')).then(function (r) {
+      if (!r.ok) return;
+      var flag;
+      try { flag = JSON.parse(unwrap(r.text)); } catch (e) { return; }
+      var reason = (flag && flag.reason) || '';
+      var sha = (reason.match(/[0-9a-f]{7,40}/) || [''])[0];
+      if (sha && sha === load('vrb.sha')) return;
+      if (wake(reason || 'heartbeat', false) && sha) store('vrb.sha', sha);
+    });
+  }
+
+  var timer = null;
+  var observer = new MutationObserver(function () {
+    clearTimeout(timer);
+    timer = setTimeout(scan, 900);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+  var tickTimer = setInterval(tick, POLL);
+  var healthTimer = setInterval(healthTick, 5000);
+  var retryTimer = setInterval(retryTick, 5000);
+
+  window.__vrb = { stop: function () {
+    clearInterval(tickTimer); clearInterval(healthTimer); clearInterval(retryTimer);
+    clearTimeout(timer); observer.disconnect();
+    if (badge.parentElement) badge.remove();
+  } };
+
+  gm(readUrl('agent/BRIDGE_GEN.json')).then(function (r) {
+    if (!r.ok) return;
+    try {
+      var g = JSON.parse(unwrap(r.text)).gen;
+      if (g && g > num('vrb.gen')) { store('vrb.gen', String(g)); paint(); }
+    } catch (e) {}
+  });
+
+  document.body.appendChild(badge);
+  paint();
+  var pendingGen = num('vrb.bootPending');
+  if (pendingGen) {
+    phase = 'boot';
+    store('vrb.bootPending', '0');
+    paint();
+    waitFor(function () { return composer() !== null; }, 30000).then(function (ok) {
+      if (!ok) { halt('composer missing after reload'); return; }
+      ensureAgentic();
+      setTimeout(function () { composeBootstrap(pendingGen); }, 2500);
+    });
+  } else {
+    setTimeout(tick, 4000);
+  }
+}());
