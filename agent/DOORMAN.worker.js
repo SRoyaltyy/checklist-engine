@@ -249,7 +249,7 @@ export default {
           const host = new URL(u).hostname;
           const isSec = host === "sec.gov" || host.endsWith(".sec.gov");
           const ua = p.get("ua") || (bodyJson && bodyJson.ua) || (isSec ? SEC_UA : "Mozilla/5.0 venice-doorman");
-          const headers = { "User-Agent": ua, "Accept": "*/*", "Accept-Encoding": "identity" };
+          const headers = { "User-Agent": ua, "Accept": "*/*", "Accept-Encoding": "identity" }; if (host === "api.github.com") { headers.Authorization = "Bearer " + env.GITHUB_TOKEN; headers.Accept = "application/vnd.github+json"; }
           let got = null, raw = "";
           const tries = isSec ? 5 : 1;
           for (let i = 0; i < tries; i += 1) {
