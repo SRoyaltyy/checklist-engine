@@ -1,1 +1,1 @@
-{ "sha": "4.9.0", "note": "loader 1.4 sanitises Copy code and fence lines before eval; bridge 4.9 strips them anywhere when writing" }
+{ "sha": "4.9.1", "note": "bridge 4.9: cleanBody strips Copy code, Copied and fence lines anywhere; loader sanitises again before eval" }
