@@ -1,6 +1,54 @@
 {
-  "pending": true,
-  "id": "2026-11-04T18:18:42.373Z",
-  "set_at": "2026-11-04T18:18:42.373Z",
-  "reason": "run 41885769483 failed (nai-sec-bulk)"
+ "pending": true,
+ "id": "2026-11-04T18:26:00.000Z",
+ "set_at": "2026-11-04T18:26:00.000Z",
+ "reason": "manual start 7d3f1a9"
 }
+
+One action, then stopping.
+
+7d3f1a9 is fresh, so the skip can't apply, and the force patch means the four-minute lock is bypassed too. It should fire on the next 30-second tick.
+
+Watch the message box, not the chat. If text appears in the box and just sits there, that's the send stall and you press Enter by hand. If nothing appears in the box at all, the tick itself isn't running, and that's a different fault — tell me that plainly and I'll look at tick rather than the flag.
+
+One more thing worth checking while you wait: does the console show [loader] patched 3 spot(s) from when 1.8 loaded? If it says a smaller number, or nothing, some of the patch didn't apply and the force bypass isn't in. That's a one-word answer I can work with.
+
+absolutely nothing is happening on Console. Got these:
+
+VM11805:10 injected: env: missing script "c3672ed9-f280-4b2a-a53f-0e1afa576d6c"!
+
+3w0gqb2bqrshb.js:6 [DbWorker] Creating worker...
+3w0gqb2bqrshb.js:6 [DbWorker] Worker instance created
+3w0gqb2bqrshb.js:6 [DbWorker] Message received: ready
+3w0gqb2bqrshb.js:6 [DbWorker] Worker ready
+jwGJGzj:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+3w0gqb2bqrshb.js:6 [db] Database ready
+3w0gqb2bqrshb.js:6 [DbWorker] Posting message: getConversations requestId: 1
+db-worker.js:13411 [db] Database ready
+3w0gqb2bqrshb.js:6 [DbWorker] Message received: conversations
+3w0gqb2bqrshb.js:6 [DbWorker] Conversations received, count: 1
+
+Worked for 6s · 1 step
+
+65% — that console tells me something important: there are no [loader] lines at all. Not one. The loader logs [loader] patched N spot(s) and [loader] bridge started every time it runs, and neither appears. So the badge isn't hidden because it went healthy — the script isn't running at all.
+
+That first line confirms it: injected: env: missing script. Tampermonkey is looking for a script that isn't there. Pasting into a fresh script while the old one still existed likely left two entries with the same name, or replaced one and orphaned it.
+
+Fix this in the dashboard, not the page:
+
+Tampermonkey icon → Dashboard.
+Look at the list. You may see two rows both called "Venice Bridge Loader".
+Delete the one whose version is 1.6 — the bin icon on the right.
+On the remaining row, confirm the version column says 1.8 and the toggle is on.
+If no row says 1.8, the paste didn't save — say so and we redo it.
+Reload the Venice tab.
+
+How you'll know it's actually running: the console shows [loader] patched 3 spot(s) and [loader] bridge started, and [bridge] lines follow. Badge appears then disappears.
+
+If the console still shows nothing after that: tell me, and also check whether the script's row has a red "!" or says disabled. That combination means Tampermonkey refuses to run it, which is a different problem from a bad paste.
+
+Ask anything privately...
+
+Agent
+
+Sub-agent
