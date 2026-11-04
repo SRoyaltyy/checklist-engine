@@ -1,1 +1,1 @@
-{ "sha": "5.0.0", "note": "scrape and dispatch now debounce 60s instead of being marked forever; a URL can be re-fetched, a workflow re-dispatched" }
+{ "sha": "5.1.0", "note": "each scrape writes its own agent/fetch file so concurrent reads cannot collide; badge v51" }
