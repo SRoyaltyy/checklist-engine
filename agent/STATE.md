@@ -4,16 +4,12 @@ Work on venice/sec-options-pipelines. Ignore venice/calendar-announce-ledger ent
 
 Read agent/CONTEXT.md in full, then agent/PROTOCOL.md, then TODO.md on main for the lane.
 
-Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Confirmed in TODO.md this wake.
+Lane as of 2026-11-03: SEC and Options no-AI download pipelines. Unchanged.
 
-Infrastructure proven. Rollover proven at gen 4. Writes from inside the loop proven.
+Infrastructure is finished. Reads now arrive on their own as chat messages. Open infrastructure defect: the doorman scrape op returns an envelope and writes the body to a file, so delivery shows a receipt. Resolve path, read the file, deliver that.
 
-Next step: item 1, SEC 403 on runners. agent/FETCH.md holds the workflows directory listing written last wake. Take the nai-sec-bulk file name from it and scrape that file raw:
-https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/venice%2Fsec-options-pipelines/.github/workflows/<name>
-Then, the wake after, fix the request: User-Agent in Name plus email@domain form, Accept and Accept-Encoding set, and a delay keeping under ten requests a second. Prove with a dispatch run ID.
+Next step: item 1, blocked pending the block page text in agent/FETCH.md. If it names an undeclared agent or missing UA, one narrow retry with the UA forwarded through the Worker is justified. If it reads as an IP ban, item 1 stops per the blocker rule and the lane moves to item 2 on whatever route survives.
 
-If it still 403s with correct headers, the TODO sanctions one fallback only: route the fetch through the Cloudflare Worker egress instead of the runner, and prove that with a green run. Journal the response headers and stop rather than trying a fourth route.
-
-Do not edit nai-sec-form345 or nai-sec-form13f this wake unless the same one-line header fix is all they need.
+Both sanctioned routes are spent. Do not invent a fourth.
 
 No markers. Never push main. Never merge without instruction.
