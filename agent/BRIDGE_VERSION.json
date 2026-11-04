@@ -1,5 +1,5 @@
 {
-  "sha": "v54-gate-20261104",
-  "bumped": "2026-11-04T17:35Z",
-  "note": "token bump to re-arm the 5.3 composer gate after its sha was blacklisted; new token is absent from the bad list so refresh() will swap and boot() will not skip"
+  "sha": "v55-gate-20261104",
+  "bumped": "2026-11-04T17:37Z",
+  "note": "fresh token; 5.3.0 is blacklisted so refresh() short-circuits and init falls back to the cached 5.1 body. New token is absent from the bad list, so either loader version will swap and boot the 5.3 body."
 }
