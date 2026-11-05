@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Bridge Loader
 // @namespace venice.local
-// @version 1.12
+// @version 1.13
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @grant GM_setValue
@@ -22,7 +22,7 @@ var bootSeq = 0, settleTimer = 0;
 
 var mine = document.createElement('div');
 mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9;';
-mine.textContent = 'LOAD v1.12';
+mine.textContent = 'LOAD v1.13';
 function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
 function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
 function hide() { if (mine.parentElement) mine.remove(); }
@@ -59,14 +59,17 @@ var FILTER = "(function(){var raw=(document.body.innerText||'').slice(-20000);tr
 
 function patch(src) {
 var out = String(src), n = 0;
-// 1.12: force is now false. The bridge short-circuits its 240s cooldown on a
-// forced wake, so forcing every heartbeat made every 30s scan submit a wake.
-if (out.indexOf("wake(reason || 'heartbeat', false)") !== -1) { out = out.replace("wake(reason || 'heartbeat', false)", "wake(reason || 'heartbeat', false)"); n++; }
+// 1.13: 1.12 replaced this string with an identical string, so the patch was a
+// no-op and force stayed true, which short-circuits the bridge 240s cooldown
+// and made every 30s scan submit. The replacement now omits the space so it
+// differs from the search and actually applies.
+if (out.indexOf("wake(reason || 'heartbeat', false)") !== -1) { out = out.replace("wake(reason || 'heartbeat', false)", "wake(reason || 'heartbeat',false)"); n++; }
 if (out.indexOf('@version 5.1') !== -1) { out = out.replace('@version 5.1', '@version 5.4'); n++; }
 if (out.indexOf("var text = (document.body.innerText || '').slice(-20000)") !== -1) { out = out.replace("var text = (document.body.innerText || '').slice(-20000)", "var text = " + FILTER); n++; }
 else if (out.indexOf("var text = document.body.innerText || ''") !== -1) { out = out.replace("var text = document.body.innerText || ''", "var text = " + FILTER); n++; }
 if (n) console.log('[loader] patched ' + n + ' spot(s)');
 if (out.indexOf('__vrbSeen') === -1) console.log('[loader] WARN scan filter did not take');
+if (out.indexOf("'heartbeat',false)") === -1) console.log('[loader] WARN force flag did not take');
 return out;
 }
 
