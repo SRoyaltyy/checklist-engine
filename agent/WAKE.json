@@ -1,7 +1,6 @@
 {
-"pending": false,
-"id": "2026-11-05T16:40:42.585Z",
-"set_at": "2026-11-05T16:40:42.585Z",
-"reason": "heartbeat: interval elapsed",
-"cleared_by": "venice, burst test 16:56Z"
+  "pending": true,
+  "id": "2026-11-05T16:58:42.300Z",
+  "set_at": "2026-11-05T16:58:42.300Z",
+  "reason": "heartbeat: interval elapsed"
 }
