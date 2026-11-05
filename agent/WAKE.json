@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-05T17:30:43.010Z",
-  "set_at": "2026-11-05T17:30:43.010Z",
-  "reason": "heartbeat: interval elapsed"
+  "id": "2026-11-05T17:46:42.740Z",
+  "set_at": "2026-11-05T17:46:42.740Z",
+  "reason": "run 42076710918 failed (.github/workflows/nai-probe.yml)"
 }
