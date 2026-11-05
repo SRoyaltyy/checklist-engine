@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Bridge Loader
 // @namespace venice.local
-// @version 1.10
+// @version 1.11
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @grant GM_setValue
@@ -21,7 +21,7 @@ var SETTLE_MS = 120000;
 
 var mine = document.createElement('div');
 mine.style.cssText = 'position:fixed;right:14px;bottom:14px;z-index:2147483646;padding:7px 11px;border-radius:8px;font:12px ui-monospace,monospace;color:#fff;background:#9e6a03;cursor:default;box-shadow:0 2px 10px rgba(0,0,0,.45);opacity:.9;';
-mine.textContent = 'LOAD v1.10';
+mine.textContent = 'LOAD v1.11';
 function say(t, bg) { mine.textContent = t; mine.style.background = bg; }
 function show() { if (!mine.parentElement && document.body) document.body.appendChild(mine); }
 function hide() { if (mine.parentElement) mine.remove(); }
@@ -41,8 +41,10 @@ probe('log'); probe('warn'); probe('error');
 
 function hash(s) { var h = 5381, i; s = String(s); for (i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36) + '.' + s.length.toString(36); }
 
-// self-contained one-shot directive filter, injected into the bridge
-var FILTER = "(function(){var S=window.__vrbSeen||(window.__vrbSeen={});var L=(document.body.innerText||'').slice(-20000).split('\n');var n=0,i,s,h,j,k;for(i=0;i<L.length;i++){s=L[i].trim();if(!/^@@(PUT|SCRAPE|RUNS|DISPATCH|MERGE|SELF)\b/.test(s))continue;h=0;for(j=0;j<s.length;j++)h=((h*33)^s.charCodeAt(j))>>>0;k=h+'.'+s.length;if(S[k]){L[i]='';}else{S[k]=1;n++;}}if(n>500){var c=0;for(k in S){if(++c>500)delete S[k];}}return L.join('\n');})()";
+// self-contained one-shot directive filter, injected into the bridge.
+// Wrapped in try/catch: if it ever throws, the plain slice is returned so the
+// scan still works and the bridge is not rolled back for a filter bug.
+var FILTER = "(function(){var raw=(document.body.innerText||'').slice(-20000);try{var S=window.__vrbSeen||(window.__vrbSeen={});var L=raw.split('\n');var n=0,i,s,h,j,k;for(i=0;i<L.length;i++){s=L[i].trim();if(!/^@@(PUT|SCRAPE|RUNS|DISPATCH|MERGE|SELF)\b/.test(s))continue;h=0;for(j=0;j<s.length;j++)h=((h*33)^s.charCodeAt(j))>>>0;k=h+'.'+s.length;if(S[k]){L[i]='';}else{S[k]=1;n++;}}if(n>500){var c=0;for(k in S){if(++c>500)delete S[k];}}return L.join('\n');}catch(e){return raw;}})()";
 
 function patch(src) {
 var out = String(src), n = 0;
@@ -51,6 +53,7 @@ if (out.indexOf('@version 5.1') !== -1) { out = out.replace('@version 5.1', '@ve
 if (out.indexOf("var text = (document.body.innerText || '').slice(-20000)") !== -1) { out = out.replace("var text = (document.body.innerText || '').slice(-20000)", "var text = " + FILTER); n++; }
 else if (out.indexOf("var text = document.body.innerText || ''") !== -1) { out = out.replace("var text = document.body.innerText || ''", "var text = " + FILTER); n++; }
 if (n) console.log('[loader] patched ' + n + ' spot(s)');
+if (out.indexOf('__vrbSeen') === -1) console.log('[loader] WARN scan filter did not take');
 return out;
 }
 
