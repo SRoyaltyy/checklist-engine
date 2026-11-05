@@ -42,6 +42,8 @@ probe('log'); probe('warn'); probe('error');
 function hash(s) { var h = 5381, i; s = String(s); for (i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36) + '.' + s.length.toString(36); }
 
 // self-contained one-shot directive filter, injected into the bridge.
+// Backslashes are doubled so they survive this string and reach the bridge as
+// \n and \b rather than as a real newline and a backspace character.
 // Wrapped in try/catch: if it ever throws, the plain slice is returned so the
 // scan still works and the bridge is not rolled back for a filter bug.
 var FILTER = "(function(){var raw=(document.body.innerText||'').slice(-20000);try{var S=window.__vrbSeen||(window.__vrbSeen={});var L=raw.split('\n');var n=0,i,s,h,j,k;for(i=0;i<L.length;i++){s=L[i].trim();if(!/^@@(PUT|SCRAPE|RUNS|DISPATCH|MERGE|SELF)\b/.test(s))continue;h=0;for(j=0;j<s.length;j++)h=((h*33)^s.charCodeAt(j))>>>0;k=h+'.'+s.length;if(S[k]){L[i]='';}else{S[k]=1;n++;}}if(n>500){var c=0;for(k in S){if(++c>500)delete S[k];}}return L.join('\n');}catch(e){return raw;}})()";
