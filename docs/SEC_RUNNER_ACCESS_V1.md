@@ -136,7 +136,18 @@ in git. The client now redacts contact-email values from failure evidence and
 response excerpts while preserving the actual request header; its additional
 regression check brings the synthetic suite to24passing tests.
 
-The one-shot request is disabled. **Task5 remains unchecked, world gate
+## Owner-approved contact deployment
+
+Cyrus explicitly approved using his private contact address in Cloudflare and SEC
+requests, while keeping it out of public GitHub code and evidence. The Worker was
+updated through its existing authenticated dashboard. Production version
+`249cd444` is visibly **Active / Latest**. Its User-Agent expression uses the
+approved private contact only for the exact hosts `sec.gov`, `www.sec.gov` and
+`data.sec.gov`; other destinations keep the existing public contact identity.
+The private value is not stored in this repository or its receipts.
+
+A fresh bounded proof now tests the same six sources after this configuration
+change and the cooldown interval. **Task5 remains unchecked, world gate
 NOT_PROVEN, scoring CLOSED.** Source access remains a prerequisite to scheduled
-bulk-download tasks; no unverified access success is claimed and no new Worker
-change is made while the specific contact-data permission is pending.
+bulk-download tasks. The one-shot request will be disabled after its actual
+result is reviewed; no unverified access success is claimed.
