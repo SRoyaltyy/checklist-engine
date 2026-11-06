@@ -22,8 +22,8 @@
   GM_registerMenuCommand('Configure Venice bridge key',()=>{const k=prompt('Doorman key (stored locally in Tampermonkey):',CONFIG.key);if(k){GM_setValue('vrb6.key',k.trim());location.reload();}});
   if(!CONFIG.key){status('configure key in Tampermonkey menu');return;}
   function getSource(){return new Promise((resolve,reject)=>{
-    const u=new URL(CONFIG.worker);u.searchParams.set('k',CONFIG.key);u.searchParams.set('op','read');u.searchParams.set('branch',CONFIG.branch);u.searchParams.set('path',SOURCE);u.searchParams.set('_',String(Date.now()));
-    GM_xmlhttpRequest({method:'GET',url:u.href,timeout:30000,onload:r=>{try{const o=JSON.parse(r.responseText);if(r.status<200||r.status>=300||o.ok!==true||typeof o.text!=='string'||!o.sha)throw new Error(o.error||'bad source');resolve({source:o.text,sha:o.sha});}catch(e){reject(e);}},onerror:()=>reject(new Error('source offline')),ontimeout:()=>reject(new Error('source timeout'))});
+    const u=new URL(CONFIG.worker);u.searchParams.set('op','source');u.searchParams.set('_',String(Date.now()));
+    GM_xmlhttpRequest({method:'GET',url:u.href,headers:{'Authorization':'Bearer '+CONFIG.key},timeout:30000,onload:r=>{try{const o=JSON.parse(r.responseText);if(r.status<200||r.status>=300||o.ok!==true||typeof o.text!=='string'||!o.sha)throw new Error(o.error||'bad source');resolve({source:o.text,sha:o.sha});}catch(e){reject(e);}},onerror:()=>reject(new Error('source offline')),ontimeout:()=>reject(new Error('source timeout'))});
   });}
   function compile(source){return new Function('GM_xmlhttpRequest','GM_getValue','GM_setValue','window','document','CONFIG',source);}
   function boot(build){
