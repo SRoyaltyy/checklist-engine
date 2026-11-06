@@ -17,3 +17,7 @@ Journal - append only, newest last. date UTC | item | action | sha | result.
 2026-11-04T17:19Z | infra | delivery now resolves the envelope and delivers page text | n/a | proven
 2026-11-04T17:19Z | 1 | SEC retry with contact UA, Accept, identity encoding, five backoff attempts via Worker | n/a | still 403, new Reference ID 0.5e711102.1793812678.1edce412
 2026-11-04T17:19Z | infra | two concurrent scrapes both write FETCH.md, so both deliveries resolve the same file | n/a | defect open
+2026-11-06T11:47Z | infra | nai-probe.yml arrived with every leading space stripped, workflow_dispatch at column 0, invalid | n/a | run 42210301200 died same second, no job
+2026-11-06T11:59Z | infra | flow style, one line, zero indentation, written to a fresh path nai-probe2.yml | n/a | landed byte-exact
+2026-11-06T12:15Z | infra | nai-probe2 green twice, runs 42216183221 and 42214233882 | n/a | proven: bridge-written workflows run when flow style
+2026-11-06T12:15Z | infra | nai-probe.yml still flat: the replayed old directive rewrites the indented body over any newer one | n/a | defect open, use fresh filenames
