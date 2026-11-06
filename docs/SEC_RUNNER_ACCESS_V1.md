@@ -79,8 +79,26 @@ option is removed and a regression check exercises the real release-wrapper
 parser. The supplied upstream header patch also passes `git apply --check`
 against the published Worker source.
 
+After Cyrus reported updating the Worker, a fresh bounded retest
+[42255662982/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42255662982)
+ran on source `2434bbe8536459167f30d6fa4630129d534ed854`. All19synthetic checks
+passed, but **all six official endpoints returned HTTP403**, one attempt each.
+The four www.sec.gov responses retained the rate-threshold title; the two
+data.sec.gov responses now said "Your Request Originates from an Undeclared
+Automated Tool", whereas those two endpoints passed in the earlier run.
+This does not prove the deployed header or establish the reason for the change.
+
+The corrected publisher successfully created the [public failed-proof release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/sec-runner-access-v1-42255662982-1).
+Its exact [8,561-byte receipt](SEC_RUNNER_ACCESS_RETEST_42255662982_V1.json) was
+independently downloaded and SHA256 checked:
+`35f67ac063b3979c7439bca530a00a0d65aa44fd130b5e36a9d6e522429c9dee`.
+The original failed receipt above remains unchanged. Cyrus has been asked for
+only the deployed Worker's User-Agent line to verify the actual edit; no token
+or secret URL is requested. The broad goal was paused, so this retest does not
+restart the remaining bulk-download backlog.
+
 The one-shot request is reset FALSE. **Task5 remains unchecked, world gate
 NOT_PROVEN, scoring CLOSED.** The next dependency is a contact-bearing deployed
-Worker or another explicitly configured authorized SEC egress route. Cyrus has
-been given the exact one-line Cloudflare edit; no deployment is claimed and no
-further SEC requests are made until that external configuration changes.
+Worker or another explicitly configured authorized SEC egress route. No
+deployment is performed by Codex and no further SEC requests are made until
+the deployed configuration is checked or changed.
