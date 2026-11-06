@@ -1,14 +1,8 @@
-// @ts-nocheck
-// venice-doorman — transport for repo actions plus a cron half that sets a wake flag.
-// Secrets: GITHUB_TOKEN, DOORMAN_KEY, DEPLOY_KEY. Vars: GITHUB_REPO, WAKE_BRANCH, DEPLOYER.
-const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST,OPTIONS", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Max-Age": "86400" };
-const WAKE_PATH = "agent/WAKE.json";
-const WAKE_HEARTBEAT_MIN = 15, WAKE_FRESH_COMMIT_MIN = 20, WAKE_FRESH_FAIL_MIN = 30;
-const SEC_UA = "checklist-engine research cyrus-checklist@users.noreply.github.com";
+const CORS={'Access-Control-Allow-Origin':'https://venice.ai','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization','Vary':'Origin'};
 const enc = (s) => { const b = new TextEncoder().encode(s); let o = ""; for (let i = 0; i < b.length; i += 8192) o += String.fromCharCode.apply(null, b.subarray(i, i + 8192)); return btoa(o); };
 const dec = (b64) => { const r = atob(String(b64 || "").replace(/\n/g, "")); const u = new Uint8Array(r.length); for (let i = 0; i < r.length; i += 1) u[i] = r.charCodeAt(i); return new TextDecoder().decode(u); };
 const reply = (d, s = 200) => new Response(JSON.stringify(d, null, 2), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
-function repo(env) { if (!env.GITHUB_REPO) throw new Error("GITHUB_REPO unset"); return env.GITHUB_REPO; }
+function repo(env) { if (env.GITHUB_REPO !== "SRoyaltyy/checklist-engine") throw new Error("Worker is pinned to SRoyaltyy/checklist-engine"); return "SRoyaltyy/checklist-engine"; }
 async function gh(env, path, init = {}) {
   const res = await fetch(`https://api.github.com/repos/${repo(env)}${path}`, { ...init, headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json", "User-Agent": "venice-doorman", ...(init.headers || {}) } });
   const text = await res.text();
@@ -49,236 +43,183 @@ async function editFile(env, branch, path, find, replace, message) {
   if (hits !== 1) throw new Error(`find matched ${hits} times, need exactly 1`);
   return writeFile(env, branch, path, current.text.replace(find, replace), message, false);
 }
-async function wakeRead(env) {
-  const got = await gh(env, `/contents/${WAKE_PATH}?ref=${encodeURIComponent(env.WAKE_BRANCH)}`);
-  if (!got.ok) return { pending: false, sha: null };
-  let parsed = /** @type {any} */ ({});
-  try { parsed = JSON.parse(dec(got.body.content)); } catch { parsed = {}; }
-  return /** @type {any} */ ({ ...parsed, sha: got.body.sha });
-}
 
-async function wakeWrite(env, payload, sha) {
-  const body = { message: "agent: wake flag", content: enc(JSON.stringify(payload, null, 2)), branch: env.WAKE_BRANCH };
-  if (sha) body.sha = sha;
-  const put = await gh(env, `/contents/${WAKE_PATH}`, { method: "PUT", body: JSON.stringify(body) });
-  if (!put.ok) throw new Error(`wake write failed: ${put.status}`);
+// Runtime v6: durable, acknowledged tools for the Venice web bridge.
+const RUNTIME_BRANCH = 'venice/sec-options-pipelines';
+const RUNTIME_ROOT = 'agent/runtime';
+function runtimeBranch(env) { return env.WAKE_BRANCH || RUNTIME_BRANCH; }
+function writableBranch(branch) {
+  if (!/^venice\/[A-Za-z0-9._/-]+$/.test(branch) || branch.includes('..')) throw new Error('Writes must use a venice/* branch; main is read-only');
+  return branch;
 }
-
-async function wakeDecide(env) {
-  const now = Date.now();
-  const wake = await wakeRead(env);
-  if (wake.pending && wake.set_at) {
-    const age = (now - Date.parse(wake.set_at)) / 60000;
-    if (age < WAKE_HEARTBEAT_MIN) return;
+function safePath(path) {
+  if (typeof path !== 'string' || !path || path.startsWith('/') || /[?#\\\x00-\x1f]/.test(path) || path.split('/').some(x => x === '..' || x === '.')) throw new Error('Invalid repository path');
+  return path;
+}
+async function maybeRead(env, branch, path) {
+  const r = await gh(env, `/contents/${safePath(path)}?ref=${encodeURIComponent(branch)}`);
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error(`read ${path}: ${r.status}`);
+  if (typeof r.body.content === 'string') return { text: dec(r.body.content), sha: r.body.sha };
+  return readFile(env, branch, path);
+}
+async function verifiedWrite(env, branch, path, text, message, expectedSha) {
+  writableBranch(branch); safePath(path);
+  if (typeof text !== 'string' || text.length > 250000) throw new Error('text must be a string under 250000 characters');
+  const prior = await maybeRead(env, branch, path);
+  if (expectedSha !== undefined && expectedSha !== (prior ? prior.sha : null)) throw new Error('File changed since read; read it again before editing');
+  if (prior && prior.text === text) return { ok: true, unchanged: true, path, blob_sha: prior.sha };
+  const body = { branch, message: message || `venice: ${path}`, content: enc(text) };
+  if (prior) body.sha = prior.sha;
+  const r = await gh(env, `/contents/${path}`, { method: 'PUT', body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`write ${path}: ${r.status} ${JSON.stringify(r.body).slice(0,250)}`);
+  const back = await readFile(env, branch, path);
+  if (back.text !== text) throw new Error(`readback mismatch: ${path}`);
+  return { ok: true, path, commit: r.body.commit.sha, blob_sha: back.sha, verified: true };
+}
+async function runtimeContext(env) {
+  const branch = runtimeBranch(env);
+  const [todo, method, progress, state, runs] = await Promise.all([
+    readFile(env, 'main', 'TODO.md'), readFile(env, 'main', 'METHODOLOGY.md'),
+    maybeRead(env, branch, `${RUNTIME_ROOT}/PROGRESS.md`), maybeRead(env, branch, `${RUNTIME_ROOT}/STATE.json`),
+    gh(env, '/actions/runs?branch=main&per_page=50')
+  ]);
+  const section = todo.text.match(/^##\s+Venice\b[^\n]*\n[\s\S]*?(?=^##\s|$(?![\s\S]))/m);
+  if (!section) throw new Error('No Venice section in main/TODO.md; refusing to invent a task');
+  const ml = method.text.split('\n');
+  const instructions = ml.slice(0,55).join('\n').slice(0,9000);
+  const specific = ml.map((text,i)=>({line:i+1,text})).filter(x=>/James.*Venice|Venice.*James|^>.*TODO\.md/.test(x.text)).slice(0,8).map(x=>`L${x.line}: ${x.text}`).join('\n').slice(0,8500);
+  return { ok:true, version:6, at:new Date().toISOString(), branch,
+    instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific},
+    progress:progress?.text || 'No v6 progress recorded yet. Begin with the current Venice lane; old SEC collector work was reassigned.',
+    state:state ? JSON.parse(state.text) : null,
+    runs:runs.ok ? (runs.body.workflow_runs||[]).filter(r=>/nai-sec-|nai-occ-oi-daily/.test(r.path||r.name||'')).slice(0,15).map(r=>({id:r.id,path:r.path,name:r.name,status:r.status,conclusion:r.conclusion,sha:r.head_sha,url:r.html_url,created_at:r.created_at})) : {error:runs.status}
+  };
+}
+async function runtimeSave(env, data) {
+  const branch=runtimeBranch(env);
+  const summary=String(data.summary||'').slice(0,10000), next=String(data.next||'').slice(0,4000);
+  const state={version:6,at:new Date().toISOString(),turn_id:data.turn_id||null,summary,next,blockers:data.blockers||[],evidence:data.evidence||[],done:!!data.done};
+  const text=`# Venice progress\n\nUpdated ${state.at} UTC\n\n## Last completed work\n${summary}\n\n## Exact next step\n${next}\n\n## Blockers\n${JSON.stringify(state.blockers)}\n\n## Evidence\n${JSON.stringify(state.evidence)}\n\nTurn: ${state.turn_id}\n`;
+  await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PROGRESS.md`,text,'venice: checkpoint progress');
+  return verifiedWrite(env,branch,`${RUNTIME_ROOT}/STATE.json`,JSON.stringify(state,null,2)+'\n','venice: checkpoint state');
+}
+async function runtimeTool(env, command) {
+  const {id,action,args={}}=command||{};
+  if (!/^[A-Za-z0-9._-]{8,120}$/.test(id||'')) throw new Error('Each tool requires a stable unique id (8-120 letters, digits, dot, dash, underscore)');
+  const branch=runtimeBranch(env), receiptPath=`${RUNTIME_ROOT}/receipts/${id}.json`;
+  const old=await maybeRead(env,branch,receiptPath);
+  if (old) {
+    const receipt=JSON.parse(old.text);
+    if (receipt.action!==action || JSON.stringify(receipt.args)!==JSON.stringify(args)) throw new Error('Action id reused with different arguments');
+    if (receipt.status==='done') return {...receipt.result,replayed:true};
+    return {ok:false,uncertain:true,error:'The previous execution did not save its final receipt. Inspect repository state/run history before issuing a new mutation.',id};
   }
-  const reasons = [];
-  const commits = await gh(env, `/commits?sha=main&per_page=1`);
-  if (commits.ok && Array.isArray(commits.body) && commits.body[0]) {
-    const when = commits.body[0].commit?.committer?.date;
-    if (when && (now - Date.parse(when)) / 60000 < WAKE_FRESH_COMMIT_MIN) reasons.push(`main moved ${commits.body[0].sha.slice(0, 8)}`);
-  }
-  const runs = await gh(env, `/actions/runs?branch=${encodeURIComponent(env.WAKE_BRANCH)}&per_page=5`);
-  if (runs.ok && runs.body.workflow_runs) {
-    for (const run of runs.body.workflow_runs) {
-      if (run.conclusion === "failure") {
-        if ((now - Date.parse(run.created_at)) / 60000 < WAKE_FRESH_FAIL_MIN) reasons.push(`run ${run.id} failed (${run.name})`);
-        break;
+  const mutations=new Set(['write_file','edit_file','create_branch','create_pr','create_issue','comment_issue','dispatch','deploy_worker']);
+  const mutation=mutations.has(action);
+  if (mutation) await verifiedWrite(env,branch,receiptPath,JSON.stringify({id,action,args,status:'running',at:new Date().toISOString()}),'venice: claim tool action');
+  let result;
+  try {
+    const target=args.branch||branch;
+    switch(action) {
+      case 'read_file': {
+        const b=args.branch||'main', file=await readFile(env,b,safePath(args.path));
+        const lines=file.text.split('\n'), start=Math.max(1,Number(args.start_line)||1), end=Math.min(lines.length,Number(args.end_line)||start+249);
+        result={ok:true,branch:b,path:args.path,sha:file.sha,total_lines:lines.length,start_line:start,end_line:end,text:lines.slice(start-1,end).join('\n').slice(0,24000)};break;
       }
+      case 'list_files': {
+        const p=args.path?safePath(args.path):'';
+        const r=await gh(env,`/contents/${p}?ref=${encodeURIComponent(args.branch||'main')}`);
+        if(!r.ok)throw new Error(`list: ${r.status}`);
+        result={ok:true,entries:(Array.isArray(r.body)?r.body:[r.body]).slice(0,150).map(x=>({path:x.path,type:x.type,size:x.size,sha:x.sha}))};break;
+      }
+      case 'grep': {
+        const file=await readFile(env,args.branch||'main',safePath(args.path));
+        const q=String(args.query||'').toLowerCase();if(!q)throw new Error('query is required');
+        result={ok:true,path:args.path,sha:file.sha,hits:file.text.split('\n').map((text,i)=>({line:i+1,text})).filter(x=>x.text.toLowerCase().includes(q)).slice(0,30)};break;
+      }
+      case 'write_file': result=await verifiedWrite(env,target,safePath(args.path),args.text,args.message,args.expected_sha);break;
+      case 'edit_file': {
+        const prior=await readFile(env,writableBranch(target),safePath(args.path));
+        if(!args.find || prior.text.split(args.find).length!==2)throw new Error('find must match exactly once');
+        result=await verifiedWrite(env,target,args.path,prior.text.replace(args.find,String(args.replace||'')),args.message,prior.sha);break;
+      }
+      case 'create_branch': {
+        writableBranch(args.branch); const r=await gh(env,`/git/ref/heads/${encodeURIComponent(args.base||'main')}`);
+        if(!r.ok)throw new Error(`base ref: ${r.status}`);
+        const made=await gh(env,'/git/refs',{method:'POST',body:JSON.stringify({ref:`refs/heads/${args.branch}`,sha:r.body.object.sha})});
+        if(!made.ok)throw new Error(`create branch: ${made.status}`);result={ok:true,branch:args.branch,sha:made.body.object.sha};break;
+      }
+      case 'runs': {
+        const r=await gh(env,`/actions/runs?branch=${encodeURIComponent(args.branch||'main')}&per_page=30`);if(!r.ok)throw new Error(`runs: ${r.status}`);
+        result={ok:true,runs:(r.body.workflow_runs||[]).map(x=>({id:x.id,path:x.path,name:x.name,status:x.status,conclusion:x.conclusion,url:x.html_url,sha:x.head_sha}))};break;
+      }
+      case 'run_jobs': {
+        if(!/^\d+$/.test(String(args.run_id)))throw new Error('run_id required');
+        const r=await gh(env,`/actions/runs/${args.run_id}/jobs?per_page=30`);if(!r.ok)throw new Error(`jobs: ${r.status}`);
+        result={ok:true,jobs:(r.body.jobs||[]).map(x=>({id:x.id,name:x.name,conclusion:x.conclusion,url:x.html_url,check_run_url:x.check_run_url,steps:x.steps?.map(s=>({name:s.name,conclusion:s.conclusion}))}))};break;
+      }
+      case 'annotations': {
+        if(!/^\d+$/.test(String(args.check_run_id)))throw new Error('check_run_id required');
+        const r=await gh(env,`/check-runs/${args.check_run_id}/annotations?per_page=30`);if(!r.ok)throw new Error(`annotations: ${r.status}`);
+        result={ok:true,annotations:r.body};break;
+      }
+      case 'create_issue': case 'comment_issue': case 'create_pr': {
+        const dedupe=String(args.dedupe_key||'').replace(/[^A-Za-z0-9._-]/g,'').slice(0,100);
+        const marker=`<!-- venice-action:${id} -->`, dedupeMarker=dedupe?`<!-- venice-dedupe:${dedupe} -->`:'';
+        const body=String(args.body||'')+'\n\n'+marker+'\n'+dedupeMarker;
+        let api,payload;
+        if(action==='create_pr'){writableBranch(target);api='/pulls';payload={title:args.title,body,head:target,base:'main'};}
+        else if(action==='create_issue'){
+          if(dedupe){const listed=await gh(env,'/issues?state=all&creator=@me&per_page=100');if(!listed.ok)throw new Error('Cannot check prior reports');const existing=(listed.body||[]).find(x=>(x.body||'').includes(dedupeMarker));if(existing){result={ok:true,number:existing.number,url:existing.html_url,deduplicated:true};break;}}
+          api='/issues';payload={title:args.title,body};
+        }
+        else {if(!/^\d+$/.test(String(args.issue)))throw new Error('issue number required');api=`/issues/${args.issue}/comments`;payload={body};}
+        const r=await gh(env,api,{method:'POST',body:JSON.stringify(payload)});if(!r.ok)throw new Error(`${action}: ${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
+        result={ok:true,number:r.body.number,url:r.body.html_url};break;
+      }
+      case 'dispatch': {
+        writableBranch(target);if(!/^[A-Za-z0-9_.-]+\.ya?ml$/.test(args.workflow||''))throw new Error('workflow filename required');
+        const r=await gh(env,`/actions/workflows/${args.workflow}/dispatches`,{method:'POST',body:JSON.stringify({ref:target,inputs:args.inputs||{}})});if(!r.ok)throw new Error(`dispatch: ${r.status}`);
+        result={ok:true,workflow:args.workflow,branch:target};break;
+      }
+      case 'deploy_worker': {
+        writableBranch(target);if(target!==runtimeBranch(env))throw new Error('Worker deployment is pinned to the runtime maintenance branch');
+        if(!env.DEPLOYER)throw new Error('DEPLOYER unset');
+        const head=await gh(env,`/git/ref/heads/${encodeURIComponent(target)}`);if(!head.ok)throw new Error('Cannot resolve deployment commit');
+        const u=new URL(/^https?:/.test(env.DEPLOYER)?env.DEPLOYER:'https://'+env.DEPLOYER);if(u.origin!=='https://venice-deployer.fullscan-relay.workers.dev')throw new Error('Unexpected deployer target');u.searchParams.set('op','deploy');u.searchParams.set('commit',head.body.object.sha);
+        const r=await fetch(u,{method:'POST',headers:{Authorization:'Bearer '+String(env.DEPLOY_KEY||'').trim()}});const body=await r.json();if(!r.ok||body.ok!==true)throw new Error(`deploy failed: ${JSON.stringify(body).slice(0,500)}`);
+        result={ok:true,commit:head.body.object.sha,deployment:body};break;
+      }
+      default: throw new Error('Unknown tool: '+action);
     }
-  }
-  if (!reasons.length) reasons.push("heartbeat: interval elapsed");
-  const stamp = new Date(now).toISOString();
-  await wakeWrite(env, { pending: true, id: stamp, set_at: stamp, reason: reasons.join("; ") }, wake.sha);
+  } catch(e) {result={ok:false,error:String(e.message||e),action};}
+  if(mutation)await verifiedWrite(env,branch,receiptPath,JSON.stringify({id,action,args,status:'done',at:new Date().toISOString(),result}),'venice: acknowledge tool action');
+  return result;
 }
+
 export default {
-  async fetch(request, env) {
-    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
-    const p = new URL(request.url).searchParams;
-    const op = p.get("op") || "ops";
-    if (env.DOORMAN_KEY && p.get("k") !== env.DOORMAN_KEY) return reply({ ok: false, error: "bad key" }, 401);
-    let bodyText = "", bodyJson = null;
-    if (request.method === "POST") {
-      bodyText = await request.text();
-      const type = request.headers.get("content-type") || "";
-      if (type.includes("application/json")) { try { bodyJson = JSON.parse(bodyText); } catch { bodyJson = null; } }
-    }
-    const pick = (name) => {
-      const q = p.get(name);
-      if (q !== null && q !== undefined) return q;
-      if (bodyJson && bodyJson[name] !== undefined) return bodyJson[name];
-      if (bodyText) return bodyText;
-      return undefined;
-    };
-    const branch = p.get("branch") || (bodyJson && bodyJson.branch) || "main";
-    const path = p.get("path") || (bodyJson && bodyJson.path);
-    const message = p.get("message") || p.get("msg") || (bodyJson && bodyJson.message) || undefined;
-    try {
-      switch (op) {
-        case "ops":
-          return reply({ ok: true, ops: ["branch", "ref", "read", "list", "commits", "diff", "search", "grep", "put", "edit", "pr", "pr-edit", "runs", "dispatch", "merge", "deploy", "scrape"] });
-        case "branch": {
-          const got = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
-          if (!got.ok) throw new Error(`branch failed: ${got.status}`);
-          return reply({ ok: true, sha: got.body.object.sha });
-        }
-        case "ref": {
-          const base = p.get("base") || "main";
-          const got = await gh(env, `/git/ref/heads/${encodeURIComponent(base)}`);
-          if (!got.ok) throw new Error(`base ref failed: ${got.status}`);
-          const made = await gh(env, `/git/refs`, { method: "POST", body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: got.body.object.sha }) });
-          if (!made.ok) throw new Error(`ref failed: ${made.status}`);
-          return reply({ ok: true, sha: made.body.object.sha });
-        }
-        case "read": {
-          if (!path) throw new Error("path is required");
-          const file = await readFile(env, branch, path);
-          if (p.get("b64") === "1") return reply({ ok: true, base64: file.base64, sha: file.sha });
-          return reply({ ok: true, text: file.text, sha: file.sha });
-        }
-        case "list": {
-          const dir = path || p.get("dir") || "";
-          const got = await gh(env, `/contents/${dir}?ref=${encodeURIComponent(branch)}`);
-          if (!got.ok) throw new Error(`list ${dir} failed: ${got.status}`);
-          const items = Array.isArray(got.body) ? got.body : [got.body];
-          return reply({ ok: true, entries: items.map((i) => ({ name: i.name, path: i.path, type: i.type, size: i.size })) });
-        }
-        case "commits": {
-          const limit = Math.min(Number(p.get("limit") || 20), 100);
-          const got = await gh(env, `/commits?sha=${encodeURIComponent(branch)}&per_page=${limit}`);
-          if (!got.ok) throw new Error(`commits failed: ${got.status}`);
-          return reply({ ok: true, commits: (Array.isArray(got.body) ? got.body : []).map((c) => ({ sha: c.sha, short: String(c.sha).slice(0, 8), message: (c.commit.message || "").split("\n")[0], date: c.commit.author.date })) });
-        }
-        case "diff": {
-          const sha = p.get("sha") || (bodyJson && bodyJson.sha);
-          const base = p.get("base") || (bodyJson && bodyJson.base);
-          if (!sha) throw new Error("sha is required");
-          const target = base ? `/compare/${encodeURIComponent(base)}...${encodeURIComponent(sha)}` : `/commits/${encodeURIComponent(sha)}`;
-          const got = await gh(env, target, { headers: { Accept: "application/vnd.github.diff" } });
-          if (!got.ok) throw new Error(`diff failed: ${got.status}`);
-          return reply({ ok: true, diff: String(got.text).slice(0, 200000) });
-        }
-        case "search": {
-          const q = p.get("q") || (bodyJson && bodyJson.q);
-          if (!q) throw new Error("q is required");
-          const got = await ghRoot(env, `/search/code?q=${encodeURIComponent(q + " repo:" + repo(env))}&per_page=${Math.min(Number(p.get("limit") || 20), 100)}`);
-          if (!got.ok) throw new Error(`search failed: ${got.status}`);
-          return reply({ ok: true, total: got.body.total_count, hits: (got.body.items || []).map((i) => ({ path: i.path, name: i.name })) });
-        }
-        case "grep": {
-          const q = p.get("q") || (bodyJson && bodyJson.q);
-          if (!q) throw new Error("q is required");
-          const limit = Math.min(Number(p.get("limit") || 40), 200);
-          const scope = p.get("path") || (bodyJson && bodyJson.path) || "";
-          const ref = await gh(env, `/git/ref/heads/${encodeURIComponent(branch)}`);
-          if (!ref.ok) throw new Error(`grep ref failed: ${ref.status}`);
-          const tree = await gh(env, `/git/trees/${ref.body.object.sha}?recursive=1`);
-          if (!tree.ok) throw new Error(`grep tree failed: ${tree.status}`);
-          const textish = /\.(py|md|json|jsonl|yml|yaml|txt|csv|ts|js|cfg|toml|ini)$/i;
-          const all = (tree.body.tree || []).filter((n) => n.type === "blob" && textish.test(n.path) && (scope ? n.path === scope || n.path.startsWith(scope.replace(/\/$/, "") + "/") : true));
-          const blobs = all.slice(0, 40);
-          const needle = q.toLowerCase();
-          const hits = [];
-          for (const n of blobs) {
-            if (hits.length >= limit) break;
-            const r = await gh(env, `/git/blobs/${n.sha}`);
-            if (!r.ok) continue;
-            const lines = dec(r.body.content).split("\n");
-            for (let k = 0; k < lines.length; k += 1) {
-              if (lines[k].toLowerCase().includes(needle)) {
-                hits.push({ path: n.path, line: k + 1, text: lines[k].trim().slice(0, 200) });
-                if (hits.length >= limit) break;
-              }
-            }
-          }
-          return reply({ ok: true, candidates: all.length, scanned: blobs.length, truncated: all.length > blobs.length, hits });
-        }
-        case "put": {
-          if (!path) throw new Error("path is required");
-          const text = pick("text");
-          if (text === undefined || text === null) throw new Error("text is required");
-          const sha = await writeFile(env, branch, path, text, message, p.get("b64") === "1");
-          return reply({ ok: true, sha });
-        }
-        case "edit": {
-          if (!path) throw new Error("path is required");
-          const find = pick("find");
-          const replace = p.get("replace") ?? p.get("repl") ?? (bodyJson && bodyJson.replace) ?? bodyText;
-          const sha = await editFile(env, branch, path, find, String(replace ?? ""), message);
-          return reply({ ok: true, sha });
-        }
-        case "pr": {
-          const created = await gh(env, `/pulls`, { method: "POST", body: JSON.stringify({ title: p.get("title"), head: branch, base: p.get("base") || "main", body: p.get("body") || "" }) });
-          if (!created.ok) throw new Error(`pr failed: ${created.status}`);
-          return reply({ ok: true, number: created.body.number, url: created.body.html_url });
-        }
-        case "pr-edit": {
-          const edited = await gh(env, `/pulls/${p.get("pr")}`, { method: "PATCH", body: JSON.stringify({ body: p.get("body") || "" }) });
-          if (!edited.ok) throw new Error(`pr-edit failed: ${edited.status}`);
-          return reply({ ok: true });
-        }
-        case "runs": {
-          const listed = await gh(env, `/actions/runs?branch=${encodeURIComponent(branch)}&per_page=10`);
-          if (!listed.ok) throw new Error(`runs failed: ${listed.status}`);
-          return reply({ ok: true, runs: (listed.body.workflow_runs || []).map((r) => ({ id: r.id, name: r.name, status: r.status, conclusion: r.conclusion, sha: r.head_sha })) });
-        }
-        case "dispatch": {
-          const workflow = p.get("workflow") || (bodyJson && bodyJson.workflow);
-          if (!workflow) throw new Error("workflow is required");
-          const sent = await gh(env, `/actions/workflows/${workflow}/dispatches`, { method: "POST", body: JSON.stringify({ ref: branch }) });
-          if (!sent.ok) throw new Error(`dispatch failed: ${sent.status}`);
-          return reply({ ok: true });
-        }
-        case "merge": {
-          const merged = await gh(env, `/pulls/${p.get("pr")}/merge`, { method: "PUT", body: JSON.stringify({ merge_method: p.get("method") || "merge" }) });
-          if (!merged.ok) throw new Error(`merge failed: ${merged.status}`);
-          return reply({ ok: true, sha: merged.body.sha });
-        }
-        case "deploy": {
-          if (!env.DEPLOYER) throw new Error("DEPLOYER unset");
-          let base = String(env.DEPLOYER).replace(/\s+/g, "").replace(/\/+$/, "");
-          if (!/^https?:\/\//.test(base)) base = "https://" + base;
-          const key = String(env.DEPLOY_KEY || "").trim();
-          const r = await fetch(`${base}?k=${key}&op=deploy&branch=${encodeURIComponent(branch)}`);
-          const body = (await r.text()).slice(0, 400);
-          return reply({ ok: r.ok, status: r.status, body }, r.ok ? 200 : 400);
-        }
-        case "scrape": {
-          const u = p.get("url") || (bodyJson && bodyJson.url);
-          if (!u) throw new Error("url is required");
-          const dest = p.get("path") || "agent/FETCH.md";
-          const host = new URL(u).hostname;
-          const isSec = host === "sec.gov" || host.endsWith(".sec.gov");
-          const ua = p.get("ua") || (bodyJson && bodyJson.ua) || (isSec ? SEC_UA : "Mozilla/5.0 venice-doorman");
-          const headers = { "User-Agent": ua, "Accept": "*/*", "Accept-Encoding": "identity" }; if (host === "api.github.com") { headers.Authorization = "Bearer " + env.GITHUB_TOKEN; headers.Accept = "application/vnd.github+json"; }
-          let got = null, raw = "";
-          const tries = isSec ? 5 : 1;
-          for (let i = 0; i < tries; i += 1) {
-            got = await fetch(u, { headers });
-            raw = await got.text();
-            if (got.ok) break;
-            if (![403, 429, 500, 502, 503, 504].includes(got.status)) break;
-            await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
-          }
-          const stripped = raw
-            .replace(/<script[\s\S]*?<\/script>/gi, " ")
-            .replace(/<style[\s\S]*?<\/style>/gi, " ")
-            .replace(/<[^>]+>/g, " ")
-            .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, String.fromCharCode(34))
-            .replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
-          const body = "# FETCH " + u + "\n\nfetched " + new Date().toISOString() + " status " + got.status + " ua " + ua + "\n\n" + stripped.slice(0, 60000) + "\n";
-          const sha = await writeFile(env, branch, dest, body, message, false);
-          return reply({ ok: got.ok, status: got.status, ua: ua, bytes: body.length, path: dest, sha });
-        }
-        default:
-          return reply({ ok: false, error: `unknown op ${op}` }, 400);
-      }
-    } catch (err) {
-      return reply({ ok: false, op, error: String(err.message || err) }, 400);
-    }
-  },
-
-  async scheduled(event, env, ctx) {
-    ctx.waitUntil(wakeDecide(env));
-  },
+ async fetch(request,env){
+  if(request.method==='OPTIONS')return new Response(null,{headers:CORS});
+  if(!env.DOORMAN_KEY || request.headers.get('Authorization')!=='Bearer '+env.DOORMAN_KEY)return reply({ok:false,error:'Unauthorized'},401);
+  const op=new URL(request.url).searchParams.get('op')||'ops';
+  try{
+   if(env.GITHUB_REPO!=='SRoyaltyy/checklist-engine')throw new Error('Unexpected repository configuration');
+   if(op==='ops')return reply({ok:true,version:6,ops:['source','context','tool','checkpoint'],repository:'SRoyaltyy/checklist-engine',writes:'venice/* only',merge:false});
+   if(op==='source'&&request.method==='GET'){const f=await readFile(env,runtimeBranch(env),'agent/BRIDGE6.js');return reply({ok:true,...f});}
+   if(op==='context'&&request.method==='GET')return reply(await runtimeContext(env));
+   if(request.method!=='POST')return reply({ok:false,error:'JSON POST required for mutations'},405);
+   const raw=await request.text();if(raw.length>300000)throw new Error('Request too large');
+   const data=JSON.parse(raw);
+   if(op==='tool')return reply(await runtimeTool(env,data));
+   if(op==='checkpoint')return reply(await runtimeSave(env,data));
+   return reply({ok:false,error:'Unknown operation'},400);
+  }catch(e){return reply({ok:false,error:String(e.message||e)},400);}
+ },
+ async scheduled(event,env,ctx){ctx.waitUntil((async()=>{
+  const branch=runtimeBranch(env),old=await maybeRead(env,branch,'agent/WAKE.json');let prior={};try{prior=JSON.parse(old?.text||'{}');}catch{}
+  if(prior.set_at&&Date.now()-Date.parse(prior.set_at)<840000)return;
+  const stamp=new Date().toISOString();await verifiedWrite(env,branch,'agent/WAKE.json',JSON.stringify({pending:true,id:stamp,set_at:stamp,reason:'scheduled heartbeat'},null,2),'venice: scheduled wake');
+ })());}
 };
+
