@@ -1,0 +1,113 @@
+# Versioned SEC bulk sources for the retained price cohort
+
+Task5 proved SEC source access in [run42260180822](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42260180822),
+merged and read back on main as `e85547a` (PR217). This next collector downloads
+the official current ticker maps, `submissions.zip` and `companyfacts.zip` through
+that same verified relay. It runs as ordinary scheduled GitHub Actions code,
+without an AI service call. Actual complete bulk-run evidence is pending.
+
+## Bound cohort and identity meaning
+
+The collector authenticates the existing retained identity map (LF SHA256
+`50323efcd9855061501d88010d8e812371fda7c9dd48d3a54c0f5f19cdad97ce`)
+and [price join keys](PRICE_WORLD_JOIN_CONTRACT_V1.md). The exact8,439ticker sets
+must agree. No price-world rebuild, new eligibility filter or cohort exclusion
+is performed.
+
+The two current SEC maps are matched by exact ticker spelling. Dot/dash, class
+shares, option roots and renames are not silently conflated. Identity rows record
+archived-only candidates, current-only candidates, agreement, conflict, ambiguity,
+unresolved names and quarantines. A conflicting archived/current pair preserves
+both retrieval candidates, with no selected unique CIK. The24product/issuer alias
+quarantines and CIK1790169 integrity quarantine are preserved. Quarantined CIKs
+never enter produced fact or filing data.
+
+`with_unique_cik` and `with_retrieval_candidates` measure different coverage. The
+latter may include conflicting candidates collected for later resolution.
+Current identities may target source acquisition; they never establish ownership
+of a historical price ticker. Formal `valid_from`/`valid_to_exclusive` remain
+unknown, and `historical_join_allowed` remains false for every identity row.
+
+## Produced data and source provenance
+
+Each run/attempt creates its own `nai-sec-bulk-v2-<run>-<attempt>` release. Existing
+published assets are never clobbered. The original fixed `nai-sec-bulk-v1` release
+is preserved. `scripts/nai/sec_bulk.py` is a compatibility entry point to the new
+`ci.sec_bulk_retained` collector.
+
+The release contains:
+
+- Exact raw `company_tickers.json` and `company_tickers_exchange.json` responses.
+- `sec_identity_map_v2-*.parquet` plus `SEC_IDENTITY_COVERAGE_V2.json`.
+- `sec_submissions_filings_retained-*.parquet`, with accession, filing date,
+  acceptance timestamp, report date, enumerated form/XBRL fields and source document
+  identifier. Root and historical submissions members are read. Duplicate
+  accessions merge missing metadata; conflicting populated values fail explicitly.
+- `sec_submissions_entities_retained-*.parquet`, with structured current ticker,
+  exchange, SIC and incorporation-state codes. Current entity metadata is labelled
+  explicitly; company names, descriptions and former-name prose are not features.
+- `sec_companyfacts_retained-*.parquet`, with taxonomy/concept/unit identifiers,
+  period and filing dates, accession/fiscal metadata and fixed numeric values.
+  `val_text` preserves the exact JSON number, including integers above2^53 and
+  decimal fractions. `val_float64` is a convenience projection;
+  `float64_exact` states whether that projection is exact. Non-numeric source
+  values and missing filing dates are counted explicitly.
+- Filtered raw JSON members in `sec_<kind>_raw-*.tar.gz`, each paired with a
+  JSON ledger containing every member's source ZIP name, CIK, byte count and
+  SHA256. The downloaded full ZIP's URL, timestamps, size and SHA256 are recorded
+  in the final receipt. Retained ZIP member CRCs are checked by the ZIP reader.
+- `SEC_BULK_COVERAGE_V2.json`, the final status, actual source/run/attempt,
+  CIK coverage, source hashes, extraction counts/date bounds, unknowns and all
+  published asset bindings.
+
+Immutable per-input and per-extraction receipts are published as each stage
+finishes. The release becomes public after identity publication and is labelled
+INCOMPLETE until the final coverage receipt exists. A live run's raw/parquet
+assets are checkpoints, not a complete result. This also preserves source ZIP
+hashes and completed work if a runner stops before the final report.
+
+Raw source members can contain issuer metadata, retained only as source evidence.
+No free-text interpretation or prose-derived feature is produced. Report periods
+are separate from filing/acceptance availability; source acquisition performs no
+stock-date join, world snapshot rebuild, eligibility proof or scoring.
+
+## Resource bounds and failure behavior
+
+The two full source ZIPs are handled sequentially. Each download is limited by
+the actual free runner disk minus2GiB of processing reserve. Completed ZIPs and
+successfully published output chunks are removed from the ephemeral runner.
+Raw shards close at about256MiB of uncompressed member data; parquet files close
+at approximately500,000rows, with at most100,000fact rows buffered at once.
+Each emitted parquet file is read back for actual row count and complete CIK
+membership before its immutable publication.
+
+HTTP requests use the verified production relay and at least one-second spacing.
+A403/429 stops the request; no automatic route or identity rotation is used.
+The private owner-approved SEC contact remains in the Worker, restricted to SEC
+destinations, and is omitted from public code and receipts.
+
+If one archive or upload fails, the runner exits nonzero and publishes an explicit
+`FAIL_PARTIAL_SOURCE_SNAPSHOT` receipt identifying the failed stage and already
+durable assets. It cannot claim full bulk success from an identity-only run or a
+successful first archive. Missing source CIKs remain visible, not converted to
+zero values or silently removed from the retained price cohort.
+
+## Schedule and verification
+
+`nai-sec-bulk` retains the Saturday22:17UTC weekly schedule and manual dispatch.
+Manual `identity_only=true` produces a distinctly labelled identity snapshot and
+does not prove complete bulk coverage. A one-shot request on
+`gpt/sec-bulk-retained-v2` allows the initial reviewed full run; PR checks use only
+synthetic inputs.
+
+All19new synthetic tests pass locally using existing dependencies. They cover
+quarantines, exact symbol matching, identity conflicts, nullable historical filing
+schemas, accession conflicts, raw-member hashes, exact numeric preservation,
+actual parquet round trips, complete output CIK checks and honest partial-failure
+publication. The initial local attempt hit Windows' restricted default temporary
+folder; rerunning with a verified workspace temporary directory passed. No local
+dependency installation or market-data calculation was performed.
+
+Actual run ID, released coverage and independent public readback will be added
+after the runner finishes. **Task6 remains unchecked. World gate NOT_PROVEN;
+scoring CLOSED.**
