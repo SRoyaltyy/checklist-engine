@@ -1,0 +1,16 @@
+name: price-join-contract
+on:
+  pull_request:
+    paths: ['ci/price_join_contract.py', 'dictionary/PRICE_WORLD_JOIN_KEYS_V1.csv', 'dictionary/PRICE_WORLD_SESSIONS_V1.csv', 'docs/PRICE_WORLD_JOIN_CONTRACT_V1.*', 'docs/SEC_RETAINED_IDENTITY_MAP_V1.json', '.github/workflows/price_join_contract.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m ci.price_join_contract check
