@@ -38,7 +38,7 @@ def test_v1_answer_entry_point_never_reads_excluded_or_unknown_prices():
     from world_binary_price import evaluate_v1_price
     class Forbidden:
         def get(self,*args):raise AssertionError('excluded prices read')
-    definition=dict(comparator='>',comparison_threshold='0')
+    definition=dict(comparator='>',comparison_threshold='0',feature_kind='continuous')
     assert evaluate_v1_price(definition,Forbidden(),None,None,ticker='FEIM',pit_eligible=True).answer=='NOT_EVALUABLE'
     assert evaluate_v1_price(definition,Forbidden(),None,None,ticker='CONTROL',pit_eligible=None).answer=='NOT_EVALUABLE'
 

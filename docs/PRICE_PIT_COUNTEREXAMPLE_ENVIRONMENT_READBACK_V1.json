@@ -1,0 +1,41 @@
+{
+  "format": "PRICE_PIT_COUNTEREXAMPLE_ENVIRONMENT_READBACK_V1",
+  "scope": "LOG_READING_ONLY_NOT_ENVIRONMENT_EQUIVALENCE_OR_CAUSAL_PROOF",
+  "producer_run": 41078405278,
+  "core_versions_observed": {
+    "python": "3.12.15",
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "pyarrow": "26.0.0",
+    "TA-Lib": "0.8.2"
+  },
+  "producer_jobs": [
+    {
+      "job_id": 124141406790,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41078405278/job/124141406790",
+      "selected_lines": [
+        "2026-10-30T15:13:01.0022856Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64",
+        "2026-10-30T15:13:14.9219072Z Successfully installed PyYAML-6.0.3 TA-Lib-0.8.2 exchange_calendars-4.13.2 iniconfig-2.3.1 korean_lunar_calendar-0.4.0 numpy-2.5.4 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pyarrow-26.0.0 pygments-2.21.0 pyluach-2.3.0 pytest-9.2.0 python-dateutil-3.0.0 pytz-2026.6 six-1.17.0 toolz-1.2.0 tzdata-2026.6"
+      ]
+    },
+    {
+      "job_id": 124141407020,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41078405278/job/124141407020",
+      "selected_lines": [
+        "2026-10-30T15:13:03.4018518Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64",
+        "2026-10-30T15:13:18.1104134Z Successfully installed PyYAML-6.0.3 TA-Lib-0.8.2 exchange_calendars-4.13.2 iniconfig-2.3.1 korean_lunar_calendar-0.4.0 numpy-2.5.4 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pyarrow-26.0.0 pygments-2.21.0 pyluach-2.3.0 pytest-9.2.0 python-dateutil-3.0.0 pytz-2026.6 six-1.17.0 toolz-1.2.0 tzdata-2026.6"
+      ]
+    },
+    {
+      "job_id": 124141406849,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41078405278/job/124141406849",
+      "selected_lines": [
+        "2026-10-30T15:13:01.1017662Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64",
+        "2026-10-30T15:13:14.4387805Z Successfully installed PyYAML-6.0.3 TA-Lib-0.8.2 exchange_calendars-4.13.2 iniconfig-2.3.1 korean_lunar_calendar-0.4.0 numpy-2.5.4 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pyarrow-26.0.0 pygments-2.21.0 pyluach-2.3.0 pytest-9.2.0 python-dateutil-3.0.0 pytz-2026.6 six-1.17.0 toolz-1.2.0 tzdata-2026.6"
+      ]
+    }
+  ],
+  "current_diagnostic_run": 41582288832,
+  "cause": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}
