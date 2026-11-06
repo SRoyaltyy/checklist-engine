@@ -1,0 +1,113 @@
+{
+  "format": "PRICE_COLUMN_AVAILABILITY_PUBLIC_READBACK_V1",
+  "status": "PASS_PUBLIC_ASSETS_COMPLETE_GRID_AND_DECLARED_PROBE_COUNTS",
+  "run_id": "42249025598",
+  "attempt": 1,
+  "source_commit": "af4424c848817c62491905c73ae35831fdc4792c",
+  "release": "price-column-availability-v1-42249025598-1",
+  "public_assets": [
+    {
+      "name": "PRICE_COLUMN_AVAILABILITY_PROOF_V1.json",
+      "size": 47785,
+      "digest": "sha256:5a18cca9e7f610fb991ad7128307e22c4538e76ee324d5c147edb735f5bbdcce",
+      "url": "https://github.com/SRoyaltyy/checklist-engine/releases/download/price-column-availability-v1-42249025598-1/PRICE_COLUMN_AVAILABILITY_PROOF_V1.json"
+    },
+    {
+      "name": "PRICE_COLUMN_AVAILABILITY_V1.csv",
+      "size": 2389572,
+      "digest": "sha256:3ff8c74bbfae3a8bf912304400d0e50093a2201d2d8ee61a905caca479d8dc69",
+      "url": "https://github.com/SRoyaltyy/checklist-engine/releases/download/price-column-availability-v1-42249025598-1/PRICE_COLUMN_AVAILABILITY_V1.csv"
+    },
+    {
+      "name": "PRICE_COLUMN_AVAILABILITY_V1.json",
+      "size": 2217,
+      "digest": "sha256:9d808a01a331a95480c5cb1692ed937fb44a3c502ebb57b0afb7fc31f6d0598c",
+      "url": "https://github.com/SRoyaltyy/checklist-engine/releases/download/price-column-availability-v1-42249025598-1/PRICE_COLUMN_AVAILABILITY_V1.json"
+    },
+    {
+      "name": "SOURCE_PRICE_PIT_READBACK_V1.json",
+      "size": 704,
+      "digest": "sha256:135d6d2696f4625ab916987c8ff29a2d334e3c4d8a7f8ea2911f3e1571dd7bc4",
+      "url": "https://github.com/SRoyaltyy/checklist-engine/releases/download/price-column-availability-v1-42249025598-1/SOURCE_PRICE_PIT_READBACK_V1.json"
+    }
+  ],
+  "column_bindings_verified": 22968,
+  "source_cohort_readback": {
+    "bundle": {
+      "alignment_gate": "PASS",
+      "field_timeframe_rows": 22968,
+      "packet_replay_gate": "FAIL",
+      "per_stock_evidence_bytes": 1420534689,
+      "prefix_gate": "PASS",
+      "proof_metadata_verified": 8439,
+      "retained_names": 8439,
+      "scoring_gate": "CLOSED",
+      "setup_day_rows": 12547288,
+      "status": "PASS_FULL_RETAINED_COHORT_BUNDLE_AND_PUBLIC_PROOF_METADATA",
+      "stock_body_verification": "BOUND_GHA_FINALIZER_NOT_A_SECOND_LOCAL_REPLAY"
+    },
+    "recovery": {
+      "actual_recovery_run_id": "41844079765",
+      "newly_measured_names": 1,
+      "part_receipts_verified": 142,
+      "recovery_commit": "92f2d4ab6cb4cf9cac2f6218085851b24f759456",
+      "reused_names": 6798,
+      "scoring_gate": "CLOSED",
+      "selected_names": 6799,
+      "selected_query_rows": 10110205,
+      "status": "PASS_PUBLIC_RECOVERY_LINEAGE"
+    }
+  },
+  "source_metadata_bodies_previously_independently_verified": 148,
+  "controls": [
+    {
+      "ticker": "BPOP",
+      "query_rows": 1712,
+      "timeframes": 22,
+      "columns_per_timeframe": 1044,
+      "raw_sha256": "7787580f195af416511d513997843e6ca7bed3c10be0c1e68b9af0c5339fa6ec",
+      "runtime": {
+        "numpy": "2.5.4",
+        "pandas": "2.3.3",
+        "python": "3.12.15 (main, Oct  1 2026, 02:36:28) [GCC 15.2.0]",
+        "talib": "0.8.2"
+      }
+    },
+    {
+      "ticker": "DJCO",
+      "query_rows": 1712,
+      "timeframes": 22,
+      "columns_per_timeframe": 1044,
+      "raw_sha256": "f44b57f96f97f656a6b0df179bc70f063d1020485a0b094879f28c220c33d806",
+      "runtime": {
+        "numpy": "2.5.4",
+        "pandas": "2.3.3",
+        "python": "3.12.15 (main, Oct  1 2026, 02:36:28) [GCC 15.2.0]",
+        "talib": "0.8.2"
+      }
+    },
+    {
+      "ticker": "KGRN",
+      "query_rows": 1712,
+      "timeframes": 22,
+      "columns_per_timeframe": 1044,
+      "raw_sha256": "7e183264ebd82b3aa48d7516a3d90611e9ef04858e5c8ed1d5249d480aad7ed4",
+      "runtime": {
+        "numpy": "2.5.4",
+        "pandas": "2.3.3",
+        "python": "3.12.15 (main, Oct  1 2026, 02:36:28) [GCC 15.2.0]",
+        "talib": "0.8.2"
+      }
+    }
+  ],
+  "counts": {
+    "exact_alignment_cells": 117963648,
+    "prefix_cells": 137808,
+    "future_perturbation_cells": 137808,
+    "clock_pair_checks": 206712
+  },
+  "reported_numeric_differences": 0,
+  "scope": "Metadata/hash/count audit; numeric replay executed on GitHub Actions, not locally.",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

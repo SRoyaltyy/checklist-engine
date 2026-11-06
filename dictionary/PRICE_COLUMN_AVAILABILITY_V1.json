@@ -1,0 +1,59 @@
+{
+  "format": "PRICE_COLUMN_AVAILABILITY_V1",
+  "version": 1,
+  "scope": "RETAINED_8439_PRODUCED_PRICE_COLUMNS_ONLY",
+  "native_fields": 1044,
+  "columns": 22968,
+  "timeframes": [
+    "1d",
+    "2d",
+    "3d",
+    "4d",
+    "5d",
+    "6d",
+    "7d",
+    "8d",
+    "9d",
+    "10d",
+    "11d",
+    "12d",
+    "13d",
+    "14d",
+    "15d",
+    "16d",
+    "17d",
+    "18d",
+    "19d",
+    "20d",
+    "21d",
+    "monthly"
+  ],
+  "source_fields_sha256": "773bd59b5e7190083a9051fe7aa8c0b569d2e071ec85f52309ac51027cfffccd",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "recipe_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "columns_file": "PRICE_COLUMN_AVAILABILITY_V1.csv",
+  "columns_lf_sha256": "3ff8c74bbfae3a8bf912304400d0e50093a2201d2d8ee61a905caca479d8dc69",
+  "source_plan": {
+    "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
+    "asset": "PRICE_FULL_COHORT_PIT_PLAN_V1.json",
+    "sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d"
+  },
+  "measurement": {
+    "release": "price-full-cohort-pit-v1-41844079765-1-measured",
+    "asset": "PRICE_FULL_COHORT_PIT_MEASURED_V1.json",
+    "sha256": "a40b5279a017f5d08af7e32577e6663ac3d295067525ef3480dfaec6648b3734",
+    "run_id": "41844079765"
+  },
+  "availability_convention": "Date keys: available_from <= setup session; source candle end < setup session, so information precedes setup open.",
+  "daily_rule": "Global fixed trading-session buckets; available_from is the next bound session after a complete candle.",
+  "monthly_rule": "Whole calendar month certified by the bound calendar; available_from is the next calendar month start.",
+  "unknown_rule": "A NaN column value has NaT column availability and is never filled or converted to NO. Infinity and signed zero stay known.",
+  "clock_storage": "One shared native row clock, explicitly referenced by every registered column; column reads mask it by that column known value.",
+  "scoring_gate": "CLOSED",
+  "pattern_code_transport": {
+    "field_prefix": "CDL",
+    "native_dtype": "float32",
+    "read_dtype": "float64",
+    "conversion": "exact IEEE value promotion; no rounding"
+  }
+}
