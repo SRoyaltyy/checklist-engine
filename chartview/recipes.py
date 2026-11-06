@@ -14,6 +14,10 @@ Return dict:
     blocker  str, only when DISABLED (shown in the picker, never drawn)
     label    measured-quantity sentence for the on-chart label box
     answer   str answer line (may be '' when blank/not applicable)
+    binary   list of derived strict YES/NO questions (§0b 2026-10-29 22:51/23:05):
+             [{'qid': '<recipe>/<rung>', 'q': '<feature + comparator + literal threshold>',
+               'a': 'YES' | 'NO' | 'NOT_EVALUABLE'}]. A blank feature -> binary = None
+             (every derived question is NOT_EVALUABLE, never silently NO).
     ops      list of drawing primitives, all in bar-index space:
         {'op': 'recolour', 'bars': [i, ...]}                purple candles + volume bars
         {'op': 'vband', 'i0': a, 'i1': b}                 light-purple band behind bars a..b
@@ -46,13 +50,22 @@ def _colours(O, C):
     return out
 
 
-def _res(id_, label, answer='', ops=(), status=READY, blocker=''):
+def _res(id_, label, answer='', ops=(), status=READY, blocker='', binary=()):
     return dict(id=id_, status=status, blocker=blocker, label=label,
-                answer=answer, ops=list(ops))
+                answer=answer, ops=list(ops),
+                binary=None if binary is None else list(binary))
 
 
 def _blank(id_, label, reason):
-    return _res(id_, label, answer=f'blank ({reason})', ops=[])
+    return _res(id_, label, answer=f'blank ({reason})', ops=[], binary=None)
+
+
+def _yn(cond):
+    return 'YES' if cond else 'NO'
+
+
+def _bq(qid, q, a):
+    return {'qid': qid, 'q': q, 'a': a}
 
 
 # ---------------------------------------------------------------- 1. mockup: red:green COUNT, nearest 5
@@ -67,10 +80,55 @@ def view_rg_count_5d(dates, O, H, L, C, V, cutoff):
     r = int((col == RED).sum()); g = int((col == GREEN).sum())
     doji = 5 - r - g
     ans = f'R:G = {r}:{g}' + (f' (doji {doji})' if doji > 0 else '')
+    binary = [
+        _bq(f'{id_}/red_majority', 'red majority of nearest 5 completed daily candles '
+            '(red_count > green_count; doji counts as neither)?', _yn(r > g)),
+        _bq(f'{id_}/red_gt_4', 'red_count of nearest 5 completed daily candles > 4?', _yn(r > 4)),
+        _bq(f'{id_}/red_ge_3', 'red_count of nearest 5 completed daily candles >= 3?', _yn(r >= 3)),
+        _bq(f'{id_}/green_ge_1', 'green_count of nearest 5 completed daily candles >= 1?', _yn(g >= 1)),
+    ]
     return _res(id_, label, ans, [
         {'op': 'vband', 'i0': int(w[0]), 'i1': int(w[-1])},
         {'op': 'recolour', 'bars': [int(i) for i in w]},
-    ])
+    ], binary=binary)
+
+
+# ---------------------------------------------------------------- 1b. red:green EXACT-candle recolour example (§0b 22:45 #163)
+def view_rg_exact_5d(dates, O, H, L, C, V, cutoff):
+    """Same R:G measurement as mockup 1, but only the exact qualifying candles
+    are recoloured purple (never circled): the majority-colour candles are the
+    evidence set. Tie or all-doji -> no exact recolour (window band only)."""
+    id_ = 'VIEW_RG_EXACT_5D'
+    label = ('Red:green EXACT-candle recolour example (§0b 22:45 #163): nearest 5 completed daily '
+             'candles; the candles of the majority colour (the answer evidence) are recoloured '
+             'purple exactly — no circles, no whole-window recolour; doji counts as neither')
+    w = _window(cutoff, 5)
+    if len(w) < 5:
+        return _blank(id_, label, 'fewer than 5 completed bars before cutoff')
+    col = _colours(O[w], C[w])
+    r = int((col == RED).sum()); g = int((col == GREEN).sum())
+    doji = 5 - r - g
+    ans = f'R:G = {r}:{g}' + (f' (doji {doji})' if doji > 0 else '')
+    if r > g:
+        exact = [int(i) for i, c in zip(w, col) if c == RED]
+        ans += f' — exact recolour: {r} red candle(s) (majority evidence)'
+    elif g > r:
+        exact = [int(i) for i, c in zip(w, col) if c == GREEN]
+        ans += f' — exact recolour: {g} green candle(s) (majority evidence)'
+    else:
+        exact = []
+        ans += ' — tie, no majority-colour evidence candles (window band only)'
+    binary = [
+        _bq(f'{id_}/red_majority', 'red majority of nearest 5 completed daily candles '
+            '(red_count > green_count; doji counts as neither)?', _yn(r > g)),
+        _bq(f'{id_}/red_gt_4', 'red_count of nearest 5 completed daily candles > 4?', _yn(r > 4)),
+        _bq(f'{id_}/red_ge_3', 'red_count of nearest 5 completed daily candles >= 3?', _yn(r >= 3)),
+        _bq(f'{id_}/green_ge_1', 'green_count of nearest 5 completed daily candles >= 1?', _yn(g >= 1)),
+    ]
+    ops = [{'op': 'vband', 'i0': int(w[0]), 'i1': int(w[-1])}]
+    if exact:
+        ops.append({'op': 'recolour', 'bars': exact})
+    return _res(id_, label, ans, ops, binary=binary)
 
 
 # ---------------------------------------------------------------- 2. mockup: Fib from window HH/LL, 60d
@@ -101,10 +159,18 @@ def view_fib_hhll_60d(dates, O, H, L, C, V, cutoff):
     hi_r = min(above) if above else 1.0
     ans = (f'H={Hp:.4g} L={Lp:.4g} pct={(pct * 100):.1f}% '
            f'bracket [{hi_r:g}..{lo_r:g}]')
+    binary = [
+        _bq(f'{id_}/lower_half', 'cutoff close in lower half of the 60d HH/LL range '
+            '(pct = (H - close) / (H - L) >= 0.5)?', _yn(pct >= 0.5)),
+        _bq(f'{id_}/deep_retrace', 'deep retracement into the 60d range '
+            '(pct >= 0.618)?', _yn(pct >= 0.618)),
+        _bq(f'{id_}/near_high', 'cutoff close near the 60d window high '
+            '(pct <= 0.236)?', _yn(pct <= 0.236)),
+    ]
     ops = [{'op': 'recolour', 'bars': [hi, lo]},
            {'op': 'hlines', 'levels': levels},
            {'op': 'shade_between', 'p0': Hp - lo_r * R, 'p1': Hp - hi_r * R}]
-    return _res(id_, label, ans, ops)
+    return _res(id_, label, ans, ops, binary=binary)
 
 
 # ---------------------------------------------------------------- 3. mockup: three descending swing highs
@@ -129,15 +195,22 @@ def view_lower_swing_highs_3(dates, O, H, L, C, V, cutoff):
     sh = _swing_highs(H, cutoff)
     pts = [(i, float(H[i]), f'{float(H[i]):.4g}') for i in sh[-3:]]
     if len(sh) < 3:
-        ans = f'NO (need 3 confirmable swing highs, have {len(sh)})'
+        ans = f'NOT_EVALUABLE (need 3 confirmable swing highs, have {len(sh)})'
+        a = 'NOT_EVALUABLE'
     elif H[sh[-3]] > H[sh[-2]] > H[sh[-1]]:
         ans = f'YES ({float(H[sh[-3]]):.4g} > {float(H[sh[-2]]):.4g} > {float(H[sh[-1]]):.4g})'
+        a = 'YES'
     else:
         ans = (f'NO (last 3 highs {float(H[sh[-3]]):.4g}, {float(H[sh[-2]]):.4g}, '
                f'{float(H[sh[-1]]):.4g} not strictly descending)')
+        a = 'NO'
+    binary = [_bq(f'{id_}/descending_3',
+                  'last 3 confirmable fractal swing highs (L=5, ties -> leftmost) '
+                  'each strictly lower than the previous '
+                  '(high[H1] > high[H2] > high[H3])?', a)]
     ops = [{'op': 'dots', 'pts': pts},
            {'op': 'polyline', 'pts': [(i, p) for i, p, _ in pts]}]
-    return _res(id_, label, ans, ops)
+    return _res(id_, label, ans, ops, binary=binary)
 
 
 # ---------------------------------------------------------------- 4. mockup: volume today vs mean of last 20
@@ -156,10 +229,16 @@ def view_vol_vs_mean_20d(dates, O, H, L, C, V, cutoff):
         return _blank(id_, label, 'base mean volume is zero')
     ratio = float(V[cutoff]) / m
     ans = f'V={int(V[cutoff])} mean20={m:.1f} ratio={ratio:.3f}'
+    binary = [
+        _bq(f'{id_}/above_mean', 'cutoff volume above its 20d mean '
+            '(V_cutoff / mean20 > 1; base includes cutoff bar)?', _yn(ratio > 1)),
+        _bq(f'{id_}/heavy', 'cutoff volume more than double its 20d mean (ratio > 2)?', _yn(ratio > 2)),
+        _bq(f'{id_}/spike', 'cutoff volume more than triple its 20d mean (ratio > 3)?', _yn(ratio > 3)),
+    ]
     return _res(id_, label, ans, [
         {'op': 'recolour_vol', 'bars': [int(i) for i in w]},
         {'op': 'hlines', 'levels': [(m, '20d avg (incl. today)')]},
-    ])
+    ], binary=binary)
 
 
 # ---------------------------------------------------------------- 5. lower_highs10 (pinned chart picture)
@@ -172,7 +251,16 @@ def lower_highs10(dates, O, H, L, C, V, cutoff):
         return _blank(id_, label, 'fewer than 11 completed bars before cutoff')
     hits = [int(i) for i in w if H[i] < H[i - 1]]
     ans = f'count = {len(hits)} / 10'
-    return _res(id_, label, ans, [{'op': 'recolour', 'bars': hits}])
+    k = len(hits)
+    binary = [
+        _bq(f'{id_}/ge_5', 'at least half of the last 10 completed daily bars are lower highs '
+            '(count of High[i] < High[i-1] >= 5)?', _yn(k >= 5)),
+        _bq(f'{id_}/ge_8', 'at least 8 of the last 10 completed daily bars are lower highs '
+            '(count >= 8)?', _yn(k >= 8)),
+        _bq(f'{id_}/all_10', 'all of the last 10 completed daily bars are lower highs '
+            '(count = 10)?', _yn(k == 10)),
+    ]
+    return _res(id_, label, ans, [{'op': 'recolour', 'bars': hits}], binary=binary)
 
 
 # ---------------------------------------------------------------- 6. cp_gr_body20 (pinned chart picture)
@@ -187,11 +275,19 @@ def cp_gr_body20(dates, O, H, L, C, V, cutoff):
     body = np.abs(C[w] - O[w])
     g = body[C[w] > O[w]].sum()
     r = body[C[w] < O[w]].sum()
-    if r == 0:
-        ans = f'green={g:.4g} red=0 ratio=inf (blank: zero denominator)'
-        return _res(id_, label, ans, [{'op': 'recolour', 'bars': [int(i) for i in w]}])
-    ans = f'green={g:.4g} red={r:.4g} ratio={g / r:.3f}'
-    return _res(id_, label, ans, [{'op': 'recolour', 'bars': [int(i) for i in w]}])
+    q = ('green absolute-body sum > red absolute-body sum over the last 20 completed '
+         'daily bars (body-sum ratio > 1; doji in neither sum)?')
+    if r == 0 and g == 0:
+        ans = 'green=0 red=0 ratio undefined (all doji)'
+        binary = [_bq(f'{id_}/gt_1', q, 'NOT_EVALUABLE')]
+    elif r == 0:
+        ans = f'green={g:.4g} red=0 ratio=inf'
+        binary = [_bq(f'{id_}/gt_1', q, 'YES')]      # infinite ratio per §0 ratio rule
+    else:
+        ans = f'green={g:.4g} red={r:.4g} ratio={g / r:.3f}'
+        binary = [_bq(f'{id_}/gt_1', q, _yn(g > r))]
+    return _res(id_, label, ans, [{'op': 'recolour', 'bars': [int(i) for i in w]}],
+                binary=binary)
 
 
 # ---------------------------------------------------------------- 7. C22 / I080 RVOL20
@@ -207,10 +303,15 @@ def rvol20(dates, O, H, L, C, V, cutoff):
     sma = float(base.mean())
     rv = float(V[cutoff]) / sma
     ans = f'RVOL={rv:.3f} ({"spike" if rv > 3 else "no spike"})  cutoff V={int(V[cutoff])} SMA20(prior)={sma:.1f}'
+    binary = [
+        _bq(f'{id_}/spike', 'volume spike at cutoff (RVOL = V_cutoff / SMA20(prior 20, '
+            'today excluded) > 3)?', _yn(rv > 3)),
+        _bq(f'{id_}/elevated', 'elevated volume at cutoff (RVOL > 1.5)?', _yn(rv > 1.5)),
+    ]
     return _res(id_, label, ans, [
         {'op': 'recolour_vol', 'bars': [cutoff]},
         {'op': 'hlines', 'levels': [(sma, 'SMA20 volume (prior 20)')]},
-    ])
+    ], binary=binary)
 
 
 # ---------------------------------------------------------------- 8. I074 pivot points (prior calendar period)
@@ -253,7 +354,17 @@ def i074_pivots(dates, O, H, L, C, V, cutoff, period='M'):
     P = (Hp + Lp + Cp) / 3
     lv = [(P, 'P'), (2 * P - Lp, 'R1'), (2 * P - Hp, 'S1'), (P + (Hp - Lp), 'R2'), (P - (Hp - Lp), 'S2')]
     ans = f'P={P:.4g} R1={lv[1][0]:.4g} S1={lv[2][0]:.4g} R2={lv[3][0]:.4g} S2={lv[4][0]:.4g}'
-    return _res(id_, label, ans, [{'op': 'hlines', 'levels': lv}])
+    cc = float(C[cutoff])
+    per = {"W": "week", "M": "month", "Q": "quarter"}[period]
+    binary = [
+        _bq(f'{id_}/above_p', f'cutoff close above the prior {per} standard pivot '
+            f'(close > P = (H+L+C)/3)?', _yn(cc > P)),
+        _bq(f'{id_}/above_r1', f'cutoff close above the prior {per} R1 (close > R1 = 2P - L)?',
+            _yn(cc > lv[1][0])),
+        _bq(f'{id_}/below_s1', f'cutoff close below the prior {per} S1 (close < S1 = 2P - H)?',
+            _yn(cc < lv[2][0])),
+    ]
+    return _res(id_, label, ans, [{'op': 'hlines', 'levels': lv}], binary=binary)
 
 
 # ---------------------------------------------------------------- 9. I101 Donchian(20)
@@ -270,10 +381,17 @@ def i101_donchian20(dates, O, H, L, C, V, cutoff):
     i_dn = int(w[len(Lw) - 1 - np.argmin(Lw[::-1])])
     mid = (up + dn) / 2
     ans = f'upper={up:.4g} lower={dn:.4g} mid={mid:.4g}'
+    cc = float(C[cutoff])
+    binary = [
+        _bq(f'{id_}/breakout_up', 'cutoff close above the prior-20 Donchian upper '
+            '(close > max(high) of the 20 bars strictly before cutoff)?', _yn(cc > up)),
+        _bq(f'{id_}/breakdown', 'cutoff close below the prior-20 Donchian lower '
+            '(close < min(low) of the 20 bars strictly before cutoff)?', _yn(cc < dn)),
+    ]
     return _res(id_, label, ans, [
         {'op': 'hlines', 'levels': [(up, 'upper20'), (dn, 'lower20'), (mid, 'mid')]},
         {'op': 'recolour', 'bars': [i_up, i_dn]},
-    ])
+    ], binary=binary)
 
 
 # ---------------------------------------------------------------- 10. chart-shape similarity (#158) — DISABLED stub
@@ -286,12 +404,14 @@ def chart_shape_similarity(dates, O, H, L, C, V, cutoff):
         'before setup date.',
         status=DISABLED,
         blocker='GPT owns the N/Y/K grid (§0b #158 / VIEWPORT_READY_FOR_KIMI_V1); Kimi must not invent N, Y or K. '
-                'Stubbed in the picker as disabled until GPT finalises the grid.')
+                'Stubbed in the picker as disabled until GPT finalises the grid.',
+        binary=None)   # switched off: #161 requires similarity>0.90 as YES/NO questions before mining
 
 
 # ---------------------------------------------------------------- registry
 PICKER = [
     ('VIEW_RG_COUNT_5D', 'Red:green candle count, nearest 5 daily candles (mockup 1)', view_rg_count_5d),
+    ('VIEW_RG_EXACT_5D', 'Red:green EXACT-candle purple recolour example, nearest 5 (§0b 22:45 #163)', view_rg_exact_5d),
     ('VIEW_FIB_HHLL_60D', 'Fibonacci retracement, past 60 daily bars, HH/LL anchors (mockup 2)', view_fib_hhll_60d),
     ('VIEW_LOWER_SWING_HIGHS_3', 'Three descending fractal swing highs, L=5 (mockup 3)', view_lower_swing_highs_3),
     ('VIEW_VOL_VS_MEAN_20D', 'Volume today vs mean of last 20 daily bars, inclusive base (mockup 4)', view_vol_vs_mean_20d),
