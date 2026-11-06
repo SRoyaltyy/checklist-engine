@@ -6,20 +6,25 @@ The lane, from TODO.md on main: thin poke. Keep the tab and the bridge alive, no
 
 L1 IS SATISFIED AND PROVEN. Issue 215 carries run 41413529249 three times and run 42240608258 once, each with conclusion, failing job, failing step and log tail, machine-posted.
 
-The live problem is now self-inflicted noise, not the lane: every push fires four reporting workflows, two of them the old broken ones. Runs 42240608258 (nai-verdict) and 42243674978 (nai-post) were the machinery failing, not a pipeline. Both old bodies have been replaced with one-line callers onto working scripts, and post.sh now dedupes by run id so the duplicate flood stops.
+Gate: still shut. Badge does not read LOADER v1.11. LOADER4.user.js is at 1.13. Rollback cause is now read out of the 1.13 source, not guessed: healthy() counts only a console line beginning with the bridge tag inside a 120s settle window, so an idle healthy bridge is silent and rolls itself back. window.__vrb is irrelevant to 1.13 but still matters to older bodies.
 
-Gate: still shut. Badge does not read LOADER v1.11. LOADER4.user.js is at 1.13. The rollback is caused by the loader's liveness test, which needs a [bridge] console line within 120s and gets none from an idle healthy bridge. Fix belongs in the bridge, which is pushable, not the loader.
+Fix pushed 2026-11-06T18:12Z as bridge 5.2: window.__vrb set synchronously at boot, a boot line and a ready line logged, and an alive line every 20s. Loader patch target strings left verbatim, so all three loader patches still apply. The loader adopts a new bridge body on its 60s refresh with no paste.
 
 Next step
 
-Bridge liveness patch: announce on a short timer and set window.__vrb synchronously at boot, so the probe passes under any loader version. Keep the loader patch target strings verbatim. Then verify two minutes of survival and a green run.
+Confirm two minutes of survival. The badge must stop cycling to UNHEALTHY and ROLLBACK, and agent/BRIDGE_VERSION.json must read 5.2. If it holds, the only thing still gating lane work is the 1.11 paste.
 
 Open items, not started
 
-Dedupe is now in post.sh but report.sh and post.sh both post; consolidate to one reporter.
+run 42267379973 (nai-auto) failed on this wake. It is the reporter on push, so diagnose it next.
+Dedupe is in post.sh but report.sh and post.sh both post; consolidate to one reporter.
 Grep the verdict log for the exception line instead of blind-tailing.
 Fix the wake payload pending flag so it clears.
 Two bridge instances still erase each other's one-shot marks.
+
+Disagreement journaled
+
+METHODOLOGY.md still says Venice takes a SEC identity sub-slice after the write-path proof. TODO.md on main narrowed to thin poke on 2026-11-05. TODO followed, METHODOLOGY not corrected since James owns it.
 
 Writer rules that still bite
 
