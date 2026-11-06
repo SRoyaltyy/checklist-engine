@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-06T15:10:42.325Z",
-  "set_at": "2026-11-06T15:10:42.325Z",
-  "reason": "run 42238151610 failed (nai-post)"
+  "id": "2026-11-06T15:26:42.548Z",
+  "set_at": "2026-11-06T15:26:42.548Z",
+  "reason": "run 42240608258 failed (nai-verdict)"
 }
