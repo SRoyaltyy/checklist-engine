@@ -1,7 +1,11 @@
 {
   "version": 1,
   "execute": true,
-  "controls": ["BPOP", "DJCO", "KGRN"],
+  "controls": [
+    "BPOP",
+    "DJCO",
+    "KGRN"
+  ],
   "prefix_cuts": ["2023-01-03", "2025-01-02"],
   "base_plan_sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d",
   "measured_report_sha256": "a40b5279a017f5d08af7e32577e6663ac3d295067525ef3480dfaec6648b3734",
