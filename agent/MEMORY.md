@@ -1,7 +1,17 @@
 MEMORY — standing focus
-Response format, every wake
+Reporting format, required by the human, 2026-11-06
 
-Open every response with one line: Goal now — what this wake is actually trying to achieve, in plain words. One line, before the three mandate answers. If there is no goal, say that and stop.
+Every wake response carries three labelled blocks, in this order, before any tool call:
+
+Strategic goal — the goal this wake serves, named from the three: composer never blocks, every prompt carries repair instructions, GitHub work to James' instructions. If the work serves none, say so in one line and stop.
+
+Operational goal — the concrete action this wake takes, and which item or defect it moves.
+
+Percentage to completion — three numbers, always: lane rows proven, gate cleared, harness reliability. Never a single blended figure.
+
+Then the three mandate answers, then work. The format is not optional and does not lapse.
+
+Percentages are stated honestly even when they are embarrassing. A wake that adds nothing says so and says why.
 
 Mandate, every wake
 
@@ -33,6 +43,11 @@ The writer strips leading whitespace from every line. Indented YAML is impossibl
 flow style, all on one line, braces for mappings and lists, zero indentation. Proven failure:
 nai-probe.yml committed flat, run 42210301200 died in the same second with no job.
 
+The writer also strips leading markdown: a leading hash or hash-hash or dash goes from line
+starts, and lone asterisks get eaten. So fence every body, keep no comment lines in scripts, and
+use no asterisks in executable code. Proven failure: open_pr.sh arrived with its comment line
+gutted and its parameter expansion mangled.
+
 Never trust a raw read straight after a write; raw caches minutes. Read blob HTML, which keeps
 angle brackets and is not cached the same way. base64 through contents also survives.
 
@@ -51,6 +66,11 @@ forever. Change the body, never a version number. It rolls back when the bridge 
 120s after boot, after one retry — the bridge sets that object synchronously, so a body that
 parses is healthy and a rollback means a broken body.
 
+The loader is the bootstrapper and only a paste changes it. The bridge is not: the loader
+re-fetches agent/BRIDGE.user.js every 60s and evals it, so a PUT to the bridge is live within a
+minute with no human. Workers are equally autonomous through the deployer with keep_bindings.
+Enhance the bridge and the Workers freely; the loader only by paste.
+
 Userscript push: PUT the file. Worker push: deployer with keep_bindings, verify with op=ops.
 
 Working rules
@@ -58,3 +78,7 @@ Working rules
 Branch venice only, PR to main, never push main. No @@CUT or @@BODY markers. Every claim needs a
 run ID or a commit; no proof means not done. A blocked item is recorded and abandoned, not
 retried forever.
+
+A block that is only a block because of an assumption gets re-examined. The loader paste was
+carried for days as the gate while the actual rollback cause sat in the bridge's liveness and was
+pushable the whole time.
