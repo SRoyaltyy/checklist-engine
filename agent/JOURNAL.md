@@ -24,5 +24,10 @@ Journal - append only, newest last. date UTC | item | action | sha | result.
 2026-11-06T14:30Z | L1 | verdict collector and poster both green; issue 215 carries run 41413529249 with job, step and log tail | n/a | L1 proven, three duplicate comments
 2026-11-06T14:45Z | L1 | branch TODO.md found stale against main's narrowed lane; Venice section replaced, poke item ticked with evidence | n/a | corrected, unproven until pushed
 2026-11-06T14:45Z | L1 | PR opener written to fresh paths, unproven | n/a | landed corrupted, see 15:05
-2026-11-06T15:05Z | infra | NEW WRITER DEFECT found by reading back: leading markdown is stripped from body lines, # and ## and - all removed, lone asterisks eaten, so open_pr.sh arrived with its comment line gutted and %%/* mangled to %%/ | n/a | defect open, fenced bodies plus no comment lines and no asterisks in code
-2026-11-06T15:05Z | L1 | opener rewritten as scripts/nai/open_pr2.sh with cosmetic-only corruption surface, caller .github/workflows/nai-pr2.yml | n/a | written, dispatch next wake
+2026-11-06T15:05Z | infra | writer strips leading markdown and eats lone asterisks; open_pr.sh arrived gutted | n/a | defect open, fence bodies, no comment lines, no asterisks in code
+2026-11-06T15:05Z | L1 | opener rewritten as scripts/nai/open_pr2.sh, cosmetic-only corruption surface | n/a | written, dispatch pending
+2026-11-06T15:29Z | L1 | run 42240608258 diagnosed: retired nai-verdict still on push, probe_result.py dies in 0s | n/a | retired workflow still live
+2026-11-06T15:30Z | L1 | direct reporter written, fenced, no asterisks, dedupes by run id | n/a | landed byte-exact
+2026-11-06T15:30Z | L1 | report fired on its own push and posted comment 6688547773 for run 42240608258 | n/a | PROVEN, one comment not six
+2026-11-06T15:42Z | infra | run 42243674978 diagnosed: old nai-post.yml, inline shell, step 3 dies on double-quote damage | n/a | second broken push workflow
+2026-11-06T15:44Z | infra | old bodies replaced with one-line callers onto working scripts; post.sh gained a dedupe-by-run-id guard | n/a | written, unproven until pushed
