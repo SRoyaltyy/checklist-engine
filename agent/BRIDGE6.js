@@ -15,10 +15,10 @@ return (function (gm, get, set, win, doc, config) {
   function request(op,data){
     return new Promise((resolve,reject)=>{
       if(stopped)return reject(new Error('Runtime stopped'));
-      const url=new URL(config.worker);url.searchParams.set('op',op);url.searchParams.set('k',config.key);url.searchParams.set('_',String(Date.now()));
+      const url=new URL(config.worker);url.searchParams.set('op',op);url.searchParams.set('_',String(Date.now()));
       let handle;
       const finish=(err,r)=>{pendingRequests.delete(handle);if(stopped)return reject(new Error('Runtime stopped'));if(err)return reject(err);let body;try{body=JSON.parse(r.responseText||'{}');}catch{return reject(new Error('Non-JSON worker response'));}if(r.status<200||r.status>=300||(body.ok===false&&op!=='tool'))return reject(new Error(body.error||('HTTP '+r.status)));resolve(body);};
-      handle=gm({method:data?'POST':'GET',url:url.href,headers:data?{'Content-Type':'application/json'}:{},data:data?JSON.stringify(data):undefined,timeout:90000,onload:r=>finish(null,r),onerror:()=>finish(new Error('Network failure')),ontimeout:()=>finish(new Error('Worker timed out'))});
+      handle=gm({method:data?'POST':'GET',url:url.href,headers:{'Authorization':'Bearer '+config.key,...(data?{'Content-Type':'application/json'}:{})},data:data?JSON.stringify(data):undefined,timeout:90000,onload:r=>finish(null,r),onerror:()=>finish(new Error('Network failure')),ontimeout:()=>finish(new Error('Worker timed out'))});
       if(handle)pendingRequests.add(handle);
     });
   }
