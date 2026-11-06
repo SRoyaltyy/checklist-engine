@@ -1,44 +1,34 @@
-const V = 7;
-const json = (d, s = 200) => new Response(JSON.stringify({ v: V, ...d }, null, 2), { status: s, headers: { "Content-Type": "application/json" } });
+// Fixed-target maintenance deployer. Existing token permissions are not widened.
+const REPO='SRoyaltyy/checklist-engine', BRANCH='venice/sec-options-pipelines', SCRIPT='venice-doorman';
+const json=(d,s=200)=>new Response(JSON.stringify({v:8,...d}),{status:s,headers:{'Content-Type':'application/json'}});
 export default {
-async fetch(request, env) {
-const p = new URL(request.url).searchParams;
-if (p.get("k") !== env.DEPLOY_KEY) return json({ ok: false, error: "bad key" }, 401);
-const op = p.get("op") || "ops";
-const acct = String(env.CF_ACCOUNT || "").trim();
-const script = String(env.SCRIPT_NAME || "").trim();
-const tok = String(env.CF_TOKEN || "");
-const auth = { Authorization: "Bearer " + tok };
-const base = "https://api.cloudflare.com/client/v4/accounts/" + acct + "/workers/scripts";
-const api = base + "/" + encodeURIComponent(script);
-if (op === "bindings") {
-const r = await fetch(api + "/settings", { headers: auth });
-const b = await r.json();
-const list = (b.result && b.result.bindings) || [];
-return json({ status: r.status, names: list.map(function (x) { return x.type + ":" + x.name; }) });
-}
-if (op !== "deploy") return json({ ok: true, ops: ["bindings", "deploy"] });
-const branch = p.get("branch") || "main";
-const safe = branch.split("/").map(encodeURIComponent).join("/");
-const got = await fetch("https://raw.githubusercontent.com/" + env.GITHUB_REPO + "/" + safe + "/agent/DOORMAN.worker.js");
-if (!got.ok) return json({ ok: false, error: "source " + got.status }, 400);
-const src = await got.text();
-if (!src || src.length < 500) return json({ ok: false, error: "source too short" }, 400);
-const cur = await fetch(api + "/settings", { headers: auth });
-const cb = await cur.json();
-const keep = ((cb.result && cb.result.bindings) || []).filter(function (x) {
-return x.type === "plain_text" || x.type === "json";
-}).map(function (x) {
-return x.type === "json" ? { type: "json", name: x.name, json: x.json } : { type: "plain_text", name: x.name, text: x.text };
-});
-const form = new FormData();
-form.set("metadata", JSON.stringify({ main_module: "worker.js", bindings: keep }));
-form.set("worker.js", new File([src], "worker.js", { type: "application/javascript+module" }));
-const put = await fetch(api + "?keep_bindings=plain_text,secret_text", { method: "PUT", headers: auth, body: form });
-const body = (await put.text()).slice(0, 300);
-const after = await fetch(api + "/settings", { headers: auth });
-const ab = await after.json();
-const names = ((ab.result && ab.result.bindings) || []).map(function (x) { return x.name; });
-return json({ ok: put.ok, status: put.status, kept: keep.length, bindings_after: names, body }, put.ok ? 200 : 400);
-},
+ async fetch(request,env){
+  if(!env.DEPLOY_KEY||request.headers.get('Authorization')!=='Bearer '+env.DEPLOY_KEY)return json({ok:false,error:'Unauthorized'},401);
+  const p=new URL(request.url).searchParams;
+  if(p.get('op')!=='deploy')return json({ok:true,target:SCRIPT,branch:BRANCH});
+  if(request.method!=='POST')return json({ok:false,error:'POST required'},405);
+  if(env.SCRIPT_NAME!==SCRIPT||env.GITHUB_REPO!==REPO)return json({ok:false,error:'Unexpected target configuration'},400);
+  const commit=p.get('commit');if(!/^[0-9a-f]{40}$/.test(commit||''))return json({ok:false,error:'Immutable 40-character commit required'},400);
+  const currentHead=await fetch('https://api.github.com/repos/'+REPO+'/git/ref/heads/'+encodeURIComponent(BRANCH),{headers:{'User-Agent':'venice-maintenance'}});
+  const head=await currentHead.json();if(!currentHead.ok||head.object?.sha!==commit)return json({ok:false,error:'Commit must be the current maintenance branch head'},409);
+  const got=await fetch('https://raw.githubusercontent.com/'+REPO+'/'+commit+'/agent/DOORMAN.worker.js');
+  if(!got.ok)return json({ok:false,error:'Source unavailable'},400);const source=await got.text();
+  if(source.length<500||source.length>150000)return json({ok:false,error:'Invalid source size'},400);
+  const api='https://api.cloudflare.com/client/v4/accounts/'+String(env.CF_ACCOUNT||'').trim()+'/workers/scripts/'+SCRIPT;
+  const auth={Authorization:'Bearer '+env.CF_TOKEN};
+  const cur=await fetch(api+'/settings',{headers:auth});const cb=await cur.json();
+  if(!cur.ok||!cb.success||!Array.isArray(cb.result?.bindings))return json({ok:false,error:'Cannot read settings; deployment aborted'},400);
+  const bindings=cb.result.bindings, names=bindings.map(x=>x.name);
+  const required=['GITHUB_TOKEN','DOORMAN_KEY','DEPLOY_KEY','GITHUB_REPO','WAKE_BRANCH','DEPLOYER'];
+  if(required.some(x=>!names.includes(x)))return json({ok:false,error:'Required existing bindings missing; deployment aborted'},400);
+  const metadata={main_module:'worker.js',keep_bindings:[...new Set(bindings.map(x=>x.type))],compatibility_date:cb.result.compatibility_date||'2026-11-01',compatibility_flags:cb.result.compatibility_flags||[],observability:cb.result.observability};
+  const form=new FormData();form.set('metadata',JSON.stringify(metadata));form.set('worker.js',new File([source],'worker.js',{type:'application/javascript+module'}));
+  const put=await fetch(api,{method:'PUT',headers:auth,body:form});const result=await put.json();
+  if(!put.ok||!result.success)return json({ok:false,error:'Upload rejected',status:put.status,errors:result.errors},400);
+  const after=await fetch(api+'/settings',{headers:auth});const ab=await after.json();
+  const afterBindings=ab.result?.bindings||[];
+  const intact=bindings.every(x=>afterBindings.some(y=>y.name===x.name&&y.type===x.type));
+  return json({ok:after.ok&&intact,target:SCRIPT,commit,bindings_preserved:intact,version:result.result?.id},after.ok&&intact?200:500);
+ }
 };
+
