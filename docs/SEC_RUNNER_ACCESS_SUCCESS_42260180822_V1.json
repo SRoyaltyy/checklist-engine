@@ -1,0 +1,78 @@
+{
+  "format": "SEC_RUNNER_ACCESS_PROOF_V1",
+  "status": "PASS_ALL_SIX_OFFICIAL_ENDPOINTS",
+  "actual_run_id": "42260180822",
+  "actual_attempt": "1",
+  "source_commit": "31b8024b415df3b1273c9b573545987db51f4a0f",
+  "request": {
+    "version": 1,
+    "scope": "SIX_DECLARED_OFFICIAL_ENDPOINTS_ONLY",
+    "max_response_bytes": 10000000,
+    "attempts_per_endpoint": 1,
+    "execute": true
+  },
+  "route": "EXISTING_PRIMARY_ACTION_RELAY_ONLY",
+  "relay_configuration": {
+    "matches_inspected_production_worker": true,
+    "secret_value_disclosed": false,
+    "check": "HTTPS host equals the production Worker visually inspected in Cloudflare"
+  },
+  "records": [
+    {
+      "kind": "tickers",
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 796507,
+      "sha256": "76b4b2abb9f7dd0e9cff38e2f20336952bb41806057b2dd1033e244f3e1faec2",
+      "rows": 10409
+    },
+    {
+      "kind": "exchange_tickers",
+      "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 522049,
+      "sha256": "224330f2c44f5d173395e427dbac3c6981acdb1f57e3658832d315c3e96f6522",
+      "rows": 10409
+    },
+    {
+      "kind": "form345_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 131596,
+      "sha256": "579fe82f87e0875740ef474d7d5625759de9f7114679f3a25e57d2e00a894988",
+      "verified_official_zip_links": 27,
+      "first_url": "https://www.sec.gov/files/datastandardsinnovation/data/insider-transactions-data-sets/2026q2_form345.zip",
+      "last_url": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2026q1_form345.zip"
+    },
+    {
+      "kind": "form13f_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 108022,
+      "sha256": "2c4b394a3378dc5b268b691cd9862fd65f1a70afa0834b7052f4dde287616c84",
+      "verified_official_zip_links": 27,
+      "first_url": "https://www.sec.gov/files/datastandardsinnovation/data/form-13f-data-sets/01jun2026-31aug2026_form13f.zip",
+      "last_url": "https://www.sec.gov/files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip"
+    },
+    {
+      "kind": "submissions",
+      "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 164372,
+      "sha256": "2c9cbb2f163361bf1fd0318faadb50cdfa719104d45aa39934f29d554d3a4916",
+      "rows": 1005
+    },
+    {
+      "kind": "numeric_concept",
+      "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/Assets.json",
+      "status": "PASS_SCHEMA_AND_NONEMPTY_BODY",
+      "bytes": 20242,
+      "sha256": "72602d245bc4962e457a31e1f739aaefe19839dc51883700d9940595e4a39957",
+      "rows": 148
+    }
+  ],
+  "scope": "Bounded source-access/schema proof only; no complete bulk downloads, identity extension or market calculation.",
+  "upstream_user_agent": "NOT_OBSERVABLE_FROM_CLIENT; deployed relay configuration must preserve a declared contact identity",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

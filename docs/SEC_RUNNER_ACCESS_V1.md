@@ -146,8 +146,22 @@ approved private contact only for the exact hosts `sec.gov`, `www.sec.gov` and
 `data.sec.gov`; other destinations keep the existing public contact identity.
 The private value is not stored in this repository or its receipts.
 
-A fresh bounded proof now tests the same six sources after this configuration
-change and the cooldown interval. **Task5 remains unchecked, world gate
-NOT_PROVEN, scoring CLOSED.** Source access remains a prerequisite to scheduled
-bulk-download tasks. The one-shot request will be disabled after its actual
-result is reviewed; no unverified access success is claimed.
+Actual [run42260180822/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42260180822)
+on source `31b8024b415df3b1273c9b573545987db51f4a0f` succeeded with
+**all six official endpoints passing**. Both ticker maps contain10,409rows;
+both Form3/4/5 and13F indexes expose27official ZIP links from2020 onward;
+the submissions sample contains1,005accessions and the numeric concept148facts.
+All24synthetic checks also passed on that source.
+
+The [public release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/sec-runner-access-v1-42260180822-1)
+contains the exact [3,289-byte successful receipt](SEC_RUNNER_ACCESS_SUCCESS_42260180822_V1.json),
+independently downloaded and SHA256 checked:
+`9964d6d85cc4e5614f830537803b10f26a34d7225af5756abd6251c9baf9a75f`.
+The readback verifies actual run/attempt/source, all six declared endpoints,
+nonempty schemas/counts, the positive relay match, and absence of a private
+Gmail contact in the receipt. Earlier failed receipts remain unchanged.
+
+The one-shot request is disabled before merge. This proves the declared runner
+source-access scope; complete bulk ZIP acquisition, cohort coverage and PIT joins
+remain later tasks. **World gate NOT_PROVEN, scoring CLOSED.** The scheduled SEC
+workflows use the same tested relay client and deployed SEC contact rule.
