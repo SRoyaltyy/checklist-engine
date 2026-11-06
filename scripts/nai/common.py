@@ -1,5 +1,5 @@
 """Shared helpers for no-AI data pipelines (plain HTTP + gh release). No LLM calls."""
-import json, os, re, subprocess, time, urllib.request, urllib.error, urllib.parse
+import html, json, os, re, subprocess, time, urllib.request, urllib.error, urllib.parse
 
 UA = "checklist-engine research cyrus-checklist@users.noreply.github.com"
 REPO = os.environ.get("GITHUB_REPOSITORY", "SRoyaltyy/checklist-engine")
@@ -29,6 +29,14 @@ class SourceError(RuntimeError):
     def __init__(self, evidence):
         self.evidence = evidence
         super().__init__(json.dumps(evidence, sort_keys=True))
+
+
+def response_excerpt(raw):
+    text=raw.decode('utf-8','replace')
+    text=re.sub(r'<(style|script)\b[^>]*>.*?</\1\s*>',' ',text,flags=re.I|re.S)
+    text=html.unescape(re.sub(r'<[^>]+>',' ',text))
+    text=re.sub(r'\b(?:\d{1,3}\.){3}\d{1,3}\b','[IP REDACTED]',text)
+    return redact(re.sub(r'\s+',' ',text).strip())[:800]
 
 
 def _relay(url):
@@ -91,7 +99,7 @@ def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None, rou
                 return raw
         except urllib.error.HTTPError as e:
             try:
-                excerpt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", e.read(8192).decode("utf-8", "replace"))).strip()[:800]
+                excerpt = response_excerpt(e.read(16384))
             except Exception:
                 excerpt = "unreadable HTTP error body"
             err = dict(url=source, route=route, http_status=e.code, attempts=i+1,

@@ -47,7 +47,7 @@ or alternate-proxy routing is performed by this PR.
 
 ## Proof and acceptance
 
-`nai-sec-access` runs 19 synthetic transport/schema/publication tests without installing
+`nai-sec-access` runs 23 synthetic transport/schema/publication/configuration tests without installing
 dependencies. The one-shot request then permits exactly six official reads on
 the authorized runner, one attempt each and at most10MB per response:
 
@@ -97,8 +97,28 @@ only the deployed Worker's User-Agent line to verify the actual edit; no token
 or secret URL is requested. The broad goal was paused, so this retest does not
 restart the remaining bulk-download backlog.
 
-The one-shot request is reset FALSE. **Task5 remains unchecked, world gate
-NOT_PROVEN, scoring CLOSED.** The next dependency is a contact-bearing deployed
-Worker or another explicitly configured authorized SEC egress route. No
-deployment is performed by Codex and no further SEC requests are made until
-the deployed configuration is checked or changed.
+## Direct deployment check and resumed diagnosis
+
+Cyrus authorized direct laptop inspection. The Cloudflare production editor for
+`fullscan-primary-relay` visibly contains the intended contact-bearing User-Agent
+at line26 and labels version `92cefbea` **Active / Latest**, with Deploy disabled.
+The source passes that headers object into its upstream fetch. The editor's one
+reported issue concerns static inference of the response headers object, not the
+User-Agent line. No Worker code or deployment was changed by Codex during this
+inspection. The earlier statement that deployment was unobserved is superseded
+by this direct observation; it does not establish why SEC rejected the requests.
+
+Cyrus then resumed the broad goal and supplied standing computer-control
+authorization. The next bounded proof first checks, inside Actions, whether the
+configured relay's HTTPS hostname equals the production Worker inspected in the
+browser. It publishes only a boolean match result, never the secret URL or query.
+A mismatch prevents every SEC request. On a match, the same six endpoints and
+one-attempt limits apply. This new attempt occurs after the SEC's documented
+ten-minute cooldown interval, without rotating identities or proxy routes.
+Error excerpts now omit CSS/scripts so the SEC's actual explanation is readable;
+IP addresses and relay details are redacted.
+
+This configuration-aware proof is pending. **Task5 remains unchecked, world gate
+NOT_PROVEN, scoring CLOSED.** The one-shot request will be disabled after the
+actual result is reviewed. Source access remains a prerequisite to the scheduled
+bulk-download tasks; no unverified access success is claimed.

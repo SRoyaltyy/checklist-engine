@@ -16,6 +16,17 @@ RELAY = 'https://private.example/route?token=secret-test-token&url=old'
 
 
 class HTTPTests(unittest.TestCase):
+    def test_error_excerpt_preserves_reason_instead_of_css_and_redacts_ip(self):
+        raw=('<title>SEC.gov | Access denied</title><style>'+'x'*1500+'</style>'
+             '<script>hidden()</script><h1>Undeclared automated tool</h1>'
+             '<p>Contact &amp; identify. IP 192.0.2.3</p>').encode()
+        result=c.response_excerpt(raw)
+        self.assertIn('Undeclared automated tool',result)
+        self.assertIn('Contact & identify.',result)
+        self.assertNotIn('hidden',result)
+        self.assertNotIn('192.0.2.3',result)
+        self.assertNotIn('x'*50,result)
+
     def setUp(self):
         self.env = patch.dict(os.environ, {'PRIMARY_ACTION_RELAY_URL':RELAY}, clear=True)
         self.env.start()

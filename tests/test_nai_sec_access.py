@@ -4,10 +4,29 @@ import os
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from ci.sec_runner_access import SOURCES,inspect,main,publish_receipt,validate_request
+from ci.sec_runner_access import INSPECTED_RELAY_HOST,SOURCES,collect_records,inspect,main,publish_receipt,relay_configuration,validate_request
 
 
 class AccessProofTests(unittest.TestCase):
+    def test_relay_configuration_match_does_not_disclose_query(self):
+        with patch.dict(os.environ,{'PRIMARY_ACTION_RELAY_URL':'https://'+INSPECTED_RELAY_HOST+'/?token=private-test-value'}):
+            result=relay_configuration()
+        self.assertTrue(result['matches_inspected_production_worker'])
+        self.assertFalse(result['secret_value_disclosed'])
+        self.assertNotIn('private-test-value',json.dumps(result))
+
+    def test_relay_configuration_rejects_wrong_host_and_insecure_values(self):
+        for value in ['', 'http://'+INSPECTED_RELAY_HOST+'/', 'https://'+INSPECTED_RELAY_HOST+'.evil.example/', 'https://user:password@'+INSPECTED_RELAY_HOST+'/']:
+            with self.subTest(value=value),patch.dict(os.environ,{'PRIMARY_ACTION_RELAY_URL':value}):
+                self.assertFalse(relay_configuration()['matches_inspected_production_worker'])
+
+    def test_configuration_mismatch_makes_no_source_requests(self):
+        with patch('ci.sec_runner_access.common.get') as network:
+            records=collect_records(dict(matches_inspected_production_worker=False))
+        network.assert_not_called()
+        self.assertEqual([r['kind'] for r in records],[kind for kind,url in SOURCES])
+        self.assertTrue(all(r['status']=='NOT_ATTEMPTED_RELAY_CONFIGURATION_MISMATCH' for r in records))
+
     def test_fixed_scope_allows_only_execute_toggle(self):
         request=dict(version=1,scope='SIX_DECLARED_OFFICIAL_ENDPOINTS_ONLY',max_response_bytes=10000000,attempts_per_endpoint=1,execute=False)
         self.assertEqual(validate_request(request),request)

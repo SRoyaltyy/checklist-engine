@@ -4,12 +4,14 @@ import json
 import os
 from pathlib import Path
 import sys
+import urllib.parse
 
 from fetch.sec_bulk import source_links
 from scripts.nai import common
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUEST = ROOT/'ci/SEC_RUNNER_ACCESS_REQUEST.json'
+INSPECTED_RELAY_HOST = 'fullscan-primary-relay.fullscan-relay.workers.dev'
 SOURCES = [
     ('tickers','https://www.sec.gov/files/company_tickers.json'),
     ('exchange_tickers','https://www.sec.gov/files/company_tickers_exchange.json'),
@@ -52,16 +54,24 @@ def inspect(kind,raw,url):
     return dict(rows=rows)
 
 
-def main():
-    if os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REPOSITORY')!='SRoyaltyy/checklist-engine':
-        raise ValueError('SEC access probes run only on the authorized GitHub runner')
-    request=validate_request(json.loads(REQUEST.read_bytes()))
-    if not request['execute']:
-        raise ValueError('SEC access proof is disabled')
+def relay_configuration():
+    """Compare locally in the runner; never publish the configured URL or query."""
+    parsed=urllib.parse.urlsplit(os.environ.get('PRIMARY_ACTION_RELAY_URL','').strip())
+    matches=(parsed.scheme=='https' and parsed.hostname==INSPECTED_RELAY_HOST
+             and parsed.username is None and parsed.password is None)
+    return dict(matches_inspected_production_worker=matches,
+                secret_value_disclosed=False,
+                check='HTTPS host equals the production Worker visually inspected in Cloudflare')
+
+
+def collect_records(configuration):
     records=[]
     for kind,url in SOURCES:
+        if not configuration['matches_inspected_production_worker']:
+            records.append(dict(kind=kind,url=url,status='NOT_ATTEMPTED_RELAY_CONFIGURATION_MISMATCH'))
+            continue
         try:
-            raw=common.get(url,tries=1,timeout=90,max_bytes=request['max_response_bytes'])
+            raw=common.get(url,tries=1,timeout=90,max_bytes=10000000)
             detail=inspect(kind,raw,url)
             records.append(dict(kind=kind,url=url,status='PASS_SCHEMA_AND_NONEMPTY_BODY',
                 bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest(),**detail))
@@ -69,10 +79,21 @@ def main():
             records.append(dict(kind=kind,url=url,status='FAIL',
                 evidence=getattr(exc,'evidence',dict(error_type=type(exc).__name__,message=common.redact(exc)))))
         print('SEC_ACCESS_RESULT',json.dumps(records[-1],sort_keys=True),flush=True)
+    return records
+
+
+def main():
+    if os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REPOSITORY')!='SRoyaltyy/checklist-engine':
+        raise ValueError('SEC access probes run only on the authorized GitHub runner')
+    request=validate_request(json.loads(REQUEST.read_bytes()))
+    if not request['execute']:
+        raise ValueError('SEC access proof is disabled')
+    configuration=relay_configuration()
+    records=collect_records(configuration)
     passed=all(r['status']=='PASS_SCHEMA_AND_NONEMPTY_BODY' for r in records)
     report=dict(format='SEC_RUNNER_ACCESS_PROOF_V1',status='PASS_ALL_SIX_OFFICIAL_ENDPOINTS' if passed else 'BLOCKED_OFFICIAL_ENDPOINT_ACCESS',
         actual_run_id=os.environ['GITHUB_RUN_ID'],actual_attempt=os.environ['GITHUB_RUN_ATTEMPT'],source_commit=os.environ['GITHUB_SHA'],
-        request=request,route='EXISTING_PRIMARY_ACTION_RELAY_ONLY',records=records,
+        request=request,route='EXISTING_PRIMARY_ACTION_RELAY_ONLY',relay_configuration=configuration,records=records,
         scope='Bounded source-access/schema proof only; no complete bulk downloads, identity extension or market calculation.',
         upstream_user_agent='NOT_OBSERVABLE_FROM_CLIENT; deployed relay configuration must preserve a declared contact identity',
         world_gate='NOT_PROVEN',scoring_gate='CLOSED')
