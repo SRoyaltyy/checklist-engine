@@ -67,9 +67,23 @@ future OHLCV at each cut. Every column's public value/clock pair is also checked
 The new runtime probes are those three controls; the complete-cohort source
 measurement is reused explicitly rather than relabelled as a new full rebuild.
 
-The runner receipt and public readback remain pending until the actual run
-finishes. Task 3 stays unchecked until the proof is reviewed and its PR merges
-with green leak checks. The historical PIT report is preserved unchanged.
+Actual [run 42249025598, attempt 1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42249025598)
+succeeded on source `af4424c848817c62491905c73ae35831fdc4792c`.
+The exact [runner receipt](PRICE_COLUMN_AVAILABILITY_PROOF_V1.json) and
+[independent public readback](PRICE_COLUMN_AVAILABILITY_PUBLIC_READBACK_V1.json)
+are committed here. All four [public release assets](https://github.com/SRoyaltyy/checklist-engine/releases/tag/price-column-availability-v1-42249025598-1)
+were downloaded and checked against their published sizes and SHA256 digests.
+The receipt SHA256 is `5a18cca9e7f610fb991ad7128307e22c4538e76ee324d5c147edb735f5bbdcce`.
+
+The three controls each cover 1,712 setup rows and all 22 native timeframes:
+**117,963,648 exact alignment cells, 137,808 prefix cells, 137,808 future-perturbation
+cells and 206,712 sampled value/clock pairs**, with zero reported differences.
+The independent metadata audit checks every declared control, field, timeframe,
+cut, source hash and count; it does not rerun market calculations locally.
+Its source-cohort readback exactly matches the independently authenticated
+full PIT bundle, retaining the packet replay FAIL for 1,308 stocks.
+The one-shot execution request is disabled before merge.
+The historical PIT report is preserved unchanged.
 Diagnostic replay failures and unresolved world prerequisites remain explicit;
 **scoring stays CLOSED**.
 
@@ -79,4 +93,4 @@ published a [FAIL receipt](https://github.com/SRoyaltyy/checklist-engine/release
 because the first reader implementation rejected the frozen float32 pattern
 transport. Its three failed controls and source reference remain available.
 The transport correction preserves those fields, their values, and the declared
-controls; a new successful runner result is required.
+controls; the corrected successful run above supersedes that reader failure.
