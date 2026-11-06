@@ -48,6 +48,18 @@ class HTTPTests(unittest.TestCase):
                 c.get(SOURCE)
             self.assertEqual(network.call_args.args[0].get_header('User-agent'),'Named research contact@example.test')
 
+    def test_contact_is_sent_to_source_but_not_published_in_failure_evidence(self):
+        def denied(request,**kwargs):
+            self.assertEqual(request.get_header('User-agent'),'Named research private-contact@example.test')
+            raise urllib.error.HTTPError(request.full_url,403,'Forbidden',{},
+                io.BytesIO(b'Identify private-contact@example.test'))
+        with patch.dict(os.environ,{'SEC_USER_AGENT':'Named research private-contact@example.test'}),\
+                patch.object(c.urllib.request,'urlopen',side_effect=denied):
+            with self.assertRaises(c.SourceError) as caught:c.get(SOURCE)
+        serialized=json.dumps(caught.exception.evidence)
+        self.assertNotIn('private-contact@example.test',serialized)
+        self.assertIn('[CONTACT EMAIL REDACTED]',serialized)
+
     def test_missing_relay_fails_before_network(self):
         os.environ.pop('PRIMARY_ACTION_RELAY_URL')
         with patch.object(c.urllib.request,'urlopen') as network:

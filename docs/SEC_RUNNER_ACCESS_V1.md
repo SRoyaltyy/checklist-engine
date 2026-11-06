@@ -47,7 +47,7 @@ or alternate-proxy routing is performed by this PR.
 
 ## Proof and acceptance
 
-`nai-sec-access` runs 23 synthetic transport/schema/publication/configuration tests without installing
+`nai-sec-access` runs 24 synthetic transport/schema/publication/configuration tests without installing
 dependencies. The one-shot request then permits exactly six official reads on
 the authorized runner, one attempt each and at most10MB per response:
 
@@ -118,7 +118,25 @@ ten-minute cooldown interval, without rotating identities or proxy routes.
 Error excerpts now omit CSS/scripts so the SEC's actual explanation is readable;
 IP addresses and relay details are redacted.
 
-This configuration-aware proof is pending. **Task5 remains unchecked, world gate
-NOT_PROVEN, scoring CLOSED.** The one-shot request will be disabled after the
-actual result is reviewed. Source access remains a prerequisite to the scheduled
-bulk-download tasks; no unverified access success is claimed.
+Actual [configuration-aware run42258164737/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42258164737),
+source `e132bf910c0fff60fe848866cf3aab4d7b4bb75f`, confirms the configured HTTPS
+host **matches the inspected production Worker**. All23then-current synthetic
+checks passed, but all six official reads again returned403 after the cooldown.
+The public [release](https://github.com/SRoyaltyy/checklist-engine/releases/tag/sec-runner-access-v1-42258164737-1)
+contains the exact [7,073-byte receipt](SEC_RUNNER_ACCESS_CONFIG_42258164737_V1.json),
+independently downloaded and SHA256 checked:
+`d3bcacd66132cf546cc748be439fb244b5b3e871ea4256e9f5bbdd72a117c851`.
+Its boolean relay comparison discloses no secret URL/query. This rules out a
+different configured hostname; it does not identify the SEC's blocking decision.
+
+The proposed relay contact has not been verified as a monitored mailbox. The next
+configuration change requires the owner's specific permission to use a monitored
+contact address in Cloudflare and requests to SEC. No private address is recorded
+in git. The client now redacts contact-email values from failure evidence and
+response excerpts while preserving the actual request header; its additional
+regression check brings the synthetic suite to24passing tests.
+
+The one-shot request is disabled. **Task5 remains unchecked, world gate
+NOT_PROVEN, scoring CLOSED.** Source access remains a prerequisite to scheduled
+bulk-download tasks; no unverified access success is claimed and no new Worker
+change is made while the specific contact-data permission is pending.

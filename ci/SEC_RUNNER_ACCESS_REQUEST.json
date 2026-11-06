@@ -3,5 +3,5 @@
   "scope": "SIX_DECLARED_OFFICIAL_ENDPOINTS_ONLY",
   "max_response_bytes": 10000000,
   "attempts_per_endpoint": 1,
-  "execute": true
+  "execute": false
 }

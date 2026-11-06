@@ -22,7 +22,8 @@ def redact(value):
             if len(token) > 3:
                 text = text.replace(token, "[REDACTED]")
                 text = text.replace(urllib.parse.quote(token, safe=""), "[REDACTED]")
-    return text
+    return re.sub(r'[A-Za-z0-9.!#$%&\x27*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+',
+                  '[CONTACT EMAIL REDACTED]', text)
 
 
 class SourceError(RuntimeError):
@@ -103,7 +104,7 @@ def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None, rou
             except Exception:
                 excerpt = "unreadable HTTP error body"
             err = dict(url=source, route=route, http_status=e.code, attempts=i+1,
-                       response_excerpt=redact(excerpt), user_agent=ua, request_spacing_seconds=pace)
+                       response_excerpt=redact(excerpt), user_agent=redact(ua), request_spacing_seconds=pace)
             if e.code in (403, 404, 429) or e.code < 500 or i == tries - 1:
                 raise SourceError(err) from None
         except (OSError, TimeoutError) as e:
