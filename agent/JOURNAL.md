@@ -21,3 +21,8 @@ Journal - append only, newest last. date UTC | item | action | sha | result.
 2026-11-06T11:59Z | infra | flow style, one line, zero indentation, written to a fresh path nai-probe2.yml | n/a | landed byte-exact
 2026-11-06T12:15Z | infra | nai-probe2 green twice, runs 42216183221 and 42214233882 | n/a | proven: bridge-written workflows run when flow style
 2026-11-06T12:15Z | infra | nai-probe.yml still flat: the replayed old directive rewrites the indented body over any newer one | n/a | defect open, use fresh filenames
+2026-11-06T14:30Z | L1 | verdict collector and poster both green; issue 215 carries run 41413529249 with job, step and log tail | n/a | L1 proven, three duplicate comments
+2026-11-06T14:45Z | L1 | branch TODO.md found stale against main's narrowed lane; Venice section replaced, poke item ticked with evidence | n/a | corrected, unproven until pushed
+2026-11-06T14:45Z | L1 | PR opener written to fresh paths, unproven | n/a | landed corrupted, see 15:05
+2026-11-06T15:05Z | infra | NEW WRITER DEFECT found by reading back: leading markdown is stripped from body lines, # and ## and - all removed, lone asterisks eaten, so open_pr.sh arrived with its comment line gutted and %%/* mangled to %%/ | n/a | defect open, fenced bodies plus no comment lines and no asterisks in code
+2026-11-06T15:05Z | L1 | opener rewritten as scripts/nai/open_pr2.sh with cosmetic-only corruption surface, caller .github/workflows/nai-pr2.yml | n/a | written, dispatch next wake
