@@ -1,0 +1,3 @@
+name: nai-report
+on: [push, workflow_dispatch]
+jobs: {report: {runs-on: ubuntu-latest, timeout-minutes: 10, permissions: {contents: read, issues: write}, env: {GH_TOKEN: '${{ github.token }}'}, steps: [{uses: actions/checkout@v4}, {run: 'bash scripts/nai/report.sh 42240608258'}]}}
