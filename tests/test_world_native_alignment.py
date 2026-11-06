@@ -26,6 +26,15 @@ def test_global_calendar_rejects_unknown_dates_and_omits_halt_buckets():
     assert ds[9] not in set(candles.date)
     with pytest.raises(ValueError,match="outside"):completed_candles(b,"5d",session_calendar=ds[1:])
 
+def test_monthly_with_a_calendar_waits_for_the_next_session():
+    ds=pd.to_datetime(["2020-01-30","2020-01-31","2020-02-03","2020-02-04"])
+    c=np.array([10.0,11.0])
+    b=pd.DataFrame(dict(date=ds[:2],open=c,high=c,low=c,close=c,volume=np.ones(2)))
+    result=completed_candles(b,"monthly",session_calendar=ds)
+    assert len(result)==1
+    assert result.available_from.iloc[0]==pd.Timestamp("2020-02-03")
+
+
 def test_global_monthly_needs_a_whole_completed_month():
     ds=pd.bdate_range("2020-01-02","2020-04-10");c=np.ones(len(ds))*20
     b=pd.DataFrame(dict(date=ds,open=c,high=c+1,low=c-1,close=c,volume=c*100))
