@@ -47,7 +47,7 @@ or alternate-proxy routing is performed by this PR.
 
 ## Proof and acceptance
 
-`nai-sec-access` runs 18 synthetic transport/schema tests without installing
+`nai-sec-access` runs 19 synthetic transport/schema/publication tests without installing
 dependencies. The one-shot request then permits exactly six official reads on
 the authorized runner, one attempt each and at most10MB per response:
 
@@ -64,7 +64,23 @@ It never interprets an HTML denial or an empty index as success. A green result
 proves only this source-access scope; complete bulk downloads, coverage and PIT
 joins remain later tasks. The one-shot request is disabled after review.
 
-Actual runner evidence is pending. **Task5 remains unchecked, world gate
-NOT_PROVEN, scoring CLOSED.** The next dependency, if the same upstream denial
-persists, is a contact-bearing deployed Worker or another explicitly configured
-authorized SEC egress route. No secret value should be posted in git or chat.
+Actual [run42254420545/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42254420545),
+source `adc606c30d579d03588dd2fd323532b58c2f5574`, confirms **four www.sec.gov
+HTTP403 failures and two data.sec.gov successes** (1,005 submission rows and148
+numeric concept observations). Each endpoint was attempted once. The initial
+release-publication call then failed on an unsupported wrapper option. The receipt
+survived as Actions artifact13521383839, whose ZIP SHA256
+`06df53b1e6d17e81a7a172cb2dabe7fa1a2206d0adb935c08edb21e47226e35f`
+was independently checked after download through the GitHub connector. Its exact
+[6,558-byte receipt](SEC_RUNNER_ACCESS_PROOF_V1.json) is preserved here with SHA256
+`26ba89c2f4d35a013d68b6a49a8f999b143d4d98974c9f23a5be93e138625c85`.
+No public release was created by that failed publication call. The unsupported
+option is removed and a regression check exercises the real release-wrapper
+parser. The supplied upstream header patch also passes `git apply --check`
+against the published Worker source.
+
+The one-shot request is reset FALSE. **Task5 remains unchecked, world gate
+NOT_PROVEN, scoring CLOSED.** The next dependency is a contact-bearing deployed
+Worker or another explicitly configured authorized SEC egress route. Cyrus has
+been given the exact one-line Cloudflare edit; no deployment is claimed and no
+further SEC requests are made until that external configuration changes.

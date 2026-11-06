@@ -1,8 +1,7 @@
 diff --git a/relay/worker.js b/relay/worker.js
 --- a/relay/worker.js
 +++ b/relay/worker.js
-@@ -23,7 +23,7 @@ export default {
- 
+@@ -24,5 +24,5 @@ export default {
      const headers = {
 -      'User-Agent': 'FullscanPrimaryActionScanner/1.0 (+https://github.com/SRoyaltyy/fullscan; public documents; no article-body crawling)',
 +      'User-Agent': 'Fullscan filing parser research@sroyaltyy.github.io',

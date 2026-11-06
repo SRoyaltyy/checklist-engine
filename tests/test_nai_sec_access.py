@@ -1,9 +1,10 @@
 """Synthetic access-proof schema and scope checks; no external requests."""
 import json
 import os
+from pathlib import Path
 import unittest
 from unittest.mock import patch
-from ci.sec_runner_access import SOURCES,inspect,main,validate_request
+from ci.sec_runner_access import SOURCES,inspect,main,publish_receipt,validate_request
 
 
 class AccessProofTests(unittest.TestCase):
@@ -41,6 +42,19 @@ class AccessProofTests(unittest.TestCase):
         self.assertEqual(inspect('numeric_concept',json.dumps(value).encode(),SOURCES[5][1]),{'rows':1})
         for bad in [dict(cik=1,units=value['units']),dict(cik=320193,units={}),dict(cik=320193,units={'USD':[{'val':'text'}]})]:
             with self.subTest(bad=bad),self.assertRaises(ValueError):inspect('numeric_concept',json.dumps(bad).encode(),SOURCES[5][1])
+
+    def test_publisher_uses_options_supported_by_real_release_wrapper(self):
+        from ci import release_assets as io
+        report=dict(actual_run_id='123',actual_attempt='1',source_commit='a'*40)
+        tag='sec-runner-access-v1-123-1'
+        with patch.dict(os.environ,{'GITHUB_REPOSITORY':'owner/repo'}),patch.dict(io._RELEASE_IDS,{},clear=True),\
+                patch.object(io,'_json_api',return_value=json.dumps(dict(id=42,tag_name=tag,draft=True))) as api,\
+                patch.object(io,'publish_assets') as upload,patch.object(io,'release_info',return_value=dict(id=42)):
+            publish_receipt(Path('receipt.json'),report)
+        self.assertEqual(api.call_args_list[0].args[0],'POST')
+        self.assertEqual(api.call_args_list[0].args[2]['target_commitish'],'a'*40)
+        self.assertEqual(api.call_args_list[1].args,('PATCH','repos/owner/repo/releases/42',{'draft':False}))
+        upload.assert_called_once_with(tag,Path('receipt.json'))
 
 
 if __name__=='__main__':

@@ -79,13 +79,17 @@ def main():
     root=ROOT/'sec-access-proof';root.mkdir(exist_ok=True)
     path=root/'SEC_RUNNER_ACCESS_PROOF_V1.json'
     path.write_bytes((json.dumps(report,indent=2)+'\n').encode())
+    publish_receipt(path,report)
+    return 0 if passed else 1
+
+
+def publish_receipt(path,report):
     tag='sec-runner-access-v1-'+report['actual_run_id']+'-'+report['actual_attempt']
     from ci.release_assets import gh_retry,publish_assets
     gh_retry('release','create',tag,'--draft','--target',report['source_commit'],'--title',tag,
-             '--notes','Bounded official SEC source-access proof. Failed endpoints retained explicitly; scoring CLOSED.','--latest=false')
+             '--notes','Bounded official SEC source-access proof. Failed endpoints retained explicitly; scoring CLOSED.')
     publish_assets(tag,path)
     gh_retry('release','edit',tag,'--draft=false')
-    return 0 if passed else 1
 
 
 if __name__=='__main__':
