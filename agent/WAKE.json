@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-06T16:14:42.388Z",
-  "set_at": "2026-11-06T16:14:42.388Z",
-  "reason": "run 42249410577 failed (nai-auto)"
+  "id": "2026-11-06T16:30:42.596Z",
+  "set_at": "2026-11-06T16:30:42.596Z",
+  "reason": "main moved 081eba00; run 42250703815 failed (nai-auto)"
 }
