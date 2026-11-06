@@ -1,0 +1,3 @@
+name: nai-write
+on: [workflow_dispatch]
+jobs: {fix: {runs-on: ubuntu-latest, timeout-minutes: 10, permissions: {contents: write}, steps: [{uses: actions/checkout@v4}, {run: 'sed -i "s/^on: [push, workflow_dispatch]/on: [workflow_dispatch]/" .github/workflows/nai-auto.yml .github/workflows/nai-verdict.yml'}, {run: 'sed -i "s|steps: [{run:|steps: [{uses: actions/checkout@v4}, {run:|" .github/workflows/nai-auto.yml'}, {run: 'git diff --stat'}, {run: 'git config user.name nai-write && git config user.email nai-write@users.noreply.github.com && git add .github/workflows && git diff --cached --quiet || git commit -m "nai-write: retire push triggers" && git push'}]}}
