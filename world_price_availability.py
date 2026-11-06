@@ -24,6 +24,8 @@ FIELDS_SHA = '773bd59b5e7190083a9051fe7aa8c0b569d2e071ec85f52309ac51027cfffccd'
 CALENDAR_SHA = '3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074'
 RECIPE = '40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3'
 CSV_FIELDS = ('column', 'timeframe', 'native_field', 'available_from', 'source_candle_end', 'missing_rule')
+PATTERN_TRANSPORT = dict(field_prefix='CDL', native_dtype='float32', read_dtype='float64',
+                         conversion='exact IEEE value promotion; no rounding')
 
 
 def digest(raw):
@@ -53,7 +55,7 @@ def load_contract(path=CONTRACT):
             or meta['source_fields_sha256'] != FIELDS_SHA or meta['calendar_sha256'] != CALENDAR_SHA
             or meta['recipe_fingerprint'] != RECIPE or meta['timeframes'] != list(TIMEFRAMES)
             or meta['native_fields'] != 1044 or meta['columns'] != 22968
-            or meta['scoring_gate'] != 'CLOSED'):
+            or meta.get('pattern_code_transport') != PATTERN_TRANSPORT or meta['scoring_gate'] != 'CLOSED'):
         raise ValueError('price column contract changes its measured source or scope')
     name = meta['columns_file']
     if Path(name).name != name or not name.endswith('.csv'):
@@ -148,8 +150,11 @@ class PriceColumnView:
         if (features.columns.has_duplicates or set(features) != set(self.contract.fields) | {'available_from'}
                 or len(features) != len(candles)):
             raise ValueError('price columns differ from the complete measured schema')
-        if len(features) and any(features[name].dtype != np.dtype('float64') for name in self.contract.fields):
-            raise ValueError('frozen price values must retain float64 semantics')
+        unsupported = {name: str(features[name].dtype) for name in self.contract.fields
+            if len(features) and features[name].dtype != np.dtype('float64')
+            and not (name.startswith('CDL') and features[name].dtype == np.dtype('float32'))}
+        if unsupported:
+            raise ValueError('unsupported frozen price transport: ' + json.dumps(unsupported, sort_keys=True))
         self.end, self.available = validate_candle_keys(candles, timeframe, self.calendar)
         feature_clock = date_keys(features['available_from'], 'feature availability')
         if not feature_clock.equals(self.available):
@@ -159,6 +164,13 @@ class PriceColumnView:
         self.features = features.loc[:, list(self.contract.fields)].copy(deep=True).reset_index(drop=True)
         if not len(self.features):
             self.features = self.features.astype('float64')
+        else:
+            # The bound recipe deliberately transports TA-Lib pattern codes as
+            # float32. Promotion is exact, matching the existing PIT float64
+            # matrix interpretation; indicator floats still require float64.
+            for name in self.contract.fields:
+                if self.features[name].dtype == np.dtype('float32'):
+                    self.features[name] = self.features[name].astype('float64')
 
     def _align(self, query_dates, fields):
         query = date_keys(query_dates, 'setup dates')

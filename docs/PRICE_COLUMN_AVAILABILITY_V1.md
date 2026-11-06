@@ -15,6 +15,12 @@ read masks that clock by the column's own known-value mask: **NaN means unknown
 value and NaT availability**, while infinity and signed zero retain their frozen
 numeric meanings. A missing latest value is not replaced by an older known value.
 
+The [frozen TA-Lib adapter](https://github.com/SRoyaltyy/checklist-engine/blob/7dcaa48680daeac9a6025c09f9e4d138f5fcbda5/facets_world.py)
+intentionally transports its 61 `CDL*` pattern-code arrays as float32. The view
+promotes those values exactly to float64, matching the existing PIT matrix
+interpretation. This introduces no rounding or tolerance. Other numeric fields
+still require float64 storage.
+
 ## Guarded reads
 
 Use `world_price_availability.PriceColumnView` with native output from the
@@ -66,3 +72,11 @@ finishes. Task 3 stays unchecked until the proof is reviewed and its PR merges
 with green leak checks. The historical PIT report is preserved unchanged.
 Diagnostic replay failures and unresolved world prerequisites remain explicit;
 **scoring stays CLOSED**.
+
+Initial [run 42246625717](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42246625717)
+reauthenticated the full retained-source bundle successfully, then correctly
+published a [FAIL receipt](https://github.com/SRoyaltyy/checklist-engine/releases/tag/price-column-availability-v1-42246625717-1)
+because the first reader implementation rejected the frozen float32 pattern
+transport. Its three failed controls and source reference remain available.
+The transport correction preserves those fields, their values, and the declared
+controls; a new successful runner result is required.

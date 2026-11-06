@@ -63,6 +63,24 @@ def test_future_values_cannot_change_any_earlier_column(calendar):
     pd.testing.assert_frame_equal(before.clocks, after.clocks)
 
 
+@pytest.mark.parametrize('timeframe', TIMEFRAMES)
+def test_all_frozen_float32_pattern_codes_promote_exactly_without_changing_indicators(calendar, timeframe):
+    native, features = synthetic(calendar, timeframe)
+    fields = load_contract().fields
+    patterns = [field for field in fields if field.startswith('CDL')]
+    assert len(patterns) == 61
+    codes = np.resize(np.array([-100.0, -0.0, 100.0], dtype='float32'), len(features))
+    for field in patterns:
+        features[field] = codes
+    aligned = PriceColumnView(native, features, timeframe, calendar).align(calendar[-1:])
+    eligible = [i for i, row in native.iterrows()
+                if row.available_from <= calendar[-1] and row.date < calendar[-1]]
+    expected = features.loc[eligible[-1], list(fields)].to_numpy(dtype='float64')
+    actual = aligned.values.iloc[0, 1:].to_numpy(dtype='float64')
+    np.testing.assert_array_equal(actual.view('uint64'), expected.view('uint64'))
+    assert all(dtype == np.dtype('float64') for dtype in aligned.values.iloc[:, 1:].dtypes)
+
+
 def test_warmup_missing_infinity_and_signed_zero_keep_distinct_semantics(calendar):
     native, features = synthetic(calendar)
     fields = load_contract().fields

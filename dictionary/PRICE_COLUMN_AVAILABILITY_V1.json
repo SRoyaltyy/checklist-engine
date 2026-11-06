@@ -49,5 +49,11 @@
   "monthly_rule": "Whole calendar month certified by the bound calendar; available_from is the next calendar month start.",
   "unknown_rule": "A NaN column value has NaT column availability and is never filled or converted to NO. Infinity and signed zero stay known.",
   "clock_storage": "One shared native row clock, explicitly referenced by every registered column; column reads mask it by that column known value.",
-  "scoring_gate": "CLOSED"
+  "scoring_gate": "CLOSED",
+  "pattern_code_transport": {
+    "field_prefix": "CDL",
+    "native_dtype": "float32",
+    "read_dtype": "float64",
+    "conversion": "exact IEEE value promotion; no rounding"
+  }
 }
