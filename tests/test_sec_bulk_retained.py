@@ -13,7 +13,7 @@ from unittest.mock import patch
 import zipfile
 
 from ci.sec_bulk_retained_core import (cik_number,companyfact_rows,decode_source,live_candidates,
-    members_by_cik,merge_filing_row,resolve_identities,submission_rows)
+    members_by_cik,annotate_filing_observations,resolve_identities,submission_rows)
 from ci.sec_bulk_retained import (ParquetSink,Publisher,encoded,load_cohort,process_archive,run,schemas,validate_request)
 
 
@@ -93,12 +93,17 @@ class TransformTests(unittest.TestCase):
         self.assertIsNone(row['filing_date']);self.assertIsNone(row['acceptance_datetime'])
         with self.assertRaises(ValueError):list(submission_rows(dict(payload,form=[]),123))
 
-    def test_duplicate_accession_merges_missing_but_conflicts_fail(self):
+    def test_duplicate_accession_observations_preserve_unknowns_and_disputed_clocks(self):
         row=list(submission_rows(dict(accessionNumber=['0000000123-20-000001'],filingDate=['2020-02-03']),123))[0]
-        rows={};self.assertFalse(merge_filing_row(rows,row.copy()))
-        self.assertTrue(merge_filing_row(rows,dict(row,acceptance_datetime='2020-02-03T20:30:00Z')))
-        self.assertEqual(rows[row['accession_number']]['acceptance_datetime'],'2020-02-03T20:30:00Z')
-        with self.assertRaises(ValueError):merge_filing_row(rows,dict(row,filing_date='2020-02-04'))
+        observations=[dict(row,source_member='root',source_row=1),
+            dict(row,acceptance_datetime='2020-02-03T20:30:00Z',source_member='history1',source_row=1),
+            dict(row,acceptance_datetime='2020-02-03T20:31:00Z',source_member='history2',source_row=1)]
+        rows,counts,examples=annotate_filing_observations({row['accession_number']:observations})
+        self.assertEqual(len(rows),3);self.assertEqual(counts['distinct_accessions'],1)
+        self.assertEqual(counts['accessions_with_conflicting_metadata'],1)
+        self.assertEqual({r['acceptance_datetime'] for r in rows},{None,'2020-02-03T20:30:00Z','2020-02-03T20:31:00Z'})
+        self.assertTrue(all(r['conflict_fields']==['acceptance_datetime'] for r in rows))
+        self.assertEqual(examples[0]['reported_values']['acceptance_datetime'],['2020-02-03T20:30:00Z','2020-02-03T20:31:00Z'])
 
     def test_exact_decimal_and_large_integer_are_preserved(self):
         raw=b'{"cik":123,"facts":{"us-gaap":{"Assets":{"units":{"USD":[{"val":9007199254740993,"filed":"2020-02-03"},{"val":0.1,"filed":null}]}}}}}'
@@ -136,20 +141,26 @@ class ParquetIntegrationTests(unittest.TestCase):
                 result.extend(pq.read_table(pa.BufferReader(raw)).to_pylist())
         return result
 
-    def test_submissions_history_null_schema_dedup_and_raw_byte_lineage(self):
+    def test_submissions_history_null_schema_observations_and_raw_byte_lineage(self):
         root=dict(cik=123,tickers=['TEST'],exchanges=['NYSE'],sic='1234',
             filings=dict(recent=dict(accessionNumber=['0000000123-20-000001'],filingDate=['2020-02-03'],
                 acceptanceDateTime=['2020-02-03T20:30:00Z'],form=['10-K'],isXBRL=[1])))
         history=dict(accessionNumber=['0000000123-20-000001','0000000123-19-000001'],
-                     filingDate=['2020-02-03','2019-02-01'],form=['10-K','10-K'])
+                     filingDate=['2020-02-03','2019-02-01'],form=['10-K','10-K'],
+                     acceptanceDateTime=['2020-02-03T20:31:00Z',None])
         sources={'CIK0000000123.json':root,'CIK0000000123-submissions-001.json':history,
                  'CIK0000000999.json':dict(cik=999,filings=dict(recent={}))}
         report=process_archive('submissions',self.source_zip(sources),{123,456},self.publisher)
         rows=self.parquet_rows('sec_submissions_filings')
-        self.assertEqual(report['rows'],2);self.assertEqual(report['duplicate_accessions'],1)
+        self.assertEqual(report['rows'],3);self.assertEqual(report['duplicate_accession_observations'],1)
+        self.assertEqual(report['distinct_accessions'],2)
         self.assertEqual(report['missing_archive_ciks'],[456])
         self.assertEqual({r['cik'] for r in rows},{123})
         self.assertEqual(sum(r['acceptance_datetime'] is None for r in rows),1)
+        self.assertEqual(report['accessions_with_conflicting_metadata'],1)
+        disputed=[r for r in rows if r['accession_number']=='0000000123-20-000001']
+        self.assertEqual({r['acceptance_datetime'] for r in disputed},{'2020-02-03T20:30:00Z','2020-02-03T20:31:00Z'})
+        self.assertTrue(all(r['conflict_fields']==['acceptance_datetime'] for r in disputed))
         ledger=json.loads(self.publisher.bodies['sec_submissions_raw-00000.json'])
         with tarfile.open(fileobj=io.BytesIO(self.publisher.bodies[ledger['archive']['name']]),mode='r:gz') as archive:
             for member in ledger['members']:

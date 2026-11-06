@@ -41,8 +41,11 @@ The release contains:
 - `sec_identity_map_v2-*.parquet` plus `SEC_IDENTITY_COVERAGE_V2.json`.
 - `sec_submissions_filings_retained-*.parquet`, with accession, filing date,
   acceptance timestamp, report date, enumerated form/XBRL fields and source document
-  identifier. Root and historical submissions members are read. Duplicate
-  accessions merge missing metadata; conflicting populated values fail explicitly.
+  identifier. Root and historical submissions members are read. Each reported
+  source observation is preserved with `source_member` and `source_row`; rows
+  are not collapsed into a canonical accession. Disputed populated values are
+  marked in `conflict_fields` on every affected observation. Unknown values are
+  not filled from another copy, and no disputed timestamp is selected for a join.
 - `sec_submissions_entities_retained-*.parquet`, with structured current ticker,
   exchange, SIC and incorporation-state codes. Current entity metadata is labelled
   explicitly; company names, descriptions and former-name prose are not features.
@@ -59,6 +62,15 @@ The release contains:
 - `SEC_BULK_COVERAGE_V2.json`, the final status, actual source/run/attempt,
   CIK coverage, source hashes, extraction counts/date bounds, unknowns and all
   published asset bindings.
+
+Filing `rows` counts source observations. `distinct_accessions`,
+`duplicate_accession_observations`, `exact_duplicate_observations` and
+`accessions_with_conflicting_metadata` are reported separately. Conflict examples
+retain the reported values. Consumers must resolve or quarantine disputed
+filing/acceptance clocks before any PIT join; multiple observations must not be
+counted as multiple economic filings.
+Flags compare literal reported values; they do not assert that differently
+formatted timestamps represent different instants.
 
 Immutable per-input and per-extraction receipts are published as each stage
 finishes. The release becomes public after identity publication and is labelled
@@ -102,7 +114,7 @@ synthetic inputs.
 
 All19new synthetic tests pass locally using existing dependencies. They cover
 quarantines, exact symbol matching, identity conflicts, nullable historical filing
-schemas, accession conflicts, raw-member hashes, exact numeric preservation,
+  schemas, preserved accession conflicts, raw-member hashes, exact numeric preservation,
 actual parquet round trips, complete output CIK checks and honest partial-failure
 publication. The initial local attempt hit Windows' restricted default temporary
 folder; rerunning with a verified workspace temporary directory passed. No local
@@ -111,3 +123,28 @@ dependency installation or market-data calculation was performed.
 Actual run ID, released coverage and independent public readback will be added
 after the runner finishes. **Task6 remains unchecked. World gate NOT_PROVEN;
 scoring CLOSED.**
+
+## First actual run and source-observation correction
+
+[Run42264090366/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42264090366),
+source `f0c11a24066a0182f14a8f5883d1d9bed8d55d55`, authenticated the exact cohort
+and downloaded both current maps plus the1,573,297,672-byte submissions ZIP
+(SHA256 `54cd920bd9cf6be1aca79588437c6f051afc313f4fef070b46b28cb8c6be44f8`).
+Its identity snapshot measured5,159unique CIK candidates /8,439names (61.13%):
+1,165current-only additions,2archived/current conflicts,3,254unresolved names and
+24product aliases. All six initial identity checkpoint assets were independently
+downloaded/hash-checked.
+
+The initial one-row-per-accession implementation stopped at a conflicting
+`acceptance_datetime` for accession `0000950123-09-041625`. Its public release
+preserves completed chunks and an explicit failed receipt. The exact
+[49,070-byte receipt](SEC_BULK_FIRST_FAILURE_42264090366_V2.json), SHA256
+`25d17cae568021ed07ef528b315a4af99f904ef3e207d6816d7e2693ce837ab7`,
+was independently downloaded/hash-checked. This failure is not promoted to
+complete bulk coverage.
+
+The corrected source-observation model above retains every reported record and
+marks disagreements, without choosing a timestamp, normalizing away a difference
+or excluding a CIK. Synthetic parquet tests check conflicting clocks survive
+unchanged and unknown clocks stay unknown. The old partial result remains
+immutable; a fresh complete run under the corrected schema is required.

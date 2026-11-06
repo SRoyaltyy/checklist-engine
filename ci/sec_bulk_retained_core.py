@@ -133,17 +133,26 @@ def submission_rows(payload,cik):
         yield row
 
 
-def merge_filing_row(rows,row):
-    key=row['accession_number']
-    if key not in rows:
-        rows[key]=row;return False
-    previous=rows[key]
-    for field,value in row.items():
-        if value is not None and previous[field] is not None and value!=previous[field]:
-            raise ValueError('conflicting duplicate accession: '+key+'/'+field)
-        if previous[field] is None:
-            previous[field]=value
-    return True
+def annotate_filing_observations(groups):
+    """Preserve each reported record; never choose or combine disputed metadata."""
+    rows=[];examples=[]
+    counters=dict(distinct_accessions=len(groups),duplicate_accession_observations=0,
+                  exact_duplicate_observations=0,accessions_with_conflicting_metadata=0)
+    fields=list(FILING_FIELDS.values())
+    for accession,observations in sorted(groups.items()):
+        values={field:sorted({r[field] for r in observations if r[field] is not None}) for field in fields}
+        conflicts=sorted(field for field,v in values.items() if len(v)>1)
+        variants={tuple(r[field] for field in fields) for r in observations}
+        counters['duplicate_accession_observations']+=len(observations)-1
+        counters['exact_duplicate_observations']+=len(observations)-len(variants)
+        if conflicts:
+            counters['accessions_with_conflicting_metadata']+=1
+            if len(examples)<20:
+                examples.append(dict(cik=observations[0]['cik'],accession_number=accession,
+                    conflict_fields=conflicts,reported_values={field:values[field] for field in conflicts}))
+        for original in sorted(observations,key=lambda r:(r['source_member'],r['source_row'])):
+            rows.append(dict(original,conflict_fields=conflicts))
+    return rows,counters,examples
 
 
 def entity_row(payload,cik):

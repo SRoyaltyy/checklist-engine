@@ -14,7 +14,7 @@ import zipfile
 from ci import release_assets as releases
 from ci.price_join_contract import IDENTITY_SHA
 from ci.sec_bulk_retained_core import (decode_source,entity_row,companyfact_rows,
-    live_candidates,members_by_cik,merge_filing_row,resolve_identities,submission_rows,QUARANTINED_CIKS)
+    live_candidates,members_by_cik,annotate_filing_observations,resolve_identities,submission_rows,QUARANTINED_CIKS)
 from ci.sec_runner_access import relay_configuration
 from scripts.nai import common
 
@@ -70,7 +70,8 @@ def schemas():
         *strings(['observed_first_filed','observed_last_filed','valid_from','valid_to_exclusive']),
         ('historical_join_allowed',pa.bool_())]),
         filings=pa.schema([('cik',pa.int64()),*strings(['accession_number','filing_date','report_date',
-            'acceptance_datetime','form','primary_document','is_xbrl','is_inline_xbrl'])]),
+            'acceptance_datetime','form','primary_document','is_xbrl','is_inline_xbrl','source_member']),
+            ('source_row',pa.int64()),('conflict_fields',pa.list_(pa.string()))]),
         entities=pa.schema([('cik',pa.int64()),('sic',pa.int64()),('current_tickers',pa.list_(pa.string())),
             ('current_exchanges',pa.list_(pa.string())),*strings(['state_of_incorporation','identity_scope'])]),
         facts=pa.schema([('cik',pa.int64()),*strings(['taxonomy','concept','unit','start','end','val_text']),
@@ -191,10 +192,12 @@ def process_archive(kind,path,selected,publisher):
 
 
 def extract_archive(kind,path,selected,raw_sink,first,entities):
-    counters=dict(source_members=0,duplicate_accessions=0,source_fact_values=0,non_numeric_fact_values=0,
+    counters=dict(source_members=0,distinct_accessions=0,duplicate_accession_observations=0,
+                  exact_duplicate_observations=0,accessions_with_conflicting_metadata=0,
+                  source_fact_values=0,non_numeric_fact_values=0,
                   numeric_facts_without_filed_date=0,filings_without_filed_date=0,
                   filings_without_acceptance_timestamp=0)
-    populated=set();filed_dates=[]
+    populated=set();filed_dates=[];conflict_examples=[]
     with zipfile.ZipFile(path) as archive:
         grouped=members_by_cik(archive.namelist(),selected,kind)
         if not grouped:raise ValueError('bulk archive has no retained CIK members')
@@ -206,8 +209,8 @@ def extract_archive(kind,path,selected,raw_sink,first,entities):
                 payload=decode_source(raw)
                 if kind=='submissions':
                     if 'filings' in payload:entities.write([entity_row(payload,cik)])
-                    for row in submission_rows(payload,cik):
-                        counters['duplicate_accessions']+=int(merge_filing_row(filings,row))
+                    for index,row in enumerate(submission_rows(payload,cik),1):
+                        filings.setdefault(row['accession_number'],[]).append(dict(row,source_member=name,source_row=index))
                 else:
                     batch=[]
                     for row in companyfact_rows(payload,cik,counters):
@@ -217,7 +220,9 @@ def extract_archive(kind,path,selected,raw_sink,first,entities):
                     first.write(batch)
                 del payload,raw
             if kind=='submissions':
-                rows=[filings[k] for k in sorted(filings)]
+                rows,filing_counts,examples=annotate_filing_observations(filings)
+                for key,value in filing_counts.items():counters[key]+=value
+                conflict_examples.extend(examples[:max(0,20-len(conflict_examples))])
                 counters['filings_without_filed_date']+=sum(r['filing_date'] is None for r in rows)
                 counters['filings_without_acceptance_timestamp']+=sum(r['acceptance_datetime'] is None for r in rows)
                 filed_dates.extend(r['filing_date'] for r in rows if r['filing_date'])
@@ -233,6 +238,8 @@ def extract_archive(kind,path,selected,raw_sink,first,entities):
     return dict(status='PASS_RETAINED_SOURCE_EXTRACTION',rows=first.total,entity_rows=entities.total if entities else None,
         archive_ciks=len(grouped),populated_ciks=sorted(populated),missing_archive_ciks=sorted(set(selected)-set(grouped)),
         ciks_without_output_rows=sorted(set(grouped)-populated),
+        filing_record_model='SOURCE_OBSERVATIONS_WITH_CONFLICT_FIELDS' if kind=='submissions' else None,
+        conflict_examples=conflict_examples,
         first_filed_date=min(filed_dates) if filed_dates else None,
         last_filed_date=max(filed_dates) if filed_dates else None,**counters)
 
@@ -254,6 +261,7 @@ def run(root,identity_only=False):
         identity_only=identity_only,retained_names=8439,identity_map_lf_sha256=IDENTITY_SHA,join_keys_lf_sha256=KEYS_SHA,
         started_at=now(),active_stage='identity',inputs={},stages={},scoring_gate='CLOSED',world_gate='NOT_PROVEN',
         historical_ownership='NOT_PROVEN_CURRENT_CANDIDATES_ONLY',free_text_features=False)
+    report['filing_record_model']='SOURCE_OBSERVATIONS_NOT_CANONICAL_ACCESSIONS'
     try:
         maps={}
         for kind in ('tickers','exchanges'):
