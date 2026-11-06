@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-06T13:02:42.625Z",
-  "set_at": "2026-11-06T13:02:42.625Z",
-  "reason": "run 42220355813 failed (nai-verdict)"
+  "id": "2026-11-06T13:18:42.394Z",
+  "set_at": "2026-11-06T13:18:42.394Z",
+  "reason": "run 42222469359 failed (.github/workflows/nai-probe.yml)"
 }
