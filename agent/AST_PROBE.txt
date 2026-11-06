@@ -1,1 +1,4 @@
-var re = /[\s\S]*?
+var re = /[\s\S]*?@@END/g;
+function x() { return 'a*b*c'; }
+var s = '**bold**';
+var g = /@@SELF[ \t]*\r?\n([\s\S]*?)\r?\n?@@END\b/g;
