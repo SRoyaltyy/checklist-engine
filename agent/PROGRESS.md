@@ -1,38 +1,38 @@
-Progress - Venice lane
+# Venice progress
 
-Lane owner: Venice. Branch venice/sec-options-pipelines. Never push main.
+Updated 2026-11-07T16:44 UTC
 
-Lane, from TODO.md on main: thin poke. Keep the tab and the bridge alive, notice a failed nai-sec-* or nai-occ-oi-daily run, post the run ID and the error in a PR comment or issue, stop. GPT owns the fix. No pipeline ownership, no new collectors, no bulk scrapes. Calendar #96 parked.
+## Goal
+Report each failed `nai-sec-*` / `nai-occ-oi-daily` run once with run ID + error, then stop. (TODO.md Venice lane @c7c31b0 — thin chatbot poke; GPT owns fixes.)
 
-Item State Evidence
+Gantt row: Venice lane (thin chatbot poke)
+Verified progress: 86%
+Current subtask: t5 (checkpoint)
 
-L1 Post a failed run's ID and error to a PR comment or issue PROVEN. Issue 215 carries run 41413529249 three times and 42240608258 once, each with conclusion, failing job, failing step and log tail, machine-posted. The instrument that does it is scripts/nai/report2.py, green on runs 42370434685, 42370537435 and 42371613132.
+| ID | Subtask | Status | Evidence |
+|---|---|---|---|
+| t1 | Confirm lane text in TODO.md, scan runs | done | TODO.md@c7c31b02e530a35d9944c705d19422d606956809 |
+| t2 | Report run 42284432095 (nai-occ-oi-daily) | done | issues/220 |
+| t3 | Correct #220 (oi_probe ran; logs truncated) | done | issues/220#issuecomment-6710061417 |
+| t4 | Report run 42156926867 (nai-sec-form345) | done | issues/221 |
+| t5 | Checkpoint this file | doing | — |
 
-How the reporter was broken and how it was fixed
+## Reported run IDs (do not re-report)
+- 42284432095 — nai-occ-oi-daily, sha e85547a, job 128121492870, failing step `scripts/nai/occ_oi_daily.py`, exit 1 → #220 + correction comment
+- 42156926867 — nai-sec-form345, sha 8ec34d48, job 127693199421, failing step `scripts/nai/sec_datasets.py form345`, exit 1 → #221
 
-Four wakes went into this, and two of the theories were wrong. Recorded so they are not repeated.
+## Known limit of this lane
+Every step on both failed jobs renders "This step has been truncated due to its large size. View the raw logs from the menu once the workflow run has completed." The bridge `job_log` therefore returns only runner/checkout scaffolding, never the Python traceback. Failure *step* is always provable; the exception text is not. Reports must say so rather than guess a cause. The unguarded OCC DELO call at `scripts/nai/occ_oi_daily.py` line 8 remains an unverified inference.
 
-Symptom: every push reddened nai-auto in under a second, first with exit 127, then exit 2. Job logs need admin rights, so the only readable signal was the check-run annotation.
+## Intentionally not reported
+- 42106074154, 41906860199, 41710121137 — earlier occurrences of the same occ_oi_daily failure already covered by #220.
+- 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 — pre-e85547a superseded sha; historical, not current breakage.
 
-Wrong theory one: a missing jq after the ubuntu-latest image moved to Ubuntu 26. The migration notice was real but irrelevant.
-Wrong theory two: a shell or python fault in the script. The script was committed, indented and correct.
+## Last healthy run
+42332789888 — nai-sec-form13f — success.
 
-Cause: the workflow had no actions/checkout step at all. One step, nothing else. The workspace was empty, so bash answered 127 for a missing .sh and python answered 2 for a missing .py.
+## Exact next step
+Nothing open. Wait for the next scheduled `nai-sec-*` / `nai-occ-oi-daily` run; if it fails, get the job ID via `run_jobs`, then `job_log`, then one issue with `dedupe_key=run-<run_id>` and stop.
 
-Fix: checkout first, python reporter second, fresh workflow path so no directive race could overwrite it. Proven green three times.
-
-Superseded, kept as reference
-
-SEC tickers and bulk, Form 4 and 13F, options OI source, forward collectors, summary doc. All GPT's now.
-
-Reading order for pipeline context
-
-docs/OPTIONS_OI_FREE_V1.md
-docs/CBOE_SOURCE_LOCATIONS_V1.json
-docs/SEC_INDEPENDENT_BULK_SOURCE_PLAN_V1.md
-docs/SEC_RETAINED_IDENTITY_MAP_V1.md
-
-Rules
-One item per wake. Proof is a run ID or a commit, never an inference.
-METHODOLOGY.md is 587KB: grep it, never read whole.
-No markers in committed files. PR to main only.
+## Blockers
+None.
