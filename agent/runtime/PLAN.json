@@ -1,12 +1,12 @@
 {
-  "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b0)",
-  "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership, no collector pushes",
+  "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
+  "why": "Sole assigned lane: Venice observes and reports, GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
   "current_task": "t5",
   "tasks": [
     {
       "id": "t1",
-      "title": "Confirm current Venice lane text in TODO.md and check recent runs for failures",
+      "title": "Confirm current Venice lane text in TODO.md and scan recent runs for failures",
       "acceptance": "TODO.md Venice section read; failed nai-* run identified by run_id",
       "weight": 1,
       "status": "done",
@@ -19,7 +19,7 @@
     {
       "id": "t2",
       "title": "Report failed nai-occ-oi-daily run 42284432095 once with run ID + error",
-      "acceptance": "Issue URL containing run_id 42284432095 plus error text, dedupe_key=run-42284432095",
+      "acceptance": "Issue URL containing run_id 42284432095 plus failing step, dedupe_key=run-42284432095",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -30,7 +30,7 @@
     },
     {
       "id": "t3",
-      "title": "Correct issue #220: oi_probe ran, step logs truncated, DELO diagnosis unverified",
+      "title": "Correct issue #220: oi_probe ran, logs truncated, DELO diagnosis unverified",
       "acceptance": "One comment on #220 with corrected step list and truncation cause",
       "weight": 1,
       "status": "done",
@@ -55,10 +55,12 @@
       "title": "Checkpoint lane state to agent/PROGRESS.md on the venice branch",
       "acceptance": "write_file returns a commit sha for agent/PROGRESS.md",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "ba179d2306dbc448f85c9caa6ae07554e07cf192"
+      ],
       "blocker": ""
     }
   ],
-  "progress_percent": 85
+  "progress_percent": 100
 }
