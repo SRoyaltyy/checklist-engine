@@ -18,5 +18,5 @@
       "receipt_sha256": "87c9d9372573bf849a84cc6d871f49a31e58ea15b47a13292075554534176d0a"
     }
   },
-  "execute": false
+  "execute": true
 }
