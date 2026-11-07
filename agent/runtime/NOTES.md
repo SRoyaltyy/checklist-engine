@@ -1,7 +1,7 @@
 # Durable Venice notes
 
 ## Authority and scope
-Read main/TODO.md Venice section + METHODOLOGY.md each turn. Current lane (TODO.md@c7c31b02): thin chatbot poke — report a failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop; GPT owns fixes. Do NOT own/rewrite SEC/options download pipelines, no collector pushes, no bulk scraping. Calendar #96 parked. #96/#177/#163 are other lanes. Ignore venice/calendar-announce-ledger after dca969a.
+Read main/TODO.md Venice section + METHODOLOGY.md each turn. Current lane (TODO.md@c7c31b02e530a35d9944c705d19422d606956809): thin chatbot poke — report a failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop; GPT owns fixes. Do NOT own/rewrite SEC/options download pipelines, no collector pushes, no bulk scraping. Calendar #96 parked. #96/#177/#163 are other lanes. Ignore venice/calendar-announce-ledger after dca969a.
 
 ## File map
 Maintenance branch venice/sec-options-pipelines. agent/BRIDGE6.js remotely loaded by agent/LOADER6.user.js; agent/DOORMAN.worker.js = GitHub transport; agent/DEPLOYER.worker.js = fixed-target deployer; runtime state in agent/runtime/. Checkpoint agent/PROGRESS.md at commit 8f1cbd8c36321a47dee6192d8e8ed47440fa0a56, blob 4bbcb076f4aa7d07dbd93deacc723de168b757f7 (previous ba179d23 / blob a83aa26f).
@@ -22,5 +22,8 @@ Never infer a traceback from source code. Never assume a truncated UI step means
 ## Interpretation
 A step can render in the job page while its API conclusion is skipped. Rendering the step name is not evidence that it executed; the API step conclusions plus report_failure settle it. Likewise every step showing 'truncated due to its large size' in the UI does not mean the log is unavailable to the API path.
 
+## Schedule note
+nai-occ-oi-daily fires ~19:59 UTC daily; at 2026-11-07T17:38Z the next occurrence is still ahead, so no new occ run is expected since the last snapshot.
+
 ## State
-All lane tasks done, no reportable failure in the current snapshot. Passive monitoring until a nai-* failure appears outside the do-not-re-report set.
+Lane tasks t1–t6 done. t7 = confirm no reportable failure in the current runs list. Passive monitoring until a nai-* failure appears outside the do-not-re-report set.
