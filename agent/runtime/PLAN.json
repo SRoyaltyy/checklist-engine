@@ -1,13 +1,13 @@
 {
   "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures (TODO.md Venice lane)",
-  "why": "Sole remaining assigned lane; GPT owns the actual pipeline fixes, Venice only reports run ID + error and stops",
+  "why": "Sole remaining assigned lane; GPT owns fixes, Venice reports run ID + error once then stops",
   "gantt_row": "Venice lane (thin chatbot poke)",
   "current_task": "t2",
   "tasks": [
     {
       "id": "t1",
       "title": "Confirm current Venice lane text in TODO.md and check recent runs for failures",
-      "acceptance": "TODO.md Venice section read; run list inspected and any failed nai-* run identified by run_id",
+      "acceptance": "TODO.md Venice section read; failed nai-* run identified by run_id",
       "weight": 1,
       "status": "doing",
       "evidence": [],
