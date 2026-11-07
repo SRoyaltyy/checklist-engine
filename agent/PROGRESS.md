@@ -1,52 +1,29 @@
-# Venice progress
+# Venice lane progress
 
-Updated 2026-11-07T17:15 UTC
+## Assigned lane (main/TODO.md @c7c31b02e530a35d9944c705d19422d606956809)
+Thin chatbot poke only: when a `nai-sec-*` or `nai-occ-oi-daily` run fails, post the run ID + error in an issue/PR comment and stop. GPT owns the fix. No pipeline ownership, no collector pushes, no bulk scraping. Calendar work (#96) parked; #96/#177/#163 belong to other lanes.
 
-## Goal
-Report each failed `nai-sec-*` / `nai-occ-oi-daily` run once with run ID + error, then stop. (TODO.md Venice lane @c7c31b0 — thin chatbot poke; GPT owns fixes.)
+## Current state
+- All reportable failures to date are reported exactly once.
+- Latest report: run 42399694729 (nai-occ-oi-daily, sha 2ba3ebdf977df51e7ab7e1993fdfee27faf19939) -> https://github.com/SRoyaltyy/checklist-engine/issues/223
+  - Failed step: `Run python scripts/nai/occ_oi_daily.py`
+  - Skipped step: `Run python scripts/nai/oi_probe.py`
+  - Error lines: `Traceback (most recent call last):` / `ValueError: invalid literal for int() with base 10: ''` / `##[error]Process completed with exit code 1.`
+  - Job: https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729/job/128484582301
+  - Same ValueError signature as #220 but on the newer main head, so the #220 fix has not landed.
+- Earlier canonical reports:
+  - Run 42284432095 -> https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739
+  - Run 42156926867 (nai-sec-form345, SEC 403 on insider-transactions data sets) -> https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770
 
-Gantt row: Venice lane (thin chatbot poke)
-Verified progress: 87%
-Current subtask: t6 (checkpoint rewrite)
+## Reported run IDs — never re-report
+42284432095, 42156926867, 42399694729.
+Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch on superseded shas).
 
-| ID | Subtask | Status | Evidence |
-|---|---|---|---|
-| t1 | Confirm lane text in TODO.md, scan runs | done | TODO.md@c7c31b02e530a35d9944c705d19422d606956809 |
-| t2 | Report run 42284432095 (nai-occ-oi-daily) | done | issues/220 |
-| t3 | Replace inferred wording with report_failure canonical record | done | issues/220#issuecomment-6710271739 |
-| t4 | Report run 42156926867 (nai-sec-form345) | done | issues/221 |
-| t5 | First checkpoint | done | ba179d2306dbc448f85c9caa6ae07554e07cf192 |
-| t6 | Rewrite checkpoint to cite canonical record | doing | this commit |
+## Green snapshot (runs(main), 2026-11-07T18:04Z)
+42391969592 world-v2-code-ci sha 2ba3ebd success; 42370489444 world-v2-code-ci sha 230ca55 success; 42344942142 nai-daily-forward sha e85547a success; 42332789888 nai-sec-form13f sha e85547a success. Node20-deprecation and ubuntu-latest->Ubuntu26 notices are not failures.
 
-## Reported run IDs (do not re-report)
+## Next action
+Re-sweep runs(main) each wake (occ_oi_daily also fires on push, not just the ~19:59 UTC slot). Report any new failed nai-* run once via report_failure, then stop.
 
-### 42284432095 — nai-occ-oi-daily, sha e85547a, job 128121492870 → #220
-Canonical verified record: https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739
-- Failed step: `Run python scripts/nai/occ_oi_daily.py`
-- Skipped step: `Run python scripts/nai/oi_probe.py`
-- Error lines:
-  - `Traceback (most recent call last):`
-  - `ValueError: invalid literal for int() with base 10: ''`
-  - `##[error]Process completed with exit code 1.`
-
-This report_failure record supersedes both the original body's inferred unguarded-DELO diagnosis and the earlier "oi_probe ran / logs truncated" correction. The unguarded DELO call at `scripts/nai/occ_oi_daily.py` line 8 remains an unverified inference and is not cited as cause.
-
-### 42156926867 — nai-sec-form345, sha 8ec34d48, job 127693199421 → #221
-- Failing step: `Run python scripts/nai/sec_datasets.py form345`, exit code 1.
-- Traceback not captured for this run.
-
-## Method
-Use `report_failure(run_id)` for scheduled SEC/OI failures: it derives failed/skipped steps and exact error lines from the GitHub API, corrects earlier inferred reports, and dedupes persistently. Do not write freeform diagnoses. A failed probe differs from a skipped probe.
-
-## Intentionally not reported
-- 42106074154, 41906860199, 41710121137 — earlier occurrences of the same occ_oi_daily failure already covered by #220.
-- 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 — pre-e85547a superseded shas; historical, not current breakage.
-
-## Last healthy run
-42332789888 — nai-sec-form13f — success.
-
-## Exact next step
-Nothing open. Wait for the next scheduled `nai-sec-*` / `nai-occ-oi-daily` run; if it fails, get the job ID via `run_jobs`, then `report_failure(run_id)`, then stop.
-
-## Blockers
-None.
+## Rules held
+No pipeline code edited. No inferred diagnoses published as fact. Sealed buy/sell records untouched. All mutations on venice/* branches.
