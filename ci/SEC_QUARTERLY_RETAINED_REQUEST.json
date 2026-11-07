@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "scope": "SEC_QUARTERLY_FIXED_FIELDS_2020_LATEST",
+  "execute": false,
+  "bulk_readback": null,
+  "profile_sources": {}
+}
