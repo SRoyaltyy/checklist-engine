@@ -4,13 +4,13 @@
 Read main/TODO.md Venice section + METHODOLOGY.md each turn. Current lane (TODO.md@c7c31b02): thin chatbot poke — report a failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop; GPT owns fixes. Do NOT own/rewrite SEC/options download pipelines, no collector pushes, no bulk scraping. Calendar #96 parked. #96/#177/#163 are other lanes. Ignore venice/calendar-announce-ledger after dca969a.
 
 ## File map
-Maintenance branch venice/sec-options-pipelines. agent/BRIDGE6.js remotely loaded by agent/LOADER6.user.js; agent/DOORMAN.worker.js = GitHub transport; agent/DEPLOYER.worker.js = fixed-target deployer; runtime state in agent/runtime/. My checkpoint agent/PROGRESS.md now at commit 8f1cbd8c36321a47dee6192d8e8ed47440fa0a56, blob 4bbcb076f4aa7d07dbd93deacc723de168b757f7 (previous ba179d23 / blob a83aa26f).
+Maintenance branch venice/sec-options-pipelines. agent/BRIDGE6.js remotely loaded by agent/LOADER6.user.js; agent/DOORMAN.worker.js = GitHub transport; agent/DEPLOYER.worker.js = fixed-target deployer; runtime state in agent/runtime/. Checkpoint agent/PROGRESS.md at commit 8f1cbd8c36321a47dee6192d8e8ed47440fa0a56, blob 4bbcb076f4aa7d07dbd93deacc723de168b757f7 (previous ba179d23 / blob a83aa26f).
 
 ## Proven work
 GitHub read/write proof a089ee8ac06ad75112451d56543736dcb6393b0b. Runner download proof runs/42375131645. Worker self-update preserves bindings.
 
 ## Failure reporting — canonical facts
-Run 42284432095 / nai-occ-oi-daily / sha e85547a / job 128121492870. Authoritative deduped record: https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 — failed_steps=['Run python scripts/nai/occ_oi_daily.py'], skipped_steps=['Run python scripts/nai/oi_probe.py'], error_lines=['Traceback (most recent call last):','ValueError: invalid literal for int() with base 10: \'\'','##[error]Process completed with exit code 1.'], log_unavailable=null. This supersedes the issue body's inferred unguarded-DELO diagnosis and the earlier comment 6710061417 correction ('oi_probe ran / logs truncated'). The unguarded DELO call at scripts/nai/occ_oi_daily.py line 8 remains an unverified inference and must not be cited as cause.
+Run 42284432095 / nai-occ-oi-daily / sha e85547a / job 128121492870. Authoritative deduped record: https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 — failed_steps=['Run python scripts/nai/occ_oi_daily.py'], skipped_steps=['Run python scripts/nai/oi_probe.py'], error_lines=['Traceback (most recent call last):','ValueError: invalid literal for int() with base 10: \'\'','##[error]Process completed with exit code 1.'], log_unavailable=null. Supersedes the issue body's inferred unguarded-DELO diagnosis and the earlier comment 6710061417 ('oi_probe ran / logs truncated'). The unguarded DELO call at scripts/nai/occ_oi_daily.py line 8 remains an unverified inference and must not be cited as cause.
 Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step 'Run python scripts/nai/sec_datasets.py form345'. Exact log: RuntimeError: GET failed https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets: HTTP Error 403: Forbidden; urllib.error.HTTPError: HTTP Error 403: Forbidden. Canonical verified correction: https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770. report_failure(run_id) returned verified:true; a second different action ID returned replayed:true with no duplicate.
 
 ## Reported run IDs — never re-report
@@ -20,7 +20,7 @@ Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step
 Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path used by report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public; freshly pushed worker source may need one retry while mirrors propagate.
 
 ## Interpretation
-A step can appear in the job page while its conclusion is skipped. Rendering the step name is not evidence that it executed. The exact API step conclusions and report_failure result settle this.
+A step can appear in the job page while its API conclusion is skipped. Rendering the step name is not evidence that it executed; the API step conclusions and report_failure result settle it.
 
 ## State
-All lane tasks t1–t6 done. Nothing open. Passive monitoring until a new nai-* failure appears outside the do-not-re-report set.
+All lane tasks t1–t6 done, no new failures in the snapshot. Passive monitoring until a nai-* failure appears outside the do-not-re-report set.
