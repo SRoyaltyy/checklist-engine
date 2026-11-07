@@ -4,8 +4,8 @@ Task5 proved SEC source access in [run42260180822](https://github.com/SRoyaltyy/
 merged and read back on main as `e85547a` (PR217). This next collector downloads
 the official current ticker maps, `submissions.zip` and `companyfacts.zip` through
 that same verified relay. It runs as ordinary scheduled GitHub Actions code,
-without an AI service call. The complete producer has succeeded; independent
-public readback is running, as recorded below.
+without an AI service call. The complete producer and independent public
+readback have succeeded, as recorded below.
 
 ## Bound cohort and identity meaning
 
@@ -128,8 +128,8 @@ publication. The initial local attempt hit Windows' restricted default temporary
 folder; rerunning with a verified workspace temporary directory passed. No local
 dependency installation or market-data calculation was performed.
 
-Actual producer coverage is recorded below; independent public readback remains
-pending. **Task6 remains unchecked. World gate NOT_PROVEN;
+Actual producer coverage and independent public readback are recorded below.
+**Task6 source acquisition is complete. World gate NOT_PROVEN;
 scoring CLOSED.**
 
 ## First actual run and source-observation correction
@@ -248,8 +248,8 @@ Recovery reused the authenticated complete submissions stage and exact cached
 companyfacts ZIP; original source times and lineage are preserved. Acquisition
 is disabled. Readback
 [42372758947](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42372758947)
-is bound to this exact producer/attempt/commit/final receipt. Producer success
-does not replace that independent audit. Task6 remains unchecked pending it.
+is bound to this exact producer/attempt/commit/final receipt and has passed.
+Producer success and independent verification are separate evidence below.
 
 ## Independent public readback
 
@@ -279,4 +279,21 @@ gate remains NOT_PROVEN and scoring CLOSED. The reader publishes its own
 immutable PASS/FAIL release and an Actions receipt. Twelve reader synthetic tests include
 an8,439-name fixture and unchanged-count value corruption, raw hash/path
 corruption, parquet CIK binding corruption, actual-run/final-receipt guards and
-reused acquisition-time corruption. Actual public readback is pending.
+reused acquisition-time corruption.
+
+[Independent run42372758947/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42372758947)
+succeeded at reader commit `c7842549bec75b920f08f7701eccdae5e1aa13d0`.
+The public `sec-bulk-readback-v1-42372758947-1` release retains its exact
+[1,570,706-byte PASS receipt](SEC_BULK_PUBLIC_READBACK_42372758947_V1.json), SHA256
+`2051171d632020bc6f1c9de2025468c97e2d45b5db20b64ccc0cd31255a2475e`,
+independently downloaded and hash-checked. It read all246producer assets,
+all8,439identity rows, every6,446,806filing/5,103entity/68,436,577fact row value,
+all raw ledgers, schemas, counters, date bounds and missing-data lists. It also
+verified all4,976retained companyfacts members against the exact full ZIP and
+authenticated the original identity and copied-submissions provenance. The
+unfiltered submissions ZIP was not retained; its published retained members were
+fully checked. Source acquisition and this scoped readback are complete; formal
+historical ticker ownership and world/scoring approval remain unproven.
+
+The acquisition, diagnostic and audit one-shot switches are all false. Scheduled
+bulk acquisition remains enabled and refreshes its SEC inputs normally.
