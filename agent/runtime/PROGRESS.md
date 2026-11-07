@@ -1,6 +1,6 @@
 # Venice progress
 
-Updated 2026-11-07T17:45:19.237Z UTC
+Updated 2026-11-07T17:51:02.717Z UTC
 
 ## Goal
 Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)
@@ -9,8 +9,8 @@ Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, th
 Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping
 
 Gantt row: Venice lane (thin chatbot poke)
-Verified progress: **88%**
-Current subtask: t7
+Verified progress: **90%**
+Current subtask: t8
 
 | ID | Subtask | Status | Evidence |
 |---|---|---|---|
@@ -20,18 +20,19 @@ Current subtask: t7
 | t4 | Report failed nai-sec-form345 run 42156926867 once (job 127693199421) | done | https://github.com/SRoyaltyy/checklist-engine/issues/221 |
 | t5 | First checkpoint of lane state to agent/PROGRESS.md | done | ba179d2306dbc448f85c9caa6ae07554e07cf192 |
 | t6 | Rewrite agent/PROGRESS.md to cite the canonical verified record | done | 8f1cbd8c36321a47dee6192d8e8ed47440fa0a56 |
-| t7 | Confirm the current runs list has no reportable nai-* failure outside the do-not-re-report set | doing |  |
+| t7 | Confirm the 17:39Z runs list had no reportable nai-* failure outside the do-not-re-report set | done | https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592 |
+| t8 | Re-verify the runs list at 17:50Z for any newly appeared nai-* failure | doing |  |
 
 ## Last completed work
-No new tool results returned this turn, and the lane's last verified check was 5 minutes ago (17:39Z) with an all-green nai-* picture. The next scheduled nai-occ-oi-daily occurrence is ~19:59 UTC, over two hours out, so no new nai-sec-* / nai-occ-oi-daily failure can exist yet beyond the already-reported set. Lane tasks t1–t7 remain complete; passive monitoring continues with no issue, comment, or pipeline write.
+No tool results returned this turn and no new lane work is indicated by the checkpoint. Executing the planned verification step: a single fresh runs(main) read to confirm no nai-sec-* / nai-occ-oi-daily failure has appeared outside the already-reported set before closing the turn. No issue, comment, or pipeline write is being made.
 
 ## Exact next step
-Next turn: call runs(branch=main) once and compare the newest nai-sec-* / nai-occ-oi-daily entries against the do-not-re-report set {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}. If a failure outside that set appears, run_jobs for its job id, then report_failure(run_id) once and stop. Otherwise close with actions=[] and done=true.
+Compare the returned runs list against the do-not-re-report set {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}. If a nai-sec-* or nai-occ-oi-daily entry shows conclusion=failure with an ID outside that set, call run_jobs(run_id) for the job id then report_failure(run_id) once and stop. Otherwise close with actions=[] and done=true. Next scheduled event: nai-occ-oi-daily ~19:59 UTC.
 
 ## Blockers
 []
 
 ## Evidence
-["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221","ba179d2306dbc448f85c9caa6ae07554e07cf192","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739","agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4","8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"]
+["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221","ba179d2306dbc448f85c9caa6ae07554e07cf192","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739","agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4","8f1cbd8c36321a47dee6192d8e8ed47440fa0a56","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42261199680","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252851317","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252169840","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42214284659","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42176587992","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42106074154","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41982771257","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41906860199","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41785171922","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41710121137","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41592147370","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41575832670","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41574644199","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413535355","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413030480","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413026299","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413022188","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413017909","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227563332","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227549644","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41224165706"]
 
-Turn: mw6p1bs5-z9ms2uh4
+Turn: mw6p8fz9-l4i7xjak
