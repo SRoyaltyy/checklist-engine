@@ -1,6 +1,6 @@
 # Venice progress
 
-Updated 2026-11-07T16:44:14.997Z UTC
+Updated 2026-11-07T16:45:02.772Z UTC
 
 ## Goal
 Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b0)
@@ -9,27 +9,28 @@ Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, th
 Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership, no collector pushes
 
 Gantt row: Venice lane (thin chatbot poke)
-Verified progress: **66%**
-Current subtask: t4
+Verified progress: **85%**
+Current subtask: t5
 
 | ID | Subtask | Status | Evidence |
 |---|---|---|---|
 | t1 | Confirm current Venice lane text in TODO.md and check recent runs for failures | done | TODO.md@c7c31b02e530a35d9944c705d19422d606956809, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095 |
 | t2 | Report failed nai-occ-oi-daily run 42284432095 once with run ID + error | done | https://github.com/SRoyaltyy/checklist-engine/issues/220, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870 |
 | t3 | Correct issue #220: oi_probe ran, step logs truncated, DELO diagnosis unverified | done | https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417 |
-| t4 | Report failed nai-sec-form345 run 42156926867 once (job 127693199421, step sec_datasets.py form345) | doing |  |
+| t4 | Report failed nai-sec-form345 run 42156926867 once (job 127693199421, step sec_datasets.py form345) | done | https://github.com/SRoyaltyy/checklist-engine/issues/221 |
+| t5 | Checkpoint lane state to agent/PROGRESS.md on the venice branch | doing |  |
 
 ## Last completed work
-Issue #220 now carries the corrective comment https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417 (oi_probe did run; traceback unavailable because job 128121492870's step logs are truncated — the job page literally reads 'This step has been truncated due to its large size' for every step, which is why job_log returns only checkout scaffolding). Run 42156926867 (nai-sec-form345, sha 8ec34d48, 19s, triggered via schedule) confirmed failed via run_jobs: single job 127693199421, only failing step 'Run python scripts/nai/sec_datasets.py form345', annotation 'Process completed with exit code 1' (https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867/job/127693199421); all other steps succeeded and the remaining annotations are Node-20-deprecation boilerplate plus the ubuntu-latest->26 migration notice. That is a distinct assigned workflow, unreported, so it gets one issue. Deliberately NOT reporting the older Nov 2–5 runs: 42106074154 is an earlier occurrence of the same occ_oi_daily failure already reported in #220, and 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 all predate sha e85547a and are superseded history — spamming GPT with them would violate the report-once-then-stop rule.
-Tool outcomes: [{"tool":"create_issue","result":{"ok":true,"number":221,"url":"https://github.com/SRoyaltyy/checklist-engine/issues/221"}}]
+Both assigned failure reports are now filed and proven. (1) Run 42284432095 / nai-occ-oi-daily / sha e85547a — issue #220 https://github.com/SRoyaltyy/checklist-engine/issues/220 plus corrective comment https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417, which fixes the earlier 'oi_probe skipped' claim (it ran; the failing step is 'Run python scripts/nai/occ_oi_daily.py') and records that every step on job 128121492870 renders 'This step has been truncated due to its large size', so no traceback is obtainable by this lane and the unguarded-DELO diagnosis stays an unverified inference. (2) Run 42156926867 / nai-sec-form345 / sha 8ec34d48 — issue #221 https://github.com/SRoyaltyy/checklist-engine/issues/221, job 127693199421, sole failing step 'Run python scripts/nai/sec_datasets.py form345' with annotation 'Process completed with exit code 1'; setup, checkout, pip install, post-checkout and complete-job all succeeded, confirming the failure is inside the script. Same truncation caveat applies. No pipeline code was touched and no collector was pushed — GPT owns both fixes. Deliberately not reported: 42106074154 (earlier occurrence of the occ_oi_daily failure already covered by #220) and the Nov 2 batch 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (superseded sha, pre-e85547a), to honour report-once-then-stop. Latest run in the snapshot, 42332789888 (nai-sec-form13f), succeeded, so nothing new is open.
+Tool outcomes: [{"tool":"write_file","result":{"ok":true,"path":"agent/PROGRESS.md","commit":"ba179d2306dbc448f85c9caa6ae07554e07cf192","blob_sha":"a83aa26fe6c41bc7172f03a90812d97064c68ae4","verified":true}}]
 
 ## Exact next step
-Create the issue for run 42156926867 (dedupe_key=run-42156926867) with job 127693199421, the failing step, and the truncated-log caveat. If it returns ok, the Venice lane has no remaining unproven work: mark t4 done, set done=true, and go back to passive monitoring of new scheduled runs.
+Confirm the write of agent/PROGRESS.md on venice/sec-options-pipelines succeeded (expect a commit sha back). Once it returns ok, set done=true with actions=[] and go back to passive monitoring of the next scheduled nai-* run.
 
 ## Blockers
 []
 
 ## Evidence
-["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221"]
+["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221","ba179d2306dbc448f85c9caa6ae07554e07cf192"]
 
-Turn: mw6muqwr-6vv0csn4
+Turn: mw6mvimv-x7f6l906
