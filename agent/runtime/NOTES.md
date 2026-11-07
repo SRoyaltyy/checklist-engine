@@ -16,8 +16,8 @@ Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step
 ## Reported run IDs — never re-report
 42284432095, 42156926867. Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b).
 
-## Verified green snapshot (runs(main), 2026-11-07T17:57Z)
-42391969592 world-v2-code-ci sha 2ba3ebd success 7m58s (merge #218 gpt/sec-bulk-retained-v2), artifacts canonical-binary-definition-plan-v1 6.72MB + fred-v2-source 1.86MB; 42370489444 world-v2-code-ci sha 230ca55 success 8m16s (merge #210 kimi/sec-options-defs); 42344942142 nai-daily-forward sha e85547a success 24s; 42332789888 nai-sec-form13f sha e85547a success 11m53s. Only Node20-deprecation and ubuntu-latest→Ubuntu26 notices — not failures.
+## Verified green snapshot (runs(main), 2026-11-07T18:04Z)
+42391969592 world-v2-code-ci sha 2ba3ebd success 7m58s (merge #218 gpt/sec-bulk-retained-v2), artifacts canonical-binary-definition-plan-v1 6.72MB sha256:463d35ed6f8e…, fred-v2-source 1.86MB sha256:2eb5b07256ea…; 42370489444 world-v2-code-ci sha 230ca55 success 8m16s (merge #210 kimi/sec-options-defs), sec-source-evidence job 0s, same two artifact names; 42344942142 nai-daily-forward sha e85547a success 24s (job 128320545326); 42332789888 nai-sec-form13f sha e85547a success 11m53s (job 128282874551). Only Node20-deprecation and ubuntu-latest→Ubuntu26 notices — not failures.
 
 ## Lessons
 Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path used by report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public; freshly pushed worker source may need one retry while mirrors propagate.
@@ -26,7 +26,7 @@ Never infer a traceback from source code. Never assume a truncated UI step means
 A step can render in the job page while its API conclusion is skipped. Rendering the step name is not evidence it executed; the API step conclusions plus report_failure settle it. A cancelled run (e.g. outside-event-calendar 41227556402) is neither a failure nor reportable in this lane.
 
 ## Schedule note
-nai-occ-oi-daily fires ~19:59 UTC daily; at 2026-11-07T18:03Z the next occurrence is ~1h56m ahead. nai-sec-form13f ~03:10 UTC and nai-daily-forward ~05:58 UTC already green today (sha e85547a).
+nai-occ-oi-daily fires ~19:59 UTC daily; at 2026-11-07T18:04Z the next occurrence is ~1h55m ahead. nai-sec-form13f ~03:10 UTC and nai-daily-forward ~05:58 UTC already green today (sha e85547a).
 
 ## State
-Lane tasks t1–t8 done. Passive monitoring only; no writes until a nai-* failure appears outside the do-not-re-report set.
+Lane tasks t1–t9 done. Passive monitoring only; no writes until a nai-* failure appears outside the do-not-re-report set.
