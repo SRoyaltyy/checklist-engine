@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "url": "https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739",
+  "issue": 220,
+  "run_id": 42284432095,
+  "facts": [
+    {
+      "job_id": 128121492870,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870",
+      "failed_steps": [
+        "Run python scripts/nai/occ_oi_daily.py"
+      ],
+      "skipped_steps": [
+        "Run python scripts/nai/oi_probe.py"
+      ],
+      "error_lines": [
+        "2026-11-06T19:59:43.1646772Z Traceback (most recent call last):",
+        "2026-11-06T19:59:43.1651077Z ValueError: invalid literal for int() with base 10: ''",
+        "2026-11-06T19:59:43.2314721Z ##[error]Process completed with exit code 1."
+      ],
+      "log_unavailable": null
+    }
+  ],
+  "verified": true
+}
