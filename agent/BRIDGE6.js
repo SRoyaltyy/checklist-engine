@@ -1,7 +1,7 @@
-// Venice web runtime 6.2.0. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.2.1. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.2.0', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.2.1', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -165,4 +165,3 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
   win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
-
