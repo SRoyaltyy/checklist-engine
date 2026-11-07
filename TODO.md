@@ -14,7 +14,7 @@ Focus now (Cyrus 2026-11-05): **SEC** and **Options** Gantt rows, done by plain 
 **Lane:** strict definitions + v1 master. Definitions only — never data downloads. Do not touch data pipelines. Do the items below strictly in order (Cyrus-approved 2026-11-03 11:21 HKT).
 - [x] **1. STOP adding BINARY_MASTER batches.** Held from 2026-11-03 11:21 HKT; last batch 26 (`f756e39d`, 107,201 defs bound). No new batches were pushed while #177 was open.
 - [x] **2. Fix PR #177 CI, then merge** → [4 Questions / v1 master]. DONE 2026-11-03 ~12:00 HKT. Merged as `87928850`.
-- [ ] **3. Then SEC and options strict definitions** → [2 Define / Strict definitions] ~45% amber. Binary / fixed-outcome only, no free text. PR #210 (head `a2e20e45`, 114 defs) — finish and merge.
+- [x] **3. Then SEC and options strict definitions** → [2 Define / Strict definitions]. DONE 2026-11-07 ~20:05 HKT. PR #210 merged as `230ca55b` (head `1d24d28c`, green CI run **42369998747**): 114 strict defs across 10 blocks + 27 unit tests; canonical grid untouched. Held within item 3 (documented, not blocking): I194 Altman variant (§6.3 ruling), I202 options/money-flow (source authentication).
 - [ ] **4. Then ruling parts 5–8** → [2 Define / Strict definitions]. MA30, VWAP anchor, SPY_VIX still held for Cyrus's ruling.
 
 ## GPT
