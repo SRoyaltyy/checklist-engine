@@ -185,7 +185,7 @@ async function runtimeTool(env, command) {
       case 'job_log': {
         if(!/^\d+$/.test(String(args.job_id)))throw new Error('job_id required');
         let r=await fetch(`https://api.github.com/repos/${repo(env)}/actions/jobs/${args.job_id}/logs`,{redirect:'manual',headers:{Authorization:`Bearer ${env.GITHUB_TOKEN}`,'User-Agent':'venice-doorman'}});
-        if(r.status===302){const u=new URL(r.headers.get('location'));if(u.protocol!=='https:'||!/(\.blob\.core\.windows\.net|\.actions\.githubusercontent\.com|\.githubusercontent\.com)$/.test(u.hostname))throw new Error('Unexpected log download host');r=await fetch(u,{redirect:'error'});}
+        if(r.status===302){const u=new URL(r.headers.get('location'));if(u.protocol!=='https:'||!/(\.blob\.core\.windows\.net|\.actions\.githubusercontent\.com|\.githubusercontent\.com)$/.test(u.hostname))throw new Error('Unexpected log download host');r=await fetch(u,{redirect:'manual'});}
         if(!r.ok)throw new Error(`job log: ${r.status}`);
         const text=await r.text();result={ok:true,job_id:args.job_id,url:`https://github.com/${repo(env)}/actions/runs/${args.run_id||''}/job/${args.job_id}`,text:text.slice(-22000),truncated:text.length>22000};break;
       }
