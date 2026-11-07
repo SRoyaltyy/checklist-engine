@@ -3,6 +3,9 @@
 Task7 is pending. This branch prepares strict readers and a disabled source
 profile workflow; no quarterly download or fixed-field parquet run has executed.
 It follows the completed bulk snapshot and independent readback from task6.
+Activation requires a frozen PASS readback receipt and its successful actual
+GitHub run; the collector checks both before any SEC request. This prerequisite
+is currently unbound, so quarterly acquisition cannot start.
 
 The catalog reads actual HTTPS ZIP links from the official
 [insider](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets)
@@ -42,6 +45,6 @@ and never applies a guessed conversion from a report period or ZIP label.
 Filing dates accept the documented DD-MON-YYYY form and explicit ISO dates;
 invalid or ambiguous forms fail rather than being silently coerced.
 
-Nine synthetic tests pass using existing dependencies. Actual archived schemas
+Ten synthetic tests pass using existing dependencies. Actual archived schemas
 will be checked before extraction. Historical ownership, acceptance-time coverage,
 fixed-field parquet coverage and task7 completion remain pending. Scoring CLOSED.

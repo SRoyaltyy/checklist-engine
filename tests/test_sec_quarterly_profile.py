@@ -1,10 +1,12 @@
 """Synthetic profile evidence, including malformed-row reporting and CRC failure."""
 import hashlib
+import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
-from ci.sec_quarterly_profile import profile_zip,validate_request
+from ci.sec_quarterly_profile import bulk_prerequisite,profile_zip,validate_request
 
 
 class ProfileTests(unittest.TestCase):
@@ -29,10 +31,28 @@ class ProfileTests(unittest.TestCase):
         with self.assertRaises(zipfile.BadZipFile):profile_zip(path)
 
     def test_request_boolean_and_year_scope_are_bound(self):
-        value=dict(version=1,scope='SEC_QUARTERLY_OFFICIAL_SOURCE_PROFILE_2020_LATEST',start_year=2020,execute=False)
+        value=dict(version=1,scope='SEC_QUARTERLY_OFFICIAL_SOURCE_PROFILE_2020_LATEST',start_year=2020,execute=False,bulk_readback=None)
         self.assertEqual(validate_request(value),value)
         for changed in [dict(value,execute='false'),dict(value,start_year=2024)]:
             with self.assertRaises(ValueError):validate_request(changed)
+        with self.assertRaisesRegex(ValueError,'frozen successful bulk readback'):validate_request(dict(value,execute=True))
+
+    def test_public_bulk_prerequisite_requires_exact_receipt_and_successful_actual_runner(self):
+        report=dict(format='SEC_BULK_PUBLIC_READBACK_V1',status='PASS',reader_commit='a'*40,
+            coverage=dict(retained_names=8439),actual_run_id='123',actual_attempt='1',source=dict(run='111',attempt='1'),
+            verification_scope='ALL_PUBLISHED_RETAINED_RAW_MEMBERS_AND_ALL_PARQUET_ROW_VALUES',
+            unfiltered_zip_readback_kinds=['companyfacts'])
+        path=self.root/'readback.json';raw=json.dumps(report).encode();path.write_bytes(raw)
+        proof=dict(release='sec-bulk-readback-v1-123-1',commit='a'*40,receipt_sha256=hashlib.sha256(raw).hexdigest())
+        run=dict(status='completed',conclusion='failure',head_sha='a'*40,path='.github/workflows/sec_bulk_readback.yml')
+        with patch.dict('os.environ',GITHUB_REPOSITORY='SRoyaltyy/checklist-engine'),\
+                patch('ci.sec_quarterly_profile.releases.release_info',return_value=dict(draft=False,target_commitish='a'*40)),\
+                patch('ci.sec_quarterly_profile.releases.download_asset',return_value=path),\
+                patch('ci.sec_quarterly_profile.releases._read',side_effect=lambda *args:json.dumps(run)):
+            with self.assertRaisesRegex(ValueError,'runner result'):bulk_prerequisite(proof,self.root)
+            run['conclusion']='success';result=bulk_prerequisite(proof,self.root)
+            self.assertEqual(result['verification_status'],'PASS');path.write_bytes(raw+b' ')
+            with self.assertRaisesRegex(ValueError,'receipt differs'):bulk_prerequisite(proof,self.root)
 
 
 if __name__=='__main__':unittest.main()

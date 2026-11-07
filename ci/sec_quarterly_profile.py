@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import zipfile
 
@@ -18,11 +19,40 @@ REQUEST=ROOT/'ci/SEC_QUARTERLY_PROFILE_REQUEST.json'
 
 
 def validate_request(value):
+    proof=value.get('bulk_readback')
     if (type(value.get('execute')) is not bool
             or value!=dict(version=1,scope='SEC_QUARTERLY_OFFICIAL_SOURCE_PROFILE_2020_LATEST',
-                           start_year=2020,execute=value.get('execute'))):
+                           start_year=2020,execute=value.get('execute'),bulk_readback=proof)):
         raise ValueError('quarterly source profile scope differs')
+    if proof is None:
+        if value['execute']:raise ValueError('quarterly acquisition requires a frozen successful bulk readback')
+    elif (set(proof)!= {'release','commit','receipt_sha256'}
+            or not re.fullmatch(r'sec-bulk-readback-v1-[1-9][0-9]*-[1-9][0-9]*',proof['release'])
+            or not re.fullmatch(r'[0-9a-f]{40}',proof['commit'])
+            or not re.fullmatch(r'[0-9a-f]{64}',proof['receipt_sha256'])):
+        raise ValueError('invalid bulk readback prerequisite anchor')
     return value
+
+
+def bulk_prerequisite(proof,root):
+    release=releases.release_info(proof['release'])
+    if release['draft'] or release['target_commitish']!=proof['commit']:
+        raise ValueError('bulk readback prerequisite release differs')
+    path=releases.download_asset(proof['release'],'SEC_BULK_PUBLIC_READBACK_V1.json',root/'bulk-prerequisite')
+    if digest(path)!=proof['receipt_sha256']:raise ValueError('bulk readback prerequisite receipt differs')
+    report=json.loads(path.read_bytes())
+    if (report['status']!='PASS' or report['format']!='SEC_BULK_PUBLIC_READBACK_V1'
+            or report['reader_commit']!=proof['commit'] or report['coverage']['retained_names']!=8439
+            or report['verification_scope']!='ALL_PUBLISHED_RETAINED_RAW_MEMBERS_AND_ALL_PARQUET_ROW_VALUES'
+            or 'companyfacts' not in report['unfiltered_zip_readback_kinds']):
+        raise ValueError('bulk prerequisite does not prove the required independent readback')
+    run=json.loads(releases._read('api',f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{report['actual_run_id']}/attempts/{report['actual_attempt']}"))
+    if (run['status']!='completed' or run['conclusion']!='success' or run['head_sha']!=proof['commit']
+            or run['path']!='.github/workflows/sec_bulk_readback.yml'):
+        raise ValueError('bulk prerequisite actual runner result differs')
+    path.unlink()
+    return dict(proof,reader_run=report['actual_run_id'],reader_attempt=report['actual_attempt'],
+                producer=report['source'],verification_status='PASS')
 
 
 def download(url,path,max_bytes):
@@ -80,11 +110,13 @@ def acquire(kind,root):
     if kind not in PAGES:raise ValueError('unsupported quarterly source kind')
     if not relay_configuration()['matches_inspected_production_worker']:raise ValueError('relay differs')
     root.mkdir(parents=True,exist_ok=True)
+    prerequisite=bulk_prerequisite(request['bulk_readback'],root)
     tag=f"sec-quarterly-profile-v2-{kind}-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
     publisher=Publisher(root,tag)
     report=dict(format='SEC_QUARTERLY_SOURCE_PROFILE_V2',status='FAIL_PARTIAL_SOURCE_CATALOG',kind=kind,
         actual_run_id=os.environ['GITHUB_RUN_ID'],actual_attempt=os.environ['GITHUB_RUN_ATTEMPT'],
         source_commit=os.environ['GITHUB_SHA'],release=tag,started_at=now(),windows=[],
+        bulk_prerequisite=prerequisite,
         scope='OFFICIAL_RAW_SOURCES_AND_SCHEMA_ONLY_NOT_FIXED_FIELD_PARQUET_OR_PIT_JOIN',
         world_gate='NOT_PROVEN',scoring_gate='CLOSED',free_text_features=False)
     try:
