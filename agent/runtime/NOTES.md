@@ -11,7 +11,7 @@ GitHub read/write proof a089ee8ac06ad75112451d56543736dcb6393b0b. Runner downloa
 
 ## Failure reporting — canonical facts
 Run 42284432095 / nai-occ-oi-daily / sha e85547a / job 128121492870. Authoritative deduped record: https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 — failed_steps=['Run python scripts/nai/occ_oi_daily.py'], skipped_steps=['Run python scripts/nai/oi_probe.py'], error_lines=['Traceback (most recent call last):','ValueError: invalid literal for int() with base 10: \'\'','##[error]Process completed with exit code 1.'], log_unavailable=null. This supersedes the issue body's inferred unguarded-DELO diagnosis and the earlier comment 6710061417 correction ('oi_probe ran / logs truncated'). The unguarded DELO call at scripts/nai/occ_oi_daily.py line 8 remains an unverified inference and must not be cited as cause.
-Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421 / failing step 'Run python scripts/nai/sec_datasets.py form345', exit 1 → https://github.com/SRoyaltyy/checklist-engine/issues/221 . Traceback not captured.
+Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step 'Run python scripts/nai/sec_datasets.py form345'. Exact log: RuntimeError: GET failed https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets: HTTP Error 403: Forbidden; urllib.error.HTTPError: HTTP Error 403: Forbidden. Canonical verified correction: https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770. report_failure(run_id) returned verified:true; a second different action ID returned replayed:true with no duplicate.
 
 ## Reported run IDs — never re-report
 42284432095, 42156926867. Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b).
@@ -19,8 +19,8 @@ Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421 / failing st
 ## Lessons
 Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path used by report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public; freshly pushed worker source may need one retry while mirrors propagate.
 
-## Open question (flagged, not investigating — out of lane)
-Job page renders a 'Run python scripts/nai/oi_probe.py' step (truncated) while report_failure lists it as skipped. Canonical record defers to report_failure.
+## Interpretation
+A step can appear in the job page while its conclusion is skipped. Rendering the step name is not evidence that it executed. The exact API step conclusions and report_failure result settle this.
 
 ## State
 All lane tasks t1–t6 done. Nothing open. Passive monitoring until a new nai-* failure appears outside the do-not-re-report set.
