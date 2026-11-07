@@ -16,8 +16,8 @@ Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step
 ## Reported run IDs — never re-report
 42284432095, 42156926867. Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b).
 
-## Latest green runs (verified this turn, runs(main) snapshot)
-42391969592 world-v2-code-ci sha 2ba3ebd success; 42370489444 world-v2-code-ci sha 230ca55 success; 42344942142 nai-daily-forward sha e85547a success; 42332789888 nai-sec-form13f sha e85547a success. Only warnings are Node20-deprecation / ubuntu-latest notices — not failures.
+## Last verified green snapshot (runs(main), 2026-11-07T17:39Z)
+42391969592 world-v2-code-ci sha 2ba3ebd success; 42370489444 world-v2-code-ci sha 230ca55 success; 42344942142 nai-daily-forward sha e85547a success; 42332789888 nai-sec-form13f sha e85547a success. Warnings seen are Node20-deprecation / ubuntu-latest notices — not failures.
 
 ## Lessons
 Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path used by report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public; freshly pushed worker source may need one retry while mirrors propagate.
@@ -26,7 +26,7 @@ Never infer a traceback from source code. Never assume a truncated UI step means
 A step can render in the job page while its API conclusion is skipped. Rendering the step name is not evidence it executed; the API step conclusions plus report_failure settle it. Every step showing 'truncated due to its large size' in the UI does not mean the log is unavailable to the API path.
 
 ## Schedule note
-nai-occ-oi-daily fires ~19:59 UTC daily; at 2026-11-07T17:39Z the next occurrence is still ahead, so no new occ run is expected yet. nai-sec-form13f fires ~03:10 UTC; nai-daily-forward ~05:58 UTC — both already green today.
+nai-occ-oi-daily fires ~19:59 UTC daily — at 2026-11-07T17:45Z the next occurrence is still ahead (~2h15m), so no new occ run can exist yet. nai-sec-form13f ~03:10 UTC; nai-daily-forward ~05:58 UTC — both already green today.
 
 ## State
-Lane tasks t1–t7 done. Passive monitoring until a nai-* failure appears outside the do-not-re-report set.
+Lane tasks t1–t7 done. Passive monitoring only; no writes until a nai-* failure appears outside the do-not-re-report set.
