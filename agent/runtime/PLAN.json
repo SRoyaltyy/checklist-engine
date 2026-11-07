@@ -1,8 +1,8 @@
 {
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
-  "why": "Sole assigned lane: Venice observes and reports, GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
+  "why": "Sole assigned lane: Venice observes and reports via report_failure, GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t5",
+  "current_task": "t6",
   "tasks": [
     {
       "id": "t1",
@@ -30,12 +30,12 @@
     },
     {
       "id": "t3",
-      "title": "Correct issue #220: oi_probe ran, logs truncated, DELO diagnosis unverified",
-      "acceptance": "One comment on #220 with corrected step list and truncation cause",
+      "title": "Replace inferred/corrected wording for run 42284432095 with the report_failure canonical record",
+      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines present in evidence; superseded wording retired",
       "weight": 1,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417"
+        "https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739"
       ],
       "blocker": ""
     },
@@ -52,7 +52,7 @@
     },
     {
       "id": "t5",
-      "title": "Checkpoint lane state to agent/PROGRESS.md on the venice branch",
+      "title": "First checkpoint of lane state to agent/PROGRESS.md",
       "acceptance": "write_file returns a commit sha for agent/PROGRESS.md",
       "weight": 1,
       "status": "done",
@@ -60,7 +60,16 @@
         "ba179d2306dbc448f85c9caa6ae07554e07cf192"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t6",
+      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record and drop superseded 'traceback unavailable / oi_probe ran' wording",
+      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md and its text names issuecomment-6710271739 plus the ValueError line",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 87
 }
