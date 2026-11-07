@@ -1,0 +1,42 @@
+{
+  "format": "PRICE_WORLD_JOIN_CONTRACT_V1",
+  "version": 1,
+  "status": "PUBLISHED_READ_ONLY_KEYS_AND_DATE_CONVENTIONS",
+  "source_plan_sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d",
+  "identity_map_lf_sha256": "50323efcd9855061501d88010d8e812371fda7c9dd48d3a54c0f5f19cdad97ce",
+  "source_calendar": {
+    "release": "native-price-inputs-v1-40336250454-1",
+    "asset": "market_sessions.parquet",
+    "sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074"
+  },
+  "keys": {
+    "path": "dictionary/PRICE_WORLD_JOIN_KEYS_V1.csv",
+    "lf_sha256": "5e6d83f56bdb2a765ad5a9bf76219f82fdbe76ff2b93acd3f9ca12fa2e3233e2",
+    "rows": 8439,
+    "setup_rows": 12547288,
+    "candidate_ciks": 3996,
+    "unresolved": 4419,
+    "quarantined_product_aliases": 24,
+    "formal_ownership_intervals": 0
+  },
+  "sessions": {
+    "path": "dictionary/PRICE_WORLD_SESSIONS_V1.csv",
+    "lf_sha256": "5d56c2787f0483b2740d3d3f514b8cca2957394f849c123143b378068172a4c1",
+    "rows": 9271,
+    "first": "1990-01-02",
+    "last": "2026-10-23"
+  },
+  "primary_key": [
+    "price_ticker",
+    "setup_session_date"
+  ],
+  "setup_minimum": "2020-01-01",
+  "membership": "Intersect the bound calendar with authenticated per-stock setup rows; calendar membership alone is insufficient.",
+  "historical_identity": "BLOCKED_WITHOUT_FORMAL_VALID_FROM_VALID_TO_EVIDENCE",
+  "observed_filing_dates": "Observations only; never interpret as ownership interval endpoints.",
+  "sec_join": "CIK + independently established dated identity; acceptance/filed date strictly before setup date.",
+  "options_join": "Exact dated underlying mapping + source session; publication availability strictly before setup open.",
+  "calendar_extension": "Outside the frozen calendar is unsupported; publish a new version before extending.",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

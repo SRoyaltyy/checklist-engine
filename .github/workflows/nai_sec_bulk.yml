@@ -10,7 +10,11 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 240
-    env: {PRIMARY_ACTION_RELAY_URL: '${{ secrets.PRIMARY_ACTION_RELAY_URL }}', GH_TOKEN: '${{ github.token }}', IDENTITY_ONLY: '${{ inputs.identity_only }}'}
+    env:
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      GH_TOKEN: ${{ github.token }}
+      IDENTITY_ONLY: ${{ inputs.identity_only }}
     steps:
       - uses: actions/checkout@v4
       - run: pip install -q pyarrow pandas

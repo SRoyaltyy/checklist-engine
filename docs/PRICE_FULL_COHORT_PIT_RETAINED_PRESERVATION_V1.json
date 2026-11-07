@@ -1,0 +1,10 @@
+{
+  "format": "PRICE_PIT_RETAINED_PRESERVATION_READBACK_V1",
+  "status": "PASS_EXACT_RETAINED_PROOF_AND_FAILURE_PRESERVATION",
+  "run_id": "41844079765",
+  "retained_proof_fingerprints_unchanged": 8438,
+  "retained_failure_vectors_unchanged": true,
+  "only_newly_measured_name": "KGRN",
+  "report_sha256": "a40b5279a017f5d08af7e32577e6663ac3d295067525ef3480dfaec6648b3734",
+  "scoring_gate": "CLOSED"
+}

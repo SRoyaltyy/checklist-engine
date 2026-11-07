@@ -1,0 +1,184 @@
+{
+  "authenticated_diagnostic_worker": {
+    "commit": "64f603de862adc81e6cd7e50e849cd7a684bf6bb",
+    "path": "ci/compact_world_storage_budget.py",
+    "sha256": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837"
+  },
+  "authenticated_sources": {
+    "composition": {
+      "asset": "COMPACT_WORLD_BUILD_COMPOSED.json",
+      "bytes": 7573427,
+      "release": "compact-world-build-composed-v1-41221028803-1",
+      "sha256": "84dc8205c12e9112e083d425e45af63d5b64b2bff3324c40a6ce7be4dde498c1"
+    },
+    "composition_request": {
+      "asset": "PRICE_RECOVERY_COMPOSITION_REQUEST.json",
+      "bytes": 1167,
+      "release": "compact-world-build-composed-v1-41221028803-1",
+      "sha256": "cc8fd08eb69d3494ace121e2221872abe5b29a9ee812a1f563749a9688f67782"
+    },
+    "parent": {
+      "asset": "COMPACT_WORLD_BUILD_MEASURED.json",
+      "bytes": 7501108,
+      "release": "compact-world-build-measured-v1-41078405278-1",
+      "sha256": "1d49218cc593a28d5940a216dfd263648f13d0302dcc5af2e603d6587b9383cc"
+    },
+    "plan": {
+      "asset": "COMPACT_WORLD_BUILD_PLAN.json",
+      "bytes": 418766,
+      "release": "compact-world-build-v1-41078405278-1-inputs",
+      "sha256": "b6258f6e57587d88f15088d2750153b6a8a926ab702bc6b7082bec0ffe4a0c8c"
+    },
+    "probe": {
+      "asset": "REBUILD_PARTIAL_CHECKPOINT_V1.json",
+      "bytes": 10599,
+      "release": "rebuild-partial-checkpoint-v1-41093742477-1",
+      "sha256": "a3d90e38ffa26a478809c6264d16dc70bec4be5168f024a1d27c1d97ff515198"
+    },
+    "registry": {
+      "asset": "DIAGNOSTIC_REGISTRIES.json",
+      "bytes": 13752319,
+      "release": "compact-world-build-v1-41078405278-1-inputs",
+      "sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2"
+    },
+    "replacement": {
+      "asset": "COMPACT_WORLD_SHARD.json",
+      "bytes": 47063,
+      "release": "compact-world-build-recovered-part-v1-41159096064-1-006",
+      "sha256": "f96ef20f28cbf34287902d8155a93e1e6a32af32861f907c7f8e0b777eca934e"
+    }
+  },
+  "build_excluded": 0,
+  "checks": {
+    "canonical_binary_price_answers_and_quality": {
+      "reason": "Published 68,904-question diagnostic registry is not the canonical BINARY_MASTER; complete tree-to-answer coverage and constant/blank quality proof are absent",
+      "status": "NOT_PROVEN"
+    },
+    "complete_world_blocks_and_dependency_budget": {
+      "reason": "Price-only output has not integrated/measured every required world block and canonical question dependency; downloads are no longer deferred by the old v1 scope cut",
+      "status": "NOT_PROVEN"
+    },
+    "diagnostic_registry_grid": {
+      "columns_per_timeframe": 1044,
+      "kind": "DIAGNOSTIC_ROLLING_COMPARISONS_NOT_CANONICAL_BINARY_MASTER",
+      "questions": 68904,
+      "questions_per_timeframe": {
+        "10d": 3132,
+        "11d": 3132,
+        "12d": 3132,
+        "13d": 3132,
+        "14d": 3132,
+        "15d": 3132,
+        "16d": 3132,
+        "17d": 3132,
+        "18d": 3132,
+        "19d": 3132,
+        "1d": 3132,
+        "20d": 3132,
+        "21d": 3132,
+        "2d": 3132,
+        "3d": 3132,
+        "4d": 3132,
+        "5d": 3132,
+        "6d": 3132,
+        "7d": 3132,
+        "8d": 3132,
+        "9d": 3132,
+        "monthly": 3132
+      },
+      "sha256": "e4c52e3f11ad2be136b615a59078326d04699e9d9078e87134430463a52450c2",
+      "status": "PASS",
+      "timeframes": [
+        "1d",
+        "2d",
+        "3d",
+        "4d",
+        "5d",
+        "6d",
+        "7d",
+        "8d",
+        "9d",
+        "10d",
+        "11d",
+        "12d",
+        "13d",
+        "14d",
+        "15d",
+        "16d",
+        "17d",
+        "18d",
+        "19d",
+        "20d",
+        "21d",
+        "monthly"
+      ]
+    },
+    "full_cohort_exact_numeric_reconstruction": {
+      "measured_sample_names": 3,
+      "reason": "Exact recomputation is authorized, but the existing proof is an older sample, not complete-cohort evidence for this corrected rebuild",
+      "rebuild_recipe_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+      "sample_recipe_fingerprint": "89efd6100f26c998148c7742b7900104618f02adfca0b535ae31baf5092d1e16",
+      "status": "SCOPE_INCOMPLETE"
+    },
+    "full_cohort_price_prefix_PIT": {
+      "measured_sample_names": 100,
+      "reason": "Published proof is the predeclared 100-stock sample; the remaining retained names are unmeasured",
+      "required_names": 8439,
+      "sample_compared_cells": 2287295424,
+      "sample_mismatch_blocks": 0,
+      "sample_run": 41075612310,
+      "status": "SCOPE_INCOMPLETE"
+    },
+    "historical_tradeable_and_nominal_100M_eligibility": {
+      "reason": "No full-cohort historical eligibility proof is bound to this rebuild; the diagnostic worker stores an all-true encoding mask, which is not a tradeability approval",
+      "status": "NOT_PROVEN"
+    },
+    "price_column_available_from_and_all_column_leak_traps": {
+      "reason": "Packet provenance binds row keys and recipe, but no complete per-column availability manifest or full-cohort leak-trap proof is published by #203",
+      "status": "NOT_PROVEN"
+    },
+    "price_dependency_storage_reservation": {
+      "limit_bytes": 100000000000,
+      "measured_bytes": 25608750278,
+      "scope": "Price dependencies, not complete world",
+      "status": "PASS"
+    },
+    "retained_price_cohort_and_current_payload_metadata": {
+      "measured_names": 8439,
+      "status": "PASS"
+    }
+  },
+  "failing_checks": [
+    "full_cohort_price_prefix_PIT",
+    "historical_tradeable_and_nominal_100M_eligibility",
+    "canonical_binary_price_answers_and_quality",
+    "price_column_available_from_and_all_column_leak_traps",
+    "full_cohort_exact_numeric_reconstruction",
+    "complete_world_blocks_and_dependency_budget"
+  ],
+  "format": "COMPLETED_PRICE_WORLD_GATE_V1",
+  "full_cohort_price_PIT": "UNMEASURED",
+  "limitation": "This runner measures complete-cohort source/asset metadata and evaluates the world prerequisites. It does not claim full payload-body or full-cohort numeric/PIT measurement.",
+  "no_new_market_computation": true,
+  "original_universe": 8727,
+  "payload_asset_metadata": {
+    "releases": 177,
+    "scope": "Current public asset size/digest/state plus producer roundtrip declarations; bodies not reread",
+    "status": "PASS",
+    "tickers": 8439
+  },
+  "protected_source_mutations": "NONE",
+  "query_stock_days": 12547288,
+  "request_sha256": "7fcb8c2615746fec0a59aef4762f6058302af91fd3f75af8cbeedf2e1795c43b",
+  "retained_names": 8439,
+  "run": 41574830836,
+  "scoring_gate": "CLOSED",
+  "source_commit": "e30db9afef98a5eddc2e8e7c4083bbf15e6a3ad1",
+  "source_excluded": 288,
+  "supporting_repo_artifacts": {
+    "ci/compact_world_storage_budget.py": "36867825bb40daee17561c5d546362b0e27aeaa297b8c6e7c28742655a7b2837",
+    "docs/NUMERIC_RECOMPUTE_MEASURED_V1.json": "50d8bdbf3435f15f9cb6b15f02c2b0c1b7f1b677af7642ea70e2eedd2a3fcf10",
+    "docs/ROW0_PRICE_WORLD_GATE_V2.json": "81817c17527f6af6a71448095df729dd2056984464a13a8c6baf4d4f6329c8db"
+  },
+  "world_gate": "NOT_PROVEN"
+}

@@ -1,0 +1,110 @@
+{
+  "format": "SEC_RUNNER_ACCESS_PROOF_V1",
+  "status": "BLOCKED_OFFICIAL_ENDPOINT_ACCESS",
+  "actual_run_id": "42258164737",
+  "actual_attempt": "1",
+  "source_commit": "e132bf910c0fff60fe848866cf3aab4d7b4bb75f",
+  "request": {
+    "version": 1,
+    "scope": "SIX_DECLARED_OFFICIAL_ENDPOINTS_ONLY",
+    "max_response_bytes": 10000000,
+    "attempts_per_endpoint": 1,
+    "execute": true
+  },
+  "route": "EXISTING_PRIMARY_ACTION_RELAY_ONLY",
+  "relay_configuration": {
+    "matches_inspected_production_worker": true,
+    "secret_value_disclosed": false,
+    "check": "HTTPS host equals the production Worker visually inspected in Cloudflare"
+  },
+  "records": [
+    {
+      "kind": "tickers",
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/files/company_tickers.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded U.S. Securities and Exchange Commission Automated access to our sites must comply with SEC.gov's Privacy and Security Policy. Please visit www.sec.gov/developer for more developer resources and Fair Access guidelines. Please visit www.sec.gov/privacy for more information on Privacy Policy. Reference ID: 0.e6182117.1793984671.545dcdc5",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "exchange_tickers",
+      "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded U.S. Securities and Exchange Commission Automated access to our sites must comply with SEC.gov's Privacy and Security Policy. Please visit www.sec.gov/developer for more developer resources and Fair Access guidelines. Please visit www.sec.gov/privacy for more information on Privacy Policy. Reference ID: 0.d182117.1793984672.a9babad5",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "form345_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded U.S. Securities and Exchange Commission Automated access to our sites must comply with SEC.gov's Privacy and Security Policy. Please visit www.sec.gov/developer for more developer resources and Fair Access guidelines. Please visit www.sec.gov/privacy for more information on Privacy Policy. Reference ID: 0.e182117.1793984673.b00fdc2b",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "form13f_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded U.S. Securities and Exchange Commission Automated access to our sites must comply with SEC.gov's Privacy and Security Policy. Please visit www.sec.gov/developer for more developer resources and Fair Access guidelines. Please visit www.sec.gov/privacy for more information on Privacy Policy. Reference ID: 0.f168c917.1793984674.62b5ba96",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "submissions",
+      "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool U.S. Securities and Exchange Commission Your Request Originates from an Undeclared Automated Tool To allow for equitable access to all users, SEC reserves the right to limit requests originating from undeclared automated tools. Your request has been identified as part of a network of automated tools outside of the acceptable policy and will be managed until action is taken to declare your traffic. Please declare your traffic by updating your user agent to include company specific information. For best practices on efficiently downloading information from SEC.gov, including the latest EDGAR filings, visit sec.gov/developer . You can also sign up for email updates on the SEC open data program, including best practices that m",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "numeric_concept",
+      "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/Assets.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/Assets.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool U.S. Securities and Exchange Commission Your Request Originates from an Undeclared Automated Tool To allow for equitable access to all users, SEC reserves the right to limit requests originating from undeclared automated tools. Your request has been identified as part of a network of automated tools outside of the acceptable policy and will be managed until action is taken to declare your traffic. Please declare your traffic by updating your user agent to include company specific information. For best practices on efficiently downloading information from SEC.gov, including the latest EDGAR filings, visit sec.gov/developer . You can also sign up for email updates on the SEC open data program, including best practices that m",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    }
+  ],
+  "scope": "Bounded source-access/schema proof only; no complete bulk downloads, identity extension or market calculation.",
+  "upstream_user_agent": "NOT_OBSERVABLE_FROM_CLIENT; deployed relay configuration must preserve a declared contact identity",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

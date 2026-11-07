@@ -1,67 +1,121 @@
 """Shared helpers for no-AI data pipelines (plain HTTP + gh release). No LLM calls."""
-import json, os, subprocess, time, urllib.request, urllib.error
+import html, json, os, re, subprocess, time, urllib.request, urllib.error, urllib.parse
 
-UA = os.environ.get("SEC_UA", "checklist-engine research cyrus-checklist@users.noreply.github.com")
+UA = "checklist-engine research cyrus-checklist@users.noreply.github.com"
 REPO = os.environ.get("GITHUB_REPOSITORY", "SRoyaltyy/checklist-engine")
 COMPOSED = ("compact-world-build-composed-v1-41221028803-1", "COMPACT_WORLD_BUILD_COMPOSED.json")
 _last = [0.0]
 
 
-_route = {}
+SEC_HOSTS = {"sec.gov", "www.sec.gov", "data.sec.gov"}
+
+
+def redact(value):
+    text = str(value)
+    relay = os.environ.get("PRIMARY_ACTION_RELAY_URL", "").strip()
+    if relay:
+        text = text.replace(relay, "[RELAY REDACTED]")
+        parsed = urllib.parse.urlsplit(relay)
+        if parsed.netloc:
+            text = text.replace(parsed.netloc, "[RELAY HOST REDACTED]")
+        for _, token in urllib.parse.parse_qsl(parsed.query, keep_blank_values=True):
+            if len(token) > 3:
+                text = text.replace(token, "[REDACTED]")
+                text = text.replace(urllib.parse.quote(token, safe=""), "[REDACTED]")
+    return re.sub(r'[A-Za-z0-9.!#$%&\x27*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+',
+                  '[CONTACT EMAIL REDACTED]', text)
+
+
+class SourceError(RuntimeError):
+    def __init__(self, evidence):
+        self.evidence = evidence
+        super().__init__(json.dumps(evidence, sort_keys=True))
+
+
+def response_excerpt(raw):
+    text=raw.decode('utf-8','replace')
+    text=re.sub(r'<(style|script)\b[^>]*>.*?</\1\s*>',' ',text,flags=re.I|re.S)
+    text=html.unescape(re.sub(r'<[^>]+>',' ',text))
+    text=re.sub(r'\b(?:\d{1,3}\.){3}\d{1,3}\b','[IP REDACTED]',text)
+    return redact(re.sub(r'\s+',' ',text).strip())[:800]
 
 
 def _relay(url):
-    import urllib.parse
     relay = os.environ.get("PRIMARY_ACTION_RELAY_URL", "").strip()
     if not relay:
-        return None
+        raise RuntimeError("DIRECT_SEC_REQUEST_FORBIDDEN: PRIMARY_ACTION_RELAY_URL is required")
     b = urllib.parse.urlsplit(relay)
+    target = urllib.parse.urlsplit(url)
+    if target.scheme != "https" or target.hostname not in SEC_HOSTS or target.username or target.password:
+        raise ValueError("SEC source must be an official HTTPS URL without credentials")
+    if b.scheme != "https" or not b.hostname or b.username or b.password or b.hostname in SEC_HOSTS:
+        raise ValueError("SEC relay must be HTTPS without embedded credentials")
     q = [(k, v) for k, v in urllib.parse.parse_qsl(b.query, keep_blank_values=True) if k != "url"] + [("url", url)]
     return urllib.parse.urlunsplit((b.scheme, b.netloc, b.path or "/", urllib.parse.urlencode(q), ""))
 
 
-def get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300):
-    """GET (SEC: direct first; on 403 falls back to the repo's existing SEC relay secret, never logged)."""
-    sec = "sec.gov" in url.split("/")[2]
-    if sec and _route.get("sec") == "relay" and _relay(url):
-        return _get(_relay(url), dest, pace, tries, ua, timeout, shown=url)
-    try:
-        return _get(url, dest, pace, 1 if sec else tries, ua, timeout)
-    except Exception as e:
-        if sec and "403" in str(e) and _relay(url):
-            _route["sec"] = "relay"; print("SEC direct 403 from runner -> using relay", flush=True)
-            return _get(_relay(url), dest, pace, tries, ua, timeout, shown=url)
-        raise
+def get(url, dest=None, pace=0.15, tries=6, ua=None, timeout=300, max_bytes=None):
+    """SEC uses the established relay only; a denied request never changes routes."""
+    sec = urllib.parse.urlsplit(url).hostname in SEC_HOSTS
+    agent = ua or os.environ.get("SEC_USER_AGENT") or os.environ.get("SEC_UA") or UA
+    if sec:
+        if "@" not in agent or "\n" in agent or "\r" in agent:
+            raise ValueError("SEC User-Agent requires a declared name and contact email")
+        return _get(_relay(url), dest, max(1.0, pace), tries, agent, timeout,
+                    shown=url, route="relay", max_bytes=max_bytes)
+    return _get(url, dest, pace, tries, agent, timeout, max_bytes=max_bytes)
 
 
-def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None):
-    """GET with polite pacing (<=~7 req/s) and exponential backoff. Streams to dest if given."""
+def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None, route="direct", max_bytes=None):
+    """Paced HTTP; stream downloads atomically and redact route secrets."""
+    if urllib.parse.urlsplit(url).hostname in SEC_HOSTS:
+        raise RuntimeError("DIRECT_SEC_REQUEST_FORBIDDEN")
+    if tries < 1 or (max_bytes is not None and max_bytes < 1):
+        raise ValueError("positive retry and byte limits required")
+    source = shown or url
     for i in range(tries):
-        wait = pace - (time.time() - _last[0])
+        wait = pace - (time.monotonic() - _last[0])
         if wait > 0:
             time.sleep(wait)
-        _last[0] = time.time()
+        _last[0] = time.monotonic()
         req = urllib.request.Request(url, headers={"User-Agent": ua, "Accept-Encoding": "identity", "Accept": "*/*"})
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 if dest:
                     with open(dest + ".part", "wb") as f:
+                        size = 0
                         while True:
                             b = r.read(1 << 20)
                             if not b:
                                 break
+                            size += len(b)
+                            if max_bytes is not None and size > max_bytes:
+                                raise ValueError("source exceeds declared byte limit")
                             f.write(b)
                     os.replace(dest + ".part", dest)
                     return dest
-                return r.read()
+                raw = r.read() if max_bytes is None else r.read(max_bytes + 1)
+                if max_bytes is not None and len(raw) > max_bytes:
+                    raise ValueError("source exceeds declared byte limit")
+                return raw
         except urllib.error.HTTPError as e:
-            if e.code in (404, 403) and i >= 1:
-                raise RuntimeError(f"HTTP {e.code} {shown or url}")
-            err = e
-        except Exception as e:  # network
-            err = e
+            try:
+                excerpt = response_excerpt(e.read(16384))
+            except Exception:
+                excerpt = "unreadable HTTP error body"
+            err = dict(url=source, route=route, http_status=e.code, attempts=i+1,
+                       response_excerpt=redact(excerpt), user_agent=redact(ua), request_spacing_seconds=pace)
+            if e.code in (403, 404, 429) or e.code < 500 or i == tries - 1:
+                raise SourceError(err) from None
+        except (OSError, TimeoutError) as e:
+            err = dict(url=source, route=route, attempts=i+1, error_type=type(e).__name__, message=redact(e))
+        finally:
+            if dest and os.path.exists(dest + ".part"):
+                os.remove(dest + ".part")
+        if i == tries - 1:
+            break
         time.sleep(min(60, 2 ** i))
-    raise RuntimeError(f"GET failed {shown or url}: {err}")
+    raise SourceError(err) from None
 
 
 def gh(*args, check=True):

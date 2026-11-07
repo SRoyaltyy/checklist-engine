@@ -1,0 +1,57 @@
+name: nai-sec-access
+on:
+  push:
+    branches: [gpt/sec-runner-route-fix-v1]
+    paths: ['ci/SEC_RUNNER_ACCESS_REQUEST.json']
+  pull_request:
+    paths: ['scripts/nai/common.py', 'ci/sec_runner_access.py', 'ci/SEC_RUNNER_ACCESS_REQUEST.json', 'tests/test_nai*.py', '.github/workflows/nai_sec_access.yml']
+permissions:
+  contents: read
+concurrency:
+  group: nai-sec-access-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m unittest discover -s tests -p 'test_nai*.py' -v
+      - id: request
+        run: |
+          python - <<'PY'
+          import json,os
+          from ci.sec_runner_access import validate_request
+          request=validate_request(json.load(open('ci/SEC_RUNNER_ACCESS_REQUEST.json')))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('execute='+str(request['execute']).lower()+'\n')
+          PY
+  proof:
+    needs: verify
+    if: github.event_name == 'push' && needs.verify.outputs.execute == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m ci.sec_runner_access
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-access-proof-${{ github.run_id }}
+          path: sec-access-proof/*.json
+          if-no-files-found: ignore

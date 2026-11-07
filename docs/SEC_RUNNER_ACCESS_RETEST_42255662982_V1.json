@@ -1,0 +1,105 @@
+{
+  "format": "SEC_RUNNER_ACCESS_PROOF_V1",
+  "status": "BLOCKED_OFFICIAL_ENDPOINT_ACCESS",
+  "actual_run_id": "42255662982",
+  "actual_attempt": "1",
+  "source_commit": "2434bbe8536459167f30d6fa4630129d534ed854",
+  "request": {
+    "version": 1,
+    "scope": "SIX_DECLARED_OFFICIAL_ENDPOINTS_ONLY",
+    "max_response_bytes": 10000000,
+    "attempts_per_endpoint": 1,
+    "execute": true
+  },
+  "route": "EXISTING_PRIMARY_ACTION_RELAY_ONLY",
+  "records": [
+    {
+      "kind": "tickers",
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/files/company_tickers.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {font-family:Georgia, Times,",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "exchange_tickers",
+      "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {font-family:Georgia, Times,",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "form345_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {font-family:Georgia, Times,",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "form13f_index",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Request Rate Threshold Exceeded html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {font-family:Georgia, Times,",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "submissions",
+      "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {f",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    },
+    {
+      "kind": "numeric_concept",
+      "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/Assets.json",
+      "status": "FAIL",
+      "evidence": {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/Assets.json",
+        "route": "relay",
+        "http_status": 403,
+        "attempts": 1,
+        "response_excerpt": "SEC.gov | Your Request Originates from an Undeclared Automated Tool html {height: 100%} body {height: 100%; margin:0; padding:0;} #header {background-color:#003968; color:#fff; padding:15px 20px 10px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px; border-bottom:solid 5px #000;} #footer {background-color:#003968; color:#fff; padding:15px 20px;font-family:Arial, Helvetica, sans-serif; font-size:20px;} #content {max-width:650px;margin:60px auto; padding:0 20px 100px 20px; background-image:url(seal_bw.png);background-repeat:no-repeat;background-position:50% 100%;} h1 {font-family:Georgia, Times, serif; font-size:20px;} h2 {text-align:center; font-family:Georgia, Times, serif; font-size:20px; width:100%; border-bottom:solid #999 1px;padding-bottom:10px; margin-bottom:20px;} h3 {f",
+        "user_agent": "checklist-engine research cyrus-checklist@users.noreply.github.com",
+        "request_spacing_seconds": 1.0
+      }
+    }
+  ],
+  "scope": "Bounded source-access/schema proof only; no complete bulk downloads, identity extension or market calculation.",
+  "upstream_user_agent": "NOT_OBSERVABLE_FROM_CLIENT; deployed relay configuration must preserve a declared contact identity",
+  "world_gate": "NOT_PROVEN",
+  "scoring_gate": "CLOSED"
+}

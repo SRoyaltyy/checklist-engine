@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "execute": false,
+  "controls": [
+    "BPOP",
+    "DJCO",
+    "KGRN"
+  ],
+  "prefix_cuts": [
+    "2023-01-03",
+    "2025-01-02"
+  ],
+  "base_plan_sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d",
+  "measured_report_sha256": "a40b5279a017f5d08af7e32577e6663ac3d295067525ef3480dfaec6648b3734",
+  "source_fields_sha256": "773bd59b5e7190083a9051fe7aa8c0b569d2e071ec85f52309ac51027cfffccd",
+  "recipe_fingerprint": "40ea182cf6fb377d12710ccbfccd7ab2b5f17b9e6e6f07df08cf4399956ca0c3",
+  "calendar_sha256": "3904f3115c180d40f230e36facad6b585efed861f0e8af13225e4dfb8513d074",
+  "expected_names": 8439,
+  "expected_query_rows": 12547288,
+  "expected_columns": 22968
+}
