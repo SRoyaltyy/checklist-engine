@@ -1,6 +1,6 @@
 // Fixed-target maintenance deployer. Existing token permissions are not widened.
 const REPO='SRoyaltyy/checklist-engine', BRANCH='venice/sec-options-pipelines', SCRIPT='venice-doorman';
-const json=(d,s=200)=>new Response(JSON.stringify({v:9,...d}),{status:s,headers:{'Content-Type':'application/json'}});
+const json=(d,s=200)=>new Response(JSON.stringify({v:10,...d}),{status:s,headers:{'Content-Type':'application/json'}});
 export default {
  async fetch(request,env){
   if(!env.DEPLOY_KEY||request.headers.get('Authorization')!=='Bearer '+env.DEPLOY_KEY)return json({ok:false,error:'Unauthorized'},401);
@@ -9,10 +9,10 @@ export default {
   if(request.method!=='POST')return json({ok:false,error:'POST required'},405);
   if(env.SCRIPT_NAME!==SCRIPT||env.GITHUB_REPO!==REPO)return json({ok:false,error:'Unexpected target configuration'},400);
   const commit=p.get('commit');if(!/^[0-9a-f]{40}$/.test(commit||''))return json({ok:false,error:'Immutable 40-character commit required'},400);
-  const currentHead=await fetch('https://api.github.com/repos/'+REPO+'/git/ref/heads/'+encodeURIComponent(BRANCH),{headers:{'User-Agent':'venice-maintenance'}});
-  const head=await currentHead.json();if(!currentHead.ok||head.object?.sha!==commit)return json({ok:false,error:'Commit must be the current maintenance branch head'},409);
   const got=await fetch('https://raw.githubusercontent.com/'+REPO+'/'+commit+'/agent/DOORMAN.worker.js');
   if(!got.ok)return json({ok:false,error:'Source unavailable'},400);const source=await got.text();
+  const current=await fetch('https://raw.githubusercontent.com/'+REPO+'/'+BRANCH+'/agent/DOORMAN.worker.js?t='+Date.now());
+  if(!current.ok||(await current.text())!==source)return json({ok:false,error:'Source must exactly match the fixed maintenance branch'},409);
   if(source.length<500||source.length>150000)return json({ok:false,error:'Invalid source size'},400);
   const api='https://api.cloudflare.com/client/v4/accounts/'+String(env.CF_ACCOUNT||'').trim()+'/workers/scripts/'+SCRIPT;
   const auth={Authorization:'Bearer '+env.CF_TOKEN};
