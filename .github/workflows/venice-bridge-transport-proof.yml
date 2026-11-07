@@ -1,0 +1,28 @@
+name: Venice bridge transport proof
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  download-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Download current repo instructions
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, urllib.request
+          url = 'https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/main/TODO.md'
+          data = urllib.request.urlopen(url, timeout=30).read()
+          assert b'## Venice' in data
+          open('TODO.downloaded.md', 'wb').write(data)
+          json.dump({'source': url, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}, open('download-proof.json', 'w'), indent=2)
+          print('Verified download:', len(data), 'bytes')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: venice-bridge-download-proof
+          path: |
+            TODO.downloaded.md
+            download-proof.json
+          retention-days: 3
