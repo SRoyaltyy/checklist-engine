@@ -171,3 +171,28 @@ commit lineage remain in the new receipts. This avoids redundant SEC requests;
 it does not reuse the incompatible partial filing outputs. Scheduled and manual
 runs acquire fresh maps. Both complete source archives still require extraction
 under the corrected observation schema and independent public readback.
+
+## Independent public readback
+
+`sec-bulk-public-readback` runs separately from the vendor collector. Its request
+must freeze a successful producer run, attempt, source commit and final receipt
+SHA256. It validates the actual GitHub run and public release, paginates the
+complete asset inventory, and downloads every manifest asset with size/SHA256
+verification. It makes no SEC requests and cannot change the producer release.
+
+The reader independently reconstructs all8,439identity rows from the two raw maps
+and pinned archived metadata. For both source kinds it streams every retained
+raw member, checks its ledger name/CIK/size/SHA256, and reconstructs every fixed
+field without importing the producer transforms. Ordered per-CIK row hashes
+cover every field of every published parquet row, including duplicates, source
+positions, unknown and disputed clocks, exact decimal strings and float-exactness
+flags. Actual schemas, file row counts and CIK sets are checked. All source/
+extraction receipts, aggregate counts, missing CIK lists and date bounds must agree.
+
+The readback covers **all published retained raw members and parquet values**.
+It does not redownload the full unfiltered SEC ZIPs or independently establish
+historical ticker ownership. Those limits are explicit in its receipt; world
+gate remains NOT_PROVEN and scoring CLOSED. The reader publishes its own
+immutable PASS/FAIL release and an Actions receipt. Eight synthetic tests include
+an8,439-name fixture and unchanged-count value corruption, raw hash/path
+corruption and parquet CIK binding corruption. Actual public readback is pending.
