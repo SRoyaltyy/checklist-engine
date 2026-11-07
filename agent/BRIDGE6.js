@@ -1,7 +1,7 @@
-// Venice web runtime 6.2.1. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.2.2. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.2.1', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.2.2', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -83,10 +83,11 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     s.phase='rolling';s.oldPath=old;s.rollAt=Date.now();persist();button.click();
   }
   async function prepare(){
+    const e=composer();if(!e||generating()||value(e).trim()){s.nextAt=Date.now()+15000;persist();note('waiting for empty composer');return;}
     const context=await request('context');
     if(stopped)return;
     if(s.rollover || (s.chatTurns||0)>=MAX_CHAT_TURNS || (s.chatChars||0)>=MAX_CHAT_CHARS){s.context=context;persist();await rollover();return;}
-    const e=composer();if(!e||generating()||value(e).trim()){note('waiting for empty composer');return;}
+    if(!composer()||generating()||value(e).trim()){s.nextAt=Date.now()+15000;persist();note('composer changed; waiting');return;}
     s.turn=uid();s.context=context;s.phase='composing';s.prompt=prompt(context);s.baseline=assistants().length;s.chatPath=win.location.pathname;s.sentAt=0;s.repair=0;persist();
     fill(e,s.prompt);note('sending wake');
   }
@@ -158,8 +159,19 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     }catch(e){if(!stopped){note(e.message);s.lastError=e.message;if(s.phase==='executing'||s.phase==='checkpointing')s.retryAt=Date.now()+30000;else{s.phase='idle';s.nextAt=Date.now()+30000;}persist();}}
     finally{pumping=false;}
   }
-  let releaseLock;
-  if(win.navigator.locks){win.navigator.locks.request('venice-bridge-runtime-v6',{ifAvailable:true},async lock=>{if(!lock){note('another tab owns agent');return;}try{const latest=JSON.parse(get(STORE,'null'));if(latest?.version===6)s=latest;}catch{}leaseHeld=true;persist();note('connected');pump();await new Promise(resolve=>{releaseLock=resolve;});});}
+  let releaseLock,acquiringLease=false;
+  async function acquireLease(){
+    if(stopped||leaseHeld||acquiringLease)return;
+    acquiringLease=true;
+    try{await win.navigator.locks.request('venice-bridge-runtime-v6',{ifAvailable:true},async lock=>{
+      if(stopped)return;
+      if(!lock){note('waiting for agent ownership');later(acquireLease,5000);return;}
+      try{const latest=JSON.parse(get(STORE,'null'));if(latest?.version===6)s=latest;}catch{}
+      leaseHeld=true;persist();note('connected');pump();await new Promise(resolve=>{releaseLock=resolve;});
+    });}catch(e){if(!stopped){note('ownership retry: '+e.message);later(acquireLease,5000);}}
+    finally{acquiringLease=false;}
+  }
+  if(win.navigator.locks){acquireLease();}
   else {leaseHeld=true;note('connected (single-tab mode)');}
   interval=win.setInterval(pump,2000);pump();persist();
   const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
