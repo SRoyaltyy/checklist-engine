@@ -1,8 +1,8 @@
 {
-  "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures once with run ID + error (TODO.md Venice lane @c7c31b0)",
-  "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership",
+  "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b0)",
+  "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership, no collector pushes",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t3",
+  "current_task": "t4",
   "tasks": [
     {
       "id": "t1",
@@ -24,31 +24,30 @@
       "status": "done",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Correct issue #220: oi_probe ran (not skipped); traceback unavailable from truncated job_log",
-      "acceptance": "One comment on #220 stating the corrected step list and that the DELO diagnosis is unverified",
+      "title": "Correct issue #220: oi_probe ran, step logs truncated, DELO diagnosis unverified",
+      "acceptance": "One comment on #220 with corrected step list and truncation cause",
       "weight": 1,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870"
+        "https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417"
       ],
       "blocker": ""
     },
     {
       "id": "t4",
-      "title": "Report remaining unreported failed runs (42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359) once each",
-      "acceptance": "Issue or PR comment per run with run_id + error, dedupe_key=run-<id>",
+      "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421, step sec_datasets.py form345)",
+      "acceptance": "Issue URL containing run_id 42156926867 and the failing step, dedupe_key=run-42156926867",
       "weight": 2,
-      "status": "todo",
+      "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 50
+  "progress_percent": 66
 }
