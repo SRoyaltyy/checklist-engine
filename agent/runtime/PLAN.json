@@ -30,8 +30,8 @@
     },
     {
       "id": "t3",
-      "title": "Replace inferred/corrected wording for run 42284432095 with the report_failure canonical record",
-      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines present in evidence; superseded wording retired",
+      "title": "Replace inferred wording for run 42284432095 with the report_failure canonical record",
+      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines present in evidence",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -41,7 +41,7 @@
     },
     {
       "id": "t4",
-      "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421, step sec_datasets.py form345)",
+      "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421)",
       "acceptance": "Issue URL containing run_id 42156926867 and the failing step, dedupe_key=run-42156926867",
       "weight": 2,
       "status": "done",
@@ -63,7 +63,7 @@
     },
     {
       "id": "t6",
-      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record and drop superseded wording",
+      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record",
       "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md naming issuecomment-6710271739 plus the ValueError line",
       "weight": 1,
       "status": "done",
@@ -74,8 +74,8 @@
     },
     {
       "id": "t7",
-      "title": "Re-check runs snapshot for a reportable nai-* failure outside the do-not-re-report set",
-      "acceptance": "Snapshot reviewed; either a new reportable run_id is identified, or none exists and the turn closes with actions=[]",
+      "title": "Confirm the current runs list has no reportable nai-* failure outside the do-not-re-report set",
+      "acceptance": "Fresh runs list reviewed; either a new reportable run_id is identified, or none exists and the turn closes with actions=[]",
       "weight": 1,
       "status": "doing",
       "evidence": [],
