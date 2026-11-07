@@ -147,7 +147,7 @@ async function reportFailure(env,runId) {
   lines.push('','This verified record supersedes any earlier inferred diagnosis or guessed step status. No pipeline code was changed.',marker,verifiedMarker);
   const body=lines.join('\n');
   const list=await gh(env,'/issues?state=all&per_page=100');if(!list.ok)throw new Error('Cannot check existing failure reports');
-  let issue=(list.body||[]).find(x=>(x.body||'').includes(marker));let result;
+  let issue=(list.body||[]).find(x=>!x.pull_request&&(x.body||'').includes(marker))||(list.body||[]).find(x=>!x.pull_request&&(x.body||'').includes(`/actions/runs/${runId}`));let result;
   if(issue){
     const comments=await gh(env,`/issues/${issue.number}/comments?per_page=100`);if(!comments.ok)throw new Error('Cannot check prior verified comments');
     const prior=(comments.body||[]).find(x=>(x.body||'').includes(verifiedMarker));
