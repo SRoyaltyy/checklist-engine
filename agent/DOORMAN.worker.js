@@ -111,7 +111,7 @@ async function runtimeSave(env, data) {
   });
   const total=tasks.reduce((n,t)=>n+t.weight,0),complete=tasks.filter(t=>t.status==='done').reduce((n,t)=>n+t.weight,0);
   const plan={goal:String(rawPlan.goal||'').slice(0,2000),why:String(rawPlan.why||'').slice(0,2000),gantt_row:String(rawPlan.gantt_row||'Venice assigned lane').slice(0,300),current_task:String(rawPlan.current_task||''),tasks,progress_percent:total?Math.floor(100*complete/total):0};
-  const state={version:6,at:new Date().toISOString(),turn_id:data.turn_id||null,summary,next,plan,blockers:data.blockers||[],evidence:known,done:!!data.done};
+  const state={version:6,at:new Date().toISOString(),turn_id:data.turn_id||null,summary,next,plan,tool_results:data.tool_results||[],blockers:data.blockers||[],evidence:known,done:!!data.done};
   const rows=tasks.map(t=>`| ${t.id} | ${t.title.replace(/\|/g,'/')} | ${t.status} | ${t.evidence.join(', ')} |`).join('\n');
   const text=`# Venice progress\n\nUpdated ${state.at} UTC\n\n## Goal\n${plan.goal}\n\n## Why this advances the repo\n${plan.why}\n\nGantt row: ${plan.gantt_row}\nVerified progress: **${plan.progress_percent}%**\nCurrent subtask: ${plan.current_task}\n\n| ID | Subtask | Status | Evidence |\n|---|---|---|---|\n${rows}\n\n## Last completed work\n${summary}\n\n## Exact next step\n${next}\n\n## Blockers\n${JSON.stringify(state.blockers)}\n\n## Evidence\n${JSON.stringify(state.evidence)}\n\nTurn: ${state.turn_id}\n`;
   await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PLAN.json`,JSON.stringify(plan,null,2)+'\n','venice: checkpoint verified task plan');
@@ -181,7 +181,10 @@ async function runtimeTool(env, command) {
       case 'read_file': {
         const b=args.branch||'main', file=await readFile(env,b,safePath(args.path));
         const lines=file.text.split('\n'), start=Math.max(1,Number(args.start_line)||1), end=Math.min(lines.length,Number(args.end_line)||start+249);
-        result={ok:true,branch:b,path:args.path,sha:file.sha,total_lines:lines.length,start_line:start,end_line:end,text:lines.slice(start-1,end).join('\n').slice(0,24000)};break;
+        const offset=args.offset===undefined?lines.slice(0,start-1).join('\n').length+(start>1?1:0):Math.max(0,Number(args.offset)||0);
+        const selected=args.offset===undefined?lines.slice(start-1,end).join('\n'):file.text.slice(offset);
+        const text=selected.slice(0,12000),next=offset+text.length;
+        result={ok:true,branch:b,path:args.path,sha:file.sha,total_lines:lines.length,total_characters:file.text.length,start_line:start,end_line:end,offset,next_offset:next<file.text.length?next:null,truncated:text.length<selected.length,text};break;
       }
       case 'list_files': {
         const p=args.path?safePath(args.path):'';
