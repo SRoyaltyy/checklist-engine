@@ -1,6 +1,6 @@
 # Venice progress
 
-Updated 2026-11-07T12:53:24.613Z UTC
+Updated 2026-11-07T12:53:48.632Z UTC
 
 ## Goal
 Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures (TODO.md Venice lane)
@@ -18,11 +18,11 @@ Current subtask: t2
 | t2 | Report failed nai-occ-oi-daily run 42284432095 once with run ID + error | doing | https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095 |
 
 ## Last completed work
-run_jobs confirmed job 128121492870 (run 42284432095) failed only at step 'Run python scripts/nai/occ_oi_daily.py'; oi_probe was skipped. Job URL: https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870. Attempt to read scripts/nai/occ_oi_daily.py returned a transient 'Tool not found: read_file' from the bridge, so no error text captured yet and no issue opened.
-Tool outcomes: [{"tool":"read_file","result":{"ok":true,"branch":"main","path":"scripts/nai/occ_oi_daily.py","sha":"3633301eee1228ae12d1c47e95b72f549a03807c","total_lines":35,"start_line":1,"end_line":35,"text":"\"\"\"Daily OCC open-interest snapshot (no AI). OCC series-search gives CURRENT per-series OI only (no history).\nCollect for retained cohort names that OCC lists as optionable. Output -> release nai-occ-oi-daily-v1, one parquet per OCC date.\"\"\"\nimport datetime as dt, os, re, sys\nimport pandas as pd\nsys.path.insert(0, os.path.dirname(__file__))\nfrom common import get, cohort, ensure_release, assets, upload\n\nTAG = \"nai-occ-oi-daily-v1\"; BROWSER = \"Mozilla/5.0 (checklist-engine research cyrus-checklist@users.noreply.github.com)\"\nlim = int(os.environ.get(\"OCC_LIMIT\", \"0\"))\ndelo = get(\"https://marketdata.theocc.com/delo-download?prodType=ALL&downloadFields=OS;US;SN&format=txt\", ua=BROWSER).decode(\"latin1\")\nund = {l.split(\"\\t\")[1].strip() for l in delo.splitlines() if l.count(\"\\t\") >= 2}\nnames = [t for t in cohort() if t.replace(\"-\", \".\") in und or t in und]\nif lim: names = names[:lim]\nprint(\"optionable cohort names:\", len(names), flush=True)\nday = dt.datetime.utcnow().strftime(\"%Y%m%d\"); asset = f\"occ_oi_{day}.parquet\"\nensure_release(TAG, \"No-AI OCC daily open interest v1\")\nif asset in assets(TAG) and not lim:\n    print(\"already have\", asset); sys.exit(0)\nrows, fails = [], 0\npat = re.compile(r\"^(\\S+)\\s+(\\d{4})\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+[CP ]+\\s+(\\d+)\\s+(\\d+)\")\nfor i, t in enumerate(names):\n    try:\n        txt = get(f\"https://marketdata.theocc.com/series-search?symbolType=U&symbol={t.replace('-', '.')}\", ua=BROWSER, pace=0.35, tries=3, timeout=60).decode(\"latin1\")\n    except Exception:\n        fails += 1; continue\n    for l in txt.splitlines():\n        m = pat.match(l.strip())\n        if m:\n            p, y, mo, d, si, sd, c, pu = m.groups()\n            rows.append((t, p, f\"{y}-{int(mo):02d}-{int(d):02d}\", float(f\"{si}.{sd}\"), int(c), int(pu)))\n    if i % 500 == 0: print(i, len(rows), flush=True)\ndf = pd.DataFrame(rows, columns=[\"ticker\", \"product\", \"expiry\", \"strike\", \"call_oi\", \"put_oi\"]); df[\"snapshot_utc\"] = day\np = f\"occ_oi_{day}{'_test' if lim else ''}.parquet\"; df.to_parquet(p, compression=\"zstd\", index=False); upload(TAG, p)\nprint({\"names\": len(names), \"fails\": fails, \"series\": len(df), \"tickers_with_rows\": df.ticker.nunique()})\n"}}]
+Read scripts/nai/occ_oi_daily.py (main, sha 3633301) — the failing step's first network call is unguarded: line 8 delo = get('https://marketdata.theocc.com/delo-download?...') has no try/except, as do ensure_release/assets/upload, so any HTTP or token error terminates the script with a traceback and exit code 1. Per-ticker fetches inside the loop are guarded, so the crash is upstream of the loop (DELO download / release setup), not per-symbol. No issue opened yet; run 42284432095 job URL is https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870.
+Tool outcomes: [{"tool":"run_status","result":{"ok":true,"id":42284432095,"status":"completed","conclusion":"failure","url":"https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","sha":"e85547ac99a28737321c063cf15cd96729c229ce","branch":"main"}}]
 
 ## Exact next step
-Retry read_file of scripts/nai/occ_oi_daily.py on main to identify the failing code path, then open one report issue with dedupe_key=run-42284432095 containing run ID, job URL and the error.
+Check run_status(42284432095) for any log excerpt; then open one report issue with dedupe_key=run-42284432095 naming run ID, job URL, failing step and the unguarded line-8 DELO call.
 
 ## Blockers
 []
@@ -30,4 +30,4 @@ Retry read_file of scripts/nai/occ_oi_daily.py on main to identify the failing c
 ## Evidence
 ["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"]
 
-Turn: mw6em7hm-fjighm4d
+Turn: mw6emojz-d3eqbyz4
