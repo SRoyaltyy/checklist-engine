@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t10",
+  "current_task": "t11",
   "tasks": [
     {
       "id": "t1",
@@ -19,19 +19,18 @@
     {
       "id": "t2",
       "title": "Report failed nai-occ-oi-daily run 42284432095 once with run ID + error",
-      "acceptance": "Issue URL containing run_id 42284432095 plus failing step, dedupe_key=run-42284432095",
+      "acceptance": "Issue URL containing run_id 42284432095 plus failing step",
       "weight": 2,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870"
+        "https://github.com/SRoyaltyy/checklist-engine/issues/220"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
       "title": "Replace inferred wording for run 42284432095 with the report_failure canonical record",
-      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines present in evidence",
+      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -42,7 +41,7 @@
     {
       "id": "t4",
       "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421)",
-      "acceptance": "Issue URL containing run_id 42156926867 and the failing step, dedupe_key=run-42156926867",
+      "acceptance": "Issue URL containing run_id 42156926867 and the failing step",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -64,7 +63,7 @@
     {
       "id": "t6",
       "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record",
-      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md naming issuecomment-6710271739 plus the ValueError line",
+      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -75,12 +74,10 @@
     {
       "id": "t7",
       "title": "Confirm the 17:39Z runs list had no reportable nai-* failure outside the do-not-re-report set",
-      "acceptance": "Runs list reviewed; no new reportable run_id; turn closed with actions=[]",
+      "acceptance": "Runs list reviewed; no new reportable run_id",
       "weight": 1,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592"
       ],
       "blocker": ""
@@ -88,29 +85,22 @@
     {
       "id": "t8",
       "title": "Re-verify the runs list at 17:57Z for any newly appeared nai-* failure",
-      "acceptance": "Fresh runs(main) returned; either a new reportable run_id outside the do-not-re-report set, or none and the turn closes",
+      "acceptance": "Fresh runs(main) returned; none reportable",
       "weight": 1,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444"
       ],
       "blocker": ""
     },
     {
       "id": "t9",
       "title": "Re-verify the runs list at 18:03–18:04Z for any newly appeared nai-* failure",
-      "acceptance": "Fresh runs(main) returned; either a new reportable run_id outside the do-not-re-report set, or none and the turn closes",
+      "acceptance": "Fresh runs(main) returned; none reportable",
       "weight": 1,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592"
       ],
       "blocker": ""
     },
@@ -119,10 +109,22 @@
       "title": "Report new failed nai-occ-oi-daily run 42399694729 (sha 2ba3ebd) once with run ID + derived error",
       "acceptance": "Issue/comment URL containing run_id 42399694729 with failed step names and exact error lines from report_failure",
       "weight": 2,
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/issues/223",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729/job/128484582301"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t11",
+      "title": "Checkpoint agent/PROGRESS.md with issue #223 and re-sweep runs(main) for newer nai-* failures",
+      "acceptance": "write_file returns a commit sha naming issues/223, and fresh runs(main) shows no reportable run_id outside the extended do-not-re-report set",
+      "weight": 1,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 84
+  "progress_percent": 92
 }
