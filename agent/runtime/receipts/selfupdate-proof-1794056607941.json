@@ -1,1 +1,1 @@
-{"id":"selfupdate-proof-1794056607941","action":"deploy_worker","args":{"branch":"venice/sec-options-pipelines"},"status":"running","at":"2026-11-07T13:03:29.863Z"}
+{"id":"selfupdate-proof-1794056607941","action":"deploy_worker","args":{"branch":"venice/sec-options-pipelines"},"status":"done","at":"2026-11-07T13:03:31.582Z","result":{"ok":false,"error":"Unexpected token 'e', \"error code: 1042\n\" is not valid JSON","action":"deploy_worker"}}
