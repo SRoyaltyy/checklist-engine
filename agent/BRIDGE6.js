@@ -1,7 +1,7 @@
-// Venice web runtime 6.2.2. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.2.3. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.2.2', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.2.3', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -116,7 +116,10 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       if(result.transport){s.phase='retrying';s.retryAt=Date.now()+30000;persist();return;}
       if(!result.ok){s.actionIndex=packet.actions.length;persist();break;}
     }
-    const evidence=[...(s.context?.available_evidence||[]),...s.results.filter(x=>x.result.ok).flatMap(x=>[x.result.commit,x.result.url,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null]).filter(Boolean)];
+    const evidence=[...(s.context?.available_evidence||[]),...s.results.filter(x=>x.result.ok).flatMap(x=>[
+      x.result.commit,x.result.url,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,
+      ...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])
+    ]).filter(Boolean)];
     s.phase='checkpointing';persist();
     await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});
     if(stopped)return;
