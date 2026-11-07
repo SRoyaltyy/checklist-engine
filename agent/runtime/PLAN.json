@@ -1,6 +1,6 @@
 {
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
-  "why": "Sole assigned lane: Venice observes and reports via report_failure, GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
+  "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
   "current_task": "t6",
   "tasks": [
@@ -67,7 +67,9 @@
       "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md and its text names issuecomment-6710271739 plus the ValueError line",
       "weight": 1,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4"
+      ],
       "blocker": ""
     }
   ],
