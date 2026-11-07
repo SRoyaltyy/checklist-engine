@@ -1,1 +1,1 @@
-{"id":"runner-stage-1794056433412-branch","action":"create_branch","args":{"branch":"venice/bridge-transport-proof-20261107","base":"main"},"status":"running","at":"2026-11-07T13:00:34.831Z"}
+{"id":"runner-stage-1794056433412-branch","action":"create_branch","args":{"branch":"venice/bridge-transport-proof-20261107","base":"main"},"status":"done","at":"2026-11-07T13:00:37.403Z","result":{"ok":true,"branch":"venice/bridge-transport-proof-20261107","sha":"9ab8e30c4ca26f73e2262a4e1fe1e3bcbae70b5b"}}
