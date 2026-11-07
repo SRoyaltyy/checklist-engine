@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-07T00:46:42.547Z",
-  "set_at": "2026-11-07T00:46:42.547Z",
-  "reason": "heartbeat: interval elapsed"
+  "id": "2026-11-07T01:02:42.885Z",
+  "set_at": "2026-11-07T01:02:42.885Z",
+  "reason": "run 42320288576 failed (nai-auto)"
 }
