@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t6",
+  "current_task": "t7",
   "tasks": [
     {
       "id": "t1",
@@ -63,15 +63,24 @@
     },
     {
       "id": "t6",
-      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record and drop superseded 'traceback unavailable / oi_probe ran' wording",
-      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md and its text names issuecomment-6710271739 plus the ValueError line",
+      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record and drop superseded wording",
+      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md naming issuecomment-6710271739 plus the ValueError line",
       "weight": 1,
       "status": "done",
       "evidence": [
         "8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t7",
+      "title": "Re-check runs snapshot for a reportable nai-* failure outside the do-not-re-report set",
+      "acceptance": "Snapshot reviewed; either a new reportable run_id is identified, or none exists and the turn closes with actions=[]",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 88
 }
