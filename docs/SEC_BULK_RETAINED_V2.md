@@ -172,6 +172,31 @@ it does not reuse the incompatible partial filing outputs. Scheduled and manual
 runs acquire fresh maps. Both complete source archives still require extraction
 under the corrected observation schema and independent public readback.
 
+## Complete submissions and companyfacts source exception
+
+[Run42368480194/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42368480194),
+source `69b000ee571c1773374e14dd6502ec17e2075a01`, completed the submissions
+stage for all5,103retrieval CIKs:7,772raw members,6,446,806observations,
+6,446,784distinct accessions,22duplicate observations (21exact duplicates),
+one accession with disputed metadata and no missing filing/acceptance clocks.
+Filing dates range1993-08-13 through2026-11-06. The disputed accession's two
+reported acceptance values remain `2009-09-08T19:29:58Z` and
+`2009-09-08T23:29:58Z` on CIK886136; neither was selected as canonical.
+
+The full1,421,776,943-byte companyfacts ZIP (SHA256
+`dfb8896a994040bccf5be76a9e65a3fb009453389cbe9268ab3d28629cc06bec`)
+downloaded successfully, but extraction stopped on a source member missing its
+body `cik`. The explicit [182,281-byte failed receipt](SEC_BULK_COMPANYFACTS_FAILURE_42368480194_V2.json),
+SHA256 `2bc049c37c3b19bf8c95c2ac56e978b0697d1917345bc9330e4ca3b8cc0cc641`,
+was independently downloaded and hash-checked. All78published assets remain
+immutable; this is not a complete two-source result.
+
+The full-acquisition switch is disabled while a separate runner diagnostic
+reproduces the exact source ZIP hash, inspects every retained member's body
+identity/container and retains exceptional raw members plus the complete ZIP.
+It does not infer a missing body identity or silently drop a CIK. Task6 stays
+unchecked pending an evidence-based correction and complete independent readback.
+
 ## Independent public readback
 
 `sec-bulk-public-readback` runs separately from the vendor collector. Its request
