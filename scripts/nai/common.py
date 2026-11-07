@@ -1,5 +1,7 @@
 """Shared helpers for no-AI data pipelines (plain HTTP + gh release). No LLM calls."""
-import html, json, os, re, subprocess, time, urllib.request, urllib.error, urllib.parse
+import html, json, math, os, re, subprocess, time, urllib.request, urllib.error, urllib.parse
+from datetime import datetime,timezone
+from email.utils import parsedate_to_datetime
 
 UA = "checklist-engine research cyrus-checklist@users.noreply.github.com"
 REPO = os.environ.get("GITHUB_REPOSITORY", "SRoyaltyy/checklist-engine")
@@ -38,6 +40,18 @@ def response_excerpt(raw):
     text=html.unescape(re.sub(r'<[^>]+>',' ',text))
     text=re.sub(r'\b(?:\d{1,3}\.){3}\d{1,3}\b','[IP REDACTED]',text)
     return redact(re.sub(r'\s+',' ',text).strip())[:800]
+
+
+def retry_after_seconds(headers):
+    value=(headers or {}).get('Retry-After')
+    if value is None:return None
+    value=str(value).strip()
+    if value.isdigit():return int(value)
+    try:
+        deadline=parsedate_to_datetime(value)
+        if deadline.tzinfo is None:return None
+        return max(0,math.ceil((deadline-datetime.now(timezone.utc)).total_seconds()))
+    except (TypeError,ValueError,OverflowError):return None
 
 
 def _relay(url):
@@ -105,6 +119,7 @@ def _get(url, dest=None, pace=0.15, tries=6, ua=UA, timeout=300, shown=None, rou
                 excerpt = "unreadable HTTP error body"
             err = dict(url=source, route=route, http_status=e.code, attempts=i+1,
                        response_excerpt=redact(excerpt), user_agent=redact(ua), request_spacing_seconds=pace)
+            if e.code==429:err['retry_after_seconds']=retry_after_seconds(e.headers)
             if e.code in (403, 404, 429) or e.code < 500 or i == tries - 1:
                 raise SourceError(err) from None
         except (OSError, TimeoutError) as e:

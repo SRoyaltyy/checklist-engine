@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "scope": "SEC_BULK_RETAINED_8439_SOURCE_ONLY",
+  "retained_names": 8439,
+  "identity_map_lf_sha256": "50323efcd9855061501d88010d8e812371fda7c9dd48d3a54c0f5f19cdad97ce",
+  "join_keys_lf_sha256": "5e6d83f56bdb2a765ad5a9bf76219f82fdbe76ff2b93acd3f9ca12fa2e3233e2",
+  "reuse_identity_inputs": true,
+  "not_before_utc": "2026-11-06T18:07:15Z",
+  "execute": false
+}

@@ -1,21 +1,65 @@
 name: nai-sec-bulk
 on:
+  push:
+    branches: [gpt/sec-bulk-retained-v2]
+    paths: ['ci/SEC_BULK_RETAINED_REQUEST.json']
+  pull_request:
+    paths: ['ci/sec_bulk_retained*.py', 'ci/SEC_BULK_RETAINED_REQUEST.json', 'scripts/nai/sec_bulk.py', 'scripts/nai/common.py', 'tests/test_sec_bulk_retained*.py', '.github/workflows/nai_sec_bulk.yml']
   workflow_dispatch:
     inputs:
-      identity_only: {description: 'only tickers map', default: ''}
+      identity_only:
+        description: 'Only the current identity snapshot; does not prove bulk coverage'
+        type: boolean
+        default: false
   schedule: [{cron: '17 22 * * 6'}]
-permissions: {contents: write}
+permissions: {contents: read}
 concurrency: {group: nai-sec-bulk, cancel-in-progress: false}
 jobs:
-  run:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 10
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pyarrow==26.0.0
+      - run: python -m unittest discover -s tests -p 'test_sec_bulk_retained*.py' -v
+      - id: request
+        run: |
+          python - <<'PY'
+          import json,os
+          from ci.sec_bulk_retained import validate_request
+          request=validate_request(json.load(open('ci/SEC_BULK_RETAINED_REQUEST.json')))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('execute='+str(request['execute']).lower()+'\n')
+          PY
+  run:
+    needs: verify
+    if: github.event_name != 'pull_request' && (github.event_name != 'push' || needs.verify.outputs.execute == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions: {contents: write}
     env:
       PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
       SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
       GH_TOKEN: ${{ github.token }}
       IDENTITY_ONLY: ${{ inputs.identity_only }}
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
     steps:
       - uses: actions/checkout@v4
-      - run: pip install -q pyarrow pandas
-      - run: df -h . && python scripts/nai/sec_bulk.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pyarrow==26.0.0
+      - run: df -h .
+      - run: python -m ci.sec_bulk_retained --directory sec-bulk-output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-bulk-receipt-${{ github.run_id }}
+          path: sec-bulk-output/SEC_BULK_COVERAGE_V2.json
+          if-no-files-found: ignore
