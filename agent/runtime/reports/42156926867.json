@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "url": "https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770",
+  "issue": 221,
+  "run_id": 42156926867,
+  "facts": [
+    {
+      "job_id": 127693199421,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867/job/127693199421",
+      "failed_steps": [
+        "Run python scripts/nai/sec_datasets.py form345"
+      ],
+      "skipped_steps": [],
+      "error_lines": [
+        "2026-11-06T03:30:30.6183638Z Traceback (most recent call last):",
+        "2026-11-06T03:30:30.6189451Z RuntimeError: GET failed https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets: HTTP Error 403: Forbidden",
+        "2026-11-06T03:30:30.6191198Z Traceback (most recent call last):",
+        "2026-11-06T03:30:30.6207031Z urllib.error.HTTPError: HTTP Error 403: Forbidden",
+        "2026-11-06T03:30:30.6207837Z Traceback (most recent call last):",
+        "2026-11-06T03:30:30.6217107Z RuntimeError: HTTP 403 https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+        "2026-11-06T03:30:30.6892332Z ##[error]Process completed with exit code 1."
+      ],
+      "log_unavailable": null
+    }
+  ],
+  "verified": true
+}
