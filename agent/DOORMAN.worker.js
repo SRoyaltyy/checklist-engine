@@ -79,10 +79,10 @@ async function verifiedWrite(env, branch, path, text, message, expectedSha) {
 }
 async function runtimeContext(env) {
   const branch = runtimeBranch(env);
-  const [todo, method, progress, state, runs] = await Promise.all([
+  const [todo, method, progress, state, runs, notes] = await Promise.all([
     readFile(env, 'main', 'TODO.md'), readFile(env, 'main', 'METHODOLOGY.md'),
     maybeRead(env, branch, `${RUNTIME_ROOT}/PROGRESS.md`), maybeRead(env, branch, `${RUNTIME_ROOT}/STATE.json`),
-    gh(env, '/actions/runs?branch=main&per_page=50')
+    gh(env, '/actions/runs?branch=main&per_page=50'), maybeRead(env,branch,`${RUNTIME_ROOT}/NOTES.md`)
   ]);
   const section = todo.text.match(/^##\s+Venice\b[^\n]*\n[\s\S]*?(?=^##\s|$(?![\s\S]))/m);
   if (!section) throw new Error('No Venice section in main/TODO.md; refusing to invent a task');
@@ -94,6 +94,7 @@ async function runtimeContext(env) {
     available_evidence:[`TODO.md@${todo.sha}`,`METHODOLOGY.md@${method.sha}`],
     progress:progress?.text || 'No v6 progress recorded yet. Begin with the current Venice lane; old SEC collector work was reassigned.',
     state:state ? JSON.parse(state.text) : null,
+    notes:notes?.text || 'No durable notes yet. Record file locations, decisions, failed approaches and unresolved questions here; keep them concise.',
     runs:runs.ok ? (runs.body.workflow_runs||[]).filter(r=>/nai[-_]sec[-_]|nai[-_]occ[-_]oi[-_]daily/.test(r.path||r.name||'')).slice(0,15).map(r=>({id:r.id,path:r.path,name:r.name,status:r.status,conclusion:r.conclusion,sha:r.head_sha,url:r.html_url,created_at:r.created_at})) : {error:runs.status}
   };
 }
@@ -115,7 +116,49 @@ async function runtimeSave(env, data) {
   const text=`# Venice progress\n\nUpdated ${state.at} UTC\n\n## Goal\n${plan.goal}\n\n## Why this advances the repo\n${plan.why}\n\nGantt row: ${plan.gantt_row}\nVerified progress: **${plan.progress_percent}%**\nCurrent subtask: ${plan.current_task}\n\n| ID | Subtask | Status | Evidence |\n|---|---|---|---|\n${rows}\n\n## Last completed work\n${summary}\n\n## Exact next step\n${next}\n\n## Blockers\n${JSON.stringify(state.blockers)}\n\n## Evidence\n${JSON.stringify(state.evidence)}\n\nTurn: ${state.turn_id}\n`;
   await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PLAN.json`,JSON.stringify(plan,null,2)+'\n','venice: checkpoint verified task plan');
   await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PROGRESS.md`,text,'venice: checkpoint progress');
+  if(typeof data.notes==='string'&&data.notes.trim())await verifiedWrite(env,branch,`${RUNTIME_ROOT}/NOTES.md`,data.notes.slice(0,10000),'venice: checkpoint durable notes');
   return verifiedWrite(env,branch,`${RUNTIME_ROOT}/STATE.json`,JSON.stringify(state,null,2)+'\n','venice: checkpoint state');
+}
+async function jobLog(env,jobId,runId) {
+  if(!/^\d+$/.test(String(jobId)))throw new Error('job_id required');
+  let r=await fetch(`https://api.github.com/repos/${repo(env)}/actions/jobs/${jobId}/logs`,{redirect:'manual',headers:{Authorization:`Bearer ${env.GITHUB_TOKEN}`,'User-Agent':'venice-doorman'}});
+  if(r.status===302){const u=new URL(r.headers.get('location'));if(u.protocol!=='https:'||!/(\.blob\.core\.windows\.net|\.actions\.githubusercontent\.com|\.githubusercontent\.com)$/.test(u.hostname))throw new Error('Unexpected log download host');r=await fetch(u,{redirect:'manual'});}
+  if(!r.ok)throw new Error(`job log: ${r.status}`);
+  const text=await r.text();
+  const error_lines=text.split('\n').filter(x=>/Traceback|(?:Error|Exception):|##\[error\]/.test(x)).slice(-15);
+  return {ok:true,job_id:jobId,url:`https://github.com/${repo(env)}/actions/runs/${runId||''}/job/${jobId}`,error_lines,total_characters:text.length,text:text.slice(-9000),truncated:text.length>9000};
+}
+async function reportFailure(env,runId) {
+  if(!/^\d+$/.test(String(runId)))throw new Error('run_id required');
+  const branch=runtimeBranch(env), proofPath=`${RUNTIME_ROOT}/reports/${runId}.json`;
+  const saved=await maybeRead(env,branch,proofPath);if(saved)return {...JSON.parse(saved.text),replayed:true};
+  const run=await gh(env,`/actions/runs/${runId}`);if(!run.ok)throw new Error(`run: ${run.status}`);
+  if(run.body.conclusion!=='failure'||!/nai[-_]sec[-_]|nai[-_]occ[-_]oi[-_]daily/.test(run.body.path||run.body.name||''))throw new Error('Only failed SEC/OI lane runs may be reported by this tool');
+  const jobs=await gh(env,`/actions/runs/${runId}/jobs?per_page=30`);if(!jobs.ok)throw new Error(`jobs: ${jobs.status}`);
+  const failed=(jobs.body.jobs||[]).filter(j=>j.conclusion==='failure');
+  const facts=[];
+  for(const j of failed.slice(0,3)){
+    let log;try{log=await jobLog(env,j.id,runId);}catch(e){log={error_lines:[],unavailable:String(e.message||e)};}
+    facts.push({job_id:j.id,url:j.html_url,failed_steps:(j.steps||[]).filter(s=>s.conclusion==='failure').map(s=>s.name),skipped_steps:(j.steps||[]).filter(s=>s.conclusion==='skipped').map(s=>s.name),error_lines:log.error_lines,log_unavailable:log.unavailable||null});
+  }
+  const marker=`<!-- venice-dedupe:run-${runId} -->`, verifiedMarker=`<!-- venice-verified-log:${runId} -->`;
+  const lines=[`Verified failure report — GitHub API/job-log facts only. GPT owns the fix.`,``,`Run: ${runId} — ${run.body.html_url}`,`Workflow: ${run.body.name}; branch: ${run.body.head_branch}; commit: ${run.body.head_sha}`,`Conclusion: ${run.body.conclusion}`];
+  for(const f of facts){lines.push('',`Job ${f.job_id}: ${f.url}`,`Failed steps: ${f.failed_steps.join('; ')||'not supplied'}`,`Skipped steps: ${f.skipped_steps.join('; ')||'none'}`,'','Exact error lines:',...f.error_lines.map(x=>'> '+x));if(f.log_unavailable)lines.push(`Log unavailable: ${f.log_unavailable}. No root cause is inferred.`);}
+  lines.push('','This verified record supersedes any earlier inferred diagnosis or guessed step status. No pipeline code was changed.',marker,verifiedMarker);
+  const body=lines.join('\n');
+  const list=await gh(env,'/issues?state=all&per_page=100');if(!list.ok)throw new Error('Cannot check existing failure reports');
+  let issue=(list.body||[]).find(x=>(x.body||'').includes(marker));let result;
+  if(issue){
+    const comments=await gh(env,`/issues/${issue.number}/comments?per_page=100`);if(!comments.ok)throw new Error('Cannot check prior verified comments');
+    const prior=(comments.body||[]).find(x=>(x.body||'').includes(verifiedMarker));
+    if(prior)result={ok:true,url:prior.html_url,issue:issue.number,already_reported:true};
+    else {const posted=await gh(env,`/issues/${issue.number}/comments`,{method:'POST',body:JSON.stringify({body})});if(!posted.ok)throw new Error(`comment: ${posted.status}`);result={ok:true,url:posted.body.html_url,issue:issue.number};}
+  }else{
+    const posted=await gh(env,'/issues',{method:'POST',body:JSON.stringify({title:`Failed scheduled run ${runId} — ${run.body.name}`,body})});if(!posted.ok)throw new Error(`issue: ${posted.status}`);result={ok:true,url:posted.body.html_url,issue:posted.body.number};
+  }
+  result={...result,run_id:runId,facts,verified:true};
+  await verifiedWrite(env,branch,proofPath,JSON.stringify(result,null,2)+'\n','venice: retain verified failure report');
+  return result;
 }
 async function runtimeTool(env, command) {
   const {id,action,args={}}=command||{};
@@ -128,7 +171,7 @@ async function runtimeTool(env, command) {
     if (receipt.status==='done') return {...receipt.result,replayed:true};
     return {ok:false,uncertain:true,error:'The previous execution did not save its final receipt. Inspect repository state/run history before issuing a new mutation.',id};
   }
-  const mutations=new Set(['write_file','edit_file','create_branch','create_pr','create_issue','comment_issue','dispatch','deploy_worker']);
+  const mutations=new Set(['write_file','edit_file','create_branch','create_pr','create_issue','comment_issue','report_failure','dispatch','deploy_worker']);
   const mutation=mutations.has(action);
   if (mutation) await verifiedWrite(env,branch,receiptPath,JSON.stringify({id,action,args,status:'running',at:new Date().toISOString()}),'venice: claim tool action');
   let result;
@@ -183,12 +226,9 @@ async function runtimeTool(env, command) {
         result={ok:true,annotations:r.body};break;
       }
       case 'job_log': {
-        if(!/^\d+$/.test(String(args.job_id)))throw new Error('job_id required');
-        let r=await fetch(`https://api.github.com/repos/${repo(env)}/actions/jobs/${args.job_id}/logs`,{redirect:'manual',headers:{Authorization:`Bearer ${env.GITHUB_TOKEN}`,'User-Agent':'venice-doorman'}});
-        if(r.status===302){const u=new URL(r.headers.get('location'));if(u.protocol!=='https:'||!/(\.blob\.core\.windows\.net|\.actions\.githubusercontent\.com|\.githubusercontent\.com)$/.test(u.hostname))throw new Error('Unexpected log download host');r=await fetch(u,{redirect:'manual'});}
-        if(!r.ok)throw new Error(`job log: ${r.status}`);
-        const text=await r.text();result={ok:true,job_id:args.job_id,url:`https://github.com/${repo(env)}/actions/runs/${args.run_id||''}/job/${args.job_id}`,text:text.slice(-22000),truncated:text.length>22000};break;
+        result=await jobLog(env,args.job_id,args.run_id);break;
       }
+      case 'report_failure': result=await reportFailure(env,args.run_id);break;
       case 'create_issue': case 'comment_issue': case 'create_pr': {
         const dedupe=String(args.dedupe_key||'').replace(/[^A-Za-z0-9._-]/g,'').slice(0,100);
         const marker=`<!-- venice-action:${id} -->`, dedupeMarker=dedupe?`<!-- venice-dedupe:${dedupe} -->`:'';
