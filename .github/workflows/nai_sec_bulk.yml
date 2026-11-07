@@ -4,7 +4,7 @@ on:
     branches: [gpt/sec-bulk-retained-v2]
     paths: ['ci/SEC_BULK_RETAINED_REQUEST.json']
   pull_request:
-    paths: ['ci/sec_bulk_retained*.py', 'ci/SEC_BULK_RETAINED_REQUEST.json', 'scripts/nai/sec_bulk.py', 'scripts/nai/common.py', 'tests/test_sec_bulk_retained*.py', '.github/workflows/nai_sec_bulk.yml']
+    paths: ['ci/sec_bulk_*.py', 'ci/SEC_BULK_RETAINED_REQUEST.json', 'scripts/nai/sec_bulk.py', 'scripts/nai/common.py', 'tests/test_sec_bulk_*.py', '.github/workflows/nai_sec_bulk.yml']
   workflow_dispatch:
     inputs:
       identity_only:
@@ -26,7 +26,7 @@ jobs:
         with:
           python-version: '3.12.15'
       - run: python -m pip install pyarrow==26.0.0
-      - run: python -m unittest discover -s tests -p 'test_sec_bulk_retained*.py' -v
+      - run: python -m unittest discover -s tests -p 'test_sec_bulk_*.py' -v
       - id: request
         run: |
           python - <<'PY'

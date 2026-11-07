@@ -10,6 +10,7 @@ import os
 from pathlib import Path,PurePosixPath
 import re
 import tarfile
+import zipfile
 
 from ci import release_assets as releases
 from ci.sec_bulk_readback_core import FIELDS,RawAudit,RowDigests,check,identities
@@ -51,7 +52,7 @@ def api(endpoint):return json.loads(releases._read('api',endpoint))
 def schema(kind):
     import pyarrow as pa
     types={k:pa.string() for k in FIELDS[kind]}
-    for k in ('cik','sic','source_row','source_sequence','fiscal_year'):
+    for k in ('cik','body_cik','sic','source_row','source_sequence','fiscal_year'):
         if k in types:types[k]=pa.int64()
     for k in ('candidate_ciks','withheld_ciks'):
         if k in types:types[k]=pa.list_(pa.int64())
@@ -134,6 +135,46 @@ class Bundle:
         raw.unlink();receipt.unlink()
         return dict(lineage,independently_downloaded=True)
 
+    def archive_lineage(self,kind,audit,selected):
+        source=self.report['inputs'][kind];lineage=source.get('reused_from')
+        if lineage is None:return None
+        release=releases.release_info(lineage['release'])
+        check(not release['draft'] and release['target_commitish']==lineage['source_commit'],'archive lineage release differs')
+        directory=self.root/'archive-lineage'/kind
+        receipt=releases.download_asset(lineage['release'],lineage['receipt'],directory)
+        check(sha(receipt)==lineage['receipt_sha256'],'archive lineage receipt differs')
+        old=json.loads(receipt.read_bytes());receipt.unlink()
+        check(old['source_commit']==lineage['source_commit'] and old['release']==lineage['release'],
+              'archive lineage source anchors differ')
+        original={k:v for k,v in source.items() if k!='reused_from'}
+        if kind=='submissions':
+            check(lineage['scope']=='COMPLETE_SUBMISSIONS_STAGE_FROM_EXPLICIT_PARTIAL_RUN'
+                and lineage['receipt']=='SEC_BULK_COVERAGE_V2.json'
+                and old['inputs'][kind]==original and old['stages'][kind]==self.report['stages'][kind],
+                  'completed submissions stage lineage differs')
+            old_bindings={b['name']:b for b in old['assets'] if b['name'].startswith('sec_submissions_')}
+            check(old_bindings=={n:b for n,b in self.bindings.items() if n.startswith('sec_submissions_')},
+                  'copied submissions asset bindings differ')
+            return dict(lineage,independently_downloaded=True,full_source_zip_verified=False)
+        check(lineage['scope']=='EXACT_OFFICIAL_UNFILTERED_SOURCE_ZIP'
+            and lineage['receipt']=='SEC_COMPANYFACTS_SOURCE_DIAGNOSTIC_V1.json'
+            and old['status']=='PASS_EXACT_SOURCE_DIAGNOSTIC_NOT_DATA_EXTRACTION' and old['source']==original,
+              'cached companyfacts source lineage differs')
+        path=releases.download_asset(lineage['release'],lineage['asset'],directory)
+        check(path.stat().st_size==source['bytes'] and sha(path)==source['sha256'],'full source ZIP differs')
+        actual={}
+        with zipfile.ZipFile(path) as archive:
+            for info in archive.infolist():
+                match=re.fullmatch(r'CIK(\d{10})\.json',PurePosixPath(info.filename).name)
+                if match and int(match[1]) in selected:
+                    check(info.filename not in actual,'duplicate full ZIP source member')
+                    raw=archive.read(info)
+                    actual[info.filename]=dict(cik=int(match[1]),bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+        path.unlink()
+        check(actual==audit.member_fingerprints,'full ZIP retained member completeness/bytes differ')
+        return dict(lineage,independently_downloaded=True,full_source_zip_verified=True,
+                    retained_source_members_verified=len(actual))
+
     def parquet(self,kind):
         import pyarrow.parquet as pq
         prefixes=dict(identity='sec_identity_map_v2-',filings='sec_submissions_filings_retained-',
@@ -205,10 +246,11 @@ def audit_bundle(bundle):
         historical_ownership_intervals=0,status_counts=dict(Counter(r['status'] for r in expected)))
     identity_coverage=bundle.json('SEC_IDENTITY_COVERAGE_V2.json')
     check(identity_coverage==coverage,'identity coverage receipt differs')
-    results={}
+    results={};archive_lineage={}
     for kind in ('submissions','companyfacts'):
         audit=RawAudit(kind);bundle.raw(kind,audit,selected);stage=audit.finish(selected)
         check(stage==bundle.report['stages'][kind],'raw-derived full stage differs: '+kind)
+        archive_lineage[kind]=bundle.archive_lineage(kind,audit,selected)
         pairs=[('filings',audit.rows),('entities',audit.entities)] if kind=='submissions' else [('facts',audit.rows)]
         row_summaries={}
         for dataset,raw_rows in pairs:
@@ -239,6 +281,8 @@ def audit_bundle(bundle):
             identity_lineage[kind]=bundle.identity_lineage(kind,name,receipt['source'])
     check(bundle.checked==set(bundle.inventory),'not every public asset was read')
     return dict(coverage=coverage,stages=results,assets_checked=len(bundle.checked),identity_input_lineage=identity_lineage,
+        archive_input_lineage=archive_lineage,
+        unfiltered_zip_readback_kinds=[k for k,v in archive_lineage.items() if v and v['full_source_zip_verified']],
         verification_scope='ALL_PUBLISHED_RETAINED_RAW_MEMBERS_AND_ALL_PARQUET_ROW_VALUES',
         full_unfiltered_zip_readback=False,historical_ownership='NOT_PROVEN_CURRENT_CANDIDATES_ONLY',
         scoring_gate='CLOSED',world_gate='NOT_PROVEN')

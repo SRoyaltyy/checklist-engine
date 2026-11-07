@@ -55,6 +55,9 @@ The release contains:
   decimal fractions. `val_float64` is a convenience projection;
   `float64_exact` states whether that projection is exact. Non-numeric source
   values and missing filing dates are counted explicitly.
+  `cik` records the official ZIP filename key; `body_cik` stays nullable and
+  `cik_evidence` distinguishes corroborated body/filename agreement from an
+  absent body identifier. A present conflicting body CIK always fails.
 - Filtered raw JSON members in `sec_<kind>_raw-*.tar.gz`, each paired with a
   JSON ledger containing every member's source ZIP name, CIK, byte count and
   SHA256. The downloaded full ZIP's URL, timestamps, size and SHA256 are recorded
@@ -116,7 +119,7 @@ does not prove complete bulk coverage. A one-shot request on
 `gpt/sec-bulk-retained-v2` allows the initial reviewed full run; PR checks use only
 synthetic inputs.
 
-All22bulk synthetic tests and26shared HTTP/access tests pass locally using existing dependencies. They cover
+All39bulk/recovery/readback synthetic tests and26shared HTTP/access tests pass locally using existing dependencies. They cover
 quarantines, exact symbol matching, identity conflicts, nullable historical filing
   schemas, preserved accession conflicts, raw-member hashes, exact numeric preservation,
 actual parquet round trips, complete output CIK checks and honest partial-failure
@@ -197,6 +200,29 @@ identity/container and retains exceptional raw members plus the complete ZIP.
 It does not infer a missing body identity or silently drop a CIK. Task6 stays
 unchecked pending an evidence-based correction and complete independent readback.
 
+The exact-source diagnostic
+[42369629763/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42369629763)
+succeeded at `e09730426be10de4fd2ed829d7e9ea8a76543e39`. Its public
+`sec-companyfacts-source-v1-42369629763-1` release retains the full ZIP with
+the same `dfb8896a...` SHA256 and all nine exceptional raw members. The exact
+1,358,988-byte diagnostic receipt, SHA256
+`87c9d9372573bf849a84cc6d871f49a31e58ea15b47a13292075554534176d0a`,
+and both nonempty exceptional members were independently downloaded/hash-checked.
+It measured4,976retained archive CIKs (127missing):4,967body identifiers agree,
+seven members are literal `{}`, and two contain fixed numeric facts without
+a body CIK. No conflicting body identifier was found.
+
+The correction preserves the latter facts under their explicit official filename
+key, with `body_cik=null` and `cik_evidence=FILENAME_ONLY_BODY_CIK_ABSENT`.
+It never fills a body identifier. Empty members and absent body identifiers have
+separate counts and CIK lists; no numeric zero is invented. Current source keys
+still establish no historical ticker ownership. A conflicting present identifier
+remains terminal. Recovery copies only the complete corrected-schema submissions
+stage from run42368480194 and reads the exact retained companyfacts ZIP from
+the diagnostic release. Every input keeps its original acquisition time and
+release/commit/receipt lineage. This push requires no new SEC request; scheduled
+and manual runs still acquire fresh inputs.
+
 ## Independent public readback
 
 `sec-bulk-public-readback` runs separately from the vendor collector. Its request
@@ -217,10 +243,12 @@ flags. Actual schemas, file row counts and CIK sets are checked. All source/
 extraction receipts, aggregate counts, missing CIK lists and date bounds must agree.
 
 The readback covers **all published retained raw members and parquet values**.
-It does not redownload the full unfiltered SEC ZIPs or independently establish
-historical ticker ownership. Those limits are explicit in its receipt; world
+For recovery it also downloads the retained full companyfacts ZIP from GitHub,
+verifies its exact bytes and checks that all selected ZIP members match the raw
+ledgers with no omission. The unfiltered submissions ZIP is not retained, and
+historical ticker ownership is not established. Those limits are explicit in its receipt; world
 gate remains NOT_PROVEN and scoring CLOSED. The reader publishes its own
-immutable PASS/FAIL release and an Actions receipt. Ten synthetic tests include
+immutable PASS/FAIL release and an Actions receipt. Twelve reader synthetic tests include
 an8,439-name fixture and unchanged-count value corruption, raw hash/path
 corruption, parquet CIK binding corruption, actual-run/final-receipt guards and
 reused acquisition-time corruption. Actual public readback is pending.

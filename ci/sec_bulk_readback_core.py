@@ -4,6 +4,7 @@ from decimal import Decimal
 import hashlib
 import json
 import math
+import re
 
 IDENTITY_FIELDS=['ticker','cik','status','candidate_ciks','withheld_ciks',
     'observed_first_filed','observed_last_filed','valid_from','valid_to_exclusive','historical_join_allowed']
@@ -13,7 +14,7 @@ FILING_SOURCE={'accessionNumber':'accession_number','filingDate':'filing_date','
 FIELDS=dict(identity=IDENTITY_FIELDS,
     filings=['cik',*FILING_SOURCE.values(),'source_member','source_row','conflict_fields'],
     entities=['cik','sic','current_tickers','current_exchanges','state_of_incorporation','identity_scope'],
-    facts=['cik','taxonomy','concept','unit','start','end','val_text','val_float64','float64_exact',
+    facts=['cik','body_cik','cik_evidence','taxonomy','concept','unit','start','end','val_text','val_float64','float64_exact',
            'accession_number','fiscal_year','fiscal_period','form','filed','frame','source_sequence'])
 
 
@@ -82,10 +83,14 @@ class RawAudit:
         self.populated=set();self.dates=[];self.examples=[]
         self.rows=RowDigests('filings' if kind=='submissions' else 'facts')
         self.entities=RowDigests('entities')
+        self.member_fingerprints={}
         self.counts=dict(source_members=0,distinct_accessions=0,duplicate_accession_observations=0,
             exact_duplicate_observations=0,accessions_with_conflicting_metadata=0,source_fact_values=0,
             non_numeric_fact_values=0,numeric_facts_without_filed_date=0,filings_without_filed_date=0,
             filings_without_acceptance_timestamp=0)
+        if kind=='companyfacts':self.counts.update(companyfacts_members_without_body_cik=0,
+            companyfacts_ciks_without_body_cik=[],empty_companyfacts_payloads=0,empty_companyfacts_ciks=[],
+            fact_rows_without_body_cik=0)
 
     def add_row(self,row):
         self.rows.add(row);self.populated.add(row['cik'])
@@ -97,10 +102,22 @@ class RawAudit:
         if cik!=self.current:
             self.finish_cik();self.current=cik
         self.seen.add(cik);self.counts['source_members']+=1
+        check(name not in self.member_fingerprints,'duplicate raw source member')
+        self.member_fingerprints[name]=dict(cik=cik,bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
         value=json.loads(raw,parse_float=Decimal)
         if self.kind=='companyfacts':
-            check(int(value['cik'])==cik,'facts body CIK differs')
-            self.facts(value,cik)
+            check(isinstance(value,dict),'facts payload is not an object')
+            if 'cik' in value:
+                check(not isinstance(value['cik'],bool) and bool(re.fullmatch(r'[0-9]{1,10}',str(value['cik']))),
+                      'invalid facts body CIK')
+            body_cik=int(value['cik']) if 'cik' in value else None
+            check(body_cik is None or body_cik==cik,'facts body CIK differs')
+            if body_cik is None:
+                self.counts['companyfacts_members_without_body_cik']+=1
+                self.counts['companyfacts_ciks_without_body_cik'].append(cik)
+            if not value:
+                self.counts['empty_companyfacts_payloads']+=1;self.counts['empty_companyfacts_ciks'].append(cik)
+            self.facts(value,cik,body_cik)
         else:
             if 'filings' in value:
                 check(int(value['cik'])==cik,'submissions body CIK differs')
@@ -135,7 +152,7 @@ class RawAudit:
                 self.add_row(dict(row,conflict_fields=conflicts))
         self.groups.clear()
 
-    def facts(self,payload,cik):
+    def facts(self,payload,cik,body_cik):
         sequence=0
         for taxonomy,concepts in payload.get('facts',{}).items():
             for concept,body in concepts.items():
@@ -150,7 +167,10 @@ class RawAudit:
                         floating=float(number);finite=math.isfinite(floating)
                         filed=item.get('filed') or None
                         self.counts['numeric_facts_without_filed_date']+=filed is None
-                        self.add_row(dict(cik=cik,taxonomy=taxonomy,concept=concept,unit=unit,
+                        self.counts['fact_rows_without_body_cik']+=body_cik is None
+                        self.add_row(dict(cik=cik,body_cik=body_cik,
+                            cik_evidence='BODY_AND_FILENAME_AGREE' if body_cik is not None else 'FILENAME_ONLY_BODY_CIK_ABSENT',
+                            taxonomy=taxonomy,concept=concept,unit=unit,
                             start=item.get('start') or None,end=item.get('end') or None,val_text=str(number),
                             val_float64=floating if finite else None,
                             float64_exact=finite and Decimal.from_float(floating)==number,

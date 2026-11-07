@@ -8,6 +8,7 @@ import json
 import math
 import os
 from pathlib import Path,PurePosixPath
+import re
 import shutil
 import tarfile
 import time
@@ -54,7 +55,7 @@ def encoded(value):
 def validate_request(value):
     expected=dict(version=2,scope='SEC_BULK_RETAINED_8439_SOURCE_ONLY',
                   retained_names=8439,identity_map_lf_sha256=IDENTITY_SHA,join_keys_lf_sha256=KEYS_SHA)
-    controls={'execute','reuse_identity_inputs','not_before_utc'}
+    controls={'execute','reuse_identity_inputs','not_before_utc','recovery_sources'}
     if (type(value.get('execute')) is not bool or type(value.get('reuse_identity_inputs')) is not bool
             or {k:v for k,v in value.items() if k not in controls}!=expected
             or not controls<=set(value)):
@@ -63,6 +64,15 @@ def validate_request(value):
         deadline=datetime.fromisoformat(value['not_before_utc'].replace('Z','+00:00'))
         if deadline.tzinfo is None or deadline.utcoffset().total_seconds()!=0:
             raise ValueError('SEC cooldown boundary must be UTC')
+    recovery=value['recovery_sources']
+    if not isinstance(recovery,dict) or not set(recovery)<= {'submissions','companyfacts'}:
+        raise ValueError('invalid recovery source kinds')
+    for kind,spec in recovery.items():
+        if (set(spec)!= {'release','commit','receipt_sha256'}
+                or not re.fullmatch(r'[A-Za-z0-9._-]+',spec['release'])
+                or not re.fullmatch(r'[0-9a-f]{40}',spec['commit'])
+                or not re.fullmatch(r'[0-9a-f]{64}',spec['receipt_sha256'])):
+            raise ValueError('invalid recovery source anchor')
     return value
 
 
@@ -106,7 +116,7 @@ def schemas():
             ('source_row',pa.int64()),('conflict_fields',pa.list_(pa.string()))]),
         entities=pa.schema([('cik',pa.int64()),('sic',pa.int64()),('current_tickers',pa.list_(pa.string())),
             ('current_exchanges',pa.list_(pa.string())),*strings(['state_of_incorporation','identity_scope'])]),
-        facts=pa.schema([('cik',pa.int64()),*strings(['taxonomy','concept','unit','start','end','val_text']),
+        facts=pa.schema([('cik',pa.int64()),('body_cik',pa.int64()),*strings(['cik_evidence','taxonomy','concept','unit','start','end','val_text']),
             ('val_float64',pa.float64()),('float64_exact',pa.bool_()),('accession_number',pa.string()),
             ('fiscal_year',pa.int64()),*strings(['fiscal_period','form','filed','frame']),('source_sequence',pa.int64())]))
 
@@ -260,6 +270,9 @@ def extract_archive(kind,path,selected,raw_sink,first,entities):
                   numeric_facts_without_filed_date=0,filings_without_filed_date=0,
                   filings_without_acceptance_timestamp=0)
     populated=set();filed_dates=[];conflict_examples=[]
+    if kind=='companyfacts':
+        counters.update(companyfacts_members_without_body_cik=0,companyfacts_ciks_without_body_cik=[],
+            empty_companyfacts_payloads=0,empty_companyfacts_ciks=[],fact_rows_without_body_cik=0)
     with zipfile.ZipFile(path) as archive:
         grouped=members_by_cik(archive.namelist(),selected,kind)
         if not grouped:raise ValueError('bulk archive has no retained CIK members')
@@ -327,6 +340,8 @@ def run(root,identity_only=False):
     report['filing_record_model']='SOURCE_OBSERVATIONS_NOT_CANONICAL_ACCESSIONS'
     report['request']=request
     report['identity_inputs_reused']=event=='push' and request.get('reuse_identity_inputs',False)
+    recovery=request.get('recovery_sources',{}) if event=='push' else {}
+    report['recovery_sources_used']=recovery
     try:
         maps={}
         for kind in ('tickers','exchanges'):
@@ -355,21 +370,32 @@ def run(root,identity_only=False):
         if not identity_only:
             for kind in ('submissions','companyfacts'):
                 report['active_stage']=kind+'_download'
-                free=shutil.disk_usage(root).free
-                if free<5*1024**3:raise ValueError('insufficient runner disk for the next SEC bulk source')
-                path,receipt=downloaded(kind,root,free-2*1024**3)
+                if kind=='submissions' and kind in recovery:
+                    from ci.sec_bulk_recovery import submissions as recovered_submissions
+                    report['active_stage']='submissions_recover'
+                    receipt,stage=recovered_submissions(recovery[kind],root,selected,publisher)
+                    path=None
+                else:
+                    free=shutil.disk_usage(root).free
+                    if free<5*1024**3:raise ValueError('insufficient runner disk for the next SEC bulk source')
+                    if kind=='companyfacts' and kind in recovery:
+                        from ci.sec_bulk_recovery import companyfacts as cached_companyfacts
+                        path,receipt=cached_companyfacts(recovery[kind],root)
+                    else:path,receipt=downloaded(kind,root,free-2*1024**3)
                 report['inputs'][kind]=receipt
                 publisher.json(f'SEC_{kind.upper()}_SOURCE_V2.json',dict(kind=kind,source=receipt,
                     source_commit=report['source_commit']),'source_input_receipt')
-                report['active_stage']=kind+'_extract'
-                report['stages'][kind]=process_archive(kind,path,selected,publisher)
+                if path is not None:
+                    report['active_stage']=kind+'_extract'
+                    stage=process_archive(kind,path,selected,publisher)
+                report['stages'][kind]=stage
                 populated=set(report['stages'][kind]['populated_ciks'])
                 report['coverage'][kind+'_unique_ticker_matches']=sum(r['cik'] in populated for r in rows if r['cik'] is not None)
                 report['coverage'][kind+'_candidate_ticker_matches']=sum(bool(set(r['candidate_ciks'])&populated) for r in rows)
                 publisher.json(f'SEC_{kind.upper()}_EXTRACTION_V2.json',dict(kind=kind,source=receipt,
                     result=report['stages'][kind],source_commit=report['source_commit'],
                     identity_map_lf_sha256=IDENTITY_SHA),'source_extraction_receipt')
-                path.unlink()
+                if path is not None:path.unlink()
         report['status']='PASS_IDENTITY_SNAPSHOT_ONLY' if identity_only else 'PASS_BOTH_BULK_SOURCES_RETAINED_EXTRACTION'
         report['active_stage']='complete'
     except Exception as exc:

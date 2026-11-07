@@ -6,5 +6,17 @@
   "join_keys_lf_sha256": "5e6d83f56bdb2a765ad5a9bf76219f82fdbe76ff2b93acd3f9ca12fa2e3233e2",
   "reuse_identity_inputs": true,
   "not_before_utc": "2026-11-06T18:07:15Z",
+  "recovery_sources": {
+    "submissions": {
+      "release": "nai-sec-bulk-v2-42368480194-1",
+      "commit": "69b000ee571c1773374e14dd6502ec17e2075a01",
+      "receipt_sha256": "2bc049c37c3b19bf8c95c2ac56e978b0697d1917345bc9330e4ca3b8cc0cc641"
+    },
+    "companyfacts": {
+      "release": "sec-companyfacts-source-v1-42369629763-1",
+      "commit": "e09730426be10de4fd2ed829d7e9ea8a76543e39",
+      "receipt_sha256": "87c9d9372573bf849a84cc6d871f49a31e58ea15b47a13292075554534176d0a"
+    }
+  },
   "execute": false
 }

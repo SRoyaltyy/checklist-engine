@@ -180,6 +180,26 @@ class ParquetIntegrationTests(unittest.TestCase):
         self.assertEqual((rows[0]['filed'],rows[0]['end']),('2020-02-03','2019-12-31'))
         self.assertNotIn('label',rows[0]);self.assertNotIn('description',rows[0])
 
+    def test_empty_members_and_filename_only_facts_are_preserved_explicitly(self):
+        source={'CIK0000000123.json':{},
+            'CIK0000000456.json':dict(entityName='excluded prose',facts={'cef':{'Shares':{'units':{'shares':[
+                dict(val=10,filed='2026-07-01')]}}}}),
+            'CIK0000000789.json':dict(cik=789,facts={'us-gaap':{'Assets':{'units':{'USD':[
+                dict(val=20,filed='2026-07-02')]}}}})}
+        report=process_archive('companyfacts',self.source_zip(source),{123,456,789,999},self.publisher)
+        rows=self.parquet_rows('sec_companyfacts');self.assertEqual(len(rows),2)
+        self.assertEqual(report['empty_companyfacts_ciks'],[123])
+        self.assertEqual(report['companyfacts_ciks_without_body_cik'],[123,456])
+        self.assertEqual(report['fact_rows_without_body_cik'],1)
+        self.assertEqual(report['ciks_without_output_rows'],[123]);self.assertEqual(report['missing_archive_ciks'],[999])
+        self.assertEqual(rows[0]['cik'],456);self.assertIsNone(rows[0]['body_cik'])
+        self.assertEqual(rows[0]['cik_evidence'],'FILENAME_ONLY_BODY_CIK_ABSENT')
+        self.assertEqual(rows[1]['body_cik'],789);self.assertEqual(rows[1]['cik_evidence'],'BODY_AND_FILENAME_AGREE')
+        self.assertEqual(rows[0]['val_text'],'10');self.assertNotIn('entityName',rows[0])
+        counters=defaultdict(int)
+        with self.assertRaisesRegex(ValueError,'filename/body CIK differs'):
+            list(companyfact_rows(dict(cik=999,facts={}),456,counters))
+
     def test_actual_parquet_cik_membership_and_chunk_counts(self):
         sink=ParquetSink(self.publisher,'chunk',schemas()['filings'],{123},limit=1)
         row=list(submission_rows(dict(accessionNumber=['0000000123-20-000001']),123))[0]
@@ -268,6 +288,34 @@ class ParquetIntegrationTests(unittest.TestCase):
         self.assertEqual(receipt['stages']['submissions']['rows'],1)
         self.assertNotIn('companyfacts',receipt['stages'])
         self.assertTrue(receipt['assets']);upload.assert_called_once()
+
+    def test_recovery_run_makes_no_vendor_request_and_keeps_source_acquisition_times(self):
+        facts=self.source_zip({'CIK0000000123.json':dict(cik=123,facts={'us-gaap':{'X':{'units':{'pure':[
+            dict(val=1,filed='2020-02-03')]}}}})})
+        def identity(kind,root):
+            value={'0':dict(ticker='TEST',cik_str=123)} if kind=='tickers' else dict(fields=['cik','ticker','exchange'],data=[[123,'TEST','NYSE']])
+            path=self.root/(kind+'.json');path.write_bytes(encoded(value))
+            return path,dict(url='synthetic identity',sha256='b'*64,bytes=path.stat().st_size)
+        source=dict(url='synthetic cached source',sha256='c'*64,bytes=facts.stat().st_size,started_at='original source time')
+        stage=dict(status='PASS_RETAINED_SOURCE_EXTRACTION',rows=1,populated_ciks=[123])
+        with patch.dict(os.environ,dict(GITHUB_ACTIONS='true',GITHUB_REPOSITORY='SRoyaltyy/checklist-engine',
+                GITHUB_RUN_ID='123',GITHUB_RUN_ATTEMPT='1',GITHUB_SHA='a'*40,GITHUB_EVENT_NAME='push')),\
+                patch('ci.sec_bulk_retained.validate_request',return_value=dict(execute=True,reuse_identity_inputs=True,
+                    recovery_sources=dict(submissions={},companyfacts={}))),\
+                patch('ci.sec_bulk_retained.relay_configuration',return_value=dict(matches_inspected_production_worker=True)),\
+                patch('ci.sec_bulk_retained.load_cohort',return_value=[record('TEST',123)]),\
+                patch('ci.sec_bulk_retained.Publisher',return_value=self.publisher),\
+                patch('ci.sec_bulk_retained.reused_identity',side_effect=identity),\
+                patch('ci.sec_bulk_retained.downloaded') as vendor,\
+                patch('ci.sec_bulk_recovery.submissions',return_value=(source,stage)) as cached_stage,\
+                patch('ci.sec_bulk_recovery.companyfacts',return_value=(facts,source)) as cached_zip,\
+                patch('ci.sec_bulk_retained.shutil.disk_usage',return_value=type('Disk',(),dict(free=20*1024**3))()),\
+                patch('ci.sec_bulk_retained.releases.publish_assets'),patch('ci.sec_bulk_retained.releases.gh_retry'):
+            report=run(self.root)
+        vendor.assert_not_called();cached_stage.assert_called_once();cached_zip.assert_called_once()
+        self.assertEqual(report['status'],'PASS_BOTH_BULK_SOURCES_RETAINED_EXTRACTION')
+        self.assertEqual(report['inputs']['companyfacts']['started_at'],'original source time')
+        self.assertEqual(report['coverage']['submissions_unique_ticker_matches'],1)
 
     def test_complete_run_counts_unique_and_conflicting_candidate_coverage_separately(self):
         source=self.source_zip({'CIK0000000123.json':dict(cik=123,

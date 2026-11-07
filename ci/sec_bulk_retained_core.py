@@ -166,8 +166,18 @@ def entity_row(payload,cik):
 
 
 def companyfact_rows(payload,cik,counters):
-    if cik_number(payload['cik'])!=cik:
+    if not isinstance(payload,dict):raise ValueError('companyfacts member is not an object')
+    body_cik=cik_number(payload['cik']) if 'cik' in payload else None
+    if body_cik is not None and body_cik!=cik:
         raise ValueError('companyfacts filename/body CIK differs')
+    if body_cik is None:
+        counters['companyfacts_members_without_body_cik']=counters.get('companyfacts_members_without_body_cik',0)+1
+        counters.setdefault('companyfacts_ciks_without_body_cik',[]).append(cik)
+    if not payload:
+        counters['empty_companyfacts_payloads']=counters.get('empty_companyfacts_payloads',0)+1
+        counters.setdefault('empty_companyfacts_ciks',[]).append(cik)
+        return
+    if not isinstance(payload.get('facts',{}),dict):raise ValueError('companyfacts facts container is not an object')
     sequence=0
     for taxonomy,concepts in payload.get('facts',{}).items():
         for concept,body in concepts.items():
@@ -184,7 +194,11 @@ def companyfact_rows(payload,cik,counters):
                     representable=math.isfinite(converted)
                     filed=iso_date(value.get('filed'))
                     if filed is None:counters['numeric_facts_without_filed_date']+=1
-                    yield dict(cik=cik,taxonomy=taxonomy,concept=concept,unit=unit,
+                    if body_cik is None:
+                        counters['fact_rows_without_body_cik']=counters.get('fact_rows_without_body_cik',0)+1
+                    yield dict(cik=cik,body_cik=body_cik,
+                        cik_evidence='BODY_AND_FILENAME_AGREE' if body_cik is not None else 'FILENAME_ONLY_BODY_CIK_ABSENT',
+                        taxonomy=taxonomy,concept=concept,unit=unit,
                         start=iso_date(value.get('start')),end=iso_date(value.get('end')),
                         val_text=str(exact),val_float64=converted if representable else None,
                         float64_exact=representable and Decimal.from_float(converted)==exact,

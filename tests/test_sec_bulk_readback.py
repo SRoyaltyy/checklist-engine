@@ -6,6 +6,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 
 import pyarrow as pa
@@ -82,6 +83,19 @@ class ReadbackTests(unittest.TestCase):
         self.assertEqual(stage['source_fact_values'],5);self.assertEqual(stage['non_numeric_fact_values'],2)
         self.assertEqual(stage['numeric_facts_without_filed_date'],1)
         self.assertEqual((stage['first_filed_date'],stage['last_filed_date']),('2020-02-03','2020-02-04'))
+
+    def test_empty_and_filename_only_raw_members_have_distinct_identity_evidence(self):
+        audit=RawAudit('companyfacts');rows=[];original=audit.add_row
+        def capture(row):rows.append(row);original(row)
+        audit.add_row=capture;audit.member(123,'CIK0000000123.json',b'{}')
+        audit.member(456,'CIK0000000456.json',b'{"facts":{"cef":{"Shares":{"units":{"shares":[{"val":10,"filed":"2026-07-01"}]}}}}}')
+        stage=audit.finish({123,456,789})
+        self.assertEqual(stage['empty_companyfacts_ciks'],[123])
+        self.assertEqual(stage['companyfacts_ciks_without_body_cik'],[123,456])
+        self.assertEqual(stage['fact_rows_without_body_cik'],1)
+        self.assertEqual(stage['missing_archive_ciks'],[789]);self.assertEqual(stage['ciks_without_output_rows'],[123])
+        self.assertIsNone(rows[0]['body_cik']);self.assertEqual(rows[0]['cik'],456)
+        self.assertEqual(rows[0]['cik_evidence'],'FILENAME_ONLY_BODY_CIK_ABSENT')
 
     def fake_bundle(self,files,bindings):
         bundle=Bundle.__new__(Bundle);bundle.root=self.root;bundle.bindings=bindings;bundle.checked=set()
@@ -176,6 +190,7 @@ class ReadbackTests(unittest.TestCase):
                 self.inventory=set(json_assets)|{'RAW:submissions','RAW:companyfacts'}|set(rows)
             def json(self,name):self.checked.add(name);return json_assets[name]
             def identity_lineage(self,kind,name,source):return None
+            def archive_lineage(self,kind,audit,selected):return None
             def parquet(self,kind):self.checked.add(kind);return iter(rows[kind])
             def raw(self,kind,audit,selected):
                 self.checked.add('RAW:'+kind);audit.member(123,'CIK0000000123.json',raw_sub if kind=='submissions' else raw_fact)
@@ -235,6 +250,31 @@ class ReadbackTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'acquisition metadata'):bundle.identity_lineage('tickers','company_tickers.json',changed)
             checked=bundle.identity_lineage('tickers','company_tickers.json',dict(source,reused_from=lineage))
             self.assertTrue(checked['independently_downloaded']);self.assertFalse(raw.exists())
+
+    def test_full_cached_zip_proves_retained_member_completeness(self):
+        raw=b'{"cik":123,"facts":{}}';path=self.root/'companyfacts.zip'
+        with zipfile.ZipFile(path,'w') as archive:
+            archive.writestr('CIK0000000123.json',raw);archive.writestr('CIK0000000456.json',b'{}')
+        zip_bytes=path.read_bytes()
+        source=dict(url=SOURCE_URLS['companyfacts'],sha256=hashlib.sha256(path.read_bytes()).hexdigest(),bytes=path.stat().st_size)
+        old=dict(status='PASS_EXACT_SOURCE_DIAGNOSTIC_NOT_DATA_EXTRACTION',source=source,
+                 source_commit='a'*40,release='synthetic-cache')
+        receipt=self.root/'receipt.json';receipt.write_bytes(json_bytes(old))
+        receipt_bytes=receipt.read_bytes()
+        lineage=dict(scope='EXACT_OFFICIAL_UNFILTERED_SOURCE_ZIP',release='synthetic-cache',source_commit='a'*40,
+            receipt='SEC_COMPANYFACTS_SOURCE_DIAGNOSTIC_V1.json',receipt_sha256=hashlib.sha256(receipt.read_bytes()).hexdigest(),
+            asset='companyfacts.zip')
+        bundle=Bundle.__new__(Bundle);bundle.root=self.root
+        bundle.report=dict(inputs=dict(companyfacts=dict(source,reused_from=lineage)))
+        audit=RawAudit('companyfacts');audit.member(123,'CIK0000000123.json',raw)
+        with patch('ci.sec_bulk_readback.releases.release_info',return_value=dict(draft=False,target_commitish='a'*40)),\
+                patch('ci.sec_bulk_readback.releases.download_asset',side_effect=[receipt,path,receipt,path]):
+            with self.assertRaisesRegex(ValueError,'completeness/bytes'):
+                bundle.archive_lineage('companyfacts',audit,{123,456})
+            receipt.write_bytes(receipt_bytes);path.write_bytes(zip_bytes)
+            audit.member(456,'CIK0000000456.json',b'{}')
+            result=bundle.archive_lineage('companyfacts',audit,{123,456})
+            self.assertTrue(result['full_source_zip_verified']);self.assertEqual(result['retained_source_members_verified'],2)
 
 
 if __name__=='__main__':unittest.main()
