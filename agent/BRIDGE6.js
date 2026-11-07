@@ -119,7 +119,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     s.phase='checkpointing';persist();
     await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});
     if(stopped)return;
-    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.failures=0;persist();note(packet.done?'checkpoint saved; monitoring':'checkpoint saved; continuing');
+    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;persist();note(packet.done?'checkpoint saved; monitoring':'checkpoint saved; continuing');
   }
   async function pump(){
     lastTick=Date.now();if(stopped||pumping||!leaseHeld)return;paint();if(!s.enabled)return;
@@ -162,7 +162,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   if(win.navigator.locks){win.navigator.locks.request('venice-bridge-runtime-v6',{ifAvailable:true},async lock=>{if(!lock){note('another tab owns agent');return;}try{const latest=JSON.parse(get(STORE,'null'));if(latest?.version===6)s=latest;}catch{}leaseHeld=true;persist();note('connected');pump();await new Promise(resolve=>{releaseLock=resolve;});});}
   else {leaseHeld=true;note('connected (single-tab mode)');}
   interval=win.setInterval(pump,2000);pump();persist();
-  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
+  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
   win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
 
