@@ -99,8 +99,20 @@ async function runtimeContext(env) {
 async function runtimeSave(env, data) {
   const branch=runtimeBranch(env);
   const summary=String(data.summary||'').slice(0,10000), next=String(data.next||'').slice(0,4000);
-  const state={version:6,at:new Date().toISOString(),turn_id:data.turn_id||null,summary,next,blockers:data.blockers||[],evidence:data.evidence||[],done:!!data.done};
-  const text=`# Venice progress\n\nUpdated ${state.at} UTC\n\n## Last completed work\n${summary}\n\n## Exact next step\n${next}\n\n## Blockers\n${JSON.stringify(state.blockers)}\n\n## Evidence\n${JSON.stringify(state.evidence)}\n\nTurn: ${state.turn_id}\n`;
+  const before=await maybeRead(env,branch,`${RUNTIME_ROOT}/STATE.json`);let previous={};try{previous=JSON.parse(before?.text||'{}');}catch{}
+  const known=[...new Set([...(previous.evidence||[]),...(data.evidence||[])])].slice(-100);
+  const rawPlan=data.plan||previous.plan||{goal:'Follow current main/TODO.md Venice lane',why:'Advance James\' assigned work',current_task:'lane',tasks:[{id:'lane',title:'Inspect the current lane and break it into provable subtasks',status:'doing',weight:1,evidence:[]}]};
+  const tasks=(Array.isArray(rawPlan.tasks)?rawPlan.tasks:[]).slice(0,25).map((t,i)=>{
+    const evidence=(Array.isArray(t.evidence)?t.evidence:[]).filter(x=>known.includes(x));
+    const status=['todo','doing','done','blocked'].includes(t.status)?t.status:'todo';
+    return {id:String(t.id||i+1),title:String(t.title||'').slice(0,300),acceptance:String(t.acceptance||'').slice(0,500),weight:Math.max(1,Math.min(20,Number(t.weight)||1)),status:status==='done'&&!evidence.length?'doing':status,evidence,blocker:String(t.blocker||'').slice(0,500)};
+  });
+  const total=tasks.reduce((n,t)=>n+t.weight,0),complete=tasks.filter(t=>t.status==='done').reduce((n,t)=>n+t.weight,0);
+  const plan={goal:String(rawPlan.goal||'').slice(0,2000),why:String(rawPlan.why||'').slice(0,2000),gantt_row:String(rawPlan.gantt_row||'Venice assigned lane').slice(0,300),current_task:String(rawPlan.current_task||''),tasks,progress_percent:total?Math.floor(100*complete/total):0};
+  const state={version:6,at:new Date().toISOString(),turn_id:data.turn_id||null,summary,next,plan,blockers:data.blockers||[],evidence:known,done:!!data.done};
+  const rows=tasks.map(t=>`| ${t.id} | ${t.title.replace(/\|/g,'/')} | ${t.status} | ${t.evidence.join(', ')} |`).join('\n');
+  const text=`# Venice progress\n\nUpdated ${state.at} UTC\n\n## Goal\n${plan.goal}\n\n## Why this advances the repo\n${plan.why}\n\nGantt row: ${plan.gantt_row}\nVerified progress: **${plan.progress_percent}%**\nCurrent subtask: ${plan.current_task}\n\n| ID | Subtask | Status | Evidence |\n|---|---|---|---|\n${rows}\n\n## Last completed work\n${summary}\n\n## Exact next step\n${next}\n\n## Blockers\n${JSON.stringify(state.blockers)}\n\n## Evidence\n${JSON.stringify(state.evidence)}\n\nTurn: ${state.turn_id}\n`;
+  await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PLAN.json`,JSON.stringify(plan,null,2)+'\n','venice: checkpoint verified task plan');
   await verifiedWrite(env,branch,`${RUNTIME_ROOT}/PROGRESS.md`,text,'venice: checkpoint progress');
   return verifiedWrite(env,branch,`${RUNTIME_ROOT}/STATE.json`,JSON.stringify(state,null,2)+'\n','venice: checkpoint state');
 }
@@ -158,6 +170,11 @@ async function runtimeTool(env, command) {
         if(!/^\d+$/.test(String(args.run_id)))throw new Error('run_id required');
         const r=await gh(env,`/actions/runs/${args.run_id}/jobs?per_page=30`);if(!r.ok)throw new Error(`jobs: ${r.status}`);
         result={ok:true,jobs:(r.body.jobs||[]).map(x=>({id:x.id,name:x.name,conclusion:x.conclusion,url:x.html_url,check_run_url:x.check_run_url,steps:x.steps?.map(s=>({name:s.name,conclusion:s.conclusion}))}))};break;
+      }
+      case 'run_status': {
+        if(!/^\d+$/.test(String(args.run_id)))throw new Error('run_id required');
+        const r=await gh(env,`/actions/runs/${args.run_id}`);if(!r.ok)throw new Error(`run: ${r.status}`);
+        result={ok:true,id:r.body.id,status:r.body.status,conclusion:r.body.conclusion,url:r.body.html_url,sha:r.body.head_sha,branch:r.body.head_branch};break;
       }
       case 'annotations': {
         if(!/^\d+$/.test(String(args.check_run_id)))throw new Error('check_run_id required');
