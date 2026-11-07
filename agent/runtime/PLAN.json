@@ -1,8 +1,8 @@
 {
-  "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures once with run ID + error (TODO.md Venice lane)",
+  "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures once with run ID + error (TODO.md Venice lane @c7c31b0)",
   "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t2",
+  "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
@@ -11,7 +11,7 @@
       "weight": 1,
       "status": "done",
       "evidence": [
-        "TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653",
+        "TODO.md@c7c31b02e530a35d9944c705d19422d606956809",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
       ],
       "blocker": ""
@@ -19,24 +19,36 @@
     {
       "id": "t2",
       "title": "Report failed nai-occ-oi-daily run 42284432095 once with run ID + error",
-      "acceptance": "Issue URL containing run_id 42284432095 plus actual error text, dedupe_key=run-42284432095",
+      "acceptance": "Issue URL containing run_id 42284432095 plus error text, dedupe_key=run-42284432095",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Correct issue #220 with exact job-log error if it differs from the source-based inference",
-      "acceptance": "One comment on #220 quoting the returned log text, or confirmation that the inference matches",
+      "title": "Correct issue #220: oi_probe ran (not skipped); traceback unavailable from truncated job_log",
+      "acceptance": "One comment on #220 stating the corrected step list and that the DELO diagnosis is unverified",
       "weight": 1,
+      "status": "doing",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t4",
+      "title": "Report remaining unreported failed runs (42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359) once each",
+      "acceptance": "Issue or PR comment per run with run_id + error, dedupe_key=run-<id>",
+      "weight": 2,
       "status": "todo",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 25
+  "progress_percent": 50
 }
