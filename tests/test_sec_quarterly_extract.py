@@ -33,10 +33,11 @@ class ExtractTests(unittest.TestCase):
         return path
 
     def test_every_owner_and_both_transaction_kinds_keep_exact_source_values(self):
-        tables=dict(SUBMISSION='ACCESSION_NUMBER\tFILING_DATE\tDOCUMENT_TYPE\tISSUERCIK\tPERIOD_OF_REPORT\nA\t03-JAN-2023\t4\t0000000123\t01-JAN-2023\n',
+        tables=dict(SUBMISSION='ACCESSION_NUMBER\tFILING_DATE\tDOCUMENT_TYPE\tISSUERCIK\tPERIOD_OF_REPORT\tFORM3_HOLDINGS_REPORTED\nA\t03-JAN-2023\t4\t0000000123\t01-JAN-2023\t0\n',
             REPORTINGOWNER='ACCESSION_NUMBER\tRPTOWNERCIK\tRPTOWNER_RELATIONSHIP\tRPTOWNERNAME\nA\t456\tDIRECTOR\tExcluded name\nA\t789\tOFFICER\tAnother name\n',
             NONDERIV_TRANS='ACCESSION_NUMBER\tNONDERIV_TRANS_SK\tTRANS_DATE\tTRANS_ACQUIRED_DISP_CD\tTRANS_SHARES\tTRANS_PRICEPERSHARE\nA\t900719925474099300000000001\t02-JAN-2023\tA\t10.25\t9007199254740993.01\n',
-            DERIV_TRANS='ACCESSION_NUMBER\tDERIV_TRANS_SK\tTRANS_DATE\tTRANS_ACQUIRED_DISP_CD\tTRANS_PRICEPERSHARE\nA\t99\t02-JAN-2023\tD\t0.1\n')
+            DERIV_TRANS='ACCESSION_NUMBER\tDERIV_TRANS_SK\tTRANS_DATE\tTRANS_ACQUIRED_DISP_CD\tTRANS_PRICEPERSHARE\tEXCERCISE_DATE\nA\t99\t02-JAN-2023\tD\t0.1\t02-JAN-2024\n',
+            DERIV_HOLDING='ACCESSION_NUMBER\tDERIV_HOLDING_SK\tEXERCISE_DATE\nA\t11\t03-JAN-2024\n')
         report=extract_zip(self.source(tables),'form345','2023Q1',self.publisher,{123})
         owners=self.publisher.rows('REPORTINGOWNER');non=self.publisher.rows('NONDERIV_TRANS');deriv=self.publisher.rows('DERIV_TRANS')
         self.assertEqual([r['RPTOWNERCIK'] for r in owners],['456','789'])
@@ -44,6 +45,9 @@ class ExtractTests(unittest.TestCase):
         self.assertEqual(non[0]['TRANS_PRICEPERSHARE'],'9007199254740993.01')
         self.assertEqual(non[0]['NONDERIV_TRANS_SK'],'900719925474099300000000001')
         self.assertEqual(deriv[0]['TRANS_PRICEPERSHARE'],'0.1')
+        self.assertEqual(deriv[0]['EXCERCISE_DATE'],'02-JAN-2024')
+        self.assertEqual(self.publisher.rows('DERIV_HOLDING')[0]['EXERCISE_DATE'],'03-JAN-2024')
+        self.assertEqual(self.publisher.rows('SUBMISSION')[0]['FORM3_HOLDINGS_REPORTED'],'0')
         self.assertEqual(non[0]['filing_date_iso'],'2023-01-03');self.assertEqual(non[0]['period_of_report_raw'],'01-JAN-2023')
         self.assertTrue(non[0]['retained_retrieval_candidate']);self.assertEqual(non[0]['issuer_cik'],123)
         self.assertEqual(report['tables']['REPORTINGOWNER']['output_rows'],2)

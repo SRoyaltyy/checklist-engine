@@ -7,5 +7,18 @@
     "commit": "c7842549bec75b920f08f7701eccdae5e1aa13d0",
     "receipt_sha256": "2051171d632020bc6f1c9de2025468c97e2d45b5db20b64ccc0cd31255a2475e"
   },
-  "profile_sources": {}
+  "profile_sources": {
+    "form345": {
+      "run": "42392401389",
+      "attempt": "1",
+      "commit": "ac99f6e230c69eb51bed9d03730f67e2410335a7",
+      "receipt_sha256": "074625032e74e6d8cbf36a53619f5e2875dcb53bf89480095d5fb0af34f1eea8"
+    },
+    "form13f": {
+      "run": "42392401389",
+      "attempt": "1",
+      "commit": "ac99f6e230c69eb51bed9d03730f67e2410335a7",
+      "receipt_sha256": "10adf374b52f2c11128b2bb7b62e38b819c45926d64883620815bfc69d662a59"
+    }
+  }
 }

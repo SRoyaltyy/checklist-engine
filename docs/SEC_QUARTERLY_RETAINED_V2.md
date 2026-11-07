@@ -1,13 +1,14 @@
 # SEC quarterly structured-source preparation
 
 Task7 is pending. This branch prepares strict readers and a disabled source
-profile workflow; no quarterly download or fixed-field parquet run has executed.
+profile workflow. All54official source ZIPs have now been acquired and profiled;
+the fixed-field data run and independent data readback remain pending.
 Task6 is complete on main `2ba3ebdf` (PR218), with producer42370671052 and
 independent readback42372758947 both successful.
 Activation requires a frozen PASS readback receipt and its successful actual
 GitHub run; the collector checks both before any SEC request. This prerequisite
 is now bound to the exact PASS receipt; both quarterly execution switches remain
-false pending current GitHub checks and initial source-profile activation.
+false pending current GitHub checks and initial fixed-field extraction.
 
 The catalog reads actual HTTPS ZIP links from the official
 [insider](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets)
@@ -56,6 +57,35 @@ all owners and source row positions. Actual parquet row counts, schemas and CIK
 sets are checked before publication. A manager CIK is explicitly named as such;
 it never becomes a held-issuer key.
 
-Sixteen synthetic tests pass using existing dependencies. Actual archived schemas
-will be checked before extraction. Historical ownership, acceptance-time coverage,
+Eighteen synthetic tests pass using existing dependencies, including a regression
+against every observed archive header. Historical ownership, acceptance-time coverage,
 fixed-field parquet coverage and task7 completion remain pending. Scoring CLOSED.
+
+## Actual source profiles
+
+[Run42392401389/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42392401389)
+succeeded at `ac99f6e230c69eb51bed9d03730f67e2410335a7` for both source kinds.
+The public `sec-quarterly-profile-v2-form345-42392401389-1` and corresponding
+`form13f` releases each retain83assets:27original ZIPs, acquisition/schema
+receipts, the official index and the final profile. Exact final receipts were
+independently downloaded/hash-checked:
+
+- [Form345](SEC_QUARTERLY_FORM345_PROFILE_42392401389_V2.json):186,609bytes, SHA256
+  `074625032e74e6d8cbf36a53619f5e2875dcb53bf89480095d5fb0af34f1eea8`.
+- [Form13F](SEC_QUARTERLY_FORM13F_PROFILE_42392401389_V2.json):127,759bytes, SHA256
+  `10adf374b52f2c11128b2bb7b62e38b819c45926d64883620815bfc69d662a59`.
+
+Insider sources span2020Q1 through2026Q3;13F spans2020Q1 through the published
+2026-06-01–2026-08-31window. The schema profiles count2,083,620non-derivative
+transactions,794,594derivative transactions and77,153,09813Fholding records,
+alongside submissions, all owners and holdings/manager metadata. Every required
+fixed-field column is present and selected tables have zero malformed rows.
+Observed archives use `FORM3_HOLDINGS_REPORTED` and derivative-holdings
+`EXERCISE_DATE`; derivative transactions retain their distinct `EXCERCISE_DATE`
+spelling. The field plan follows those observed names. Only `AFF10B5ONE` is absent
+in the twelve pre-2023insider quarters, explicitly treated as unknown.
+
+The source-profile switch is false. Initial data extraction is bound to these
+exact profile roots and uses their cached ZIPs, preserving acquisition times
+without additional SEC requests. The monthly schedules remain5th23:29UTC for
+Form345 and6th23:41UTC for13F; their updated collector fetches fresh sources.

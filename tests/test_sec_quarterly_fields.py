@@ -1,8 +1,26 @@
 import unittest
+import json
+from pathlib import Path
 from ci.sec_quarterly_fields import TABLES,filing_date_iso,value_unit_13f
 
 
 class FieldTests(unittest.TestCase):
+    def test_every_selected_field_matches_all_54_observed_archive_headers(self):
+        root=Path(__file__).resolve().parents[1]/'docs'
+        for kind in ('form345','form13f'):
+            report=json.loads((root/f'SEC_QUARTERLY_{kind.upper()}_PROFILE_42392401389_V2.json').read_bytes())
+            self.assertEqual(report['status'],'PASS_PUBLISHED_SOURCE_CATALOG_ONLY')
+            self.assertEqual(len(report['windows']),27)
+            for window in report['windows']:
+                actual={t['table']:t for t in window['profile']['tables']}
+                self.assertTrue(set(TABLES[kind])<=set(actual))
+                for table,spec in TABLES[kind].items():
+                    absent=set(spec['columns'])-set(actual[table]['columns'])
+                    allowed={'AFF10B5ONE'} if kind=='form345' and window['window']['label']<'2023Q1' else set()
+                    if table!='SUBMISSION':allowed=set()
+                    self.assertEqual(absent,allowed,(kind,window['window']['label'],table))
+                    self.assertEqual(actual[table]['ragged_rows'],0)
+
     def test_sec_dates_and_13f_value_unit_boundary_are_explicit(self):
         self.assertEqual(filing_date_iso('03-JAN-2023'),'2023-01-03')
         self.assertEqual(filing_date_iso('29-FEB-2024'),'2024-02-29')
