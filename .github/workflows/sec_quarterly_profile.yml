@@ -37,7 +37,7 @@ jobs:
         kind: [form345, form13f]
     runs-on: ubuntu-latest
     timeout-minutes: 350
-    permissions: {contents: write}
+    permissions: {contents: write, actions: read}
     env:
       PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
       SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
