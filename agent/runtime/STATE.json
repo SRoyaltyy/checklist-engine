@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-07T17:15:17.394Z",
-  "turn_id": "mw6nyhw7-ouzp0bv1",
-  "summary": "Rewriting the Venice checkpoint so it cites the canonical report_failure record for run 42284432095 (issue #220 comment 6710271739, exact ValueError line) and retires the earlier 'traceback unavailable / oi_probe ran' wording. No pipeline code touched; no collector pushed.",
-  "next": "Inspect the write_file result: confirm it returns a commit sha for agent/PROGRESS.md on venice/sec-options-pipelines, then set t6 done and go passive (actions=[], done=true) until a nai-* run fails outside the do-not-re-report set.",
+  "at": "2026-11-07T17:16:02.458Z",
+  "turn_id": "mw6nzhdp-2989ne4j",
+  "summary": "Checkpoint rewrite landed and verified. write_file returned commit 8f1cbd8c36321a47dee6192d8e8ed47440fa0a56 (blob 4bbcb076f4aa7d07dbd93deacc723de168b757f7, verified:true) for agent/PROGRESS.md on venice/sec-options-pipelines; the new text cites https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 and quotes 'ValueError: invalid literal for int() with base 10: '''. Superseded 'traceback unavailable / oi_probe ran' wording retired. No pipeline code touched, no collector pushed, no main write. Run snapshot unchanged: latest run 42332789888 (nai-sec-form13f) success; every failure in the list is already reported or deliberately deduped. No new assigned work remains, so this turn closes passive.",
+  "next": "Stay passive with actions=[] and done=true. On the next wake, re-read main/TODO.md Venice section and the runs snapshot; only if a nai-sec-* / nai-occ-oi-daily run has failed with an ID outside {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359} do run_jobs then report_failure(run_id) and stop.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
@@ -72,24 +72,16 @@
         "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record and drop superseded 'traceback unavailable / oi_probe ran' wording",
         "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md and its text names issuecomment-6710271739 plus the ValueError line",
         "weight": 1,
-        "status": "doing",
+        "status": "done",
         "evidence": [
-          "agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4"
+          "8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"
         ],
         "blocker": ""
       }
     ],
-    "progress_percent": 87
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "write_file",
-      "ok": true,
-      "path": "agent/PROGRESS.md",
-      "commit": "8f1cbd8c36321a47dee6192d8e8ed47440fa0a56",
-      "verified": true
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -106,5 +98,5 @@
     "agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4",
     "8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"
   ],
-  "done": false
+  "done": true
 }
