@@ -5,10 +5,12 @@ from datetime import datetime,timezone
 import hashlib
 import io
 import json
+import math
 import os
 from pathlib import Path,PurePosixPath
 import shutil
 import tarfile
+import time
 import zipfile
 
 from ci import release_assets as releases
@@ -25,6 +27,13 @@ URLS=dict(tickers='https://www.sec.gov/files/company_tickers.json',
     exchanges='https://www.sec.gov/files/company_tickers_exchange.json',
     submissions='https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip',
     companyfacts='https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip')
+IDENTITY_INPUT_RELEASE='nai-sec-bulk-v2-42264090366-1'
+IDENTITY_INPUT_COMMIT='f0c11a24066a0182f14a8f5883d1d9bed8d55d55'
+IDENTITY_INPUT_PINS=dict(
+    tickers=('76b4b2abb9f7dd0e9cff38e2f20336952bb41806057b2dd1033e244f3e1faec2',
+             '006c98eee722d8c2722ca6084cd5aeec94e3e4f7acef41464ebeb7176e863de3'),
+    exchanges=('224330f2c44f5d173395e427dbac3c6981acdb1f57e3658832d315c3e96f6522',
+               '738374c24b0b5cb7cd12c3376e3460cb1767b452bc8b83ab808a1bb2e04af1b3'))
 
 
 def now():
@@ -45,9 +54,32 @@ def encoded(value):
 def validate_request(value):
     expected=dict(version=2,scope='SEC_BULK_RETAINED_8439_SOURCE_ONLY',
                   retained_names=8439,identity_map_lf_sha256=IDENTITY_SHA,join_keys_lf_sha256=KEYS_SHA)
-    if type(value.get('execute')) is not bool or {k:v for k,v in value.items() if k!='execute'}!=expected:
+    controls={'execute','reuse_identity_inputs','not_before_utc'}
+    if (type(value.get('execute')) is not bool or type(value.get('reuse_identity_inputs')) is not bool
+            or {k:v for k,v in value.items() if k not in controls}!=expected
+            or not controls<=set(value)):
         raise ValueError('SEC bulk request changes the bound retained cohort')
+    if value['not_before_utc'] is not None:
+        deadline=datetime.fromisoformat(value['not_before_utc'].replace('Z','+00:00'))
+        if deadline.tzinfo is None or deadline.utcoffset().total_seconds()!=0:
+            raise ValueError('SEC cooldown boundary must be UTC')
     return value
+
+
+def wait_seconds(seconds):
+    seconds=math.ceil(seconds)
+    if seconds<0 or seconds>3605:
+        raise ValueError('SEC cooldown exceeds the bounded one-hour wait')
+    while seconds:
+        step=min(60,seconds)
+        print('SEC_PROVIDER_COOLDOWN',step,'remaining',seconds,flush=True)
+        time.sleep(step);seconds-=step
+
+
+def wait_before_requests(boundary):
+    if boundary is None:return
+    deadline=datetime.fromisoformat(boundary.replace('Z','+00:00'))
+    wait_seconds(max(0,(deadline-datetime.now(timezone.utc)).total_seconds()))
 
 
 def load_cohort():
@@ -173,9 +205,39 @@ class RawSink:
 
 def downloaded(kind,root,max_bytes):
     path=root/URLS[kind].rsplit('/',1)[1]
-    started=now()
-    common.get(URLS[kind],str(path),tries=3,timeout=1800,max_bytes=max_bytes)
-    return path,dict(url=URLS[kind],bytes=path.stat().st_size,sha256=digest(path),started_at=started,finished_at=now())
+    started=now();limits=[]
+    for attempt in range(2):
+        try:
+            common.get(URLS[kind],str(path),tries=3,timeout=1800,max_bytes=max_bytes)
+            break
+        except common.SourceError as exc:
+            if exc.evidence.get('http_status')!=429:raise
+            delay=max(601,exc.evidence.get('retry_after_seconds') or 0)
+            limits.append(dict(observed_at=now(),wait_seconds=delay,evidence=exc.evidence.copy()))
+            if attempt==1 or delay>3605:
+                exc.evidence['rate_limit_history']=limits
+                raise
+            wait_seconds(delay)
+    return path,dict(url=URLS[kind],bytes=path.stat().st_size,sha256=digest(path),started_at=started,
+                     finished_at=now(),rate_limit_history=limits)
+
+
+def reused_identity(kind,root):
+    raw_sha,receipt_sha=IDENTITY_INPUT_PINS[kind]
+    name=URLS[kind].rsplit('/',1)[1]
+    receipt_name=f'SEC_{kind.upper()}_SOURCE_V2.json'
+    cached=root/'reused-identity'
+    source=releases.download_asset(IDENTITY_INPUT_RELEASE,name,cached)
+    receipt=releases.download_asset(IDENTITY_INPUT_RELEASE,receipt_name,cached)
+    if digest(source)!=raw_sha or digest(receipt)!=receipt_sha:
+        raise ValueError('reused identity snapshot differs from authenticated source')
+    metadata=json.loads(receipt.read_bytes())
+    if (metadata['kind']!=kind or metadata['source_commit']!=IDENTITY_INPUT_COMMIT
+            or metadata['source']['sha256']!=raw_sha or metadata['source']['url']!=URLS[kind]):
+        raise ValueError('reused identity lineage differs')
+    destination=root/name;shutil.copyfile(source,destination)
+    return destination,dict(metadata['source'],reused_from=dict(release=IDENTITY_INPUT_RELEASE,
+        asset=name,sha256=raw_sha,receipt=receipt_name,receipt_sha256=receipt_sha,source_commit=IDENTITY_INPUT_COMMIT))
 
 
 def process_archive(kind,path,selected,publisher):
@@ -253,6 +315,7 @@ def run(root,identity_only=False):
         raise ValueError('one-shot bulk acquisition is disabled')
     if not relay_configuration()['matches_inspected_production_worker']:
         raise ValueError('configured relay differs from the verified production Worker')
+    wait_before_requests(request.get('not_before_utc'))
     records=load_cohort();root.mkdir(parents=True,exist_ok=True)
     tag=f"nai-sec-bulk-v2-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
     publisher=Publisher(root,tag)
@@ -262,10 +325,13 @@ def run(root,identity_only=False):
         started_at=now(),active_stage='identity',inputs={},stages={},scoring_gate='CLOSED',world_gate='NOT_PROVEN',
         historical_ownership='NOT_PROVEN_CURRENT_CANDIDATES_ONLY',free_text_features=False)
     report['filing_record_model']='SOURCE_OBSERVATIONS_NOT_CANONICAL_ACCESSIONS'
+    report['request']=request
+    report['identity_inputs_reused']=event=='push' and request.get('reuse_identity_inputs',False)
     try:
         maps={}
         for kind in ('tickers','exchanges'):
-            path,receipt=downloaded(kind,root,10000000);report['inputs'][kind]=receipt
+            path,receipt=(reused_identity(kind,root) if report['identity_inputs_reused'] else downloaded(kind,root,10000000))
+            report['inputs'][kind]=receipt
             publisher.json(f'SEC_{kind.upper()}_SOURCE_V2.json',dict(kind=kind,source=receipt,
                 source_commit=report['source_commit']),'source_input_receipt')
             maps[kind]=json.loads(path.read_bytes());publisher.emit(path,'official_current_identity_source')

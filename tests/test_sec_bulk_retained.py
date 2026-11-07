@@ -14,7 +14,9 @@ import zipfile
 
 from ci.sec_bulk_retained_core import (cik_number,companyfact_rows,decode_source,live_candidates,
     members_by_cik,annotate_filing_observations,resolve_identities,submission_rows)
-from ci.sec_bulk_retained import (ParquetSink,Publisher,encoded,load_cohort,process_archive,run,schemas,validate_request)
+from ci.sec_bulk_retained import (ParquetSink,Publisher,downloaded,encoded,load_cohort,process_archive,
+                                 reused_identity,run,schemas,validate_request,wait_seconds)
+from scripts.nai.common import SourceError
 
 
 def record(ticker,cik=None,status=None):
@@ -200,6 +202,45 @@ class ParquetIntegrationTests(unittest.TestCase):
         self.assertIn('--draft',gh.call_args.args)
         upload.assert_called_once_with('unique-run-tag',path)
         self.assertFalse(path.exists())
+
+    def test_rate_limit_waits_then_retries_same_source_once(self):
+        attempts=[]
+        def fetch(url,destination,**kwargs):
+            attempts.append((url,destination))
+            if len(attempts)==1:raise SourceError(dict(http_status=429,retry_after_seconds=900))
+            Path(destination).write_bytes(b'synthetic download')
+        with patch('ci.sec_bulk_retained.common.get',side_effect=fetch),patch('ci.sec_bulk_retained.wait_seconds') as wait:
+            path,receipt=downloaded('submissions',self.root,1000)
+        self.assertEqual(attempts[0],attempts[1]);wait.assert_called_once_with(900)
+        self.assertEqual(len(receipt['rate_limit_history']),1)
+        self.assertEqual(path.read_bytes(),b'synthetic download')
+
+    def test_repeated_rate_limit_is_bounded_and_403_is_not_retried(self):
+        for code,expected_calls in [(429,2),(403,1)]:
+            with self.subTest(code=code),patch('ci.sec_bulk_retained.common.get',
+                    side_effect=SourceError(dict(http_status=code))) as network,\
+                    patch('ci.sec_bulk_retained.wait_seconds') as wait:
+                with self.assertRaises(SourceError):downloaded('submissions',self.root,1000)
+            self.assertEqual(network.call_count,expected_calls)
+            self.assertEqual(wait.call_count,1 if code==429 else 0)
+
+    def test_cooldown_is_chunked_and_reuse_makes_no_vendor_request(self):
+        with patch('ci.sec_bulk_retained.time.sleep') as sleep,patch('sys.stdout',new_callable=io.StringIO):
+            wait_seconds(601)
+        self.assertEqual([c.args[0] for c in sleep.call_args_list],[60]*10+[1])
+        from ci.sec_bulk_retained import IDENTITY_INPUT_COMMIT,URLS
+        raw=b'{"0":{"ticker":"TEST","cik_str":123}}';raw_sha=hashlib.sha256(raw).hexdigest()
+        source=self.root/'source.json';source.write_bytes(raw)
+        receipt=self.root/'source-receipt.json'
+        receipt.write_bytes(encoded(dict(kind='tickers',source_commit=IDENTITY_INPUT_COMMIT,
+            source=dict(url=URLS['tickers'],sha256=raw_sha,bytes=len(raw),started_at='2026-11-06T17:43:00Z',finished_at='2026-11-06T17:43:01Z'))))
+        pins=dict(tickers=(raw_sha,hashlib.sha256(receipt.read_bytes()).hexdigest()))
+        with patch('ci.sec_bulk_retained.IDENTITY_INPUT_PINS',pins),\
+                patch('ci.sec_bulk_retained.releases.download_asset',side_effect=[source,receipt]),\
+                patch('ci.sec_bulk_retained.common.get') as vendor:
+            destination,binding=reused_identity('tickers',self.root)
+        vendor.assert_not_called();self.assertEqual(destination.read_bytes(),raw)
+        self.assertEqual(binding['reused_from']['source_commit'],IDENTITY_INPUT_COMMIT)
 
     def test_second_archive_failure_publishes_honest_partial_receipt(self):
         source=self.source_zip({'CIK0000000123.json':dict(cik=123,

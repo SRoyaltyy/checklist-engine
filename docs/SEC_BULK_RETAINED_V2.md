@@ -94,7 +94,11 @@ Each emitted parquet file is read back for actual row count and complete CIK
 membership before its immutable publication.
 
 HTTP requests use the verified production relay and at least one-second spacing.
-A403/429 stops the request; no automatic route or identity rotation is used.
+A403 stops the request. A429 permits one retry of the identical source through
+the same route after at least601seconds, honoring a longer `Retry-After` (up to
+one hour). A second429 or longer requested wait stops the run. Waits are logged
+in60second increments and rate-limit evidence is retained. No automatic route
+or identity rotation is used.
 The private owner-approved SEC contact remains in the Worker, restricted to SEC
 destinations, and is omitted from public code and receipts.
 
@@ -112,7 +116,7 @@ does not prove complete bulk coverage. A one-shot request on
 `gpt/sec-bulk-retained-v2` allows the initial reviewed full run; PR checks use only
 synthetic inputs.
 
-All19new synthetic tests pass locally using existing dependencies. They cover
+All22bulk synthetic tests and26shared HTTP/access tests pass locally using existing dependencies. They cover
 quarantines, exact symbol matching, identity conflicts, nullable historical filing
   schemas, preserved accession conflicts, raw-member hashes, exact numeric preservation,
 actual parquet round trips, complete output CIK checks and honest partial-failure
@@ -148,3 +152,22 @@ marks disagreements, without choosing a timestamp, normalizing away a difference
 or excluding a CIK. Synthetic parquet tests check conflicting clocks survive
 unchanged and unknown clocks stay unknown. The old partial result remains
 immutable; a fresh complete run under the corrected schema is required.
+
+## Rate-limit recovery
+
+[Run42266176849/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42266176849),
+source `ac52e8eade13d0b95075f93d5356891576b2411b`, passed its19synthetic
+checks but received SEC429 on the first ticker-map request. It produced no
+identity or archive data. The independently downloaded exact
+[1,892-byte failed receipt](SEC_BULK_RATE_LIMIT_42266176849_V2.json), SHA256
+`272d6960dca2913619e9641fd558e913afd5653ae4784a28638113bc36975667`,
+remains an explicit failure.
+
+The recovery request enforces a not-before boundary after the stated ten-minute
+provider cooldown. For this push only, it reuses the two exact raw ticker maps
+already published by run42264090366, independently checked against pinned raw
+and acquisition-receipt hashes. Their original acquisition times and release/
+commit lineage remain in the new receipts. This avoids redundant SEC requests;
+it does not reuse the incompatible partial filing outputs. Scheduled and manual
+runs acquire fresh maps. Both complete source archives still require extraction
+under the corrected observation schema and independent public readback.
