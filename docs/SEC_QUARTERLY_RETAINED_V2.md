@@ -42,9 +42,18 @@ The same manual documents a market-value unit change beginning2023-01-03.
 The field helper marks pre-boundary filing values `USD_THOUSANDS`, later ones
 `USD`, and missing filing dates `UNKNOWN_FILING_DATE`. It preserves the raw value
 and never applies a guessed conversion from a report period or ZIP label.
-Filing dates accept the documented DD-MON-YYYY form and explicit ISO dates;
-invalid or ambiguous forms fail rather than being silently coerced.
+Filing dates accept the documented DD-MON-YYYY form and explicit ISO dates.
+The parser rejects invalid or ambiguous forms. The prepared extractor preserves
+such raw dates, writes a null normalized date and names the parse failure;
+report periods never substitute for filing availability. Orphan child rows stay
+in the source outputs with missing-parent status and unknown availability.
 
-Ten synthetic tests pass using existing dependencies. Actual archived schemas
+The parquet extractor is prepared but has not run on quarterly source archives.
+It retains raw surrogate keys and exact numeric strings, both transaction kinds,
+all owners and source row positions. Actual parquet row counts, schemas and CIK
+sets are checked before publication. A manager CIK is explicitly named as such;
+it never becomes a held-issuer key.
+
+Fourteen synthetic tests pass using existing dependencies. Actual archived schemas
 will be checked before extraction. Historical ownership, acceptance-time coverage,
 fixed-field parquet coverage and task7 completion remain pending. Scoring CLOSED.
