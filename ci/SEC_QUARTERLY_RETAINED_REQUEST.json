@@ -1,7 +1,7 @@
 {
   "version": 2,
   "scope": "SEC_QUARTERLY_FIXED_FIELDS_2020_LATEST",
-  "execute": false,
+  "execute": true,
   "bulk_readback": {
     "release": "sec-bulk-readback-v1-42372758947-1",
     "commit": "c7842549bec75b920f08f7701eccdae5e1aa13d0",
