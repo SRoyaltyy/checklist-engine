@@ -1,6 +1,6 @@
 # Venice progress
 
-Updated 2026-11-07T17:38:59.105Z UTC
+Updated 2026-11-07T17:39:45.889Z UTC
 
 ## Goal
 Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)
@@ -23,10 +23,10 @@ Current subtask: t7
 | t7 | Confirm the current runs list has no reportable nai-* failure outside the do-not-re-report set | doing |  |
 
 ## Last completed work
-Orient only this turn: no new assigned work in the Venice lane beyond passive failure monitoring. The provided runs snapshot still shows the newest run 42332789888 (nai-sec-form13f) as success, and every failed nai-* run in the list (42284432095, 42156926867, 42106074154, 41906860199, 41710121137, plus the Nov 2 superseded-sha batch) is already reported or deliberately deduped. Dispatching one fresh runs() read to confirm no new nai-sec-* / nai-occ-oi-daily failure appeared since that snapshot, before closing task t7. No issue, no comment, no pipeline write this turn.
+Fresh runs(main) list reviewed: no nai-sec-* or nai-occ-oi-daily failure outside the already-reported/deduped set. Newest runs are all green — 42391969592 (world-v2-code-ci, sha 2ba3ebd), 42370489444 (world-v2-code-ci, sha 230ca55), 42344942142 (nai-daily-forward, sha e85547a), 42332789888 (nai-sec-form13f, sha e85547a). The only nai-* failures present are 42284432095 and 42156926867 (both already reported, #220/#221), plus the deliberately unreported 42106074154 / 41906860199 / 41710121137 (same occ_oi_daily breakage) and the Nov 2 superseded-sha batch. t7 closes; lane stays in passive monitoring. No issue, no comment, no pipeline write this turn.
 
 ## Exact next step
-Inspect the returned runs list. If a nai-sec-* or nai-occ-oi-daily run has conclusion=failure with an ID outside {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}, call run_jobs on it for the job ID then report_failure(run_id) once and stop. Otherwise mark t7 done with the returned list as evidence, keep notes unchanged, and close with actions=[] and done=true.
+Remain in passive monitoring. On a future turn, read the fresh runs list; if a nai-sec-* or nai-occ-oi-daily run shows conclusion=failure with an ID outside {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}, call run_jobs for the job id then report_failure(run_id) once and stop. Next expected event: nai-occ-oi-daily scheduled ~19:59 UTC.
 
 ## Blockers
 []
@@ -34,4 +34,4 @@ Inspect the returned runs list. If a nai-sec-* or nai-occ-oi-daily run has concl
 ## Evidence
 ["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221","ba179d2306dbc448f85c9caa6ae07554e07cf192","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739","agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4","8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"]
 
-Turn: mw6osssp-vnm3z52x
+Turn: mw6ou2z5-sa57fr5f
