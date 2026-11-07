@@ -9,7 +9,7 @@ from unittest.mock import patch
 import zipfile
 import pyarrow.parquet as pq
 from ci.sec_quarterly_extract import extract_zip
-from ci.sec_quarterly_readback_core import RowHash,columns,raw_window
+from ci.sec_quarterly_readback_core import RowHash,columns,parent_context,raw_window
 from ci import sec_quarterly_readback as reader
 
 
@@ -68,6 +68,18 @@ class ReadbackTests(unittest.TestCase):
             reader.validate_request(dict(version=1,execute=True,sources={'form345':spec}))
         with self.assertRaisesRegex(ValueError,'request differs'):
             reader.validate_request(dict(version=1,execute='false',sources={}))
+
+    def test_independent_dates_units_and_source_identifier_unknowns(self):
+        row=dict(FILING_DATE='31-DEC-2022',PERIODOFREPORT='31-DEC-2020',CIK='0000000123')
+        common,extra=parent_context(row,'form13f',set())
+        self.assertEqual(common[:3],['31-DEC-2022','2022-12-31','KNOWN_SOURCE_DATE'])
+        self.assertEqual(extra,[row['CIK'],123,'SOURCE_IDENTIFIER_NOT_HISTORICAL_OWNERSHIP','USD_THOUSANDS'])
+        self.assertEqual(parent_context(dict(row,FILING_DATE='2023-01-03'),'form13f',set())[1][-1],'USD')
+        common,extra=parent_context(dict(row,FILING_DATE='31-FEB-2023',CIK='123x'),'form13f',set())
+        self.assertEqual(common[:3],['31-FEB-2023',None,'INVALID_SOURCE_DATE'])
+        self.assertEqual(extra[1:],[None,'INVALID_SOURCE_CIK','UNKNOWN_FILING_DATE'])
+        common,extra=parent_context(dict(row,FILING_DATE=None),'form13f',set())
+        self.assertIsNone(common[1]);self.assertEqual(extra[-1],'UNKNOWN_FILING_DATE')
 
     def test_catalog_preserves_actual_shifted_windows_and_rejects_ambiguous_names(self):
         html='<a href="/files/2020q1_form13f.zip">a</a><a href="/files/01jun2026-31aug2026_form13f.zip">b</a>'

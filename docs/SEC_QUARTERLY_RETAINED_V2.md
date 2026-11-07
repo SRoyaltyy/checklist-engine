@@ -1,14 +1,18 @@
-# SEC quarterly structured-source preparation
+# SEC quarterly structured sources and complete readback
 
-Task7 is pending. This branch prepares strict readers and a disabled source
-profile workflow. All54official source ZIPs have now been acquired and profiled;
-the fixed-field data run and independent data readback remain pending.
+Task7 is pending independent readback. All54official source ZIPs have been
+acquired and profiled. Fixed-field run42393939287 is active at
+`43a5fe730053b725a727e9c0467b24c6b567c32d`: Form345 succeeded with6,721,925rows
+across all27windows; Form13F is still running. The independently downloaded
+Form345 final receipt is7,246,456bytes, SHA256
+`dbda3df9f0214e07c095cd01103a32c71c9887a3164fd6d1aa0dec3ee215eb71`.
 Task6 is complete on main `2ba3ebdf` (PR218), with producer42370671052 and
 independent readback42372758947 both successful.
 Activation requires a frozen PASS readback receipt and its successful actual
 GitHub run; the collector checks both before any SEC request. This prerequisite
-is now bound to the exact PASS receipt; both quarterly execution switches remain
-false pending current GitHub checks and initial fixed-field extraction.
+is bound to the exact PASS receipt. The source-profile switch is false; the
+initial fixed-field switch is true for the existing run. Neither source profiles
+nor a single successful matrix leg prove the complete task.
 
 The catalog reads actual HTTPS ZIP links from the official
 [insider](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets)
@@ -51,15 +55,41 @@ such raw dates, writes a null normalized date and names the parse failure;
 report periods never substitute for filing availability. Orphan child rows stay
 in the source outputs with missing-parent status and unknown availability.
 
-The parquet extractor is prepared but has not run on quarterly source archives.
+The parquet extractor runs on quarterly source archives on GitHub Actions.
 It retains raw surrogate keys and exact numeric strings, both transaction kinds,
 all owners and source row positions. Actual parquet row counts, schemas and CIK
 sets are checked before publication. A manager CIK is explicitly named as such;
 it never becomes a held-issuer key.
 
-Eighteen synthetic tests pass using existing dependencies, including a regression
-against every observed archive header. Historical ownership, acceptance-time coverage,
-fixed-field parquet coverage and task7 completion remain pending. Scoring CLOSED.
+Twenty-four synthetic tests pass using existing dependencies, including a
+regression against every observed archive header and independent public-release
+readback fixtures. Historical ownership, acceptance-time coverage and complete
+independent parquet verification remain unproven. Scoring CLOSED.
+
+## Independent audit
+
+`sec-quarterly-public-readback` runs separately from acquisition and has no SEC
+relay credentials. Its request remains false until both producer legs and the
+actual source run succeed and both final receipt fingerprints are frozen.
+The reader authenticates actual run/attempt/commit, release inventories, the
+retained identity baseline, original source-profile receipts, acquisition times
+and every original ZIP fingerprint. It independently parses the official index
+to require every published source window.
+
+The independent core imports no producer transformation code. It reconstructs
+every selected source cell and annotation, then checks all published parquet
+rows and every field, in source order, using canonical row hashes. Checks include
+all owners, both transaction/holding kinds, orphan status, exact surrogate keys
+and numeric strings, filing dates, filing-dependent13Funits and manager/issuer
+CIK roles. Actual parquet schemas, row counts, CIK sets and part sequences are
+also verified. Unbound, missing or unread assets fail the audit. Synthetic tests
+prove that a changed financial value fails even with internally consistent new
+asset hashes and unchanged row counts.
+
+The complete ZIPs retain excluded prose as immutable evidence; prose does not
+become a feature. This audit proves source extraction, not historical ticker
+ownership or point-in-time stock joins. Neither a report period nor the filename
+window supplies an unknown filing or acceptance timestamp.
 
 ## Actual source profiles
 
