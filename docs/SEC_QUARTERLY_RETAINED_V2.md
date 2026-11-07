@@ -2,10 +2,12 @@
 
 Task7 is pending. This branch prepares strict readers and a disabled source
 profile workflow; no quarterly download or fixed-field parquet run has executed.
-It follows the completed bulk snapshot and independent readback from task6.
+Task6 is complete on main `2ba3ebdf` (PR218), with producer42370671052 and
+independent readback42372758947 both successful.
 Activation requires a frozen PASS readback receipt and its successful actual
 GitHub run; the collector checks both before any SEC request. This prerequisite
-is currently unbound, so quarterly acquisition cannot start.
+is now bound to the exact PASS receipt; both quarterly execution switches remain
+false pending current GitHub checks and initial source-profile activation.
 
 The catalog reads actual HTTPS ZIP links from the official
 [insider](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets)
@@ -54,6 +56,6 @@ all owners and source row positions. Actual parquet row counts, schemas and CIK
 sets are checked before publication. A manager CIK is explicitly named as such;
 it never becomes a held-issuer key.
 
-Fourteen synthetic tests pass using existing dependencies. Actual archived schemas
+Sixteen synthetic tests pass using existing dependencies. Actual archived schemas
 will be checked before extraction. Historical ownership, acceptance-time coverage,
 fixed-field parquet coverage and task7 completion remain pending. Scoring CLOSED.

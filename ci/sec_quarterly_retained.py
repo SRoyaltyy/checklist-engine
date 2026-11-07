@@ -48,6 +48,7 @@ def run(kind,root):
     prerequisite=bulk_prerequisite(request['bulk_readback'],root)
     selected,identity_source=retained_ciks(prerequisite,root)
     spec=request['profile_sources'].get(kind) if event=='push' else None
+    if event=='push' and spec is None:raise ValueError('initial quarterly extraction requires the verified source profile cache')
     if spec:
         cache=ProfileCache(kind,spec,root);windows=[r['window'] for r in cache.windows]
     else:

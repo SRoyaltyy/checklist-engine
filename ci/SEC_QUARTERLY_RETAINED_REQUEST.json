@@ -2,6 +2,10 @@
   "version": 2,
   "scope": "SEC_QUARTERLY_FIXED_FIELDS_2020_LATEST",
   "execute": false,
-  "bulk_readback": null,
+  "bulk_readback": {
+    "release": "sec-bulk-readback-v1-42372758947-1",
+    "commit": "c7842549bec75b920f08f7701eccdae5e1aa13d0",
+    "receipt_sha256": "2051171d632020bc6f1c9de2025468c97e2d45b5db20b64ccc0cd31255a2475e"
+  },
   "profile_sources": {}
 }
