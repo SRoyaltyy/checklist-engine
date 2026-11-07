@@ -103,6 +103,18 @@ class HTTPTests(unittest.TestCase):
             with self.assertRaises(c.SourceError):c.get(SOURCE)
         self.assertEqual(network.call_count,1)
 
+    def test_rate_denial_preserves_retry_after_without_retrying_in_transport(self):
+        error=urllib.error.HTTPError(SOURCE,429,'Too Many Requests',{'Retry-After':'900'},io.BytesIO(b'Wait'))
+        with patch.object(c.urllib.request,'urlopen',side_effect=error) as network:
+            with self.assertRaises(c.SourceError) as caught:c.get(SOURCE)
+        self.assertEqual(caught.exception.evidence['retry_after_seconds'],900)
+        self.assertEqual(network.call_count,1)
+
+    def test_retry_after_date_and_invalid_header(self):
+        self.assertGreater(c.retry_after_seconds({'Retry-After':'Wed, 21 Oct 2099 07:28:00 GMT'}),601)
+        self.assertIsNone(c.retry_after_seconds({'Retry-After':'invalid'}))
+        self.assertIsNone(c.retry_after_seconds({}))
+
     def test_transient_failure_can_retry_politely(self):
         error=urllib.error.HTTPError(SOURCE,503,'Unavailable',{},io.BytesIO(b'Temporary'))
         with patch.object(c.urllib.request,'urlopen',side_effect=[error,io.BytesIO(b'ok')]) as network,patch.object(c.time,'sleep') as sleep:
