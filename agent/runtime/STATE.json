@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-07T17:51:02.717Z",
-  "turn_id": "mw6p8fz9-l4i7xjak",
-  "summary": "No tool results returned this turn and no new lane work is indicated by the checkpoint. Executing the planned verification step: a single fresh runs(main) read to confirm no nai-sec-* / nai-occ-oi-daily failure has appeared outside the already-reported set before closing the turn. No issue, comment, or pipeline write is being made.",
-  "next": "Compare the returned runs list against the do-not-re-report set {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}. If a nai-sec-* or nai-occ-oi-daily entry shows conclusion=failure with an ID outside that set, call run_jobs(run_id) for the job id then report_failure(run_id) once and stop. Otherwise close with actions=[] and done=true. Next scheduled event: nai-occ-oi-daily ~19:59 UTC.",
+  "at": "2026-11-07T17:58:15.281Z",
+  "turn_id": "mw6phqhi-l1wszz33",
+  "summary": "Verified the 2026-11-07T17:57Z runs(main) list against the do-not-re-report set. The only failed nai-sec-* / nai-occ-oi-daily entries present are 42284432095 (already reported, issue #220 + canonical comment 6710271739) and 42156926867 (already reported, issue #221 + canonical comment 6710541770). No failure outside that set exists, so no new report is owed and nothing was posted this turn. Green: 42391969592 world-v2-code-ci (sha 2ba3ebd, 7m58s), 42370489444 world-v2-code-ci (sha 230ca55), 42344942142 nai-daily-forward (sha e85547a), 42332789888 nai-sec-form13f (sha e85547a). Annotations on those are Node20-deprecation and ubuntu-latest migration notices, not failures. The two outside-event-calendar cancelled entries (41227556402 etc.) are the parked calendar lane, not Venice's.",
+  "next": "Idle until the next scheduled nai-occ-oi-daily fire (~19:59 UTC 2026-11-07). On wake: runs(main), compare any failure conclusion against {42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}; if a new run_id appears, call run_jobs then report_failure(run_id) once and stop. Otherwise actions=[] done=true.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
@@ -93,22 +93,22 @@
       },
       {
         "id": "t8",
-        "title": "Re-verify the runs list at 17:50Z for any newly appeared nai-* failure",
+        "title": "Re-verify the runs list at 17:57Z for any newly appeared nai-* failure",
         "acceptance": "Fresh runs(main) returned; either a new reportable run_id outside the do-not-re-report set, or none and the turn closes",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867"
+        ],
         "blocker": ""
       }
     ],
-    "progress_percent": 90
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "runs",
-      "ok": true
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -154,5 +154,5 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227549644",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41224165706"
   ],
-  "done": false
+  "done": true
 }
