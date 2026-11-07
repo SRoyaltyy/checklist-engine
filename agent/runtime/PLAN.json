@@ -1,6 +1,6 @@
 {
-  "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures (TODO.md Venice lane)",
-  "why": "Sole remaining assigned lane; GPT owns fixes, Venice reports run ID + error once then stops",
+  "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures once with run ID + error (TODO.md Venice lane)",
+  "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership",
   "gantt_row": "Venice lane (thin chatbot poke)",
   "current_task": "t2",
   "tasks": [
@@ -9,21 +9,34 @@
       "title": "Confirm current Venice lane text in TODO.md and check recent runs for failures",
       "acceptance": "TODO.md Venice section read; failed nai-* run identified by run_id",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+      ],
       "blocker": ""
     },
     {
       "id": "t2",
       "title": "Report failed nai-occ-oi-daily run 42284432095 once with run ID + error",
-      "acceptance": "Issue URL containing run_id 42284432095 and its error text, dedupe_key=run-42284432095",
+      "acceptance": "Issue URL containing run_id 42284432095 plus actual error text, dedupe_key=run-42284432095",
       "weight": 2,
       "status": "doing",
       "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/issues/220",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t3",
+      "title": "Correct issue #220 with exact job-log error if it differs from the source-based inference",
+      "acceptance": "One comment on #220 quoting the returned log text, or confirmation that the inference matches",
+      "weight": 1,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 0
+  "progress_percent": 25
 }
