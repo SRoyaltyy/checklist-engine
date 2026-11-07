@@ -87,13 +87,14 @@ async function runtimeContext(env) {
   const section = todo.text.match(/^##\s+Venice\b[^\n]*\n[\s\S]*?(?=^##\s|$(?![\s\S]))/m);
   if (!section) throw new Error('No Venice section in main/TODO.md; refusing to invent a task');
   const ml = method.text.split('\n');
-  const instructions = ml.slice(0,55).join('\n').slice(0,9000);
-  const specific = ml.map((text,i)=>({line:i+1,text})).filter(x=>/James.*Venice|Venice.*James|^>.*TODO\.md/.test(x.text)).slice(0,8).map(x=>`L${x.line}: ${x.text}`).join('\n').slice(0,8500);
+  const instructions = ml.slice(0,22).join('\n').slice(0,6000);
+  const specific = 'Historical lane assignments are omitted to prevent stale work. Use grep/read_file on main/METHODOLOGY.md for task-specific rules. The active task list is the current main/TODO.md Venice section.';
   return { ok:true, version:6, at:new Date().toISOString(), branch,
     instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific},
+    available_evidence:[`TODO.md@${todo.sha}`,`METHODOLOGY.md@${method.sha}`],
     progress:progress?.text || 'No v6 progress recorded yet. Begin with the current Venice lane; old SEC collector work was reassigned.',
     state:state ? JSON.parse(state.text) : null,
-    runs:runs.ok ? (runs.body.workflow_runs||[]).filter(r=>/nai-sec-|nai-occ-oi-daily/.test(r.path||r.name||'')).slice(0,15).map(r=>({id:r.id,path:r.path,name:r.name,status:r.status,conclusion:r.conclusion,sha:r.head_sha,url:r.html_url,created_at:r.created_at})) : {error:runs.status}
+    runs:runs.ok ? (runs.body.workflow_runs||[]).filter(r=>/nai[-_]sec[-_]|nai[-_]occ[-_]oi[-_]daily/.test(r.path||r.name||'')).slice(0,15).map(r=>({id:r.id,path:r.path,name:r.name,status:r.status,conclusion:r.conclusion,sha:r.head_sha,url:r.html_url,created_at:r.created_at})) : {error:runs.status}
   };
 }
 async function runtimeSave(env, data) {
@@ -180,6 +181,13 @@ async function runtimeTool(env, command) {
         if(!/^\d+$/.test(String(args.check_run_id)))throw new Error('check_run_id required');
         const r=await gh(env,`/check-runs/${args.check_run_id}/annotations?per_page=30`);if(!r.ok)throw new Error(`annotations: ${r.status}`);
         result={ok:true,annotations:r.body};break;
+      }
+      case 'job_log': {
+        if(!/^\d+$/.test(String(args.job_id)))throw new Error('job_id required');
+        let r=await fetch(`https://api.github.com/repos/${repo(env)}/actions/jobs/${args.job_id}/logs`,{redirect:'manual',headers:{Authorization:`Bearer ${env.GITHUB_TOKEN}`,'User-Agent':'venice-doorman'}});
+        if(r.status===302){const u=new URL(r.headers.get('location'));if(u.protocol!=='https:'||!/(\.blob\.core\.windows\.net|\.actions\.githubusercontent\.com|\.githubusercontent\.com)$/.test(u.hostname))throw new Error('Unexpected log download host');r=await fetch(u,{redirect:'error'});}
+        if(!r.ok)throw new Error(`job log: ${r.status}`);
+        const text=await r.text();result={ok:true,job_id:args.job_id,url:`https://github.com/${repo(env)}/actions/runs/${args.run_id||''}/job/${args.job_id}`,text:text.slice(-22000),truncated:text.length>22000};break;
       }
       case 'create_issue': case 'comment_issue': case 'create_pr': {
         const dedupe=String(args.dedupe_key||'').replace(/[^A-Za-z0-9._-]/g,'').slice(0,100);
