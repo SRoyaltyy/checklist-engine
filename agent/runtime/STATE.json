@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-07T18:12:34.524Z",
-  "turn_id": "mw6pzwsx-5ex539nh",
-  "summary": "Run 42399694729 is now reported once, verified, at issue #223: failed step 'Run python scripts/nai/occ_oi_daily.py', skipped step 'Run python scripts/nai/oi_probe.py', exact error lines 'Traceback (most recent call last):' / \"ValueError: invalid literal for int() with base 10: ''\" / '##[error]Process completed with exit code 1.' (job 128484582301, sha 2ba3ebd). No pipeline code touched. Checkpointing that URL to agent/PROGRESS.md and re-checking runs(main) for any newer nai-* failure.",
-  "next": "Verify write_file returns a new commit sha for agent/PROGRESS.md on venice/sec-options-pipelines and that the fresh runs(main) list contains no reportable nai-* failure outside the extended do-not-re-report set (now including 42399694729); then close the turn with actions=[] if clean.",
+  "at": "2026-11-07T18:13:43.768Z",
+  "turn_id": "mw6q15m6-b0etyj06",
+  "summary": "Checkpoint landed: agent/PROGRESS.md written on venice/sec-options-pipelines at commit aa3fab0cdd1dfe27b8acd27a934be49230db700c (blob 431e9399e614e976fb11d4d359a65b12773a0cbf), citing issue #223 for run 42399694729. Fresh runs(main) sweep returned 30 runs; the only failure at the top of the list is 42399694729 itself, already reported at #223. Every other failure in the list (42284432095, 42156926867, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359) is in the do-not-re-report set. No new reportable nai-* failure exists, so the lane has no open work this wake.",
+  "next": "No action — close this turn. Bridge wakes in ~5 minutes; then re-run runs(main) and report only a failure whose run_id is outside the do-not-re-report set {42284432095, 42156926867, 42399694729, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
@@ -127,26 +127,17 @@
         "title": "Checkpoint agent/PROGRESS.md with issue #223 and re-sweep runs(main) for newer nai-* failures",
         "acceptance": "write_file returns a commit sha naming issues/223, and fresh runs(main) shows no reportable run_id outside the extended do-not-re-report set",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+        ],
         "blocker": ""
       }
     ],
-    "progress_percent": 92
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "write_file",
-      "ok": true,
-      "path": "agent/PROGRESS.md",
-      "commit": "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
-      "verified": true
-    },
-    {
-      "tool": "runs",
-      "ok": true
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -196,5 +187,5 @@
     "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
   ],
-  "done": false
+  "done": true
 }
