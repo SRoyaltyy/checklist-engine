@@ -1,6 +1,6 @@
 {
   "pending": true,
-  "id": "2026-11-07T03:10:42.675Z",
-  "set_at": "2026-11-07T03:10:42.675Z",
-  "reason": "run 42331511598 failed (nai-verdict2)"
+  "id": "2026-11-07T03:26:42.403Z",
+  "set_at": "2026-11-07T03:26:42.403Z",
+  "reason": "heartbeat: interval elapsed"
 }
