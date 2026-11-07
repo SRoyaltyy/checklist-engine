@@ -4,7 +4,8 @@ Task5 proved SEC source access in [run42260180822](https://github.com/SRoyaltyy/
 merged and read back on main as `e85547a` (PR217). This next collector downloads
 the official current ticker maps, `submissions.zip` and `companyfacts.zip` through
 that same verified relay. It runs as ordinary scheduled GitHub Actions code,
-without an AI service call. Actual complete bulk-run evidence is pending.
+without an AI service call. The complete producer has succeeded; independent
+public readback is running, as recorded below.
 
 ## Bound cohort and identity meaning
 
@@ -127,8 +128,8 @@ publication. The initial local attempt hit Windows' restricted default temporary
 folder; rerunning with a verified workspace temporary directory passed. No local
 dependency installation or market-data calculation was performed.
 
-Actual run ID, released coverage and independent public readback will be added
-after the runner finishes. **Task6 remains unchecked. World gate NOT_PROVEN;
+Actual producer coverage is recorded below; independent public readback remains
+pending. **Task6 remains unchecked. World gate NOT_PROVEN;
 scoring CLOSED.**
 
 ## First actual run and source-observation correction
@@ -222,6 +223,33 @@ stage from run42368480194 and reads the exact retained companyfacts ZIP from
 the diagnostic release. Every input keeps its original acquisition time and
 release/commit/receipt lineage. This push requires no new SEC request; scheduled
 and manual runs still acquire fresh inputs.
+
+## Successful complete producer
+
+[Run42370671052/attempt1](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370671052)
+succeeded at `ce282c977dd91a22cbf5340caa1abba435f682e2`. Its public
+`nai-sec-bulk-v2-42370671052-1` release contains246assets, including the exact
+[295,904-byte final receipt](SEC_BULK_RETAINED_SUCCESS_42370671052_V2.json), SHA256
+`695fd933f5959c48f32a49ce12d0678bbfcd088290f6b1097cea27e58f7b340b`,
+independently downloaded/hash-checked before readback activation.
+
+Submissions retain6,446,806observations/6,446,784distinct accessions for all5,103
+retrieval CIKs, with5,103entity rows and7,772raw members. Companyfacts retain
+68,436,577numeric facts in135parquet chunks:4,976source members,4,885populated
+CIKs,91source CIKs without numeric output and127absent retrieval CIKs. All nine
+missing-body-CIK cases and seven empty objects remain explicit; the two nonempty
+filename-only records contribute exactly two facts. No fact is missing its filed
+date, and no nonnumeric values were silently coerced. Fact filing dates range
+2009-04-15 through2026-11-06. This supplies facts for4,941unique-CIK ticker
+matches (4,943names including conflicting retrieval candidates), with unresolved
+identities and historical ownership still unproven.
+
+Recovery reused the authenticated complete submissions stage and exact cached
+companyfacts ZIP; original source times and lineage are preserved. Acquisition
+is disabled. Readback
+[42372758947](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42372758947)
+is bound to this exact producer/attempt/commit/final receipt. Producer success
+does not replace that independent audit. Task6 remains unchecked pending it.
 
 ## Independent public readback
 
