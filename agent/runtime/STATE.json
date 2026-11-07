@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-07T12:53:48.632Z",
-  "turn_id": "mw6emojz-d3eqbyz4",
-  "summary": "Read scripts/nai/occ_oi_daily.py (main, sha 3633301) — the failing step's first network call is unguarded: line 8 delo = get('https://marketdata.theocc.com/delo-download?...') has no try/except, as do ensure_release/assets/upload, so any HTTP or token error terminates the script with a traceback and exit code 1. Per-ticker fetches inside the loop are guarded, so the crash is upstream of the loop (DELO download / release setup), not per-symbol. No issue opened yet; run 42284432095 job URL is https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870.\nTool outcomes: [{\"tool\":\"run_status\",\"result\":{\"ok\":true,\"id\":42284432095,\"status\":\"completed\",\"conclusion\":\"failure\",\"url\":\"https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095\",\"sha\":\"e85547ac99a28737321c063cf15cd96729c229ce\",\"branch\":\"main\"}}]",
-  "next": "Check run_status(42284432095) for any log excerpt; then open one report issue with dedupe_key=run-42284432095 naming run ID, job URL, failing step and the unguarded line-8 DELO call.",
+  "at": "2026-11-07T12:54:15.882Z",
+  "turn_id": "mw6en5h6-59qvsoi2",
+  "summary": "Run 42284432095 confirmed failed via run_status (completed/failure, sha e85547ac, branch main, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095); job 128121492870 failed only at step 'Run python scripts/nai/occ_oi_daily.py' with 'Process completed with exit code 1', oi_probe skipped. Bridge exposes no job log text, so the crash site was inferred from source: scripts/nai/occ_oi_daily.py@3633301 line 8 calls the OCC DELO download unguarded, and ensure_release/assets/upload are also unguarded, so the failure is upstream of the guarded per-ticker loop. Opening the single report issue now.\nTool outcomes: [{\"tool\":\"create_issue\",\"result\":{\"ok\":true,\"number\":220,\"url\":\"https://github.com/SRoyaltyy/checklist-engine/issues/220\"}}]",
+  "next": "Open issue with dedupe_key=run-42284432095 (run ID + job URL + failing step + exit 1 + unguarded line 8); after the returned issue URL, mark t2 done and stop.",
   "plan": {
     "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures (TODO.md Venice lane)",
     "why": "Sole remaining assigned lane; GPT owns fixes, Venice reports run ID + error once then stops",
@@ -35,7 +35,8 @@
   },
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
+    "https://github.com/SRoyaltyy/checklist-engine/issues/220"
   ],
   "done": false
 }
