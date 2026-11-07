@@ -2154,6 +2154,164 @@ def test_evaluate_stack_flip(grid):
         assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
 
 
+def test_evaluate_days_since_partial_flip(grid):
+    span = 260                        # 200-bar SMA seed + 10-bar window + slack
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|moving_averages|MA_group(10/20/50/200)|'
+                          'days_since_partial_flip|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+
+    def bars_for(closes):
+        return _bars_hl([(c, c + 1.5, c - 1.0, c) for c in closes])
+
+    # Steady uptrend: bull order holds from the first seeded bar on, so the
+    # stack never changed state -> none.
+    bars = bars_for([100.0 + 0.2 * i for i in range(span)])
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['lt5'], bars, setup, last).answer == 'NO'
+    # 250-bar uptrend then a 10-bar sharp decline: the last MA-pair flip is
+    # within the final 5 bars -> lt5.
+    closes = [100.0 + 0.2 * i for i in range(250)]
+    c = closes[-1]
+    for _ in range(10):
+        c -= 3.0
+        closes.append(c)
+    bars = bars_for(closes)
+    assert evaluate_master(defs['lt5'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['b5_20'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['gt20'], bars, setup, last).answer == 'NO'
+    # One-bar -25 dip 10 bars before the end (needs > ~18 to flip MA10/MA20):
+    # the cross back up lands ~8 bars from the end -> b5_20.
+    closes = [100.0 + 0.2 * i for i in range(span)]
+    closes[250] -= 25.0
+    bars = bars_for(closes)
+    assert evaluate_master(defs['b5_20'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['lt5'], bars, setup, last).answer == 'NO'
+    assert evaluate_master(defs['gt20'], bars, setup, last).answer == 'NO'
+    # Same dip 30 bars before the end -> gt20.
+    closes = [100.0 + 0.2 * i for i in range(span)]
+    closes[220] -= 25.0
+    bars = bars_for(closes)
+    assert evaluate_master(defs['gt20'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['b5_20'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_rejection(grid):
+    span = 300                        # 252-bar reference + 10-bar window + ATR14
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|extremes|52w_range|rejection|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    flat = lambda c: (c, c + 1.0, c - 1.0, c)   # noqa: E731
+    # New 52w high at the window open then a fade well over 2 ATR -> yes.
+    bars = _bars_hl([flat(100)] * 290 + [(100, 110, 99, 103)] + [flat(100)] * 9)
+    assert evaluate_master(defs['yes'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['no'], bars, setup, last).answer == 'NO'
+    # Same touch but price holds near the high -> no.
+    bars = _bars_hl([flat(100)] * 290 + [(100, 110, 99, 103)]
+                    + [(108, 109, 107, 108)] * 9)
+    assert evaluate_master(defs['no'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['yes'], bars, setup, last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_current_level_touches(grid):
+    row, variant = _q(grid, 'B|support_resistance|prior_pivots|'
+                          'current_level_touches|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    flat = lambda c: (c, c + 1.0, c - 1.0, c)   # noqa: E731
+    # 30 flat bars: the window is full of touches that all hold (the last
+    # bars' fate windows truncate and are not counted) -> 3+_held.
+    span = 30
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    bars = _bars_hl([flat(100)] * span)
+    assert evaluate_master(defs['3+_held'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['1-2_held'], bars, setup, last).answer == 'NO'
+    # Only bar 26 of the window reaches the level and it holds; 27-29's fate
+    # windows truncate -> not counted -> 1-2_held.
+    bars = _bars_hl([flat(105)] * 26 + [flat(100)] * 4)
+    assert evaluate_master(defs['1-2_held'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['3+_held'], bars, setup, last).answer == 'NO'
+    # Bar 24 dips through the level zone, bars 25+ gap up and hold -> one
+    # counted touch that broke up -> broke_up_after_1-2.
+    bars = _bars_hl([flat(105)] * 24 + [(110, 111, 105, 106)]
+                    + [(115, 115.5, 114.5, 115)] * 4 + [flat(110)])
+    assert evaluate_master(defs['broke_up_after_1-2'], bars, setup,
+                           last).answer == 'YES'
+    assert evaluate_master(defs['broke_up_after_3+'], bars, setup,
+                           last).answer == 'NO'
+    assert evaluate_master(defs['1-2_held'], bars, setup, last).answer == 'NO'
+    # Mirror: bar 24 spikes up through the zone, bars 25+ collapse and hold
+    # -> broke_down_after_1-2.
+    bars = _bars_hl([flat(105)] * 24 + [(101, 112, 100.5, 111), (98, 99, 97.5, 98)]
+                    + [(97, 97.5, 96.5, 97)] * 3 + [flat(100)])
+    assert evaluate_master(defs['broke_down_after_1-2'], bars, setup,
+                           last).answer == 'YES'
+    assert evaluate_master(defs['broke_down_after_3+'], bars, setup,
+                           last).answer == 'NO'
+    # Touches exist only in the final two bars and every fate window runs
+    # past the stream end -> NOT_EVALUABLE (not "none").
+    span = 25
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    bars = _bars_hl([flat(105)] * 23 + [flat(100)] * 2)
+    for d in defs.values():
+        assert evaluate_master(d, bars, setup, last).answer == 'NOT_EVALUABLE'
+
+
+def test_evaluate_wick_evolution(grid):
+    span = 15                         # 10-bar window (bars 5..14) + 5-bar seg
+    setup = date(2024, 3, 1) + timedelta(days=span + 1)
+    last = 100 + span - 1
+    row, variant = _q(grid, 'B|candles|OHLC|wick_evolution|1x10')
+    defs = _by_outcome(bind_master_question(row, variant))
+    # Window low sits in the 5-bar segment and lower wicks grow 0.2 -> 0.5
+    # (> 1.25x); the window high is outside the segment and bodies do not
+    # shrink -> lower_wicks_longer_near_low only.
+    bars = _bars_hl([(100, 101, 99, 100)] * 5 + [(102, 103, 101.9, 102.5)] * 5
+                    + [(102, 102.5, 101.8, 102)] * 2
+                    + [(102, 102.3, 101.5, 101.9)] * 3)
+    assert evaluate_master(defs['lower_wicks_longer_near_low'], bars, setup,
+                           last).answer == 'YES'
+    assert evaluate_master(defs['upper_wicks_longer_near_high'], bars, setup,
+                           last).answer == 'NO'
+    assert evaluate_master(defs['bodies_shrinking_near_extreme'], bars, setup,
+                           last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # Mirror: window high in the segment, upper wicks grow 0.3 -> 0.8.
+    bars = _bars_hl([(100, 101, 99, 100)] * 5 + [(97, 97.5, 96, 96.5)] * 5
+                    + [(98, 98.3, 97.8, 98)] * 2
+                    + [(98, 98.8, 97.9, 98.1)] * 3)
+    assert evaluate_master(defs['upper_wicks_longer_near_high'], bars, setup,
+                           last).answer == 'YES'
+    assert evaluate_master(defs['lower_wicks_longer_near_low'], bars, setup,
+                           last).answer == 'NO'
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'NO'
+    # Bodies shrink 1.0 -> 0.1 (< 0.8x) with the window high in the segment;
+    # the segment's upper wicks start at 0 so the ratio test cannot fire.
+    bars = _bars_hl([(100, 101, 99, 100)] * 5 + [(100, 100.6, 99.4, 100)] * 5
+                    + [(100, 101, 100, 101)] * 2
+                    + [(100.5, 101.5, 100.4, 100.6)] * 3)
+    assert evaluate_master(defs['bodies_shrinking_near_extreme'], bars, setup,
+                           last).answer == 'YES'
+    assert evaluate_master(defs['lower_wicks_longer_near_low'], bars, setup,
+                           last).answer == 'NO'
+    assert evaluate_master(defs['upper_wicks_longer_near_high'], bars, setup,
+                           last).answer == 'NO'
+    # Uniform bars: both extremes sit outside the segment, ratios constant.
+    bars = _bars_hl([(100, 101, 99, 100)] * span)
+    assert evaluate_master(defs['none'], bars, setup, last).answer == 'YES'
+    assert evaluate_master(defs['lower_wicks_longer_near_low'], bars, setup,
+                           last).answer == 'NO'
+    for d in defs.values():
+        assert evaluate_master(d, {}, setup, last).answer == 'NOT_EVALUABLE'
+
+
 def _stage_root(tmp_path):
     for rel in (GRID, QUESTIONS, TREE, LADDERS, SCALAR_PROOF, DICTIONARY, SETTINGS):
         src = Path(ROOT) / rel
