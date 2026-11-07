@@ -1,7 +1,7 @@
 // Venice web runtime 6.0.0. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.1.1', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.1.2', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -30,8 +30,8 @@ return (function (gm, get, set, win, doc, config) {
   const value=e=>e.tagName==='TEXTAREA'?e.value:e.innerText||e.textContent||'';
   function fill(e,text){e.focus();if(e.tagName==='TEXTAREA')Object.getOwnPropertyDescriptor(win.HTMLTextAreaElement.prototype,'value').set.call(e,text);else {const selection=win.getSelection(),range=doc.createRange();range.selectNodeContents(e);selection.removeAllRanges();selection.addRange(range);if(!doc.execCommand('insertText',false,text))e.textContent=text;selection.removeAllRanges();}e.dispatchEvent(new win.Event('input',{bubbles:true}));}
   function sendButton(){
-    const scope=doc.querySelector('[data-testid="minds-chat-input-actions"]')||composer()?.closest('[data-testid="minds-chat-dropzone"]');
-    const buttons=[...(scope||doc).querySelectorAll('button')].filter(e=>visible(e)&&!e.disabled);
+    const scope=doc.querySelector('[data-testid="minds-chat-input-actions"]')||composer()?.closest('form')||composer()?.closest('[data-testid="minds-chat-dropzone"]');
+    const buttons=[...(scope||doc).querySelectorAll('button')].filter(e=>visible(e)&&!e.disabled&&e.id!=='venice-runtime-v6');
     return buttons.find(e=>/send|submit/i.test(label(e)))||buttons.find(e=>e.querySelector('svg.lucide-arrow-up,svg.lucide-send,svg[data-icon="arrow-up"]'))||null;
   }
   function generating(){return [...doc.querySelectorAll('button')].some(e=>visible(e)&&/stop generating|stop response|stop generation|minds-chat-stop|^stop$/i.test(label(e)));}
