@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t7",
+  "current_task": "t8",
   "tasks": [
     {
       "id": "t1",
@@ -74,13 +74,26 @@
     },
     {
       "id": "t7",
-      "title": "Confirm the current runs list has no reportable nai-* failure outside the do-not-re-report set",
-      "acceptance": "Fresh runs list reviewed; either a new reportable run_id is identified, or none exists and the turn closes with actions=[]",
+      "title": "Confirm the 17:39Z runs list had no reportable nai-* failure outside the do-not-re-report set",
+      "acceptance": "Runs list reviewed; no new reportable run_id; turn closed with actions=[]",
+      "weight": 1,
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t8",
+      "title": "Re-verify the runs list at 17:50Z for any newly appeared nai-* failure",
+      "acceptance": "Fresh runs(main) returned; either a new reportable run_id outside the do-not-re-report set, or none and the turn closes",
       "weight": 1,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 88
+  "progress_percent": 90
 }
