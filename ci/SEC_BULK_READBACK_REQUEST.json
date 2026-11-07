@@ -1,5 +1,10 @@
 {
   "version": 1,
-  "execute": false,
-  "source": null
+  "execute": true,
+  "source": {
+    "run": "42370671052",
+    "attempt": "1",
+    "commit": "ce282c977dd91a22cbf5340caa1abba435f682e2",
+    "receipt_sha256": "695fd933f5959c48f32a49ce12d0678bbfcd088290f6b1097cea27e58f7b340b"
+  }
 }
