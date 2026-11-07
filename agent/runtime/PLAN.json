@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t8",
+  "current_task": "t9",
   "tasks": [
     {
       "id": "t1",
@@ -98,7 +98,16 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t9",
+      "title": "Re-verify the runs list at 18:03Z for any newly appeared nai-* failure",
+      "acceptance": "Fresh runs(main) returned; either a new reportable run_id outside the do-not-re-report set, or none and the turn closes",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 90
 }
