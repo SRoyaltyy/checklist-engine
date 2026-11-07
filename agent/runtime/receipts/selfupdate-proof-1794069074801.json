@@ -1,1 +1,1 @@
-{"id":"selfupdate-proof-1794069074801","action":"deploy_worker","args":{"branch":"venice/sec-options-pipelines"},"status":"running","at":"2026-11-07T16:31:17.164Z"}
+{"id":"selfupdate-proof-1794069074801","action":"deploy_worker","args":{"branch":"venice/sec-options-pipelines"},"status":"done","at":"2026-11-07T16:31:22.833Z","result":{"ok":true,"commit":"a09283db917b2cb4d0fff71f2254cf6ae689c917","deployment":{"v":10,"ok":true,"target":"venice-doorman","commit":"a09283db917b2cb4d0fff71f2254cf6ae689c917","bindings_preserved":true,"version":"venice-doorman"}}}
