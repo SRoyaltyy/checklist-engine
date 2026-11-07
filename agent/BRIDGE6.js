@@ -1,7 +1,7 @@
 // Venice web runtime 6.0.0. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.0.0', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.1.0', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -9,6 +9,7 @@ return (function (gm, get, set, win, doc, config) {
   let s;
   try {s=JSON.parse(get(STORE,'null'));}catch{ s=null; }
   if(!s||s.version!==6)s={version:6,phase:'idle',enabled:true,chatTurns:0,chatChars:0,results:[],nextAt:0,rollover:true};
+  if(s.runtimeBuild!==VERSION){if(win.location.pathname==='/chat/classic'&&s.phase==='waiting'){s.phase='idle';s.rollover=false;s.nextAt=0;s.prompt=null;s.packet=null;s.actionIndex=0;}s.runtimeBuild=VERSION;}
   const persist=()=>{if(leaseHeld&&!stopped)set(STORE,JSON.stringify(s));};
   function later(fn,ms){const id=win.setTimeout(()=>{timers.delete(id);if(!stopped)fn();},ms);timers.add(id);return id;}
   function note(text){console.log('[venice6] '+text);s.lastStatus=text;paint();}
@@ -49,7 +50,7 @@ return (function (gm, get, set, win, doc, config) {
   function paint(){badge.textContent=`V6 ${s.enabled?'ON':'PAUSED'} | ${s.phase} | ${s.chatTurns||0} turns`+(s.lastStatus?' | '+s.lastStatus.slice(0,65):'');badge.title='Click to pause/resume. Right-click to continue in a fresh chat. Progress is checkpointed to GitHub.';}
   doc.body.appendChild(badge);paint();
   const tools=`Tools (each action is {"tool":"name","args":{...}}):
-read_file(path,branch=main,start_line,end_line), list_files(path,branch), grep(path,query,branch), runs(branch=main), run_status(run_id), run_jobs(run_id), annotations(check_run_id), write_file(path,text,branch,expected_sha), edit_file(path,find,replace,branch), create_branch(branch,base=main), create_pr(title,body,branch), create_issue(title,body,dedupe_key), comment_issue(issue,body), dispatch(workflow,branch,inputs), deploy_worker(branch).
+read_file(path,branch=main,start_line,end_line), list_files(path,branch), grep(path,query,branch), runs(branch=main), run_status(run_id), run_jobs(run_id), job_log(job_id,run_id), annotations(check_run_id), write_file(path,text,branch,expected_sha), edit_file(path,find,replace,branch), create_branch(branch,base=main), create_pr(title,body,branch), create_issue(title,body,dedupe_key), comment_issue(issue,body), dispatch(workflow,branch,inputs), deploy_worker(branch).
 All mutations use venice/* branches. Never write main or merge. Use create_issue/comment_issue only when James' lane calls for it. Failed tools return errors; fix the cause before issuing a NEW action. Keep the same action id only for retry of that exact request (the bridge assigns ids).
 For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/LOADER6.user.js on ${config.branch}; write corrected source there. The loader checks new runtime source automatically at safe idle points and retains a healthy fallback. Worker source is agent/DOORMAN.worker.js; after writing it use deploy_worker on its venice/* branch. Deployer handles the worker secrets. Never put credentials into prompts or repository files.`;
   function prompt(context){
@@ -59,6 +60,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     if(generating())return;
     const e=composer();if(e&&value(e).trim()){note('waiting for user draft');return;}
     const old=win.location.pathname;
+    if(assistants().length===0 && /\/chat\/(classic|agent)\/?$/.test(old)){s.phase='idle';s.rollover=false;s.chatTurns=0;s.chatChars=0;s.nextAt=0;persist();note('fresh landing; restoring GitHub state');return;}
     const button=[...doc.querySelectorAll('button,a,[role="button"]')].find(e=>visible(e)&&/^(new chat|new conversation|start new)(\b|$)/i.test(label(e)));
     if(!button){note('new chat control missing');return;}
     s.phase='rolling';s.oldPath=old;s.rollAt=Date.now();persist();button.click();
@@ -68,7 +70,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     if(stopped)return;
     if(s.rollover || (s.chatTurns||0)>=MAX_CHAT_TURNS || (s.chatChars||0)>=MAX_CHAT_CHARS){s.context=context;persist();await rollover();return;}
     const e=composer();if(!e||generating()||value(e).trim()){note('waiting for empty composer');return;}
-    s.turn=uid();s.context=context;s.phase='composing';s.prompt=prompt(context);s.baseline=assistants().length;s.sentAt=0;s.repair=0;persist();
+    s.turn=uid();s.context=context;s.phase='composing';s.prompt=prompt(context);s.baseline=assistants().length;s.chatPath=win.location.pathname;s.sentAt=0;s.repair=0;persist();
     fill(e,s.prompt);note('sending wake');
   }
   async function trySend(){
@@ -95,7 +97,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       s.results.push({tool:a.tool,args:a.args,result});s.actionIndex=i+1;persist();note(`${a.tool}: ${result.ok?'OK':result.error}`);
       if(result.transport){s.phase='retrying';s.retryAt=Date.now()+30000;persist();return;}
     }
-    const evidence=s.results.map(x=>x.result).filter(x=>x.ok).map(x=>x.commit||x.url).filter(Boolean);
+    const evidence=[...(s.context?.available_evidence||[]),...s.results.filter(x=>x.result.ok).flatMap(x=>[x.result.commit,x.result.url,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null]).filter(Boolean)];
     s.phase='checkpointing';persist();
     await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||'')+'\nTool outcomes: '+JSON.stringify(s.results.map(x=>({tool:x.tool,result:x.result}))).slice(0,7000),next:packet.next||'',plan:packet.plan,done:!!packet.done,evidence});
     if(stopped)return;
