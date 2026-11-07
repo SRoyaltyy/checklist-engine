@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Venice Bridge Loader
 // @namespace venice.local
-// @version 2.0.0
+// @version 2.1.0
 // @match https://venice.ai/*
 // @grant GM_xmlhttpRequest
 // @grant GM_getValue
@@ -16,10 +16,13 @@
   'use strict';
   const CONFIG={worker:'https://venice-doorman.fullscan-relay.workers.dev/',branch:'venice/sec-options-pipelines',key:GM_getValue('vrb6.key','')};
   const SOURCE='agent/BRIDGE6.js';
-  let current=null,currentSha='',candidate=null,refreshing=false,bootedAt=0;
+  let current=null,currentSha='',candidate=null,refreshing=false,bootedAt=0,lastWatch=Date.now();
   const badge=document.createElement('div');badge.style.cssText='position:fixed;right:12px;bottom:52px;z-index:2147483647;background:#574615;color:white;padding:6px 9px;border-radius:6px;font:12px monospace';document.body.appendChild(badge);
   function status(t){badge.textContent='Loader 2 | '+t;console.log('[venice-loader2] '+t);}
   GM_registerMenuCommand('Configure Venice bridge key',()=>{const k=prompt('Doorman key (stored locally in Tampermonkey):',CONFIG.key);if(k){GM_setValue('vrb6.key',k.trim());location.reload();}});
+  GM_registerMenuCommand('Wake Venice now',()=>current?.wake());
+  GM_registerMenuCommand('Continue in a fresh chat',()=>current?.rollover());
+  GM_registerMenuCommand('Venice runtime status',()=>{const h=current?.health(),s=current?.status();alert(JSON.stringify({version:current?.version,phase:h?.phase,enabled:h?.enabled,owner:h?.owner,last_tick_age_ms:h?Date.now()-h.lastTick:null,next_wake:s?.nextAt?new Date(s.nextAt).toISOString():null,last_status:s?.lastStatus,last_completed_turn:s?.lastCompletedTurn},null,2));});
   if(!CONFIG.key){status('configure key in Tampermonkey menu');return;}
   function getSource(){return new Promise((resolve,reject)=>{
     const u=new URL(CONFIG.worker);u.searchParams.set('op','source');u.searchParams.set('_',String(Date.now()));
@@ -45,10 +48,12 @@
     finally{refreshing=false;}
   }
   setInterval(()=>{
+    const now=Date.now(),gap=now-lastWatch;lastWatch=now;
+    if(gap>120000){status('browser resumed; checking next heartbeat');return;}
     if(!current)return;
     const h=current.health();
-    if(candidate&&h.ready&&Date.now()-bootedAt>30000&&Date.now()-h.lastTick<20000){GM_setValue('vrb6.lastgood',candidate);candidate=null;status('healthy '+current.version);}
-    if(Date.now()-h.lastTick>90000){const bad=currentSha;current.stop();current=null;currentSha='';GM_setValue('vrb6.badSha',bad);status('stalled; restoring last healthy build');const cached=GM_getValue('vrb6.lastgood',null);if(cached&&cached.sha!==bad)try{boot(cached);}catch(e){status(e.message);}}
+    if(candidate&&h.ready&&Date.now()-bootedAt>30000&&Date.now()-h.lastTick<90000&&(h.lastCompletedAt===undefined||h.lastCompletedAt>=bootedAt)){GM_setValue('vrb6.lastgood',candidate);candidate=null;status('healthy '+current.version);}
+    if(Date.now()-h.lastTick>150000){const bad=currentSha;current.stop();current=null;currentSha='';GM_setValue('vrb6.badSha',bad);status('stalled; restoring last healthy build');const cached=GM_getValue('vrb6.lastgood',null);if(cached&&cached.sha!==bad)try{boot(cached);}catch(e){status(e.message);}}
   },10000);
   setInterval(refresh,60000);refresh();
 })();
