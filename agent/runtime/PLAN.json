@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t9",
+  "current_task": "t10",
   "tasks": [
     {
       "id": "t1",
@@ -113,7 +113,16 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t10",
+      "title": "Report new failed nai-occ-oi-daily run 42399694729 (sha 2ba3ebd) once with run ID + derived error",
+      "acceptance": "Issue/comment URL containing run_id 42399694729 with failed step names and exact error lines from report_failure",
+      "weight": 2,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 84
 }
