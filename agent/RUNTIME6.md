@@ -4,8 +4,8 @@ The browser is the model runner. Cloudflare is the GitHub tool transport. GitHub
 
 ## Active files
 
-- `agent/LOADER6.user.js`: stable Tampermonkey loader, version 2. The installed script remains named **Venice Bridge Loader**. The standalone legacy **Venice Repo Bridge** entry stays disabled.
-- `agent/BRIDGE6.js`: remotely updated browser runtime. The loader compiles it, runs it with explicit Tampermonkey functions, and receives a lifecycle handle. It does not rewrite the source with string patches.
+- `agent/LOADER6.user.js`: stable Tampermonkey loader, version 2.1.0. The installed script remains named **Venice Bridge Loader**. The standalone legacy **Venice Repo Bridge** entry stays disabled.
+- `agent/BRIDGE6.js`: published browser runtime, version 6.2.2. The loader compiles it, runs it with explicit Tampermonkey functions, and receives a lifecycle handle. It does not rewrite the source with string patches.
 - `agent/DOORMAN.worker.js`: authenticated GitHub transport, context snapshots, tool receipts, and progress checkpoints.
 - `agent/DEPLOYER.worker.js`: worker deployment preserving existing binding types and settings.
 - `agent/runtime/PROGRESS.md` and `STATE.json`: last completed work, exact next step, blockers, and evidence.
@@ -31,7 +31,7 @@ Local in-flight state survives a browser reload using Tampermonkey storage. A sa
 
 ## Autonomous maintenance
 
-Write corrected runtime source to `agent/BRIDGE6.js` on `venice/sec-options-pipelines`. The loader checks once a minute, waits for a completed-turn idle point, compiles the candidate before stopping the current runtime, then retains a local healthy fallback. It does not restart unchanged source. A failed candidate is skipped by blob SHA.
+Write corrected runtime source to `agent/BRIDGE6.js` on `venice/sec-options-pipelines`. The loader checks once a minute, waits for a completed-turn idle point, compiles the candidate before stopping the current runtime, then retains a local healthy fallback. It does not restart unchanged source. The runtime retries temporary ownership contention after reload or code updates, and waits before fetching context when the composer is unavailable or contains a draft. A failed candidate is skipped by blob SHA. New runtimes become the healthy fallback only after completing a checkpoint. The loader tolerates background timer delays and a browser sleep/resume gap without blacklisting healthy source.
 
 For worker updates, write `agent/DOORMAN.worker.js` on the maintenance branch and request `deploy_worker`. The deployer accepts an immutable commit and verifies that its source exactly matches the fixed maintenance branch. It preserves all existing binding types, checks required bindings, and verifies their presence after deployment. It enables `global_fetch_strictly_public` so authenticated requests between the two Workers do not fail with Cloudflare error 1042. A newly pushed source may require a later retry while GitHub's public source mirrors propagate. Read back the context endpoint after deployment. Loader metadata updates can also be pushed to `agent/LOADER6.user.js` and picked up by Tampermonkey's update mechanism; most behavior belongs in the remotely loaded runtime.
 
@@ -40,10 +40,16 @@ For worker updates, write `agent/DOORMAN.worker.js` on the maintenance branch an
 - Exact authenticated GitHub write/read, including replay without duplicate writes: commit `a089ee8ac06ad75112451d56543736dcb6393b0b` on the maintenance branch.
 - Runner dispatch, public source download and artifact upload: run [42375131645](https://github.com/SRoyaltyy/checklist-engine/actions/runs/42375131645), artifact `venice-bridge-download-proof`.
 - Worker self-deployment through the fixed-target deployer, preserving existing bindings: commit `3254934f8d03748c3b14475f641b76f4d0ebd74d`.
-- Model-generated reporting and checkpoints: issue [220](https://github.com/SRoyaltyy/checklist-engine/issues/220), followed by verified correction when the job-log path became available.
-- Live chat rollover and state restoration were exercised; the browser resumes from GitHub's checkpoint and notes.
+- Model-generated reporting and checkpoints: issues [220](https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739) and [221](https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770), followed by exact GitHub-log corrections and verified persistent deduplication.
+- Live classic-chat rollover and state restoration were exercised on runtime 6.2.0; Venice resumed its saved task, wrote the corrected progress file at commit `8f1cbd8c36321a47dee6192d8e8ed47440fa0a56`, read the verified result, then checkpointed the task as complete. Agentic mode has automated DOM-adapter coverage and was exercised earlier; this final acceptance pass used Classic.
+- 47 automated checks pass: 17 transport/checkpoint/reporting, 9 Agentic browser adapter, 9 Classic browser adapter, 3 deployer, 6 loader/update/suspension checks, and 3 ownership/recovery checks.
 
-The doorman key is stored only in the installed Tampermonkey script storage as `vrb6.key`, configured with its menu item. Do not write credentials to GitHub, prompts, checkpoints, or receipts. Previously published keys need equivalent rotation in the Worker and the local configuration.
+## Outstanding acceptance check
+
+Commissioning status at 2026-11-07 17:24 UTC: implementation approximately 95% complete. The installed loader is 2.1.0; the last directly observed runtime was 6.2.0, ON in Classic Chat, after a successful fresh-chat restoration and verified progress-file write. Version 6.2.2 is published with the ownership-retry repair; its live activation is not yet confirmed.
+
+The last model checkpoint is 2026-11-07 17:16:02 UTC, turn `mw6nzhdp-2989ne4j`, done=true, lane progress 100%. An eight-minute read-only watch did not observe another model checkpoint. Therefore the final unattended five-minute wake check has **not passed**. Do not equate the lane's 100% with a passing unattended runtime. Browser control stopped because the automation service could not confidently determine Chrome's URL; no further browser inputs were issued. Resume by checking the actual loader/runtime status, ownership, enabled state and next wake; then verify Chrome keeps venice.ai active and repeat an unassisted idle interval. Chrome's discard exception has not been configured or verified. Avoid replacing the saved model checkpoint while investigating.
+
+The current loader stores the doorman key locally in Tampermonkey as `vrb6.key`, configured with its menu item. Do not write credentials to GitHub, prompts, checkpoints, or receipts. Previously published keys need equivalent rotation in the Worker and the local configuration.
 
 The loop requires an open, signed-in browser and an available Venice service. Browser suspension, network outages, account limits, and provider UI changes can delay or stop execution. Checkpointing supports recovery; it cannot guarantee unlimited provider availability.
-
