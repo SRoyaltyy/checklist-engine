@@ -1,6 +1,6 @@
 // Fixed-target maintenance deployer. Existing token permissions are not widened.
 const REPO='SRoyaltyy/checklist-engine', BRANCH='venice/sec-options-pipelines', SCRIPT='venice-doorman';
-const json=(d,s=200)=>new Response(JSON.stringify({v:8,...d}),{status:s,headers:{'Content-Type':'application/json'}});
+const json=(d,s=200)=>new Response(JSON.stringify({v:9,...d}),{status:s,headers:{'Content-Type':'application/json'}});
 export default {
  async fetch(request,env){
   if(!env.DEPLOY_KEY||request.headers.get('Authorization')!=='Bearer '+env.DEPLOY_KEY)return json({ok:false,error:'Unauthorized'},401);
@@ -21,7 +21,8 @@ export default {
   const bindings=cb.result.bindings, names=bindings.map(x=>x.name);
   const required=['GITHUB_TOKEN','DOORMAN_KEY','DEPLOY_KEY','GITHUB_REPO','WAKE_BRANCH','DEPLOYER'];
   if(required.some(x=>!names.includes(x)))return json({ok:false,error:'Required existing bindings missing; deployment aborted'},400);
-  const metadata={main_module:'worker.js',keep_bindings:[...new Set(bindings.map(x=>x.type))],compatibility_date:cb.result.compatibility_date||'2026-11-01',compatibility_flags:cb.result.compatibility_flags||[],observability:cb.result.observability};
+  const flags=[...new Set([...(cb.result.compatibility_flags||[]).filter(x=>x!=='global_fetch_private_origin'),'global_fetch_strictly_public'])];
+  const metadata={main_module:'worker.js',keep_bindings:[...new Set(bindings.map(x=>x.type))],compatibility_date:cb.result.compatibility_date||'2026-11-01',compatibility_flags:flags,observability:cb.result.observability};
   const form=new FormData();form.set('metadata',JSON.stringify(metadata));form.set('worker.js',new File([source],'worker.js',{type:'application/javascript+module'}));
   const put=await fetch(api,{method:'PUT',headers:auth,body:form});const result=await put.json();
   if(!put.ok||!result.success)return json({ok:false,error:'Upload rejected',status:put.status,errors:result.errors},400);
