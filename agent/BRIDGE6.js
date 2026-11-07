@@ -1,7 +1,7 @@
 // Venice web runtime 6.0.0. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.1.0', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.1.1', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -10,6 +10,7 @@ return (function (gm, get, set, win, doc, config) {
   try {s=JSON.parse(get(STORE,'null'));}catch{ s=null; }
   if(!s||s.version!==6)s={version:6,phase:'idle',enabled:true,chatTurns:0,chatChars:0,results:[],nextAt:0,rollover:true};
   if(s.runtimeBuild!==VERSION){if(win.location.pathname==='/chat/classic'&&s.phase==='waiting'){s.phase='idle';s.rollover=false;s.nextAt=0;s.prompt=null;s.packet=null;s.actionIndex=0;}s.runtimeBuild=VERSION;}
+  if(win.location.pathname==='/chat/classic'&&s.phase==='waiting'&&s.chatPath!==win.location.pathname){s.phase='idle';s.rollover=false;s.nextAt=0;s.prompt=null;s.packet=null;s.actionIndex=0;}
   const persist=()=>{if(leaseHeld&&!stopped)set(STORE,JSON.stringify(s));};
   function later(fn,ms){const id=win.setTimeout(()=>{timers.delete(id);if(!stopped)fn();},ms);timers.add(id);return id;}
   function note(text){console.log('[venice6] '+text);s.lastStatus=text;paint();}
