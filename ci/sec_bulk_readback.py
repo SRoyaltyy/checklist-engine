@@ -19,6 +19,10 @@ IDENTITY_SHA='50323efcd9855061501d88010d8e812371fda7c9dd48d3a54c0f5f19cdad97ce'
 KEYS_SHA='5e6d83f56bdb2a765ad5a9bf76219f82fdbe76ff2b93acd3f9ca12fa2e3233e2'
 REQUEST=ROOT/'ci/SEC_BULK_READBACK_REQUEST.json'
 FINAL='SEC_BULK_COVERAGE_V2.json'
+SOURCE_URLS=dict(tickers='https://www.sec.gov/files/company_tickers.json',
+    exchanges='https://www.sec.gov/files/company_tickers_exchange.json',
+    submissions='https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip',
+    companyfacts='https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip')
 
 
 def sha(path):return releases._digest(path).removeprefix('sha256:')
@@ -111,6 +115,25 @@ class Bundle:
         if name!=FINAL:path.unlink()
         return value
 
+    def identity_lineage(self,kind,name,source):
+        lineage=source.get('reused_from')
+        if lineage is None:return None
+        check(lineage['asset']==name and lineage['receipt']==f'SEC_{kind.upper()}_SOURCE_V2.json'
+            and lineage['sha256']==source['sha256'],'reused identity lineage fields differ')
+        release=releases.release_info(lineage['release'])
+        check(not release['draft'] and release['target_commitish']==lineage['source_commit'],
+              'original identity release commit differs')
+        directory=self.root/'identity-lineage'/kind
+        raw=releases.download_asset(lineage['release'],name,directory)
+        receipt=releases.download_asset(lineage['release'],lineage['receipt'],directory)
+        check(sha(raw)==source['sha256'] and raw.stat().st_size==source['bytes']
+            and sha(receipt)==lineage['receipt_sha256'],'original identity bytes/receipt differ')
+        metadata=json.loads(receipt.read_bytes())
+        check(metadata==dict(kind=kind,source={k:v for k,v in source.items() if k!='reused_from'},
+            source_commit=lineage['source_commit']),'original identity acquisition metadata differs')
+        raw.unlink();receipt.unlink()
+        return dict(lineage,independently_downloaded=True)
+
     def parquet(self,kind):
         import pyarrow.parquet as pq
         prefixes=dict(identity='sec_identity_map_v2-',filings='sec_submissions_filings_retained-',
@@ -202,18 +225,20 @@ def audit_bundle(bundle):
             source_commit=bundle.source['commit'],identity_map_lf_sha256=IDENTITY_SHA),'extraction receipt differs')
         results[kind]=dict(stage=stage,row_digests=row_summaries)
     check(coverage==bundle.report['coverage'],'full coverage differs')
+    identity_lineage={}
     for kind in ('tickers','exchanges','submissions','companyfacts'):
         receipt=bundle.json(f'SEC_{kind.upper()}_SOURCE_V2.json')
         check(receipt==dict(kind=kind,source=bundle.report['inputs'][kind],source_commit=bundle.source['commit']),
               'input receipt differs: '+kind)
-        check(receipt['source']['url'].startswith('https://www.sec.gov/') and receipt['source']['bytes']>0,
+        check(receipt['source']['url']==SOURCE_URLS[kind] and receipt['source']['bytes']>0,
               'unexpected source URL/size')
         if kind in ('tickers','exchanges'):
             name='company_tickers.json' if kind=='tickers' else 'company_tickers_exchange.json'
             check(receipt['source']['sha256']==bundle.bindings[name]['sha256']
                 and receipt['source']['bytes']==bundle.bindings[name]['bytes'],'raw identity source binding differs')
+            identity_lineage[kind]=bundle.identity_lineage(kind,name,receipt['source'])
     check(bundle.checked==set(bundle.inventory),'not every public asset was read')
-    return dict(coverage=coverage,stages=results,assets_checked=len(bundle.checked),
+    return dict(coverage=coverage,stages=results,assets_checked=len(bundle.checked),identity_input_lineage=identity_lineage,
         verification_scope='ALL_PUBLISHED_RETAINED_RAW_MEMBERS_AND_ALL_PARQUET_ROW_VALUES',
         full_unfiltered_zip_readback=False,historical_ownership='NOT_PROVEN_CURRENT_CANDIDATES_ONLY',
         scoring_gate='CLOSED',world_gate='NOT_PROVEN')

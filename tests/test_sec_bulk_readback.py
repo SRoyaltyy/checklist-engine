@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 import pyarrow as pa
 import pyarrow.parquet as pq
-from ci.sec_bulk_readback import Bundle,audit_bundle,json_bytes,schema,validate_request
+from ci.sec_bulk_readback import Bundle,SOURCE_URLS,audit_bundle,json_bytes,schema,validate_request
 from ci.sec_bulk_readback_core import FIELDS,RawAudit,RowDigests,identities
 
 
@@ -159,8 +159,8 @@ class ReadbackTests(unittest.TestCase):
                   for name,body in raw_assets.items()}
         inputs={}
         for kind,name in [('tickers','company_tickers.json'),('exchanges','company_tickers_exchange.json')]:
-            inputs[kind]=dict(url='https://www.sec.gov/'+name,**bindings[name])
-        for kind in ('submissions','companyfacts'):inputs[kind]=dict(url='https://www.sec.gov/'+kind+'.zip',bytes=123,sha256='c'*64)
+            inputs[kind]=dict(url=SOURCE_URLS[kind],**bindings[name])
+        for kind in ('submissions','companyfacts'):inputs[kind]=dict(url=SOURCE_URLS[kind],bytes=123,sha256='c'*64)
         report=dict(stages=stages,coverage=complete_coverage,inputs=inputs)
         json_assets=dict(raw_assets,SEC_IDENTITY_COVERAGE_V2=coverage)
         json_assets['SEC_IDENTITY_COVERAGE_V2.json']=json_assets.pop('SEC_IDENTITY_COVERAGE_V2')
@@ -175,6 +175,7 @@ class ReadbackTests(unittest.TestCase):
                 self.source=source;self.report=report;self.bindings=bindings;self.checked=set()
                 self.inventory=set(json_assets)|{'RAW:submissions','RAW:companyfacts'}|set(rows)
             def json(self,name):self.checked.add(name);return json_assets[name]
+            def identity_lineage(self,kind,name,source):return None
             def parquet(self,kind):self.checked.add(kind);return iter(rows[kind])
             def raw(self,kind,audit,selected):
                 self.checked.add('RAW:'+kind);audit.member(123,'CIK0000000123.json',raw_sub if kind=='submissions' else raw_fact)
@@ -188,6 +189,52 @@ class ReadbackTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'row values differ: facts'):audit_bundle(SyntheticBundle())
             rows['facts'][0]['val_text']='0.1';identity_rows[0]['historical_join_allowed']=True
             with self.assertRaisesRegex(ValueError,'identity rows differ'):audit_bundle(SyntheticBundle())
+
+    def test_bundle_requires_successful_actual_run_and_frozen_complete_receipt(self):
+        from ci.sec_bulk_readback import FINAL,IDENTITY_SHA,KEYS_SHA
+        source=dict(run='123',attempt='1',commit='a'*40,receipt_sha256='b'*64)
+        run=dict(status='completed',conclusion='failure',head_sha=source['commit'],path='.github/workflows/nai_sec_bulk.yml')
+        release=dict(id=99,draft=False,target_commitish=source['commit'])
+        final=dict(actual_run_id='123',actual_attempt='1',source_commit=source['commit'],release='nai-sec-bulk-v2-123-1',
+            status='PASS_BOTH_BULK_SOURCES_RETAINED_EXTRACTION',identity_only=False,scoring_gate='CLOSED',world_gate='NOT_PROVEN',
+            free_text_features=False,retained_names=8439,identity_map_lf_sha256=IDENTITY_SHA,join_keys_lf_sha256=KEYS_SHA,
+            filing_record_model='SOURCE_OBSERVATIONS_NOT_CANONICAL_ACCESSIONS',
+            historical_ownership='NOT_PROVEN_CURRENT_CANDIDATES_ONLY',assets=[])
+        final_path=self.root/FINAL;final_path.write_bytes(json_bytes(final));source['receipt_sha256']=hashlib.sha256(final_path.read_bytes()).hexdigest()
+        asset=dict(name=FINAL,state='uploaded',size=final_path.stat().st_size,digest='sha256:'+source['receipt_sha256'])
+        def metadata(endpoint):return [asset] if '/releases/' in endpoint else run
+        with patch.dict('os.environ',GITHUB_REPOSITORY='SRoyaltyy/checklist-engine'),\
+                patch('ci.sec_bulk_readback.api',side_effect=metadata),\
+                patch('ci.sec_bulk_readback.releases.release_info',return_value=release),\
+                patch('ci.sec_bulk_readback.releases.download_asset',return_value=final_path):
+            with self.assertRaisesRegex(ValueError,'not successful'):Bundle(self.root,source)
+            run['conclusion']='success';run['head_sha']='c'*40
+            with self.assertRaisesRegex(ValueError,'commit/workflow'):Bundle(self.root,source)
+            run['head_sha']=source['commit'];release['draft']=True
+            with self.assertRaisesRegex(ValueError,'not public'):Bundle(self.root,source)
+            release['draft']=False
+            bundle=Bundle(self.root,source);self.assertEqual(bundle.checked,{FINAL})
+            source['receipt_sha256']='0'*64
+            with self.assertRaisesRegex(ValueError,'frozen fingerprint'):Bundle(self.root,source)
+            source['receipt_sha256']=asset['digest'][7:]
+            final['status']='PASS_IDENTITY_SNAPSHOT_ONLY';final_path.write_bytes(json_bytes(final))
+            source['receipt_sha256']=hashlib.sha256(final_path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(ValueError,'complete two-archive'):Bundle(self.root,source)
+
+    def test_reused_identity_acquisition_times_and_original_receipt_are_authenticated(self):
+        raw=self.root/'original-map.json';raw.write_bytes(b'{"0":{"ticker":"TEST","cik_str":123}}')
+        source=dict(url=SOURCE_URLS['tickers'],bytes=raw.stat().st_size,sha256=hashlib.sha256(raw.read_bytes()).hexdigest(),
+            started_at='2026-11-06T17:43:00Z',finished_at='2026-11-06T17:43:01Z')
+        receipt=self.root/'original-receipt.json';receipt.write_bytes(json_bytes(dict(kind='tickers',source=source,source_commit='a'*40)))
+        lineage=dict(release='old-identity',asset='company_tickers.json',receipt='SEC_TICKERS_SOURCE_V2.json',
+            sha256=source['sha256'],receipt_sha256=hashlib.sha256(receipt.read_bytes()).hexdigest(),source_commit='a'*40)
+        bundle=Bundle.__new__(Bundle);bundle.root=self.root
+        with patch('ci.sec_bulk_readback.releases.release_info',return_value=dict(draft=False,target_commitish='a'*40)),\
+                patch('ci.sec_bulk_readback.releases.download_asset',side_effect=[raw,receipt,raw,receipt]):
+            changed=dict(source,started_at='2026-11-07T00:00:00Z',reused_from=lineage)
+            with self.assertRaisesRegex(ValueError,'acquisition metadata'):bundle.identity_lineage('tickers','company_tickers.json',changed)
+            checked=bundle.identity_lineage('tickers','company_tickers.json',dict(source,reused_from=lineage))
+            self.assertTrue(checked['independently_downloaded']);self.assertFalse(raw.exists())
 
 
 if __name__=='__main__':unittest.main()

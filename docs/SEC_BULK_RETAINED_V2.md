@@ -180,6 +180,8 @@ SHA256. It validates the actual GitHub run and public release, paginates the
 complete asset inventory, and downloads every manifest asset with size/SHA256
 verification. It makes no SEC requests and cannot change the producer release.
 
+Reused identity inputs are independently downloaded from their original release;
+the original acquisition receipt hash, commit and timestamps must still agree.
 The reader independently reconstructs all8,439identity rows from the two raw maps
 and pinned archived metadata. For both source kinds it streams every retained
 raw member, checks its ledger name/CIK/size/SHA256, and reconstructs every fixed
@@ -193,6 +195,7 @@ The readback covers **all published retained raw members and parquet values**.
 It does not redownload the full unfiltered SEC ZIPs or independently establish
 historical ticker ownership. Those limits are explicit in its receipt; world
 gate remains NOT_PROVEN and scoring CLOSED. The reader publishes its own
-immutable PASS/FAIL release and an Actions receipt. Eight synthetic tests include
+immutable PASS/FAIL release and an Actions receipt. Ten synthetic tests include
 an8,439-name fixture and unchanged-count value corruption, raw hash/path
-corruption and parquet CIK binding corruption. Actual public readback is pending.
+corruption, parquet CIK binding corruption, actual-run/final-receipt guards and
+reused acquisition-time corruption. Actual public readback is pending.
