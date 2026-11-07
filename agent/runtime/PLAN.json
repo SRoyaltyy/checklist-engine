@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b0)",
   "why": "Sole assigned lane: Venice reports, GPT fixes; no pipeline ownership, no collector pushes",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t4",
+  "current_task": "t5",
   "tasks": [
     {
       "id": "t1",
@@ -44,10 +44,21 @@
       "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421, step sec_datasets.py form345)",
       "acceptance": "Issue URL containing run_id 42156926867 and the failing step, dedupe_key=run-42156926867",
       "weight": 2,
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/issues/221"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t5",
+      "title": "Checkpoint lane state to agent/PROGRESS.md on the venice branch",
+      "acceptance": "write_file returns a commit sha for agent/PROGRESS.md",
+      "weight": 1,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 66
+  "progress_percent": 85
 }
