@@ -1,0 +1,58 @@
+name: sec-quarterly-source-profile
+on:
+  push:
+    branches: [gpt/sec-quarterly-retained-v2]
+    paths: ['ci/SEC_QUARTERLY_PROFILE_REQUEST.json']
+  pull_request:
+    paths: ['ci/sec_quarterly_*.py', 'ci/SEC_QUARTERLY_PROFILE_REQUEST.json', 'tests/test_sec_quarterly*.py', '.github/workflows/sec_quarterly_profile.yml']
+permissions: {contents: read}
+concurrency: {group: sec-quarterly-source-profile, cancel-in-progress: false}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m unittest discover -s tests -p 'test_sec_quarterly*.py' -v
+      - id: request
+        run: |
+          python - <<'PY'
+          import json,os
+          from ci.sec_quarterly_profile import validate_request
+          request=validate_request(json.load(open('ci/SEC_QUARTERLY_PROFILE_REQUEST.json')))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('execute='+str(request['execute']).lower()+'\n')
+          PY
+  profile:
+    needs: verify
+    if: github.event_name == 'push' && needs.verify.outputs.execute == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [form345, form13f]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions: {contents: write}
+    env:
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m ci.sec_quarterly_profile --kind '${{ matrix.kind }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-quarterly-profile-${{ matrix.kind }}-${{ github.run_id }}
+          path: sec-quarterly-profile-output/SEC_QUARTERLY_SOURCE_PROFILE_V2.json
+          if-no-files-found: ignore
