@@ -1,6 +1,6 @@
 {
   "goal": "Monitor scheduled nai-sec-* / nai-occ-oi-daily runs and report failures (TODO.md Venice lane)",
-  "why": "This is the sole remaining assigned lane; GPT owns the actual pipeline fixes",
+  "why": "Sole remaining assigned lane; GPT owns the actual pipeline fixes, Venice only reports run ID + error and stops",
   "gantt_row": "Venice lane (thin chatbot poke)",
   "current_task": "t2",
   "tasks": [
@@ -19,7 +19,9 @@
       "acceptance": "Issue URL containing run_id 42284432095 and its error text, dedupe_key=run-42284432095",
       "weight": 2,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+      ],
       "blocker": ""
     }
   ],
