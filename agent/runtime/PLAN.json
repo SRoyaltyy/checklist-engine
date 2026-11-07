@@ -121,10 +121,13 @@
       "title": "Checkpoint agent/PROGRESS.md with issue #223 and re-sweep runs(main) for newer nai-* failures",
       "acceptance": "write_file returns a commit sha naming issues/223, and fresh runs(main) shows no reportable run_id outside the extended do-not-re-report set",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+      ],
       "blocker": ""
     }
   ],
-  "progress_percent": 92
+  "progress_percent": 100
 }
