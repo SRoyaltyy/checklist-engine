@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-08T14:42:30.331Z",
-  "turn_id": "mw7xy1s9-1xb31jm2",
-  "summary": "The PROGRESS.md checkpoint did not land: write_file returned ok:false, error \"File changed since read; read it again before editing\" because expected_sha aa3fab0cdd1dfe27b8acd27a934be49230db700c is stale. No mutation occurred, so nothing is claimed as committed. Fix in progress: re-read agent/PROGRESS.md on venice/sec-options-pipelines to obtain the current blob sha, then re-issue the write with that sha. Sweep evidence unchanged from the 14:41Z runs(main) result: only failure is 42399694729 (already reported at #223), new entry 42434336421 nai-sec-bulk is green, and no run_id outside the do-not-re-report set failed — so there is still nothing to file this wake.",
-  "next": "Read the returned agent/PROGRESS.md content and its sha, then call write_file on venice/sec-options-pipelines with expected_sha set to that returned sha and the same Nov 8 checkpoint text (naming run 42434336421 plus the absent-scheduled-slots observation).",
+  "at": "2026-11-08T14:43:31.531Z",
+  "turn_id": "mw7xz3gy-dukfggmw",
+  "summary": "Re-read agent/PROGRESS.md on venice/sec-options-pipelines and obtained the current blob sha 431e9399e614e976fb11d4d359a65b12773a0cbf (30 lines), which supersedes the stale expected_sha aa3fab0c that caused the previous rejected write. Re-issued the Nov 8 checkpoint write against that sha. No new reportable failure exists: the 14-run runs(main) sweep at 14:41Z shows only 42399694729 (already reported at issue #223) and the already-covered older occ_oi_daily/form345 failures; new run 42434336421 (nai-sec-bulk, sha 2ba3ebd) is green. No claim of a committed checkpoint until the write returns a commit sha.",
+  "next": "Inspect the write_file result for a new commit sha; if ok:true, record that sha as the PROGRESS.md evidence for t12, mark t12 done, then re-sweep runs(main) on the following wake. If it fails again, re-read agent/PROGRESS.md and retry once with the freshly returned sha.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
@@ -135,21 +135,25 @@
       },
       {
         "id": "t12",
-        "title": "Re-read agent/PROGRESS.md to get its current sha, then land the Nov 8 checkpoint naming run 42434336421",
-        "acceptance": "read_file returns current sha; subsequent write_file returns ok:true with a new commit sha",
+        "title": "Land the Nov 8 checkpoint naming green run 42434336421 using the refreshed blob sha",
+        "acceptance": "write_file returns ok:true with a new commit sha",
         "weight": 1,
         "status": "doing",
-        "evidence": [],
-        "blocker": "write_file rejected on 2026-11-08T14:42Z: 'File changed since read' against expected_sha aa3fab0c"
+        "evidence": [
+          "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf"
+        ],
+        "blocker": "Prior attempt rejected 2026-11-08T14:42Z on stale expected_sha aa3fab0c; resolved by re-read, write re-issued this turn"
       }
     ],
     "progress_percent": 93
   },
   "tool_results": [
     {
-      "tool": "read_file",
+      "tool": "write_file",
       "ok": true,
-      "path": "agent/PROGRESS.md"
+      "path": "agent/PROGRESS.md",
+      "commit": "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
+      "verified": true
     }
   ],
   "blockers": [],
@@ -200,7 +204,8 @@
     "https://github.com/SRoyaltyy/checklist-engine/issues/223",
     "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-    "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf"
+    "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf",
+    "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
   ],
   "done": false
 }
