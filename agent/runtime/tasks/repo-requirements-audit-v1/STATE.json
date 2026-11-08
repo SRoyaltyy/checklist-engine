@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-08T18:28:32.193Z",
-  "turn_id": "mw85yw0y-k7skhmun",
-  "summary": "PROGRESS.json is committed on the audit branch (72feb223) and the two authority reads returned: INVENTORY_CATALOG_AUDIT_V1.json is a 12-line summary (258 inventory/source/mapping items, 5676 required inventory-timeframe rows, 4774 pending, full_world_gate NOT_PROVEN, scoring CLOSED) with no id list inside it, and WORLD_COVERAGE.csv is 12872 lines with the 13-column coverage schema. Next: locate the authoritative 258-id list and re-read the audit spec's exact CSV column contracts before writing REQUIREMENTS.csv/DATA_REQUIREMENTS.csv.",
-  "next": "Use the grep result to identify the file that actually enumerates the 258 canonical inventory ids, read it, then write the first REQUIREMENTS.csv and DATA_REQUIREMENTS.csv blocks on venice/repo-requirements-audit-v1 with expected_sha=null (new files).",
+  "at": "2026-11-08T18:33:40.202Z",
+  "turn_id": "mw864trq-hclep8hi",
+  "summary": "Located the canonical inventory id source: dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478, dictionary/DATA_SOURCES.csv@c9d9af05 and docs/LENSES_COVERAGE_V1.csv@fa338f19 all carry the same id-keyed rows (260 total_lines each, ids C01, C02, ... with C28/C29 as NO_QUESTIONS controls in LENSES). Read the C01-C17 rows of all three files, which give per-id definition, source/pit_start/fetch_test/in_repo and lens class/applicability. Wrote the first DATA_REQUIREMENTS.csv block (header + rows C01-C17, 19 columns as the spec names them) on venice/repo-requirements-audit-v1 from those read rows only. Remaining rows C18-C258 are not yet written.",
+  "next": "Inspect the returned tail reads to confirm the highest id is C258 (and that C28/C29 are the only NO_QUESTIONS controls), then append DATA_REQUIREMENTS.csv rows C18-C60 using dictionary/DATA_SOURCES.csv@c9d9af05 offsets 12000 and 24000 for item names, block and in_repo status.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -23,13 +23,14 @@
       },
       {
         "id": "t2",
-        "title": "Extract canonical inventory ids and coverage schema from catalog/coverage authority files; build REQUIREMENTS.csv for stages 0–8",
-        "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id with authority_ref and source_urls",
+        "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id C01-C258) and REQUIREMENTS.csv (stages 0-8) from authority files",
+        "acceptance": "DATA_REQUIREMENTS.csv has 19-column header plus a row for every canonical id including C28/C29 controls; REQUIREMENTS.csv covers stages 0,1,2,3,4,5,5b,6,7,8",
         "weight": 2,
         "status": "doing",
         "evidence": [
-          "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
-          "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+          "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+          "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+          "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
         ],
         "blocker": ""
       },
@@ -67,13 +68,24 @@
     {
       "tool": "read_file",
       "ok": true,
-      "path": "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md"
+      "path": "docs/LENSES_COVERAGE_V1.csv"
     },
     {
-      "tool": "grep",
-      "ok": false,
-      "error": "read docs failed: 422",
-      "path": "docs"
+      "tool": "read_file",
+      "ok": true,
+      "path": "dictionary/DATA_SOURCES.csv"
+    },
+    {
+      "tool": "read_file",
+      "ok": true,
+      "path": "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv"
+    },
+    {
+      "tool": "write_file",
+      "ok": true,
+      "path": "docs/venice-audit-v1/DATA_REQUIREMENTS.csv",
+      "commit": "b8a271b0cd9603d759892af47ab2b83f5ec47e0e",
+      "verified": true
     }
   ],
   "blockers": [],
@@ -142,7 +154,15 @@
     "1ec0e862d45d823392da48f02bd7c5b8c0970174",
     "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
     "756f6a36ea11c670bb3e574d6ff88d1185208b7a",
-    "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+    "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
+    "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+    "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+    "c9d9af057e804a9c836847d01ce784c52174a2c3",
+    "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+    "fa338f19ca8732829939eb30fdee473927ea0464",
+    "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
+    "agent/runtime/receipts/mw864trq-hclep8hi.3.json@ff68c31323cd13ff25eb9af35177805daaf54aae",
+    "b8a271b0cd9603d759892af47ab2b83f5ec47e0e"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -150,12 +170,12 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "finding",
-    "description": "Established that the catalog-completeness file is a 12-line summary with no id list, so the 258 canonical inventory ids must be sourced elsewhere, and captured the exact 13-column WORLD_COVERAGE.csv schema including the namespace-qualified key that DATA_REQUIREMENTS.csv must use.",
+    "kind": "implementation",
+    "description": "Created docs/venice-audit-v1/DATA_REQUIREMENTS.csv on venice/repo-requirements-audit-v1 with the exact 19-column spec header plus the first 17 id rows (C01-C17), each row sourced only from the three authority files read this turn (dictionary/WORLD_SNAPSHOT_DICTIONARY.csv, dictionary/DATA_SOURCES.csv, docs/LENSES_COVERAGE_V1.csv) and cross-referenced to the WORLD_COVERAGE.csv measurement for that id.",
     "evidence": [
-      "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
-      "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
-      "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
+      "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+      "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+      "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
     ]
   },
   "pitfalls": []
