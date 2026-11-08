@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t26",
+  "current_task": "t27",
   "tasks": [
     {
       "id": "t1",
@@ -72,30 +72,6 @@
       "blocker": ""
     },
     {
-      "id": "t23",
-      "title": "Sweep runs(main) at 16:15Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t24",
-      "title": "Sweep runs(main) at 16:28Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t25",
       "title": "Refresh agent/PROGRESS.md checkpoint to the 16:28Z 30-run snapshot",
       "acceptance": "write_file returns ok:true with a new commit sha",
@@ -117,7 +93,16 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t27",
+      "title": "Sweep runs(main) at 16:48Z for any newly fired failed nai-* run",
+      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 91
 }
