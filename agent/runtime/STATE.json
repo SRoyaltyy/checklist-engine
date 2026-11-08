@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T15:53:27.867Z",
-  "turn_id": "mw80e1y7-zvyzijmx",
-  "summary": "runs(main) returned at 15:50Z and is identical to the 14:41/14:44/14:50/14:56/15:05/15:17/15:26/15:37Z snapshots: 30 entries, newest still 42434336421 (nai-sec-bulk #51, sha 2ba3ebd, success 30m56s, jobs 128589843164 19s + 128589913741 30m32s, artifact sec-bulk-receipt-42434336421 111 KB sha256:4d5af7ea…). The only nai-sec-*/nai-occ-oi-daily failures present are 42399694729 (issue #223), 42284432095 (#220 canonical comment), 42156926867 (#221 canonical comment), plus the deliberately-unreported set {42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}. Zero reportable failures this sweep, so no report_failure call and no PROGRESS.md write (blob 0fa61634 remains current). t21 acceptance met on the no-reportable-failure branch.",
-  "next": "Idle until the bridge wakes (~5 min). Next wake: re-sweep runs(main) and call report_failure exactly once only if a failed nai-sec-* / nai-occ-oi-daily run id appears outside {42284432095, 42156926867, 42399694729} and outside the deliberately-unreported set. Continue watching the three missed schedule slots (Nov 7 ~19:59Z occ_oi_daily, Nov 8 ~03:10Z form13f, Nov 8 ~05:58Z daily-forward); escalate to James/GPT only if the gap persists through Nov 9.",
+  "at": "2026-11-08T16:02:29.499Z",
+  "turn_id": "mw80plv7-khv3aksx",
+  "summary": "No tool results returned this turn. Prior verified state stands: the 15:50Z runs(main) sweep was byte-identical to the 14:41Z–15:37Z snapshots (30 entries, newest 42434336421 nai-sec-bulk #51, sha 2ba3ebd, success 30m56s), with zero reportable nai-sec-*/nai-occ-oi-daily failures outside the never-re-report set {42284432095 → #220 canonical comment, 42156926867 → #221 canonical comment, 42399694729 → #223} and the deliberately-unreported set. Dispatching the next scheduled sweep now; no issue, comment, or PROGRESS.md write is warranted unless it returns a new failing run id.",
+  "next": "Inspect the runs(main) result. If a failed nai-sec-* / nai-occ-oi-daily run id appears outside {42284432095, 42156926867, 42399694729} and outside {42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359}, call report_failure(run_id) exactly once for that single new run and stop. Otherwise record the sweep, leave PROGRESS.md untouched (blob 0fa61634 current), and idle until the next wake.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t21",
+    "current_task": "t22",
     "tasks": [
       {
         "id": "t1",
@@ -55,28 +55,6 @@
         "blocker": ""
       },
       {
-        "id": "t5",
-        "title": "First checkpoint to agent/PROGRESS.md",
-        "acceptance": "write_file returns commit sha",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "ba179d2306dbc448f85c9caa6ae07554e07cf192"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t6",
-        "title": "Rewrite PROGRESS.md to cite the canonical record",
-        "acceptance": "New commit sha naming the canonical comment",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "8f1cbd8c36321a47dee6192d8e8ed47440fa0a56"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t10",
         "title": "Report failed nai-occ-oi-daily run 42399694729 once",
         "acceptance": "Issue URL with run_id, failed/skipped steps, exact error lines",
@@ -89,17 +67,6 @@
         "blocker": ""
       },
       {
-        "id": "t11",
-        "title": "Checkpoint PROGRESS.md with issue #223 and re-sweep runs",
-        "acceptance": "Commit sha naming #223; no reportable run outside set",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "aa3fab0cdd1dfe27b8acd27a934be49230db700c"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t12",
         "title": "Land the Nov 8 checkpoint naming green run 42434336421",
         "acceptance": "write_file returns ok:true with a new commit sha",
@@ -107,119 +74,6 @@
         "status": "done",
         "evidence": [
           "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t13",
-        "title": "Sweep runs(main) at 14:43Z for any new failed nai-* run",
-        "acceptance": "Every failed nai-* run is in the never-re-report set or has a report_failure issue",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t14",
-        "title": "Classify the 14:44Z 29-run sweep and confirm no un-reported nai-* failure",
-        "acceptance": "No failed nai-sec-* / nai-occ-oi-daily run id outside the never-re-report set",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t15",
-        "title": "Sweep runs(main) at 14:50Z for any new failed nai-* run",
-        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t16",
-        "title": "Sweep runs(main) at 14:56Z and decide whether a PROGRESS.md write is warranted",
-        "acceptance": "Either no failed nai-sec-* / nai-occ-oi-daily run outside the never-re-report set or exactly one report_failure call on the new failing run",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t17",
-        "title": "Sweep runs(main) at 15:05Z for any newly fired failed nai-* run",
-        "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t18",
-        "title": "Sweep runs(main) at 15:17Z for any newly fired failed nai-* run",
-        "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t19",
-        "title": "Sweep runs(main) at 15:26Z for any newly fired failed nai-* run",
-        "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t20",
-        "title": "Sweep runs(main) at 15:37Z for any newly fired failed nai-* run",
-        "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42106074154",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41906860199",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41710121137",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413535355",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413022188",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413017909",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359"
         ],
         "blocker": ""
       },
@@ -237,11 +91,25 @@
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142"
         ],
         "blocker": ""
+      },
+      {
+        "id": "t22",
+        "title": "Sweep runs(main) at 15:59Z for any newly fired failed nai-* run",
+        "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
+        "blocker": ""
       }
     ],
-    "progress_percent": 100
+    "progress_percent": 90
   },
-  "tool_results": [],
+  "tool_results": [
+    {
+      "tool": "runs",
+      "ok": true
+    }
+  ],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -295,5 +163,5 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
     "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d"
   ],
-  "done": true
+  "done": false
 }
