@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T14:43:31.531Z",
-  "turn_id": "mw7xz3gy-dukfggmw",
-  "summary": "Re-read agent/PROGRESS.md on venice/sec-options-pipelines and obtained the current blob sha 431e9399e614e976fb11d4d359a65b12773a0cbf (30 lines), which supersedes the stale expected_sha aa3fab0c that caused the previous rejected write. Re-issued the Nov 8 checkpoint write against that sha. No new reportable failure exists: the 14-run runs(main) sweep at 14:41Z shows only 42399694729 (already reported at issue #223) and the already-covered older occ_oi_daily/form345 failures; new run 42434336421 (nai-sec-bulk, sha 2ba3ebd) is green. No claim of a committed checkpoint until the write returns a commit sha.",
-  "next": "Inspect the write_file result for a new commit sha; if ok:true, record that sha as the PROGRESS.md evidence for t12, mark t12 done, then re-sweep runs(main) on the following wake. If it fails again, re-read agent/PROGRESS.md and retry once with the freshly returned sha.",
+  "at": "2026-11-08T14:44:11.282Z",
+  "turn_id": "mw7y05xj-6bxrve86",
+  "summary": "The Nov 8 checkpoint landed: write_file on agent/PROGRESS.md (branch venice/sec-options-pipelines, expected_sha 431e9399) returned ok:true, commit 8a3ed5d5cad3b052f84872bd3d82e3699e161fcd, blob_sha 0fa61634a892f6b2a433ace58ecd6a0af896ff3d, verified:true. That clears the stale-sha blocker from the 14:42Z turn and completes t12. No new reportable failure is known; a fresh runs(main) sweep is issued this turn to confirm nothing new has failed since the 14:41Z snapshot.",
+  "next": "Read the runs(main) result. If a nai-sec-* or nai-occ-oi-daily run has conclusion failure and its run_id is not in the never-re-report set (42284432095, 42156926867, 42399694729, plus the covered 42106074154/41906860199/41710121137 and Nov-2 batch), call report_failure on it once and stop. Otherwise leave actions empty and let the bridge wake again.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t12",
+    "current_task": "t13",
     "tasks": [
       {
         "id": "t1",
@@ -138,22 +138,28 @@
         "title": "Land the Nov 8 checkpoint naming green run 42434336421 using the refreshed blob sha",
         "acceptance": "write_file returns ok:true with a new commit sha",
         "weight": 1,
-        "status": "doing",
+        "status": "done",
         "evidence": [
-          "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf"
+          "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
         ],
-        "blocker": "Prior attempt rejected 2026-11-08T14:42Z on stale expected_sha aa3fab0c; resolved by re-read, write re-issued this turn"
+        "blocker": ""
+      },
+      {
+        "id": "t13",
+        "title": "Sweep runs(main) at 14:43Z for any new failed nai-* run",
+        "acceptance": "Every failed nai-* run in the list is either in the never-re-report set or has a report_failure issue",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
+        "blocker": ""
       }
     ],
     "progress_percent": 93
   },
   "tool_results": [
     {
-      "tool": "write_file",
-      "ok": true,
-      "path": "agent/PROGRESS.md",
-      "commit": "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
-      "verified": true
+      "tool": "runs",
+      "ok": true
     }
   ],
   "blockers": [],
@@ -205,7 +211,8 @@
     "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
     "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf",
-    "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
+    "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421"
   ],
   "done": false
 }
