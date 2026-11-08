@@ -108,13 +108,16 @@
     },
     {
       "id": "t26",
-      "title": "Sweep runs(main) at 16:35Z for any newly fired failed nai-* run",
+      "title": "Sweep runs(main) at 16:39Z for any newly fired failed nai-* run",
       "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+      ],
       "blocker": ""
     }
   ],
-  "progress_percent": 92
+  "progress_percent": 100
 }
