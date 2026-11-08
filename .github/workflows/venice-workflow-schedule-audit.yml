@@ -10,6 +10,7 @@ on:
       - agent/workflow_audit_requirements.txt
       - tests/test_workflow_schedule_audit.py
       - agent/verification/test_workflow_schedule_audit_acceptance.py
+      - agent/requests/workflow-schedule-audit.json
 
 permissions:
   contents: read
