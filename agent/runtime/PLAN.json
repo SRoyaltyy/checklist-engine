@@ -233,10 +233,23 @@
       "title": "Sweep runs(main) at 15:37Z for any newly fired failed nai-* run",
       "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42106074154",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41906860199",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41710121137",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413535355",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413022188",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413017909",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359"
+      ],
       "blocker": ""
     }
   ],
-  "progress_percent": 95
+  "progress_percent": 100
 }
