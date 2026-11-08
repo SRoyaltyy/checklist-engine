@@ -1,13 +1,13 @@
 {
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
-  "why": "Advances the Venice lane row for the Cyrus-assigned full repository audit and prevents missing requirements or false completion claims before any gate is considered.",
+  "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
   "current_task": "t1",
   "tasks": [
     {
       "id": "t1",
-      "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as the durable fallback",
-      "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and PROGRESS.json exists on that branch at that sha",
+      "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as durable fallback",
+      "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and docs/venice-audit-v1/PROGRESS.json exists on that branch at that sha",
       "weight": 1,
       "status": "doing",
       "evidence": [],
@@ -15,8 +15,8 @@
     },
     {
       "id": "t2",
-      "title": "Read spec + both Gantt claim baselines and extract every stage, canonical inventory id and claimed status",
-      "acceptance": "Requirements matrix lists every stage 0–8 and every inventory id with its source link and claimed-vs-verified status",
+      "title": "Read remaining baselines (offset 4319+) plus inventory/coverage authority files and extract every stage and canonical inventory id",
+      "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id, each with authority_ref",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -24,8 +24,8 @@
     },
     {
       "id": "t3",
-      "title": "Verify each claim against immutable main evidence (source status json, proof summaries, retained artifacts) without trusting catalog rows or green jobs",
-      "acceptance": "Evidence ledger row per claim with a main path or blob sha and an explicit verified/unverified/missing verdict",
+      "title": "Verify claims against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts) without trusting catalog rows or green jobs",
+      "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
       "weight": 3,
       "status": "todo",
       "evidence": [],
@@ -33,8 +33,8 @@
     },
     {
       "id": "t4",
-      "title": "Publish comparison matrix, corrected Gantt visualization and dependency-ordered actionable report under docs/venice-audit-v1/",
-      "acceptance": "Files present on the audit branch and referenced from PROGRESS.json, with no changes outside allowed_paths",
+      "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+      "acceptance": "All six required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -42,8 +42,8 @@
     },
     {
       "id": "t5",
-      "title": "Add validator script, source-matched test and push-triggered audit workflow on the venice branch, then open and merge the PR to main",
-      "acceptance": "Workflow run on the venice branch is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+      "title": "Add validator script, source-matched test and push-triggered audit workflow, then open PR and merge to main",
+      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "todo",
       "evidence": [],
