@@ -4,30 +4,30 @@
 Read main/TODO.md Venice section + METHODOLOGY.md each turn. Current lane (TODO.md@c7c31b02e530a35d9944c705d19422d606956809): thin chatbot poke — report a failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop; GPT owns fixes. Do NOT own/rewrite SEC/options download pipelines, no collector pushes, no bulk scraping. Calendar #96 parked; #96/#177/#163 other lanes. Ignore venice/calendar-announce-ledger after dca969a.
 
 ## File map
-Branch venice/sec-options-pipelines. agent/BRIDGE6.js loaded by agent/LOADER6.user.js; agent/DOORMAN.worker.js = GitHub transport; agent/DEPLOYER.worker.js = deployer; runtime state agent/runtime/. agent/PROGRESS.md last commit aa3fab0cdd1dfe27b8acd27a934be49230db700c (blob 431e9399e614e976fb11d4d359a65b12773a0cbf); prior 8f1cbd8c, ba179d23.
+Branch venice/sec-options-pipelines. agent/BRIDGE6.js loaded by agent/LOADER6.user.js; agent/DOORMAN.worker.js = GitHub transport; agent/DEPLOYER.worker.js = deployer; runtime state agent/runtime/. agent/PROGRESS.md last confirmed commit aa3fab0cdd1dfe27b8acd27a934be49230db700c (blob 431e9399e614e976fb11d4d359a65b12773a0cbf); prior 8f1cbd8c, ba179d23. NOTE: a write against expected_sha aa3fab0 was rejected as stale on 2026-11-08T14:42Z — the file changed outside this turn, so re-read before editing.
 
 ## Proven work
 GitHub read/write proof a089ee8ac06ad75112451d56543736dcb6393b0b. Runner download proof runs/42375131645. Worker self-update preserves bindings.
 
 ## Failure reporting — canonical facts
-Run 42399694729 / nai-occ-oi-daily / sha 2ba3ebd / job 128484582301 / schedule 2026-11-07T18:07Z. Canonical: https://github.com/SRoyaltyy/checklist-engine/issues/223 — failed_steps=['Run python scripts/nai/occ_oi_daily.py'], skipped_steps=['Run python scripts/nai/oi_probe.py'], error_lines=['Traceback (most recent call last):',"ValueError: invalid literal for int() with base 10: ''",'##[error]Process completed with exit code 1.']. verified:true. Same signature as #220 on newer head, so #220 fix not landed.
-Run 42284432095 / sha e85547a / job 128121492870: canonical https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 — same failed/skipped steps and ValueError. Supersedes issue body's inferred unguarded-DELO diagnosis and comment 6710061417. DELO stays unverified inference; never cite as cause.
-Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step 'Run python scripts/nai/sec_datasets.py form345', no skipped steps; log: RuntimeError: GET failed https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets: HTTP Error 403: Forbidden. Canonical https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770 (verified:true).
+Run 42399694729 / nai-occ-oi-daily / sha 2ba3ebd / job 128484582301 / schedule 2026-11-07T18:07Z. Canonical issue #223 body (verified:true, confirmed by scrape): failed step 'Run python scripts/nai/occ_oi_daily.py'; listed skipped step 'Run python scripts/nai/oi_probe.py'; error lines 'Traceback (most recent call last):' / "ValueError: invalid literal for int() with base 10: ''" / '##[error]Process completed with exit code 1.'. Same ValueError signature as #220 on a newer head, so the #220 fix has not landed.
+Run 42284432095 / sha e85547a / job 128121492870: canonical https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739 — same failed/skipped step names and same ValueError lines. That comment supersedes the issue body's inferred unguarded-DELO diagnosis and comment 6710061417. DELO stays unverified inference; never cite as cause. Note the contradiction inside #220: comment 6710061417 says oi_probe ran first, the canonical comment lists it as skipped; report_failure's derived field is authoritative for the lane.
+Run 42156926867 / nai-sec-form345 / sha 8ec34d48 / job 127693199421: failed step 'Run python scripts/nai/sec_datasets.py form345', skipped none; error lines RuntimeError GET failed https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets: HTTP Error 403 Forbidden; urllib.error.HTTPError 403; RuntimeError HTTP 403; '##[error]Process completed with exit code 1.'. Canonical https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770 (verified:true).
 
 ## Reported run IDs — never re-report
 42284432095, 42156926867, 42399694729. Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch, superseded shas d5ab097/b0a563b).
 
 ## runs(main) snapshot 2026-11-08T14:41Z (14 runs)
-42434336421 nai-sec-bulk success sha 2ba3ebd 2026-11-08T01:27Z (NEW, healthy). 42399694729 occ failure (reported). 42332789888 nai-sec-form13f success e85547a; 42284432095 occ failure (reported); 42156926867 form345 failure (reported); 42106074154 occ failure (covered); 41906860199 / 41710121137 occ failures (covered); 41413535355 / 41413529249 / 41413017909 / 41413013359 Nov-2 failures (covered); 41413026299 occ success d5ab097. No world-v2-code-ci run newer than 42391969592 in this list.
+42434336421 nai-sec-bulk success sha 2ba3ebd 2026-11-08T01:27Z (new, healthy). 42399694729 occ failure (reported). 42332789888 nai-sec-form13f success e85547a; 42284432095 occ failure (reported); 42156926867 form345 failure (reported); 42106074154 occ failure (covered); 41906860199 / 41710121137 occ failures (covered); 41413535355 / 41413529249 / 41413017909 / 41413013359 Nov-2 failures (covered); 41413026299 occ success d5ab097. No world-v2-code-ci run newer than 42391969592 in this list.
 
 ## Open observation (not a failure, nothing filed)
-Expected scheduled slots absent from runs(main): Nov 7 ~19:59Z nai-occ-oi-daily, Nov 8 ~03:10Z nai-sec-form13f, Nov 8 ~05:58Z nai-daily-forward. Possible schedule stall or disabled workflows. A missing run is not a failure, so the lane does not report it. Re-check each wake; if the gap persists, it is worth raising to James/GPT outside this lane's report_failure duty.
+Expected scheduled slots absent from runs(main): Nov 7 ~19:59Z nai-occ-oi-daily, Nov 8 ~03:10Z nai-sec-form13f, Nov 8 ~05:58Z nai-daily-forward. Possible schedule stall or disabled workflows. A missing run is not a failed run, so this lane does not report it through report_failure; re-check each wake and escalate to James/GPT only if the gap persists.
 
 ## Lessons
-Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path in report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public.
+Never infer a traceback from source code. Never assume a truncated UI step means the log is absent — the API path in report_failure retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. write_file needs the sha of the latest read of that exact path; a stale expected_sha fails closed and must be fixed by re-reading, not by retrying the same call. Cloudflare 1042 fixed by global_fetch_strictly_public.
 
 ## Interpretation
 A step can render in the job page while its API conclusion is skipped; API conclusions plus report_failure settle it. A cancelled run is neither a failure nor reportable in this lane.
 
 ## State
-t1–t11 done. t12 active: checkpoint the Nov 8 sweep (new green nai-sec-bulk + absent-scheduled-runs observation). No unreported failure exists.
+t1–t11 done. t12 blocked on the stale sha, now retrying via re-read. No unreported failure exists. Only open external items: GPT fixing occ_oi_daily.py (#220/#223) and sec_datasets.py form345 (#221).
