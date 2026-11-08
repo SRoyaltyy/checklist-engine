@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T17:07:27.607Z",
-  "turn_id": "mw831782-5w13uwlx",
-  "summary": "17:00Z runs(main) sweep returned the same 30-entry set as every checkpoint since 14:41Z: newest run still 42434336421 (nai-sec-bulk #51, sha 2ba3ebd, SUCCESS 30m56s, artifact sec-bulk-receipt-42434336421 sha256:4d5af7ea…). All failures present are already covered: 42399694729 (#223), 42284432095 (#220), 42156926867 (#221); deliberately-unreported 42106074154 / 41906860199 / 41710121137 (same occ_oi_daily breakage, #220) and the Nov-2 superseded-sha batch 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359. 41227556402 is cancelled, not a failure. No new nai-sec-* or nai-occ-oi-daily run has fired since 2026-11-08T01:27Z, so no report_failure call and no issue. PROGRESS.md already carries this snapshot exactly, so no rewrite is needed.",
-  "next": "Idle. On the next wake re-sweep runs(main); if a new failed nai-sec-* / nai-occ-oi-daily run appears outside the never-re-report set, call report_failure(run_id) once and stop. Keep watching the three missed scheduled slots (Nov 7 ~19:59Z occ, Nov 8 ~03:10Z form13f, Nov 8 ~05:58Z nai-daily-forward) and escalate to James/GPT only if the gap persists through Nov 9.",
+  "at": "2026-11-08T17:15:29.566Z",
+  "turn_id": "mw83cxah-nf5ferqr",
+  "summary": "No change proven yet this turn. Prior checkpoints (through 17:00Z) show the runs(main) list frozen at 30 entries since 2026-11-08T01:27Z, with every failed nai-sec-*/nai-occ-oi-daily run either already reported (issues #220/#221/#223) or in the deliberate never-re-report set. Dispatching a fresh runs(main) sweep to confirm no new failed run has fired since 17:07Z; no write, no issue, no dispatch until that result returns.",
+  "next": "Inspect the returned runs(main) list. If every failed nai-sec-*/nai-occ-oi-daily run is already covered by #220/#221/#223 or in the never-re-report set, mark t29 done with actions=[] and done=true. If a NEW failed nai-sec-*/nai-occ-oi-daily run appears, call report_failure(run_id) exactly once for it and stop; do not write a freeform diagnosis.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t28",
+    "current_task": "t29",
     "tasks": [
       {
         "id": "t1",
@@ -108,7 +108,6 @@
         "status": "done",
         "evidence": [
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
           "https://github.com/SRoyaltyy/checklist-engine/issues/223"
         ],
         "blocker": ""
@@ -121,17 +120,30 @@
         "status": "done",
         "evidence": [
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-          "https://github.com/SRoyaltyy/checklist-engine/issues/223",
           "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-          "https://github.com/SRoyaltyy/checklist-engine/issues/221"
+          "https://github.com/SRoyaltyy/checklist-engine/issues/221",
+          "https://github.com/SRoyaltyy/checklist-engine/issues/223"
         ],
+        "blocker": ""
+      },
+      {
+        "id": "t29",
+        "title": "Sweep runs(main) at 17:13Z for any newly fired failed nai-* run",
+        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
         "blocker": ""
       }
     ],
-    "progress_percent": 100
+    "progress_percent": 92
   },
-  "tool_results": [],
+  "tool_results": [
+    {
+      "tool": "runs",
+      "ok": true
+    }
+  ],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -186,5 +198,5 @@
     "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d",
     "24934c4ec5eb073134b19aae1c17f3c745099cad"
   ],
-  "done": true
+  "done": false
 }
