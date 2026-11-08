@@ -2,15 +2,17 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t1",
+  "current_task": "t2",
   "tasks": [
     {
       "id": "t1",
       "title": "Seed docs/venice-audit-v1/PROGRESS.json on the created audit branch as durable fallback",
       "acceptance": "write_file returns a commit sha on venice/repo-requirements-audit-v1 and the file is readable at that sha",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
+      ],
       "blocker": ""
     },
     {
@@ -18,8 +20,11 @@
       "title": "Extract canonical inventory ids and coverage schema from catalog/coverage authority files; build REQUIREMENTS.csv for stages 0–8",
       "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id with authority_ref and source_urls",
       "weight": 2,
-      "status": "todo",
-      "evidence": [],
+      "status": "doing",
+      "evidence": [
+        "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
+        "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+      ],
       "blocker": ""
     },
     {
@@ -50,5 +55,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 0
+  "progress_percent": 9
 }
