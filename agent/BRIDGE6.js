@@ -1,7 +1,7 @@
-// Venice web runtime 6.4.2. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.4.3. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.4.2', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.4.3', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -93,7 +93,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     if(stopped)return;
     s.context=context;
     const active=context.assignment?.id||null;
-    if((s.activeTaskId||null)!==active){s.activeTaskId=active;s.results=[];s.rollover=true;s.quietAfterTurn=false;s.lastInputSignature=null;persist();}
+    if((s.activeTaskId||null)!==active){s.activeTaskId=active;s.results=[];s.evidence=[];s.rollover=true;s.quietAfterTurn=false;s.lastInputSignature=null;persist();}
     if(context.assignment){const claim=await request('tool',{id:'claim-'+uid(),action:'claim_task',args:{}});if(!claim.ok)throw new Error(claim.error||'Task ownership unavailable');}
     const observed=context.assignment?context.task_runs:context.runs;
     const signature=JSON.stringify([context.instructions?.todo_sha,context.instructions?.methodology_sha,context.assignment?.assignment_sha,context.publishing_enabled,Array.isArray(observed)?observed.map(x=>[x.id,x.sha,x.status,x.conclusion]):observed,context.task_pr]);
@@ -115,8 +115,10 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     if(!b){note('send button missing');return;}
     s.phase='sending';s.sendAttempt=Date.now();persist();b.click();
   }
+  function returnedEvidence(results){return [...results.map(x=>x.result.receipt_path&&x.result.receipt_sha?x.result.receipt_path+'@'+x.result.receipt_sha:null),...results.filter(x=>x.result.ok).flatMap(x=>[x.result.commit,x.result.url,x.result.sha,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])])].filter(Boolean);}
   async function execute(packet){
     if(packet.actions.length>4)throw new Error('At most 4 actions per turn');
+    s.evidence=[...new Set([...(s.evidence||[]),...returnedEvidence(s.results||[])])].slice(-100);
     s.phase='executing';s.packet=packet;s.actionIndex=s.actionIndex||0;s.results=s.actionIndex?s.results:[];persist();
     for(let i=s.actionIndex;i<packet.actions.length;i++){
       if(stopped||!s.enabled)return;
@@ -129,10 +131,8 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       if(result.transport){s.phase='retrying';s.retryAt=Date.now()+30000;persist();return;}
       if(!result.ok){s.actionIndex=packet.actions.length;persist();break;}
     }
-    const evidence=[...(s.context?.available_evidence||[]),...s.results.map(x=>x.result.receipt_path&&x.result.receipt_sha?x.result.receipt_path+'@'+x.result.receipt_sha:null),...s.results.filter(x=>x.result.ok).flatMap(x=>[
-      x.result.commit,x.result.url,x.result.sha,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,
-      ...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])
-    ])].filter(Boolean);
+    const evidence=[...new Set([...(s.evidence||[]),...(s.context?.available_evidence||[]),...returnedEvidence(s.results)])].slice(-100);
+    s.evidence=evidence;
     s.phase='checkpointing';persist();
     try{await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,contribution:packet.contribution,pitfalls:packet.pitfalls,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});}
     catch(error){if(error.status===400){s.lastError=error.message;s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('Checkpoint: '+error.message);return;}throw error;}
