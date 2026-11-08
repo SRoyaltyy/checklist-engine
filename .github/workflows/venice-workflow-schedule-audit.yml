@@ -50,6 +50,7 @@ jobs:
           python -m unittest discover -s agent/verification -p test_workflow_schedule_audit_acceptance.py -v 2>&1 | tee artifacts/owner-acceptance.log
 
       - name: Audit checked-out SEC/options workflows
+        id: audit
         run: |
           set +e
           python agent/workflow_schedule_audit.py --workflows .github/workflows --output artifacts/workflow_schedule_audit.json --source-commit "$GITHUB_SHA"
@@ -57,6 +58,16 @@ jobs:
           set -e
           echo "audit_exit_code=$code" | tee artifacts/audit-exit-code.log
           python -c "import json,os;d=json.load(open('artifacts/workflow_schedule_audit.json'));assert d['schema_version']==1;assert d.get('source_commit')==os.environ['GITHUB_SHA'];print('status',d['status']);print('workflows',[r['path'] for r in d['workflows']]);print('errors',d['errors'])"
+          status=$(python -c "import json;d=json.load(open('artifacts/workflow_schedule_audit.json'));print(d['status'])")
+          echo "audit_status=$status" | tee artifacts/audit-status.log
+          if [ "$code" -ne 0 ]; then
+            echo "::error::audit CLI exited with code $code"
+            exit "$code"
+          fi
+          if [ "$status" != "PASS" ]; then
+            echo "::error::audit report status is $status, expected PASS"
+            exit 1
+          fi
 
       - name: Upload audit evidence
         if: always()
