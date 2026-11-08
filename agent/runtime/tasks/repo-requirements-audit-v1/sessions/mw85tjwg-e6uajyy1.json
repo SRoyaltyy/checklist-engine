@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "at": "2026-11-08T18:25:37.091Z",
+  "input": {
+    "task_id": "repo-requirements-audit-v1",
+    "assignment_sha": "fe5043dc723075d0d79b72a91c100b9667ab4fa7",
+    "owner_id": "mw83wh2u-kaq8t5cl",
+    "turn_id": "mw85tjwg-e6uajyy1",
+    "branch": "venice/repo-requirements-audit-v1",
+    "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+    "summary": "Created venice/repo-requirements-audit-v1 from main (returned sha c30c23be, receipt c94e33c6); main head equals that same sha, so the only delta from the spec-mandated audit base 68c6f2a8 is the task-assignment commit. Finished reading agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json end-to-end: 56 baseline rows in total (B0–B6, D0–D9, W0–W18, F0–F4, S0, Q0–Q2, A0–A3, V0–V1, M0–M5, T0–T1, L0–L1), which is the complete row set the GANTT_COMPARISON.csv must map. No audit artifact written yet; PROGRESS.json is the next write.",
+    "next": "After the PROGRESS.json write returns a commit sha, read docs/INVENTORY_CATALOG_AUDIT_V1.json (first ~30 lines) and docs/WORLD_COVERAGE.csv (first ~10 lines) to capture the canonical inventory id list and the coverage column schema, then begin REQUIREMENTS.csv rows for stages 0–1.",
+    "contribution": {
+      "kind": "implementation",
+      "description": "Created the assigned audit branch venice/repo-requirements-audit-v1 from main at c30c23be (the assignment commit) and completed the full read of the Gantt claim baselines, establishing the exact 56-row baseline set that GANTT_COMPARISON.csv must map and confirming live main differs from the spec audit base only by that assignment commit.",
+      "evidence": [
+        "agent/runtime/receipts/mw85rga4-s3xk35sy.0.json@c94e33c6d2440943c01e84d8dfa72bb08d86c7e8",
+        "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202"
+      ]
+    },
+    "plan": {
+      "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+      "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
+      "gantt_row": "All project stages 0–8; evidence audit only",
+      "current_task": "t1",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Seed docs/venice-audit-v1/PROGRESS.json on the created audit branch as durable fallback",
+          "acceptance": "write_file returns a commit sha on venice/repo-requirements-audit-v1 and the file is readable at that sha",
+          "status": "doing",
+          "weight": 1,
+          "evidence": [
+            "branch venice/repo-requirements-audit-v1@c30c23be created"
+          ]
+        },
+        {
+          "id": "t2",
+          "title": "Extract canonical inventory ids and coverage schema from catalog/coverage authority files; build REQUIREMENTS.csv for stages 0–8",
+          "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id with authority_ref and source_urls",
+          "status": "todo",
+          "weight": 2,
+          "evidence": [
+            "baseline row set B0–L1 fully read"
+          ]
+        },
+        {
+          "id": "t3",
+          "title": "Verify each claim against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts)",
+          "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
+          "status": "todo",
+          "weight": 3,
+          "evidence": []
+        },
+        {
+          "id": "t4",
+          "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+          "acceptance": "All required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
+          "status": "todo",
+          "weight": 2,
+          "evidence": []
+        },
+        {
+          "id": "t5",
+          "title": "Add validator script, source-matched test and push-triggered audit workflow, then open PR and merge to main",
+          "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+          "status": "todo",
+          "weight": 3,
+          "evidence": []
+        }
+      ]
+    },
+    "notes": "CONTRACT: repo-requirements-audit-v1 active, assignment_sha fe5043dc723075d0d79b72a91c100b9667ab4fa7, deliverable merged_pr, allow_merge true, publishing_enabled true, lease owner mw83wh2u-kaq8t5cl. Branch venice/repo-requirements-audit-v1 CREATED from main at c30c23bed24dc986b2bbf5a4b559a022e2df4300 (receipt agent/runtime/receipts/mw85rga4-s3xk35sy.0.json@c94e33c6). main head == c30c23be == 'tasks: assign Venice full requirements, data and Gantt evidence audit'. Spec audit base 68c6f2a8 differs from live main by that assignment commit only; needs an explicit delta check before the PR.\nALLOWED PATHS: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. Read-only: agent/ACTIVE_TASK.json, agent/tasks/**, agent/verification/**, TODO.md, METHODOLOGY.md.\nDELIVERABLES: REQUIREMENTS.csv (stages 0,1,2,3,4,5,5b,6,7,8), DATA_REQUIREMENTS.csv (18 named columns, one row per canonical inventory id incl. exclusions), GANTT_COMPARISON.csv (one row per baseline row; split bundled rows; reverse map), EVIDENCE.json, AUDIT.md, GANTT.html/svg, PROGRESS.json.\nBASELINE ROW SET (complete, agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202): v16 chart as_of 2026-11-07 08:55 HKT ref e85547ac; v20 chart as_of 2026-11-09 01:13 HKT ref 2ba3ebdf; both mark legacy dates NOT a forecast. Blockers B0–B6 (B0 166 replay mismatches; B2 full world NOT_PROVEN + scoring CLOSED; B3 8439/8439 measured but packet replay FAIL 1308; B4 22968 produced bindings only; B5 8439 keys/9271 sessions identity unproven; B6 SEC access only). Data D0–D9 (D0 catalog verified != downloaded; D1 8439 retained/288 excluded; D2 bundled row must split; D3 CBOE joins UNKNOWN; D4 246 assets readback PASS, identity 61.13%; D5 Form4/13F no accepted panel on main; D6 OCC FAIL, Dolt any-row 21.42%, no OI; D7 skeleton; D8 0 accepted; D9 decision unresolved). World W0–W18 (W0 0 formal intervals/current identity 5159 of 8439; W1 tradeability/$100m/shares/float NOT_PROVEN; W2 produced subset only; W3 earnings 112760 rows/4195 old-cohort; W4 analyst 350374 rows/4041; W5/W6 FINRA SI/SV unproven; W7 Reg SHO old asset; W8 halts old results not raw tape; W9 dividends/splits unproven; W10/W11 sector & theme dated membership unproven; W12 money flow signed/block/dark-pool/ETF history unproven; W13 FRED/ALFRED 21-series PIT PASS but world joins UNKNOWN; W14 breadth native PASS with survivor caveat; W15 ETF/index joins UNKNOWN; W16 Finviz EXCLUDED_LIVE_ONLY (verify owner authority); W17 GDELT owner-dropped (verify); W18 no 258-kind cohort×period scoreboard on main). Define F0–F4 (14-lens applicability design only; 114 strict defs; rulings 5–8 no main proof; price available_from scoped PASS; leak probes only BPOP/DJCO/KGRN). Show S0 viewport #163 UNMERGED. Questions Q0–Q2 (107201 bound defs, answers not passed; batch27 #224 CI PASS unmerged; 2664 canonical ladders +80 aliases, semantic completion UNKNOWN). Answers A0–A3 all not run/0 accepted. V0–V1 options/money-flow questions data-gated. Mine M0–M5 all 0 accepted/world-gated (26100 exit rules planned, not built). Test T0–T1 0 accepted. Live L0–L1 PAPER ONLY, gates CLOSED.\nSUPERSEDED: SEC/OI failure-monitoring lane (runs 42284432095, 42156926867 already reported in #220/#221; GPT owns the fixes).\nRULES: catalog row != download; access test != acquisition; PR branch != accepted main work; audit completion never opens world/scoring/live gates; never edit sealed records, receipts, inventories, other lanes, production pipelines; no new paid sources; 2025–26 authorized for testing but record selection vs evaluation contamination; no aggregated percentages without numerator/denominator/scope.",
+    "pitfalls": []
+  },
+  "pitfalls": []
+}
