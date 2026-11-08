@@ -1,1 +1,1 @@
-{"id":"mw85htua-tc9k48n6.1","action":"sync_branch","args":{"expected_head_sha":"ec5867d1c8d321d9369b974cb7e9c8313a5b97e1"},"status":"running","at":"2026-11-08T18:13:57.293Z"}
+{"id":"mw85htua-tc9k48n6.1","action":"sync_branch","args":{"expected_head_sha":"ec5867d1c8d321d9369b974cb7e9c8313a5b97e1"},"status":"done","at":"2026-11-08T18:14:00.839Z","result":{"ok":true,"branch":"venice/workflow-schedule-audit-v1","commit":"df19f7c2a2ffba580b6d0b678094c4d3f582c885","base_sha":"68c6f2a83387f796cdf9836261dce1546ea61a92","unchanged":false}}
