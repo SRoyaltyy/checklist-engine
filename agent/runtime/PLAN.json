@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t24",
+  "current_task": "t25",
   "tasks": [
     {
       "id": "t1",
@@ -97,11 +97,13 @@
     },
     {
       "id": "t25",
-      "title": "Refresh agent/PROGRESS.md checkpoint with the 16:28Z sweep result",
-      "acceptance": "write_file returns ok:true with a new commit sha, or read sha shows content already current",
+      "title": "Refresh agent/PROGRESS.md checkpoint to the 16:28Z 30-run snapshot",
+      "acceptance": "write_file returns ok:true with a new commit sha",
       "weight": 1,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d"
+      ],
       "blocker": ""
     }
   ],
