@@ -1,6 +1,6 @@
 # Venice progress
 
-Updated 2026-11-08T14:55:29.506Z UTC
+Updated 2026-11-08T14:59:27.485Z UTC
 
 ## Goal
 Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)
@@ -9,7 +9,7 @@ Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, th
 Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping
 
 Gantt row: Venice lane (thin chatbot poke)
-Verified progress: **94%**
+Verified progress: **100%**
 Current subtask: t16
 
 | ID | Subtask | Status | Evidence |
@@ -29,13 +29,13 @@ Current subtask: t16
 | t13 | Sweep runs(main) at 14:43Z for any new failed nai-* run | done | https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421 |
 | t14 | Classify the 14:44Z 29-run sweep and confirm no un-reported nai-* failure | done | https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402 |
 | t15 | Sweep runs(main) at 14:50Z for any new failed nai-* run | done | https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729 |
-| t16 | Sweep runs(main) at 14:52Z and decide whether a PROGRESS.md write is warranted | doing | agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d |
+| t16 | Sweep runs(main) at 14:56Z and decide whether a PROGRESS.md write is warranted | done | https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421, https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729, https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402 |
 
 ## Last completed work
-agent/PROGRESS.md read back at blob 0fa61634a892f6b2a433ace58ecd6a0af896ff3d (34 lines, 3114 chars) — it already records the assigned lane, the three canonical reports (#220 comment 6710271739, #221 comment 6710541770, #223), the never-re-report set, the 14:41Z snapshot, and the un-filed schedule-gap observation. So t16 as originally scoped (rewrite for a 14:50Z sweep that returned the identical 30-entry list) would be a no-change write, which my own recorded lesson says to skip. Re-scoping t16 to a fresh runs(main) sweep instead: if it is still identical, no write is warranted and the lane is done until the next wake; if a new nai-sec-* / nai-occ-oi-daily failure appears outside the never-re-report set, report_failure is the next call. No PROGRESS.md mutation issued this turn.
+runs(main) returned 30 entries at 14:56Z — byte-for-byte the same set as the 14:41Z / 14:44Z / 14:50Z snapshots. Newest run is still 42434336421 (nai-sec-bulk #51, sha 2ba3ebd, success, 30m56s, jobs 128589843164 19s + 128589913741 30m32s, artifact sec-bulk-receipt-42434336421 111 KB sha256:4d5af7ea…), corroborated by the scraped run page which shows status Success with only Node20-deprecation and ubuntu-latest->Ubuntu26 annotations. Every failed nai-sec-* / nai-occ-oi-daily entry in the list is inside the never-re-report set: 42399694729 (#223), 42284432095 (#220), 42156926867 (#221), 42106074154 / 41906860199 / 41710121137 (covered by #220), 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b). 41227556402 is cancelled, which is neither a failure nor reportable. No new run fired and no un-reported failure exists, so no report_failure call and no PROGRESS.md write — t16 acceptance met on the 'no write needed, blob 0fa61634 already current' branch. Lane idle until the next wake.
 
 ## Exact next step
-Read the runs(main) result. If every failed nai-sec-* / nai-occ-oi-daily entry is inside the never-re-report set (42284432095, 42156926867, 42399694729, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359), do not write PROGRESS.md and return actions=[] / done=true. Otherwise call report_failure once on the single new failing run id and stop.
+Nothing to do until the bridge wakes again in ~5 minutes. Next wake: re-sweep runs(main); report_failure only on a failed nai-sec-* / nai-occ-oi-daily run id outside the never-re-report set; keep watching the Nov 7 19:59Z occ / Nov 8 03:10Z form13f / Nov 8 05:58Z daily-forward schedule gap and escalate to James/GPT only if it persists through Nov 9.
 
 ## Blockers
 []
@@ -43,4 +43,4 @@ Read the runs(main) result. If every failed nai-sec-* / nai-occ-oi-daily entry i
 ## Evidence
 ["https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095","https://github.com/SRoyaltyy/checklist-engine/issues/220","TODO.md@a222d34988f9a66a2de20ea25a3a8bf49a6dd653","METHODOLOGY.md@805865895f2835383a79b8c43afd92570bc5d101","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095/job/128121492870","TODO.md@c7c31b02e530a35d9944c705d19422d606956809","METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710061417","https://github.com/SRoyaltyy/checklist-engine/issues/221","ba179d2306dbc448f85c9caa6ae07554e07cf192","https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739","agent/PROGRESS.md@a83aa26fe6c41bc7172f03a90812d97064c68ae4","8f1cbd8c36321a47dee6192d8e8ed47440fa0a56","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42391969592","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42370489444","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42344942142","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42332789888","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42261199680","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252851317","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252169840","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42214284659","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42176587992","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42106074154","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41982771257","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41906860199","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41785171922","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41710121137","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41592147370","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41575832670","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41574644199","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413535355","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413030480","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413026299","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413022188","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413017909","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227563332","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227549644","https://github.com/SRoyaltyy/checklist-engine/actions/runs/41224165706","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729/job/128484582301","https://github.com/SRoyaltyy/checklist-engine/issues/223","aa3fab0cdd1dfe27b8acd27a934be49230db700c","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729","agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf","8a3ed5d5cad3b052f84872bd3d82e3699e161fcd","https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421","agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d"]
 
-Turn: mw7ybghp-ylnfth6e
+Turn: mw7yglon-emrnyvmq
