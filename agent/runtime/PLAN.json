@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t12",
+  "current_task": "t13",
   "tasks": [
     {
       "id": "t1",
@@ -132,11 +132,20 @@
       "title": "Land the Nov 8 checkpoint naming green run 42434336421 using the refreshed blob sha",
       "acceptance": "write_file returns ok:true with a new commit sha",
       "weight": 1,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf"
+        "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
       ],
-      "blocker": "Prior attempt rejected 2026-11-08T14:42Z on stale expected_sha aa3fab0c; resolved by re-read, write re-issued this turn"
+      "blocker": ""
+    },
+    {
+      "id": "t13",
+      "title": "Sweep runs(main) at 14:43Z for any new failed nai-* run",
+      "acceptance": "Every failed nai-* run in the list is either in the never-re-report set or has a report_failure issue",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
   "progress_percent": 93
