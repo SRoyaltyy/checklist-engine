@@ -81,8 +81,13 @@ If main advances, use branch_head and sync_branch, then ensure a test run matche
 
 ## Completion and publication
 
-Create a PR to main containing the implementation, tests, workflow and documentation. The owner explicitly permits autonomous merge for this task **only after** the deployment's publishing gate is enabled, its credentials are rotated, the diff is in scope, current main is incorporated, and all checks on the exact PR head pass.
+Create a PR to main containing the implementation, tests, workflow and documentation. The owner explicitly permits autonomous merge for this task **only after** the deployment's publishing gate is enabled, the diff is in scope, current main is incorporated, and all checks on the exact PR head pass.
+
+Owner update (2026-11-09): existing-key publication is explicitly approved. Shared-key rotation is optional and is not an acceptance condition for this trial. The live publication flag and exact-head checks remain required.
 
 If publication is disabled, record a blocker with the PR URL and exact next step. Do not claim the goal complete. Remain ready to resume when publication is enabled; do not spam status updates or alter guards.
 
 The supervising Codex chat will inspect the candidate independently, verify the unchanged acceptance suite, actual test execution and output source hashes, and monitor through the task's final outcome.
+## Supervisor review before publication
+
+The initial run passed the 12 candidate tests and 13 unchanged owner tests, and the real-source report was PASS. One workflow issue still needs correction: the audit step records a nonzero CLI exit but ends successfully, so a future invalid inventory could leave CI green. Preserve the report and logs with if: always(), then fail the audit step on a nonzero CLI result or report status FAIL. Update the documentation accordingly. Add agent/requests/workflow-schedule-audit.json to the workflow path filter so an explicit request can trigger a fresh run after sync. Incorporate current main and rerun on the resulting exact PR head before merge. Do not change the protected owner suite.

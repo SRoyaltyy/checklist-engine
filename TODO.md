@@ -7,6 +7,8 @@ Focus now (Cyrus 2026-11-05): **SEC** and **Options** Gantt rows, done by plain 
 ---
 
 ## Venice
+**Supervisor review pending:** re-read the final supervisor-review section of docs/VENICE_WORKFLOW_AUDIT_TRIAL_V1.md on current main. Fix the CI false-green path and request-path trigger, sync current main, and test the resulting exact head before publishing PR #225. Existing-key publication is approved and enabled.
+
 **Lane — owner-approved autonomous coding trial:** complete task workflow-schedule-audit-v1. Build a deterministic, read-only inventory of the configured SEC/options workflow triggers and source hashes. This is the primary Venice task until its PR is tested and published; do not modify collectors or production pipeline workflows. Calendar #96 remains parked.
 - [ ] **workflow-schedule-audit-v1** → [1 Data / SEC / analyst / sector history] + [1 Data / Options + money-flow (#165)]. Read [the full task spec](docs/VENICE_WORKFLOW_AUDIT_TRIAL_V1.md) and [active machine assignment](agent/ACTIVE_TASK.json). Work on venice/workflow-schedule-audit-v1. Create implementation, tests and a branch-triggered CI workflow; pass the unchanged owner acceptance suite; publish only through the task-scoped checked merge route when enabled. A blocked publication is not a completed goal.
 - Every work session must add code, test evidence, a useful finding or an explicit blocker; preserve previous progress and structured pitfalls. Repeated status checks do not count as progress. The parent assignment, other agents' lanes and acceptance suite are protected.
