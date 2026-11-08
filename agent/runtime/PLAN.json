@@ -1,149 +1,54 @@
 {
-  "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
-  "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
-  "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t30",
+  "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+  "why": "Advances the Venice lane row for the Cyrus-assigned full repository audit and prevents missing requirements or false completion claims before any gate is considered.",
+  "gantt_row": "All project stages 0–8; evidence audit only",
+  "current_task": "t1",
   "tasks": [
     {
       "id": "t1",
-      "title": "Confirm Venice lane text in TODO.md and scan runs for failures",
-      "acceptance": "Lane read; failed nai-* run identified",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "TODO.md@c7c31b02e530a35d9944c705d19422d606956809"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t2",
-      "title": "Report failed nai-occ-oi-daily run 42284432095 once",
-      "acceptance": "Issue URL containing run_id 42284432095",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t3",
-      "title": "Replace inferred wording for 42284432095 with report_failure canonical record",
-      "acceptance": "Canonical comment URL with derived steps and error lines",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t4",
-      "title": "Report failed nai-sec-form345 run 42156926867 once",
-      "acceptance": "Issue URL with run_id and failing step",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/221"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t10",
-      "title": "Report failed nai-occ-oi-daily run 42399694729 once",
-      "acceptance": "Issue URL with run_id, failed/skipped steps, exact error lines",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/issues/223",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729/job/128484582301"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t12",
-      "title": "Land the Nov 8 checkpoint naming green run 42434336421",
-      "acceptance": "write_file returns ok:true with a new commit sha",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t25",
-      "title": "Refresh agent/PROGRESS.md checkpoint to the 16:28Z 30-run snapshot",
-      "acceptance": "write_file returns ok:true with a new commit sha",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "24934c4ec5eb073134b19aae1c17f3c745099cad"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t26",
-      "title": "Sweep runs(main) at 16:39Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t27",
-      "title": "Sweep runs(main) at 16:51Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned 30-entry list is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/223"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t28",
-      "title": "Sweep runs(main) at 17:00Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned 30-entry list is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/221",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/223"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t29",
-      "title": "Sweep runs(main) at 17:16Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/223",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/220",
-        "https://github.com/SRoyaltyy/checklist-engine/issues/221"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t30",
-      "title": "Sweep runs(main) after 17:16Z for any newly fired failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+      "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as the durable fallback",
+      "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and PROGRESS.json exists on that branch at that sha",
       "weight": 1,
       "status": "doing",
       "evidence": [],
       "blocker": ""
+    },
+    {
+      "id": "t2",
+      "title": "Read spec + both Gantt claim baselines and extract every stage, canonical inventory id and claimed status",
+      "acceptance": "Requirements matrix lists every stage 0–8 and every inventory id with its source link and claimed-vs-verified status",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
+    },
+    {
+      "id": "t3",
+      "title": "Verify each claim against immutable main evidence (source status json, proof summaries, retained artifacts) without trusting catalog rows or green jobs",
+      "acceptance": "Evidence ledger row per claim with a main path or blob sha and an explicit verified/unverified/missing verdict",
+      "weight": 3,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
+    },
+    {
+      "id": "t4",
+      "title": "Publish comparison matrix, corrected Gantt visualization and dependency-ordered actionable report under docs/venice-audit-v1/",
+      "acceptance": "Files present on the audit branch and referenced from PROGRESS.json, with no changes outside allowed_paths",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
+    },
+    {
+      "id": "t5",
+      "title": "Add validator script, source-matched test and push-triggered audit workflow on the venice branch, then open and merge the PR to main",
+      "acceptance": "Workflow run on the venice branch is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+      "weight": 3,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 93
+  "progress_percent": 0
 }
