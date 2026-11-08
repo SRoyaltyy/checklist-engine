@@ -5,7 +5,7 @@ The browser is the model runner. Cloudflare is the GitHub tool transport. GitHub
 ## Active files
 
 - `agent/LOADER6.user.js`: stable Tampermonkey loader, version 2.1.0. The installed script remains named **Venice Bridge Loader**. The standalone legacy **Venice Repo Bridge** entry stays disabled.
-- `agent/BRIDGE6.js`: published browser runtime, version 6.2.2. The loader compiles it, runs it with explicit Tampermonkey functions, and receives a lifecycle handle. It does not rewrite the source with string patches.
+- `agent/BRIDGE6.js`: published browser runtime, version 6.2.3. The loader compiles it, runs it with explicit Tampermonkey functions, and receives a lifecycle handle. It does not rewrite the source with string patches.
 - `agent/DOORMAN.worker.js`: authenticated GitHub transport, context snapshots, tool receipts, and progress checkpoints.
 - `agent/DEPLOYER.worker.js`: worker deployment preserving existing binding types and settings.
 - `agent/runtime/PROGRESS.md` and `STATE.json`: last completed work, exact next step, blockers, and evidence.
@@ -42,14 +42,32 @@ For worker updates, write `agent/DOORMAN.worker.js` on the maintenance branch an
 - Worker self-deployment through the fixed-target deployer, preserving existing bindings: commit `3254934f8d03748c3b14475f641b76f4d0ebd74d`.
 - Model-generated reporting and checkpoints: issues [220](https://github.com/SRoyaltyy/checklist-engine/issues/220#issuecomment-6710271739) and [221](https://github.com/SRoyaltyy/checklist-engine/issues/221#issuecomment-6710541770), followed by exact GitHub-log corrections and verified persistent deduplication.
 - Live classic-chat rollover and state restoration were exercised on runtime 6.2.0; Venice resumed its saved task, wrote the corrected progress file at commit `8f1cbd8c36321a47dee6192d8e8ed47440fa0a56`, read the verified result, then checkpointed the task as complete. Agentic mode has automated DOM-adapter coverage and was exercised earlier; this final acceptance pass used Classic.
-- 47 automated checks pass: 17 transport/checkpoint/reporting, 9 Agentic browser adapter, 9 Classic browser adapter, 3 deployer, 6 loader/update/suspension checks, and 3 ownership/recovery checks.
+- 49 automated checks pass: 17 transport/checkpoint/reporting, 10 Agentic browser adapter, 10 Classic browser adapter, 3 deployer, 6 loader/update/suspension checks, and 3 ownership/recovery checks.
 
-## Outstanding acceptance check
+## Daily use
 
-Commissioning status at 2026-11-07 17:24 UTC: implementation approximately 95% complete. The installed loader is 2.1.0; the last directly observed runtime was 6.2.0, ON in Classic Chat, after a successful fresh-chat restoration and verified progress-file write. Version 6.2.2 is published with the ownership-retry repair; its live activation is not yet confirmed.
+Open https://venice.ai/chat/classic in the existing signed-in Chrome profile with **Venice Bridge Loader** enabled in Tampermonkey. Leave **Venice Repo Bridge** disabled. The existing local key and saved checkpoint are reused; no wake prompt or manual context paste is required. The badge should show **V6 ON**. Clicking that badge pauses/resumes; right-clicking requests a fresh chat. The loader's **testing** label becomes **healthy** after a completed checkpoint. A newly opened page can wait until the saved next wake is due.
 
-The last model checkpoint is 2026-11-07 17:16:02 UTC, turn `mw6nzhdp-2989ne4j`, done=true, lane progress 100%. An eight-minute read-only watch did not observe another model checkpoint. Therefore the final unattended five-minute wake check has **not passed**. Do not equate the lane's 100% with a passing unattended runtime. Browser control stopped because the automation service could not confidently determine Chrome's URL; no further browser inputs were issued. Resume by checking the actual loader/runtime status, ownership, enabled state and next wake; then verify Chrome keeps venice.ai active and repeat an unassisted idle interval. Chrome's discard exception has not been configured or verified. Avoid replacing the saved model checkpoint while investigating.
+The loop schedules the next idle check five minutes after a completed turn. Browser timer delays and model response time add to this. The observed background checkpoint intervals were approximately eight to nine minutes. The computer must remain awake, online, and signed in to Venice.
+
+## Operating status
+
+Verified at 2026-11-08 01:34 Hong Kong time: installed loader 2.1.0 and **healthy runtime 6.2.2**, loop ON in Classic Chat. Automatic source updating and ownership recovery are active. Unassisted monitoring checkpoints completed at 01:24:27 and 01:33:08 Hong Kong time, turns `mw6o9s60-bgoldpz7` and `mw6oirhp-w4ehs68d`. The earlier watch ended seconds before the first of these completed; that earlier pending result is superseded. Chrome's **Always keep these sites active** list now contains `venice.ai`, verified in the Settings UI.
+
+Fresh-page startup passed: opening the Classic landing page reconnected with the saved enabled state, sent a wake without manual input, read runs(main), and checkpointed at 01:38:59 Hong Kong time (turn mw6osssp-vnm3z52x). Proactive rollover then continued in another chat and saved the inspected run results at 01:39:45 (turn mw6ou2z5-sa57fr5f). The startup, idle-wake, source-refresh and rollover acceptance checks have all been exercised live. Version 6.2.3 was observed loaded and ON; its new progress-evidence handling has automated coverage. Later live checkpoints on November 8 now record the completed monitoring work with 100% verified plan progress. It retains actual run/job links from tool result lists, so a completed read can provide progress evidence.
+
+## Demonstrated work quality
+
+Venice has demonstrated narrow failure monitoring, exact file edits with readback, handling returned results, checkpointing and fresh-chat continuation. It has not completed a substantial code feature with passing feature tests and an independently reviewed PR in this commissioning run. Runner downloads demonstrate transport capability, not coding quality.
+
+The model previously inferred an incorrect diagnosis, misread skipped-step status, and treated truncated log text as missing. The verified report_failure path now derives the exact facts and persistently deduplicates the report. This improves the monitoring lane without establishing general autonomous engineering quality. Server progress counts recognized evidence; it does not independently judge every task's acceptance criterion or code correctness. Repository writes use venice/* branches and pull requests; main writes and merges remain disabled.
 
 The current loader stores the doorman key locally in Tampermonkey as `vrb6.key`, configured with its menu item. Do not write credentials to GitHub, prompts, checkpoints, or receipts. Previously published keys need equivalent rotation in the Worker and the local configuration.
 
 The loop requires an open, signed-in browser and an available Venice service. Browser suspension, network outages, account limits, and provider UI changes can delay or stop execution. Checkpointing supports recovery; it cannot guarantee unlimited provider availability.
+
+## November 8 operating check and cleanup
+
+At 23:08 HKT, the latest saved turn mw7yv47y-8vxkhl7y reported no new unreported SEC/OI failure and closed the monitoring check with 100% plan progress. This percentage applies to that monitoring plan, not the entire checklist-engine project. The loop has continued saving checkpoints into the following day. A real new failure, run 42399694729, was reported at https://github.com/SRoyaltyy/checklist-engine/issues/223 with the exact failed/skipped steps and exception, about four minutes after the logged failure.
+
+Two legacy branch-only helpers, .github/workflows/nai-verdict.yml and nai-verdict2.yml, were found triggering on every push and repeatedly collecting the same November 2 run 41413529249. Both are now manual-only and require an explicit run_id. Verified commits: c065ed9fe815bde161f16b4335109f11370f9b68 and 82d02e1c2e75994d0a474c3996020e42f283320f. This removes unnecessary runner activity from routine checkpoints. The assigned SEC/options production pipelines and main were not modified.
