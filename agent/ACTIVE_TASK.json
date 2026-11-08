@@ -1,28 +1,28 @@
 {
   "version": 1,
-  "id": "workflow-schedule-audit-v1",
+  "id": "repo-requirements-audit-v1",
   "status": "active",
-  "goal": "Implement, test and publish a deterministic read-only SEC/options workflow schedule inventory for checklist-engine.",
-  "why": "Provide exact configured triggers and source hashes for operational monitoring, replacing schedule guesses from old chat history.",
-  "gantt_row": "[1 Data / SEC / analyst / sector history] + [1 Data / Options + money-flow (#165)]",
-  "branch": "venice/workflow-schedule-audit-v1",
+  "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+  "why": "Prevent missing project requirements and false completion claims; give James an actionable dependency-ordered backlog with source links and measurable acceptance conditions.",
+  "gantt_row": "All project stages 0–8; evidence audit only",
+  "branch": "venice/repo-requirements-audit-v1",
   "base_branch": "main",
-  "spec_path": "docs/VENICE_WORKFLOW_AUDIT_TRIAL_V1.md",
-  "acceptance_path": "agent/verification/test_workflow_schedule_audit_acceptance.py",
+  "spec_path": "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md",
   "allowed_paths": [
-    "agent/workflow_schedule_audit.py",
-    "agent/workflow_audit_requirements.txt",
-    "agent/fixtures/workflow_schedule_audit/**",
-    "agent/requests/workflow-schedule-audit.json",
-    "tests/test_workflow_schedule_audit.py",
-    "docs/VENICE_WORKFLOW_SCHEDULE_AUDIT_V1.md",
-    ".github/workflows/venice-workflow-schedule-audit.yml"
+    "docs/venice-audit-v1/**",
+    "agent/repo_requirements_audit_validate.py",
+    "tests/test_repo_requirements_audit.py",
+    ".github/workflows/venice-repo-requirements-audit.yml"
   ],
   "protected_paths": [
     "agent/ACTIVE_TASK.json",
-    "agent/verification/**"
+    "agent/tasks/**",
+    "agent/verification/**",
+    "TODO.md",
+    "METHODOLOGY.md"
   ],
   "allow_infrastructure": false,
   "allow_merge": true,
-  "deliverable": "merged_pr"
+  "deliverable": "merged_pr",
+  "supersedes": "workflow-schedule-audit-v1"
 }

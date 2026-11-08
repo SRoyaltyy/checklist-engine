@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "provenance": "Working textual transcription of salient rows in two screenshots supplied by Cyrus in this chat. Claims are unverified baseline inputs; reconcile against source files. Grouped wording is not an exact pixel/word transcription.",
+  "charts": [
+    {
+      "id": "v16",
+      "title": "project status v16",
+      "as_of": "2026-11-07 ~08:55 HKT",
+      "main_ref": "e85547ac",
+      "forecast_dates": "Legacy dates, not a new forecast"
+    },
+    {
+      "id": "v20",
+      "title": "skeptical audit v20",
+      "as_of": "2026-11-09 01:13 HKT",
+      "main_ref": "2ba3ebdf",
+      "forecast_dates": "Legacy dates NOT a forecast"
+    }
+  ],
+  "rows": [
+    {
+      "id": "B0",
+      "group": "0 Blockers",
+      "label": "Legacy repair / quarantine",
+      "v16_claim": "Part172 / 55 exclusions / #145 / #139+#137 done",
+      "v20_claim": "166 replay mismatches; not all resolved"
+    },
+    {
+      "id": "B1",
+      "group": "0 Blockers",
+      "label": "100-name price sample",
+      "v16_claim": "PASS run 41075612310",
+      "v20_claim": "PASS sample only; not full world"
+    },
+    {
+      "id": "B2",
+      "group": "0 Blockers",
+      "label": "Full world gate",
+      "v16_claim": "NOT_PROVEN hard gate",
+      "v20_claim": "NOT_PROVEN; scoring CLOSED; completion UNKNOWN"
+    },
+    {
+      "id": "B3",
+      "group": "0 Blockers",
+      "label": "Full-cohort PIT measurement",
+      "v16_claim": "#212 MEASURED 8439 / 12.5M",
+      "v20_claim": "8439/8439 measured; prefix/alignment PASS; packet replay FAIL 1308"
+    },
+    {
+      "id": "B4",
+      "group": "0 Blockers",
+      "label": "Price available_from contract",
+      "v16_claim": "#214 PASS",
+      "v20_claim": "22968 produced bindings PASS; not all world feeds"
+    },
+    {
+      "id": "B5",
+      "group": "0 Blockers",
+      "label": "Price join contract",
+      "v16_claim": "#216 PUBLISHED",
+      "v20_claim": "8439 keys / 9271 sessions; historical identity NOT proven"
+    },
+    {
+      "id": "B6",
+      "group": "0 Blockers",
+      "label": "SEC runner access",
+      "v16_claim": "#217 SUCCESS",
+      "v20_claim": "Six endpoints PASS; access only"
+    },
+    {
+      "id": "D0",
+      "group": "1 Data",
+      "label": "258-kind inventory",
+      "v16_claim": "FINAL",
+      "v20_claim": "Catalog verified, not 258 downloaded kinds"
+    },
+    {
+      "id": "D1",
+      "group": "1 Data",
+      "label": "Composed price world",
+      "v16_claim": "8439 names; caveat",
+      "v20_claim": "8439 retained / 288 excluded; acceptance/reconstitution UNKNOWN"
+    },
+    {
+      "id": "D2",
+      "group": "1 Data",
+      "label": "Bundled FRED / earnings / SI / halts / dividends / breadth",
+      "v16_claim": "Green bundled row",
+      "v20_claim": "NOT complete; must split into component rows"
+    },
+    {
+      "id": "D3",
+      "group": "1 Data",
+      "label": "CBOE market context",
+      "v16_claim": "1990-2026-10-28; 0DTE caveat",
+      "v20_claim": "Source/native components exist; joins/coverage UNKNOWN"
+    },
+    {
+      "id": "D4",
+      "group": "1 Data",
+      "label": "SEC bulk",
+      "v16_claim": "#218 about 58%; readback pending",
+      "v20_claim": "Retained bulk readback PASS 246 assets; identity 61.13%; world coverage UNKNOWN"
+    },
+    {
+      "id": "D5",
+      "group": "1 Data",
+      "label": "SEC Form4 / 13F",
+      "v16_claim": "Part of SEC remaining work",
+      "v20_claim": "#219 DRAFT; cached run SUCCESS; no accepted panel on main"
+    },
+    {
+      "id": "D6",
+      "group": "1 Data",
+      "label": "Stock options / OI / money flow",
+      "v16_claim": "5%; no green on main",
+      "v20_claim": "#222 DRAFT; OCC FAIL; Dolt any-row 21.42%; no OI"
+    },
+    {
+      "id": "D7",
+      "group": "1 Data",
+      "label": "No-AI summary document",
+      "v16_claim": "5%; stub",
+      "v20_claim": "Skeleton only; run results blank"
+    },
+    {
+      "id": "D8",
+      "group": "1 Data",
+      "label": "Webull MF / imbalance / analyst snapshots",
+      "v16_claim": "Not built",
+      "v20_claim": "0 accepted; no main delivery proof"
+    },
+    {
+      "id": "D9",
+      "group": "1 Data",
+      "label": "Source / paid-OI decision",
+      "v16_claim": "Decision required",
+      "v20_claim": "Unresolved; does not waive stipulated feeds"
+    },
+    {
+      "id": "W0",
+      "group": "World state",
+      "label": "Historical ticker / CIK ownership",
+      "v16_claim": "No separate row",
+      "v20_claim": "0 formal intervals; current identity 5159/8439"
+    },
+    {
+      "id": "W1",
+      "group": "World state",
+      "label": "Historical tradeability / $100m eligibility / shares / float",
+      "v16_claim": "No separate row",
+      "v20_claim": "NOT_PROVEN"
+    },
+    {
+      "id": "W2",
+      "group": "World state",
+      "label": "OHLCV-derived indicators",
+      "v16_claim": "Inside price/world rows",
+      "v20_claim": "Produced subset measured; per-kind full rebuild UNKNOWN"
+    },
+    {
+      "id": "W3",
+      "group": "World state",
+      "label": "Earnings I184-186",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "112760 rows / 4195 old-cohort names; history/PIT NOT_PROVEN"
+    },
+    {
+      "id": "W4",
+      "group": "World state",
+      "label": "Analyst I197",
+      "v16_claim": "Inside bundled data row",
+      "v20_claim": "350374 rows / 4041 old-cohort names; history/PIT NOT_PROVEN"
+    },
+    {
+      "id": "W5",
+      "group": "World state",
+      "label": "FINRA short interest I188",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "Box/source claims; cohort-period proof UNKNOWN"
+    },
+    {
+      "id": "W6",
+      "group": "World state",
+      "label": "FINRA short volume I189",
+      "v16_claim": "Inside bundled data row",
+      "v20_claim": "Forward jobs exist; historical coverage/readback UNKNOWN"
+    },
+    {
+      "id": "W7",
+      "group": "World state",
+      "label": "Reg SHO I190",
+      "v16_claim": "Inside bundled data row",
+      "v20_claim": "Old Nasdaq asset; exchange/period/PIT UNKNOWN"
+    },
+    {
+      "id": "W8",
+      "group": "World state",
+      "label": "Halts I191",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "Old results not raw tape; full-period release proof UNKNOWN"
+    },
+    {
+      "id": "W9",
+      "group": "World state",
+      "label": "Dividends / splits I196",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "Source claims; historical released panel/PIT UNKNOWN"
+    },
+    {
+      "id": "W10",
+      "group": "World state",
+      "label": "Historical sector membership / peers C26 I177",
+      "v16_claim": "No separate row",
+      "v20_claim": "Dated mapping NOT proven"
+    },
+    {
+      "id": "W11",
+      "group": "World state",
+      "label": "Historical theme / peer sets I176",
+      "v16_claim": "No separate row",
+      "v20_claim": "2026 captures do not reconstitute 2020"
+    },
+    {
+      "id": "W12",
+      "group": "World state",
+      "label": "Genuine money flow",
+      "v16_claim": "Bundled options + MF",
+      "v20_claim": "Signed/block/dark-pool/ETF-flow history NOT proven"
+    },
+    {
+      "id": "W13",
+      "group": "World state",
+      "label": "FRED / ALFRED I195",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "21-series native PIT readback PASS; world joins/gaps UNKNOWN"
+    },
+    {
+      "id": "W14",
+      "group": "World state",
+      "label": "Market breadth I179-180",
+      "v16_claim": "Inside bundled green row",
+      "v20_claim": "Native readback PASS; survivor/old-cohort caveat"
+    },
+    {
+      "id": "W15",
+      "group": "World state",
+      "label": "ETF / index context",
+      "v16_claim": "No separate row",
+      "v20_claim": "Source PASS; dated stock-sector joins UNKNOWN"
+    },
+    {
+      "id": "W16",
+      "group": "World state",
+      "label": "Finviz I198",
+      "v16_claim": "No separate row",
+      "v20_claim": "EXCLUDED_LIVE_ONLY; check owner authority"
+    },
+    {
+      "id": "W17",
+      "group": "World state",
+      "label": "GDELT I200",
+      "v16_claim": "No separate row",
+      "v20_claim": "Owner-dropped scope exception; check owner authority"
+    },
+    {
+      "id": "W18",
+      "group": "World state",
+      "label": "258-kind cohort × period acceptance scoreboard",
+      "v16_claim": "No separate row",
+      "v20_claim": "No current proof found on main"
+    },
+    {
+      "id": "F0",
+      "group": "2 Define",
+      "label": "14-lens applicability",
+      "v16_claim": "Lenses V1 on main",
+      "v20_claim": "Applicability design only; implementation UNMEASURED"
+    },
+    {
+      "id": "F1",
+      "group": "2 Define",
+      "label": "Strict definitions / SEC-options",
+      "v16_claim": "#210 merged; about 75% incl held rulings",
+      "v20_claim": "114 strict defs verified; distinguish remaining scope"
+    },
+    {
+      "id": "F2",
+      "group": "2 Define",
+      "label": "Ruling parts 5-8",
+      "v16_claim": "Held inside strict defs row",
+      "v20_claim": "Approved but no main implementation proof; 0 accepted"
+    },
+    {
+      "id": "F3",
+      "group": "2 Define",
+      "label": "Price available_from",
+      "v16_claim": "PROVEN #214",
+      "v20_claim": "Scoped contract PASS; duplicate of blocker row"
+    },
+    {
+      "id": "F4",
+      "group": "2 Define",
+      "label": "Leak probes / leak-trap fixes",
+      "v16_claim": "Declared traps PASS",
+      "v20_claim": "BPOP/DJCO/KGRN only; full-world leak gate NOT proven"
+    },
+    {
+      "id": "S0",
+      "group": "3 Show",
+      "label": "Viewport #163",
+      "v16_claim": "80%; stale 4ded9b86",
+      "v20_claim": "UNMERGED; main acceptance UNKNOWN"
+    },
+    {
+      "id": "Q0",
+      "group": "4 Questions",
+      "label": "v1 master batches 1-26",
+      "v16_claim": "#177 merged 87928850",
+      "v20_claim": "107201 bound defs; answers / quality NOT passed"
+    },
+    {
+      "id": "Q1",
+      "group": "4 Questions",
+      "label": "Batch27 #224",
+      "v16_claim": "Not in older chart",
+      "v20_claim": "CI PASS but UNMERGED; 0 accepted on main"
+    },
+    {
+      "id": "Q2",
+      "group": "4 Questions",
+      "label": "Ladders / aliases",
+      "v16_claim": "70%; 2664/2680 +80 aliases",
+      "v20_claim": "2664 canonical;80 reviewed /16 aliases; semantic completion UNKNOWN"
+    },
+    {
+      "id": "A0",
+      "group": "5 Answers v1",
+      "label": "Question quality gate",
+      "v16_claim": "Not started",
+      "v20_claim": "NOT passed; 0 accepted"
+    },
+    {
+      "id": "A1",
+      "group": "5 Answers v1",
+      "label": "Canonical v1 stock-day answers",
+      "v16_claim": "Future compute",
+      "v20_claim": "NOT_RUN;0 accepted"
+    },
+    {
+      "id": "A2",
+      "group": "5 Answers v1",
+      "label": "Leak gate v1 / PIT eligibility",
+      "v16_claim": "Hard gate",
+      "v20_claim": "CLOSED / not accepted"
+    },
+    {
+      "id": "A3",
+      "group": "5 Answers v1",
+      "label": "Rework buffer",
+      "v16_claim": "Buffer",
+      "v20_claim": "Planning allowance; not progress"
+    },
+    {
+      "id": "V0",
+      "group": "5b v2",
+      "label": "Options / money-flow questions",
+      "v16_claim": "Future work",
+      "v20_claim": "Definitions exist; delivery UNKNOWN / data-gated"
+    },
+    {
+      "id": "V1",
+      "group": "5b v2",
+      "label": "Compute v2 / leak gate",
+      "v16_claim": "Hard gate",
+      "v20_claim": "CLOSED / not accepted"
+    },
+    {
+      "id": "M0",
+      "group": "6 Mine",
+      "label": "Dedup / cluster / size prize",
+      "v16_claim": "Future work",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "M1",
+      "group": "6 Mine",
+      "label": "Singles / pairs per layer",
+      "v16_claim": "2020-21 planned",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "M2",
+      "group": "6 Mine",
+      "label": "Triples+ per layer",
+      "v16_claim": "Future work",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "M3",
+      "group": "6 Mine",
+      "label": "Full exit grid",
+      "v16_claim": "26100 rules planned",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "M4",
+      "group": "6 Mine",
+      "label": "Luck correction",
+      "v16_claim": "All setup × rule tries",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "M5",
+      "group": "6 Mine",
+      "label": "Buffer",
+      "v16_claim": "Two weeks",
+      "v20_claim": "Planning allowance; not progress"
+    },
+    {
+      "id": "T0",
+      "group": "7 Test",
+      "label": "2022 check / 2023-24 confirm",
+      "v16_claim": "Future work",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "T1",
+      "group": "7 Test",
+      "label": "2025-26 evaluation",
+      "v16_claim": "Out-of-sample planned",
+      "v20_claim": "0 accepted; world-gated; verify latest usage authority"
+    },
+    {
+      "id": "L0",
+      "group": "8 Live",
+      "label": "Shadow period",
+      "v16_claim": "Sealed / no money",
+      "v20_claim": "0 accepted; world-gated"
+    },
+    {
+      "id": "L1",
+      "group": "8 Live",
+      "label": "Deployment / daily replay diff",
+      "v16_claim": "Future go-live",
+      "v20_claim": "PAPER ONLY; authorization/world gates CLOSED"
+    }
+  ]
+}

@@ -7,11 +7,11 @@ Focus now (Cyrus 2026-11-05): **SEC** and **Options** Gantt rows, done by plain 
 ---
 
 ## Venice
-**Supervisor review pending:** re-read the final supervisor-review section of docs/VENICE_WORKFLOW_AUDIT_TRIAL_V1.md on current main. Fix the CI false-green path and request-path trigger, sync current main, and test the resulting exact head before publishing PR #225. Existing-key publication is approved and enabled.
-
-**Lane — owner-approved autonomous coding trial:** complete task workflow-schedule-audit-v1. Build a deterministic, read-only inventory of the configured SEC/options workflow triggers and source hashes. This is the primary Venice task until its PR is tested and published; do not modify collectors or production pipeline workflows. Calendar #96 remains parked.
-- [ ] **workflow-schedule-audit-v1** → [1 Data / SEC / analyst / sector history] + [1 Data / Options + money-flow (#165)]. Read [the full task spec](docs/VENICE_WORKFLOW_AUDIT_TRIAL_V1.md) and [active machine assignment](agent/ACTIVE_TASK.json). Work on venice/workflow-schedule-audit-v1. Create implementation, tests and a branch-triggered CI workflow; pass the unchanged owner acceptance suite; publish only through the task-scoped checked merge route when enabled. A blocked publication is not a completed goal.
-- Every work session must add code, test evidence, a useful finding or an explicit blocker; preserve previous progress and structured pitfalls. Repeated status checks do not count as progress. The parent assignment, other agents' lanes and acceptance suite are protected.
+**Lane — Cyrus-assigned full repository audit (repo-requirements-audit-v1).** This supersedes the merged workflow trial. Read [the complete task](agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md), [both chart claim baselines](agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json), and [active machine assignment](agent/ACTIVE_TASK.json).
+- [ ] Audit ALL project stages and canonical inventory ids: exact requirements, data fields/universe/dates, source/download links, existing artifacts, measured coverage, missing work, dependencies and owner lanes. Compare the older v16 Gantt and skeptical v20 chart against immutable main evidence. Do not infer completion from catalog rows or green jobs.
+- [ ] Create requirements/data/comparison matrices, evidence ledger, corrected Gantt visualization and an actionable report under docs/venice-audit-v1/ on venice/repo-requirements-audit-v1; deliver a tested PR.
+- FIRST: create the assigned branch and docs/venice-audit-v1/PROGRESS.json. At every new chat read that branch's PROGRESS.json and current matrices; update the file after each useful batch. This is the durable fallback while runtime progress projection is under investigation.
+- Keep other agents' lanes, original inventories, acceptance receipts, sealed records and production pipelines unchanged. Audit completion never opens the world/scoring/live gates.
 
 ## Kimi
 **Lane:** strict definitions + v1 master. Definitions only — never data downloads. Do not touch data pipelines. Do the items below strictly in order (Cyrus-approved 2026-11-03 11:21 HKT).
