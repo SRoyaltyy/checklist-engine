@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T14:44:49.868Z",
-  "turn_id": "mw7y10x1-k6wdtywi",
-  "summary": "Fresh runs(main) sweep at 14:44Z returned 29 runs. Every failed nai-sec-* / nai-occ-oi-daily run in the list is already covered: 42399694729 (issue #223), 42284432095 (#220), 42156926867 (#221), and the deliberately-unreported set 42106074154 / 41906860199 / 41710121137 (same occ_oi_daily ValueError, covered by #220) and 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b). Newly visible healthy runs since the last snapshot: 42344942142 nai-daily-forward success (e85547a), 42391969592 world-v2-code-ci success (2ba3ebd), 42261199680 world-v2-code-ci success, 41413030480 nai-daily-forward success, 41575832670 / 41574644199 world-v2-code-ci success, 41785171922 / 41982771257 / 41592147370 nai-daily-forward success, 41227563332 outside-event-calendar success. One cancelled run, 41227556402 outside-event-calendar — cancelled is not a failure and not reportable in this lane. Nothing new to file, so no report_failure call is issued.",
-  "next": "No unassigned reportable failure exists this wake. Leave actions empty and let the bridge wake again in five minutes; on the next wake re-run runs(main) and only call report_failure for a failed nai-sec-* / nai-occ-oi-daily run whose id is outside the never-re-report set.",
+  "at": "2026-11-08T14:50:33.176Z",
+  "turn_id": "mw7y8814-ftk1cfvt",
+  "summary": "No tool results returned for this wake, so no new evidence exists yet. t14 (14:44Z 29-run sweep classification) is already complete and every failed nai-sec-* / nai-occ-oi-daily run is covered: 42399694729 (#223), 42284432095 (#220), 42156926867 (#221), plus the deliberately-unreported set 42106074154 / 41906860199 / 41710121137 (same occ_oi_daily ValueError, covered by #220) and the Nov 2 batch 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (superseded shas d5ab097/b0a563b). Issuing one runs(main) sweep to confirm nothing failed in the ~6 minutes since that snapshot; if a new nai-* failure appears outside the never-re-report set, report_failure is the next call.",
+  "next": "Read the runs(main) result. If any nai-sec-* or nai-occ-oi-daily run has conclusion failure and its id is not in the never-re-report set (42284432095, 42156926867, 42399694729, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359), call report_failure on that run once and stop. Otherwise actions=[] and done=true until the next wake.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t14",
+    "current_task": "t15",
     "tasks": [
       {
         "id": "t1",
@@ -166,11 +166,25 @@
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
         ],
         "blocker": ""
+      },
+      {
+        "id": "t15",
+        "title": "Sweep runs(main) at 14:50Z for any new failed nai-* run",
+        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
+        "blocker": ""
       }
     ],
-    "progress_percent": 100
+    "progress_percent": 94
   },
-  "tool_results": [],
+  "tool_results": [
+    {
+      "tool": "runs",
+      "ok": true
+    }
+  ],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -223,5 +237,5 @@
     "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421"
   ],
-  "done": true
+  "done": false
 }
