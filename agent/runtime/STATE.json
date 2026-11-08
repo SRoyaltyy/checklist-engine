@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T14:44:11.282Z",
-  "turn_id": "mw7y05xj-6bxrve86",
-  "summary": "The Nov 8 checkpoint landed: write_file on agent/PROGRESS.md (branch venice/sec-options-pipelines, expected_sha 431e9399) returned ok:true, commit 8a3ed5d5cad3b052f84872bd3d82e3699e161fcd, blob_sha 0fa61634a892f6b2a433ace58ecd6a0af896ff3d, verified:true. That clears the stale-sha blocker from the 14:42Z turn and completes t12. No new reportable failure is known; a fresh runs(main) sweep is issued this turn to confirm nothing new has failed since the 14:41Z snapshot.",
-  "next": "Read the runs(main) result. If a nai-sec-* or nai-occ-oi-daily run has conclusion failure and its run_id is not in the never-re-report set (42284432095, 42156926867, 42399694729, plus the covered 42106074154/41906860199/41710121137 and Nov-2 batch), call report_failure on it once and stop. Otherwise leave actions empty and let the bridge wake again.",
+  "at": "2026-11-08T14:44:49.868Z",
+  "turn_id": "mw7y10x1-k6wdtywi",
+  "summary": "Fresh runs(main) sweep at 14:44Z returned 29 runs. Every failed nai-sec-* / nai-occ-oi-daily run in the list is already covered: 42399694729 (issue #223), 42284432095 (#220), 42156926867 (#221), and the deliberately-unreported set 42106074154 / 41906860199 / 41710121137 (same occ_oi_daily ValueError, covered by #220) and 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (Nov 2 batch on superseded shas d5ab097/b0a563b). Newly visible healthy runs since the last snapshot: 42344942142 nai-daily-forward success (e85547a), 42391969592 world-v2-code-ci success (2ba3ebd), 42261199680 world-v2-code-ci success, 41413030480 nai-daily-forward success, 41575832670 / 41574644199 world-v2-code-ci success, 41785171922 / 41982771257 / 41592147370 nai-daily-forward success, 41227563332 outside-event-calendar success. One cancelled run, 41227556402 outside-event-calendar — cancelled is not a failure and not reportable in this lane. Nothing new to file, so no report_failure call is issued.",
+  "next": "No unassigned reportable failure exists this wake. Leave actions empty and let the bridge wake again in five minutes; on the next wake re-run runs(main) and only call report_failure for a failed nai-sec-* / nai-occ-oi-daily run whose id is outside the never-re-report set.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t13",
+    "current_task": "t14",
     "tasks": [
       {
         "id": "t1",
@@ -149,19 +149,28 @@
         "title": "Sweep runs(main) at 14:43Z for any new failed nai-* run",
         "acceptance": "Every failed nai-* run in the list is either in the never-re-report set or has a report_failure issue",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+        ],
+        "blocker": ""
+      },
+      {
+        "id": "t14",
+        "title": "Classify the 14:44Z 29-run sweep and confirm no un-reported nai-* failure",
+        "acceptance": "No failed nai-sec-* / nai-occ-oi-daily run id outside the never-re-report set; no report_failure call needed",
+        "weight": 1,
+        "status": "done",
+        "evidence": [
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
+        ],
         "blocker": ""
       }
     ],
-    "progress_percent": 93
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "runs",
-      "ok": true
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -214,5 +223,5 @@
     "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421"
   ],
-  "done": false
+  "done": true
 }
