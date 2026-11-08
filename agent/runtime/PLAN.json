@@ -129,12 +129,12 @@
     },
     {
       "id": "t12",
-      "title": "Nov 8 sweep: checkpoint new green nai-sec-bulk 42434336421 and record absent scheduled slots",
-      "acceptance": "write_file returns a commit sha for agent/PROGRESS.md naming run 42434336421; no failure reported because none is outside the do-not-re-report set",
+      "title": "Re-read agent/PROGRESS.md to get its current sha, then land the Nov 8 checkpoint naming run 42434336421",
+      "acceptance": "read_file returns current sha; subsequent write_file returns ok:true with a new commit sha",
       "weight": 1,
       "status": "doing",
       "evidence": [],
-      "blocker": ""
+      "blocker": "write_file rejected on 2026-11-08T14:42Z: 'File changed since read' against expected_sha aa3fab0c"
     }
   ],
   "progress_percent": 93
