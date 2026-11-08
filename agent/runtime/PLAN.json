@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t15",
+  "current_task": "t16",
   "tasks": [
     {
       "id": "t1",
@@ -122,8 +122,7 @@
       "weight": 1,
       "status": "done",
       "evidence": [
-        "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+        "aa3fab0cdd1dfe27b8acd27a934be49230db700c"
       ],
       "blocker": ""
     },
@@ -145,8 +144,7 @@
       "weight": 1,
       "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421"
       ],
       "blocker": ""
     },
@@ -165,6 +163,18 @@
       "id": "t15",
       "title": "Sweep runs(main) at 14:50Z for any new failed nai-* run",
       "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+      "weight": 1,
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t16",
+      "title": "Checkpoint agent/PROGRESS.md with the 14:50Z clean sweep",
+      "acceptance": "write_file returns ok:true with a new commit sha",
       "weight": 1,
       "status": "doing",
       "evidence": [],
