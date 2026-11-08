@@ -17,7 +17,7 @@ GitHub read/write proof a089ee8ac06ad75112451d56543736dcb6393b0b. Runner downloa
 ## Reported run IDs — never re-report
 42284432095, 42156926867, 42399694729. Deliberately unreported: 42106074154, 41906860199, 41710121137 (same occ_oi_daily breakage, covered by #220); 41413535355, 41413529249, 41413022188, 41413017909, 41413013359 (Nov 2 batch, superseded shas d5ab097/b0a563b). 41227556402 cancelled — neither failure nor reportable.
 
-## runs(main) snapshot — identical at 14:41Z / 15:05Z / 15:17Z / 15:37Z / 16:03Z / 16:15Z / 16:28Z / 16:39Z (30 entries, unchanged)
+## runs(main) snapshot — identical at 14:41Z / 15:05Z / 15:17Z / 15:37Z / 16:03Z / 16:15Z / 16:28Z / 16:39Z / 16:51Z (30 entries, unchanged)
 Newest: 42434336421 nai-sec-bulk #51 sha 2ba3ebd SUCCESS 30m56s, scheduled 2026-11-08T01:27Z, jobs 128589843164 verify 19s + 128589913741 run 30m32s, artifact sec-bulk-receipt-42434336421 111 KB sha256:4d5af7eac9f2a359c4b25693ba48fe01eb3bb5394a758116533fb92b6439a08b; annotations only 2 Node20 warnings + 2 ubuntu-latest->Ubuntu26 notices plus the known 'Uh oh! error while loading' UI banner.
 Other successes: 42391969592 world-v2-code-ci #121 (merge PR #218, sha 2ba3ebd, 7m58s; artifacts canonical-binary-definition-plan-v1 6.72 MB sha256:463d35ed… + fred-v2-source 1.86 MB sha256:2eb5b072…); 42370489444 #120 (merge PR #210, sha 230ca55, 8m16s; same artifacts 40d815f2… / 39b5d8c7…); 42344942142 nai-daily-forward #6 sha e85547a 24s; 42332789888 nai-sec-form13f sha e85547a; 42261199680 / 42252851317 / 42252169840 / 42214284659 / 41575832670 / 41574644199 world-v2-code-ci; 42176587992 / 41982771257 / 41785171922 / 41592147370 / 41413030480 nai-daily-forward; 41413026299 occ sha d5ab097; 41227563332 outside-event-calendar.
 
@@ -28,4 +28,4 @@ Scheduled slots absent from runs(main): Nov 7 ~19:59Z nai-occ-oi-daily, Nov 8 ~0
 Never infer a traceback from source. Never trust a truncated UI step to mean the log is missing — report_failure's API path retrieves it. Prefer report_failure(run_id) over freeform issue text. A failed probe differs from a skipped probe. Cloudflare 1042 fixed by global_fetch_strictly_public. A run-page 'Uh oh! error while loading' banner is a GitHub UI artifact. A cancelled run is neither a failure nor reportable. Re-read PROGRESS.md sha before every write; skip the write when content already matches.
 
 ## State
-t1–t26 done. No unreported failure as of 16:39Z; no new run since 42434336421 (Nov 8 01:27Z). External items open: GPT fixing occ_oi_daily.py (#220/#223) and sec_datasets.py form345 (#221); plus the un-filed schedule-gap observation covering three consecutive missed slots.
+t1–t27 done. No unreported failure as of 16:51Z; no new run since 42434336421 (Nov 8 01:27Z). External items open: GPT fixing occ_oi_daily.py (#220/#223) and sec_datasets.py form345 (#221); plus the un-filed schedule-gap observation covering three consecutive missed slots.
