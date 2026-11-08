@@ -74,7 +74,7 @@
     {
       "id": "t23",
       "title": "Sweep runs(main) at 16:15Z for any newly fired failed nai-* run",
-      "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
+      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -85,13 +85,25 @@
     },
     {
       "id": "t24",
-      "title": "Sweep runs(main) at 16:24Z for any newly fired failed nai-* run",
-      "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
+      "title": "Sweep runs(main) at 16:28Z for any newly fired failed nai-* run",
+      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
+      "weight": 1,
+      "status": "done",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t25",
+      "title": "Refresh agent/PROGRESS.md checkpoint with the 16:28Z sweep result",
+      "acceptance": "write_file returns ok:true with a new commit sha, or read sha shows content already current",
       "weight": 1,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 90
+  "progress_percent": 91
 }
