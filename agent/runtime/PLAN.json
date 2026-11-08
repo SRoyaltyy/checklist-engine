@@ -129,12 +129,14 @@
     },
     {
       "id": "t12",
-      "title": "Re-read agent/PROGRESS.md to get its current sha, then land the Nov 8 checkpoint naming run 42434336421",
-      "acceptance": "read_file returns current sha; subsequent write_file returns ok:true with a new commit sha",
+      "title": "Land the Nov 8 checkpoint naming green run 42434336421 using the refreshed blob sha",
+      "acceptance": "write_file returns ok:true with a new commit sha",
       "weight": 1,
       "status": "doing",
-      "evidence": [],
-      "blocker": "write_file rejected on 2026-11-08T14:42Z: 'File changed since read' against expected_sha aa3fab0c"
+      "evidence": [
+        "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf"
+      ],
+      "blocker": "Prior attempt rejected 2026-11-08T14:42Z on stale expected_sha aa3fab0c; resolved by re-read, write re-issued this turn"
     }
   ],
   "progress_percent": 93
