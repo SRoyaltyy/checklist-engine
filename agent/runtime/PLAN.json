@@ -6,8 +6,8 @@
   "tasks": [
     {
       "id": "t1",
-      "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as durable fallback",
-      "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and docs/venice-audit-v1/PROGRESS.json exists on that branch at that sha",
+      "title": "Seed docs/venice-audit-v1/PROGRESS.json on the created audit branch as durable fallback",
+      "acceptance": "write_file returns a commit sha on venice/repo-requirements-audit-v1 and the file is readable at that sha",
       "weight": 1,
       "status": "doing",
       "evidence": [],
@@ -15,8 +15,8 @@
     },
     {
       "id": "t2",
-      "title": "Read remaining baselines (offset 4319+) plus inventory/coverage authority files and extract every stage and canonical inventory id",
-      "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id, each with authority_ref",
+      "title": "Extract canonical inventory ids and coverage schema from catalog/coverage authority files; build REQUIREMENTS.csv for stages 0–8",
+      "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id with authority_ref and source_urls",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -24,7 +24,7 @@
     },
     {
       "id": "t3",
-      "title": "Verify claims against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts) without trusting catalog rows or green jobs",
+      "title": "Verify each claim against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts)",
       "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
       "weight": 3,
       "status": "todo",
@@ -34,7 +34,7 @@
     {
       "id": "t4",
       "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
-      "acceptance": "All six required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
+      "acceptance": "All required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
       "weight": 2,
       "status": "todo",
       "evidence": [],
