@@ -1,19 +1,19 @@
 {
   "version": 6,
-  "at": "2026-11-08T18:20:36.077Z",
-  "turn_id": "mw85q9ul-jz2hqnq0",
-  "summary": "Oriented on the active assignment repo-requirements-audit-v1 (supersedes workflow-schedule-audit-v1): audit every checklist-engine stage/requirement against immutable main evidence and publish matrices, evidence ledger, corrected Gantt and report under docs/venice-audit-v1/ on venice/repo-requirements-audit-v1, deliverable merged_pr. No audit artifact exists yet on the audit branch; this turn only reads the task spec, the two Gantt claim baselines, and the head SHAs of the audit branch and main so the first write (docs/venice-audit-v1/PROGRESS.json) can be made with a correct expected_sha.",
-  "next": "Read the returned spec/baseline content, then create_branch venice/repo-requirements-audit-v1 from the returned main head if it does not exist, and write docs/venice-audit-v1/PROGRESS.json with expected_sha null (or the returned audit-branch sha if the branch already exists).",
+  "at": "2026-11-08T18:21:36.029Z",
+  "turn_id": "mw85rga4-s3xk35sy",
+  "summary": "Read the full audit spec (45 lines, sha b777a66f) and the first 140 lines of the Gantt claim baselines (sha b8d0569c, 450 lines total, rows B0–D9 so far). Confirmed the audit branch venice/repo-requirements-audit-v1 does not exist yet (branch_head 404), so it must be created from main before PROGRESS.json can be seeded. No audit artifact exists; no merge or publication attempted this turn.",
+  "next": "create_branch venice/repo-requirements-audit-v1 from main, then write docs/venice-audit-v1/PROGRESS.json with expected_sha null recording task_id repo-requirements-audit-v1, snapshot_sha 68c6f2a83387f796cdf9836261dce1546ea61a92 (spec-mandated audit base; record actual returned main head alongside it), current_subtask t1, completed_subtasks [], remaining_subtasks t1–t5, evidence (spec/baseline blob shas), pitfalls [], exact_next_step. Then continue reading baselines from offset 4319 to line 450.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
-    "why": "Advances the Venice lane row for the Cyrus-assigned full repository audit and prevents missing requirements or false completion claims before any gate is considered.",
+    "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
     "gantt_row": "All project stages 0–8; evidence audit only",
     "current_task": "t1",
     "tasks": [
       {
         "id": "t1",
-        "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as the durable fallback",
-        "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and PROGRESS.json exists on that branch at that sha",
+        "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as durable fallback",
+        "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and docs/venice-audit-v1/PROGRESS.json exists on that branch at that sha",
         "weight": 1,
         "status": "doing",
         "evidence": [],
@@ -21,8 +21,8 @@
       },
       {
         "id": "t2",
-        "title": "Read spec + both Gantt claim baselines and extract every stage, canonical inventory id and claimed status",
-        "acceptance": "Requirements matrix lists every stage 0–8 and every inventory id with its source link and claimed-vs-verified status",
+        "title": "Read remaining baselines (offset 4319+) plus inventory/coverage authority files and extract every stage and canonical inventory id",
+        "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id, each with authority_ref",
         "weight": 2,
         "status": "todo",
         "evidence": [],
@@ -30,8 +30,8 @@
       },
       {
         "id": "t3",
-        "title": "Verify each claim against immutable main evidence (source status json, proof summaries, retained artifacts) without trusting catalog rows or green jobs",
-        "acceptance": "Evidence ledger row per claim with a main path or blob sha and an explicit verified/unverified/missing verdict",
+        "title": "Verify claims against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts) without trusting catalog rows or green jobs",
+        "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
         "weight": 3,
         "status": "todo",
         "evidence": [],
@@ -39,8 +39,8 @@
       },
       {
         "id": "t4",
-        "title": "Publish comparison matrix, corrected Gantt visualization and dependency-ordered actionable report under docs/venice-audit-v1/",
-        "acceptance": "Files present on the audit branch and referenced from PROGRESS.json, with no changes outside allowed_paths",
+        "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+        "acceptance": "All six required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
         "weight": 2,
         "status": "todo",
         "evidence": [],
@@ -48,8 +48,8 @@
       },
       {
         "id": "t5",
-        "title": "Add validator script, source-matched test and push-triggered audit workflow on the venice branch, then open and merge the PR to main",
-        "acceptance": "Workflow run on the venice branch is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+        "title": "Add validator script, source-matched test and push-triggered audit workflow, then open PR and merge to main",
+        "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
         "weight": 3,
         "status": "todo",
         "evidence": [],
@@ -60,9 +60,8 @@
   },
   "tool_results": [
     {
-      "tool": "read_file",
-      "ok": true,
-      "path": "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md"
+      "tool": "create_branch",
+      "ok": true
     },
     {
       "tool": "read_file",
@@ -71,8 +70,8 @@
     },
     {
       "tool": "branch_head",
-      "ok": false,
-      "error": "branch_head: 404"
+      "ok": true,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/c30c23bed24dc986b2bbf5a4b559a022e2df4300"
     }
   ],
   "blockers": [],
@@ -132,7 +131,10 @@
     "b777a66fb94eff0a4860844e17c3d8a13fa3370c",
     "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66fb94eff0a4860844e17c3d8a13fa3370c",
     "b8d0569c50ad09c11d78d4a525906cc26a99a202",
-    "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202"
+    "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202",
+    "agent/runtime/receipts/mw85rga4-s3xk35sy.0.json@c94e33c6d2440943c01e84d8dfa72bb08d86c7e8",
+    "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/c30c23bed24dc986b2bbf5a4b559a022e2df4300"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -140,11 +142,11 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "verification",
-    "description": "Confirmed from the live bridge context that the active contract is repo-requirements-audit-v1 on venice/repo-requirements-audit-v1 with allowed_paths limited to docs/venice-audit-v1/**, the validator script, its test and its workflow, and that it explicitly supersedes workflow-schedule-audit-v1; also confirmed no audit branch PR exists yet (task_pr null), so the first deliverable action is branch creation plus PROGRESS.json.",
+    "kind": "finding",
+    "description": "Read the authoritative audit spec and the first 18 baseline chart rows, establishing the exact deliverable set (REQUIREMENTS.csv, DATA_REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json, AUDIT.md, GANTT.html/svg, PROGRESS.json), the mandated immutable audit base 68c6f2a8, the 258-vs-233/~296 count reconciliation requirement, and the v16 (e85547ac) vs v20 (2ba3ebdf) claim pairs B0–D9 that the matrices must map; also confirmed the audit branch does not exist yet.",
     "evidence": [
-      "TODO.md@a9cc1c0a5e87abd5735beb20af58196c73b92c4c",
-      "METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b"
+      "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66fb94eff0a4860844e17c3d8a13fa3370c",
+      "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202"
     ]
   },
   "pitfalls": []
