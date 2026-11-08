@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "at": "2026-11-08T18:20:36.077Z",
+  "input": {
+    "task_id": "repo-requirements-audit-v1",
+    "assignment_sha": "fe5043dc723075d0d79b72a91c100b9667ab4fa7",
+    "owner_id": "mw83wh2u-kaq8t5cl",
+    "turn_id": "mw85q9ul-jz2hqnq0",
+    "branch": "venice/repo-requirements-audit-v1",
+    "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+    "summary": "Oriented on the active assignment repo-requirements-audit-v1 (supersedes workflow-schedule-audit-v1): audit every checklist-engine stage/requirement against immutable main evidence and publish matrices, evidence ledger, corrected Gantt and report under docs/venice-audit-v1/ on venice/repo-requirements-audit-v1, deliverable merged_pr. No audit artifact exists yet on the audit branch; this turn only reads the task spec, the two Gantt claim baselines, and the head SHAs of the audit branch and main so the first write (docs/venice-audit-v1/PROGRESS.json) can be made with a correct expected_sha.",
+    "next": "Read the returned spec/baseline content, then create_branch venice/repo-requirements-audit-v1 from the returned main head if it does not exist, and write docs/venice-audit-v1/PROGRESS.json with expected_sha null (or the returned audit-branch sha if the branch already exists).",
+    "contribution": {
+      "kind": "verification",
+      "description": "Confirmed from the live bridge context that the active contract is repo-requirements-audit-v1 on venice/repo-requirements-audit-v1 with allowed_paths limited to docs/venice-audit-v1/**, the validator script, its test and its workflow, and that it explicitly supersedes workflow-schedule-audit-v1; also confirmed no audit branch PR exists yet (task_pr null), so the first deliverable action is branch creation plus PROGRESS.json.",
+      "evidence": [
+        "TODO.md@a9cc1c0a5e87abd5735beb20af58196c73b92c4c",
+        "METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b"
+      ]
+    },
+    "plan": {
+      "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+      "why": "Advances the Venice lane row for the Cyrus-assigned full repository audit and prevents missing requirements or false completion claims before any gate is considered.",
+      "gantt_row": "All project stages 0–8; evidence audit only",
+      "current_task": "t1",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Create audit branch venice/repo-requirements-audit-v1 and seed docs/venice-audit-v1/PROGRESS.json as the durable fallback",
+          "acceptance": "branch_head(venice/repo-requirements-audit-v1) returns a commit sha and PROGRESS.json exists on that branch at that sha",
+          "status": "doing",
+          "weight": 1,
+          "evidence": []
+        },
+        {
+          "id": "t2",
+          "title": "Read spec + both Gantt claim baselines and extract every stage, canonical inventory id and claimed status",
+          "acceptance": "Requirements matrix lists every stage 0–8 and every inventory id with its source link and claimed-vs-verified status",
+          "status": "todo",
+          "weight": 2,
+          "evidence": []
+        },
+        {
+          "id": "t3",
+          "title": "Verify each claim against immutable main evidence (source status json, proof summaries, retained artifacts) without trusting catalog rows or green jobs",
+          "acceptance": "Evidence ledger row per claim with a main path or blob sha and an explicit verified/unverified/missing verdict",
+          "status": "todo",
+          "weight": 3,
+          "evidence": []
+        },
+        {
+          "id": "t4",
+          "title": "Publish comparison matrix, corrected Gantt visualization and dependency-ordered actionable report under docs/venice-audit-v1/",
+          "acceptance": "Files present on the audit branch and referenced from PROGRESS.json, with no changes outside allowed_paths",
+          "status": "todo",
+          "weight": 2,
+          "evidence": []
+        },
+        {
+          "id": "t5",
+          "title": "Add validator script, source-matched test and push-triggered audit workflow on the venice branch, then open and merge the PR to main",
+          "acceptance": "Workflow run on the venice branch is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+          "status": "todo",
+          "weight": 3,
+          "evidence": []
+        }
+      ]
+    },
+    "notes": "Assignment: repo-requirements-audit-v1 (active, supersedes workflow-schedule-audit-v1), assignment_sha fe5043dc723075d0d79b72a91c100b9667ab4fa7, deliverable merged_pr, allow_merge true, publishing_enabled true. Branch venice/repo-requirements-audit-v1, base main. Allowed paths: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. Protected: agent/ACTIVE_TASK.json, agent/tasks/**, agent/verification/**, TODO.md, METHODOLOGY.md (read-only). Spec: agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md. Claim baselines: agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json (older v16 Gantt vs skeptical v20 chart). Required deliverables per TODO Venice lane: requirements matrix, data/source matrix, comparison matrix, evidence ledger, corrected Gantt visualization, actionable dependency-ordered report; durable fallback PROGRESS.json updated after each useful batch. Rule: never infer completion from catalog rows or green jobs; audit completion does not open world/scoring/live gates; keep other lanes, inventories, receipts and sealed records untouched. TODO.md@a9cc1c0a5e87abd5735beb20af58196c73b92c4c, METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b. Monitoring lane (report_failure on failed nai-sec-*/nai-occ-oi-daily) is superseded by this assignment; known failure IDs 42399694729, 42284432095, 42156926867 already reported elsewhere and are not part of this lane's deliverable. No pitfalls proven yet; pitfalls list intentionally empty until a failed approach is observed.",
+    "pitfalls": []
+  },
+  "pitfalls": []
+}
