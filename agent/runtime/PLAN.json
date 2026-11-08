@@ -128,7 +128,7 @@
     },
     {
       "id": "t12",
-      "title": "Land the Nov 8 checkpoint naming green run 42434336421 using the refreshed blob sha",
+      "title": "Land the Nov 8 checkpoint naming green run 42434336421",
       "acceptance": "write_file returns ok:true with a new commit sha",
       "weight": 1,
       "status": "done",
@@ -140,7 +140,7 @@
     {
       "id": "t13",
       "title": "Sweep runs(main) at 14:43Z for any new failed nai-* run",
-      "acceptance": "Every failed nai-* run in the list is either in the never-re-report set or has a report_failure issue",
+      "acceptance": "Every failed nai-* run is in the never-re-report set or has a report_failure issue",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -151,7 +151,7 @@
     {
       "id": "t14",
       "title": "Classify the 14:44Z 29-run sweep and confirm no un-reported nai-* failure",
-      "acceptance": "No failed nai-sec-* / nai-occ-oi-daily run id outside the never-re-report set; no report_failure call needed",
+      "acceptance": "No failed nai-sec-* / nai-occ-oi-daily run id outside the never-re-report set",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -162,7 +162,7 @@
     {
       "id": "t15",
       "title": "Sweep runs(main) at 14:50Z for any new failed nai-* run",
-      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+      "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -173,11 +173,13 @@
     },
     {
       "id": "t16",
-      "title": "Checkpoint agent/PROGRESS.md with the 14:50Z clean sweep",
-      "acceptance": "write_file returns ok:true with a new commit sha",
+      "title": "Sweep runs(main) at 14:52Z and decide whether a PROGRESS.md write is warranted",
+      "acceptance": "Either no failed nai-sec-* / nai-occ-oi-daily run outside the never-re-report set (no write needed, PROGRESS.md@0fa61634 already current) or exactly one report_failure call on the new failing run",
       "weight": 1,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d"
+      ],
       "blocker": ""
     }
   ],
