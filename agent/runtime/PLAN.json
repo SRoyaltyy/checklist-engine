@@ -17,13 +17,14 @@
     },
     {
       "id": "t2",
-      "title": "Extract canonical inventory ids and coverage schema from catalog/coverage authority files; build REQUIREMENTS.csv for stages 0–8",
-      "acceptance": "REQUIREMENTS.csv covers stages 0–8 and DATA_REQUIREMENTS.csv has one row per canonical inventory id with authority_ref and source_urls",
+      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id C01-C258) and REQUIREMENTS.csv (stages 0-8) from authority files",
+      "acceptance": "DATA_REQUIREMENTS.csv has 19-column header plus a row for every canonical id including C28/C29 controls; REQUIREMENTS.csv covers stages 0,1,2,3,4,5,5b,6,7,8",
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
-        "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+        "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+        "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+        "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
       ],
       "blocker": ""
     },
