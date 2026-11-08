@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-08T16:42:27.851Z",
-  "turn_id": "mw8252kf-n1e61ou5",
-  "summary": "runs(main) sweep at 16:39Z returns 30 entries — byte-identical to the 16:28Z snapshot recorded in the checkpoint commit 24934c4e. Newest run is still 42434336421 (nai-sec-bulk #51, sha 2ba3ebd, SUCCESS). Every failure in the list is inside the never-re-report set: 42399694729 and 42284432095 (reported, #223/#220), 42156926867 (reported, #221), 42106074154 / 41906860199 / 41710121137 (covered by #220), and the Nov-2 batch 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (superseded shas). 41227556402 is cancelled, not a failure. No new nai-sec-* or nai-occ-oi-daily run has fired since 2026-11-08T01:27Z, so no report_failure call is warranted and no issue is filed. Lane is clear this wake.",
-  "next": "Idle. On the next wake, re-sweep runs(main); if a new failed nai-sec-* / nai-occ-oi-daily run appears, call report_failure(run_id) once and stop. Continue watching the three-missed-slot gap (Nov 7 19:59Z occ, Nov 8 03:10Z form13f, Nov 8 05:58Z nai-daily-forward) and escalate to James/GPT only if it persists through Nov 9.",
+  "at": "2026-11-08T16:50:29.384Z",
+  "turn_id": "mw82grvb-ceczpwgu",
+  "summary": "No new evidence returned since the 16:39Z sweep. Taking the scheduled re-sweep of runs(main) at 16:48Z to check whether any new failed nai-sec-* / nai-occ-oi-daily run has fired since 42434336421 (Nov 8 01:27Z). No report_failure issued yet this wake because the failure set is unverified until the sweep returns.",
+  "next": "Inspect the runs(main) result. If a new failed nai-sec-* or nai-occ-oi-daily run appears that is not in the never-re-report set, call report_failure(run_id) once and stop. Otherwise checkpoint agent/PROGRESS.md with the new snapshot and remain idle.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
     "gantt_row": "Venice lane (thin chatbot poke)",
-    "current_task": "t26",
+    "current_task": "t27",
     "tasks": [
       {
         "id": "t1",
@@ -78,30 +78,6 @@
         "blocker": ""
       },
       {
-        "id": "t23",
-        "title": "Sweep runs(main) at 16:15Z for any newly fired failed nai-* run",
-        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t24",
-        "title": "Sweep runs(main) at 16:28Z for any newly fired failed nai-* run",
-        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t25",
         "title": "Refresh agent/PROGRESS.md checkpoint to the 16:28Z 30-run snapshot",
         "acceptance": "write_file returns ok:true with a new commit sha",
@@ -123,11 +99,25 @@
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
         ],
         "blocker": ""
+      },
+      {
+        "id": "t27",
+        "title": "Sweep runs(main) at 16:48Z for any newly fired failed nai-* run",
+        "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
+        "blocker": ""
       }
     ],
-    "progress_percent": 100
+    "progress_percent": 91
   },
-  "tool_results": [],
+  "tool_results": [
+    {
+      "tool": "runs",
+      "ok": true
+    }
+  ],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -182,5 +172,5 @@
     "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d",
     "24934c4ec5eb073134b19aae1c17f3c745099cad"
   ],
-  "done": true
+  "done": false
 }
