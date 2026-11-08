@@ -1,7 +1,7 @@
-// Venice web runtime 6.4.0. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.4.2. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.4.0', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.4.2', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -54,7 +54,7 @@ return (function (gm, get, set, win, doc, config) {
   doc.body.appendChild(badge);paint();
   const tools=`Tools (each action is {"tool":"name","args":{...}}):
 read_file(path,branch=main,start_line,end_line,offset), list_files(path,branch), grep(path,query,branch), branch_head(branch), read_issue(issue,offset), read_pr(pr,offset), issue_comments(issue,page), pr_files(pr,page), runs(branch=main), run_status(run_id), run_jobs(run_id), job_log(job_id,run_id), annotations(check_run_id), report_failure(run_id), write_file(path,text,branch,expected_sha), edit_file(path,find,replace,branch), create_branch(branch,base=main), sync_branch(expected_head_sha), create_pr(title,body,branch), create_issue(title,body,dedupe_key), comment_issue(issue,body), dispatch(workflow,branch,inputs), merge_pr(pr,expected_head_sha), deploy_worker(branch).
-All mutations use venice/* branches. Never write main or merge. Use create_issue/comment_issue only when James' lane calls for it. Failed tools return errors; fix the cause before issuing a NEW action. Keep the same action id only for retry of that exact request (the bridge assigns ids).
+File writes use venice/* branches. Publication to main uses only merge_pr when the active assignment and live publishing flag permit it. Use create_issue/comment_issue only when James' lane calls for it. Failed tools return errors; fix the cause before issuing a NEW action. Keep the same action id only for retry of that exact request (the bridge assigns ids).
 For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/LOADER6.user.js on ${config.branch}; write corrected source there. The loader checks new runtime source automatically at safe idle points and retains a healthy fallback. Worker source is agent/DOORMAN.worker.js; after writing it use deploy_worker on its venice/* branch. Deployer handles the worker secrets. Never put credentials into prompts or repository files.`;
   function prompt(context){
     const snapshot={...context,progress:undefined,state:context.state?{...context.state,summary:String(context.state.summary||'').slice(0,4000)}:null};
@@ -130,12 +130,12 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       if(!result.ok){s.actionIndex=packet.actions.length;persist();break;}
     }
     const evidence=[...(s.context?.available_evidence||[]),...s.results.map(x=>x.result.receipt_path&&x.result.receipt_sha?x.result.receipt_path+'@'+x.result.receipt_sha:null),...s.results.filter(x=>x.result.ok).flatMap(x=>[
-      x.result.commit,x.result.url,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,
+      x.result.commit,x.result.url,x.result.sha,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,
       ...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])
     ])].filter(Boolean);
     s.phase='checkpointing';persist();
     try{await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,contribution:packet.contribution,pitfalls:packet.pitfalls,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});}
-    catch(error){if(error.status===400){s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('handoff rejected; request corrected evidence');return;}throw error;}
+    catch(error){if(error.status===400){s.lastError=error.message;s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('Checkpoint: '+error.message);return;}throw error;}
     if(stopped)return;
     s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
   }
@@ -194,3 +194,4 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
   win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
+
