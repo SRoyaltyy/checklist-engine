@@ -173,15 +173,17 @@
     },
     {
       "id": "t16",
-      "title": "Sweep runs(main) at 14:52Z and decide whether a PROGRESS.md write is warranted",
+      "title": "Sweep runs(main) at 14:56Z and decide whether a PROGRESS.md write is warranted",
       "acceptance": "Either no failed nai-sec-* / nai-occ-oi-daily run outside the never-re-report set (no write needed, PROGRESS.md@0fa61634 already current) or exactly one report_failure call on the new failing run",
       "weight": 1,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
       ],
       "blocker": ""
     }
   ],
-  "progress_percent": 94
+  "progress_percent": 100
 }
