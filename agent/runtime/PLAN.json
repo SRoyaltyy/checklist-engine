@@ -2,24 +2,23 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t11",
+  "current_task": "t12",
   "tasks": [
     {
       "id": "t1",
-      "title": "Confirm current Venice lane text in TODO.md and scan recent runs for failures",
-      "acceptance": "TODO.md Venice section read; failed nai-* run identified by run_id",
+      "title": "Confirm Venice lane text in TODO.md and scan runs for failures",
+      "acceptance": "Lane read; failed nai-* run identified",
       "weight": 1,
       "status": "done",
       "evidence": [
-        "TODO.md@c7c31b02e530a35d9944c705d19422d606956809",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095"
+        "TODO.md@c7c31b02e530a35d9944c705d19422d606956809"
       ],
       "blocker": ""
     },
     {
       "id": "t2",
-      "title": "Report failed nai-occ-oi-daily run 42284432095 once with run ID + error",
-      "acceptance": "Issue URL containing run_id 42284432095 plus failing step",
+      "title": "Report failed nai-occ-oi-daily run 42284432095 once",
+      "acceptance": "Issue URL containing run_id 42284432095",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -29,8 +28,8 @@
     },
     {
       "id": "t3",
-      "title": "Replace inferred wording for run 42284432095 with the report_failure canonical record",
-      "acceptance": "Canonical comment URL with derived failed/skipped steps and exact error lines",
+      "title": "Replace inferred wording for 42284432095 with report_failure canonical record",
+      "acceptance": "Canonical comment URL with derived steps and error lines",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -40,8 +39,8 @@
     },
     {
       "id": "t4",
-      "title": "Report failed nai-sec-form345 run 42156926867 once (job 127693199421)",
-      "acceptance": "Issue URL containing run_id 42156926867 and the failing step",
+      "title": "Report failed nai-sec-form345 run 42156926867 once",
+      "acceptance": "Issue URL with run_id and failing step",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -51,8 +50,8 @@
     },
     {
       "id": "t5",
-      "title": "First checkpoint of lane state to agent/PROGRESS.md",
-      "acceptance": "write_file returns a commit sha for agent/PROGRESS.md",
+      "title": "First checkpoint to agent/PROGRESS.md",
+      "acceptance": "write_file returns commit sha",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -62,8 +61,8 @@
     },
     {
       "id": "t6",
-      "title": "Rewrite agent/PROGRESS.md to cite the canonical verified record",
-      "acceptance": "write_file returns a new commit sha for agent/PROGRESS.md",
+      "title": "Rewrite PROGRESS.md to cite the canonical record",
+      "acceptance": "New commit sha naming the canonical comment",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -73,8 +72,8 @@
     },
     {
       "id": "t7",
-      "title": "Confirm the 17:39Z runs list had no reportable nai-* failure outside the do-not-re-report set",
-      "acceptance": "Runs list reviewed; no new reportable run_id",
+      "title": "Sweep runs(main) at 17:39Z",
+      "acceptance": "No reportable run outside set",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -84,8 +83,8 @@
     },
     {
       "id": "t8",
-      "title": "Re-verify the runs list at 17:57Z for any newly appeared nai-* failure",
-      "acceptance": "Fresh runs(main) returned; none reportable",
+      "title": "Sweep runs(main) at 17:57Z",
+      "acceptance": "No reportable run outside set",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -95,8 +94,8 @@
     },
     {
       "id": "t9",
-      "title": "Re-verify the runs list at 18:03–18:04Z for any newly appeared nai-* failure",
-      "acceptance": "Fresh runs(main) returned; none reportable",
+      "title": "Sweep runs(main) at 18:03Z",
+      "acceptance": "No reportable run outside set",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -106,8 +105,8 @@
     },
     {
       "id": "t10",
-      "title": "Report new failed nai-occ-oi-daily run 42399694729 (sha 2ba3ebd) once with run ID + derived error",
-      "acceptance": "Issue/comment URL containing run_id 42399694729 with failed step names and exact error lines from report_failure",
+      "title": "Report failed nai-occ-oi-daily run 42399694729 once",
+      "acceptance": "Issue URL with run_id, failed/skipped steps, exact error lines",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -118,8 +117,8 @@
     },
     {
       "id": "t11",
-      "title": "Checkpoint agent/PROGRESS.md with issue #223 and re-sweep runs(main) for newer nai-* failures",
-      "acceptance": "write_file returns a commit sha naming issues/223, and fresh runs(main) shows no reportable run_id outside the extended do-not-re-report set",
+      "title": "Checkpoint PROGRESS.md with issue #223 and re-sweep runs",
+      "acceptance": "Commit sha naming #223; no reportable run outside set",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -127,7 +126,16 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t12",
+      "title": "Nov 8 sweep: checkpoint new green nai-sec-bulk 42434336421 and record absent scheduled slots",
+      "acceptance": "write_file returns a commit sha for agent/PROGRESS.md naming run 42434336421; no failure reported because none is outside the do-not-re-report set",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 93
 }
