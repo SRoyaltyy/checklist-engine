@@ -1,0 +1,67 @@
+name: venice-workflow-schedule-audit
+
+on:
+  push:
+    branches:
+      - venice/workflow-schedule-audit-v1
+    paths:
+      - .github/workflows/venice-workflow-schedule-audit.yml
+      - agent/workflow_schedule_audit.py
+      - agent/workflow_audit_requirements.txt
+      - tests/test_workflow_schedule_audit.py
+      - agent/verification/test_workflow_schedule_audit_acceptance.py
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: workflow-schedule-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install declared dependency
+        run: |
+          mkdir -p artifacts
+          python -m pip install --upgrade pip
+          python -m pip install -r agent/workflow_audit_requirements.txt
+          python -c "import yaml; print('PyYAML', yaml.__version__)" | tee artifacts/pyyaml-version.log
+          echo "head_sha=$GITHUB_SHA" | tee artifacts/source-identity.log
+
+      - name: Run audit unit tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -p test_workflow_schedule_audit.py -v 2>&1 | tee artifacts/unit-tests.log
+
+      - name: Run unchanged owner acceptance suite
+        run: |
+          set -o pipefail
+          python -m unittest discover -s agent/verification -p test_workflow_schedule_audit_acceptance.py -v 2>&1 | tee artifacts/owner-acceptance.log
+
+      - name: Audit checked-out SEC/options workflows
+        run: |
+          set +e
+          python agent/workflow_schedule_audit.py --workflows .github/workflows --output artifacts/workflow_schedule_audit.json --source-commit "$GITHUB_SHA"
+          code=$?
+          set -e
+          echo "audit_exit_code=$code" | tee artifacts/audit-exit-code.log
+          python -c "import json,os;d=json.load(open('artifacts/workflow_schedule_audit.json'));assert d['schema_version']==1;assert d.get('source_commit')==os.environ['GITHUB_SHA'];print('status',d['status']);print('workflows',[r['path'] for r in d['workflows']]);print('errors',d['errors'])"
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-schedule-audit-${{ github.run_id }}
+          path: artifacts/
+          retention-days: 14
+          if-no-files-found: warn
