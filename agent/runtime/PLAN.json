@@ -2,7 +2,7 @@
   "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
   "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
   "gantt_row": "Venice lane (thin chatbot poke)",
-  "current_task": "t16",
+  "current_task": "t17",
   "tasks": [
     {
       "id": "t1",
@@ -174,7 +174,7 @@
     {
       "id": "t16",
       "title": "Sweep runs(main) at 14:56Z and decide whether a PROGRESS.md write is warranted",
-      "acceptance": "Either no failed nai-sec-* / nai-occ-oi-daily run outside the never-re-report set (no write needed, PROGRESS.md@0fa61634 already current) or exactly one report_failure call on the new failing run",
+      "acceptance": "Either no failed nai-sec-* / nai-occ-oi-daily run outside the never-re-report set (no write needed, PROGRESS.md@0fa61634 already current) or exactly one report_failure call on the new failing<|place_holder_mm_span_0442|> run",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -183,7 +183,16 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t17",
+      "title": "Sweep runs(main) at 15:05Z for any newly fired failed nai-* run",
+      "acceptance": "Either every failed nai-sec-* / nai-occ-oi-daily run is in the never-re-report set or already has a report_failure issue, or exactly one report_failure call is made on the single new failing run id",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 95
 }
