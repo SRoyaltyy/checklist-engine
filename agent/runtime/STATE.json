@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-08T16:38:29.606Z",
-  "turn_id": "mw81zxdl-vtvnp5ql",
-  "summary": "Checkpoint write landed: agent/PROGRESS.md on venice/sec-options-pipelines committed as 24934c4ec5eb073134b19aae1c17f3c745099cad (blob b988307b82ae189a93703ca714839f49d6ae3e61, verified:true), replacing the stale 14-run 14:41Z checkpoint with the 16:28Z 30-entry snapshot plus all three canonical failure records verbatim. That closes t25. Now re-sweeping runs(main) at 16:35Z for any newly fired failed nai-sec-* or nai-occ-oi-daily run, since occ_oi_daily also triggers on push.",
-  "next": "Inspect the runs(main) result. If every failure in the returned list is inside the never-re-report set (42284432095, 42156926867, 42399694729, 42106074154, 41906860199, 41710121137, 41413535355, 41413529249, 41413022188, 41413017909, 41413013359), take no action and idle with done=true. If a new failed nai-* run appears, call report_failure with its run_id once and stop.",
+  "at": "2026-11-08T16:42:27.851Z",
+  "turn_id": "mw8252kf-n1e61ou5",
+  "summary": "runs(main) sweep at 16:39Z returns 30 entries — byte-identical to the 16:28Z snapshot recorded in the checkpoint commit 24934c4e. Newest run is still 42434336421 (nai-sec-bulk #51, sha 2ba3ebd, SUCCESS). Every failure in the list is inside the never-re-report set: 42399694729 and 42284432095 (reported, #223/#220), 42156926867 (reported, #221), 42106074154 / 41906860199 / 41710121137 (covered by #220), and the Nov-2 batch 41413535355 / 41413529249 / 41413022188 / 41413017909 / 41413013359 (superseded shas). 41227556402 is cancelled, not a failure. No new nai-sec-* or nai-occ-oi-daily run has fired since 2026-11-08T01:27Z, so no report_failure call is warranted and no issue is filed. Lane is clear this wake.",
+  "next": "Idle. On the next wake, re-sweep runs(main); if a new failed nai-sec-* / nai-occ-oi-daily run appears, call report_failure(run_id) once and stop. Continue watching the three-missed-slot gap (Nov 7 19:59Z occ, Nov 8 03:10Z form13f, Nov 8 05:58Z nai-daily-forward) and escalate to James/GPT only if it persists through Nov 9.",
   "plan": {
     "goal": "Report each failed nai-sec-* / nai-occ-oi-daily run once with run ID + error, then stop (TODO.md Venice lane @c7c31b02)",
     "why": "Sole assigned lane: Venice observes and reports via report_failure; GPT owns fixes; no pipeline ownership, no collector pushes, no bulk scraping",
@@ -114,22 +114,20 @@
       },
       {
         "id": "t26",
-        "title": "Sweep runs(main) at 16:35Z for any newly fired failed nai-* run",
+        "title": "Sweep runs(main) at 16:39Z for any newly fired failed nai-* run",
         "acceptance": "Every failed nai-sec-* / nai-occ-oi-daily run in the returned list is in the never-re-report set or already has a report_failure issue",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729"
+        ],
         "blocker": ""
       }
     ],
-    "progress_percent": 92
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "runs",
-      "ok": true
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42284432095",
@@ -184,5 +182,5 @@
     "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d",
     "24934c4ec5eb073134b19aae1c17f3c745099cad"
   ],
-  "done": false
+  "done": true
 }
