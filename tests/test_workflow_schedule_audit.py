@@ -51,7 +51,7 @@ class WorkflowScheduleAuditTests(unittest.TestCase):
         self.write("world-v2-code-ci.yml", "on: push\n")
         self.write("nai_daily_forward.yml", "on: push\n")
         paths = [row["path"] for row in self.rows(self.audit())]
-        self.assertEqual(paths, ["nai-occ-oi-daily.yml", "nai_occ_oi_daily.yml", "nai-sec-form345.yaml", "nai_sec_bulk.yml"])
+        self.assertEqual(paths, ["nai-occ-oi-daily.yml", "nai-sec-form345.yaml", "nai_occ_oi_daily.yml", "nai_sec_bulk.yml"])
 
     def test_events_and_schedules_are_normalized(self):
         self.write("nai_sec_bulk.yml", "on:\n  push:\n    branches: [main]\n  workflow_dispatch:\n  schedule:\n    - cron: '7 3 * * 1'\n")
