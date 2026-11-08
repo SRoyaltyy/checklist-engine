@@ -1,0 +1,36 @@
+name: Venice new branch workflow proof
+on:
+  push:
+    branches:
+      - venice/autonomous-workflow-proof-20261109
+    paths:
+      - .github/workflows/venice-new-workflow-proof.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Download and verify current project instructions
+        env:
+          PROOF_COMMIT: ${{ github.sha }}
+          PROOF_BRANCH: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os,urllib.request
+          url='https://raw.githubusercontent.com/SRoyaltyy/checklist-engine/main/TODO.md'
+          data=urllib.request.urlopen(url,timeout=30).read()
+          assert b'## Venice' in data
+          open('TODO.downloaded.md','wb').write(data)
+          result={'proof':'new_workflow_on_nondefault_branch','branch':os.environ['PROOF_BRANCH'],'commit':os.environ['PROOF_COMMIT'],'source':url,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+          json.dump(result,open('workflow-proof.json','w'),indent=2)
+          print(json.dumps(result))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: venice-new-workflow-proof
+          path: |
+            workflow-proof.json
+            TODO.downloaded.md
+          retention-days: 3
