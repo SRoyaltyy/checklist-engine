@@ -1,1 +1,1 @@
-{"id":"mw854mdo-omtxnpdp.0","action":"merge_pr","args":{"pr":225,"expected_head_sha":"a5deb2c4ba100e83609556312a92bb4f6d8030ea"},"status":"running","at":"2026-11-08T18:03:31.394Z"}
+{"id":"mw854mdo-omtxnpdp.0","action":"merge_pr","args":{"pr":225,"expected_head_sha":"a5deb2c4ba100e83609556312a92bb4f6d8030ea"},"status":"done","at":"2026-11-08T18:03:38.411Z","result":{"ok":true,"merged":true,"commit":"ae8b32d31e088c56ac38b3a5d6bb11246d0576ce","head_sha":"a5deb2c4ba100e83609556312a92bb4f6d8030ea","url":"https://github.com/SRoyaltyy/checklist-engine/pull/225"}}
