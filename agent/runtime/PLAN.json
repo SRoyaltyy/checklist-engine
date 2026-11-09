@@ -78,7 +78,8 @@
       "status": "doing",
       "evidence": [
         "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
-        "eda683e7d07114ca4f0faba314b9539cce4297cc"
+        "eda683e7d07114ca4f0faba314b9539cce4297cc",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
       ],
       "blocker": ""
     }
