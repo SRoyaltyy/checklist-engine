@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "at": "2026-11-09T03:15:31.281Z",
+  "input": {
+    "task_id": "repo-requirements-audit-v1",
+    "assignment_sha": "fe5043dc723075d0d79b72a91c100b9667ab4fa7",
+    "owner_id": "mw83wh2u-kaq8t5cl",
+    "turn_id": "mw8oskcw-f3ad5an5",
+    "branch": "venice/repo-requirements-audit-v1",
+    "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+    "summary": "Added docs/venice-audit-v1/.gitignore to stop the workflow's `git add docs/venice-audit-v1` from sweeping __pycache__ into auto-commits; write landed at commit 8b6a299c (blob 7f6ff296) and the push run 42555125029 completed success in 15s with only the Node20-deprecation warning and Ubuntu-26 notice as annotations — no error annotation. Prior green heads remain: PROGRESS.json f2c7891 (run 42555008761) and build_gantt.py 96ef7894 (run 42554257008). This turn only reads the branch file list and PROGRESS.json to capture the exact SHA needed for the next non-stale write; no artifact is claimed complete until that read returns.",
+    "next": "Use the returned list_files to confirm docs/venice-audit-v1/GANTT.html and docs/venice-audit-v1/AUDIT.md are present at the branch head, and use the returned PROGRESS.json sha as expected_sha for the refreshed PROGRESS.json write; then extend tests/test_repo_requirements_audit.py for REQUIREMENTS.csv 11-column header, full baseline-row coverage, EVIDENCE.json id uniqueness/kind/limits, and GANTT.html existence, and open the PR only after a green exact-head run.",
+    "contribution": {
+      "kind": "implementation",
+      "description": "Wrote docs/venice-audit-v1/.gitignore so the workflow's `git add docs/venice-audit-v1` cannot auto-commit generated __pycache__/*.pyc from build_matrices/build_extra/build_gantt; the push run on that exact commit completed success with no error annotation.",
+      "evidence": [
+        "8b6a299c6d6b369591fe038de7593d2031f85526"
+      ]
+    },
+    "plan": {
+      "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+      "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
+      "gantt_row": "All project stages 0–8; evidence audit only",
+      "current_task": "t4b",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
+          "acceptance": "write_file returns a commit sha and the file is readable at that sha",
+          "weight": 1,
+          "status": "done",
+          "evidence": [
+            "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
+          ]
+        },
+        {
+          "id": "t2",
+          "title": "Build DATA_REQUIREMENTS.csv and SOURCE_MANIFEST.json from authority files",
+          "acceptance": "19-column header, 258 rows, four authority blob shas, green push run with pytest executing",
+          "weight": 2,
+          "status": "done",
+          "evidence": [
+            "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
+            "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
+          ]
+        },
+        {
+          "id": "t3",
+          "title": "Emit REQUIREMENTS.csv, GANTT_COMPARISON.csv (all baseline rows, D2 split) and EVIDENCE.json",
+          "acceptance": "Three files with spec column contracts, every baseline row present, DATA_REQUIREMENTS.csv byte-identical, run green",
+          "weight": 3,
+          "status": "done",
+          "evidence": [
+            "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+            "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+            "docs/venice-audit-v1/EVIDENCE.json@2ab0495353694ea6c84493fddc93fbb95a1e5945"
+          ]
+        },
+        {
+          "id": "t4",
+          "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
+          "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage",
+          "weight": 2,
+          "status": "doing",
+          "evidence": []
+        },
+        {
+          "id": "t4a",
+          "title": "Fix the build_gantt syntax defect and reach a green run on the audit branch",
+          "acceptance": "A push run on venice/repo-requirements-audit-v1 completes success with no error annotation",
+          "weight": 3,
+          "status": "done",
+          "evidence": [
+            "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
+            "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
+          ]
+        },
+        {
+          "id": "t4b",
+          "title": "Confirm GANTT.html exists on the branch and refresh PROGRESS.json to the green head",
+          "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html and AUDIT.md at head 8b6a299c and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
+          "weight": 1,
+          "status": "doing",
+          "evidence": [
+            "8b6a299c6d6b369591fe038de7593d2031f85526"
+          ]
+        },
+        {
+          "id": "t5",
+          "title": "Add validator, extend source-matched tests, open PR and merge on green exact-head checks",
+          "acceptance": "Green run with pytest executing and merge_pr returns a merge commit on main for the exact expected_head_sha",
+          "weight": 3,
+          "status": "todo",
+          "evidence": []
+        }
+      ],
+      "progress_percent": 62
+    },
+    "notes": "CONTRACT: repo-requirements-audit-v1, assignment_sha fe5043dc723075d0d79b72a91c100b9667ab4fa7, deliverable merged_pr, allow_merge true, publishing_enabled true, base main c30c23be. ALLOWED: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. Read-only: agent/ACTIVE_TASK.json, agent/tasks/**, agent/verification/**, TODO.md, METHODOLOGY.md. PR #225 merged - do not reopen.\nSPEC (agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66f): REQUIREMENTS.csv 11 cols; DATA_REQUIREMENTS.csv 19 cols per canonical id; GANTT_COMPARISON.csv with split rows and reverse mappings; EVIDENCE.json separating claimed receipt / reachable artifact / independently read artifact / verified contents; AUDIT.md; GANTT.html or .svg; PROGRESS.json. Audit base 68c6f2a8, live main c30c23be - delta section required. No percentage without numerator/denominator/scope.\nWORKFLOW (verbatim, sha 3fc6c647, 42 lines): push on venice/repo-requirements-audit-v1, paths docs/venice-audit-v1/**, tests/test_repo_requirements_audit.py, the workflow itself; permissions contents:write; concurrency venice-repo-requirements-audit, cancel-in-progress false; job 'audit' ubuntu-latest timeout 20m; steps Checkout audit branch (ref venice/repo-requirements-audit-v1) / Set up Python 3.12 / Install pytest / Build matrices from authority files (python docs/venice-audit-v1/build_matrices.py) / Run source-matched tests (hashFiles-guarded pytest) / Commit regenerated matrices. Commit step body is already guarded: git config user.name 'venice-audit-bot', user.email 'venice-audit-bot@users.noreply.github.com', git add docs/venice-audit-v1, then `if git diff --cached --quiet; then echo 'no matrix changes'; else git commit -m 'audit: regenerate matrices from main authority files'; git push origin HEAD:venice/repo-requirements-audit-v1; fi`. The earlier empty-diff-commit pitfall is a MISDIAGNOSIS - do not rewrite the workflow for it.\nGITIGNORE ADDED THIS TURN: docs/venice-audit-v1/.gitignore@8b6a299c (blob 7f6ff296) contains __pycache__/ and *.pyc with a comment explaining the `git add docs/venice-audit-v1` sweep risk. Push run 42555125029 = success, 15s, job 128959009789, 1 warning + 1 notice, no error annotation.\nPROVEN RUN HISTORY: 42551981408 yml@9472d46 success; 42552322976 a1210ac job 128950413628 10/10 success; 42552951167 d60e2483 success; 42553294959 b3e0ddbd success; 42553306526 9d0f2556 job 128953452581 10/10 success; 42554257008 96ef7894 job 128956342546 success; 42555008761 f2c7891 success; 42555125029 8b6a299c success. RED: 42553614919 17dc926e job 128954378248 exit 1 at step 5; 42553625095 653d099 job 128954439178 exit 1 at step 5 with tests+commit skipped; 42553597443 4a4a8ba job 128954318362 exit 1 at step 7 only, build+test success.\nROOT CAUSE 1 CONFIRMED FIXED: build_gantt.py@4a4a8ba began with a single-quoted multi-line string instead of a docstring -> SyntaxError on import from build_matrices.run_extras(). Fixed by triple-quoted docstring, commit 96ef7894 / blob 5bf023d0, next run green. Blob-shape rule: any module imported by build_matrices must start with a real docstring or comment.\nBUILDER: build_matrices.py@3121d20b emits DATA_REQUIREMENTS.csv + SOURCE_MANIFEST.json; 9d0f2556 (blob 6e43f634) added run_extras(); 17dc926e (blob 99818667) appended import build_gantt. build_extra.py@b3e0ddbd (blob 352110f9) holds ROWS/REQMAP/STATUS/SCD/MISS/DEPS/SPLITS over data['rows'] of REPO_AUDIT_GANTT_BASELINES_V1.json.\nARTIFACTS ON BRANCH: REQUIREMENTS.csv@78ee06ad 11-col header, 47 rows; GANTT_COMPARISON.csv@4220cfdf 13-col header, 68 rows incl. D2 splits with split_from; EVIDENCE.json@2ab04953 114 lines; AUDIT.md@dbdf9d97 sections 1-9; build_gantt.py@96ef7894 renders GANTT.html from GANTT_COMPARISON.csv and aborts if a baseline row id is missing; PROGRESS.json last written f2c7891 (re-read for sha before writing).\nDISTINCTION TO KEEP IN AUDIT.md: REQUIREMENTS.csv current_status = best status from cited evidence; GANTT_COMPARISON.csv current_verified_status = whether THIS audit re-checked that chart row.\nT2 EVIDENCE: SOURCE_MANIFEST.json@c4755f36 row_count=258, four authority shas (WSD 9412f478, DS c9d9af05, LENSES fa338f19, WORLD_COVERAGE 756f6a36); DATA_REQUIREMENTS.csv@531b1d19 258 rows.\nTEST FILE: tests/test_repo_requirements_audit.py@a1210ac (blob 0eea2378) 7 tests; extend in t5 for REQUIREMENTS.csv 11 cols, baseline-row coverage, EVIDENCE.json id uniqueness + kind/limits presence, and GANTT.html existence/non-fabrication.\nID NAMESPACE: 258 unique ids; C28/C29 controls are exclusions not gaps.\nBASELINE FACTS (REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c, 62 rows, v16 e85547ac, v20 2ba3ebdf): B0 166 replay mismatches; B2 world NOT_PROVEN scoring CLOSED; B3 8439/8439 measured but packet replay FAIL 1308; B4 22968 bindings; B5 identity 5159/8439; B6 SEC access only; D0 catalog != downloaded; D2 bundled split; D4 246 assets readback PASS identity 61.13%; D6 OCC FAIL, Dolt any-row 21.42%, no OI; D7 skeleton; D8 0 accepted; W3 112760/4195; W4 350374/4041; W13 FRED 21-series PIT PASS, joins UNKNOWN; W14 breadth PASS survivor caveat; W16 Finviz EXCLUDED_LIVE_ONLY; W17 GDELT dropped; F0-F4 design only, probes BPOP/DJCO/KGRN; S0 #163 unmerged; Q2 #224 unmerged; 2664 ladders + 80 aliases; A/M/T 0 accepted; L0-L1 PAPER ONLY.\nTOOL LIMITS: grep on a top-level dir returns 422 - grep a specific file. Long CSV rows exceed the 12000-char read window - page by offset. Job HTML logs render as 'This step has been truncated' for unauthenticated fetches, so run_jobs step conclusions plus the annotation list are the only reliable signals; never claim a log line not received. The checkpoint tool rejects a pitfall entry with no returned evidence, so return pitfalls only with real evidence arrays.\nSUPERSEDED: SEC/OI failure-monitoring lane (42284432095, 42156926867 filed; GPT owns fixes).\nRULES: catalog row != download; access test != acquisition; PR branch != accepted main work; audit never opens world/scoring/live gates; never edit sealed records, receipts, inventories, other lanes, production pipelines; no new paid sources; 2025-26 authorized for testing but record selection vs evaluation contamination.",
+    "pitfalls": []
+  },
+  "pitfalls": [
+    {
+      "id": "single-quote-docstring",
+      "problem": "build_gantt.py opened with a single-quoted multi-line string, so importing it from build_matrices.py raised SyntaxError and the 'Build matrices from authority files' step exited 1 (run 42553625095).",
+      "failed_approach": "Trusting the write_file ok=true receipt as proof the Python source parses; the receipt proves the blob landed, not that it is valid Python.",
+      "lesson": "A new module imported by build_matrices must start with a real docstring or comment, and its first proof is the build step conclusion on the following push run - not the write receipt.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
+      ],
+      "first_seen": "mw8obqp1-utvl8qsl",
+      "last_seen": "mw8ogubb-60z104gk",
+      "seen_at_ms": 1794193652414,
+      "resolved_at": "mw8ogubb-60z104gk",
+      "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
+    },
+    {
+      "id": "empty-diff-commit",
+      "problem": "'Commit regenerated matrices' exited 1 at 42553597443, which I initially attributed to an unguarded commit on a clean tree.",
+      "failed_approach": "Diagnosing the failing step from its name instead of reading the step body; the workflow at 3fc6c647 already wraps commit/push in `if git diff --cached --quiet; then echo 'no matrix changes'; else ... fi`.",
+      "lesson": "Read the workflow step body before proposing a workflow repair. When the guard is already present, a step-7 exit 1 means the else-branch ran and the commit or push itself failed, so look at tree state and remote head at that commit rather than rewriting the guard.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362",
+        ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
+      ],
+      "first_seen": "mw8obqp1-utvl8qsl",
+      "last_seen": "mw8ogubb-60z104gk",
+      "seen_at_ms": 1794193652414,
+      "correction": "Misdiagnosis corrected; no workflow change required for this id."
+    },
+    {
+      "id": "truncated-job-logs",
+      "problem": "Unauthenticated job pages return 'This step has been truncated due to its large size' for every step, so the failing log line is never visible.",
+      "failed_approach": "Trying to read the cause from the job HTML page.",
+      "lesson": "Use run_jobs step conclusions plus the annotation list (which names the step and 'Process completed with exit code 1'); never quote a log line that was not actually returned.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+      ],
+      "first_seen": "mw8ogubb-60z104gk",
+      "last_seen": "mw8ogubb-60z104gk",
+      "seen_at_ms": 1794193652414
+    }
+  ]
+}
