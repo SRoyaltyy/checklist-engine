@@ -24,7 +24,8 @@
       "weight": 1,
       "status": "done",
       "evidence": [
-        "055b1e3440432f60755614e6e5b324e3556088d1"
+        "055b1e3440432f60755614e6e5b324e3556088d1",
+        "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
       ],
       "blocker": ""
     },
