@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:29:45.364Z",
-  "turn_id": "mw8pagm6-eugw4ftq",
-  "summary": "Read the live test file at 0eea2378 (80 lines, 7 tests, all scoped to DATA_REQUIREMENTS.csv + SOURCE_MANIFEST.json) and confirmed the branch head advanced to 187168f5 by the workflow's own regenerate commit. That establishes the real gap for t5: no assertion yet covers REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json or GANTT.html. This turn writes the extended source-matched test file against the exact headers verified last turn and lists the audit directory to confirm the artifact set.",
-  "next": "Inspect the push run triggered by the test-file commit on venice/repo-requirements-audit-v1: read run_jobs for the 'Run source-matched tests' step conclusion. If green, open the PR; if the new assertions fail, read which one and relax only that assertion to a property I can prove from a returned read.",
+  "at": "2026-11-09T03:33:38.275Z",
+  "turn_id": "mw8peaqa-mpohpq6v",
+  "summary": "Confirmed the extended source-matched test file landed at e3eba97e (blob ee0c73e5) and its push-triggered run 42556696754 completed success with no error annotation, so the enlarged suite (REQUIREMENTS.csv 11-col header, GANTT_COMPARISON.csv 13-col header with split_from resolution, EVIDENCE.json snapshot/entry contracts, skip-guarded GANTT.html percentage check) executes and passes on the audit branch. Audit directory listing confirms the full artifact set is present on the branch: AUDIT.md, DATA_REQUIREMENTS.csv, EVIDENCE.json, GANTT.html, GANTT_COMPARISON.csv, PROGRESS.json, REQUIREMENTS.csv, SOURCE_MANIFEST.json, three builders, .gitignore, no tracked __pycache__ file. Next step is opening the PR against main for merge on green exact-head checks.",
+  "next": "Read the created PR number and take branch_head again; confirm the newest push run on that head is success, then merge_pr with that exact expected_head_sha.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -51,9 +51,9 @@
         "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
         "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
         "weight": 2,
-        "status": "doing",
+        "status": "done",
         "evidence": [
-          "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546"
         ],
         "blocker": ""
       },
@@ -81,17 +81,6 @@
         "blocker": ""
       },
       {
-        "id": "t5",
-        "title": "Extend source-matched tests, open PR and merge on green exact-head checks",
-        "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
-        "weight": 3,
-        "status": "doing",
-        "evidence": [
-          "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t5a",
         "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
         "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
@@ -99,31 +88,37 @@
         "status": "doing",
         "evidence": [],
         "blocker": ""
+      },
+      {
+        "id": "t5",
+        "title": "Open PR and merge on green exact-head checks",
+        "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+        "weight": 3,
+        "status": "doing",
+        "evidence": [],
+        "blocker": ""
       }
     ],
-    "progress_percent": 58
+    "progress_percent": 70
   },
   "tool_results": [
     {
-      "tool": "write_file",
-      "ok": true,
-      "path": "tests/test_repo_requirements_audit.py",
-      "commit": "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
-      "verified": true
+      "tool": "run_jobs",
+      "ok": true
     },
     {
-      "tool": "list_files",
+      "tool": "branch_head",
       "ok": true,
-      "path": "docs/venice-audit-v1"
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+    },
+    {
+      "tool": "create_pr",
+      "ok": true,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/pull/226"
     }
   ],
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413026299",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413022188",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413017909",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413013359",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227563332",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227549644",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41224165706",
@@ -218,7 +213,12 @@
     "https://github.com/SRoyaltyy/checklist-engine/tree/187168f5018a7ad4ea96521b9d025abd40f9613c",
     "187168f5018a7ad4ea96521b9d025abd40f9613c",
     "agent/runtime/receipts/mw8pagm6-eugw4ftq.0.json@a24e8269e8afa9f033fdfff962cfd3c865722510",
-    "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91"
+    "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
+    "agent/runtime/receipts/mw8peaqa-mpohpq6v.2.json@1a04635c6cbf00075cc229c655c05fe7d3e2eabe",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+    "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+    "https://github.com/SRoyaltyy/checklist-engine/pull/226"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -226,11 +226,10 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "implementation",
-    "description": "Authored the extended source-matched test suite covering REQUIREMENTS.csv (11-col header, unique ids, acceptance conditions, blob-pinned authority paths), GANTT_COMPARISON.csv (13-col header, unique baseline ids incl. B0/B1/D2, split rows whose split_from resolves to a present row) and EVIDENCE.json (snapshot keys, unique entry ids, required fields with non-empty limits and coverage_scope), plus a skip-guarded GANTT.html check that rejects a fabricated '% complete'.",
+    "kind": "verification",
+    "description": "The enlarged source-matched test suite is proven executing and passing on the audit branch: push run 42556696754 at e3eba97e completed success with only Node20/ubuntu-latest warnings and no error annotation, and list_files confirms all eight required deliverables (AUDIT.md, DATA_REQUIREMENTS.csv, REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json, GANTT.html, SOURCE_MANIFEST.json, PROGRESS.json) plus the three builders are present on the branch with no tracked __pycache__ file.",
     "evidence": [
-      "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3",
-      "https://github.com/SRoyaltyy/checklist-engine/tree/187168f5018a7ad4ea96521b9d025abd40f9613c"
+      "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91"
     ]
   },
   "pitfalls": [
