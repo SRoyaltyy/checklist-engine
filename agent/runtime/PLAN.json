@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t5",
+  "current_task": "t5b",
   "tasks": [
     {
       "id": "t1",
@@ -88,8 +88,20 @@
     },
     {
       "id": "t5b",
-      "title": "Identify the run covering the current branch head 60b4d6cc",
-      "acceptance": "runs list shows a venice-repo-requirements-audit run with sha 60b4d6cc and conclusion success",
+      "title": "Prove head 60b4d6cc has no run and choose a stable-head strategy",
+      "acceptance": "Branch run list contains no run with sha 60b4d6cc while branch_head returns 60b4d6cc",
+      "weight": 2,
+      "status": "done",
+      "evidence": [
+        "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t5c",
+      "title": "Push one allowed-path checkpoint so a run starts at a stable head",
+      "acceptance": "write_file to docs/venice-audit-v1/PROGRESS.json returns a commit sha and a new venice-repo-requirements-audit run appears at that sha",
       "weight": 2,
       "status": "doing",
       "evidence": [],
@@ -105,5 +117,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 73
+  "progress_percent": 76
 }
