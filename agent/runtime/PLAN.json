@@ -17,8 +17,8 @@
     },
     {
       "id": "t2",
-      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and REQUIREMENTS.csv (stages 0-8) from authority files",
-      "acceptance": "docs/venice-audit-v1/build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id in dictionary/WORLD_SNAPSHOT_DICTIONARY.csv (C28/C29 marked excluded_control), and SOURCE_MANIFEST.json records a git blob sha for each of the four authority files",
+      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and SOURCE_MANIFEST.json from authority files",
+      "acceptance": "docs/venice-audit-v1/build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id (C28/C29 marked excluded_control), SOURCE_MANIFEST.json records a git blob sha for each of the four authority files, and the push-triggered workflow run on the audit branch is green",
       "weight": 2,
       "status": "doing",
       "evidence": [
@@ -40,7 +40,7 @@
     },
     {
       "id": "t4",
-      "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+      "title": "Publish REQUIREMENTS.csv, GANTT_COMPARISON.csv, corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
       "acceptance": "All required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
       "weight": 2,
       "status": "todo",
@@ -49,8 +49,8 @@
     },
     {
       "id": "t5",
-      "title": "Add validator script, source-matched test and push-triggered audit workflow, then open PR and merge to main",
-      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+      "title": "Add validator script and source-matched test, then open PR and merge to main",
+      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green with the pytest step actually executing, and merge_pr returns a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "todo",
       "evidence": [],
