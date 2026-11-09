@@ -1,0 +1,1 @@
+{"id":"mw9azbi5-lneotp6j.0","action":"edit_file","args":{"path":"docs/venice-audit-v1/build_hierarchy.py","find":"    ('S7', 'Stage 7: evaluation and reporting'),\n]","replace":"    ('S7', 'Stage 7: evaluation and reporting'),\n    ('S8', 'Stage 8: shadow and live gates'),\n]","branch":"venice/repo-hierarchical-audit-v2"},"status":"running","at":"2026-11-09T13:35:22.559Z"}
