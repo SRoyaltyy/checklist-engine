@@ -2,7 +2,7 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t3",
+  "current_task": "t4",
   "tasks": [
     {
       "id": "t1",
@@ -34,12 +34,10 @@
       "title": "Fix stage-8 substage mapping and stale branch-scope test so build + tests are green",
       "acceptance": "build_matrices completes and the source-matched test step is green on the active head",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
-        "c3e256510b6b0ea5766f6fc7526ae3104618dacf",
-        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863/job/129193065738"
+        "b574d2acc6a117094db2f30cd4ba1e8658d2225a",
+        "tests/test_repo_requirements_audit.py@4b77fe90b6344746589dd1acae134c30589712ab"
       ],
       "blocker": ""
     },
@@ -48,7 +46,7 @@
       "title": "Build QUESTION_INDEX.csv",
       "acceptance": "QUESTION_INDEX.csv exists with canonical IDs, parent_substage_id, subject_id and design/implementation/answer/verification states at a returned blob SHA",
       "weight": 2,
-      "status": "todo",
+      "status": "doing",
       "evidence": [],
       "blocker": ""
     },
@@ -77,11 +75,10 @@
       "weight": 2,
       "status": "todo",
       "evidence": [
-        "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
-        "eda683e7d07114ca4f0faba314b9539cce4297cc"
+        "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
       ],
       "blocker": ""
     }
   ],
-  "progress_percent": 16
+  "progress_percent": 33
 }
