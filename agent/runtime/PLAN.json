@@ -2,7 +2,7 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment (supersedes v1 PR 226) in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t2",
+  "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
@@ -20,10 +20,13 @@
     {
       "id": "t2",
       "title": "Rewrite docs/venice-audit-v1/PROGRESS.json for repo-hierarchical-audit-v2",
-      "acceptance": "PROGRESS.json on venice/repo-hierarchical-audit-v2 has task_id repo-hierarchical-audit-v2, assignment_sha 8e75e4f7, snapshot_sha main@7020524b and a new returned blob SHA",
+      "acceptance": "PROGRESS.json on the branch has task_id repo-hierarchical-audit-v2, assignment_sha 8e75e4f7, snapshot_sha main@7020524b and a new returned blob SHA",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "055b1e3440432f60755614e6e5b324e3556088d1",
+        "agent/runtime/receipts/mw98hrv5-rzim04sg.0.json@6d74bbaac36a2723c9d98c24083bd56a233a4dba"
+      ],
       "blocker": ""
     },
     {
@@ -31,7 +34,7 @@
       "title": "Build STAGES.csv and REQUIREMENTS.csv stage > substage > granular hierarchy with 8 status dimensions",
       "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique node/requirement ids, parent links and per-item statuses at returned blob SHAs",
       "weight": 2,
-      "status": "todo",
+      "status": "doing",
       "evidence": [],
       "blocker": ""
     },
@@ -55,7 +58,7 @@
     },
     {
       "id": "t6",
-      "title": "Write README.md entrypoint, GANTT.md overview, top-level GANTT.html/svg and details/<substage-id>.md pages",
+      "title": "Write README.md entrypoint, GANTT.md overview, top-level GANTT visual and details/<substage-id>.md pages",
       "acceptance": "All reporting layers exist, percentages only inside substages, no fabricated completion, cross-referenced with v1 matrices",
       "weight": 2,
       "status": "todo",
@@ -72,5 +75,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 8
+  "progress_percent": 16
 }
