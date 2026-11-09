@@ -1348,9 +1348,11 @@ def _measure(recipe, candles, feature=None):
             return {'high': False, 'low': False, 'none': True}
         if recipe == 'native_new_extreme_v1':
             # Ruling part 2 #5: window high > max high of the ref_bars (C128,
-            # default 60) completed bars immediately BEFORE the window; both
-            # can fire. Fewer ref bars -> NE (a truncated reference silently
-            # weakens "new extreme").
+            # default 60) completed bars immediately BEFORE the window. The
+            # four outcomes are a strict single-hot partition (like gap_side):
+            # high = new high only, low = new low only, both = both, none.
+            # Fewer ref bars -> NE (a truncated reference silently weakens
+            # "new extreme").
             lb = int(feature['lookback'])
             ref = int(feature['ref_bars'])
             if len(candles) < lb + ref:
@@ -1359,8 +1361,8 @@ def _measure(recipe, candles, feature=None):
             pre_l = low[-lb - ref:-lb]
             hi = float(high[-lb:].max()) > float(pre_h.max())
             lo = float(low[-lb:].min()) < float(pre_l.min())
-            return {'high': hi, 'low': lo, 'both': hi and lo,
-                    'none': not hi and not lo}
+            return {'high': hi and not lo, 'low': lo and not hi,
+                    'both': hi and lo, 'none': not hi and not lo}
         if recipe == 'native_magnet_v1':
             # Ruling part 2 #7: round levels {$1,$5,$10,$50,$100,$500} plus
             # {$0.10,$0.50} when the window mean close < $1. yes when >=
@@ -2170,6 +2172,364 @@ def _measure(recipe, candles, feature=None):
                     'similar': w_mean <= band * p_mean
                     and w_mean >= p_mean / band,
                     'smaller': w_mean < p_mean / band}
+        if recipe == 'native_run_unusual_v1':
+            # Ruling part 4 #35: longest same-colour body run in the window
+            # vs the run-length distribution of the prior 252 bars (every
+            # completed run plus the current open run as observed - the
+            # union is simply all runs in the block, documented). unusual
+            # when the window longest run is strictly above the 90th
+            # percentile of that distribution (linear interpolation,
+            # documented). Zero-body bars break runs (documented). Warmup
+            # 252 -> NE.
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 252:
+                return None
+            b = close - opened
+
+            def _run_lengths(block):
+                out = []
+                cur = 0
+                cur_sign = 0
+                for x in block:
+                    s = 1 if x > 0 else -1 if x < 0 else 0
+                    if s == 0:
+                        if cur:
+                            out.append(cur)
+                        cur = 0
+                        cur_sign = 0
+                    elif s == cur_sign:
+                        cur += 1
+                    else:
+                        if cur:
+                            out.append(cur)
+                        cur = 1
+                        cur_sign = s
+                if cur:
+                    out.append(cur)
+                return out
+
+            dist = _run_lengths(b[-lb - 252:-lb])
+            if not dist:
+                return None
+            longest = max(_run_lengths(b[-lb:]), default=0)
+            p90 = float(np.percentile(np.asarray(dist, dtype=np.float64), 90))
+            return {'unusual': longest > p90, 'typical': longest <= p90}
+        if recipe == 'native_gap_given_back_v1':
+            # Ruling part 4 #36 (follows gap core #6): the latest gap bar in
+            # the window decides (gap-up: open[t] > high[t-1]; gap-down
+            # mirror; the parenthetical "open-gap definition" refers to the
+            # strict gap definition, not the open state - documented, since
+            # an open gap-up can never be given_back). Classify C[D-1]
+            # against the pre-gap extreme and the gap open:
+            # gap-up: held = C >= open[t], given_back = C <= high[t-1],
+            # partial = in between (gap-down mirrored arithmetic).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1:
+                return None
+            wk = slice(len(candles) - lb, len(candles))
+            o_w = opened[wk]
+            h_w = high[wk]
+            l_w = low[wk]
+            c_last = float(close[-1])
+            latest = None
+            for i in range(lb):
+                t = len(candles) - lb + i
+                if o_w[i] > high[t - 1]:
+                    latest = ('up', float(high[t - 1]), float(o_w[i]))
+                elif o_w[i] < low[t - 1]:
+                    latest = ('down', float(low[t - 1]), float(o_w[i]))
+            out = {k: False for k in
+                   ('up_held', 'up_partial', 'up_given_back',
+                    'down_held', 'down_partial', 'down_given_back', 'none')}
+            if latest is None:
+                out['none'] = True
+                return out
+            side, edge, gopen = latest
+            if side == 'up':
+                if c_last >= gopen:
+                    out['up_held'] = True
+                elif c_last <= edge:
+                    out['up_given_back'] = True
+                else:
+                    out['up_partial'] = True
+            else:
+                if c_last <= gopen:
+                    out['down_held'] = True
+                elif c_last >= edge:
+                    out['down_given_back'] = True
+                else:
+                    out['down_partial'] = True
+            return out
+        if recipe == 'native_cross_round_v1':
+            # Ruling part 4 #37 (magnet level convention #7): levels
+            # {$1,$5,$10,$50,$100} plus {$0.10,$0.50} when C[D-1] < $1.
+            # Cross-up at t = C[t] >= level > C[t-1]; mirror down; the
+            # latest cross in the window decides; none = no cross. Up and
+            # down cannot fire on the same bar (documented).
+            lb = int(feature['lookback'])
+            if len(candles) < lb + 1:
+                return None
+            levels = [1.0, 5.0, 10.0, 50.0, 100.0]
+            if close[-1] < 1.0:
+                levels += [0.10, 0.50]
+            last = 'none'
+            for t in range(len(candles) - lb, len(candles)):
+                c0 = float(close[t - 1])
+                c1 = float(close[t])
+                for lv in levels:
+                    if c1 >= lv > c0:
+                        last = 'up'
+                    elif c1 < lv <= c0:
+                        last = 'down'
+            return {'up': last == 'up', 'down': last == 'down',
+                    'none': last == 'none'}
+        if recipe == 'native_touch_order_v1':
+            # Ruling part 4 #38: rising MA = MA[D-1] > MA 5 bars earlier
+            # (documented k=5); falling mirror. A touch = a window bar
+            # whose range straddles the MA. Rising: first_held when the
+            # FIRST touch held (next 3 closes >= MA); else later_held when
+            # the LATEST touch held; else broke. Falling mirror with
+            # rejected = next 3 closes <= MA and reclaimed as the else
+            # bucket (latest touch not rejected; documented). A touch with
+            # fewer than 3 forward closes is unknowable and not counted
+            # (kijun_tests precedent). No counted touch, or the MA neither
+            # rising nor falling -> none.
+            lb = int(feature['lookback'])
+            import talib
+            period = int(feature['ma_period'])
+            kind = feature['ma_kind']
+            if kind not in ('SMA', 'EMA'):
+                raise NotImplementedError('unregistered moving average: ' + kind)
+            if len(candles) < lb + period:
+                return None
+            ma = getattr(talib, kind)(np.asarray(close, dtype=np.float64),
+                                      timeperiod=period)
+            wk = slice(len(candles) - lb, len(candles))
+            ma_w = ma[wk]
+            if not np.isfinite(ma_w).all():
+                return None
+            if ma[-1] == ma[-6]:
+                trend = 0
+            else:
+                trend = 1 if ma[-1] > ma[-6] else -1
+            if trend == 0:
+                return {'rising_first_held': False, 'rising_later_held': False,
+                        'rising_broke': False, 'falling_first_rejected': False,
+                        'falling_later_rejected': False,
+                        'falling_reclaimed': False, 'none': True}
+            c_w = close[wk]
+            h_w = high[wk]
+            l_w = low[wk]
+            touches = []
+            for i in range(lb):
+                if l_w[i] <= ma_w[i] <= h_w[i]:
+                    if i + 3 > lb - 1:
+                        continue  # unknowable forward closes (documented)
+                    if trend == 1:
+                        ok = all(c_w[i + j] >= ma_w[i + j] for j in (1, 2, 3))
+                    else:
+                        ok = all(c_w[i + j] <= ma_w[i + j] for j in (1, 2, 3))
+                    touches.append(ok)
+            out = {'rising_first_held': False, 'rising_later_held': False,
+                   'rising_broke': False, 'falling_first_rejected': False,
+                   'falling_later_rejected': False,
+                   'falling_reclaimed': False, 'none': False}
+            if not touches:
+                out['none'] = True
+                return out
+            first_ok = touches[0]
+            last_ok = touches[-1]
+            if trend == 1:
+                if first_ok:
+                    out['rising_first_held'] = True
+                elif last_ok:
+                    out['rising_later_held'] = True
+                else:
+                    out['rising_broke'] = True
+            else:
+                if not first_ok:
+                    out['falling_first_rejected'] = True
+                elif not last_ok:
+                    out['falling_later_rejected'] = True
+                else:
+                    out['falling_reclaimed'] = True
+            return out
+        if recipe == 'native_days_since_partial_flip_v1':
+            # Ruling part 4 #39: stack state = count of adjacent bull-order
+            # pairs among SMA10/20/50/200 (0-3) computed per bar on the
+            # fetched stream (200-bar SMA200 seed warmup). Age = bars since
+            # the most recent state change in the computable stream (from
+            # the first fully-seeded bar). Buckets: < age_recent -> lt5,
+            # <= age_old -> b5_20, else gt20. none = the stack never changed
+            # state in the entire computable stream (documented; the warmup
+            # region itself is not a state change by definition).
+            import talib
+            lb = int(feature['lookback'])
+            recent = int(feature['age_recent'])
+            old = int(feature['age_old'])
+            ma10 = talib.SMA(close, timeperiod=10)
+            ma20 = talib.SMA(close, timeperiod=20)
+            ma50 = talib.SMA(close, timeperiod=50)
+            ma200 = talib.SMA(close, timeperiod=200)
+            seeded = np.isfinite(ma10) & np.isfinite(ma20) & np.isfinite(ma50) & np.isfinite(ma200)
+            first = int(np.argmax(seeded)) if seeded.any() else len(close)
+            if len(close) - first < lb:
+                return None  # window not fully computable
+            states = ((ma10 > ma20).astype(int) + (ma20 > ma50).astype(int)
+                      + (ma50 > ma200).astype(int))
+            stream = states[first:]
+            changes = np.nonzero(np.diff(stream) != 0)[0]
+            age = (len(stream) - 1) - changes[-1] if changes.size else None
+            out = {'lt5': False, 'b5_20': False, 'gt20': False, 'none': False}
+            if age is None:
+                out['none'] = True
+            elif age < recent:
+                out['lt5'] = True
+            elif age <= old:
+                out['b5_20'] = True
+            else:
+                out['gt20'] = True
+            return out
+        if recipe == 'native_rejection_v1':
+            # Ruling part 4 #40 (52w_range rows only; the round_numbers L3
+            # rows stay honestly unbound - flagged for James). touched =
+            # some bar in the window reached >= the max high of the trailing
+            # C215 bars (window included; touch bar = the FIRST bar hitting
+            # that reference, documented). fell = C[D-1] <= touch high -
+            # break_atr x ATR14 (ATR at D-1). yes = touched AND fell; no
+            # otherwise - a no-touch is a well-defined NO here ("was there
+            # a rejection"), documented. Warmup = hist_bars + ATR14 seed.
+            lb = int(feature['lookback'])
+            hist = int(feature['hist_bars'])
+            batr = float(feature['break_atr'])
+            if len(candles) < lb + hist + 14:
+                return None
+            ref = float(np.max(high[-(lb + hist):]))
+            wk = slice(len(candles) - lb, len(candles))
+            touch_idx = None
+            for i in range(len(candles) - lb - hist, len(candles)):
+                if high[i] >= ref:
+                    touch_idx = i
+                    break
+            fell = False
+            if touch_idx is not None:
+                atr = _native_atr_series(high, low, close)
+                if not np.isfinite(atr[-1]) or atr[-1] <= 0:
+                    return None
+                fell = float(close[-1]) <= float(high[touch_idx]) - batr * float(atr[-1])
+            return {'yes': touch_idx is not None and fell,
+                    'no': touch_idx is None or not fell}
+        if recipe == 'native_current_level_touches_v1':
+            # Ruling part 4 #41: level = C[D-1]; tolerance =
+            # S_retest_tol_atr x ATR14 (matches the question's own "+-0.5
+            # ATR" text; the C266 ATR dial is declared-but-unmapped,
+            # flagged). A touch = a window bar whose range comes within tol
+            # of the level (high >= level - tol AND low <= level + tol).
+            # Fate of each touch: within the next C267 bars a close beyond
+            # level + tol = broke_up, beyond level - tol = broke_down, else
+            # held. Touches whose fate window would run past the last
+            # fetched bar are unknowable and not counted (kijun_tests
+            # precedent); if no counted touch remains -> NOT_EVALUABLE.
+            # Any break -> the LATEST touch's break direction wins; else the
+            # held bucket by touch count (<= C264 -> 1-2, else 3+). C265 is
+            # declared-but-unmapped (flagged). none = no touch at all.
+            lb = int(feature['lookback'])
+            tol_atr = float(feature['retest_tol'])
+            fate_bars = int(feature['fate_bars'])
+            count_edge = int(feature['count_edge'])
+            if len(candles) < lb + 15:
+                return None
+            atr = _native_atr_series(high, low, close)
+            if not np.isfinite(atr[-1]) or atr[-1] <= 0:
+                return None
+            level = float(close[-1])
+            tol = tol_atr * float(atr[-1])
+            wk = slice(len(candles) - lb, len(candles))
+            touches = []  # (index, fate) for touches with knowable fate
+            for i in range(wk.start, wk.stop):
+                if high[i] >= level - tol and low[i] <= level + tol:
+                    fate = 'held'
+                    decidable = True
+                    for j in range(i + 1, min(i + 1 + fate_bars, len(candles))):
+                        if close[j] > level + tol:
+                            fate = 'broke_up'
+                            break
+                        if close[j] < level - tol:
+                            fate = 'broke_down'
+                            break
+                    else:
+                        # no break: either the fate window completed with
+                        # no close beyond tolerance (held) or it was
+                        # truncated at the stream end (unknowable)
+                        decidable = (i + fate_bars <= len(candles) - 1)
+                    if decidable:
+                        touches.append((i, fate))
+            out = {k: False for k in
+                   ('none', '1-2_held', '3+_held', 'broke_up_after_1-2',
+                    'broke_up_after_3+', 'broke_down_after_1-2',
+                    'broke_down_after_3+')}
+            if not touches:
+                # distinguish "no touch in window" (well-defined none) from
+                # "touches existed but all unknowable" (NOT_EVALUABLE)
+                any_touch = any(high[i] >= level - tol and low[i] <= level + tol
+                                for i in range(wk.start, wk.stop))
+                if any_touch:
+                    return None
+                out['none'] = True
+                return out
+            n = len(touches)
+            suffix = '1-2' if n <= count_edge else '3+'
+            broke = [f for _, f in touches if f != 'held']
+            if broke:
+                out[f'{broke[-1]}_after_{suffix}'] = True
+            else:
+                out[f'{suffix}_held'] = True
+            return out
+        if recipe == 'native_wick_evolution_v1':
+            # Ruling part 4 #42: segment = last C024 window bars (needs
+            # segment <= lb). lower_wicks_longer_near_low = window low index
+            # inside the segment AND mean lower wick of the segment's last
+            # half > 1.25 x its first half (documented 1.25); upper mirror.
+            # bodies_shrinking_near_extreme = window extreme (high or low)
+            # inside the segment AND mean |body| last half < 0.8 x first
+            # half. Precedence in listed order; else none. A zero
+            # first-half mean makes that ratio test unsatisfied (falls
+            # through, documented) - none is a well-defined answer here.
+            lb = int(feature['lookback'])
+            seg = int(feature['segment_bars'])
+            if seg < 4 or seg > lb:
+                return None
+            wk = slice(len(candles) - lb, len(candles))
+            h_w = high[wk]
+            l_w = low[wk]
+            o_w = opened[wk]
+            c_w = close[wk]
+            body_w = np.abs(c_w - o_w)
+            lower_w = np.minimum(o_w, c_w) - l_w
+            upper_w = h_w - np.maximum(o_w, c_w)
+            i_low = int(np.argmin(l_w))
+            i_high = int(np.argmax(h_w))
+            s0 = lb - seg  # segment start within the window
+            half = seg // 2
+            seg_lower_first = float(lower_w[s0:s0 + half].mean(dtype=np.float64))
+            seg_lower_last = float(lower_w[s0 + half:s0 + seg].mean(dtype=np.float64))
+            seg_upper_first = float(upper_w[s0:s0 + half].mean(dtype=np.float64))
+            seg_upper_last = float(upper_w[s0 + half:s0 + seg].mean(dtype=np.float64))
+            seg_body_first = float(body_w[s0:s0 + half].mean(dtype=np.float64))
+            seg_body_last = float(body_w[s0 + half:s0 + seg].mean(dtype=np.float64))
+            out = {'lower_wicks_longer_near_low': False,
+                   'upper_wicks_longer_near_high': False,
+                   'bodies_shrinking_near_extreme': False, 'none': False}
+            if i_low >= s0 and seg_lower_first > 0 and seg_lower_last > 1.25 * seg_lower_first:
+                out['lower_wicks_longer_near_low'] = True
+            elif i_high >= s0 and seg_upper_first > 0 and seg_upper_last > 1.25 * seg_upper_first:
+                out['upper_wicks_longer_near_high'] = True
+            elif ((i_high >= s0 or i_low >= s0) and seg_body_first > 0
+                    and seg_body_last < 0.8 * seg_body_first):
+                out['bodies_shrinking_near_extreme'] = True
+            else:
+                out['none'] = True
+            return out
         if recipe == 'native_full_stack_streak_v1':
             # Longest run of consecutive WINDOW bars in full bull order
             # (close > SMA10 > SMA20 > SMA50 > SMA200, all strict) and in
@@ -4014,6 +4374,110 @@ FACETS = {
         outcome_spec={'larger': ('boolean', '=', 'one'),
                       'similar': ('boolean', '=', 'one'),
                       'smaller': ('boolean', '=', 'one')}),
+    # ---- batch 27 (ruling part 4 #35-#38, approved 2026-11-01): unusual
+    # runs, gap give-back, round-level crosses, MA touch order. ----
+    'run_unusual': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_run_unusual_v1',
+        unit='window_longest_same_colour_run_vs_prior_252_run_p90',
+        outcomes=('unusual', 'typical'), cutoff_id=None,
+        outcome_spec={'unusual': ('boolean', '=', 'one'),
+                      'typical': ('boolean', '=', 'one')}),
+    'gap_given_back': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_gap_given_back_v1',
+        unit='latest_window_gap_give_back_state_by_side',
+        outcomes=('up_held', 'up_partial', 'up_given_back',
+                  'down_held', 'down_partial', 'down_given_back', 'none'),
+        cutoff_id=None,
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('up_held', 'up_partial', 'up_given_back',
+                                'down_held', 'down_partial', 'down_given_back',
+                                'none')}),
+    'cross_round': dict(
+        binding='mixed',
+        l1_l3=(('support_resistance', 'round_numbers(merged price level)'),),
+        recipe='native_cross_round_v1',
+        unit='latest_round_level_cross_direction_in_window',
+        outcomes=('up', 'down', 'none'), cutoff_id=None,
+        outcome_spec={'up': ('boolean', '=', 'one'),
+                      'down': ('boolean', '=', 'one'),
+                      'none': ('boolean', '=', 'one')}),
+    'touch_order': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'SMA20'), ('moving_averages', 'SMA50'),
+               ('moving_averages', 'SMA200'), ('moving_averages', 'EMA21')),
+        recipe='native_touch_order_v1',
+        unit='first_vs_latest_ma_touch_fate_by_ma_trend',
+        outcomes=('rising_first_held', 'rising_later_held', 'rising_broke',
+                  'falling_first_rejected', 'falling_later_rejected',
+                  'falling_reclaimed', 'none'),
+        cutoff_id=None,
+        l3_map={'SMA20': {'ma_kind': 'SMA', 'ma_period': '20'},
+                'SMA50': {'ma_kind': 'SMA', 'ma_period': '50'},
+                'SMA200': {'ma_kind': 'SMA', 'ma_period': '200'},
+                'EMA21': {'ma_kind': 'EMA', 'ma_period': '21'}},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('rising_first_held', 'rising_later_held',
+                                'rising_broke', 'falling_first_rejected',
+                                'falling_later_rejected', 'falling_reclaimed',
+                                'none')}),
+    # ---- batch 27 continued (ruling part 4 #39-#42, approved 2026-11-01):
+    # stack-flip age, 52w rejection, current-level touch fate, wick
+    # evolution. ----
+    'days_since_partial_flip': dict(
+        binding='mixed',
+        l1_l3=(('moving_averages', 'MA_group(10/20/50/200)'),),
+        recipe='native_days_since_partial_flip_v1',
+        unit='bars_since_ma_group_stack_state_last_changed_bucket',
+        outcomes=('lt5', 'b5_20', 'gt20', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('S_age_recent_bars', 'S_age_old_bars'),
+        baked_map={'S_age_recent_bars': 'age_recent',
+                   'S_age_old_bars': 'age_old'},
+        outcome_spec={o: ('boolean', '=', 'one')
+                      for o in ('lt5', 'b5_20', 'gt20', 'none')}),
+    'rejection': dict(
+        binding='mixed', l1_l3=(('extremes', '52w_range'),),
+        recipe='native_rejection_v1',
+        unit='window_touch_of_trailing_reference_high_then_atr_fall_boolean',
+        outcomes=('yes', 'no'), cutoff_id=None,
+        baked_cutoff_ids=('S_break_atr_2', 'C215_rejection__scalar252'),
+        baked_map={'S_break_atr_2': 'break_atr',
+                   'C215_rejection__scalar252': 'hist_bars'},
+        outcome_spec={'yes': ('boolean', '=', 'one'),
+                      'no': ('boolean', '=', 'one')}),
+    'current_level_touches': dict(
+        binding='mixed',
+        l1_l3=(('support_resistance', 'prior_pivots'),),
+        recipe='native_current_level_touches_v1',
+        unit='window_touches_of_current_level_and_their_fate_buckets',
+        outcomes=('none', '1-2_held', '3+_held', 'broke_up_after_1-2',
+                  'broke_up_after_3+', 'broke_down_after_1-2',
+                  'broke_down_after_3+'), cutoff_id=None,
+        baked_cutoff_ids=('S_retest_tol_atr',
+                          'C264_current_level_touches__scalar2',
+                          'C265_current_level_touches__scalar3',
+                          'C266_current_level_touches__atr1',
+                          'C267_current_level_touches__bars3'),
+        baked_map={'S_retest_tol_atr': 'retest_tol',
+                   'C264_current_level_touches__scalar2': 'count_edge',
+                   'C267_current_level_touches__bars3': 'fate_bars'},
+        outcome_spec={o: ('boolean', '=', 'one') for o in
+                      ('none', '1-2_held', '3+_held', 'broke_up_after_1-2',
+                       'broke_up_after_3+', 'broke_down_after_1-2',
+                       'broke_down_after_3+')}),
+    'wick_evolution': dict(
+        binding='mixed', l1_l3=(('candles', 'OHLC'),),
+        recipe='native_wick_evolution_v1',
+        unit='segment_wick_and_body_evolution_vs_window_extreme',
+        outcomes=('lower_wicks_longer_near_low', 'upper_wicks_longer_near_high',
+                  'bodies_shrinking_near_extreme', 'none'), cutoff_id=None,
+        baked_cutoff_ids=('C024_wick_evolution__bars5',),
+        baked_map={'C024_wick_evolution__bars5': 'segment_bars'},
+        outcome_spec={o: ('boolean', '=', 'one') for o in
+                      ('lower_wicks_longer_near_low',
+                       'upper_wicks_longer_near_high',
+                       'bodies_shrinking_near_extreme', 'none')}),
     'spike': dict(
         binding='mixed', l1_l3=(('volume', 'RVOL20'),),
         recipe='native_volume_spike_v1',
@@ -4789,6 +5253,11 @@ EXACT_PARTITION_FACETS = {
     'weekly_trend', 'weekly_stack', 'extreme_position', 'exit_os', 'trend',
     'path_dir', 'distance_route', 'above_share',
     'efficiency', 'skew', 'autocorr', 'stack_flip',
+    # batch 27 (ruling part 4 #35-#42): latest-decides fate partitions and
+    # exact bucket partitions
+    'run_unusual', 'gap_given_back', 'cross_round', 'touch_order',
+    'days_since_partial_flip', 'rejection', 'current_level_touches',
+    'wick_evolution',
     # batch 19 (ruling parts 6-8): cross-L3 speed partition
     'speed',
     # batch 20 (ruling part 6 #48/#49): zone-share and divergence partitions
@@ -4811,6 +5280,8 @@ EXACT_PARTITION_FACETS = {
     # batch 26 (ruling part 4 #32-#34): patterns, location route, size
     'pattern_1d_mix', 'pattern_2d_mix', 'pattern_3d_seen',
     'close_location_route', 'size_vs_chart',
+    # batch 27 (ruling part 4 #35-#38): runs, give-back, crosses, touches
+    'run_unusual', 'gap_given_back', 'cross_round', 'touch_order',
 }
 
 NOT_EVALUABLE = ('Fewer completed native sessions than lookback*candle_days (+1 prior candle where a '
@@ -5020,6 +5491,7 @@ _MASTER_RECIPES = {spec['recipe'] for _facet, spec in _iter_specs()}
 # baseline length from the feature (baked S_baseline_bars dial).
 _EXTRA_PRIOR = {'native_gap_up_fate_v1': 1, 'native_gap_down_fate_v1': 1,
                 'native_inside_outside_seq_v1': 1,
+                'native_gap_given_back_v1': 1, 'native_cross_round_v1': 1,
                 'native_volume_dry_up_at_low_v1': 49,
                 'native_absorption_day_v1': 49, 'native_capitulation_bar_v1': 49,
                 'native_hl_base_breakout_v1': 30,
@@ -5074,7 +5546,12 @@ _CATEGORICAL_RECIPES = {'native_gap_up_fate_v1', 'native_gap_down_fate_v1',
                         'native_pattern_1d_mix_v1', 'native_pattern_2d_mix_v1',
                         'native_pattern_3d_seen_v1',
                         'native_close_location_route_v1',
-                        'native_size_vs_chart_v1'}
+                        'native_size_vs_chart_v1',
+                        'native_run_unusual_v1', 'native_gap_given_back_v1',
+                        'native_cross_round_v1', 'native_touch_order_v1',
+                        'native_days_since_partial_flip_v1',
+                        'native_rejection_v1', 'native_current_level_touches_v1',
+                        'native_wick_evolution_v1'}
 
 
 def evaluate_master(definition, bars, setup_date, expected_slot):
@@ -5150,7 +5627,12 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                                  'native_donchian_midline_cross_v1',
                                  'native_donchian_failed_break_v1',
                                  'native_tail_event_v1', 'native_extreme_count_v1',
-                                 'native_size_vs_chart_v1'):
+                                 'native_run_unusual_v1',
+                                 'native_size_vs_chart_v1',
+                                 'native_touch_order_v1',
+                                 'native_days_since_partial_flip_v1',
+                                 'native_rejection_v1',
+                                 'native_current_level_touches_v1'):
             # Required facet/history groups must be present; an old halt/IPO
             # partial group is omitted only from indicator initialization.
             required = feature['lookback']
@@ -5226,6 +5708,18 @@ def evaluate_master(definition, bars, setup_date, expected_slot):
                 required += 252  # documented new-high history constant
             if feature['recipe'] == 'native_size_vs_chart_v1':
                 required += 252  # documented "all prior history" convention
+            if feature['recipe'] == 'native_run_unusual_v1':
+                required += 252  # documented run-distribution baseline
+            if feature['recipe'] == 'native_touch_order_v1':
+                required += int(feature['ma_period'])  # MA seed warmup
+            if feature['recipe'] == 'native_days_since_partial_flip_v1':
+                required += 200  # SMA200 seed warmup (stack state computable)
+            if feature['recipe'] == 'native_rejection_v1':
+                required += int(feature['hist_bars']) + 14  # C215 ref + ATR14 seed
+            if feature['recipe'] == 'native_current_level_touches_v1':
+                required += 15  # ATR14 seed (tolerance at the last bar)
+            # gap_given_back / cross_round need one prior bar (t-1 edge):
+            # handled by _EXTRA_PRIOR on the simple path
             # pattern_1d/2d/3d_mix and close_location_route: window-only,
             # they stay on the simple path (extra 0, like batch 23's
             # range_max_position/vol_direction_link)
