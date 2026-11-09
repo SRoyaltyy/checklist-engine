@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0-8; evidence audit only",
-  "current_task": "t2",
+  "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
@@ -20,30 +20,29 @@
       "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and SOURCE_MANIFEST.json from authority files",
       "acceptance": "build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id (C28/C29 excluded_control), SOURCE_MANIFEST.json records a git blob sha for each of the four authority files, and the push-triggered workflow run on the audit branch is green with pytest actually executing",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
-        "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
-        "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
-        "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
         "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
-        "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9"
+        "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Verify each claim against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts)",
-      "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
+      "title": "Verify each claim against immutable main evidence and emit REQUIREMENTS.csv + EVIDENCE.json",
+      "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict, and REQUIREMENTS.csv carrying the 11-column spec contract for stages 0-8",
       "weight": 3,
-      "status": "todo",
-      "evidence": [],
+      "status": "doing",
+      "evidence": [
+        "docs/venice-audit-v1/build_matrices.py@3121d20bd7cb825f74e145f65a72157c507d8f00"
+      ],
       "blocker": ""
     },
     {
       "id": "t4",
-      "title": "Publish REQUIREMENTS.csv, GANTT_COMPARISON.csv, corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
-      "acceptance": "All required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
+      "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+      "acceptance": "All required artifacts present on the audit branch, bundled baseline rows split with reverse mappings, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -51,13 +50,13 @@
     },
     {
       "id": "t5",
-      "title": "Add validator script and source-matched test, then open PR and merge to main",
-      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green with the pytest step actually executing, and merge_pr returns a merge commit on main for the exact expected_head_sha",
+      "title": "Add validator script, extend tests, open PR and merge on green exact-head checks",
+      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green with pytest executing, and merge_pr returns a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "todo",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 9
+  "progress_percent": 27
 }
