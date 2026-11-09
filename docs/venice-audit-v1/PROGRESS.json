@@ -6,8 +6,8 @@
   "audit_base_sha_required_by_spec": "68c6f2a83387f796cdf9836261dce1546ea61a92",
   "observed_main_head_at_start": "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
   "main_delta_note": "Live main advanced from the spec audit base 68c6f2a8 to c30c23be via commit 'tasks: assign Venice full requirements, data and Gantt evidence audit'. All other audit findings must be re-checked against c30c23be and the delta stated explicitly before the final PR.",
-  "updated_at": "2026-11-08T18:22:00Z",
-  "current_subtask": "t2",
+  "updated_at": "2026-11-09T02:48:00Z",
+  "current_subtask": "t3",
   "completed_subtasks": [
     {
       "id": "t0a",
@@ -21,27 +21,41 @@
       "id": "t0b",
       "title": "Create assigned branch from main",
       "evidence": ["venice/repo-requirements-audit-v1@c30c23bed24dc986b2bbf5a4b559a022e2df4300"]
+    },
+    {
+      "id": "t1",
+      "title": "Seed durable PROGRESS.json on the audit branch",
+      "evidence": ["72feb223aa4edb78abfbf7143361b1b75fcba7ad"]
+    },
+    {
+      "id": "t2",
+      "title": "Build DATA_REQUIREMENTS.csv (258 rows, 19 columns) and SOURCE_MANIFEST.json from the four authority files, with a green push-triggered workflow that actually runs pytest",
+      "evidence": [
+        "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
+        "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
+        "tests/test_repo_requirements_audit.py@a1210ac105402c3388cb3988c633b6458f8c74a5",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
+      ]
     }
   ],
   "remaining_subtasks": [
-    {"id": "t2", "title": "Extract canonical inventory ids and coverage schema; build REQUIREMENTS.csv stages 0-8 and DATA_REQUIREMENTS.csv one row per inventory id"},
-    {"id": "t3", "title": "Verify every chart claim against immutable main evidence into EVIDENCE.json with verified/unverified/missing verdicts"},
+    {"id": "t3", "title": "Verify each claim against immutable main evidence into EVIDENCE.json with verified/unverified/missing verdicts; emit REQUIREMENTS.csv for stages 0-8"},
     {"id": "t4", "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html, dependency-ordered AUDIT.md"},
-    {"id": "t5", "title": "Add validator, source-matched test, push-triggered workflow; open PR and merge on green exact-head checks"}
+    {"id": "t5", "title": "Add validator, extend source-matched tests, open PR and merge on green exact-head checks"}
   ],
-  "baseline_rows_to_map": ["B0","B1","B2","B3","B4","B5","B6","D0","D1","D2","D3","D4","D5","D6","D7","D8","D9","W0","W1","W2","W3","W4","W5","W6","W7","W8","W9","W10","W11","W12","W13","W14","W15","W16","W17","W18","F0","F1","F2","F3","F4","S0","Q0","Q1","Q2","A0","A1","A2","A3","V0","V1","M0","M1","M2","M3","M4","M5","T0","T1","L0","L1"],
   "baseline_charts": {
     "v16": {"as_of": "2026-11-07 ~08:55 HKT", "main_ref": "e85547ac", "forecast_dates": "legacy, NOT a forecast"},
     "v20": {"as_of": "2026-11-09 01:13 HKT", "main_ref": "2ba3ebdf", "forecast_dates": "legacy, NOT a forecast"}
   },
   "evidence": [
-    "branch_head(main) -> c30c23bed24dc986b2bbf5a4b559a022e2df4300",
-    "create_branch receipt agent/runtime/receipts/mw85rga4-s3xk35sy.0.json@c94e33c6d2440943c01e84d8dfa72bb08d86c7e8"
+    "branch_head(venice/repo-requirements-audit-v1) -> a1210ac105402c3388cb3988c633b6458f8c74a5",
+    "run_jobs(42552322976) -> all 10 steps success, including 'Run source-matched tests'",
+    ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
   ],
   "pitfalls": [],
   "open_questions": [
     "Which main path holds the authoritative 258-kind inventory list (docs/INVENTORY_CATALOG_AUDIT_V1.json vs dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) and how are the older 233 / ~296 counts reconciled?",
     "Where is the owner authority that excludes Finviz (live-only) and GDELT, as required by W16/W17?"
   ],
-  "exact_next_step": "Read docs/INVENTORY_CATALOG_AUDIT_V1.json (structure and inventory id list) and docs/WORLD_COVERAGE.csv (coverage column schema), then write the first REQUIREMENTS.csv rows for stages 0 and 1 with authority_path + anchor and current_status UNKNOWN where unverified."
+  "exact_next_step": "Extend docs/venice-audit-v1/build_matrices.py to also emit REQUIREMENTS.csv (requirement_id,authority_path,authority_anchor_or_lines,requirement,gantt_group,owner_lane,dependencies,acceptance_condition,current_status,evidence_refs,remaining_action for stages 0-8) and EVIDENCE.json keyed to main path@blob-sha with verified/unverified/missing verdicts, leaving DATA_REQUIREMENTS.csv byte-stable so the existing 7 tests still pass."
 }
