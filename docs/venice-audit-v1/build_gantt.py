@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-'Render GANTT.html from GANTT_COMPARISON.csv and assert chart-row coverage.
+"""Render GANTT.html from GANTT_COMPARISON.csv and assert chart-row coverage.
 
 Offline, deterministic, no network. A completion percentage is never invented:
 percent_basis is copied through verbatim and rows whose basis is UNKNOWN are
-rendered as UNKNOWN text rather than as a bar.'
+rendered as UNKNOWN text rather than as a bar.
+"""
 import csv
 import html
 import json
