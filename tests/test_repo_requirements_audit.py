@@ -199,3 +199,12 @@ def test_gantt_html_is_generated_without_a_fabricated_percentage():
     text = page.read_text(encoding='utf-8').lower()
     assert '<html' in text or '<table' in text, 'GANTT.html is not an html document'
     assert '% complete' not in text, 'GANTT.html states a completion percentage'
+
+
+def test_audit_workflow_is_branch_scoped_and_diff_guarded():
+    wf = ROOT / '.github' / 'workflows' / 'venice-repo-requirements-audit.yml'
+    assert wf.is_file(), 'audit workflow file is missing'
+    text = wf.read_text(encoding='utf-8')
+    assert 'venice/repo-requirements-audit-v1' in text, 'workflow is not scoped to the audit branch'
+    assert 'git diff --cached --quiet' in text, 'workflow commit step is not diff-guarded'
+
