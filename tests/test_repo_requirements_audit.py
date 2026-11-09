@@ -29,11 +29,72 @@ COLS = [
 ]
 
 REQ_COLS = [
-    'requirement_id', 'authority_path', 'authority_anchor_or_lines',
-    'requirement', 'gantt_group', 'owner_lane', 'dependencies',
-    'acceptance_condition', 'current_status', 'evidence_refs',
-    'remaining_action',
+    'requirement_id', 'parent_substage_id', 'subject_id',
+    'scope_definition_status', 'data_acquisition_status',
+    'strict_data_definition_status', 'implementation_status',
+    'question_design_status', 'answer_generation_status',
+    'verification_status', 'main_acceptance_status', 'status_explanation',
+    'authority_path', 'authority_anchor_or_lines', 'requirement',
+    'gantt_group', 'owner_lane', 'dependencies', 'acceptance_condition',
+    'scope', 'evidence_refs', 'missing_work', 'remaining_action',
 ]
+
+STATUS_FIELDS = [
+    'scope_definition_status', 'data_acquisition_status',
+    'strict_data_definition_status', 'implementation_status',
+    'question_design_status', 'answer_generation_status',
+    'verification_status', 'main_acceptance_status',
+]
+
+STATUS_VALUES = {
+    'NOT_STARTED', 'IN_PROGRESS', 'PARTIAL', 'COMPLETE', 'BLOCKED',
+    'UNVERIFIED', 'NOT_APPLICABLE',
+}
+
+STAGES = AUDIT / 'STAGES.csv'
+
+STAGES_COLS = [
+    'node_id', 'parent_id', 'node_type', 'title', 'status',
+    'substage_percent', 'percent_numerator', 'percent_denominator',
+    'percent_basis', 'blockers', 'next_action', 'evidence_refs',
+    'details_path',
+]
+
+
+def test_stages_header_is_exact():
+    fields, _ = load_csv(STAGES)
+    assert fields == STAGES_COLS, fields
+
+
+def test_stage_rows_carry_no_percentage():
+    _, rows = load_csv(STAGES)
+    stages = [r for r in rows if r['node_type'] == 'stage']
+    assert stages, 'expected stage rows'
+    for row in stages:
+        for key in ('substage_percent', 'percent_numerator', 'percent_denominator'):
+            assert not row[key].strip(), (row['node_id'], key, row[key])
+
+
+def test_substage_rows_carry_only_their_own_percentage():
+    _, rows = load_csv(STAGES)
+    subs = [r for r in rows if r['node_type'] == 'substage']
+    assert subs, 'expected substage rows'
+    ids = {r['node_id'] for r in rows}
+    for row in subs:
+        assert row['parent_id'] in ids, (row['node_id'], row['parent_id'])
+        num, den = row['percent_numerator'].strip(), row['percent_denominator'].strip()
+        assert num.isdigit() and den.isdigit(), (row['node_id'], num, den)
+        assert int(num) <= int(den), (row['node_id'], num, den)
+        assert row['percent_basis'].strip(), row['node_id']
+
+
+def test_requirements_status_fields_use_the_documented_vocabulary():
+    _, rows = load_csv(REQS)
+    for row in rows:
+        assert row['parent_substage_id'].strip(), row['requirement_id']
+        for key in STATUS_FIELDS:
+            assert row[key].strip() in STATUS_VALUES, (row['requirement_id'], key, row[key])
+        assert row['status_explanation'].strip(), row['requirement_id']
 
 GANTT_COLS = [
     'baseline_row_id', 'baseline_group', 'baseline_label',
