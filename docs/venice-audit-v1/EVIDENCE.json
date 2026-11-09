@@ -74,7 +74,7 @@
     {
       "id": "E6",
       "claim": "Durable PROGRESS.json commit triggers and passes the audit workflow",
-      "artifact_path": "docs/venice-audit-v1/PROGRESS.json@c9669f2aefcf765c15718e7525d5a407a6febb60",
+      "artifact_path": "docs/venice-audit-v1/PROGRESS.json@4b8c54ffd05185541daafdab234d8f9bb6f6a696",
       "artifact_blob_sha": "c9669f2aefcf765c15718e7525d5a407a6febb60",
       "kind": "verified_contents",
       "check_performed": "Run 42552951167 inspected after commit d60e2483",
