@@ -90,6 +90,9 @@ def statuses(row, stage_id):
     elif v1 == 'VERIFIED_ACCESS_ONLY':
         base = dict(scope_definition_status=COMP, data_acquisition_status=PART, strict_data_definition_status=UNV, implementation_status=PART, verification_status=PART, main_acceptance_status=UNV)
         expl = 'v1 evidence proves access only, not acquisition or acceptance.'
+    elif v1 == 'CLOSED':
+        base = dict(scope_definition_status=COMP, data_acquisition_status=BLK, strict_data_definition_status=BLK, implementation_status=BLK, verification_status=BLK, main_acceptance_status=BLK)
+        expl = 'v1 inventory records this gate as CLOSED by design; no main artifact opens it and this audit never opens it.'
     elif v1 == 'EXCLUDED_PENDING_RULING':
         base = dict(scope_definition_status=BLK, data_acquisition_status=BLK, strict_data_definition_status=BLK, implementation_status=BLK, verification_status=BLK, main_acceptance_status=BLK)
         expl = 'Excluded pending an owner ruling; no ruling is cited as accepted evidence.'
