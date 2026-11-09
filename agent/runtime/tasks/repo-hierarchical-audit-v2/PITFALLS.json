@@ -10,21 +10,21 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mw99nr43-ehiegorb",
-    "seen_at_ms": 1794229120405
+    "last_seen": "mw99u20e-0592bvl2",
+    "seen_at_ms": 1794229387392
   },
   {
     "id": "workflow-branch-filter-mismatch",
     "status": "open",
-    "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'], so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit, and no exact-head validation run can appear for t7.",
+    "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'], so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit.",
     "failed_approach": "Assuming a push to the active audit branch would start the audit workflow.",
-    "lesson": "Update the workflow branches filter to venice/repo-hierarchical-audit-v2 (and the checkout ref) as part of the v2 change before expecting a green run; manual workflow_dispatch is not a substitute because it needs default-branch registration.",
+    "lesson": "Update the workflow branches filter to venice/repo-hierarchical-audit-v2 (and the checkout ref) as part of the v2 change before expecting a green run.",
     "evidence": [
       ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
       "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mw99nr43-ehiegorb",
-    "seen_at_ms": 1794229120405
+    "last_seen": "mw99u20e-0592bvl2",
+    "seen_at_ms": 1794229387392
   }
 ]
