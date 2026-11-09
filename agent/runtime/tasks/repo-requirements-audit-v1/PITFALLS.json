@@ -8,8 +8,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8p6pl1-1rqlj2af",
-    "seen_at_ms": 1794194791457,
+    "last_seen": "mw8pagm6-eugw4ftq",
+    "seen_at_ms": 1794194985364,
     "resolved_at": "mw8ogubb-60z104gk",
     "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
   },
@@ -23,8 +23,8 @@
       ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8p6pl1-1rqlj2af",
-    "seen_at_ms": 1794194791457,
+    "last_seen": "mw8pagm6-eugw4ftq",
+    "seen_at_ms": 1794194985364,
     "correction": "Misdiagnosis corrected; no workflow change required for this id."
   },
   {
@@ -37,7 +37,19 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
     ],
     "first_seen": "mw8ogubb-60z104gk",
-    "last_seen": "mw8p6pl1-1rqlj2af",
-    "seen_at_ms": 1794194791457
+    "last_seen": "mw8pagm6-eugw4ftq",
+    "seen_at_ms": 1794194985364
+  },
+  {
+    "id": "workflow-self-commit-moves-head",
+    "problem": "The workflow's own 'Commit regenerated matrices' step pushed 187168f5, so the branch head no longer matched the sha my prior read/plan assumed.",
+    "failed_approach": "Assuming branch_head stays at the last file I wrote; a push-triggered run on this branch rewrites the matrices and pushes a new head.",
+    "lesson": "Before any write, take branch_head and read the target file at that head; expected_sha must come from that same read, and the post-push head will be one or more commits ahead of my write.",
+    "evidence": [
+      "187168f5018a7ad4ea96521b9d025abd40f9613c"
+    ],
+    "first_seen": "mw8pagm6-eugw4ftq",
+    "last_seen": "mw8pagm6-eugw4ftq",
+    "seen_at_ms": 1794194985364
   }
 ]
