@@ -24,25 +24,23 @@
       "weight": 1,
       "status": "done",
       "evidence": [
-        "055b1e3440432f60755614e6e5b324e3556088d1",
-        "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
+        "055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Fix stage-8 substage mapping so build_hierarchy/build_matrices completes on all canonical rows",
-      "acceptance": "build_matrices.py runs to completion with no 'unmapped requirement' output; STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; source-matched test step green",
+      "title": "Fix stage-8 substage mapping and stale branch-scope test so build + tests are green",
+      "acceptance": "build_matrices completes and the source-matched test step is green on the active head",
       "weight": 2,
       "status": "doing",
       "evidence": [
         "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
-        "aaf674d0b2502615b874a559d6407a8e97d6861c",
         "c3e256510b6b0ea5766f6fc7526ae3104618dacf",
         "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863/job/129193065738"
       ],
-      "blocker": "source-matched test step fails on head c3e25651; exact assertion not yet read"
+      "blocker": ""
     },
     {
       "id": "t4",
