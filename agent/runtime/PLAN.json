@@ -35,17 +35,20 @@
       "status": "done",
       "evidence": [
         "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
-        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
+        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+        "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c"
       ],
       "blocker": ""
     },
     {
       "id": "t4",
       "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
-      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage",
+      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
       "weight": 2,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
+      ],
       "blocker": ""
     },
     {
@@ -74,10 +77,12 @@
     {
       "id": "t5",
       "title": "Extend source-matched tests, open PR and merge on green exact-head checks",
-      "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+      "acceptance": "Green run with pytest executing the extended assertions (11-col REQUIREMENTS header, 13-col GANTT_COMPARISON header with split_from rows, EVIDENCE.json entry shape) and merge_pr returning a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3"
+      ],
       "blocker": ""
     }
   ],
