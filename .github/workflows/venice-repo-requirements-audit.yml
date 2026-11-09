@@ -16,7 +16,7 @@ jobs:
       - name: Checkout audit branch
         uses: actions/checkout@v4
         with:
-          ref: venice/repo-requirements-audit-v1
+          ref: venice/repo-hierarchical-audit-v2
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
