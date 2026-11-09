@@ -1,7 +1,7 @@
-// Repo web runtime 6.5.4. Venice and DeepSeek adapters share the verified GitHub protocol.
+// Repo web runtime 6.5.5. Venice and DeepSeek adapters share the verified GitHub protocol.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.5.4', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.5.5', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   // Jitter smooths load; it does not conceal automation or override provider restrictions.
   const pacing={minGapMs:240000,maxGapMs:300000,hourlyCap:15,...(config.pacing||{})};
   if(!Number.isFinite(pacing.minGapMs)||pacing.minGapMs<0||!Number.isFinite(pacing.maxGapMs)||pacing.maxGapMs<pacing.minGapMs||!Number.isSafeInteger(pacing.hourlyCap)||pacing.hourlyCap<1)throw new Error('Invalid pacing configuration');
@@ -187,7 +187,9 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   }
   function returnedEvidence(results){return [...results.map(x=>x.result.receipt_path&&x.result.receipt_sha?x.result.receipt_path+'@'+x.result.receipt_sha:null),...results.filter(x=>x.result.ok).flatMap(x=>[x.result.commit,x.result.url,x.result.sha,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,x.result.sha&&x.result.branch?x.result.branch+'@'+x.result.sha:null,...(Array.isArray(x.result.entries)?x.result.entries.flatMap(item=>item.path&&item.sha?[item.sha,item.path+'@'+item.sha]:[]):[]),...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])])].filter(Boolean);}
   async function execute(packet){
-    if(packet.actions.length>4)throw new Error('At most 4 actions per turn');
+    const actions=Array.isArray(packet?.actions)?packet.actions.map(a=>a&&typeof a==='object'&&!Array.isArray(a)&&typeof a.tool==='string'&&!Object.prototype.hasOwnProperty.call(a,'args')&&Object.keys(a).length>1?{tool:a.tool,args:Object.fromEntries(Object.entries(a).filter(([k])=>k!=='tool'))}:a):null;
+    if(!actions||actions.length>4||actions.some(a=>!a||typeof a.tool!=='string'||!a.args||typeof a.args!=='object'||Array.isArray(a.args))){s.results=[...(s.results||[]),{tool:'bridge_validation',args:{},result:{ok:false,error:'Malformed action. Use {tool:"name",args:{...parameters}}; at most 4 actions. Already executed actions are in the tool results; do not repeat them.'}}];s.phase='idle';s.packet=null;s.prompt=null;s.actionIndex=0;s.repair=1;s.failures=(s.failures||0)+1;s.nextAt=Date.now()+3000;persist();note('invalid action; requesting corrected JSON');return;}
+    packet={...packet,actions};
     s.evidence=[...new Set([...(s.evidence||[]),...returnedEvidence(s.results||[])])].slice(-100);
     s.phase='executing';s.packet=packet;s.actionIndex=s.actionIndex||0;s.results=s.actionIndex?s.results:[];persist();
     for(let i=s.actionIndex;i<packet.actions.length;i++){
