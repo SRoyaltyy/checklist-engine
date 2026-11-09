@@ -1,7 +1,7 @@
 {
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
-  "gantt_row": "All project stages 0–8; evidence audit only",
+  "gantt_row": "All project stages 0-8; evidence audit only",
   "current_task": "t2",
   "tasks": [
     {
@@ -17,14 +17,15 @@
     },
     {
       "id": "t2",
-      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id C01-C258) and REQUIREMENTS.csv (stages 0-8) from authority files",
-      "acceptance": "DATA_REQUIREMENTS.csv has 19-column header plus a row for every canonical id including C28/C29 controls; REQUIREMENTS.csv covers stages 0,1,2,3,4,5,5b,6,7,8",
+      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and REQUIREMENTS.csv (stages 0-8) from authority files",
+      "acceptance": "docs/venice-audit-v1/build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id in dictionary/WORLD_SNAPSHOT_DICTIONARY.csv (C28/C29 marked excluded_control), and SOURCE_MANIFEST.json records a git blob sha for each of the four authority files",
       "weight": 2,
       "status": "doing",
       "evidence": [
         "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
         "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
-        "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
+        "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
+        "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
       ],
       "blocker": ""
     },
