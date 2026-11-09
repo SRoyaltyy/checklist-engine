@@ -1,7 +1,7 @@
 name: venice-repo-requirements-audit
 on:
   push:
-    branches: ['venice/repo-requirements-audit-v1']
+    branches: ['venice/repo-hierarchical-audit-v2']
     paths: ['docs/venice-audit-v1/**', 'tests/test_repo_requirements_audit.py', '.github/workflows/venice-repo-requirements-audit.yml']
 permissions:
   contents: write
