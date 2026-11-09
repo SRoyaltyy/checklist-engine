@@ -10,8 +10,8 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mw9atx46-f9hp6fok",
-    "seen_at_ms": 1794231062993
+    "last_seen": "mw9azbi5-lneotp6j",
+    "seen_at_ms": 1794231343796
   },
   {
     "id": "workflow-branch-filter-mismatch",
@@ -25,21 +25,23 @@
       "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mw9atx46-f9hp6fok",
-    "seen_at_ms": 1794231062993
+    "last_seen": "mw9azbi5-lneotp6j",
+    "seen_at_ms": 1794231343796
   },
   {
     "id": "unmapped-stage8-substage",
-    "status": "open",
-    "problem": "build_hierarchy.py raises SystemExit on requirement R8.1 with group '8 Shadow and live' and lane 'OPS' because no STAGES/SUBSTAGES entry matches that group/lane, aborting build_matrices.py with exit 1.",
-    "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
-    "lesson": "Add explicit substage mapping for the '8 Shadow and live' group (with OPS lane) covering R8.1 and its sibling stage-8 requirements, and verify build_matrices completes with no unmapped-requirement message.",
+    "status": "fixing",
+    "problem": "build_hierarchy.py raises SystemExit on requirement R8.1 with group '8 Shadow and live' and lane 'OPS' because STAGES has no S8 and SUBSTAGES has no entry for that group/lane, aborting build_matrices.py with exit 1.",
+    "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified, and the STAGES list silently ended at S7.",
+    "lesson": "Add S8 plus an S8.1 substage keyed on gantt_group '8 Shadow and live'/lane OPS, and handle the v1 'CLOSED' status explicitly; verify build_matrices completes with no unmapped-requirement message.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
-      "eda683e7d07114ca4f0faba314b9539cce4297cc"
+      "eda683e7d07114ca4f0faba314b9539cce4297cc",
+      "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+      "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mw9atx46-f9hp6fok",
-    "seen_at_ms": 1794231062993
+    "last_seen": "mw9azbi5-lneotp6j",
+    "seen_at_ms": 1794231343796
   }
 ]
