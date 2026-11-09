@@ -9,10 +9,8 @@
       "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
       "acceptance": "write_file returns a commit sha and the file is readable at that sha",
       "weight": 1,
-      "status": "done",
-      "evidence": [
-        "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
-      ],
+      "status": "doing",
+      "evidence": [],
       "blocker": ""
     },
     {
@@ -43,7 +41,7 @@
     {
       "id": "t4",
       "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
-      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
+      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main stated",
       "weight": 2,
       "status": "done",
       "evidence": [
@@ -88,21 +86,20 @@
     },
     {
       "id": "t5b",
-      "title": "Prove head 60b4d6cc has no run and choose a stable-head strategy",
-      "acceptance": "Branch run list contains no run with sha 60b4d6cc while branch_head returns 60b4d6cc",
+      "title": "Prove the head produced by the job's own commit has no run",
+      "acceptance": "A green run sha differs from the branch head / PR head_sha",
       "weight": 2,
       "status": "done",
       "evidence": [
-        "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754"
+        "08aa8c2cbf09736be6d10ae8cd70e58d17712143"
       ],
       "blocker": ""
     },
     {
       "id": "t5c",
-      "title": "Force a fresh run from a non-regenerated filtered path",
-      "acceptance": "A push to tests/test_repo_requirements_audit.py or the workflow file returns a commit sha, a run exists at that exact sha, and the commit step makes no further commit",
-      "weight": 2,
+      "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
+      "acceptance": "Workflow step reports drift without git push; a run exists whose sha equals branch_head with conclusion success and no error annotation",
+      "weight": 3,
       "status": "doing",
       "evidence": [],
       "blocker": ""
@@ -117,5 +114,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 76
+  "progress_percent": 68
 }
