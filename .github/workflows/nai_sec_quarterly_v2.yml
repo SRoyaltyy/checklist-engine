@@ -1,0 +1,60 @@
+name: nai-sec-quarterly-fixed-v2
+on:
+  push:
+    branches: [gpt/sec-quarterly-retained-v2]
+    paths: ['ci/SEC_QUARTERLY_RETAINED_REQUEST.json']
+  pull_request:
+    paths: ['ci/sec_quarterly_*.py', 'ci/SEC_QUARTERLY_RETAINED_REQUEST.json', 'tests/test_sec_quarterly*.py', 'scripts/nai/sec_datasets.py', '.github/workflows/nai_sec_quarterly_v2.yml', '.github/workflows/nai_sec_form345.yml', '.github/workflows/nai_sec_form13f.yml']
+permissions: {contents: read}
+concurrency: {group: nai-sec-quarterly-fixed-v2, cancel-in-progress: false}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pyarrow==26.0.0
+      - run: python -m unittest discover -s tests -p 'test_sec_quarterly*.py' -v
+      - id: request
+        run: |
+          python - <<'PY'
+          import json,os
+          from ci.sec_quarterly_retained import validate_request
+          request=validate_request(json.load(open('ci/SEC_QUARTERLY_RETAINED_REQUEST.json')))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('execute='+str(request['execute']).lower()+'\n')
+          PY
+  collect:
+    needs: verify
+    if: github.event_name == 'push' && needs.verify.outputs.execute == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [form345, form13f]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions: {contents: write, actions: read}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRIMARY_ACTION_RELAY_URL: ${{ secrets.PRIMARY_ACTION_RELAY_URL }}
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pyarrow==26.0.0
+      - run: python -m ci.sec_quarterly_retained '${{ matrix.kind }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec-quarterly-fixed-${{ matrix.kind }}-${{ github.run_id }}
+          path: sec-quarterly-fixed-output/SEC_QUARTERLY_FIXED_FIELDS_V2.json
+          if-no-files-found: ignore
