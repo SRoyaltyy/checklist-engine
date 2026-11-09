@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-09T04:01:32.488Z",
-  "turn_id": "mw8qfrfx-p8fk6rm9",
-  "summary": "PR #226 merged into main at merge commit 38ca4c1d (head 92de9357, green run 42558653746 at that exact sha). The repo-requirements-audit-v1 deliverable (merged_pr) is satisfied. Verifying the audit artifacts are readable on the new main before closing the assignment.",
-  "next": "If branch_head(main) returns 38ca4c1d (or a descendant) and docs/venice-audit-v1/AUDIT.md + GANTT_COMPARISON.csv read on main, mark t6 done and set done=true with the merge commit and run as deliverable proof. If either file 404s on main, read pr_files(226) to see which paths actually merged and open a small follow-up commit on venice/repo-requirements-audit-v1 for any missing artifact.",
+  "at": "2026-11-09T04:05:29.261Z",
+  "turn_id": "mw8qjgxn-zq96ahb1",
+  "summary": "Merge verified on main: branch_head(main) = 38ca4c1d (the PR #226 merge commit), and both docs/venice-audit-v1/AUDIT.md (sha dbdf9d97, 241 lines) and GANTT_COMPARISON.csv (sha 4220cfdf, 69 lines) read successfully at that commit. The audit deliverable (merged_pr) is satisfied and closed.",
+  "next": "No further work in this assignment. If the bridge issues a new active assignment, start from its branch and allowed_paths. Otherwise actions=[] and done=true.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
     "gantt_row": "All project stages 0–8; evidence audit only",
-    "current_task": "t6",
+    "current_task": "done",
     "tasks": [
       {
         "id": "t1",
@@ -98,30 +98,18 @@
         "title": "Verify the audit artifacts are present on main after the merge",
         "acceptance": "branch_head(main) is the merge commit or a descendant, and AUDIT.md plus GANTT_COMPARISON.csv read successfully on main",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "38ca4c1da04c1f52c1e81196bd743d2704b5d93d",
+          "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
+          "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
+        ],
         "blocker": ""
       }
     ],
-    "progress_percent": 94
+    "progress_percent": 100
   },
-  "tool_results": [
-    {
-      "tool": "branch_head",
-      "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/38ca4c1da04c1f52c1e81196bd743d2704b5d93d"
-    },
-    {
-      "tool": "read_file",
-      "ok": true,
-      "path": "docs/venice-audit-v1/AUDIT.md"
-    },
-    {
-      "tool": "read_file",
-      "ok": true,
-      "path": "docs/venice-audit-v1/GANTT_COMPARISON.csv"
-    }
-  ],
+  "tool_results": [],
   "blockers": [],
   "evidence": [
     "3593d67f3978ced231df1be0d9b643b4344c56d8",
@@ -225,19 +213,20 @@
     "dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
     "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5"
   ],
-  "done": false,
+  "done": true,
   "task_id": "repo-requirements-audit-v1",
   "assignment_sha": "fe5043dc723075d0d79b72a91c100b9667ab4fa7",
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
     "kind": "completion",
-    "description": "Merged the tested requirements/data/Gantt audit PR #226 into main on the exact green head, delivering docs/venice-audit-v1 artifacts under the assignment's allowed paths with allow_merge true and publishing enabled.",
+    "description": "Verified the merged audit artifacts are live on main at the merge commit: AUDIT.md@dbdf9d97 and GANTT_COMPARISON.csv@4220cfdf both read successfully at main head 38ca4c1d, confirming the deliverable landed rather than only merging a branch.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/pull/226",
       "38ca4c1da04c1f52c1e81196bd743d2704b5d93d",
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746",
-      "agent/runtime/receipts/mw8qag3c-s2jeh0sl.1.json@136d9fa1808246275738157ab68bd483c0207eb6"
+      "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
+      "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+      "https://github.com/SRoyaltyy/checklist-engine/pull/226",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746"
     ]
   },
   "pitfalls": [
@@ -250,8 +239,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488,
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
@@ -265,8 +254,8 @@
         ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488,
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261,
       "correction": "Misdiagnosis corrected; no workflow change required at that time."
     },
     {
@@ -279,8 +268,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261
     },
     {
       "id": "workflow-self-commit-moves-head",
@@ -294,8 +283,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
       ],
       "first_seen": "mw8pagm6-eugw4ftq",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261
     },
     {
       "id": "self-commit-head-has-no-run",
@@ -308,8 +297,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
       ],
       "first_seen": "mw8pnasd-ovllhjwu",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261
     },
     {
       "id": "progress-json-is-build-output",
@@ -322,8 +311,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/pull/226"
       ],
       "first_seen": "mw8psfyv-ekpb17ml",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261
     },
     {
       "id": "self-commit-loop-nondeterministic",
@@ -335,8 +324,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
       ],
       "first_seen": "mw8q1g11-iyiom24h",
-      "last_seen": "mw8qfrfx-p8fk6rm9",
-      "seen_at_ms": 1794196892488,
+      "last_seen": "mw8qjgxn-zq96ahb1",
+      "seen_at_ms": 1794197129261,
       "resolution": "Self-push removed at b05c9fc3; head stayed at 92de9357 with green run 42558653746; merge_pr(226) succeeded at that exact sha -> 38ca4c1d.",
       "resolved_at": "mw8qag3c-s2jeh0sl"
     }
