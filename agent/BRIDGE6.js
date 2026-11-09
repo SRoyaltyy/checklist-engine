@@ -1,7 +1,7 @@
-// Repo web runtime 6.5.3. Venice and DeepSeek adapters share the verified GitHub protocol.
+// Repo web runtime 6.5.4. Venice and DeepSeek adapters share the verified GitHub protocol.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.5.3', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.5.4', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   // Jitter smooths load; it does not conceal automation or override provider restrictions.
   const pacing={minGapMs:240000,maxGapMs:300000,hourlyCap:15,...(config.pacing||{})};
   if(!Number.isFinite(pacing.minGapMs)||pacing.minGapMs<0||!Number.isFinite(pacing.maxGapMs)||pacing.maxGapMs<pacing.minGapMs||!Number.isSafeInteger(pacing.hourlyCap)||pacing.hourlyCap<1)throw new Error('Invalid pacing configuration');
@@ -16,6 +16,8 @@ return (function (gm, get, set, win, doc, config) {
   if(s.runtimeBuild!==VERSION){if(win.location.pathname==='/chat/classic'&&s.phase==='waiting'){s.phase='idle';s.rollover=false;s.nextAt=0;s.prompt=null;s.packet=null;s.actionIndex=0;}s.runtimeBuild=VERSION;}
   if(win.location.pathname==='/chat/classic'&&s.phase==='waiting'&&s.chatPath!==win.location.pathname){s.phase='idle';s.rollover=false;s.nextAt=0;s.prompt=null;s.packet=null;s.actionIndex=0;}
   const persist=()=>{if(leaseHeld&&!stopped)set(STORE,JSON.stringify(s));};
+  function restoreNormalPacing(){if(s.completedAt>=s.sendAttempt&&s.sendAttempt&&!s.failures&&!s.providerBlock&&(s.pacingPenalty||1)<=1){s.nextModelAt=Math.min(s.nextModelAt||0,s.sendAttempt+pacing.maxGapMs);if(s.phase==='idle'&&!s.quietAfterTurn)s.nextAt=Math.min(s.nextAt||0,s.nextModelAt);}}
+  restoreNormalPacing();
   function later(fn,ms){const id=win.setTimeout(()=>{timers.delete(id);if(!stopped)fn();},ms);timers.add(id);return id;}
   function note(text){console.log('[venice6] '+text);s.lastStatus=text;paint();}
   function nextAllowedSend(){
@@ -31,7 +33,7 @@ return (function (gm, get, set, win, doc, config) {
   }
   function recordSendAttempt(){
     nextAllowedSend();s.sendAttempts.push(Date.now());
-    const penalty=Math.max(s.pacingPenalty||1,Math.min(4,2**Math.min(s.failures||0,2)));
+    const penalty=Math.max(s.pacingPenalty||1,Math.min(4,2**Math.min(s.technicalTimeouts||0,2)));
     s.nextModelAt=Date.now()+Math.floor((pacing.minGapMs+Math.random()*(pacing.maxGapMs-pacing.minGapMs))*penalty);persist();
   }
   function request(op,data){
@@ -205,7 +207,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     try{await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,contribution:packet.contribution,pitfalls:packet.pitfalls,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});}
     catch(error){if(error.status===400){s.lastError=error.message;s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('Checkpoint: '+error.message);return;}throw error;}
     if(stopped)return;
-    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.technicalTimeouts=0;s.pacingPenalty=Math.max(1,(s.pacingPenalty||1)/2);s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
+    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.technicalTimeouts=0;s.pacingPenalty=Math.max(1,(s.pacingPenalty||1)/2);s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');restoreNormalPacing();persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
   }
   async function pump(){
     lastTick=Date.now();if(stopped||pumping||!leaseHeld)return;paint();if(!s.enabled)return;
@@ -257,6 +259,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       if(stopped)return;
       if(!lock){note('waiting for agent ownership');later(acquireLease,5000);return;}
       try{const latest=JSON.parse(get(STORE,'null'));if(latest?.version===6)s=latest;}catch{}
+      restoreNormalPacing();
       leaseHeld=true;persist();note('connected');pump();await new Promise(resolve=>{releaseLock=resolve;});
     });}catch(e){if(!stopped){note('ownership retry: '+e.message);later(acquireLease,5000);}}
     finally{acquiringLease=false;}
