@@ -2,12 +2,12 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0-8; evidence audit only",
-  "current_task": "t4",
+  "current_task": "t4a",
   "tasks": [
     {
       "id": "t1",
-      "title": "Seed docs/venice-audit-v1/PROGRESS.json on the created audit branch as durable fallback",
-      "acceptance": "write_file returns a commit sha on venice/repo-requirements-audit-v1 and the file is readable at that sha",
+      "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
+      "acceptance": "write_file returns a commit sha and the file is readable at that sha",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -17,21 +17,20 @@
     },
     {
       "id": "t2",
-      "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and SOURCE_MANIFEST.json from authority files",
-      "acceptance": "build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id (C28/C29 excluded_control), SOURCE_MANIFEST.json records a git blob sha for each of the four authority files, and the push-triggered workflow run on the audit branch is green with pytest actually executing",
+      "title": "Build DATA_REQUIREMENTS.csv and SOURCE_MANIFEST.json from authority files",
+      "acceptance": "19-column header, 258 rows, four authority blob shas, green push run with pytest executing",
       "weight": 2,
       "status": "done",
       "evidence": [
         "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
-        "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Emit REQUIREMENTS.csv (stages 0-8, 11 columns), GANTT_COMPARISON.csv (all baseline rows, D2 split) and EVIDENCE.json (path@blob-sha with verdicts)",
-      "acceptance": "build_extra.py runs inside the existing green workflow step, all three files exist on venice/repo-requirements-audit-v1 with the spec column contracts, every baseline row id appears in GANTT_COMPARISON.csv, and DATA_REQUIREMENTS.csv stays byte-identical so the 7 existing tests still pass",
+      "title": "Emit REQUIREMENTS.csv, GANTT_COMPARISON.csv (all baseline rows, D2 split) and EVIDENCE.json",
+      "acceptance": "Three files with spec column contracts, every baseline row present, DATA_REQUIREMENTS.csv byte-identical, run green",
       "weight": 3,
       "status": "done",
       "evidence": [
@@ -44,22 +43,34 @@
     },
     {
       "id": "t4",
-      "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
-      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv so it cannot drift, the generator aborts if any baseline chart row is missing, unknown completion never rendered as a fabricated percentage, historical actuals separated from proposed dates, every percentage carries numerator/denominator/scope or is UNKNOWN",
+      "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
+      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage",
       "weight": 2,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     },
     {
+      "id": "t4a",
+      "title": "Fix the two proven red-run defects (build_gantt docstring syntax, empty-diff commit) and reach a green run",
+      "acceptance": "A push run on venice/repo-requirements-audit-v1 shows 'Build matrices', 'Run source-matched tests' and 'Commit regenerated matrices' all success",
+      "weight": 3,
+      "status": "doing",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+      ],
+      "blocker": ""
+    },
+    {
       "id": "t5",
-      "title": "Add validator script, extend source-matched tests, open PR and merge on green exact-head checks",
-      "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green with pytest executing, and merge_pr returns a merge commit on main for the exact expected_head_sha",
+      "title": "Add validator, extend source-matched tests, open PR and merge on green exact-head checks",
+      "acceptance": "Green run with pytest executing and merge_pr returns a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "todo",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 54
+  "progress_percent": 42
 }
