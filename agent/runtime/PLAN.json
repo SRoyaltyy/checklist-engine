@@ -38,7 +38,8 @@
       "evidence": [
         "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
         "17ec27c19e0545bb8204cf629e5bed202c76aa29",
-        "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62"
+        "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
       ],
       "blocker": ""
     },
