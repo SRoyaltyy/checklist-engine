@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:33:38.275Z",
-  "turn_id": "mw8peaqa-mpohpq6v",
-  "summary": "Confirmed the extended source-matched test file landed at e3eba97e (blob ee0c73e5) and its push-triggered run 42556696754 completed success with no error annotation, so the enlarged suite (REQUIREMENTS.csv 11-col header, GANTT_COMPARISON.csv 13-col header with split_from resolution, EVIDENCE.json snapshot/entry contracts, skip-guarded GANTT.html percentage check) executes and passes on the audit branch. Audit directory listing confirms the full artifact set is present on the branch: AUDIT.md, DATA_REQUIREMENTS.csv, EVIDENCE.json, GANTT.html, GANTT_COMPARISON.csv, PROGRESS.json, REQUIREMENTS.csv, SOURCE_MANIFEST.json, three builders, .gitignore, no tracked __pycache__ file. Next step is opening the PR against main for merge on green exact-head checks.",
-  "next": "Read the created PR number and take branch_head again; confirm the newest push run on that head is success, then merge_pr with that exact expected_head_sha.",
+  "at": "2026-11-09T03:36:32.453Z",
+  "turn_id": "mw8pjm30-ss5nde7v",
+  "summary": "PR #226 is open for venice/repo-requirements-audit-v1. The enlarged source-matched suite passed on push run 42556696754 (audit job 128963937196, conclusion success, only Node20/ubuntu-latest warnings, no error annotation) at commit e3eba97e. That run's own 'Commit regenerated matrices' step then pushed commit 60b4d6cc ('audit: regenerate matrices from main authority files'), so the branch head is now 60b4d6cc while the proven check-run head_sha is e3eba97e. Merge is gated on successful checks at the exact head, so I am taking a fresh branch head plus the run list to identify the run that covers 60b4d6cc before merging.",
+  "next": "From the returned runs list, identify the newest venice-repo-requirements-audit run whose sha equals the freshly returned branch head. If it is success at that exact sha, call merge_pr(226, expected_head_sha=<that sha>) with no other writes. If no run covers that sha or the head moved again, dispatch/allow a push run on the head first and merge only on the green exact-head check.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -85,53 +85,47 @@
         "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
         "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
         "weight": 2,
+        "status": "done",
+        "evidence": [
+          "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
+        ],
+        "blocker": ""
+      },
+      {
+        "id": "t5b",
+        "title": "Identify the run covering the current branch head 60b4d6cc",
+        "acceptance": "runs list shows a venice-repo-requirements-audit run with sha 60b4d6cc and conclusion success",
+        "weight": 2,
         "status": "doing",
         "evidence": [],
         "blocker": ""
       },
       {
         "id": "t5",
-        "title": "Open PR and merge on green exact-head checks",
-        "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+        "title": "Merge PR #226 on green exact-head checks",
+        "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha with successful checks at that sha",
         "weight": 3,
         "status": "doing",
         "evidence": [],
         "blocker": ""
       }
     ],
-    "progress_percent": 70
+    "progress_percent": 73
   },
   "tool_results": [
-    {
-      "tool": "run_jobs",
-      "ok": true
-    },
     {
       "tool": "branch_head",
       "ok": true,
       "url": "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
     },
     {
-      "tool": "create_pr",
-      "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/pull/226"
+      "tool": "runs",
+      "ok": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227556402",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41227549644",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41224165706",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729/job/128484582301",
-    "https://github.com/SRoyaltyy/checklist-engine/issues/223",
-    "aa3fab0cdd1dfe27b8acd27a934be49230db700c",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42399694729",
-    "agent/PROGRESS.md@431e9399e614e976fb11d4d359a65b12773a0cbf",
-    "8a3ed5d5cad3b052f84872bd3d82e3699e161fcd",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42434336421",
-    "agent/PROGRESS.md@0fa61634a892f6b2a433ace58ecd6a0af896ff3d",
-    "24934c4ec5eb073134b19aae1c17f3c745099cad",
-    "TODO.md@a9cc1c0a5e87abd5735beb20af58196c73b92c4c",
     "b777a66fb94eff0a4860844e17c3d8a13fa3370c",
     "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66fb94eff0a4860844e17c3d8a13fa3370c",
     "b8d0569c50ad09c11d78d4a525906cc26a99a202",
@@ -218,7 +212,20 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196",
     "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
     "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
-    "https://github.com/SRoyaltyy/checklist-engine/pull/226"
+    "https://github.com/SRoyaltyy/checklist-engine/pull/226",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555771004",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555125029",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555008761",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553614919",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553306526",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553294959",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552951167",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42551981408"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -226,10 +233,12 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "verification",
-    "description": "The enlarged source-matched test suite is proven executing and passing on the audit branch: push run 42556696754 at e3eba97e completed success with only Node20/ubuntu-latest warnings and no error annotation, and list_files confirms all eight required deliverables (AUDIT.md, DATA_REQUIREMENTS.csv, REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json, GANTT.html, SOURCE_MANIFEST.json, PROGRESS.json) plus the three builders are present on the branch with no tracked __pycache__ file.",
+    "kind": "finding",
+    "description": "PR #226 was created for the audit branch, and the green push run that proved the enlarged test suite (42556696754, success at e3eba97e) ended by having the workflow push commit 60b4d6cc, which moved the branch head past the proven check-run sha. That means the existing success does not satisfy the exact-head merge gate; a run at 60b4d6cc (or the current head) must be located before merge_pr.",
     "evidence": [
-      "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91"
+      "https://github.com/SRoyaltyy/checklist-engine/pull/226",
+      "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
     ]
   },
   "pitfalls": [
@@ -242,8 +251,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pagm6-eugw4ftq",
-      "seen_at_ms": 1794194985364,
+      "last_seen": "mw8pjm30-ss5nde7v",
+      "seen_at_ms": 1794195392453,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
@@ -257,8 +266,8 @@
         ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pagm6-eugw4ftq",
-      "seen_at_ms": 1794194985364,
+      "last_seen": "mw8pjm30-ss5nde7v",
+      "seen_at_ms": 1794195392453,
       "correction": "Misdiagnosis corrected; no workflow change required for this id."
     },
     {
@@ -271,20 +280,22 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8pagm6-eugw4ftq",
-      "seen_at_ms": 1794194985364
+      "last_seen": "mw8pjm30-ss5nde7v",
+      "seen_at_ms": 1794195392453
     },
     {
       "id": "workflow-self-commit-moves-head",
-      "problem": "The workflow's own 'Commit regenerated matrices' step pushed 187168f5, so the branch head no longer matched the sha my prior read/plan assumed.",
-      "failed_approach": "Assuming branch_head stays at the last file I wrote; a push-triggered run on this branch rewrites the matrices and pushes a new head.",
-      "lesson": "Before any write, take branch_head and read the target file at that head; expected_sha must come from that same read, and the post-push head will be one or more commits ahead of my write.",
+      "problem": "The workflow's own 'Commit regenerated matrices' step pushes a commit, so the branch head no longer matches the sha the proven check-run covers. It pushed 187168f5 earlier and 60b4d6cc after run 42556696754, while that run's check-run head_sha stayed e3eba97e.",
+      "failed_approach": "Treating a green run on the branch as sufficient for the merge gate, or assuming branch_head stays at the last file I wrote.",
+      "lesson": "Before merge_pr, take branch_head and the branch run list in the same turn and match run.sha to the exact head. A green run whose sha is an ancestor does not authorize the merge.",
       "evidence": [
-        "187168f5018a7ad4ea96521b9d025abd40f9613c"
+        "187168f5018a7ad4ea96521b9d025abd40f9613c",
+        "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
       ],
       "first_seen": "mw8pagm6-eugw4ftq",
-      "last_seen": "mw8pagm6-eugw4ftq",
-      "seen_at_ms": 1794194985364
+      "last_seen": "mw8pjm30-ss5nde7v",
+      "seen_at_ms": 1794195392453
     }
   ]
 }
