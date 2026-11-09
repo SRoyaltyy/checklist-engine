@@ -1,13 +1,13 @@
 {
   "version": 6,
-  "at": "2026-11-08T18:33:40.202Z",
-  "turn_id": "mw864trq-hclep8hi",
-  "summary": "Located the canonical inventory id source: dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478, dictionary/DATA_SOURCES.csv@c9d9af05 and docs/LENSES_COVERAGE_V1.csv@fa338f19 all carry the same id-keyed rows (260 total_lines each, ids C01, C02, ... with C28/C29 as NO_QUESTIONS controls in LENSES). Read the C01-C17 rows of all three files, which give per-id definition, source/pit_start/fetch_test/in_repo and lens class/applicability. Wrote the first DATA_REQUIREMENTS.csv block (header + rows C01-C17, 19 columns as the spec names them) on venice/repo-requirements-audit-v1 from those read rows only. Remaining rows C18-C258 are not yet written.",
-  "next": "Inspect the returned tail reads to confirm the highest id is C258 (and that C28/C29 are the only NO_QUESTIONS controls), then append DATA_REQUIREMENTS.csv rows C18-C60 using dictionary/DATA_SOURCES.csv@c9d9af05 offsets 12000 and 24000 for item names, block and in_repo status.",
+  "at": "2026-11-09T02:37:41.397Z",
+  "turn_id": "mw8neub3-txlx9jsa",
+  "summary": "Proven this session: the canonical id space is mixed (C-prefixed rows then I1..I228) across the three 260-line authority files, and the tail rows I217-I228 are block A / STOCK_SCALAR with CLASS_APPLICABILITY_ONLY and UNMEASURED status. Last committed artifact is docs/venice-audit-v1/DATA_REQUIREMENTS.csv at b8a271b0 with the exact 19-column header plus rows C01-C17. Hand-transcribing 240 further rows would be error-prone, so this turn writes a deterministic builder that derives every column from the four authority files by header name, plus the push-triggered audit workflow. Nothing is claimed as merged; no gate is opened.",
+  "next": "Read docs/venice-audit-v1/PROGRESS.json (need its blob sha) and the returned write commits, then add tests/test_repo_requirements_audit.py asserting 258 inventory ids, 19 columns, non-empty authority_ref per row and C28/C29 as excluded controls, so the next push runs the workflow green.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
-    "gantt_row": "All project stages 0–8; evidence audit only",
+    "gantt_row": "All project stages 0-8; evidence audit only",
     "current_task": "t2",
     "tasks": [
       {
@@ -23,14 +23,15 @@
       },
       {
         "id": "t2",
-        "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id C01-C258) and REQUIREMENTS.csv (stages 0-8) from authority files",
-        "acceptance": "DATA_REQUIREMENTS.csv has 19-column header plus a row for every canonical id including C28/C29 controls; REQUIREMENTS.csv covers stages 0,1,2,3,4,5,5b,6,7,8",
+        "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and REQUIREMENTS.csv (stages 0-8) from authority files",
+        "acceptance": "docs/venice-audit-v1/build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id in dictionary/WORLD_SNAPSHOT_DICTIONARY.csv (C28/C29 marked excluded_control), and SOURCE_MANIFEST.json records a git blob sha for each of the four authority files",
         "weight": 2,
         "status": "doing",
         "evidence": [
           "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
           "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
-          "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
+          "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
+          "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
         ],
         "blocker": ""
       },
@@ -66,25 +67,17 @@
   },
   "tool_results": [
     {
-      "tool": "read_file",
+      "tool": "write_file",
       "ok": true,
-      "path": "docs/LENSES_COVERAGE_V1.csv"
-    },
-    {
-      "tool": "read_file",
-      "ok": true,
-      "path": "dictionary/DATA_SOURCES.csv"
-    },
-    {
-      "tool": "read_file",
-      "ok": true,
-      "path": "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv"
+      "path": "docs/venice-audit-v1/build_matrices.py",
+      "commit": "3593d67f3978ced231df1be0d9b643b4344c56d8",
+      "verified": true
     },
     {
       "tool": "write_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/DATA_REQUIREMENTS.csv",
-      "commit": "b8a271b0cd9603d759892af47ab2b83f5ec47e0e",
+      "path": ".github/workflows/venice-repo-requirements-audit.yml",
+      "commit": "9472d46c7afe3008d798d19c20261bfea878170a",
       "verified": true
     }
   ],
@@ -162,7 +155,11 @@
     "fa338f19ca8732829939eb30fdee473927ea0464",
     "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
     "agent/runtime/receipts/mw864trq-hclep8hi.3.json@ff68c31323cd13ff25eb9af35177805daaf54aae",
-    "b8a271b0cd9603d759892af47ab2b83f5ec47e0e"
+    "b8a271b0cd9603d759892af47ab2b83f5ec47e0e",
+    "agent/runtime/receipts/mw8neub3-txlx9jsa.0.json@44a832b6f2afca600b388f19ecdd53a976cfa4a7",
+    "agent/runtime/receipts/mw8neub3-txlx9jsa.1.json@e177b83d90cc940f189303300be027b73bb3dc03",
+    "3593d67f3978ced231df1be0d9b643b4344c56d8",
+    "9472d46c7afe3008d798d19c20261bfea878170a"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -170,8 +167,8 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "implementation",
-    "description": "Created docs/venice-audit-v1/DATA_REQUIREMENTS.csv on venice/repo-requirements-audit-v1 with the exact 19-column spec header plus the first 17 id rows (C01-C17), each row sourced only from the three authority files read this turn (dictionary/WORLD_SNAPSHOT_DICTIONARY.csv, dictionary/DATA_SOURCES.csv, docs/LENSES_COVERAGE_V1.csv) and cross-referenced to the WORLD_COVERAGE.csv measurement for that id.",
+    "kind": "finding",
+    "description": "Proved the canonical id space is mixed (C-prefixed rows then I1..I228) across all three 260-line authority files, with I217-I228 as block-A STOCK_SCALAR rows that are CLASS_APPLICABILITY_ONLY / UNMEASURED / NOT_PROVEN, and decided to replace hand-transcription with a deterministic builder keyed by CSV header name so column order and row count cannot drift.",
     "evidence": [
       "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
       "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
