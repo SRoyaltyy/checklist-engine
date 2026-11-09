@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t5b",
+  "current_task": "t5c",
   "tasks": [
     {
       "id": "t1",
@@ -100,19 +100,19 @@
     },
     {
       "id": "t5c",
-      "title": "Push one allowed-path checkpoint so a run starts at a stable head",
-      "acceptance": "write_file to docs/venice-audit-v1/PROGRESS.json returns a commit sha and a new venice-repo-requirements-audit run appears at that sha",
+      "title": "Force a fresh run from a non-regenerated filtered path",
+      "acceptance": "A push to tests/test_repo_requirements_audit.py or the workflow file returns a commit sha and the new run's commit step makes no further commit",
       "weight": 2,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     },
     {
-      "id": "t5",
-      "title": "Merge PR #226 on green exact-head checks",
-      "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha with successful checks at that sha",
+      "id": "t5d",
+      "title": "Merge PR #226 on the green exact-head check",
+      "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha with a successful check at that sha",
       "weight": 3,
-      "status": "doing",
+      "status": "todo",
       "evidence": [],
       "blocker": ""
     }
