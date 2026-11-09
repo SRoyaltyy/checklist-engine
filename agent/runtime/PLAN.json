@@ -101,7 +101,7 @@
     {
       "id": "t5c",
       "title": "Force a fresh run from a non-regenerated filtered path",
-      "acceptance": "A push to tests/test_repo_requirements_audit.py or the workflow file returns a commit sha and the new run's commit step makes no further commit",
+      "acceptance": "A push to tests/test_repo_requirements_audit.py or the workflow file returns a commit sha, a run exists at that exact sha, and the commit step makes no further commit",
       "weight": 2,
       "status": "doing",
       "evidence": [],
