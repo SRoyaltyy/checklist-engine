@@ -266,7 +266,7 @@ def test_audit_workflow_is_branch_scoped_and_diff_guarded():
     wf = ROOT / '.github' / 'workflows' / 'venice-repo-requirements-audit.yml'
     assert wf.is_file(), 'audit workflow file is missing'
     text = wf.read_text(encoding='utf-8')
-    assert 'venice/repo-requirements-audit-v1' in text, 'workflow is not scoped to the audit branch'
+    assert 'venice/repo-hierarchical-audit-v2' in text, 'workflow is not scoped to the audit branch'
     assert 'git diff --cached --quiet' in text, 'workflow commit step is not diff-guarded'
     assert 'git push' not in text, 'workflow must not push from the job: a self-commit head has no run and blocks the exact-head merge gate'
 
