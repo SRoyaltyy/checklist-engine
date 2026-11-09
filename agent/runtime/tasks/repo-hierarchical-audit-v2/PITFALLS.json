@@ -1,0 +1,15 @@
+[
+  {
+    "id": "stale-v1-progress",
+    "status": "open",
+    "problem": "PROGRESS.json on venice/repo-hierarchical-audit-v2 still describes the superseded v1 task (task_id repo-requirements-audit-v1, current_subtask t5) rather than the active repo-hierarchical-audit-v2 contract.",
+    "failed_approach": "Treating the previous audit's PROGRESS.json handoff as current assignment state.",
+    "lesson": "Rewrite PROGRESS.json for repo-hierarchical-audit-v2 using its live blob SHA as expected_sha; old notes never restore a superseded assignment.",
+    "evidence": [
+      "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
+    ],
+    "first_seen": "mw98b8ur-tl63d9d0",
+    "last_seen": "mw98b8ur-tl63d9d0",
+    "seen_at_ms": 1794226831906
+  }
+]
