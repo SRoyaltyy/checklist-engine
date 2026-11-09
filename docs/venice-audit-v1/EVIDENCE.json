@@ -1,0 +1,113 @@
+{
+  "generated_by": "docs/venice-audit-v1/build_extra.py",
+  "snapshot": {
+    "branch": "venice/repo-requirements-audit-v1",
+    "main_head_observed": "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
+    "spec_audit_base": "68c6f2a83387f796cdf9836261dce1546ea61a92",
+    "delta_note": "Live main advanced past the spec audit base; all findings must be re-checked against c30c23be and the delta stated in AUDIT.md"
+  },
+  "entries": [
+    {
+      "id": "E1",
+      "claim": "Canonical id universe enumerated from the authority CSVs",
+      "artifact_path": "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv;dictionary/DATA_SOURCES.csv;docs/LENSES_COVERAGE_V1.csv",
+      "artifact_blob_sha": "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd;c9d9af057e804a9c836847d01ce784c52174a2c3;fa338f19ca8732829939eb30fdee473927ea0464",
+      "kind": "verified_contents",
+      "check_performed": "Enumerated ids by CSV header name and counted unique keys",
+      "result": "258 unique ids: C01..C3x then I1..I228; C28 and C29 are explicit control exclusions",
+      "coverage_scope": "Inventory identity only",
+      "limits": "Proves no dataset was downloaded or measured",
+      "evidence_urls": []
+    },
+    {
+      "id": "E2",
+      "claim": "DATA_REQUIREMENTS.csv generated with the spec 19-column contract",
+      "artifact_path": "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
+      "artifact_blob_sha": "531b1d197df79c5ba4388200d25d8bbbda4739e9",
+      "kind": "verified_contents",
+      "check_performed": "Read header and row count, cross-checked against SOURCE_MANIFEST row_count",
+      "result": "258 data rows plus header, 19 columns ending owner_lane,status",
+      "coverage_scope": "Every canonical id including exclusions",
+      "limits": "Structure only; per-field coverage still UNKNOWN for most ids",
+      "evidence_urls": []
+    },
+    {
+      "id": "E3",
+      "claim": "SOURCE_MANIFEST.json pins four authority blob shas",
+      "artifact_path": "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
+      "artifact_blob_sha": "c4755f36e1376e3087863150fc3345bcd243cb43",
+      "kind": "verified_contents",
+      "check_performed": "Read manifest and confirmed four 40-hex shas plus row_count",
+      "result": "row_count 258; WORLD_SNAPSHOT_DICTIONARY 9412f478, DATA_SOURCES c9d9af05, LENSES_COVERAGE_V1 fa338f19, WORLD_COVERAGE 756f6a36",
+      "coverage_scope": "Authority provenance for this audit",
+      "limits": "Pins the inputs, not the truth of their contents",
+      "evidence_urls": []
+    },
+    {
+      "id": "E4",
+      "claim": "Source-matched tests execute and pass on the audit branch",
+      "artifact_path": "tests/test_repo_requirements_audit.py",
+      "artifact_blob_sha": "0eea2378",
+      "kind": "verified_contents",
+      "check_performed": "run_jobs on run 42552322976 inspected step by step",
+      "result": "All 10 steps success including Build matrices and Run source-matched tests at sha a1210ac",
+      "coverage_scope": "Structural assertions on the generated matrices",
+      "limits": "Green CI validates structure, not financial or project completeness",
+      "evidence_urls": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976"
+      ]
+    },
+    {
+      "id": "E5",
+      "claim": "Audit workflow bootstrap is green",
+      "artifact_path": ".github/workflows/venice-repo-requirements-audit.yml",
+      "artifact_blob_sha": "3fc6c647ee143b2c24ad922bac3ce92bbc573d6a",
+      "kind": "verified_contents",
+      "check_performed": "Run 42551981408 inspected",
+      "result": "success in 18s at sha 9472d46, annotations limited to Node20 and ubuntu-26 notices",
+      "coverage_scope": "Workflow registration and execution on the audit branch",
+      "limits": "Does not validate audit content",
+      "evidence_urls": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42551981408"
+      ]
+    },
+    {
+      "id": "E6",
+      "claim": "Durable PROGRESS.json commit triggers and passes the audit workflow",
+      "artifact_path": "docs/venice-audit-v1/PROGRESS.json@c9669f2aefcf765c15718e7525d5a407a6febb60",
+      "artifact_blob_sha": "c9669f2aefcf765c15718e7525d5a407a6febb60",
+      "kind": "verified_contents",
+      "check_performed": "Run 42552951167 inspected after commit d60e2483",
+      "result": "success in 16s; job 128952339125 green",
+      "coverage_scope": "Durable handoff path",
+      "limits": "Records completed actions only; future work stays in remaining_subtasks",
+      "evidence_urls": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552951167"
+      ]
+    },
+    {
+      "id": "E7",
+      "claim": "Inventory catalog audit reports 258 items",
+      "artifact_path": "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
+      "artifact_blob_sha": "1ec0e862d45d823392da48f02bd7c5b8c0970174",
+      "kind": "reachable_artifact",
+      "check_performed": "Path and blob identity confirmed; contents not read line by line in this batch",
+      "result": "Reported 258 inventory/source/mapping items",
+      "coverage_scope": "Catalog membership claim",
+      "limits": "Catalog verification is not proof of downloaded or measured data",
+      "evidence_urls": []
+    },
+    {
+      "id": "E8",
+      "claim": "WORLD_COVERAGE records price coverage as PENDING and provisional",
+      "artifact_path": "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
+      "artifact_blob_sha": "756f6a36ea11c670bb3e574d6ff88d1185208b7a",
+      "kind": "verified_contents",
+      "check_performed": "Read the dictionary/C01/1d row",
+      "result": "status PENDING with reason no exact column mapping; universe SIX_STOCK_PROVISIONAL_NOT_FULL_UNIVERSE",
+      "coverage_scope": "One row of a 12872-line file",
+      "limits": "Remaining rows must be measured per id before any world claim",
+      "evidence_urls": []
+    }
+  ]
+}
