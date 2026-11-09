@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:36:32.453Z",
-  "turn_id": "mw8pjm30-ss5nde7v",
-  "summary": "PR #226 is open for venice/repo-requirements-audit-v1. The enlarged source-matched suite passed on push run 42556696754 (audit job 128963937196, conclusion success, only Node20/ubuntu-latest warnings, no error annotation) at commit e3eba97e. That run's own 'Commit regenerated matrices' step then pushed commit 60b4d6cc ('audit: regenerate matrices from main authority files'), so the branch head is now 60b4d6cc while the proven check-run head_sha is e3eba97e. Merge is gated on successful checks at the exact head, so I am taking a fresh branch head plus the run list to identify the run that covers 60b4d6cc before merging.",
-  "next": "From the returned runs list, identify the newest venice-repo-requirements-audit run whose sha equals the freshly returned branch head. If it is success at that exact sha, call merge_pr(226, expected_head_sha=<that sha>) with no other writes. If no run covers that sha or the head moved again, dispatch/allow a push run on the head first and merge only on the green exact-head check.",
+  "at": "2026-11-09T03:40:31.435Z",
+  "turn_id": "mw8pnasd-ovllhjwu",
+  "summary": "Confirmed the exact-head merge gate is unsatisfiable by waiting: branch head is 60b4d6cc (commit 'audit: regenerate matrices from main authority files' by venice-audit-bot) and the returned branch run list contains 13 runs, none with sha 60b4d6cc. The newest is 42556696754 at e3eba97e (success). The 60b4d6cc commit was pushed by the workflow's own guarded commit step using the default GITHUB_TOKEN, and such pushes do not create new workflow runs, so no run will ever appear for 60b4d6cc. PR #226 is open at head 60b4d6cc. Plan: push one small allowed-path change so a fresh push-triggered run starts at a new head; because the matrices are now already regenerated, that run's guarded commit step should find no diff and skip the push, leaving the head stable and the run green at exactly that head. Then merge_pr on that exact sha.",
+  "next": "From the read_file result take the PROGRESS.json blob sha and from read_pr(226) confirm head_sha 60b4d6cc and mergeable state; then write_file docs/venice-audit-v1/PROGRESS.json on venice/repo-requirements-audit-v1 with expected_sha=<that blob sha> and a short checkpoint text that records the merge-gate finding, which starts a fresh push run at a stable head.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
     "gantt_row": "All project stages 0–8; evidence audit only",
-    "current_task": "t5",
+    "current_task": "t5b",
     "tasks": [
       {
         "id": "t1",
@@ -94,8 +94,20 @@
       },
       {
         "id": "t5b",
-        "title": "Identify the run covering the current branch head 60b4d6cc",
-        "acceptance": "runs list shows a venice-repo-requirements-audit run with sha 60b4d6cc and conclusion success",
+        "title": "Prove head 60b4d6cc has no run and choose a stable-head strategy",
+        "acceptance": "Branch run list contains no run with sha 60b4d6cc while branch_head returns 60b4d6cc",
+        "weight": 2,
+        "status": "done",
+        "evidence": [
+          "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754"
+        ],
+        "blocker": ""
+      },
+      {
+        "id": "t5c",
+        "title": "Push one allowed-path checkpoint so a run starts at a stable head",
+        "acceptance": "write_file to docs/venice-audit-v1/PROGRESS.json returns a commit sha and a new venice-repo-requirements-audit run appears at that sha",
         "weight": 2,
         "status": "doing",
         "evidence": [],
@@ -111,24 +123,22 @@
         "blocker": ""
       }
     ],
-    "progress_percent": 73
+    "progress_percent": 76
   },
   "tool_results": [
     {
-      "tool": "branch_head",
+      "tool": "read_file",
       "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+      "path": "docs/venice-audit-v1/PROGRESS.json"
     },
     {
-      "tool": "runs",
-      "ok": true
+      "tool": "read_pr",
+      "ok": true,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/pull/226"
     }
   ],
   "blockers": [],
   "evidence": [
-    "b777a66fb94eff0a4860844e17c3d8a13fa3370c",
-    "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66fb94eff0a4860844e17c3d8a13fa3370c",
-    "b8d0569c50ad09c11d78d4a525906cc26a99a202",
     "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202",
     "agent/runtime/receipts/mw85rga4-s3xk35sy.0.json@c94e33c6d2440943c01e84d8dfa72bb08d86c7e8",
     "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
@@ -225,7 +235,10 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553294959",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552951167",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42551981408"
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42551981408",
+    "TODO.md@a9cc1c0a5e87abd5735beb20af58196c73b92c4c",
+    "b3c23c40bc4acea52b31686e77b9c3caa5dd86d6",
+    "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -233,12 +246,12 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "finding",
-    "description": "PR #226 was created for the audit branch, and the green push run that proved the enlarged test suite (42556696754, success at e3eba97e) ended by having the workflow push commit 60b4d6cc, which moved the branch head past the proven check-run sha. That means the existing success does not satisfy the exact-head merge gate; a run at 60b4d6cc (or the current head) must be located before merge_pr.",
+    "kind": "blocker",
+    "description": "The exact-head merge gate cannot be satisfied by waiting: branch head 60b4d6cc has no workflow run at all, because that commit was pushed by the workflow's own step using the default token and such pushes do not trigger workflows. The returned branch run list of 13 runs stops at e3eba97e (42556696754). Resolution path identified: push one allowed-path change so a run starts at a new head, which should not self-commit again because the matrices are already regenerated.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/pull/226",
       "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754",
+      "https://github.com/SRoyaltyy/checklist-engine/pull/226"
     ]
   },
   "pitfalls": [
@@ -251,8 +264,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pjm30-ss5nde7v",
-      "seen_at_ms": 1794195392453,
+      "last_seen": "mw8pnasd-ovllhjwu",
+      "seen_at_ms": 1794195631435,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
@@ -266,8 +279,8 @@
         ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pjm30-ss5nde7v",
-      "seen_at_ms": 1794195392453,
+      "last_seen": "mw8pnasd-ovllhjwu",
+      "seen_at_ms": 1794195631435,
       "correction": "Misdiagnosis corrected; no workflow change required for this id."
     },
     {
@@ -280,8 +293,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8pjm30-ss5nde7v",
-      "seen_at_ms": 1794195392453
+      "last_seen": "mw8pnasd-ovllhjwu",
+      "seen_at_ms": 1794195631435
     },
     {
       "id": "workflow-self-commit-moves-head",
@@ -294,8 +307,22 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
       ],
       "first_seen": "mw8pagm6-eugw4ftq",
-      "last_seen": "mw8pjm30-ss5nde7v",
-      "seen_at_ms": 1794195392453
+      "last_seen": "mw8pnasd-ovllhjwu",
+      "seen_at_ms": 1794195631435
+    },
+    {
+      "id": "self-commit-head-has-no-run",
+      "problem": "Head 60b4d6cc, created by the workflow's own commit step, has no workflow run in the branch run list, so the exact-head check requirement can never be met by polling.",
+      "failed_approach": "Polling branch_head plus runs repeatedly and waiting for a run whose sha equals the self-commit head.",
+      "lesson": "A commit pushed by a workflow step with the default GITHUB_TOKEN does not trigger a new workflow run. To get a check at a stable head, push one allowed-path change yourself; once generated outputs are already committed the run's guarded commit step produces no diff and the head stays put.",
+      "evidence": [
+        "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754",
+        "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+      ],
+      "first_seen": "mw8pnasd-ovllhjwu",
+      "last_seen": "mw8pnasd-ovllhjwu",
+      "seen_at_ms": 1794195631435
     }
   ]
 }
