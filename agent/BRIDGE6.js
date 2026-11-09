@@ -1,7 +1,7 @@
-// Repo web runtime 6.5.1. Venice and DeepSeek adapters share the verified GitHub protocol.
+// Repo web runtime 6.5.2. Venice and DeepSeek adapters share the verified GitHub protocol.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.5.1', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.5.2', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   // Jitter smooths load; it does not conceal automation or override provider restrictions.
   const pacing={minGapMs:240000,maxGapMs:300000,hourlyCap:15,...(config.pacing||{})};
   if(!Number.isFinite(pacing.minGapMs)||pacing.minGapMs<0||!Number.isFinite(pacing.maxGapMs)||pacing.maxGapMs<pacing.minGapMs||!Number.isSafeInteger(pacing.hourlyCap)||pacing.hourlyCap<1)throw new Error('Invalid pacing configuration');
@@ -94,9 +94,9 @@ return (function (gm, get, set, win, doc, config) {
   function replyText(){const a=assistants();return a.length&&(DEEPSEEK||a.length>s.baseline)?a[a.length-1].innerText:'';}
   function parseReply(text,turn){
     const a=assistants().at(-1);const blocks=a?[...a.querySelectorAll('pre code,pre')].filter(e=>e.tagName==='CODE'||!e.querySelector('code')).map(e=>e.textContent):[];
-    for(const raw of [...blocks,text]) {
+    for(const [raw,codeBlock] of [...blocks.map(raw=>[raw,true]),[text,false]]) {
       const start=raw.indexOf('{'),end=raw.lastIndexOf('}');if(start<0||end<=start)continue;
-      try{const p=JSON.parse(raw.slice(start,end+1));if(p.bridge==='venice-v6'&&p.turn===turn&&Array.isArray(p.actions))return p;}catch{}
+      try{const p=JSON.parse(raw.slice(start,end+1));if(p.bridge==='venice-v6'&&p.turn===turn&&Array.isArray(p.actions)){if(DEEPSEEK&&!codeBlock&&p.actions.some(a=>['write_file','edit_file'].includes(a.tool)))continue;return p;}}catch{}
     }
     return null;
   }
@@ -128,6 +128,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
       'When context.assignment is active, it is the explicit current task contract. Work only its assigned branch and allowed_paths. Ownership is claimed automatically. Every write_file must include expected_sha from your prior read, or null only to create a new file. Never overwrite another writer on a stale SHA. merge_pr is available only when publishing_enabled and assignment.allow_merge are true, with successful checks on the exact expected_head_sha; never bypass these gates. If main advanced, read branch_head and sync_branch, then run tests on the new head before merging. A goal with deliverable=merged_pr cannot be marked done until its actual PR is merged.',
       'Every active-task checkpoint MUST include contribution:{kind,description,evidence}, where kind is implementation,verification,finding,blocker,completion and evidence is actual returned proof. Each work session must advance the goal tangibly. Repeated status is not a contribution. Preserve structured pitfalls using stable ids, problem, failed_approach, lesson and evidence; prior pitfalls are merged rather than deleted. Read them before choosing the next approach. Keep work ownership, file/branch references and the exact next step in the handoff. Do not create a new checklist task for each idle poll.',
       'Return ONE JSON code block, without prose. Schema example:\n'+JSON.stringify(example),
+      DEEPSEEK?'IMPORTANT: enclose the entire response in a fenced JSON code block (three backticks, json, newline, the JSON, newline, three backticks). File-write/edit actions outside a code block are rejected because rendered Markdown can silently alter source text and wildcard characters.':'',
       'Work one subtask at a time: orient, act, inspect the returned result, verify its acceptance criterion, then checkpoint. Maintain the plan unless new instructions or evidence require a change. Done requires returned commit, issue/run URL, or file@blob-sha evidence. Use context.available_evidence and returned proofs. Percentage is computed by the server; do not invent it.',
       'For scheduled SEC/OI failure monitoring, use report_failure(run_id). It derives failed/skipped steps and exact error lines from GitHub, corrects any earlier inferred report, and deduplicates persistently. Do NOT write freeform diagnoses or guess causes from source code, annotations, truncated text, or a previous summary. A failed probe is different from a skipped probe.',
       'The latest structured tool result is authoritative. Model summaries can be wrong. Check the actual result before claiming an error, retry, success, or absence of evidence. If the same approach fails twice, choose a different approach or record a concrete blocker.',
