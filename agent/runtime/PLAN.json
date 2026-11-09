@@ -2,7 +2,7 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t3",
+  "current_task": "t7",
   "tasks": [
     {
       "id": "t1",
@@ -75,8 +75,11 @@
       "title": "Retarget audit workflow to v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
       "acceptance": "Workflow points at venice/repo-hierarchical-audit-v2, tests updated, green run on final head and merged PR",
       "weight": 2,
-      "status": "todo",
-      "evidence": [],
+      "status": "doing",
+      "evidence": [
+        "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
+        "eda683e7d07114ca4f0faba314b9539cce4297cc"
+      ],
       "blocker": ""
     }
   ],
