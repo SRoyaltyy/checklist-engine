@@ -8,8 +8,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8pnasd-ovllhjwu",
-    "seen_at_ms": 1794195631435,
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355,
     "resolved_at": "mw8ogubb-60z104gk",
     "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
   },
@@ -23,8 +23,8 @@
       ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8pnasd-ovllhjwu",
-    "seen_at_ms": 1794195631435,
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355,
     "correction": "Misdiagnosis corrected; no workflow change required for this id."
   },
   {
@@ -37,8 +37,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
     ],
     "first_seen": "mw8ogubb-60z104gk",
-    "last_seen": "mw8pnasd-ovllhjwu",
-    "seen_at_ms": 1794195631435
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355
   },
   {
     "id": "workflow-self-commit-moves-head",
@@ -51,8 +51,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
     ],
     "first_seen": "mw8pagm6-eugw4ftq",
-    "last_seen": "mw8pnasd-ovllhjwu",
-    "seen_at_ms": 1794195631435
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355
   },
   {
     "id": "self-commit-head-has-no-run",
@@ -65,7 +65,21 @@
       "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
     ],
     "first_seen": "mw8pnasd-ovllhjwu",
-    "last_seen": "mw8pnasd-ovllhjwu",
-    "seen_at_ms": 1794195631435
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355
+  },
+  {
+    "id": "progress-json-is-build-output",
+    "problem": "PROGRESS.json under docs/venice-audit-v1/ is rewritten by the build step, so authored text there does not survive and editing it re-fires the guarded commit.",
+    "failed_approach": "Planning to force a fresh push run by editing docs/venice-audit-v1/PROGRESS.json, assuming my write would define the new head content.",
+    "lesson": "Distinguish authored files from build outputs before choosing a push target. My PROGRESS.json write became 4b8c54ff, but head 60b4d6cc replaced it with b3c23c40. Force runs from a filtered path the build never writes: tests/test_repo_requirements_audit.py or the workflow file.",
+    "evidence": [
+      "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555771004",
+      "https://github.com/SRoyaltyy/checklist-engine/pull/226"
+    ],
+    "first_seen": "mw8psfyv-ekpb17ml",
+    "last_seen": "mw8psfyv-ekpb17ml",
+    "seen_at_ms": 1794195872355
   }
 ]
