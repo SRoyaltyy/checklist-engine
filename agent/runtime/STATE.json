@@ -1,14 +1,14 @@
 {
   "version": 6,
-  "at": "2026-11-09T13:25:49.546Z",
-  "turn_id": "mw9an9y0-7w6dh6vy",
-  "summary": "The failed step is 'Build matrices from authority files' (build_matrices.py) on the v2 tree; tests and drift report were skipped. Need the exact error line from the job log before changing source.",
-  "next": "Read job log 129183857092 and its annotations to get the exact traceback from build_matrices.py, then patch build_hierarchy.py accordingly.",
+  "at": "2026-11-09T13:31:02.993Z",
+  "turn_id": "mw9atx46-f9hp6fok",
+  "summary": "Job log proves build_matrices.py exits 1 with 'unmapped requirement R8.1 (group 8 Shadow and live, lane OPS)' after successfully building 258 rows, 47 requirements, 67 comparison rows and 11 stages. The defect is a missing stage-8 substage mapping in build_hierarchy.py, not a general generator chain failure. Reading the generator and the stage-8 requirement rows to patch the mapping.",
+  "next": "Use the returned build_hierarchy.py source and the stage-8 rows of REQUIREMENTS.csv to add the missing '8 Shadow and live'/'OPS' substage mapping (covering R8.1 and any siblings), then push and re-run the workflow.",
   "plan": {
-    "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
+    "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
     "gantt_row": "All project stages 0–8; evidence audit only",
-    "current_task": "t7",
+    "current_task": "t3",
     "tasks": [
       {
         "id": "t1",
@@ -37,15 +37,15 @@
       },
       {
         "id": "t3",
-        "title": "Author STAGES.csv hierarchy and v2 8-status REQUIREMENTS.csv via generator, aligned to test assertions",
-        "acceptance": "build_hierarchy runs to completion on real v1 rows (no unmapped-requirement SystemExit) and STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; REQ_COLS in generator and test agree",
+        "title": "Fix stage-8 substage mapping so build_hierarchy/build_matrices completes on all canonical rows",
+        "acceptance": "build_matrices.py runs to completion with no 'unmapped requirement' output; STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; REQ_COLS in generator and test agree",
         "weight": 2,
         "status": "doing",
         "evidence": [
           "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
           "17ec27c19e0545bb8204cf629e5bed202c76aa29",
           "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
-          "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
         ],
         "blocker": ""
       },
@@ -78,14 +78,13 @@
       },
       {
         "id": "t7",
-        "title": "Retarget audit workflow to v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
-        "acceptance": "Workflow points at venice/repo-hierarchical-audit-v2, tests updated, green run on final head and merged PR",
+        "title": "Extend validator/tests, get green exact-head run, open and merge PR",
+        "acceptance": "Tests updated to v2 columns, green run on final head and merged PR",
         "weight": 2,
-        "status": "doing",
+        "status": "todo",
         "evidence": [
           "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
-          "eda683e7d07114ca4f0faba314b9539cce4297cc",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
+          "eda683e7d07114ca4f0faba314b9539cce4297cc"
         ],
         "blocker": ""
       }
@@ -94,16 +93,14 @@
   },
   "tool_results": [
     {
-      "tool": "job_log",
+      "tool": "read_file",
       "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
-      "error_lines": [
-        "2026-11-09T13:18:37.8152108Z ##[error]Process completed with exit code 1."
-      ]
+      "path": "docs/venice-audit-v1/build_hierarchy.py"
     },
     {
-      "tool": "annotations",
-      "ok": true
+      "tool": "grep",
+      "ok": true,
+      "path": "docs/venice-audit-v1/REQUIREMENTS.csv"
     }
   ],
   "blockers": [],
@@ -216,11 +213,10 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Narrowed the v2 audit failure to a single workflow step: 'Build matrices from authority files' (build_matrices.py) fails while checkout/setup succeed and tests/drift are skipped, so the defect is inside the generator chain (build_extra -> build_gantt -> build_hierarchy) run against the v2 tree.",
+    "description": "Exact failure cause identified from the job log: build_matrices.py exits 1 because build_hierarchy raises on unmapped requirement R8.1 (group '8 Shadow and live', lane 'OPS'); all preceding matrix/stage generation succeeded, so only the stage-8 substage mapping needs adding.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
-      "eda683e7d07114ca4f0faba314b9539cce4297cc",
-      ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246"
+      "eda683e7d07114ca4f0faba314b9539cce4297cc"
     ]
   },
   "pitfalls": [
@@ -235,23 +231,37 @@
         "055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mw9abvy2-apaduzgt",
-      "seen_at_ms": 1794230237589
+      "last_seen": "mw9atx46-f9hp6fok",
+      "seen_at_ms": 1794231062993
     },
     {
       "id": "workflow-branch-filter-mismatch",
       "status": "open",
-      "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'] and the checkout step pins ref venice/repo-requirements-audit-v1, so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit and any run would test the wrong tree.",
+      "problem": "venice-repo-requirements-audit.yml push trigger was filtered to venice/repo-requirements-audit-v1 and checkout pinned that ref, so the active v2 branch never ran the audit.",
       "failed_approach": "Assuming a push to the active audit branch would start the audit workflow.",
-      "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 (and keep paths narrow) as part of the v2 change before expecting a green run.",
+      "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 and keep paths narrow; both pins are now flipped and the v2 tree is reached, but a green run is still required.",
       "evidence": [
         ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
         "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1",
         "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mw9an9y0-7w6dh6vy",
-      "seen_at_ms": 1794230749546
+      "last_seen": "mw9atx46-f9hp6fok",
+      "seen_at_ms": 1794231062993
+    },
+    {
+      "id": "unmapped-stage8-substage",
+      "status": "open",
+      "problem": "build_hierarchy.py raises SystemExit on requirement R8.1 with group '8 Shadow and live' and lane 'OPS' because no STAGES/SUBSTAGES entry matches that group/lane, aborting build_matrices.py with exit 1.",
+      "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
+      "lesson": "Add explicit substage mapping for the '8 Shadow and live' group (with OPS lane) covering R8.1 and its sibling stage-8 requirements, and verify build_matrices completes with no unmapped-requirement message.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
+        "eda683e7d07114ca4f0faba314b9539cce4297cc"
+      ],
+      "first_seen": "mw9atx46-f9hp6fok",
+      "last_seen": "mw9atx46-f9hp6fok",
+      "seen_at_ms": 1794231062993
     }
   ]
 }
