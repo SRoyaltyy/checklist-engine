@@ -8,8 +8,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8pxrbi-vw3a4cnv",
-    "seen_at_ms": 1794196057446,
+    "last_seen": "mw8q1g11-iyiom24h",
+    "seen_at_ms": 1794196301351,
     "resolved_at": "mw8ogubb-60z104gk",
     "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
   },
@@ -37,8 +37,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
     ],
     "first_seen": "mw8ogubb-60z104gk",
-    "last_seen": "mw8pxrbi-vw3a4cnv",
-    "seen_at_ms": 1794196057446
+    "last_seen": "mw8q1g11-iyiom24h",
+    "seen_at_ms": 1794196301351
   },
   {
     "id": "workflow-self-commit-moves-head",
@@ -79,7 +79,20 @@
       "https://github.com/SRoyaltyy/checklist-engine/pull/226"
     ],
     "first_seen": "mw8psfyv-ekpb17ml",
-    "last_seen": "mw8pxrbi-vw3a4cnv",
-    "seen_at_ms": 1794196057446
+    "last_seen": "mw8q1g11-iyiom24h",
+    "seen_at_ms": 1794196301351
+  },
+  {
+    "id": "self-commit-loop-nondeterministic",
+    "problem": "Every push run regenerates docs/venice-audit-v1 outputs into a state that differs from the committed files, so the guarded commit step pushes a new head (187168f5, 60b4d6cc, then 6a4455b1) after each green run; the green run's sha is never the branch head and the exact-head merge gate can never pass by polling.",
+    "failed_approach": "Repeatedly forcing fresh runs from allowed paths while leaving the job's git push in place.",
+    "lesson": "When a workflow job pushes its own build output, no push-triggered run can certify the head it creates. Remove the push from the job (report drift instead) or make the build byte-stable; verify the head stops moving before attempting merge_pr.",
+    "evidence": [
+      "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
+      "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+    ],
+    "first_seen": "mw8q1g11-iyiom24h",
+    "last_seen": "mw8q1g11-iyiom24h",
+    "seen_at_ms": 1794196301351
   }
 ]
