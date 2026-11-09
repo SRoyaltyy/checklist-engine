@@ -1,0 +1,26 @@
+[
+  {
+    "id": "single-quote-docstring",
+    "problem": "build_gantt.py opened with a single-quoted multi-line string, so importing it from build_matrices.py raised SyntaxError and the 'Build matrices from authority files' step exited 1 (run 42553625095).",
+    "failed_approach": "Trusting the write_file ok=true receipt as proof the Python source parses; the receipt proves the blob landed, not that it is valid Python.",
+    "lesson": "Any new module that build_matrices imports must be validated by the workflow's build step before being wired in; check the build step's conclusion, not just the write receipt.",
+    "evidence": [
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
+    ],
+    "first_seen": "mw8obqp1-utvl8qsl",
+    "last_seen": "mw8obqp1-utvl8qsl",
+    "seen_at_ms": 1794193416348
+  },
+  {
+    "id": "empty-diff-commit",
+    "problem": "'Commit regenerated matrices' exits 1 when regeneration produces no diff, failing an otherwise green build+test run (42553597443 at 4a4a8ba).",
+    "failed_approach": "Assuming the step is already diff-guarded because its intent is to commit only on change.",
+    "lesson": "A regeneration-and-commit step must branch on git diff --quiet and exit 0 on a clean tree; verify by the step conclusion on a run whose matrices are unchanged.",
+    "evidence": [
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+    ],
+    "first_seen": "mw8obqp1-utvl8qsl",
+    "last_seen": "mw8obqp1-utvl8qsl",
+    "seen_at_ms": 1794193416348
+  }
+]
