@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:47:37.446Z",
-  "turn_id": "mw8pxrbi-vw3a4cnv",
-  "summary": "No new run has appeared since the last checkpoint: branch venice/repo-requirements-audit-v1 is still at head 60b4d6cc (the workflow's own self-commit) and that sha has no workflow run, so the exact-head merge gate for PR #226 is still unmet. This turn pushes the forced-run change from a filtered path the build never rewrites: tests/test_repo_requirements_audit.py (blob ee0c73e5, 202 lines, verified by read_file this session). A workflow-contract test is appended so the push lands inside the workflow's own path filter; because every docs/venice-audit-v1 output is already at its generated state at head 60b4d6cc, the guarded commit step should produce no diff and the head should stay at my commit, giving a check at the exact head.",
-  "next": "Read the edit_file receipt: if it returns a new commit sha, that sha is the new branch head and the push-triggered run will be titled 'venice: tests/test_repo_requirements_audit.py'. Next turn take branch_head('venice/repo-requirements-audit-v1') and runs('venice/repo-requirements-audit-v1') in one turn and match run.sha to that exact head. If a run exists at that sha and is green with no error annotation, call merge_pr(226, expected_head_sha=<that sha>). If the guarded commit fired again and moved the head, re-push the same contract change from .github/workflows/venice-repo-requirements-audit.yml instead.",
+  "at": "2026-11-09T03:51:41.351Z",
+  "turn_id": "mw8q1g11-iyiom24h",
+  "summary": "New evidence changes the diagnosis: run 42558304970 at sha 08aa8c2c (my appended workflow-contract test) completed success, yet PR #226 head_sha is 6a4455b1 and branch tree shows venice-audit-bot's commit 60b4d6cc — so the job's own 'Commit regenerated matrices' step pushed again after every green run. The exact-head merge gate can therefore never be met while the job pushes: each run regenerates a diff (build output is not stable against the committed state) and moves the head to a sha that has no run. This turn removes the push from the job (keeping the guarded diff check as a non-pushing drift report) and tightens the test to forbid 'git push' in the workflow, so the next push produces a run at a head that stays put.",
+  "next": "Next turn call branch_head('venice/repo-requirements-audit-v1') and runs('venice/repo-requirements-audit-v1') together; the head must equal the commit returned by this turn's workflow edit, and the newest run's sha must equal that head with conclusion success and no error annotation. If matched, call merge_pr(226, expected_head_sha=<that head>); if the head moved again, read run_jobs on the newest run to see whether the drift-report step or tests failed.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -15,10 +15,8 @@
         "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
         "acceptance": "write_file returns a commit sha and the file is readable at that sha",
         "weight": 1,
-        "status": "done",
-        "evidence": [
-          "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
-        ],
+        "status": "doing",
+        "evidence": [],
         "blocker": ""
       },
       {
@@ -49,7 +47,7 @@
       {
         "id": "t4",
         "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
-        "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
+        "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main stated",
         "weight": 2,
         "status": "done",
         "evidence": [
@@ -94,21 +92,20 @@
       },
       {
         "id": "t5b",
-        "title": "Prove head 60b4d6cc has no run and choose a stable-head strategy",
-        "acceptance": "Branch run list contains no run with sha 60b4d6cc while branch_head returns 60b4d6cc",
+        "title": "Prove the head produced by the job's own commit has no run",
+        "acceptance": "A green run sha differs from the branch head / PR head_sha",
         "weight": 2,
         "status": "done",
         "evidence": [
-          "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754"
+          "08aa8c2cbf09736be6d10ae8cd70e58d17712143"
         ],
         "blocker": ""
       },
       {
         "id": "t5c",
-        "title": "Force a fresh run from a non-regenerated filtered path",
-        "acceptance": "A push to tests/test_repo_requirements_audit.py or the workflow file returns a commit sha, a run exists at that exact sha, and the commit step makes no further commit",
-        "weight": 2,
+        "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
+        "acceptance": "Workflow step reports drift without git push; a run exists whose sha equals branch_head with conclusion success and no error annotation",
+        "weight": 3,
         "status": "doing",
         "evidence": [],
         "blocker": ""
@@ -123,28 +120,26 @@
         "blocker": ""
       }
     ],
-    "progress_percent": 76
+    "progress_percent": 68
   },
   "tool_results": [
     {
-      "tool": "read_file",
+      "tool": "edit_file",
       "ok": true,
-      "path": ".github/workflows/venice-repo-requirements-audit.yml"
+      "path": ".github/workflows/venice-repo-requirements-audit.yml",
+      "commit": "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
+      "verified": true
     },
     {
       "tool": "edit_file",
       "ok": true,
       "path": "tests/test_repo_requirements_audit.py",
-      "commit": "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
+      "commit": "92de93572753f1a5c3dfacede4aaa25aadf13845",
       "verified": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "agent/runtime/receipts/mw85tjwg-e6uajyy1.0.json@2309465d013305d0ffb73edb5072adcc768adab4",
-    "72feb223aa4edb78abfbf7143361b1b75fcba7ad",
-    "1ec0e862d45d823392da48f02bd7c5b8c0970174",
-    "docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862d45d823392da48f02bd7c5b8c0970174",
     "756f6a36ea11c670bb3e574d6ff88d1185208b7a",
     "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
     "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
@@ -240,7 +235,11 @@
     "ee0c73e5cf5d02d05ad3d9fb742eac7f7f5dd3eb",
     "tests/test_repo_requirements_audit.py@ee0c73e5cf5d02d05ad3d9fb742eac7f7f5dd3eb",
     "agent/runtime/receipts/mw8pxrbi-vw3a4cnv.1.json@cad189f3e18cd607d5d2e1757ebd02270ec443f1",
-    "08aa8c2cbf09736be6d10ae8cd70e58d17712143"
+    "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
+    "agent/runtime/receipts/mw8q1g11-iyiom24h.0.json@5dcb330f55521d9575098d22c87eb9caa6e2e2c4",
+    "agent/runtime/receipts/mw8q1g11-iyiom24h.1.json@ecf9d3a92d349cf5749b0f040cc2fc10acf9914e",
+    "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
+    "92de93572753f1a5c3dfacede4aaa25aadf13845"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -248,11 +247,11 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "implementation",
-    "description": "Appended a workflow-contract test to tests/test_repo_requirements_audit.py from the exact tail anchor read this session, so the forced push lands on a path that is inside the workflow's own push filter and is never regenerated by build_matrices.py - the only route that can produce a workflow run at a stable exact head after the self-commit head 60b4d6cc.",
+    "kind": "finding",
+    "description": "Root cause of the unmet exact-head merge gate proven from returned data: run 42558304970 is green at sha 08aa8c2c, but PR #226 head_sha is 6a4455b1 and the branch tree at 60b4d6cc is the bot's own 'audit: regenerate matrices' commit - the job pushes a regenerated diff on every run, so a green run's sha can never equal the head. Fix: make the diff check a non-pushing drift report and forbid git push in the workflow contract test.",
     "evidence": [
-      "tests/test_repo_requirements_audit.py@ee0c73e5cf5d02d05ad3d9fb742eac7f7f5dd3eb",
-      "60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+      "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
+      "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
     ]
   },
   "pitfalls": [
@@ -265,8 +264,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pxrbi-vw3a4cnv",
-      "seen_at_ms": 1794196057446,
+      "last_seen": "mw8q1g11-iyiom24h",
+      "seen_at_ms": 1794196301351,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
@@ -294,8 +293,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8pxrbi-vw3a4cnv",
-      "seen_at_ms": 1794196057446
+      "last_seen": "mw8q1g11-iyiom24h",
+      "seen_at_ms": 1794196301351
     },
     {
       "id": "workflow-self-commit-moves-head",
@@ -336,8 +335,21 @@
         "https://github.com/SRoyaltyy/checklist-engine/pull/226"
       ],
       "first_seen": "mw8psfyv-ekpb17ml",
-      "last_seen": "mw8pxrbi-vw3a4cnv",
-      "seen_at_ms": 1794196057446
+      "last_seen": "mw8q1g11-iyiom24h",
+      "seen_at_ms": 1794196301351
+    },
+    {
+      "id": "self-commit-loop-nondeterministic",
+      "problem": "Every push run regenerates docs/venice-audit-v1 outputs into a state that differs from the committed files, so the guarded commit step pushes a new head (187168f5, 60b4d6cc, then 6a4455b1) after each green run; the green run's sha is never the branch head and the exact-head merge gate can never pass by polling.",
+      "failed_approach": "Repeatedly forcing fresh runs from allowed paths while leaving the job's git push in place.",
+      "lesson": "When a workflow job pushes its own build output, no push-triggered run can certify the head it creates. Remove the push from the job (report drift instead) or make the build byte-stable; verify the head stops moving before attempting merge_pr.",
+      "evidence": [
+        "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
+        "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+      ],
+      "first_seen": "mw8q1g11-iyiom24h",
+      "last_seen": "mw8q1g11-iyiom24h",
+      "seen_at_ms": 1794196301351
     }
   ]
 }
