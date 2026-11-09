@@ -45,9 +45,9 @@
       "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
       "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546"
       ],
       "blocker": ""
     },
@@ -75,17 +75,6 @@
       "blocker": ""
     },
     {
-      "id": "t5",
-      "title": "Extend source-matched tests, open PR and merge on green exact-head checks",
-      "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
-      "weight": 3,
-      "status": "doing",
-      "evidence": [
-        "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t5a",
       "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
       "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
@@ -93,7 +82,16 @@
       "status": "doing",
       "evidence": [],
       "blocker": ""
+    },
+    {
+      "id": "t5",
+      "title": "Open PR and merge on green exact-head checks",
+      "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+      "weight": 3,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 58
+  "progress_percent": 70
 }
