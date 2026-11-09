@@ -3,24 +3,41 @@
     "id": "single-quote-docstring",
     "problem": "build_gantt.py opened with a single-quoted multi-line string, so importing it from build_matrices.py raised SyntaxError and the 'Build matrices from authority files' step exited 1 (run 42553625095).",
     "failed_approach": "Trusting the write_file ok=true receipt as proof the Python source parses; the receipt proves the blob landed, not that it is valid Python.",
-    "lesson": "Any new module that build_matrices imports must be validated by the workflow's build step before being wired in; check the build step's conclusion, not just the write receipt.",
+    "lesson": "A new module imported by build_matrices must start with a real docstring or comment, and its first proof is the build step conclusion on the following push run - not the write receipt.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8obqp1-utvl8qsl",
-    "seen_at_ms": 1794193416348
+    "last_seen": "mw8ogubb-60z104gk",
+    "seen_at_ms": 1794193652414,
+    "resolved_at": "mw8ogubb-60z104gk",
+    "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
   },
   {
     "id": "empty-diff-commit",
-    "problem": "'Commit regenerated matrices' exits 1 when regeneration produces no diff, failing an otherwise green build+test run (42553597443 at 4a4a8ba).",
-    "failed_approach": "Assuming the step is already diff-guarded because its intent is to commit only on change.",
-    "lesson": "A regeneration-and-commit step must branch on git diff --quiet and exit 0 on a clean tree; verify by the step conclusion on a run whose matrices are unchanged.",
+    "problem": "'Commit regenerated matrices' exited 1 at 42553597443, which I initially attributed to an unguarded commit on a clean tree.",
+    "failed_approach": "Diagnosing the failing step from its name instead of reading the step body; the workflow at 3fc6c647 already wraps commit/push in `if git diff --cached --quiet; then echo 'no matrix changes'; else ... fi`.",
+    "lesson": "Read the workflow step body before proposing a workflow repair. When the guard is already present, a step-7 exit 1 means the else-branch ran and the commit or push itself failed, so look at tree state and remote head at that commit rather than rewriting the guard.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362",
+      ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8obqp1-utvl8qsl",
-    "seen_at_ms": 1794193416348
+    "last_seen": "mw8ogubb-60z104gk",
+    "seen_at_ms": 1794193652414,
+    "correction": "Misdiagnosis corrected; no workflow change required for this id."
+  },
+  {
+    "id": "truncated-job-logs",
+    "problem": "Unauthenticated job pages return 'This step has been truncated due to its large size' for every step, so the failing log line is never visible.",
+    "failed_approach": "Trying to read the cause from the job HTML page.",
+    "lesson": "Use run_jobs step conclusions plus the annotation list (which names the step and 'Process completed with exit code 1'); never quote a log line that was not actually returned.",
+    "evidence": [
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+    ],
+    "first_seen": "mw8ogubb-60z104gk",
+    "last_seen": "mw8ogubb-60z104gk",
+    "seen_at_ms": 1794193652414
   }
 ]
