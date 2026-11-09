@@ -1,7 +1,10 @@
-// Venice web runtime 6.4.4. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.4.5. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.4.4', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.4.5', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  // Jitter smooths load; it does not conceal automation or override provider restrictions.
+  const pacing={minGapMs:300000,maxGapMs:600000,hourlyCap:6,...(config.pacing||{})};
+  if(!Number.isFinite(pacing.minGapMs)||pacing.minGapMs<0||!Number.isFinite(pacing.maxGapMs)||pacing.maxGapMs<pacing.minGapMs||!Number.isSafeInteger(pacing.hourlyCap)||pacing.hourlyCap<1)throw new Error('Invalid pacing configuration');
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -15,6 +18,22 @@ return (function (gm, get, set, win, doc, config) {
   const persist=()=>{if(leaseHeld&&!stopped)set(STORE,JSON.stringify(s));};
   function later(fn,ms){const id=win.setTimeout(()=>{timers.delete(id);if(!stopped)fn();},ms);timers.add(id);return id;}
   function note(text){console.log('[venice6] '+text);s.lastStatus=text;paint();}
+  function nextAllowedSend(){
+    s.sendAttempts=(s.sendAttempts||[]).filter(t=>Number.isFinite(t)&&t>Date.now()-3600000).sort((a,b)=>a-b);
+    const budget=s.sendAttempts.length>=pacing.hourlyCap?s.sendAttempts[s.sendAttempts.length-pacing.hourlyCap]+3600000:0;
+    return Math.max(s.nextModelAt||0,budget);
+  }
+  function pacingReady(){
+    const due=nextAllowedSend();if(Date.now()>=due)return true;
+    s.nextAt=Math.max(s.nextAt||0,due);
+    const status='Pacing; next model request after '+new Date(due).toLocaleTimeString();
+    if(s.lastStatus!==status){s.lastStatus=status;persist();paint();}return false;
+  }
+  function recordSendAttempt(){
+    nextAllowedSend();s.sendAttempts.push(Date.now());
+    const penalty=Math.max(s.pacingPenalty||1,Math.min(4,2**Math.min(s.failures||0,2)));
+    s.nextModelAt=Date.now()+Math.floor((pacing.minGapMs+Math.random()*(pacing.maxGapMs-pacing.minGapMs))*penalty);persist();
+  }
   function request(op,data){
     if(data)data={...data,owner_id:ownerId,...(s.context?.assignment?{task_id:s.context.assignment.id,assignment_sha:s.context.assignment.assignment_sha}:{})};
     return new Promise((resolve,reject)=>{
@@ -62,6 +81,7 @@ return (function (gm, get, set, win, doc, config) {
     const resumePhase=['executing','checkpointing','retrying'].includes(s.phase)?s.phase:'idle';
     const e=composer();if(e&&s.prompt&&value(e).trim()===s.prompt.trim())fill(e,'');
     s.providerBlock={notice:notice.text,observedAt:Date.now(),until:notice.duration?Date.now()+notice.duration:null,resumePhase,refreshed:false};
+    s.pacingPenalty=Math.min(4,(s.pacingPenalty||1)*2);
     s.phase='provider_blocked';persist();note(notice.duration?'provider cooldown; automatic resume after advertised wait':'provider blocked; waiting for notice to clear');return true;
   }
   function assistants(){return [...doc.querySelectorAll('.assistant')].filter(e=>!e.parentElement?.closest('.assistant'));}
@@ -115,6 +135,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     s.phase='rolling';s.oldPath=old;s.rollAt=Date.now();persist();button.click();
   }
   async function prepare(){
+    if(!s.quietAfterTurn&&!pacingReady())return;
     const e=composer();if(!e||generating()||value(e).trim()){s.nextAt=Date.now()+15000;persist();note('waiting for empty composer');return;}
     const context=await request('context');
     if(stopped)return;
@@ -125,6 +146,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     const observed=context.assignment?context.task_runs:context.runs;
     const signature=JSON.stringify([context.instructions?.todo_sha,context.instructions?.methodology_sha,context.assignment?.assignment_sha,context.publishing_enabled,Array.isArray(observed)?observed.map(x=>[x.id,x.sha,x.status,x.conclusion]):observed,context.task_pr]);
     if(s.quietAfterTurn&&s.lastInputSignature===signature){s.nextAt=Date.now()+PERIOD;persist();note('idle; no new task inputs');return;}
+    if(!pacingReady())return;
     s.inputSignature=signature;
     if(s.rollover || (s.chatTurns||0)>=MAX_CHAT_TURNS || (s.chatChars||0)>=MAX_CHAT_CHARS){s.context=context;persist();await rollover();return;}
     if(!composer()||generating()||value(e).trim()){s.nextAt=Date.now()+15000;persist();note('composer changed; waiting');return;}
@@ -132,6 +154,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     fill(e,s.prompt);s.repair=0;persist();note('sending wake');
   }
   async function trySend(){
+    if(!pacingReady())return;
     if(generating())return;
     const e=composer();if(!e)return;
     if(value(e).trim()!==s.prompt.trim()){
@@ -140,7 +163,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     }
     const b=sendButton();
     if(!b){note('send button missing');return;}
-    s.phase='sending';s.sendAttempt=Date.now();persist();b.click();
+    s.phase='sending';s.sendAttempt=Date.now();recordSendAttempt();persist();b.click();
   }
   function returnedEvidence(results){return [...results.map(x=>x.result.receipt_path&&x.result.receipt_sha?x.result.receipt_path+'@'+x.result.receipt_sha:null),...results.filter(x=>x.result.ok).flatMap(x=>[x.result.commit,x.result.url,x.result.sha,x.result.sha&&x.args.path?x.args.path+'@'+x.result.sha:null,...['runs','jobs'].flatMap(k=>Array.isArray(x.result[k])?x.result[k].map(item=>item.url):[])])].filter(Boolean);}
   async function execute(packet){
@@ -164,7 +187,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     try{await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,contribution:packet.contribution,pitfalls:packet.pitfalls,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});}
     catch(error){if(error.status===400){s.lastError=error.message;s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('Checkpoint: '+error.message);return;}throw error;}
     if(stopped)return;
-    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
+    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.pacingPenalty=Math.max(1,(s.pacingPenalty||1)/2);s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
   }
   async function pump(){
     lastTick=Date.now();if(stopped||pumping||!leaseHeld)return;paint();if(!s.enabled)return;
@@ -219,7 +242,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   if(win.navigator.locks){acquireLease();}
   else {leaseHeld=true;note('connected (single-tab mode)');}
   interval=win.setInterval(pump,2000);pump();persist();
-  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,providerBlocked:!!s.providerBlock,blockedUntil:s.providerBlock?.until,canUpgrade:!pumping&&['idle','provider_blocked'].includes(s.phase)}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
+  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,providerBlocked:!!s.providerBlock,blockedUntil:s.providerBlock?.until,nextModelAt:nextAllowedSend(),pacing,canUpgrade:!pumping&&['idle','provider_blocked'].includes(s.phase)}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
   win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
 
