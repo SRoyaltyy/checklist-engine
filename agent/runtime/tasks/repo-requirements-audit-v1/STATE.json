@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:51:41.351Z",
-  "turn_id": "mw8q1g11-iyiom24h",
-  "summary": "New evidence changes the diagnosis: run 42558304970 at sha 08aa8c2c (my appended workflow-contract test) completed success, yet PR #226 head_sha is 6a4455b1 and branch tree shows venice-audit-bot's commit 60b4d6cc — so the job's own 'Commit regenerated matrices' step pushed again after every green run. The exact-head merge gate can therefore never be met while the job pushes: each run regenerates a diff (build output is not stable against the committed state) and moves the head to a sha that has no run. This turn removes the push from the job (keeping the guarded diff check as a non-pushing drift report) and tightens the test to forbid 'git push' in the workflow, so the next push produces a run at a head that stays put.",
-  "next": "Next turn call branch_head('venice/repo-requirements-audit-v1') and runs('venice/repo-requirements-audit-v1') together; the head must equal the commit returned by this turn's workflow edit, and the newest run's sha must equal that head with conclusion success and no error annotation. If matched, call merge_pr(226, expected_head_sha=<that head>); if the head moved again, read run_jobs on the newest run to see whether the drift-report step or tests failed.",
+  "at": "2026-11-09T03:54:33.448Z",
+  "turn_id": "mw8q6sx6-sen0hwc1",
+  "summary": "Removed the workflow's self-push (step now reports matrix drift without committing) and tightened the contract test to forbid 'git push'. Both edits produced green push runs: 42558645358 at b05c9fc3 (workflow) and 42558653746 at 92de9357 (test), and PR #226 head_sha is now 92de9357 — the same sha as the newest green run. Exact-head gate appears met; verifying head stability before merging.",
+  "next": "If branch_head('venice/repo-requirements-audit-v1') equals 92de93572753f1a5c3dfacede4aaa25aadf13845 and run 42558653746 is success at that sha with no error annotation, call merge_pr(226, expected_head_sha='92de93572753f1a5c3dfacede4aaa25aadf13845'). If the head moved again, read run_jobs(42558653746) to see which step failed and fix that step rather than re-forcing runs.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -15,8 +15,10 @@
         "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
         "acceptance": "write_file returns a commit sha and the file is readable at that sha",
         "weight": 1,
-        "status": "doing",
-        "evidence": [],
+        "status": "done",
+        "evidence": [
+          "docs/venice-audit-v1/PROGRESS.json@5a538f9a88975b88ae650abfe5d9767ef59bc5d0"
+        ],
         "blocker": ""
       },
       {
@@ -56,29 +58,6 @@
         "blocker": ""
       },
       {
-        "id": "t4a",
-        "title": "Fix the build_gantt syntax defect and reach a green run",
-        "acceptance": "A push run on venice/repo-requirements-audit-v1 completes success with no error annotation",
-        "weight": 3,
-        "status": "done",
-        "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
-          "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t4c",
-        "title": "Untrack committed docs/venice-audit-v1/__pycache__ and stop the auto-commit sweep",
-        "acceptance": "No __pycache__ path in the branch tree and the push run on that commit is green",
-        "weight": 1,
-        "status": "done",
-        "evidence": [
-          "8b6a299c6d6b369591fe038de7593d2031f85526"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t5a",
         "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
         "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
@@ -91,23 +70,16 @@
         "blocker": ""
       },
       {
-        "id": "t5b",
-        "title": "Prove the head produced by the job's own commit has no run",
-        "acceptance": "A green run sha differs from the branch head / PR head_sha",
-        "weight": 2,
-        "status": "done",
-        "evidence": [
-          "08aa8c2cbf09736be6d10ae8cd70e58d17712143"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t5c",
         "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
         "acceptance": "Workflow step reports drift without git push; a run exists whose sha equals branch_head with conclusion success and no error annotation",
         "weight": 3,
         "status": "doing",
-        "evidence": [],
+        "evidence": [
+          "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
+          "92de93572753f1a5c3dfacede4aaa25aadf13845",
+          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746"
+        ],
         "blocker": ""
       },
       {
@@ -120,31 +92,25 @@
         "blocker": ""
       }
     ],
-    "progress_percent": 68
+    "progress_percent": 62
   },
   "tool_results": [
     {
-      "tool": "edit_file",
+      "tool": "branch_head",
       "ok": true,
-      "path": ".github/workflows/venice-repo-requirements-audit.yml",
-      "commit": "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
-      "verified": true
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/92de93572753f1a5c3dfacede4aaa25aadf13845"
     },
     {
-      "tool": "edit_file",
-      "ok": true,
-      "path": "tests/test_repo_requirements_audit.py",
-      "commit": "92de93572753f1a5c3dfacede4aaa25aadf13845",
-      "verified": true
+      "tool": "runs",
+      "ok": true
+    },
+    {
+      "tool": "run_jobs",
+      "ok": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "756f6a36ea11c670bb3e574d6ff88d1185208b7a",
-    "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a",
-    "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
-    "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
-    "c9d9af057e804a9c836847d01ce784c52174a2c3",
     "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
     "fa338f19ca8732829939eb30fdee473927ea0464",
     "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
@@ -239,7 +205,12 @@
     "agent/runtime/receipts/mw8q1g11-iyiom24h.0.json@5dcb330f55521d9575098d22c87eb9caa6e2e2c4",
     "agent/runtime/receipts/mw8q1g11-iyiom24h.1.json@ecf9d3a92d349cf5749b0f040cc2fc10acf9914e",
     "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
-    "92de93572753f1a5c3dfacede4aaa25aadf13845"
+    "92de93572753f1a5c3dfacede4aaa25aadf13845",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/92de93572753f1a5c3dfacede4aaa25aadf13845",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558645358",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558304970",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746/job/128969995300"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -247,11 +218,13 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "finding",
-    "description": "Root cause of the unmet exact-head merge gate proven from returned data: run 42558304970 is green at sha 08aa8c2c, but PR #226 head_sha is 6a4455b1 and the branch tree at 60b4d6cc is the bot's own 'audit: regenerate matrices' commit - the job pushes a regenerated diff on every run, so a green run's sha can never equal the head. Fix: make the diff check a non-pushing drift report and forbid git push in the workflow contract test.",
+    "kind": "implementation",
+    "description": "Removed the workflow job's own git commit/push (replaced with a non-pushing drift report that keeps the diff guard) and added a test assertion forbidding 'git push' in the workflow. Both push runs are green and PR #226 head_sha now equals the newest green run sha, ending the self-commit head loop.",
     "evidence": [
-      "08aa8c2cbf09736be6d10ae8cd70e58d17712143",
-      "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
+      "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
+      "92de93572753f1a5c3dfacede4aaa25aadf13845",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558645358",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746"
     ]
   },
   "pitfalls": [
@@ -264,24 +237,24 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8q1g11-iyiom24h",
-      "seen_at_ms": 1794196301351,
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
     {
       "id": "empty-diff-commit",
       "problem": "Commit regenerated matrices exited 1 at 42553597443, initially attributed to an unguarded commit on a clean tree.",
-      "failed_approach": "Diagnosing from the step name instead of reading the step body; the workflow already wraps commit/push in an if git diff --cached --quiet guard.",
+      "failed_approach": "Diagnosing from the step name instead of reading the step body; the workflow already wrapped commit/push in an if git diff --cached --quiet guard.",
       "lesson": "Read the workflow step body before proposing a repair; with the guard present, a step-7 exit 1 means the else-branch ran and commit or push itself failed.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362",
         ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8pxrbi-vw3a4cnv",
-      "seen_at_ms": 1794196057446,
-      "correction": "Misdiagnosis corrected; no workflow change required."
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448,
+      "correction": "Misdiagnosis corrected; no workflow change required at that time."
     },
     {
       "id": "truncated-job-logs",
@@ -293,22 +266,23 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8q1g11-iyiom24h",
-      "seen_at_ms": 1794196301351
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448
     },
     {
       "id": "workflow-self-commit-moves-head",
-      "problem": "The workflow's own commit step pushes a commit, so the branch head no longer matches the sha the proven check-run covers (it pushed 187168f5, then 60b4d6cc, while the green check-run head stayed e3eba97e).",
+      "problem": "The workflow's own commit step pushed a commit, so the branch head no longer matched the sha the proven check-run covered (pushed 187168f5, then 60b4d6cc, while the green check-run head stayed e3eba97e).",
       "failed_approach": "Treating a green run on the branch as sufficient for the merge gate.",
       "lesson": "Before merge_pr, take branch_head and the branch run list in the same turn and match run.sha to the exact head. A green run whose sha is an ancestor does not authorize the merge.",
       "evidence": [
         "187168f5018a7ad4ea96521b9d025abd40f9613c",
         "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196",
+        "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
       ],
       "first_seen": "mw8pagm6-eugw4ftq",
-      "last_seen": "mw8pxrbi-vw3a4cnv",
-      "seen_at_ms": 1794196057446
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448
     },
     {
       "id": "self-commit-head-has-no-run",
@@ -335,12 +309,12 @@
         "https://github.com/SRoyaltyy/checklist-engine/pull/226"
       ],
       "first_seen": "mw8psfyv-ekpb17ml",
-      "last_seen": "mw8q1g11-iyiom24h",
-      "seen_at_ms": 1794196301351
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448
     },
     {
       "id": "self-commit-loop-nondeterministic",
-      "problem": "Every push run regenerates docs/venice-audit-v1 outputs into a state that differs from the committed files, so the guarded commit step pushes a new head (187168f5, 60b4d6cc, then 6a4455b1) after each green run; the green run's sha is never the branch head and the exact-head merge gate can never pass by polling.",
+      "problem": "Every push run regenerated docs/venice-audit-v1 outputs into a state differing from the committed files, so the guarded commit pushed a new head after each green run; the green run's sha was never the branch head and the exact-head merge gate could never pass by polling.",
       "failed_approach": "Repeatedly forcing fresh runs from allowed paths while leaving the job's git push in place.",
       "lesson": "When a workflow job pushes its own build output, no push-triggered run can certify the head it creates. Remove the push from the job (report drift instead) or make the build byte-stable; verify the head stops moving before attempting merge_pr.",
       "evidence": [
@@ -348,8 +322,9 @@
         "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
       ],
       "first_seen": "mw8q1g11-iyiom24h",
-      "last_seen": "mw8q1g11-iyiom24h",
-      "seen_at_ms": 1794196301351
+      "last_seen": "mw8q6sx6-sen0hwc1",
+      "seen_at_ms": 1794196473448,
+      "resolution": "Self-push removed at b05c9fc3; test forbids git push at 92de9357; both runs green and PR head_sha equals the newest run sha."
     }
   ]
 }
