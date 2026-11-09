@@ -132,6 +132,8 @@ def main():
 def run_extras():
     import build_extra
     build_extra.main()
+    import build_gantt
+    build_gantt.main()
 
 
 if __name__ == '__main__':
