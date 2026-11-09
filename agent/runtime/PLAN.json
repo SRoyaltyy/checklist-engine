@@ -31,12 +31,13 @@
     },
     {
       "id": "t3",
-      "title": "Build STAGES.csv and REQUIREMENTS.csv stage > substage > granular hierarchy with 8 status dimensions",
-      "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique node/requirement ids, parent links and per-item statuses at returned blob SHAs, without breaking build_matrices.py or the tests",
+      "title": "Author STAGES.csv hierarchy (stages 0-8 + substages) and v2 REQUIREMENTS.csv 8-status granular master, aligned to generator/test constraints",
+      "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique node/requirement ids, parent links, blank stage-row percentages and per-item statuses at returned blob SHAs, with test/generator compatibility accounted for",
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
+        "docs/venice-audit-v1/build_matrices.py@998186675274ba149ea5999b48cbde80107003db",
+        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197"
       ],
       "blocker": ""
     },
@@ -70,7 +71,7 @@
     {
       "id": "t7",
       "title": "Retarget audit workflow to the v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
-      "acceptance": "Workflow branch filter/checkout ref point at venice/repo-hierarchical-audit-v2, green run on the final head SHA and merged PR on main",
+      "acceptance": "Workflow branch filter/checkout ref point at venice/repo-hierarchical-audit-v2, tests updated for v2 CSVs, green run on the final head SHA and merged PR on main",
       "weight": 2,
       "status": "todo",
       "evidence": [],
