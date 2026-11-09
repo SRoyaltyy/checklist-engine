@@ -54,6 +54,7 @@ SUBSTAGES = [
     ('S6.2', 'S6', 'Exit-rule registry applied per setup', '6 Mining', ['EXECUTION'], 'Every registered exit rule evaluated per setup'),
     ('S6.3', 'S6', 'Luck correction and same-day benchmark', '6 Mining', ['EVAL'], 'Benchmark and luck correction per result'),
     ('S7.1', 'S7', 'Per-setup and exit-tuple statistics', '7 Evaluation', ['EVAL'], 'Required statistics with sample size and significance'),
+    ('S8.1', 'S8', 'Shadow and live gate status', '8 Shadow and live', ['OPS'], 'Shadow and live gates stay closed by design; the audit never opens them'),
 ]
 
 # Which status dimensions apply to which stage family.
