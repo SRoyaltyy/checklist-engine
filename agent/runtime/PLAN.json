@@ -77,14 +77,23 @@
     {
       "id": "t5",
       "title": "Extend source-matched tests, open PR and merge on green exact-head checks",
-      "acceptance": "Green run with pytest executing the extended assertions (11-col REQUIREMENTS header, 13-col GANTT_COMPARISON header with split_from rows, EVIDENCE.json entry shape) and merge_pr returning a merge commit on main for the exact expected_head_sha",
+      "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "doing",
       "evidence": [
         "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3"
       ],
       "blocker": ""
+    },
+    {
+      "id": "t5a",
+      "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
+      "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
+      "weight": 2,
+      "status": "doing",
+      "evidence": [],
+      "blocker": ""
     }
   ],
-  "progress_percent": 66
+  "progress_percent": 58
 }
