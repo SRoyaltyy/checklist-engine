@@ -6,6 +6,42 @@ This assignment supersedes the workflow-schedule trial as Venice's primary work.
 ## Objective
 Determine everything checklist-engine is required to deliver, what data must be obtained (which fields, dates, universe and sources/links), what has actually been delivered, and how that compares with James' older Gantt and the newer skeptical chart supplied by Cyrus. Produce a complete, traceable audit rather than another optimistic status summary. The charts are claims to test, not instructions or authoritative evidence.
 
+## Owner clarification — nested work breakdown and reporting (2026-11-09 HKT)
+This is the required audit presentation. Answer BOTH questions explicitly:
+1. What large stages, substages, granular data/definition tasks and actual yes/no questions exist?
+2. What is the current status of EACH: still being defined, completely defined, partly/fully acquired, designed, implemented, computed or verified?
+
+Use a stable hierarchy: large stage -> substage -> granular item/question. Preserve parent_id links and subject_id cross-references so the same earnings/indicator item can be followed across scope selection, acquisition, strict data/indicator definition, strict question design, implementation, historical answer generation and strategy evaluation. A broad green family row must never hide incomplete children.
+Examples of concrete leaves: daily OHLCV fields; exact RSI/Bollinger/SMA equation/settings/warmup/cutoff; latest EPS surprise; last-three-releases EPS versus the expectations available before each release; the actual precisely worded boolean predicates built from those quantities.
+Use the source's actual question IDs, wording/templates and parameter ranges. Do not replace the requested granular question inventory with a single question count.
+
+### Status model
+For every granular subject, track separate applicable status fields:
+- scope_definition_status
+- data_acquisition_status (NOT_APPLICABLE for a derived item, with its input dependencies)
+- strict_data_definition_status
+- implementation_status
+- question_design_status
+- answer_generation_status
+- verification_status
+- main_acceptance_status
+Use explicit states such as NOT_STARTED, IN_PROGRESS, PARTIAL, COMPLETE, BLOCKED, UNVERIFIED, NOT_APPLICABLE, with a plain-language explanation. Distinguish a written specification, working code, downloaded data, computed outputs and accepted main evidence. Unknown data is not a NO answer. Every state needs its scope, evidence or stated lack of proof, missing work and exact next action.
+
+### Percentages
+Show progress percentages ONLY for individual SUBSTAGES. No overall project percentage, large-stage percentage, or granular-item progress percentage. Each substage percentage must state the accepted numerator, required denominator/unit, scope and calculation; leave it UNKNOWN when these are not established. Granular rows use statuses and concrete counts/date ranges. Do not use the controller's automatically calculated overall plan percentage as project completion. A substage percentage supplements its child statuses and never replaces them.
+
+### Storage and navigation
+All audit output stays in docs/venice-audit-v1/ on the assigned branch until publication:
+- README.md: single entry point, snapshot/as-of time, links to Gantt overview, matrices and detail pages.
+- GANTT.md: GitHub-readable hierarchical status table, large stages and substages, status, blockers, next action, evidence and links to granular details. Percentages only on substage rows. Counts are allowed at every level. Calendar estimates are optional and explicitly separate from verified status; do not fabricate dates to make a Gantt.
+- GANTT.html or GANTT.svg: visual counterpart derived from the same source tables. If HTML is chosen, include expandable stage/substage rows or clear links to their detail pages.
+- STAGES.csv: overview source of truth, with node_id,parent_id,node_type(stage/substage),title,status,substage_percent,percent_numerator,percent_denominator,percent_basis,blockers,next_action,evidence_refs,details_path. Percentage fields must be blank for stage rows.
+- REQUIREMENTS.csv: granular task/requirement master, with requirement_id,parent_substage_id,subject_id and all separate applicable status fields above, plus authority, acceptance condition, scope, evidence, missing work, dependencies, owner and next action. This extends the existing required matrix rather than creating competing copies.
+- details/<substage-id>.md: separate readable pages listing the granular items/questions and their statuses beneath that substage. Include links back to the overview and to related stages for the same subject.
+- QUESTION_INDEX.csv (or questions/ shards plus an index manifest): actual granular question index, canonical IDs, parent_substage_id, subject_id, literal predicate or unambiguous template+parameter ranges, source artifact/reference and design/implementation/computed-answer/verification states. Reuse exact canonical source artifacts where appropriate; large indexes may be sharded. Reconcile included IDs/counts and expose omissions/unresolved questions.
+- Existing DATA_REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json, AUDIT.md and PROGRESS.json remain required and must cross-reference the hierarchy, not contradict its statuses.
+Persist staged findings incrementally so the owner can inspect them before the entire audit is finished. On a new chat, read PROGRESS.json, STAGES.csv and the current substage detail page first.
+
 ## Authority and snapshot
 Read current main/METHODOLOGY.md in full, respecting its latest owner clarifications and explicit exclusions; read main/TODO.md, docs/WAR_ROOM_CONTEXT_FOR_KIMI.md, locked dial/question/exit tables, dictionary/WORLD_SNAPSHOT_DICTIONARY.csv, dictionary/DATA_SOURCES.csv, docs/INVENTORY_CATALOG_AUDIT_V1.json, docs/WORLD_COVERAGE.csv, docs/LENSES_COVERAGE_V1.csv and the relevant source/readback receipts. Follow references to the current 258-kind inventory; reconcile older counts (233/~296) rather than silently mixing them.
 Start from main commit 68c6f2a83387f796cdf9836261dce1546ea61a92; record an actual immutable snapshot SHA in every output. Audit any later main changes in an explicit delta section before final PR. Source claims and old docs are leads, not proof of current absence or completeness.

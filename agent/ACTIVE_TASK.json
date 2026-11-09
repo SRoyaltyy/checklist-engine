@@ -24,5 +24,20 @@
   "allow_infrastructure": false,
   "allow_merge": true,
   "deliverable": "merged_pr",
-  "supersedes": "workflow-schedule-audit-v1"
+  "supersedes": "workflow-schedule-audit-v1",
+  "reporting_structure": "large_stage > substage > granular_item_or_question",
+  "percentage_scope": "individual_substage_only",
+  "reporting_entrypoint": "docs/venice-audit-v1/README.md",
+  "reporting_overview": "docs/venice-audit-v1/GANTT.md",
+  "reporting_details": "docs/venice-audit-v1/details/<substage-id>.md",
+  "status_dimensions": [
+    "scope_definition",
+    "data_acquisition",
+    "strict_data_definition",
+    "implementation",
+    "question_design",
+    "answer_generation",
+    "verification",
+    "main_acceptance"
+  ]
 }
