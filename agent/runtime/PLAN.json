@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0-8; evidence audit only",
-  "current_task": "t4a",
+  "current_task": "t4b",
   "tasks": [
     {
       "id": "t1",
@@ -36,8 +36,7 @@
       "evidence": [
         "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
         "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
-        "docs/venice-audit-v1/EVIDENCE.json@2ab0495353694ea6c84493fddc93fbb95a1e5945",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553306526/job/128953452581"
+        "docs/venice-audit-v1/EVIDENCE.json@2ab0495353694ea6c84493fddc93fbb95a1e5945"
       ],
       "blocker": ""
     },
@@ -52,14 +51,23 @@
     },
     {
       "id": "t4a",
-      "title": "Fix the two proven red-run defects (build_gantt docstring syntax, empty-diff commit) and reach a green run",
-      "acceptance": "A push run on venice/repo-requirements-audit-v1 shows 'Build matrices', 'Run source-matched tests' and 'Commit regenerated matrices' all success",
+      "title": "Fix the build_gantt syntax defect and reach a green run on the audit branch",
+      "acceptance": "A push run on venice/repo-requirements-audit-v1 completes success with no error annotation",
       "weight": 3,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
+        "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
       ],
+      "blocker": ""
+    },
+    {
+      "id": "t4b",
+      "title": "Confirm GANTT.html exists on the branch and refresh PROGRESS.json to the green head",
+      "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html at head 96ef7894 and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
       "blocker": ""
     },
     {
@@ -72,5 +80,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 42
+  "progress_percent": 60
 }
