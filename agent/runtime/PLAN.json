@@ -1,105 +1,75 @@
 {
-  "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
-  "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
+  "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
+  "why": "Satisfies the active repo-hierarchical-audit-v2 assignment (supersedes v1 PR 226) in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "done",
+  "current_task": "t1",
   "tasks": [
     {
       "id": "t1",
-      "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
-      "acceptance": "write_file returns a commit sha and the file is readable at that sha",
+      "title": "Read the full v2 spec sections (nested reporting, per-substage visual Gantt) and current main head",
+      "acceptance": "Spec text for hierarchy levels, required files and chart rules read from agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@main plus branch_head(main) SHA returned",
       "weight": 1,
-      "status": "done",
+      "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/PROGRESS.json@5a538f9a88975b88ae650abfe5d9767ef59bc5d0"
+        "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60",
+        "main@7020524ba68ed49932e2c72ce721993991d9cd99"
       ],
       "blocker": ""
     },
     {
       "id": "t2",
-      "title": "Build DATA_REQUIREMENTS.csv and SOURCE_MANIFEST.json from authority files",
-      "acceptance": "19-column header, 258 rows, four authority blob shas, green push run with pytest executing",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
-      ],
+      "title": "Rewrite docs/venice-audit-v1/PROGRESS.json for repo-hierarchical-audit-v2",
+      "acceptance": "PROGRESS.json on venice/repo-hierarchical-audit-v2 has task_id repo-hierarchical-audit-v2, assignment_sha 8e75e4f7 and a new returned blob SHA",
+      "weight": 1,
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Emit REQUIREMENTS.csv, GANTT_COMPARISON.csv (all baseline rows, D2 split) and EVIDENCE.json",
-      "acceptance": "Three files with spec column contracts, every baseline row present, run green",
-      "weight": 3,
-      "status": "done",
-      "evidence": [
-        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
-        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
-      ],
+      "title": "Build STAGES.csv and REQUIREMENTS.csv stage > substage > granular hierarchy with 8 status dimensions",
+      "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique node/requirement ids, parent links and per-item statuses at returned blob SHAs",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     },
     {
       "id": "t4",
-      "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
-      "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage",
+      "title": "Build QUESTION_INDEX.csv with canonical question ids, predicates/templates and per-question states",
+      "acceptance": "QUESTION_INDEX.csv exists with canonical IDs, parent_substage_id, subject_id and design/implementation/answer/verification states at a returned blob SHA",
       "weight": 2,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546"
-      ],
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     },
     {
-      "id": "t5a",
-      "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
-      "acceptance": "New commit sha and the following push run executes the enlarged test count",
+      "id": "t5",
+      "title": "Emit per-substage visual Gantt SVGs plus charts/CHART_INDEX.csv",
+      "acceptance": "Every substage in STAGES.csv has its own SVG showing all required children/statuses, indexed by CHART_INDEX.csv at returned SHAs",
       "weight": 2,
-      "status": "done",
-      "evidence": [
-        "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t5c",
-      "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
-      "acceptance": "Workflow reports drift without git push; a run exists whose sha equals branch_head with conclusion success",
-      "weight": 3,
-      "status": "done",
-      "evidence": [
-        "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
-        "92de93572753f1a5c3dfacede4aaa25aadf13845",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746/job/128969995300"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t5d",
-      "title": "Merge PR #226 on the green exact-head check",
-      "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha",
-      "weight": 3,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/pull/226",
-        "38ca4c1da04c1f52c1e81196bd743d2704b5d93d"
-      ],
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     },
     {
       "id": "t6",
-      "title": "Verify the audit artifacts are present on main after the merge",
-      "acceptance": "branch_head(main) is the merge commit or a descendant, and AUDIT.md plus GANTT_COMPARISON.csv read successfully on main",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "38ca4c1da04c1f52c1e81196bd743d2704b5d93d",
-        "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
-        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
-      ],
+      "title": "Write README.md entrypoint, GANTT.md overview, GANTT.html/svg and details/<substage-id>.md pages",
+      "acceptance": "All reporting layers exist, percentages only inside substages, no fabricated completion, cross-referenced with v1 matrices",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
+      "blocker": ""
+    },
+    {
+      "id": "t7",
+      "title": "Extend validator/tests, get green exact-head run, open and merge PR",
+      "acceptance": "Green run on the final head SHA and merged PR on main",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 100
+  "progress_percent": 0
 }
