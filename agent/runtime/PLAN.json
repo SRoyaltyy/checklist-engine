@@ -37,8 +37,8 @@
       "status": "doing",
       "evidence": [
         "262ca2c05af9b9a3cc54605328d90df75dc45803",
-        "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
-        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197"
+        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197",
+        "docs/venice-audit-v1/build_matrices.py@998186675274ba149ea5999b48cbde80107003db"
       ],
       "blocker": ""
     },
