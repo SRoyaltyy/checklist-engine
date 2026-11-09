@@ -1,13 +1,13 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:07:32.414Z",
-  "turn_id": "mw8ogubb-60z104gk",
-  "summary": "The build_gantt.py docstring fix (edit at head 96ef7894, blob 5bf023d0) produced a green push run 42554257008 on venice/repo-requirements-audit-v1: conclusion success, 15s, job 128956342546, and its annotation list carries only the Node20 deprecation warning plus the Ubuntu 26 notice, with no error annotation. That closes the SyntaxError defect: the previous run at 653d099 had 'Process completed with exit code 1' pinned to step 5 'Build matrices from authority files'. The read of the workflow file shows the 'Commit regenerated matrices' step already contains a `git diff --cached --quiet` guard that echoes 'no matrix changes' instead of committing, so the earlier exit 1 at that step in run 42553597443 was not a missing guard - the guard exists at workflow sha 3fc6c647 and the green run at 96ef789 now passes that same step unchanged, which means the failure was specific to that head's tree state (a real generated diff whose commit/push path failed), not a structural workflow defect.",
-  "next": "Verify the green run 42554257008 step-by-step with run_jobs, confirm GANTT.html now exists in docs/venice-audit-v1/, and read PROGRESS.json to capture its current sha so the next write can update it without a stale-SHA overwrite.",
+  "at": "2026-11-09T03:15:31.281Z",
+  "turn_id": "mw8oskcw-f3ad5an5",
+  "summary": "Added docs/venice-audit-v1/.gitignore to stop the workflow's `git add docs/venice-audit-v1` from sweeping __pycache__ into auto-commits; write landed at commit 8b6a299c (blob 7f6ff296) and the push run 42555125029 completed success in 15s with only the Node20-deprecation warning and Ubuntu-26 notice as annotations — no error annotation. Prior green heads remain: PROGRESS.json f2c7891 (run 42555008761) and build_gantt.py 96ef7894 (run 42554257008). This turn only reads the branch file list and PROGRESS.json to capture the exact SHA needed for the next non-stale write; no artifact is claimed complete until that read returns.",
+  "next": "Use the returned list_files to confirm docs/venice-audit-v1/GANTT.html and docs/venice-audit-v1/AUDIT.md are present at the branch head, and use the returned PROGRESS.json sha as expected_sha for the refreshed PROGRESS.json write; then extend tests/test_repo_requirements_audit.py for REQUIREMENTS.csv 11-column header, full baseline-row coverage, EVIDENCE.json id uniqueness/kind/limits, and GANTT.html existence, and open the PR only after a green exact-head run.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
-    "gantt_row": "All project stages 0-8; evidence audit only",
+    "gantt_row": "All project stages 0–8; evidence audit only",
     "current_task": "t4b",
     "tasks": [
       {
@@ -70,10 +70,12 @@
       {
         "id": "t4b",
         "title": "Confirm GANTT.html exists on the branch and refresh PROGRESS.json to the green head",
-        "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html at head 96ef7894 and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
+        "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html and AUDIT.md at head 8b6a299c and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
         "weight": 1,
         "status": "doing",
-        "evidence": [],
+        "evidence": [
+          "8b6a299c6d6b369591fe038de7593d2031f85526"
+        ],
         "blocker": ""
       },
       {
@@ -90,10 +92,6 @@
   },
   "tool_results": [
     {
-      "tool": "run_jobs",
-      "ok": true
-    },
-    {
       "tool": "list_files",
       "ok": true,
       "path": "docs/venice-audit-v1"
@@ -106,14 +104,6 @@
   ],
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252851317",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42252169840",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42214284659",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42176587992",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42156926867",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42106074154",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41982771257",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41906860199",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41785171922",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41710121137",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41592147370",
@@ -205,7 +195,15 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362",
     "agent/runtime/receipts/mw8obqp1-utvl8qsl.0.json@f81fb4017c3177c5002606a698145b2c19659119",
     "96ef78940beffb523b0fc7698d5bb89cc99eae7d",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546"
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
+    "agent/runtime/receipts/mw8olzho-b11kblsj.0.json@58b718b87428d239a957a169031689bf6892efe0",
+    "f2c7891530934535b1441b2cb08f793f59ffd37f",
+    "0eea23789f631a6daf7a20334585977da7b5d5c3",
+    "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3",
+    "agent/runtime/receipts/mw8oq9sw-5o7jpnnk.3.json@254d41a4d96bc2d86a239f494f6953645b417a20",
+    "8b6a299c6d6b369591fe038de7593d2031f85526",
+    "4b8c54ffd05185541daafdab234d8f9bb6f6a696",
+    "docs/venice-audit-v1/PROGRESS.json@4b8c54ffd05185541daafdab234d8f9bb6f6a696"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -213,12 +211,10 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
-    "kind": "verification",
-    "description": "The single-quote docstring defect is proven fixed: after the edit to build_gantt.py at commit 96ef7894 (blob 5bf023d0), push run 42554257008 completed with conclusion success in 15s and its annotation set contains no error entry, whereas the immediately prior run at 653d099 failed with 'Process completed with exit code 1' on step 5. Also disproved my own earlier empty-diff diagnosis by reading the workflow verbatim: the commit step already has a `git diff --cached --quiet` guard, so that exit 1 came from the else-branch, not a missing guard.",
+    "kind": "implementation",
+    "description": "Wrote docs/venice-audit-v1/.gitignore so the workflow's `git add docs/venice-audit-v1` cannot auto-commit generated __pycache__/*.pyc from build_matrices/build_extra/build_gantt; the push run on that exact commit completed success with no error annotation.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
-      "96ef78940beffb523b0fc7698d5bb89cc99eae7d",
-      ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
+      "8b6a299c6d6b369591fe038de7593d2031f85526"
     ]
   },
   "pitfalls": [
