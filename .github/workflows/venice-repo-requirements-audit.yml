@@ -1,0 +1,41 @@
+name: venice-repo-requirements-audit
+on:
+  push:
+    branches: ['venice/repo-requirements-audit-v1']
+    paths: ['docs/venice-audit-v1/**', 'tests/test_repo_requirements_audit.py', '.github/workflows/venice-repo-requirements-audit.yml']
+permissions:
+  contents: write
+concurrency:
+  group: venice-repo-requirements-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout audit branch
+        uses: actions/checkout@v4
+        with:
+          ref: venice/repo-requirements-audit-v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: python -m pip install --quiet pytest
+      - name: Build matrices from authority files
+        run: python docs/venice-audit-v1/build_matrices.py
+      - name: Run source-matched tests
+        if: hashFiles('tests/test_repo_requirements_audit.py') != ''
+        run: python -m pytest -q tests/test_repo_requirements_audit.py
+      - name: Commit regenerated matrices
+        run: |
+          git config user.name 'venice-audit-bot'
+          git config user.email 'venice-audit-bot@users.noreply.github.com'
+          git add docs/venice-audit-v1
+          if git diff --cached --quiet; then
+            echo 'no matrix changes'
+          else
+            git commit -m 'audit: regenerate matrices from main authority files'
+            git push origin HEAD:venice/repo-requirements-audit-v1
+          fi
