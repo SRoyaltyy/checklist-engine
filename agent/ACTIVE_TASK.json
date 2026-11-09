@@ -40,5 +40,8 @@
     "verification",
     "main_acceptance"
   ],
-  "previous_deliverable_pr": 226
+  "previous_deliverable_pr": 226,
+  "visual_charts_required": "one actual visual Gantt per substage; every required item and its status",
+  "chart_index": "docs/venice-audit-v1/charts/CHART_INDEX.csv",
+  "visual_format": "SVG preferred; visual HTML or runner-rendered PNG supported"
 }

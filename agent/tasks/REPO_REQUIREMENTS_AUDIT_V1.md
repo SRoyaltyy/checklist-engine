@@ -42,6 +42,21 @@ All audit output stays in docs/venice-audit-v1/ on the assigned branch until pub
 - Existing DATA_REQUIREMENTS.csv, GANTT_COMPARISON.csv, EVIDENCE.json, AUDIT.md and PROGRESS.json remain required and must cross-reference the hierarchy, not contradict its statuses.
 Persist staged findings incrementally so the owner can inspect them before the entire audit is finished. On a new chat, read PROGRESS.json, STAGES.csv and the current substage detail page first.
 
+## Owner clarification — a visual Gantt for EVERY substage (2026-11-09 HKT)
+An overview alone is insufficient. Produce a separate VISUAL Gantt chart for EVERY substage node in STAGES.csv. At minimum provide distinct complete views for data scope/selection, data fetching, strict data/indicator definition, question definition/design, and question asking (computing historical stock-day answers), plus the remaining required downstream substages. Follow each subject through these phases.
+
+Every chart must show ALL work/items required by that substage and each item's current phase-specific status, including work not started, still being defined, partly complete, blocked or unknown. Do not show only completed items, examples or a convenient subset. Reconcile the chart row IDs to its complete requirement/question coverage index. Use expandable groups, scrolling or pagination for large sets; keep the full index searchable and expose parameter/timeframe domains rather than hiding omitted coverage. Show what is needed, what exists, what is missing and the exact next action.
+
+Required chart layout: actual visual task bars/status marks in a Gantt-style view; a dark navy background, grouped rows, legible labels, colored status legend and dependency/blocker markers similar to the owner's supplied charts are appropriate. Include an as-of snapshot and TODAY line where a real date axis is used. Separate actual dates from explicitly estimated dates; undated work must stay marked undated instead of receiving invented dates or durations. Percentages remain limited to the individual SUBSTAGE summary; granular rows use status labels and evidence/counts. A CSV or plain Markdown table is an underlying source or accessible companion, not the sole visual chart.
+
+Write:
+- charts/CHART_INDEX.csv: one entry for each substage_id, parent_stage_id, title, visual_path, readable_path, granular_details_path, required_item_count, represented_item_count and omissions/blockers.
+- charts/<substage-id>/GANTT.svg (preferred for direct GitHub visual preview) or GANTT.html (real visual bars, not table-only), with a readable GANTT.md companion and links to the granular status details.
+- Optional GANTT.png exports may be rendered by a plain Python plotting script on a GitHub runner. A code-generated SVG/HTML is sufficient; no image-generation service is required.
+- The top-level README and GANTT overview must link to EVERY substage chart. REQUIREMENTS.csv, QUESTION_INDEX/shards and details pages remain the canonical granular source; generate charts from them to avoid contradictory copies.
+
+Validate that every substage has a chart/index entry and every required child is represented or explicitly accounted for. Inspect the generated outputs (dimensions, labels, legend and clipping) before publishing. CI passing checks structure/render generation, not completeness of the underlying project evidence.
+
 ## Authority and snapshot
 Read current main/METHODOLOGY.md in full, respecting its latest owner clarifications and explicit exclusions; read main/TODO.md, docs/WAR_ROOM_CONTEXT_FOR_KIMI.md, locked dial/question/exit tables, dictionary/WORLD_SNAPSHOT_DICTIONARY.csv, dictionary/DATA_SOURCES.csv, docs/INVENTORY_CATALOG_AUDIT_V1.json, docs/WORLD_COVERAGE.csv, docs/LENSES_COVERAGE_V1.csv and the relevant source/readback receipts. Follow references to the current 258-kind inventory; reconcile older counts (233/~296) rather than silently mixing them.
 Use the existing v1 snapshot/evidence as historical findings, then inspect current main for deltas. Start this revision from current main; cite the exact commit you actually read; record an actual immutable snapshot SHA in every output. Audit any later main changes in an explicit delta section before final PR. Source claims and old docs are leads, not proof of current absence or completeness.
