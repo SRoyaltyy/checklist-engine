@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T13:31:02.993Z",
-  "turn_id": "mw9atx46-f9hp6fok",
-  "summary": "Job log proves build_matrices.py exits 1 with 'unmapped requirement R8.1 (group 8 Shadow and live, lane OPS)' after successfully building 258 rows, 47 requirements, 67 comparison rows and 11 stages. The defect is a missing stage-8 substage mapping in build_hierarchy.py, not a general generator chain failure. Reading the generator and the stage-8 requirement rows to patch the mapping.",
-  "next": "Use the returned build_hierarchy.py source and the stage-8 rows of REQUIREMENTS.csv to add the missing '8 Shadow and live'/'OPS' substage mapping (covering R8.1 and any siblings), then push and re-run the workflow.",
+  "at": "2026-11-09T13:35:43.796Z",
+  "turn_id": "mw9azbi5-lneotp6j",
+  "summary": "Read the full build_hierarchy.py source and the stage-8 requirement rows. Confirmed STAGES has no S8 entry and SUBSTAGES no entry for gantt_group '8 Shadow and live', so match_substage returns None for R8.1/R8.2 and SystemExit aborts build_matrices. Also found R8 rows carry current_status 'CLOSED', which statuses() does not handle and would mislabel as NOT_PROVEN. Applying three targeted edits to add S8/S8.1 and a CLOSED status branch.",
+  "next": "After the three edits return, read build_hierarchy.py@<new sha> to confirm the S8/S8.1 entries and CLOSED branch, then check the run triggered by the push (runs on venice/repo-hierarchical-audit-v2) for a green build_matrices step.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -93,24 +93,29 @@
   },
   "tool_results": [
     {
-      "tool": "read_file",
+      "tool": "edit_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/build_hierarchy.py"
+      "path": "docs/venice-audit-v1/build_hierarchy.py",
+      "commit": "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
+      "verified": true
     },
     {
-      "tool": "grep",
+      "tool": "edit_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/REQUIREMENTS.csv"
+      "path": "docs/venice-audit-v1/build_hierarchy.py",
+      "commit": "aaf674d0b2502615b874a559d6407a8e97d6861c",
+      "verified": true
+    },
+    {
+      "tool": "edit_file",
+      "ok": true,
+      "path": "docs/venice-audit-v1/build_hierarchy.py",
+      "commit": "c3e256510b6b0ea5766f6fc7526ae3104618dacf",
+      "verified": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555125029",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42555008761",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553614919",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553306526",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553294959",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552951167",
@@ -204,7 +209,13 @@
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
     "12a577d8fb94f200ef5ff1de116e191c9cc4c246",
     ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
-    "venice/repo-hierarchical-audit-v2@12a577d8fb94f200ef5ff1de116e191c9cc4c246"
+    "venice/repo-hierarchical-audit-v2@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
+    "agent/runtime/receipts/mw9azbi5-lneotp6j.0.json@94a345be9d6cd938981ed621bd632cd03f91ac60",
+    "agent/runtime/receipts/mw9azbi5-lneotp6j.1.json@14d89441ed5c27699fad6f142e16e2d88be31272",
+    "agent/runtime/receipts/mw9azbi5-lneotp6j.2.json@50ac97c6a152bdd04c05dbc51bc0803a28416bc9",
+    "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
+    "aaf674d0b2502615b874a559d6407a8e97d6861c",
+    "c3e256510b6b0ea5766f6fc7526ae3104618dacf"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -213,10 +224,11 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Exact failure cause identified from the job log: build_matrices.py exits 1 because build_hierarchy raises on unmapped requirement R8.1 (group '8 Shadow and live', lane 'OPS'); all preceding matrix/stage generation succeeded, so only the stage-8 substage mapping needs adding.",
+    "description": "Verified from source plus the CSV rows that the abort is exactly a missing S8 stage and '8 Shadow and live'/OPS substage (STAGES ends at S7, SUBSTAGES at S7.1), and additionally that the stage-8 rows use status 'CLOSED', which statuses() does not handle and would mislabel as NOT_PROVEN.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
-      "eda683e7d07114ca4f0faba314b9539cce4297cc"
+      "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+      "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
     ]
   },
   "pitfalls": [
@@ -231,8 +243,8 @@
         "055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mw9atx46-f9hp6fok",
-      "seen_at_ms": 1794231062993
+      "last_seen": "mw9azbi5-lneotp6j",
+      "seen_at_ms": 1794231343796
     },
     {
       "id": "workflow-branch-filter-mismatch",
@@ -246,22 +258,24 @@
         "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mw9atx46-f9hp6fok",
-      "seen_at_ms": 1794231062993
+      "last_seen": "mw9azbi5-lneotp6j",
+      "seen_at_ms": 1794231343796
     },
     {
       "id": "unmapped-stage8-substage",
-      "status": "open",
-      "problem": "build_hierarchy.py raises SystemExit on requirement R8.1 with group '8 Shadow and live' and lane 'OPS' because no STAGES/SUBSTAGES entry matches that group/lane, aborting build_matrices.py with exit 1.",
-      "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
-      "lesson": "Add explicit substage mapping for the '8 Shadow and live' group (with OPS lane) covering R8.1 and its sibling stage-8 requirements, and verify build_matrices completes with no unmapped-requirement message.",
+      "status": "fixing",
+      "problem": "build_hierarchy.py raises SystemExit on requirement R8.1 with group '8 Shadow and live' and lane 'OPS' because STAGES has no S8 and SUBSTAGES has no entry for that group/lane, aborting build_matrices.py with exit 1.",
+      "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified, and the STAGES list silently ended at S7.",
+      "lesson": "Add S8 plus an S8.1 substage keyed on gantt_group '8 Shadow and live'/lane OPS, and handle the v1 'CLOSED' status explicitly; verify build_matrices completes with no unmapped-requirement message.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
-        "eda683e7d07114ca4f0faba314b9539cce4297cc"
+        "eda683e7d07114ca4f0faba314b9539cce4297cc",
+        "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
       ],
       "first_seen": "mw9atx46-f9hp6fok",
-      "last_seen": "mw9atx46-f9hp6fok",
-      "seen_at_ms": 1794231062993
+      "last_seen": "mw9azbi5-lneotp6j",
+      "seen_at_ms": 1794231343796
     }
   ]
 }
