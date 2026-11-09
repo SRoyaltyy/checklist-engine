@@ -38,7 +38,8 @@
       "evidence": [
         "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
         "docs/venice-audit-v1/build_matrices.py@998186675274ba149ea5999b48cbde80107003db",
-        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197"
+        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197",
+        "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60"
       ],
       "blocker": ""
     },
