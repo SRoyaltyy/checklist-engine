@@ -9,8 +9,10 @@
       "title": "Seed docs/venice-audit-v1/PROGRESS.json on the audit branch",
       "acceptance": "write_file returns a commit sha and the file is readable at that sha",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "docs/venice-audit-v1/PROGRESS.json@5a538f9a88975b88ae650abfe5d9767ef59bc5d0"
+      ],
       "blocker": ""
     },
     {
@@ -50,29 +52,6 @@
       "blocker": ""
     },
     {
-      "id": "t4a",
-      "title": "Fix the build_gantt syntax defect and reach a green run",
-      "acceptance": "A push run on venice/repo-requirements-audit-v1 completes success with no error annotation",
-      "weight": 3,
-      "status": "done",
-      "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
-        "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t4c",
-      "title": "Untrack committed docs/venice-audit-v1/__pycache__ and stop the auto-commit sweep",
-      "acceptance": "No __pycache__ path in the branch tree and the push run on that commit is green",
-      "weight": 1,
-      "status": "done",
-      "evidence": [
-        "8b6a299c6d6b369591fe038de7593d2031f85526"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t5a",
       "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
       "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
@@ -85,23 +64,16 @@
       "blocker": ""
     },
     {
-      "id": "t5b",
-      "title": "Prove the head produced by the job's own commit has no run",
-      "acceptance": "A green run sha differs from the branch head / PR head_sha",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "08aa8c2cbf09736be6d10ae8cd70e58d17712143"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t5c",
       "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
       "acceptance": "Workflow step reports drift without git push; a run exists whose sha equals branch_head with conclusion success and no error annotation",
       "weight": 3,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
+        "92de93572753f1a5c3dfacede4aaa25aadf13845",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746"
+      ],
       "blocker": ""
     },
     {
@@ -114,5 +86,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 68
+  "progress_percent": 62
 }
