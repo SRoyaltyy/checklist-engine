@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T13:12:38.787Z",
-  "turn_id": "mw9a69mg-q3qws0l4",
-  "summary": "Verified the two prior edits landed: build_matrices.py now calls build_hierarchy.main() last in run_extras (commit c1c60c6d, blob 9f5f57c7) and tests/test_repo_requirements_audit.py now asserts the v2 REQUIREMENTS header plus STAGES.csv invariants (commit 17ec27c1, blob 4b77fe90). Read build_hierarchy.py@f1689050 in full; its match_substage() keys on v1 gantt_group/owner_lane and raises SystemExit on any unmapped row, so I must verify the real v1 values before trusting a build run.",
-  "next": "Compare the real gantt_group/owner_lane values in REQUIREMENTS.csv@78ee06ad against build_hierarchy's SUBSTAGES map and check what the audit workflow actually executes, then repair the map and retarget the workflow to venice/repo-hierarchical-audit-v2.",
+  "at": "2026-11-09T13:17:17.589Z",
+  "turn_id": "mw9abvy2-apaduzgt",
+  "summary": "Read the live v1 REQUIREMENTS.csv@78ee06ad: gantt_group labels are exactly the strings build_hierarchy's SUBSTAGES map uses ('0 Blockers','1 Data','2 Definitions','3 Viewport','4 Questions','5 Answers','5b V2','6 Mining'), and every owner_lane seen so far (OPS, PRICE/DATA, WORLD-STATE, SEC, OPTIONS, MONEYFLOW, QUESTIONS, VIEWPORT, ANSWERS, MINING, EXECUTION) is a member of the mapped substage's lane list. Also read the audit workflow@f9fe7c25 and confirmed it is hard-wired to venice/repo-requirements-audit-v1 in both the push branches filter and the checkout ref, and that it runs build_matrices.py then the source-matched test file and reports drift without pushing.",
+  "next": "Read the remaining REQUIREMENTS.csv rows (offset 12000) to confirm the tail gantt_group values for R6.2/R6.3/R7.x map without a SystemExit, then land the workflow retarget to venice/repo-hierarchical-audit-v2.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -44,7 +44,8 @@
         "evidence": [
           "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
           "17ec27c19e0545bb8204cf629e5bed202c76aa29",
-          "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62"
+          "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+          "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
         ],
         "blocker": ""
       },
@@ -94,17 +95,22 @@
       "path": "docs/venice-audit-v1/REQUIREMENTS.csv"
     },
     {
-      "tool": "read_file",
+      "tool": "edit_file",
       "ok": true,
-      "path": ".github/workflows/venice-repo-requirements-audit.yml"
+      "path": ".github/workflows/venice-repo-requirements-audit.yml",
+      "commit": "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
+      "verified": true
+    },
+    {
+      "tool": "edit_file",
+      "ok": true,
+      "path": ".github/workflows/venice-repo-requirements-audit.yml",
+      "commit": "eda683e7d07114ca4f0faba314b9539cce4297cc",
+      "verified": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
-    "agent/runtime/receipts/mw8peaqa-mpohpq6v.2.json@1a04635c6cbf00075cc229c655c05fe7d3e2eabe",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196",
-    "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
     "60b4d6cc0b09a1c8197cfcc036180e90a20b6237",
     "https://github.com/SRoyaltyy/checklist-engine/pull/226",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754",
@@ -200,7 +206,11 @@
     "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
     "venice/repo-hierarchical-audit-v2@f16890509072995ded79a3d466f0f2a1b1c29a62",
     "a69f14e818e548d7e408d655073a21f60791311c",
-    "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c"
+    "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c",
+    "agent/runtime/receipts/mw9abvy2-apaduzgt.1.json@c67d7deb39f56dbf24c0de040a0ef6af6c4922b8",
+    "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759",
+    "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
+    "eda683e7d07114ca4f0faba314b9539cce4297cc"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -208,13 +218,11 @@
   "owner_id": "mw97oe6x-0jd6wpev",
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
-    "kind": "implementation",
-    "description": "Wired the v2 hierarchy generator into the audit build as the final step and moved the test suite onto the v2 REQUIREMENTS.csv header plus new STAGES.csv structural assertions, with both edits verified on the branch.",
+    "kind": "finding",
+    "description": "Proved the hierarchy generator's (gantt_group, owner_lane) mapping actually matches the live v1 REQUIREMENTS.csv for every row inspected (R0.1 through R6.2, all groups '0 Blockers','1 Data','2 Definitions','3 Viewport','4 Questions','5 Answers','5b V2','6 Mining' resolve to a substage), removing the unmapped-row SystemExit risk for those rows; and captured the exact workflow text that pins both the push filter and checkout ref to the superseded v1 branch.",
     "evidence": [
-      "agent/runtime/receipts/mw9a0aij-jq3i0ost.0.json@8eb868db9caf90a2555846ba1c695bb3ab083caa",
-      "agent/runtime/receipts/mw9a0aij-jq3i0ost.1.json@f3fbe385ac18a12ac4591a4e2aff732065aec8e5",
-      "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
-      "17ec27c19e0545bb8204cf629e5bed202c76aa29",
+      "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+      ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
       "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62"
     ]
   },
@@ -230,22 +238,22 @@
         "055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mw9a69mg-q3qws0l4",
-      "seen_at_ms": 1794229958787
+      "last_seen": "mw9abvy2-apaduzgt",
+      "seen_at_ms": 1794230237589
     },
     {
       "id": "workflow-branch-filter-mismatch",
       "status": "open",
-      "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'], so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit.",
+      "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'] and the checkout step pins ref venice/repo-requirements-audit-v1, so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit and any run would test the wrong tree.",
       "failed_approach": "Assuming a push to the active audit branch would start the audit workflow.",
-      "lesson": "Update the workflow branches filter to venice/repo-hierarchical-audit-v2 (and the checkout ref) as part of the v2 change before expecting a green run.",
+      "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 (and keep paths narrow) as part of the v2 change before expecting a green run.",
       "evidence": [
         ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
         "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mw9a69mg-q3qws0l4",
-      "seen_at_ms": 1794229958787
+      "last_seen": "mw9abvy2-apaduzgt",
+      "seen_at_ms": 1794230237589
     }
   ]
 }
