@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name Venice Bridge Loader
 // @namespace venice.local
-// @version 2.1.0
+// @version 2.2.0
 // @match https://venice.ai/*
+// @match https://chat.deepseek.com/*
 // @grant GM_xmlhttpRequest
 // @grant GM_getValue
 // @grant GM_setValue
@@ -14,11 +15,17 @@
 // ==/UserScript==
 (function(){
   'use strict';
-  const CONFIG={worker:'https://venice-doorman.fullscan-relay.workers.dev/',branch:'venice/sec-options-pipelines',key:GM_getValue('vrb6.key','')};
+  const provider=location.hostname==='chat.deepseek.com'?'deepseek':'venice',prefix=provider==='deepseek'?'drb6':'vrb6';
+  const CONFIG={worker:'https://venice-doorman.fullscan-relay.workers.dev/',branch:'venice/sec-options-pipelines',provider,key:GM_getValue('vrb6.key','')};
   const SOURCE='agent/BRIDGE6.js';
   let current=null,currentSha='',candidate=null,refreshing=false,bootedAt=0,lastWatch=Date.now();
   const badge=document.createElement('div');badge.style.cssText='position:fixed;right:12px;bottom:52px;z-index:2147483647;background:#574615;color:white;padding:6px 9px;border-radius:6px;font:12px monospace';document.body.appendChild(badge);
   function status(t){badge.textContent='Loader 2 | '+t;console.log('[venice-loader2] '+t);}
+  if(provider==='deepseek'){
+    if(new URL(location.href).searchParams.get('repo_bridge')==='1')sessionStorage.setItem('repo_bridge_deepseek_active','true');
+    GM_registerMenuCommand('Start repo agent in this DeepSeek tab',()=>{sessionStorage.setItem('repo_bridge_deepseek_active','true');location.reload();});
+    if(sessionStorage.getItem('repo_bridge_deepseek_active')!=='true'){status('DeepSeek idle; start repo agent from the script menu');return;}
+  }
   GM_registerMenuCommand('Configure Venice bridge key',()=>{const k=prompt('Doorman key (stored locally in Tampermonkey):',CONFIG.key);if(k){GM_setValue('vrb6.key',k.trim());location.reload();}});
   GM_registerMenuCommand('Wake Venice now',()=>current?.wake());
   GM_registerMenuCommand('Continue in a fresh chat',()=>current?.rollover());
@@ -41,10 +48,10 @@
     refreshing=true;
     try{
       const build=await getSource();if(build.sha===currentSha)return;
-      if(build.sha===GM_getValue('vrb6.badSha',''))return;
+      if(build.sha===GM_getValue(prefix+'.badSha',''))return;
       if(current&&!current.health().canUpgrade){status('update waiting for turn checkpoint');return;}
-      try{boot(build);}catch(e){GM_setValue('vrb6.badSha',build.sha);status('update rejected: '+e.message);if(!current){const cached=GM_getValue('vrb6.lastgood',null);if(cached)boot(cached);}}
-    }catch(e){status(e.message);if(!current){const cached=GM_getValue('vrb6.lastgood',null);if(cached)try{boot(cached);}catch(e){status('cached build failed: '+e.message);}}}
+      try{boot(build);}catch(e){GM_setValue(prefix+'.badSha',build.sha);status('update rejected: '+e.message);if(!current){const cached=GM_getValue(prefix+'.lastgood',null);if(cached)boot(cached);}}
+    }catch(e){status(e.message);if(!current){const cached=GM_getValue(prefix+'.lastgood',null);if(cached)try{boot(cached);}catch(e){status('cached build failed: '+e.message);}}}
     finally{refreshing=false;}
   }
   setInterval(()=>{
@@ -52,8 +59,8 @@
     if(gap>120000){status('browser resumed; checking next heartbeat');return;}
     if(!current)return;
     const h=current.health();
-    if(candidate&&h.ready&&Date.now()-bootedAt>30000&&Date.now()-h.lastTick<90000&&(h.lastCompletedAt===undefined||h.lastCompletedAt>=bootedAt)){GM_setValue('vrb6.lastgood',candidate);candidate=null;status('healthy '+current.version);}
-    if(Date.now()-h.lastTick>150000){const bad=currentSha;current.stop();current=null;currentSha='';GM_setValue('vrb6.badSha',bad);status('stalled; restoring last healthy build');const cached=GM_getValue('vrb6.lastgood',null);if(cached&&cached.sha!==bad)try{boot(cached);}catch(e){status(e.message);}}
+    if(candidate&&h.ready&&Date.now()-bootedAt>30000&&Date.now()-h.lastTick<90000&&(h.lastCompletedAt===undefined||h.lastCompletedAt>=bootedAt)){GM_setValue(prefix+'.lastgood',candidate);candidate=null;status('healthy '+current.version);}
+    if(Date.now()-h.lastTick>150000){const bad=currentSha;current.stop();current=null;currentSha='';GM_setValue(prefix+'.badSha',bad);status('stalled; restoring last healthy build');const cached=GM_getValue(prefix+'.lastgood',null);if(cached&&cached.sha!==bad)try{boot(cached);}catch(e){status(e.message);}}
   },10000);
   setInterval(refresh,60000);refresh();
 })();

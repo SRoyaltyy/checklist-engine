@@ -1,14 +1,14 @@
-// Venice web runtime 6.4.5. Loaded by LOADER6.user.js, returns an explicit handle.
+// Repo web runtime 6.5.0. Venice and DeepSeek adapters share the verified GitHub protocol.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.4.5', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.5.0', PROVIDER=config.provider||(win.location.hostname==='chat.deepseek.com'?'deepseek':'venice'), DEEPSEEK=PROVIDER==='deepseek', PREFIX=DEEPSEEK?'drb6':'vrb6', STORE=PREFIX+'.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   // Jitter smooths load; it does not conceal automation or override provider restrictions.
-  const pacing={minGapMs:300000,maxGapMs:600000,hourlyCap:6,...(config.pacing||{})};
+  const pacing={minGapMs:240000,maxGapMs:300000,hourlyCap:15,...(config.pacing||{})};
   if(!Number.isFinite(pacing.minGapMs)||pacing.minGapMs<0||!Number.isFinite(pacing.maxGapMs)||pacing.maxGapMs<pacing.minGapMs||!Number.isSafeInteger(pacing.hourlyCap)||pacing.hourlyCap<1)throw new Error('Invalid pacing configuration');
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
-  const ownerId=get('vrb6.owner_id','')||uid();set('vrb6.owner_id',ownerId);
+  const ownerId=get(PREFIX+'.owner_id','')||uid();set(PREFIX+'.owner_id',ownerId);
   const tabId=uid();
   let s;
   try {s=JSON.parse(get(STORE,'null'));}catch{ s=null; }
@@ -47,19 +47,25 @@ return (function (gm, get, set, win, doc, config) {
   }
   const visible=e=>!!e&&e.getClientRects().length>0;
   const label=e=>[e.getAttribute('aria-label'),e.title,e.getAttribute('data-testid'),e.innerText].filter(Boolean).join(' ').trim();
-  function composer(){return [...doc.querySelectorAll('[data-testid="minds-chat-input-text-column"] [contenteditable="true"],textarea,[contenteditable="true"][role="textbox"],[contenteditable="true"]')].find(visible)||null;}
+  function composer(){return [...doc.querySelectorAll(DEEPSEEK?'textarea[placeholder="Message DeepSeek"],textarea[name="search"]':'[data-testid="minds-chat-input-text-column"] [contenteditable="true"],textarea,[contenteditable="true"][role="textbox"],[contenteditable="true"]')].find(visible)||null;}
   const value=e=>e.tagName==='TEXTAREA'?e.value:e.innerText||e.textContent||'';
   function fill(e,text){e.focus();if(e.tagName==='TEXTAREA')Object.getOwnPropertyDescriptor(win.HTMLTextAreaElement.prototype,'value').set.call(e,text);else {const selection=win.getSelection(),range=doc.createRange();range.selectNodeContents(e);selection.removeAllRanges();selection.addRange(range);if(!doc.execCommand('insertText',false,text))e.textContent=text;selection.removeAllRanges();}e.dispatchEvent(new win.Event('input',{bubbles:true}));}
   function sendButton(){
+    if(DEEPSEEK)return [...doc.querySelectorAll('[role="button"].ds-button--primary.ds-button--circle')].find(e=>visible(e)&&!disabled(e))||null;
     const scope=doc.querySelector('[data-testid="minds-chat-input-actions"]')||composer()?.closest('form')||composer()?.closest('[data-testid="minds-chat-dropzone"]');
     const buttons=[...(scope||doc).querySelectorAll('button')].filter(e=>visible(e)&&!e.disabled&&e.id!=='venice-runtime-v6');
     return buttons.find(e=>/send|submit/i.test(label(e)))||buttons.find(e=>e.querySelector('svg.lucide-arrow-up,svg.lucide-send,svg[data-icon="arrow-up"]'))||null;
   }
-  function generating(){return [...doc.querySelectorAll('button')].some(e=>visible(e)&&/stop generating|stop response|stop generation|minds-chat-stop|^stop$/i.test(label(e)));}
+  function disabled(e){return e.disabled||e.getAttribute('aria-disabled')==='true'||e.classList?.contains('ds-button--disabled');}
+  function generating(){
+    if(DEEPSEEK){const b=sendButton();if(!b)return false;const e=composer();if(['composing','sending'].includes(s.phase)&&s.prompt&&e&&value(e).trim()===s.prompt.trim())return false;return true;}
+    return [...doc.querySelectorAll('button')].some(e=>visible(e)&&/stop generating|stop response|stop generation|minds-chat-stop|^stop$/i.test(label(e)));
+  }
   function providerNotice(){
-    const text=[...doc.querySelectorAll('[role="alert"]')].filter(visible).map(e=>e.innerText||e.textContent||'').find(x=>/unusually heavy automated usage|requests\s+resume\s+in/i.test(x));
+    if(DEEPSEEK&&[...doc.querySelectorAll('#cf-overlay')].some(visible))return {text:'Human verification required; the agent is waiting for the user.',duration:null};
+    const text=[...doc.querySelectorAll(DEEPSEEK?'[role="alert"],.ds-notification':'[role="alert"]')].filter(visible).map(e=>e.innerText||e.textContent||'').find(x=>/unusually heavy automated usage|requests\s+resume\s+in|too many requests|rate limit reached|usage limit|请求过于频繁/i.test(x));
     if(!text)return null;
-    const m=text.match(/requests\s+resume\s+in\s+(\d+(?:\.\d+)?)\s*(seconds?|minutes?|hours?|days?)/i);
+    const m=text.match(/(?:requests\s+resume\s+in|try\s+again\s+in)\s+(\d+(?:\.\d+)?)\s*(seconds?|minutes?|hours?|days?)/i);
     const duration=m?Number(m[1])*({s:1000,m:60000,h:3600000,d:86400000})[m[2][0].toLowerCase()]:null;
     return {text:text.trim().slice(0,1500),duration:duration>0?duration:null};
   }
@@ -73,7 +79,7 @@ return (function (gm, get, set, win, doc, config) {
     if(block&&(!block.until||Date.now()>=block.until)){
       const current=providerNotice();
       if(!current){s.phase=block.resumePhase||'idle';s.providerBlock=null;s.prompt=null;s.nextAt=0;persist();note('provider notice cleared; restoring saved work');return false;}
-      if(!block.until)return true;
+      if(!block.until){if(current.text!==block.notice&&current.duration){block.notice=current.text;block.observedAt=Date.now();block.until=Date.now()+current.duration;persist();note('provider supplied a cooldown duration');}return true;}
       s.providerBlock=null;block=null;
     }
     if(block)return true;
@@ -84,8 +90,8 @@ return (function (gm, get, set, win, doc, config) {
     s.pacingPenalty=Math.min(4,(s.pacingPenalty||1)*2);
     s.phase='provider_blocked';persist();note(notice.duration?'provider cooldown; automatic resume after advertised wait':'provider blocked; waiting for notice to clear');return true;
   }
-  function assistants(){return [...doc.querySelectorAll('.assistant')].filter(e=>!e.parentElement?.closest('.assistant'));}
-  function replyText(){const a=assistants();return a.length>s.baseline?a[a.length-1].innerText:'';}
+  function assistants(){const selector=DEEPSEEK?'.ds-assistant-message-main-content':'.assistant';return [...doc.querySelectorAll(selector)].filter(e=>!e.parentElement?.closest(selector));}
+  function replyText(){const a=assistants();return a.length&&(DEEPSEEK||a.length>s.baseline)?a[a.length-1].innerText:'';}
   function parseReply(text,turn){
     const a=assistants().at(-1);const blocks=a?[...a.querySelectorAll('pre code,pre')].filter(e=>e.tagName==='CODE'||!e.querySelector('code')).map(e=>e.textContent):[];
     for(const raw of [...blocks,text]) {
@@ -94,10 +100,17 @@ return (function (gm, get, set, win, doc, config) {
     }
     return null;
   }
+  function veniceMode(){return win.location.pathname.match(/^\/chat\/(agent|classic)(?:\/|$)/)?.[1]||null;}
+  function switchVeniceMode(mode,reason){
+    if(DEEPSEEK||s.providerBlock||providerNotice()||generating()||!['agent','classic'].includes(mode))return false;
+    const e=composer();if(e&&value(e).trim()){if(s.prompt&&value(e).trim()===s.prompt.trim())fill(e,'');else return false;}
+    s.modeRoute={to:mode,at:Date.now()};s.lastModeSwitch={from:veniceMode(),to:mode,reason,at:Date.now()};s.phase='switching_mode';s.prompt=null;s.technicalTimeouts=0;persist();
+    win.location.assign('https://venice.ai/chat/'+mode);return true;
+  }
   const badge=doc.createElement('button');badge.id='venice-runtime-v6';badge.style.cssText='position:fixed;right:12px;bottom:12px;z-index:2147483647;background:#1b6b45;color:white;border:1px solid #7bdba5;border-radius:8px;padding:8px 12px;font:12px monospace;max-width:380px;cursor:pointer';
   badge.onclick=()=>{s.enabled=!s.enabled;persist();paint();if(s.enabled)pump();};
   badge.oncontextmenu=e=>{e.preventDefault();s.nextAt=0;s.rollover=true;s.quietAfterTurn=false;persist();pump();};
-  function paint(){badge.textContent=s.providerBlock?`V6 ${s.enabled?'ON':'PAUSED'} | PROVIDER BLOCKED | `+(s.providerBlock.until?'wait until '+new Date(s.providerBlock.until).toLocaleString():'waiting for provider notice to clear'):`V6 ${s.enabled?'ON':'PAUSED'} | ${s.phase} | ${s.chatTurns||0} turns`+(s.lastStatus?' | '+s.lastStatus.slice(0,65):'');badge.title=s.providerBlock?s.providerBlock.notice:'Click to pause/resume. Right-click to continue in a fresh chat. Progress is checkpointed to GitHub.';}
+  function paint(){const name=DEEPSEEK?'DeepSeek':'Venice';badge.textContent=s.providerBlock?`${name} ${s.enabled?'ON':'PAUSED'} | PROVIDER BLOCKED | `+(s.providerBlock.until?'wait until '+new Date(s.providerBlock.until).toLocaleString():'waiting for provider notice to clear'):`${name} ${s.enabled?'ON':'PAUSED'} | ${s.phase} | ${s.chatTurns||0} turns`+(s.lastStatus?' | '+s.lastStatus.slice(0,65):'');badge.title=s.providerBlock?s.providerBlock.notice:'Click to pause/resume. Right-click to continue in a fresh chat. Progress is checkpointed to GitHub.';}
   doc.body.appendChild(badge);paint();
   const tools=`Tools (each action is {"tool":"name","args":{...}}):
 read_file(path,branch=main,start_line,end_line,offset), list_files(path,branch), grep(path,query,branch), branch_head(branch), read_issue(issue,offset), read_pr(pr,offset), issue_comments(issue,page), pr_files(pr,page), runs(branch=main), run_status(run_id), run_jobs(run_id), job_log(job_id,run_id), annotations(check_run_id), report_failure(run_id), write_file(path,text,branch,expected_sha), edit_file(path,find,replace,branch), create_branch(branch,base=main), sync_branch(expected_head_sha), create_pr(title,body,branch), create_issue(title,body,dedupe_key), comment_issue(issue,body), dispatch(workflow,branch,inputs), merge_pr(pr,expected_head_sha), deploy_worker(branch).
@@ -108,7 +121,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     const example={bridge:'venice-v6',turn:s.turn,summary:'Only proven work, with actual evidence. Planned work is not complete.',next:'Exact next action after these tools return',notes:'Concise durable notes: file map, verified facts, failed approaches, decisions, open questions. Preserve relevant prior notes.',contribution:{kind:'finding',description:'One new useful finding, implementation, verification, blocker or completion this session',evidence:['A real returned proof identity']},pitfalls:[],plan:{goal:'Specific current task from James',why:'How it advances the assigned repository lane',gantt_row:'Assigned row',current_task:'t1',tasks:[{id:'t1',title:'One concrete subtask',acceptance:'Observable passing condition',status:'doing',weight:1,evidence:[]}]},actions:[],done:false};
     return [
       `[VENICE BRIDGE V6 — turn ${s.turn}]`,
-      'You are the persistent Venice agent for SRoyaltyy/checklist-engine. The external bridge performs your GitHub tools. Return tool requests as JSON; do not invoke native tools, print @@ commands, or explain what a human should do.',
+      `You are the persistent repository agent for SRoyaltyy/checklist-engine, using the ${PROVIDER} interface. The external bridge performs your GitHub tools. Return tool requests as JSON; do not invoke native tools, print @@ commands, or explain what a human should do.`,
       'Task authority: main/METHODOLOGY.md says active task lists live in TODO.md. Follow the CURRENT main/TODO.md Venice lane below. Old chat history and notes never restore a superseded assignment. Preserve sealed records and stay in the assigned lane.',
       tools,
       'New workflow execution: a push-triggered workflow can run from your venice/* branch before it is merged to main. Use an exact branch filter and narrow paths so checkpoints do not trigger unrelated jobs. Manual workflow_dispatch has default-branch registration requirements; do not confuse this with push-triggered execution. Use minimal permissions, job timeouts, source-matched tests and retained outputs.',
@@ -129,6 +142,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     if(generating())return;
     const e=composer();if(e&&value(e).trim()){note('waiting for user draft');return;}
     const old=win.location.pathname;
+    if(DEEPSEEK){if(old==='/'&&assistants().length===0){s.phase='idle';s.rollover=false;s.chatTurns=0;s.chatChars=0;s.nextAt=0;persist();return;}s.phase='rolling';s.oldPath=old;s.rollAt=Date.now();persist();win.location.assign('https://chat.deepseek.com/?repo_bridge=1');return;}
     if(assistants().length===0 && /\/chat\/(classic|agent)\/?$/.test(old)){s.phase='idle';s.rollover=false;s.chatTurns=0;s.chatChars=0;s.nextAt=0;persist();note('fresh landing; restoring GitHub state');return;}
     const button=[...doc.querySelectorAll('button,a,[role="button"]')].find(e=>visible(e)&&/^(new chat|new conversation|start new)(\b|$)/i.test(label(e)));
     if(!button){note('new chat control missing');return;}
@@ -137,6 +151,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   async function prepare(){
     if(!s.quietAfterTurn&&!pacingReady())return;
     const e=composer();if(!e||generating()||value(e).trim()){s.nextAt=Date.now()+15000;persist();note('waiting for empty composer');return;}
+    if(!DEEPSEEK&&!s.modePreferenceApplied){s.modePreferenceApplied=true;persist();const preferred=config.preferredVeniceMode||'agent';if(veniceMode()&&veniceMode()!==preferred&&switchVeniceMode(preferred,'preferred_mode'))return;}
     const context=await request('context');
     if(stopped)return;
     s.context=context;
@@ -187,13 +202,17 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     try{await request('checkpoint',{turn_id:s.turn,summary:String(packet.summary||''),next:packet.next||'',plan:packet.plan,notes:packet.notes,contribution:packet.contribution,pitfalls:packet.pitfalls,tool_results:s.results.map(x=>({tool:x.tool,ok:x.result.ok,error:x.result.error,path:x.result.path||x.args.path,url:x.result.url,commit:x.result.commit,verified:x.result.verified,facts:x.result.facts,error_lines:x.result.error_lines})),done:!!packet.done,evidence});}
     catch(error){if(error.status===400){s.lastError=error.message;s.results.push({tool:'checkpoint',args:{},result:{ok:false,error:error.message}});s.phase='idle';s.prompt=null;s.packet=null;s.actionIndex=0;s.quietAfterTurn=false;s.repair=1;s.failures=(s.failures||0)+1;if(s.failures>=2)s.rollover=true;s.nextAt=Date.now()+3000;persist();note('Checkpoint: '+error.message);return;}throw error;}
     if(stopped)return;
-    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.pacingPenalty=Math.max(1,(s.pacingPenalty||1)/2);s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
+    s.chatTurns=(s.chatTurns||0)+1;s.chatChars=(s.chatChars||0)+(s.prompt?.length||0)+(lastReply.length||0);s.phase='idle';s.actionIndex=0;s.packet=null;s.prompt=null;s.nextAt=Date.now()+(packet.done||!packet.actions.length?PERIOD:3000);s.lastCompletedTurn=s.turn;s.completedAt=Date.now();s.failures=0;s.technicalTimeouts=0;s.pacingPenalty=Math.max(1,(s.pacingPenalty||1)/2);s.lastInputSignature=s.inputSignature;s.quietAfterTurn=!!packet.done||(!packet.actions.length&&packet.contribution?.kind==='blocker');persist();note(packet.done?'checkpoint saved; waiting for new inputs':'checkpoint saved; continuing');
   }
   async function pump(){
     lastTick=Date.now();if(stopped||pumping||!leaseHeld)return;paint();if(!s.enabled)return;
     pumping=true;
     try{
       if(providerBlocked()){paint();return;}
+      if(s.phase==='switching_mode'){
+        if(veniceMode()===s.modeRoute?.to&&composer()&&!generating()){s.phase='idle';s.modeRoute=null;s.rollover=true;s.chatTurns=0;s.chatChars=0;s.nextAt=0;persist();note('chat mode changed; restoring GitHub task state');}
+        else if(Date.now()-(s.modeRoute?.at||0)>45000){s.phase='idle';s.modeRoute=null;s.nextAt=Date.now()+30000;persist();note('mode navigation incomplete; waiting');}return;
+      }
       if(s.phase==='rolling'){
         if(win.location.pathname!==s.oldPath && composer() && !generating() && assistants().length===0){
           s.phase='idle';s.rollover=false;s.chatTurns=0;s.chatChars=0;s.nextAt=0;s.failures=0;persist();note('new chat; restoring GitHub state');
@@ -211,7 +230,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
         const text=replyText();if(text!==lastReply){lastReply=text;replyChanged=Date.now();}
         const packet=parseReply(text,s.turn);
         if(packet&&!generating()&&Date.now()-replyChanged>5000){s.actionIndex=0;await execute(packet);return;}
-        if(Date.now()-s.sentAt>360000){s.failures=(s.failures||0)+1;s.phase='idle';s.rollover=true;s.nextAt=Date.now()+15000;persist();note('response timeout; rolling over with saved state');}
+        if(Date.now()-s.sentAt>360000){s.failures=(s.failures||0)+1;s.technicalTimeouts=(s.technicalTimeouts||0)+1;if(!DEEPSEEK&&s.technicalTimeouts>=2&&Date.now()-(s.lastModeSwitch?.at||0)>1800000&&switchVeniceMode(veniceMode()==='agent'?'classic':'agent','repeated_response_timeout')){note('technical response failure; changing chat mode');return;}s.phase='idle';s.rollover=true;s.nextAt=Date.now()+15000;persist();note('response timeout; rolling over with saved state');}
         else if(text&&!packet&&!generating()&&Date.now()-replyChanged>25000){
           s.failures=(s.failures||0)+1;s.repair=1;s.phase='idle';s.nextAt=Date.now()+3000;if(s.failures>=2)s.rollover=true;persist();note('requesting structured continuation');
         }
@@ -243,6 +262,6 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   else {leaseHeld=true;note('connected (single-tab mode)');}
   interval=win.setInterval(pump,2000);pump();persist();
   const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,providerBlocked:!!s.providerBlock,blockedUntil:s.providerBlock?.until,nextModelAt:nextAllowedSend(),pacing,canUpgrade:!pumping&&['idle','provider_blocked'].includes(s.phase)}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
-  win.__venice6=api;return api;
+  win.__repoBridge=api;win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
 
