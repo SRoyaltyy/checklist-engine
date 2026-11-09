@@ -1,8 +1,8 @@
 {
-  "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
+  "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t7",
+  "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
@@ -31,15 +31,15 @@
     },
     {
       "id": "t3",
-      "title": "Author STAGES.csv hierarchy and v2 8-status REQUIREMENTS.csv via generator, aligned to test assertions",
-      "acceptance": "build_hierarchy runs to completion on real v1 rows (no unmapped-requirement SystemExit) and STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; REQ_COLS in generator and test agree",
+      "title": "Fix stage-8 substage mapping so build_hierarchy/build_matrices completes on all canonical rows",
+      "acceptance": "build_matrices.py runs to completion with no 'unmapped requirement' output; STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; REQ_COLS in generator and test agree",
       "weight": 2,
       "status": "doing",
       "evidence": [
         "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
         "17ec27c19e0545bb8204cf629e5bed202c76aa29",
         "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
-        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
       ],
       "blocker": ""
     },
@@ -72,14 +72,13 @@
     },
     {
       "id": "t7",
-      "title": "Retarget audit workflow to v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
-      "acceptance": "Workflow points at venice/repo-hierarchical-audit-v2, tests updated, green run on final head and merged PR",
+      "title": "Extend validator/tests, get green exact-head run, open and merge PR",
+      "acceptance": "Tests updated to v2 columns, green run on final head and merged PR",
       "weight": 2,
-      "status": "doing",
+      "status": "todo",
       "evidence": [
         "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
-        "eda683e7d07114ca4f0faba314b9539cce4297cc",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092"
+        "eda683e7d07114ca4f0faba314b9539cce4297cc"
       ],
       "blocker": ""
     }
