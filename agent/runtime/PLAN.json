@@ -1,13 +1,13 @@
 {
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
-  "why": "Satisfies the active repo-hierarchical-audit-v2 assignment (supersedes v1 PR 226) in the Venice lane while preserving sealed records and other agents' lanes.",
+  "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
   "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
-      "title": "Read the full v2 spec (both halves) and confirm live main and branch heads",
-      "acceptance": "Spec read to line 96 with sha, main head sha and branch head sha returned",
+      "title": "Read the full v2 spec and confirm live main and branch heads",
+      "acceptance": "Spec read with sha, main head sha and branch head sha returned",
       "weight": 1,
       "status": "done",
       "evidence": [
@@ -20,30 +20,31 @@
     {
       "id": "t2",
       "title": "Rewrite docs/venice-audit-v1/PROGRESS.json for repo-hierarchical-audit-v2",
-      "acceptance": "PROGRESS.json on the branch has task_id repo-hierarchical-audit-v2, assignment_sha 8e75e4f7, snapshot_sha main@7020524b and a new returned blob SHA",
+      "acceptance": "PROGRESS.json has task_id repo-hierarchical-audit-v2 and new blob SHA",
       "weight": 1,
       "status": "done",
       "evidence": [
         "055b1e3440432f60755614e6e5b324e3556088d1",
-        "agent/runtime/receipts/mw98hrv5-rzim04sg.0.json@6d74bbaac36a2723c9d98c24083bd56a233a4dba"
+        "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
       ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Author STAGES.csv hierarchy (stages 0-8 + substages) and v2 REQUIREMENTS.csv 8-status granular master, aligned to generator/test constraints",
-      "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique node/requirement ids, parent links, blank stage-row percentages and per-item statuses at returned blob SHAs, with test/generator compatibility accounted for",
+      "title": "Author STAGES.csv hierarchy and v2 8-status REQUIREMENTS.csv aligned to generator/test constraints",
+      "acceptance": "STAGES.csv and REQUIREMENTS.csv exist with unique ids, parent links, blank stage-row percentages and per-item statuses at returned blob SHAs, generator/test compatibility established",
       "weight": 2,
       "status": "doing",
       "evidence": [
         "docs/venice-audit-v1/build_matrices.py@998186675274ba149ea5999b48cbde80107003db",
-        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197"
+        "tests/test_repo_requirements_audit.py@4ef0ff05948697ab1809e49f719ae037a89ee197",
+        "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19"
       ],
       "blocker": ""
     },
     {
       "id": "t4",
-      "title": "Build QUESTION_INDEX.csv with canonical question ids, predicates/templates and per-question states",
+      "title": "Build QUESTION_INDEX.csv",
       "acceptance": "QUESTION_INDEX.csv exists with canonical IDs, parent_substage_id, subject_id and design/implementation/answer/verification states at a returned blob SHA",
       "weight": 2,
       "status": "todo",
@@ -53,7 +54,7 @@
     {
       "id": "t5",
       "title": "Emit per-substage visual Gantt SVGs plus charts/CHART_INDEX.csv",
-      "acceptance": "Every substage in STAGES.csv has its own SVG showing all required children/statuses, indexed by CHART_INDEX.csv at returned SHAs",
+      "acceptance": "Every substage has its own SVG showing all required children/statuses, indexed at returned SHAs",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -61,8 +62,8 @@
     },
     {
       "id": "t6",
-      "title": "Write README.md entrypoint, GANTT.md overview, top-level GANTT visual and details/<substage-id>.md pages",
-      "acceptance": "All reporting layers exist, percentages only inside substages, no fabricated completion, cross-referenced with v1 matrices",
+      "title": "Write README.md, GANTT.md, top-level GANTT visual and details/<substage-id>.md pages",
+      "acceptance": "All reporting layers exist, percentages only inside substages, cross-referenced with v1 matrices",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -70,8 +71,8 @@
     },
     {
       "id": "t7",
-      "title": "Retarget audit workflow to the v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
-      "acceptance": "Workflow branch filter/checkout ref point at venice/repo-hierarchical-audit-v2, tests updated for v2 CSVs, green run on the final head SHA and merged PR on main",
+      "title": "Retarget audit workflow to v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
+      "acceptance": "Workflow points at venice/repo-hierarchical-audit-v2, tests updated, green run on final head and merged PR",
       "weight": 2,
       "status": "todo",
       "evidence": [],
