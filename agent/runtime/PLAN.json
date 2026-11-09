@@ -79,19 +79,31 @@
       "title": "Write the extended test file covering REQUIREMENTS/GANTT_COMPARISON/EVIDENCE",
       "acceptance": "write_file returns a new commit sha and the following push run executes the enlarged test count",
       "weight": 2,
+      "status": "done",
+      "evidence": [
+        "e3eba97efdcbfdf29c1bbf7a6b384dba8a32eb91",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42556696754/job/128963937196"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t5b",
+      "title": "Identify the run covering the current branch head 60b4d6cc",
+      "acceptance": "runs list shows a venice-repo-requirements-audit run with sha 60b4d6cc and conclusion success",
+      "weight": 2,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     },
     {
       "id": "t5",
-      "title": "Open PR and merge on green exact-head checks",
-      "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+      "title": "Merge PR #226 on green exact-head checks",
+      "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha with successful checks at that sha",
       "weight": 3,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 70
+  "progress_percent": 73
 }
