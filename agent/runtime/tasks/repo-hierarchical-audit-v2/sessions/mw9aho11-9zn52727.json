@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "at": "2026-11-09T13:21:33.199Z",
+  "input": {
+    "task_id": "repo-hierarchical-audit-v2",
+    "assignment_sha": "8e75e4f7f1e0ccf926392cca31246dcdacf1fd8b",
+    "owner_id": "mw97oe6x-0jd6wpev",
+    "turn_id": "mw9aho11-9zn52727",
+    "branch": "venice/repo-hierarchical-audit-v2",
+    "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy, with separate lifecycle statuses and percentages only within substages.",
+    "summary": "Orient on the failed audit run eda683e7 triggered after retargeting the workflow checkout to venice/repo-hierarchical-audit-v2; the earlier run on 8c2ec30 (still pinned to the v1 tree) passed, so the failure is in building/testing the v2 branch tree.",
+    "next": "Read job ids from run 42624144140, then pull the failing job log to get the exact error line before changing any source.",
+    "contribution": {
+      "kind": "finding",
+      "description": "Isolated that the audit failure is specific to the v2 tree, not the workflow mechanics: the identical workflow passed while checking out the old v1 branch (8c2ec30) and failed only after the checkout ref was switched to venice/repo-hierarchical-audit-v2 (eda683e7).",
+      "evidence": [
+        "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
+        "eda683e7d07114ca4f0faba314b9539cce4297cc",
+        "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
+      ]
+    },
+    "plan": {
+      "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses and percentages only within substages, delivering a new tested PR on venice/repo-hierarchical-audit-v2.",
+      "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
+      "gantt_row": "All project stages 0–8; evidence audit only",
+      "current_task": "t7",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Read the full v2 spec and confirm live main and branch heads",
+          "acceptance": "Spec read with sha, main head sha and branch head sha returned",
+          "weight": 1,
+          "status": "done",
+          "evidence": [
+            "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60",
+            "main@7020524ba68ed49932e2c72ce721993991d9cd99",
+            "venice/repo-hierarchical-audit-v2@8405b21da8aee133fc704ffefa67c24d4257b60c"
+          ],
+          "blocker": ""
+        },
+        {
+          "id": "t2",
+          "title": "Rewrite docs/venice-audit-v1/PROGRESS.json for repo-hierarchical-audit-v2",
+          "acceptance": "PROGRESS.json has task_id repo-hierarchical-audit-v2 and new blob SHA",
+          "weight": 1,
+          "status": "done",
+          "evidence": [
+            "055b1e3440432f60755614e6e5b324e3556088d1",
+            "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6"
+          ],
+          "blocker": ""
+        },
+        {
+          "id": "t3",
+          "title": "Author STAGES.csv hierarchy and v2 8-status REQUIREMENTS.csv via generator, aligned to test assertions",
+          "acceptance": "build_hierarchy runs to completion on real v1 rows (no unmapped-requirement SystemExit) and STAGES.csv + v2 REQUIREMENTS.csv exist at returned blob SHAs; REQ_COLS in generator and test agree",
+          "weight": 2,
+          "status": "doing",
+          "evidence": [
+            "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
+            "17ec27c19e0545bb8204cf629e5bed202c76aa29",
+            "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+            "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346"
+          ],
+          "blocker": ""
+        },
+        {
+          "id": "t4",
+          "title": "Build QUESTION_INDEX.csv",
+          "acceptance": "QUESTION_INDEX.csv exists with canonical IDs, parent_substage_id, subject_id and design/implementation/answer/verification states at a returned blob SHA",
+          "weight": 2,
+          "status": "todo",
+          "evidence": [],
+          "blocker": ""
+        },
+        {
+          "id": "t5",
+          "title": "Emit per-substage visual Gantt SVGs plus charts/CHART_INDEX.csv",
+          "acceptance": "Every substage has its own SVG showing all required children/statuses, indexed at returned SHAs",
+          "weight": 2,
+          "status": "todo",
+          "evidence": [],
+          "blocker": ""
+        },
+        {
+          "id": "t6",
+          "title": "Write README.md, GANTT.md, top-level GANTT visual and details/<substage-id>.md pages",
+          "acceptance": "All reporting layers exist, percentages only inside substages, cross-referenced with v1 matrices",
+          "weight": 2,
+          "status": "todo",
+          "evidence": [],
+          "blocker": ""
+        },
+        {
+          "id": "t7",
+          "title": "Retarget audit workflow to v2 branch, extend validator/tests, get green exact-head run, open and merge PR",
+          "acceptance": "Workflow points at venice/repo-hierarchical-audit-v2, tests updated, green run on final head and merged PR",
+          "weight": 2,
+          "status": "doing",
+          "evidence": [
+            "8c2ec30a9c594549a0d5d8c6e3c6843daea94be5",
+            "eda683e7d07114ca4f0faba314b9539cce4297cc"
+          ],
+          "blocker": ""
+        }
+      ],
+      "progress_percent": 16
+    },
+    "notes": "ACTIVE: repo-hierarchical-audit-v2, branch venice/repo-hierarchical-audit-v2, assignment_sha 8e75e4f7, allow_merge=true, publishing_enabled=true, deliverable=merged_pr. Snapshot main@7020524b. allowed_paths: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. SPEC @db3d5404: README.md entrypoint; GANTT.md hierarchical table (percent only substage rows); STAGES.csv cols node_id,parent_id,node_type,title,status,substage_percent,percent_numerator,percent_denominator,percent_basis,blockers,next_action,evidence_refs,details_path; REQUIREMENTS.csv = requirement_id,parent_substage_id,subject_id + 8 status fields + status_explanation + authority/acceptance/scope/evidence/missing_work/dependencies/owner/next_action; details/<substage-id>.md; QUESTION_INDEX.csv; charts/CHART_INDEX.csv; charts/<substage-id>/GANTT.svg showing ALL required children. States: NOT_STARTED, IN_PROGRESS, PARTIAL, COMPLETE, BLOCKED, UNVERIFIED, NOT_APPLICABLE. GENERATOR ORDER DONE: build_matrices.run_extras() = build_extra -> build_gantt -> build_hierarchy (c1c60c6d, blob 9f5f57c7). build_hierarchy.py@f1689050: STAGES S0-S7 incl S5B, 19 SUBSTAGES, match_substage by (gantt_group,owner_lane) then group-only fallback, SystemExit on unmapped; mapping verified for R0.1-R6.2 against v1 REQUIREMENTS.csv@78ee06ad. WORKFLOW: now push-filter AND checkout ref both venice/repo-hierarchical-audit-v2 (commits 8c2ec30a then eda683e7; receipts mw9abvy2-apaduzgt.1/.2). Run 42624123419 on 8c2ec30 SUCCESS (still checked out v1 tree); run 42624144140 on eda683e7 FAILURE (now builds v2 tree). Most likely failure sources to confirm from log: build_hierarchy SystemExit on an unmapped tail row, or the workflow drift-report step flagging files regenerated/changed by build_hierarchy (e.g. REQUIREMENTS.csv rewritten to v2). Old v1 test assertions in tests/test_repo_requirements_audit.py still need review in t7. build_extra EVIDENCE still stale (v1 branch, main c30c23be). MISSING on branch: README.md, GANTT.md, STAGES.csv, QUESTION_INDEX.csv, details/, charts/, agent/repo_requirements_audit_validate.py. Branch blobs: DATA_REQUIREMENTS.csv@531b1d19, REQUIREMENTS.csv@78ee06ad, GANTT_COMPARISON.csv@4220cfdf, SOURCE_MANIFEST.json@c4755f36, AUDIT.md@dbdf9d97, GANTT.html@db4e7073, EVIDENCE.json@a69f14e8, PROGRESS.json@19a64f70, build_extra.py@352110f9, build_gantt.py@5bf023d0, build_hierarchy.py@f1689050, tests@4ef0ff05, .gitignore@7f6ff296, tracked __pycache__@96b2fb31. Pitfalls: stale-v1-progress corrected; workflow-branch-filter-mismatch in progress (both pins now flipped, awaiting green run); tracked __pycache__ open. Never infer completion from catalog rows/green jobs; unknown stays UNKNOWN.",
+    "pitfalls": [
+      {
+        "id": "workflow-branch-filter-mismatch",
+        "status": "open",
+        "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'] and the checkout step pins ref venice/repo-requirements-audit-v1, so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit and any run would test the wrong tree.",
+        "failed_approach": "Assuming a push to the active audit branch would start the audit workflow.",
+        "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 (and keep paths narrow) as part of the v2 change before expecting a green run.",
+        "evidence": [
+          ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
+          "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1",
+          "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
+        ],
+        "first_seen": "mw98tesh-vz882aou",
+        "last_seen": "mw9aho11-9zn52727",
+        "seen_at_ms": 1794230460000
+      }
+    ]
+  },
+  "pitfalls": [
+    {
+      "id": "stale-v1-progress",
+      "status": "corrected",
+      "problem": "PROGRESS.json on venice/repo-hierarchical-audit-v2 described the superseded v1 task (task_id repo-requirements-audit-v1, current_subtask t5).",
+      "failed_approach": "Reusing the previous audit's PROGRESS.json as current assignment state.",
+      "lesson": "Rewrite PROGRESS.json for the active task id with its live blob SHA as expected_sha; confirm the new blob on the next read.",
+      "evidence": [
+        "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6",
+        "055b1e3440432f60755614e6e5b324e3556088d1"
+      ],
+      "first_seen": "mw98b8ur-tl63d9d0",
+      "last_seen": "mw9abvy2-apaduzgt",
+      "seen_at_ms": 1794230237589
+    },
+    {
+      "id": "workflow-branch-filter-mismatch",
+      "status": "open",
+      "problem": "venice-repo-requirements-audit.yml push trigger is filtered to branches ['venice/repo-requirements-audit-v1'] and the checkout step pins ref venice/repo-requirements-audit-v1, so pushes to the active venice/repo-hierarchical-audit-v2 never run the audit and any run would test the wrong tree.",
+      "failed_approach": "Assuming a push to the active audit branch would start the audit workflow.",
+      "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 (and keep paths narrow) as part of the v2 change before expecting a green run.",
+      "evidence": [
+        ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
+        "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1",
+        "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
+      ],
+      "first_seen": "mw98tesh-vz882aou",
+      "last_seen": "mw9aho11-9zn52727",
+      "seen_at_ms": 1794230493199
+    }
+  ]
+}
