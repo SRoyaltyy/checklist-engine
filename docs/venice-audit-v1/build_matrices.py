@@ -129,5 +129,11 @@ def main():
     print(json.dumps({'rows': len(out), 'excluded': sum(1 for r in out if r['required_or_excluded'] == 'excluded_control'), 'unique_ids': len(order)}))
 
 
+def run_extras():
+    import build_extra
+    build_extra.main()
+
+
 if __name__ == '__main__':
     main()
+    run_extras()
