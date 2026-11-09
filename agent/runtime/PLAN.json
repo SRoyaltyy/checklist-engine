@@ -12,8 +12,7 @@
       "status": "done",
       "evidence": [
         "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60",
-        "main@7020524ba68ed49932e2c72ce721993991d9cd99",
-        "venice/repo-hierarchical-audit-v2@8405b21da8aee133fc704ffefa67c24d4257b60c"
+        "main@7020524ba68ed49932e2c72ce721993991d9cd99"
       ],
       "blocker": ""
     },
@@ -36,8 +35,7 @@
       "weight": 2,
       "status": "done",
       "evidence": [
-        "b574d2acc6a117094db2f30cd4ba1e8658d2225a",
-        "tests/test_repo_requirements_audit.py@4b77fe90b6344746589dd1acae134c30589712ab"
+        "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
       ],
       "blocker": ""
     },
@@ -47,7 +45,9 @@
       "acceptance": "QUESTION_INDEX.csv exists with canonical IDs, parent_substage_id, subject_id and design/implementation/answer/verification states at a returned blob SHA",
       "weight": 2,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376"
+      ],
       "blocker": ""
     },
     {
@@ -74,9 +74,7 @@
       "acceptance": "Tests updated to v2 columns, green run on final head and merged PR",
       "weight": 2,
       "status": "todo",
-      "evidence": [
-        "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
-      ],
+      "evidence": [],
       "blocker": ""
     }
   ],
