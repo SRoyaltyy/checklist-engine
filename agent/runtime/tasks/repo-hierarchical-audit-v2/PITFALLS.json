@@ -2,7 +2,7 @@
   {
     "id": "stale-v1-progress",
     "status": "corrected",
-    "problem": "PROGRESS.json on venice/repo-hierarchical-audit-v2 described the superseded v1 task (task_id repo-requirements-audit-v1, current_subtask t5).",
+    "problem": "PROGRESS.json on venice/repo-hierarchical-audit-v2 described the superseded v1 task.",
     "failed_approach": "Reusing the previous audit's PROGRESS.json as current assignment state.",
     "lesson": "Rewrite PROGRESS.json for the active task id with its live blob SHA as expected_sha; confirm the new blob on the next read.",
     "evidence": [
@@ -10,13 +10,13 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mw9byjh7-1bcwmp3j",
-    "seen_at_ms": 1794232957568
+    "last_seen": "mw9c57e1-jfv7smou",
+    "seen_at_ms": 1794233267681
   },
   {
     "id": "workflow-branch-filter-mismatch",
     "status": "resolved",
-    "problem": "venice-repo-requirements-audit.yml push trigger was filtered to the v1 branch and its source-matched test asserted the v1 branch string, so no green run existed on the active v2 branch.",
+    "problem": "Workflow branch filter and source-matched test referenced the v1 branch, so no green run existed on the active v2 branch.",
     "failed_approach": "Assuming flipping the workflow filter alone would green the suite.",
     "lesson": "Workflow branches filter + checkout ref AND tests/test_repo_requirements_audit.py must all reference venice/repo-hierarchical-audit-v2, and a green run on the active head is required to close it.",
     "evidence": [
@@ -29,13 +29,13 @@
       "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mw9byjh7-1bcwmp3j",
-    "seen_at_ms": 1794232957568
+    "last_seen": "mw9c57e1-jfv7smou",
+    "seen_at_ms": 1794233267681
   },
   {
     "id": "unmapped-stage8-substage",
     "status": "resolved",
-    "problem": "build_hierarchy.py raised SystemExit on requirement R8.1 because STAGES lacked S8 and SUBSTAGES lacked the '8 Shadow and live'/OPS entry, aborting build_matrices with exit 1.",
+    "problem": "build_hierarchy.py raised SystemExit on requirement R8.1 because STAGES lacked S8 and SUBSTAGES lacked the '8 Shadow and live'/OPS entry.",
     "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
     "lesson": "Add S8 plus an S8.1 substage keyed on gantt_group '8 Shadow and live'/lane OPS, handle the v1 'CLOSED' status explicitly, and verify build_matrices completes with no unmapped-requirement message.",
     "evidence": [
@@ -50,7 +50,7 @@
       "aaf674d0b2502615b874a559d6407a8e97d6861c"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mw9byjh7-1bcwmp3j",
-    "seen_at_ms": 1794232957568
+    "last_seen": "mw9c57e1-jfv7smou",
+    "seen_at_ms": 1794233267681
   }
 ]
