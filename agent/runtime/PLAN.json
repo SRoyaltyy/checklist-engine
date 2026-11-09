@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t5c",
+  "current_task": "t5d",
   "tasks": [
     {
       "id": "t1",
@@ -68,11 +68,11 @@
       "title": "Remove the job's self-push so the head stops moving, then get a green run at that exact head",
       "acceptance": "Workflow step reports drift without git push; a run exists whose sha equals branch_head with conclusion success and no error annotation",
       "weight": 3,
-      "status": "doing",
+      "status": "done",
       "evidence": [
         "b05c9fc3fce9e979f724f3824e07a482b5d3a0f9",
         "92de93572753f1a5c3dfacede4aaa25aadf13845",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42558653746/job/128969995300"
       ],
       "blocker": ""
     },
@@ -81,10 +81,10 @@
       "title": "Merge PR #226 on the green exact-head check",
       "acceptance": "merge_pr returns a merge commit on main for the exact expected_head_sha with a successful check at that sha",
       "weight": 3,
-      "status": "todo",
+      "status": "doing",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 62
+  "progress_percent": 81
 }
