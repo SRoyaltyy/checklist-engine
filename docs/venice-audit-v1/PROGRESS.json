@@ -5,9 +5,11 @@
   "branch_created_from_main_sha": "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
   "audit_base_sha_required_by_spec": "68c6f2a83387f796cdf9836261dce1546ea61a92",
   "observed_main_head_at_start": "c30c23bed24dc986b2bbf5a4b559a022e2df4300",
-  "main_delta_note": "Live main advanced from the spec audit base 68c6f2a8 to c30c23be via commit 'tasks: assign Venice full requirements, data and Gantt evidence audit'. All other audit findings must be re-checked against c30c23be and the delta stated explicitly before the final PR.",
-  "updated_at": "2026-11-09T02:48:00Z",
-  "current_subtask": "t3",
+  "main_delta_note": "Live main advanced from the spec audit base 68c6f2a8 to c30c23be via commit 'tasks: assign Venice full requirements, data and Gantt evidence audit'. AUDIT.md section 9 states the delta; re-check it against current main immediately before the merge.",
+  "updated_at": "2026-11-09T03:10:00Z",
+  "green_head": "96ef78940beffb523b0fc7698d5bb89cc99eae7d",
+  "green_run": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546",
+  "current_subtask": "t5",
   "completed_subtasks": [
     {
       "id": "t0a",
@@ -29,33 +31,63 @@
     },
     {
       "id": "t2",
-      "title": "Build DATA_REQUIREMENTS.csv (258 rows, 19 columns) and SOURCE_MANIFEST.json from the four authority files, with a green push-triggered workflow that actually runs pytest",
+      "title": "Build DATA_REQUIREMENTS.csv (258 rows, 19 columns) and SOURCE_MANIFEST.json from the four authority files, with a green push workflow that actually runs pytest",
       "evidence": [
         "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
         "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
         "tests/test_repo_requirements_audit.py@a1210ac105402c3388cb3988c633b6458f8c74a5",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42552322976/job/128950413628"
       ]
+    },
+    {
+      "id": "t3",
+      "title": "Verify claims into EVIDENCE.json and emit REQUIREMENTS.csv plus GANTT_COMPARISON.csv with D2 split rows",
+      "evidence": [
+        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+        "docs/venice-audit-v1/EVIDENCE.json@2ab0495353694ea6c84493fddc93fbb95a1e5945"
+      ]
+    },
+    {
+      "id": "t4",
+      "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
+      "evidence": [
+        "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
+        "docs/venice-audit-v1/GANTT.html@db4e707374d305fbd45c0300505c5b722375fbfc"
+      ]
+    },
+    {
+      "id": "t4a",
+      "title": "Fix the build_gantt docstring syntax defect and reach a green run",
+      "evidence": [
+        "docs/venice-audit-v1/build_gantt.py@5bf023d09a62c98ffc41abf1c7396fb8b3b5d133",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42554257008/job/128956342546"
+      ]
     }
   ],
   "remaining_subtasks": [
-    {"id": "t3", "title": "Verify each claim against immutable main evidence into EVIDENCE.json with verified/unverified/missing verdicts; emit REQUIREMENTS.csv for stages 0-8"},
-    {"id": "t4", "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html, dependency-ordered AUDIT.md"},
-    {"id": "t5", "title": "Add validator, extend source-matched tests, open PR and merge on green exact-head checks"}
+    {"id": "t4b", "title": "Clear the committed docs/venice-audit-v1/__pycache__ directory before the PR"},
+    {"id": "t5", "title": "Extend tests/test_repo_requirements_audit.py, open the PR and merge on green exact-head checks"}
   ],
   "baseline_charts": {
     "v16": {"as_of": "2026-11-07 ~08:55 HKT", "main_ref": "e85547ac", "forecast_dates": "legacy, NOT a forecast"},
     "v20": {"as_of": "2026-11-09 01:13 HKT", "main_ref": "2ba3ebdf", "forecast_dates": "legacy, NOT a forecast"}
   },
   "evidence": [
-    "branch_head(venice/repo-requirements-audit-v1) -> a1210ac105402c3388cb3988c633b6458f8c74a5",
-    "run_jobs(42552322976) -> all 10 steps success, including 'Run source-matched tests'",
+    "run_jobs(42554257008) -> all 10 steps success, including Build matrices, Run source-matched tests and Commit regenerated matrices",
+    "check-runs/128956342546 -> conclusion success, annotations_count 2, no error annotation",
+    "list_files(docs/venice-audit-v1) -> 11 files, GANTT.html present at db4e7073",
     ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
   ],
-  "pitfalls": [],
+  "pitfalls": [
+    {"id": "single-quote-docstring", "status": "resolved", "lesson": "Modules imported by build_matrices must open with a real docstring or comment; prove with the build step conclusion, not the write receipt."},
+    {"id": "empty-diff-commit", "status": "corrected", "lesson": "The commit step was already diff-guarded; a step-7 exit 1 came from the else-branch commit/push path."},
+    {"id": "truncated-job-logs", "status": "open", "lesson": "Use run_jobs conclusions and check-runs annotations; job HTML logs are always truncated."},
+    {"id": "committed-pycache", "status": "open", "lesson": "git add of a whole docs directory sweeps in __pycache__; remove before PR."}
+  ],
   "open_questions": [
     "Which main path holds the authoritative 258-kind inventory list (docs/INVENTORY_CATALOG_AUDIT_V1.json vs dictionary/WORLD_SNAPSHOT_DICTIONARY.csv) and how are the older 233 / ~296 counts reconciled?",
     "Where is the owner authority that excludes Finviz (live-only) and GDELT, as required by W16/W17?"
   ],
-  "exact_next_step": "Extend docs/venice-audit-v1/build_matrices.py to also emit REQUIREMENTS.csv (requirement_id,authority_path,authority_anchor_or_lines,requirement,gantt_group,owner_lane,dependencies,acceptance_condition,current_status,evidence_refs,remaining_action for stages 0-8) and EVIDENCE.json keyed to main path@blob-sha with verified/unverified/missing verdicts, leaving DATA_REQUIREMENTS.csv byte-stable so the existing 7 tests still pass."
+  "exact_next_step": "Remove docs/venice-audit-v1/__pycache__ from the branch, extend tests/test_repo_requirements_audit.py with assertions for REQUIREMENTS.csv 11-column header, full baseline-row coverage in GANTT_COMPARISON.csv, EVIDENCE.json id uniqueness and GANTT.html presence without fabricated percentages, confirm a green run at the new head, then open the PR to main and merge on exact-head success."
 }
