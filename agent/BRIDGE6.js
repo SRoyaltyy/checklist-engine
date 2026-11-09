@@ -1,7 +1,7 @@
-// Venice web runtime 6.4.3. Loaded by LOADER6.user.js, returns an explicit handle.
+// Venice web runtime 6.4.4. Loaded by LOADER6.user.js, returns an explicit handle.
 return (function (gm, get, set, win, doc, config) {
   'use strict';
-  const VERSION='6.4.3', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
+  const VERSION='6.4.4', STORE='vrb6.runtime', PERIOD=300000, MAX_CHAT_TURNS=10, MAX_CHAT_CHARS=100000;
   let stopped=false, pumping=false, lastTick=Date.now(), interval, lastReply='', replyChanged=0, leaseHeld=false;
   const timers=new Set(), pendingRequests=new Set();
   const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
@@ -37,6 +37,33 @@ return (function (gm, get, set, win, doc, config) {
     return buttons.find(e=>/send|submit/i.test(label(e)))||buttons.find(e=>e.querySelector('svg.lucide-arrow-up,svg.lucide-send,svg[data-icon="arrow-up"]'))||null;
   }
   function generating(){return [...doc.querySelectorAll('button')].some(e=>visible(e)&&/stop generating|stop response|stop generation|minds-chat-stop|^stop$/i.test(label(e)));}
+  function providerNotice(){
+    const text=[...doc.querySelectorAll('[role="alert"]')].filter(visible).map(e=>e.innerText||e.textContent||'').find(x=>/unusually heavy automated usage|requests\s+resume\s+in/i.test(x));
+    if(!text)return null;
+    const m=text.match(/requests\s+resume\s+in\s+(\d+(?:\.\d+)?)\s*(seconds?|minutes?|hours?|days?)/i);
+    const duration=m?Number(m[1])*({s:1000,m:60000,h:3600000,d:86400000})[m[2][0].toLowerCase()]:null;
+    return {text:text.trim().slice(0,1500),duration:duration>0?duration:null};
+  }
+  function providerBlocked(){
+    let block=s.providerBlock;
+    if(block?.until&&Date.now()>=block.until&&!block.refreshed){
+      // Refresh once AFTER the advertised cooldown, never rotate chats/accounts to evade it.
+      block.refreshed=true;persist();note('cooldown elapsed; refreshing provider notice');
+      if(typeof win.location.reload==='function')win.location.reload();return true;
+    }
+    if(block&&(!block.until||Date.now()>=block.until)){
+      const current=providerNotice();
+      if(!current){s.phase=block.resumePhase||'idle';s.providerBlock=null;s.prompt=null;s.nextAt=0;persist();note('provider notice cleared; restoring saved work');return false;}
+      if(!block.until)return true;
+      s.providerBlock=null;block=null;
+    }
+    if(block)return true;
+    const notice=providerNotice();if(!notice)return false;
+    const resumePhase=['executing','checkpointing','retrying'].includes(s.phase)?s.phase:'idle';
+    const e=composer();if(e&&s.prompt&&value(e).trim()===s.prompt.trim())fill(e,'');
+    s.providerBlock={notice:notice.text,observedAt:Date.now(),until:notice.duration?Date.now()+notice.duration:null,resumePhase,refreshed:false};
+    s.phase='provider_blocked';persist();note(notice.duration?'provider cooldown; automatic resume after advertised wait':'provider blocked; waiting for notice to clear');return true;
+  }
   function assistants(){return [...doc.querySelectorAll('.assistant')].filter(e=>!e.parentElement?.closest('.assistant'));}
   function replyText(){const a=assistants();return a.length>s.baseline?a[a.length-1].innerText:'';}
   function parseReply(text,turn){
@@ -50,7 +77,7 @@ return (function (gm, get, set, win, doc, config) {
   const badge=doc.createElement('button');badge.id='venice-runtime-v6';badge.style.cssText='position:fixed;right:12px;bottom:12px;z-index:2147483647;background:#1b6b45;color:white;border:1px solid #7bdba5;border-radius:8px;padding:8px 12px;font:12px monospace;max-width:380px;cursor:pointer';
   badge.onclick=()=>{s.enabled=!s.enabled;persist();paint();if(s.enabled)pump();};
   badge.oncontextmenu=e=>{e.preventDefault();s.nextAt=0;s.rollover=true;s.quietAfterTurn=false;persist();pump();};
-  function paint(){badge.textContent=`V6 ${s.enabled?'ON':'PAUSED'} | ${s.phase} | ${s.chatTurns||0} turns`+(s.lastStatus?' | '+s.lastStatus.slice(0,65):'');badge.title='Click to pause/resume. Right-click to continue in a fresh chat. Progress is checkpointed to GitHub.';}
+  function paint(){badge.textContent=s.providerBlock?`V6 ${s.enabled?'ON':'PAUSED'} | PROVIDER BLOCKED | `+(s.providerBlock.until?'wait until '+new Date(s.providerBlock.until).toLocaleString():'waiting for provider notice to clear'):`V6 ${s.enabled?'ON':'PAUSED'} | ${s.phase} | ${s.chatTurns||0} turns`+(s.lastStatus?' | '+s.lastStatus.slice(0,65):'');badge.title=s.providerBlock?s.providerBlock.notice:'Click to pause/resume. Right-click to continue in a fresh chat. Progress is checkpointed to GitHub.';}
   doc.body.appendChild(badge);paint();
   const tools=`Tools (each action is {"tool":"name","args":{...}}):
 read_file(path,branch=main,start_line,end_line,offset), list_files(path,branch), grep(path,query,branch), branch_head(branch), read_issue(issue,offset), read_pr(pr,offset), issue_comments(issue,page), pr_files(pr,page), runs(branch=main), run_status(run_id), run_jobs(run_id), job_log(job_id,run_id), annotations(check_run_id), report_failure(run_id), write_file(path,text,branch,expected_sha), edit_file(path,find,replace,branch), create_branch(branch,base=main), sync_branch(expected_head_sha), create_pr(title,body,branch), create_issue(title,body,dedupe_key), comment_issue(issue,body), dispatch(workflow,branch,inputs), merge_pr(pr,expected_head_sha), deploy_worker(branch).
@@ -143,6 +170,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
     lastTick=Date.now();if(stopped||pumping||!leaseHeld)return;paint();if(!s.enabled)return;
     pumping=true;
     try{
+      if(providerBlocked()){paint();return;}
       if(s.phase==='rolling'){
         if(win.location.pathname!==s.oldPath && composer() && !generating() && assistants().length===0){
           s.phase='idle';s.rollover=false;s.chatTurns=0;s.chatChars=0;s.nextAt=0;s.failures=0;persist();note('new chat; restoring GitHub state');
@@ -191,7 +219,7 @@ For script repairs: the browser runtime is agent/BRIDGE6.js and loader is agent/
   if(win.navigator.locks){acquireLease();}
   else {leaseHeld=true;note('connected (single-tab mode)');}
   interval=win.setInterval(pump,2000);pump();persist();
-  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,canUpgrade:!pumping&&s.phase==='idle'}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
+  const api={version:VERSION,health:()=>({ready:!stopped,lastTick,lastCompletedAt:s.completedAt||0,phase:s.phase,enabled:s.enabled,owner:leaseHeld,providerBlocked:!!s.providerBlock,blockedUntil:s.providerBlock?.until,canUpgrade:!pumping&&['idle','provider_blocked'].includes(s.phase)}),stop:()=>{stopped=true;win.clearInterval(interval);for(const t of timers)win.clearTimeout(t);for(const r of pendingRequests)try{r.abort();}catch{}releaseLock?.();badge.remove();},wake:()=>{s.nextAt=0;s.enabled=true;s.quietAfterTurn=false;persist();pump();},rollover:()=>{s.rollover=true;s.nextAt=0;s.quietAfterTurn=false;persist();pump();},status:()=>JSON.parse(JSON.stringify(s))};
   win.__venice6=api;return api;
 })(GM_xmlhttpRequest,GM_getValue,GM_setValue,window,document,CONFIG);
 

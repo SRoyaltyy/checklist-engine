@@ -1,0 +1,13 @@
+{
+  "status": "PROVIDER_COOLDOWN_OBSERVED",
+  "observed_at": "2026-11-09T05:24:31.000Z",
+  "provider_notice": "Unusually heavy automated usage; requests resume in 10 hours.",
+  "source": "Observed Venice browser alert",
+  "source_url": "https://venice.ai/chat/classic/goTMZr6",
+  "estimated_not_before": "2026-11-09T15:24:31.000Z",
+  "exact_reset_unknown": true,
+  "task_id": "repo-hierarchical-audit-v2",
+  "assignment_remains_queued": true,
+  "controller_fix": "6.4.4 detects the provider notice, stops chat attempts/rollovers, retains state and waits through the advertised interval.",
+  "verification": "51 browser/loader/ownership checks passed; real resumed inference cannot be verified until provider allows it."
+}
