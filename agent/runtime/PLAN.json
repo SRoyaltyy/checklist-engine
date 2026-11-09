@@ -1,7 +1,7 @@
 {
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
-  "gantt_row": "All project stages 0-8; evidence audit only",
+  "gantt_row": "All project stages 0–8; evidence audit only",
   "current_task": "t4b",
   "tasks": [
     {
@@ -64,10 +64,12 @@
     {
       "id": "t4b",
       "title": "Confirm GANTT.html exists on the branch and refresh PROGRESS.json to the green head",
-      "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html at head 96ef7894 and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
+      "acceptance": "list_files shows docs/venice-audit-v1/GANTT.html and AUDIT.md at head 8b6a299c and a PROGRESS.json write returns a commit on venice/repo-requirements-audit-v1",
       "weight": 1,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "8b6a299c6d6b369591fe038de7593d2031f85526"
+      ],
       "blocker": ""
     },
     {
