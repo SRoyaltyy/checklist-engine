@@ -2,7 +2,7 @@
   "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
   "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t6",
+  "current_task": "done",
   "tasks": [
     {
       "id": "t1",
@@ -92,10 +92,14 @@
       "title": "Verify the audit artifacts are present on main after the merge",
       "acceptance": "branch_head(main) is the merge commit or a descendant, and AUDIT.md plus GANTT_COMPARISON.csv read successfully on main",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "38ca4c1da04c1f52c1e81196bd743d2704b5d93d",
+        "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
+        "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
+      ],
       "blocker": ""
     }
   ],
-  "progress_percent": 94
+  "progress_percent": 100
 }
