@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "at": "2026-11-09T02:37:41.397Z",
+  "input": {
+    "task_id": "repo-requirements-audit-v1",
+    "assignment_sha": "fe5043dc723075d0d79b72a91c100b9667ab4fa7",
+    "owner_id": "mw83wh2u-kaq8t5cl",
+    "turn_id": "mw8neub3-txlx9jsa",
+    "branch": "venice/repo-requirements-audit-v1",
+    "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+    "summary": "Proven this session: the canonical id space is mixed (C-prefixed rows then I1..I228) across the three 260-line authority files, and the tail rows I217-I228 are block A / STOCK_SCALAR with CLASS_APPLICABILITY_ONLY and UNMEASURED status. Last committed artifact is docs/venice-audit-v1/DATA_REQUIREMENTS.csv at b8a271b0 with the exact 19-column header plus rows C01-C17. Hand-transcribing 240 further rows would be error-prone, so this turn writes a deterministic builder that derives every column from the four authority files by header name, plus the push-triggered audit workflow. Nothing is claimed as merged; no gate is opened.",
+    "next": "Read docs/venice-audit-v1/PROGRESS.json (need its blob sha) and the returned write commits, then add tests/test_repo_requirements_audit.py asserting 258 inventory ids, 19 columns, non-empty authority_ref per row and C28/C29 as excluded controls, so the next push runs the workflow green.",
+    "contribution": {
+      "kind": "finding",
+      "description": "Proved the canonical id space is mixed (C-prefixed rows then I1..I228) across all three 260-line authority files, with I217-I228 as block-A STOCK_SCALAR rows that are CLASS_APPLICABILITY_ONLY / UNMEASURED / NOT_PROVEN, and decided to replace hand-transcription with a deterministic builder keyed by CSV header name so column order and row count cannot drift.",
+      "evidence": [
+        "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+        "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+        "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464"
+      ]
+    },
+    "plan": {
+      "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
+      "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
+      "gantt_row": "All project stages 0-8; evidence audit only",
+      "current_task": "t2",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Seed docs/venice-audit-v1/PROGRESS.json on the created audit branch as durable fallback",
+          "acceptance": "write_file returns a commit sha on venice/repo-requirements-audit-v1 and the file is readable at that sha",
+          "weight": 1,
+          "status": "done",
+          "evidence": [
+            "72feb223aa4edb78abfbf7143361b1b75fcba7ad"
+          ]
+        },
+        {
+          "id": "t2",
+          "title": "Build DATA_REQUIREMENTS.csv (one row per canonical id) and REQUIREMENTS.csv (stages 0-8) from authority files",
+          "acceptance": "docs/venice-audit-v1/build_matrices.py regenerates DATA_REQUIREMENTS.csv with the 19-column header and exactly one row per canonical id in dictionary/WORLD_SNAPSHOT_DICTIONARY.csv (C28/C29 marked excluded_control), and SOURCE_MANIFEST.json records a git blob sha for each of the four authority files",
+          "weight": 2,
+          "status": "doing",
+          "evidence": [
+            "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+            "dictionary/DATA_SOURCES.csv@c9d9af057e804a9c836847d01ce784c52174a2c3",
+            "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
+            "docs/WORLD_COVERAGE.csv@756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+          ]
+        },
+        {
+          "id": "t3",
+          "title": "Verify each claim against immutable main evidence (coverage CSVs, catalog audit json, source status/proof summaries, receipts)",
+          "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict",
+          "weight": 3,
+          "status": "todo",
+          "evidence": []
+        },
+        {
+          "id": "t4",
+          "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html/svg and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+          "acceptance": "All required artifacts present on the audit branch, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
+          "weight": 2,
+          "status": "todo",
+          "evidence": []
+        },
+        {
+          "id": "t5",
+          "title": "Add validator script, source-matched test and push-triggered audit workflow, then open PR and merge to main",
+          "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green and merge_pr returns a merge commit on main for the exact expected_head_sha",
+          "weight": 3,
+          "status": "todo",
+          "evidence": []
+        }
+      ],
+      "progress_percent": 14
+    },
+    "notes": "CONTRACT: repo-requirements-audit-v1, assignment_sha fe5043dc723075d0d79b72a91c100b9667ab4fa7, deliverable merged_pr, allow_merge true, publishing_enabled true. Branch venice/repo-requirements-audit-v1 from main c30c23bed24dc986b2bbf5a4b559a022e2df4300. ALLOWED PATHS: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. Read-only: agent/ACTIVE_TASK.json, agent/tasks/**, agent/verification/**, TODO.md, METHODOLOGY.md.\nSPEC COLUMN CONTRACT (agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@b777a66f): REQUIREMENTS.csv = requirement_id,authority_path,authority_anchor_or_lines,requirement,gantt_group,owner_lane,dependencies,acceptance_condition,current_status,evidence_refs,remaining_action. DATA_REQUIREMENTS.csv = 19 columns. Stages required: 0,1,2,3,4,5,5b,6,7,8. GANTT_COMPARISON.csv must split bundled rows and keep reverse mappings. PR #225 merged - do not reopen.\nID NAMESPACE PROVEN: all three authority files have 260 total_lines and share the same id keys; rows are C01..C3x followed by I1..I228 (lines 249-260 = I217..I228). docs/INVENTORY_CATALOG_AUDIT_V1.json@1ec0e862 reports inventory_items 258, source_items 258, mapping_items 258 - consistent with (C-rows + I-rows) = 258. C28 = bucket/threshold boundary rule and C29 = leak/point-in-time rule are NO_QUESTIONS / NOT_APPLICABLE controls with 0 lenses; they are explicit exclusions, not gaps.\nAUTHORITY HEADERS (use by name, never by index): WSD = id,group,item,setting,definition,inputs,window,rolling_or_fixed,pit_rule,warmup,edge_cases,in_code,parameters @9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd. DS = id,block,item,source,pit_start,fetch_test,evidence,in_repo @c9d9af057e804a9c836847d01ce784c52174a2c3. LENSES = id,item,block,cls,applicable,conditional,potential_lens_count,candidate_alias,coverage_scope,implemented_lens_count,implementation_status,minimum_6_status,inapplicable,flags @fa338f19ca8732829939eb30fdee473927ea0464. WORLD_COVERAGE = namespace,item_id,item,timeframe,block,snapshot_columns,non_null_pct_2020_2026,first_date_available,status,reason,source_evidence,column_measurements,universe_scope @756f6a36ea11c670bb3e574d6ff88d1185208b7a (12872 lines).\nPROVEN PER-ID FACTS: C01-C25 block A, cls STOCK_SCALAR or EVENT_COUNT (C16-C22 EVENT_COUNT), potential_lens_count 13, candidate_alias absolute|threshold, coverage_scope CLASS_APPLICABILITY_ONLY, implementation_status UNMEASURED, minimum_6_status NOT_PROVEN, flag 'rank: named PIT peer set required'. C26 sector membership = CATEGORICAL_STATE, 12 lenses. C27 tradeable filter = BOOLEAN_STATE, 12 lenses, position inapplicable. I217-I228 also block A, 13 lenses, CLASS_APPLICABILITY_ONLY, UNMEASURED, NOT_PROVEN, with per-id conditional notes (Elder Impulse I221: absolute and position inapplicable, divergence native pairings only, rank conditional on declared share; I225/I228 require a named PIT peer or literal benchmark per reading). Price ids C01-C20 share source 'Yahoo chart API query1.finance.yahoo.com/v8/finance/chart daily OHLCV split-adjusted; locked engine copy release data-2020-24-v1 bars_all_le2024.parquet + universe_2020_survivors_le2024.parquet sha in SHA256SUMS; backup Nasdaq api.nasdaq.com/api/quote/SYM/historical ~10y; Stooq FAILED'; pit_start 1980-12-12 AAPL varies; engine file 2015-2024; fetch_test proven (checklist_brainstorm/fetch_tests/fetch_test_report.csv yahoo_daily 7/7); in_repo 'yes: release data-2020-24-v1 (2020-24 only; 2025-26 not yet uploaded)'. docs/WORLD_COVERAGE.csv dictionary/C01/1d = PENDING, 'no exact column mapping', SIX_STOCK_PROVISIONAL_NOT_FULL_UNIVERSE.\nDECISION THIS TURN: stop hand-transcribing. docs/venice-audit-v1/build_matrices.py builds all 258 rows from the four authority CSVs via csv.DictReader (column order irrelevant), emits DATA_REQUIREMENTS.csv + SOURCE_MANIFEST.json (git hash-object blob shas), and marks every non-authority field UNKNOWN instead of inventing it. Hand-written C01-C17 rows are superseded by generated output. Workflow venice-repo-requirements-audit.yml: push on the audit branch, paths-filtered, contents:write, build -> pytest -> commit only when the diff is non-empty, so a repeat run is a no-op and cannot loop; pytest step guarded by hashFiles until the test file lands.\nOTHER DICTIONARY FILES: BAR_STATISTICS_REGISTRY.json@466f9460, CHART_SHAPE_REGISTRY_V1.json@c0de9dda, INDICATOR_SETTINGS.json@dfc13702, PRICE_COLUMN_AVAILABILITY_V1.csv@ab294751 (2.4MB), PRICE_WORLD_JOIN_KEYS_V1.csv@2dab52b3 (1.2MB), PRICE_WORLD_SESSIONS_V1.csv@3b70fc26, REPLAY_QUARANTINE_V1.json@d1431afd, world_coverage_map.csv@379c07f9, DATA_SOURCES.md@787c08ba, FRED_1635_SERIES.json@4e1a1302, PRICE_V1_SCOPE_V1.json@db071073.\nBASELINE 56 ROWS (agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c): v16 as_of 2026-11-07 08:55 HKT ref e85547ac; v20 as_of 2026-11-09 01:13 HKT ref 2ba3ebdf; dates are NOT a forecast. B0 166 replay mismatches; B2 full world NOT_PROVEN/scoring CLOSED; B3 8439/8439 measured but packet replay FAIL 1308; B4 22968 bindings only; B5 8439 keys/9271 sessions identity unproven; B6 SEC access only. D0 catalog verified != downloaded; D1 8439 retained/288 excluded; D2 bundled row must split; D3 CBOE joins UNKNOWN; D4 246 assets readback PASS identity 61.13%; D5 Form4/13F no accepted panel; D6 OCC FAIL, Dolt any-row 21.42%, no OI; D7 skeleton; D8 0 accepted; D9 unresolved. W0 0 formal intervals, identity 5159 of 8439; W1 tradeability/$100m/shares/float NOT_PROVEN; W2 produced subset only; W3 earnings 112760 rows/4195; W4 analyst 350374 rows/4041; W5/W6 FINRA SI/SV unproven; W7 Reg SHO old asset; W8 halts old results not raw tape; W9 dividends/splits unproven; W10/W11 dated membership unproven; W12 money flow signed/block/dark-pool/ETF history unproven; W13 FRED/ALFRED 21-series PIT PASS, world joins UNKNOWN; W14 breadth native PASS survivor caveat; W15 ETF/index joins UNKNOWN; W16 Finviz EXCLUDED_LIVE_ONLY; W17 GDELT owner-dropped; W18 no cohort x period scoreboard. F0-F4 14-lens design only, 114 strict defs, rulings 5-8 no main proof, price available_from scoped PASS, leak probes only BPOP/DJCO/KGRN. S0 viewport #163 UNMERGED. Q0-Q2 107201 bound defs, answers not passed; batch27 #224 CI PASS unmerged; 2664 ladders +80 aliases, semantic completion UNKNOWN. A0-A3 0 accepted. V0-V1 data-gated. M0-M5 0 accepted (26100 exit rules planned). T0-T1 0 accepted. L0-L1 PAPER ONLY, gates CLOSED.\nTOOL LIMITS LEARNED: grep on a top-level directory (path=docs) returns 422 - grep a specific file. Long CSV rows exceed the 12000-char read window, so page by offset. A checkpoint pitfall entry was rejected for lacking returned evidence - record lessons in notes until a real tool error is quoted.\nSUPERSEDED: SEC/OI failure-monitoring lane. Runs 42284432095 (occ_oi_daily.py ValueError int('')) and 42156926867 (sec_datasets.py form345 HTTP 403) already filed in #220/#221; GPT owns fixes.\nRULES: catalog row != download; access test != acquisition; PR branch != accepted main work; audit never opens world/scoring/live gates; never edit sealed records, receipts, inventories, other lanes, production pipelines; no new paid sources; 2025-26 authorized for testing but record selection vs evaluation contamination; no percentage without numerator/denominator/scope.",
+    "pitfalls": []
+  },
+  "pitfalls": []
+}
