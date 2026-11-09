@@ -30,19 +30,20 @@
     },
     {
       "id": "t3",
-      "title": "Verify each claim against immutable main evidence and emit REQUIREMENTS.csv + EVIDENCE.json",
-      "acceptance": "EVIDENCE.json entry per claim with main path@blob-sha and an explicit verified/unverified/missing verdict, and REQUIREMENTS.csv carrying the 11-column spec contract for stages 0-8",
+      "title": "Emit REQUIREMENTS.csv (stages 0-8, 11 columns), GANTT_COMPARISON.csv (all baseline rows, D2 split) and EVIDENCE.json (path@blob-sha with verdicts)",
+      "acceptance": "build_extra.py runs inside the existing green workflow step, all three files exist on venice/repo-requirements-audit-v1 with the spec column contracts, every baseline row id appears in GANTT_COMPARISON.csv, and DATA_REQUIREMENTS.csv stays byte-identical so the 7 existing tests still pass",
       "weight": 3,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/build_matrices.py@3121d20bd7cb825f74e145f65a72157c507d8f00"
+        "docs/venice-audit-v1/build_matrices.py@3121d20bd7cb825f74e145f65a72157c507d8f00",
+        "agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json@b8d0569c50ad09c11d78d4a525906cc26a99a202"
       ],
       "blocker": ""
     },
     {
       "id": "t4",
-      "title": "Publish GANTT_COMPARISON.csv, corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
-      "acceptance": "All required artifacts present on the audit branch, bundled baseline rows split with reverse mappings, no writes outside allowed_paths, every percentage carries numerator/denominator/scope or is UNKNOWN",
+      "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md under docs/venice-audit-v1/",
+      "acceptance": "Both artifacts present, unknown completion never rendered as a fabricated percentage, historical actuals separated from proposed dates, every percentage carries numerator/denominator/scope or is UNKNOWN",
       "weight": 2,
       "status": "todo",
       "evidence": [],
@@ -50,7 +51,7 @@
     },
     {
       "id": "t5",
-      "title": "Add validator script, extend tests, open PR and merge on green exact-head checks",
+      "title": "Add validator script, extend source-matched tests, open PR and merge on green exact-head checks",
       "acceptance": "Workflow run on venice/repo-requirements-audit-v1 is green with pytest executing, and merge_pr returns a merge commit on main for the exact expected_head_sha",
       "weight": 3,
       "status": "todo",
