@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-09T03:23:33.358Z",
-  "turn_id": "mw8p1f0l-28dr8vej",
-  "summary": "Orienting t5: the audit branch is green at 8b6a299c (run 42555125029) with all artifacts present, and the checkpoint rejection was caused by pitfall entries lacking returned evidence arrays. This turn reads the exact headers/structures of REQUIREMENTS.csv, GANTT_COMPARISON.csv and EVIDENCE.json so the extended source-matched tests assert real column names and real baseline-row coverage instead of guessed ones. No artifact is claimed complete from a write receipt.",
-  "next": "Write the extended tests/test_repo_requirements_audit.py using the returned exact headers (REQUIREMENTS.csv 11 columns, GANTT_COMPARISON.csv 13 columns) and the EVIDENCE.json field shape, with expected_sha 0eea23789f631a6daf7a20334585977da7b5d5c3, then inspect the push run on venice/repo-requirements-audit-v1 for a green exact-head conclusion before opening the PR.",
+  "at": "2026-11-09T03:26:31.457Z",
+  "turn_id": "mw8p6pl1-1rqlj2af",
+  "summary": "Orienting t5 with returned proof of the exact artifact contracts: REQUIREMENTS.csv is an 11-column matrix (requirement_id..remaining_action, 47 rows), GANTT_COMPARISON.csv is 13 columns (baseline_row_id..split_from, 68 rows incl. D2 split rows), and EVIDENCE.json entries carry id/claim/artifact_path/artifact_blob_sha/kind/check_performed/result/coverage_scope/limits/evidence_urls. These are the real field names the extended source-matched tests must assert, so no assertion is guessed. No artifact is claimed complete from a write receipt.",
+  "next": "Read tests/test_repo_requirements_audit.py at its current blob sha on venice/repo-requirements-audit-v1 plus branch_head, then write the extended test file with expected_sha from that read and inspect the push run for a green exact-head conclusion before opening the PR.",
   "plan": {
     "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
     "why": "Advances the assigned Venice lane row for the Cyrus full-repository audit and prevents missing requirements or false completion claims before any world/scoring/live gate is considered.",
@@ -41,17 +41,20 @@
         "status": "done",
         "evidence": [
           "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
-          "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1"
+          "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+          "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c"
         ],
         "blocker": ""
       },
       {
         "id": "t4",
         "title": "Publish corrected GANTT.html and dependency-ordered AUDIT.md",
-        "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage",
+        "acceptance": "Both artifacts present, GANTT.html generated from GANTT_COMPARISON.csv, generator aborts on a missing baseline row, no fabricated percentage, delta vs live main c30c23be stated",
         "weight": 2,
         "status": "doing",
-        "evidence": [],
+        "evidence": [
+          "96ef78940beffb523b0fc7698d5bb89cc99eae7d"
+        ],
         "blocker": ""
       },
       {
@@ -80,10 +83,12 @@
       {
         "id": "t5",
         "title": "Extend source-matched tests, open PR and merge on green exact-head checks",
-        "acceptance": "Green run with pytest executing the extended assertions and merge_pr returning a merge commit on main for the exact expected_head_sha",
+        "acceptance": "Green run with pytest executing the extended assertions (11-col REQUIREMENTS header, 13-col GANTT_COMPARISON header with split_from rows, EVIDENCE.json entry shape) and merge_pr returning a merge commit on main for the exact expected_head_sha",
         "weight": 3,
         "status": "doing",
-        "evidence": [],
+        "evidence": [
+          "tests/test_repo_requirements_audit.py@0eea23789f631a6daf7a20334585977da7b5d5c3"
+        ],
         "blocker": ""
       }
     ],
@@ -93,23 +98,16 @@
     {
       "tool": "read_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/REQUIREMENTS.csv"
+      "path": "tests/test_repo_requirements_audit.py"
     },
     {
-      "tool": "read_file",
+      "tool": "branch_head",
       "ok": true,
-      "path": "docs/venice-audit-v1/GANTT_COMPARISON.csv"
-    },
-    {
-      "tool": "read_file",
-      "ok": true,
-      "path": "docs/venice-audit-v1/EVIDENCE.json"
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/187168f5018a7ad4ea96521b9d025abd40f9613c"
     }
   ],
   "blockers": [],
   "evidence": [
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41574644199",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413535355",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413529249",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413030480",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/41413026299",
@@ -207,7 +205,9 @@
     "agent/runtime/receipts/mw8owam0-oahhthv7.1.json@536f23d98ebb6b8447c9da90f7c18c58bb81e12f",
     "f4feaf8c3f7c963463af2ef5e8752c46a3191e53",
     "a69f14e818e548d7e408d655073a21f60791311c",
-    "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c"
+    "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/187168f5018a7ad4ea96521b9d025abd40f9613c",
+    "187168f5018a7ad4ea96521b9d025abd40f9613c"
   ],
   "done": false,
   "task_id": "repo-requirements-audit-v1",
@@ -216,10 +216,11 @@
   "work_branch": "venice/repo-requirements-audit-v1",
   "contribution": {
     "kind": "finding",
-    "description": "The audit branch head 8b6a299c is confirmed green with all seven required deliverables present, and the checkpoint tool rejects any pitfall object lacking a returned evidence array - so the previous checkpoint was malformed, not the work.",
+    "description": "Confirmed the exact column and field contracts of the three published matrices by direct read, so the extended source-matched tests will assert real header names and the real EVIDENCE.json entry shape instead of guessed ones.",
     "evidence": [
-      "8b6a299c6d6b369591fe038de7593d2031f85526",
-      "docs/venice-audit-v1/PROGRESS.json@4b8c54ffd05185541daafdab234d8f9bb6f6a696"
+      "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+      "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+      "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c"
     ]
   },
   "pitfalls": [
@@ -232,23 +233,23 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8ogubb-60z104gk",
-      "seen_at_ms": 1794193652414,
+      "last_seen": "mw8p6pl1-1rqlj2af",
+      "seen_at_ms": 1794194791457,
       "resolved_at": "mw8ogubb-60z104gk",
       "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
     },
     {
       "id": "empty-diff-commit",
       "problem": "'Commit regenerated matrices' exited 1 at 42553597443, which I initially attributed to an unguarded commit on a clean tree.",
-      "failed_approach": "Diagnosing the failing step from its name instead of reading the step body; the workflow at 3fc6c647 already wraps commit/push in `if git diff --cached --quiet; then echo 'no matrix changes'; else ... fi`.",
+      "failed_approach": "Diagnosing the failing step from its name instead of reading the step body; the workflow at 3fc6c647 already wraps commit/push in an `if git diff --cached --quiet` guard.",
       "lesson": "Read the workflow step body before proposing a workflow repair. When the guard is already present, a step-7 exit 1 means the else-branch ran and the commit or push itself failed, so look at tree state and remote head at that commit rather than rewriting the guard.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362",
         ".github/workflows/venice-repo-requirements-audit.yml@3fc6c647ee143b2c24ad922bac3ce92bbc573d6a"
       ],
       "first_seen": "mw8obqp1-utvl8qsl",
-      "last_seen": "mw8ogubb-60z104gk",
-      "seen_at_ms": 1794193652414,
+      "last_seen": "mw8p6pl1-1rqlj2af",
+      "seen_at_ms": 1794194791457,
       "correction": "Misdiagnosis corrected; no workflow change required for this id."
     },
     {
@@ -261,8 +262,8 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
       ],
       "first_seen": "mw8ogubb-60z104gk",
-      "last_seen": "mw8ogubb-60z104gk",
-      "seen_at_ms": 1794193652414
+      "last_seen": "mw8p6pl1-1rqlj2af",
+      "seen_at_ms": 1794194791457
     }
   ]
 }
