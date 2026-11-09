@@ -21,10 +21,11 @@
     "lesson": "Update both the workflow branches filter and the checkout ref to venice/repo-hierarchical-audit-v2 (and keep paths narrow) as part of the v2 change before expecting a green run.",
     "evidence": [
       ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
-      "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1"
+      "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1",
+      "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mw9abvy2-apaduzgt",
-    "seen_at_ms": 1794230237589
+    "last_seen": "mw9aho11-9zn52727",
+    "seen_at_ms": 1794230493199
   }
 ]
