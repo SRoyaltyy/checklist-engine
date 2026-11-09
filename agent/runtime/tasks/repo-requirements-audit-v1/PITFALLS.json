@@ -8,8 +8,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553625095/job/128954439178"
     ],
     "first_seen": "mw8obqp1-utvl8qsl",
-    "last_seen": "mw8q6sx6-sen0hwc1",
-    "seen_at_ms": 1794196473448,
+    "last_seen": "mw8qag3c-s2jeh0sl",
+    "seen_at_ms": 1794196720332,
     "resolved_at": "mw8ogubb-60z104gk",
     "resolution": "Docstring edit at 96ef7894 produced green run 42554257008."
   },
@@ -37,8 +37,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42553597443/job/128954318362"
     ],
     "first_seen": "mw8ogubb-60z104gk",
-    "last_seen": "mw8q6sx6-sen0hwc1",
-    "seen_at_ms": 1794196473448
+    "last_seen": "mw8qag3c-s2jeh0sl",
+    "seen_at_ms": 1794196720332
   },
   {
     "id": "workflow-self-commit-moves-head",
@@ -52,8 +52,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
     ],
     "first_seen": "mw8pagm6-eugw4ftq",
-    "last_seen": "mw8q6sx6-sen0hwc1",
-    "seen_at_ms": 1794196473448
+    "last_seen": "mw8qag3c-s2jeh0sl",
+    "seen_at_ms": 1794196720332
   },
   {
     "id": "self-commit-head-has-no-run",
@@ -80,8 +80,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/pull/226"
     ],
     "first_seen": "mw8psfyv-ekpb17ml",
-    "last_seen": "mw8q6sx6-sen0hwc1",
-    "seen_at_ms": 1794196473448
+    "last_seen": "mw8qag3c-s2jeh0sl",
+    "seen_at_ms": 1794196720332
   },
   {
     "id": "self-commit-loop-nondeterministic",
@@ -93,8 +93,8 @@
       "https://github.com/SRoyaltyy/checklist-engine/tree/60b4d6cc0b09a1c8197cfcc036180e90a20b6237"
     ],
     "first_seen": "mw8q1g11-iyiom24h",
-    "last_seen": "mw8q6sx6-sen0hwc1",
-    "seen_at_ms": 1794196473448,
-    "resolution": "Self-push removed at b05c9fc3; test forbids git push at 92de9357; both runs green and PR head_sha equals the newest run sha."
+    "last_seen": "mw8qag3c-s2jeh0sl",
+    "seen_at_ms": 1794196720332,
+    "resolution": "Self-push removed at b05c9fc3; test forbids git push at 92de9357; head stayed at 92de9357 with green run 42558653746 at that exact sha."
   }
 ]
