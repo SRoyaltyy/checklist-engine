@@ -30,6 +30,7 @@ STAGES = [
     ('S5B', 'Stage 5b: v2 ladders and aliases'),
     ('S6', 'Stage 6: mining and exit rules'),
     ('S7', 'Stage 7: evaluation and reporting'),
+    ('S8', 'Stage 8: shadow and live gates'),
 ]
 
 # substage_id, parent stage, title, gantt_group, allowed owner_lanes (None = any), scope note
