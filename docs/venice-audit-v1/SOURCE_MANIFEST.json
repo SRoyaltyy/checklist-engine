@@ -1,0 +1,41 @@
+{
+  "generated_by": "docs/venice-audit-v1/build_matrices.py",
+  "authority_blob_shas": {
+    "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv": "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+    "dictionary/DATA_SOURCES.csv": "c9d9af057e804a9c836847d01ce784c52174a2c3",
+    "docs/LENSES_COVERAGE_V1.csv": "fa338f19ca8732829939eb30fdee473927ea0464",
+    "docs/WORLD_COVERAGE.csv": "756f6a36ea11c670bb3e574d6ff88d1185208b7a"
+  },
+  "row_count": 258,
+  "columns": [
+    "inventory_id",
+    "item",
+    "required_or_excluded",
+    "authority_ref",
+    "source_urls",
+    "source_link_verification",
+    "required_fields",
+    "required_universe",
+    "required_period",
+    "timeframes",
+    "availability_or_publication_rule",
+    "identity_join_requirements",
+    "existing_assets",
+    "coverage_evidence",
+    "measured_scope",
+    "missing_scope",
+    "next_acquisition_or_build_step",
+    "owner_lane",
+    "status"
+  ],
+  "ids_first": [
+    "C01",
+    "C02",
+    "C03"
+  ],
+  "ids_last": [
+    "I226",
+    "I227",
+    "I228"
+  ]
+}
