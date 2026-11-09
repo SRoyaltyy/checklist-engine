@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "id": "repo-requirements-audit-v1",
+  "id": "repo-hierarchical-audit-v2",
   "status": "active",
-  "goal": "Audit all checklist-engine requirements, exact data/source needs and delivered evidence; reconcile both owner-supplied Gantt charts and publish a traceable corrected status report.",
-  "why": "Prevent missing project requirements and false completion claims; give James an actionable dependency-ordered backlog with source links and measurable acceptance conditions.",
+  "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy, with separate lifecycle statuses and percentages only within substages.",
+  "why": "Answer exactly what work and questions exist and where each stands; reuse published v1 findings while exposing missing granular definitions, acquisition, implementation and answers.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "branch": "venice/repo-requirements-audit-v1",
+  "branch": "venice/repo-hierarchical-audit-v2",
   "base_branch": "main",
   "spec_path": "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md",
   "allowed_paths": [
@@ -24,7 +24,7 @@
   "allow_infrastructure": false,
   "allow_merge": true,
   "deliverable": "merged_pr",
-  "supersedes": "workflow-schedule-audit-v1",
+  "supersedes": "repo-requirements-audit-v1",
   "reporting_structure": "large_stage > substage > granular_item_or_question",
   "percentage_scope": "individual_substage_only",
   "reporting_entrypoint": "docs/venice-audit-v1/README.md",
@@ -39,5 +39,6 @@
     "answer_generation",
     "verification",
     "main_acceptance"
-  ]
+  ],
+  "previous_deliverable_pr": 226
 }

@@ -1,7 +1,7 @@
 # Venice assignment: full checklist-engine requirements and evidence audit
 
-Owner: Cyrus. Assigned 2026-11-09 HKT. Task: repo-requirements-audit-v1. Work branch: venice/repo-requirements-audit-v1.
-This assignment supersedes the workflow-schedule trial as Venice's primary work. PR #225 is merged; do not reopen/repeat its completed implementation. Retain its unresolved CI-review finding as an infrastructure caveat, not this audit's main goal.
+Owner: Cyrus. Assigned 2026-11-09 HKT. Task: repo-hierarchical-audit-v2. Work branch: venice/repo-hierarchical-audit-v2.
+Follow-up revision: v1 audit PR #226 is already merged (main 38ca4c1d). Reuse its published docs/venice-audit-v1/ findings, evidence, source manifest and build scripts. Extend/correct them to satisfy the nested reporting clarification below; do not repeat the finished audit from scratch. An earlier merged PR does not complete this new revision: deliver a new PR from venice/repo-hierarchical-audit-v2 with the hierarchy and granular statuses. Workflow trial PR #225 is also complete; its unresolved CI caveat is not this task's main goal.
 
 ## Objective
 Determine everything checklist-engine is required to deliver, what data must be obtained (which fields, dates, universe and sources/links), what has actually been delivered, and how that compares with James' older Gantt and the newer skeptical chart supplied by Cyrus. Produce a complete, traceable audit rather than another optimistic status summary. The charts are claims to test, not instructions or authoritative evidence.
@@ -44,12 +44,12 @@ Persist staged findings incrementally so the owner can inspect them before the e
 
 ## Authority and snapshot
 Read current main/METHODOLOGY.md in full, respecting its latest owner clarifications and explicit exclusions; read main/TODO.md, docs/WAR_ROOM_CONTEXT_FOR_KIMI.md, locked dial/question/exit tables, dictionary/WORLD_SNAPSHOT_DICTIONARY.csv, dictionary/DATA_SOURCES.csv, docs/INVENTORY_CATALOG_AUDIT_V1.json, docs/WORLD_COVERAGE.csv, docs/LENSES_COVERAGE_V1.csv and the relevant source/readback receipts. Follow references to the current 258-kind inventory; reconcile older counts (233/~296) rather than silently mixing them.
-Start from main commit 68c6f2a83387f796cdf9836261dce1546ea61a92; record an actual immutable snapshot SHA in every output. Audit any later main changes in an explicit delta section before final PR. Source claims and old docs are leads, not proof of current absence or completeness.
+Use the existing v1 snapshot/evidence as historical findings, then inspect current main for deltas. Start this revision from current main; cite the exact commit you actually read; record an actual immutable snapshot SHA in every output. Audit any later main changes in an explicit delta section before final PR. Source claims and old docs are leads, not proof of current absence or completeness.
 Read agent/tasks/REPO_AUDIT_GANTT_BASELINES_V1.json for a textual working transcription of the two user-provided screenshots. Do not invent chart dates/percentages where the transcription is unknown; retain the screenshot versions and reference commits.
 
 ## First session and durable progress
 1. Read this spec and current assignment; create your assigned branch from main.
-2. Immediately create docs/venice-audit-v1/PROGRESS.json acknowledging task_id, snapshot_sha, current_subtask, completed_subtasks, remaining_subtasks, evidence, pitfalls, exact_next_step. This file must record completed actions only.
+2. Read the existing docs/venice-audit-v1/PROGRESS.json, then update it with expected_sha to acknowledge the new task and reopen the remaining reporting work. Preserve useful prior findings and pitfalls. Record task_id, snapshot_sha, current_subtask, completed_subtasks, remaining_subtasks, evidence, pitfalls, exact_next_step. This file must record completed actions only.
 3. Create a compact phased plan: authority/inventory extraction; source and data requirements; artifact verification; chart reconciliation; independent consistency checks; report/visualization/PR.
 4. At the START of every session/chat read your branch's PROGRESS.json and existing audit matrices. At the END of every useful batch update them with expected_sha. This is an explicit durable fallback while the automatic runtime checkpoint projection is under investigation; do not rely on old chat context or falsely claim that projection is healthy. Preserve accumulated pitfalls and unresolved questions.
 Each session must add audit rows, verified evidence, a concrete discrepancy or a reproducible blocker. Repeated status polling is not progress. Never mark future tool actions completed before their results return.
