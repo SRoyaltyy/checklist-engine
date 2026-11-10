@@ -2,18 +2,27 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t9",
+  "current_task": "t10",
   "tasks": [
     {
       "id": "t9",
       "title": "Make the validator's status/title parity read the real STAGES.csv columns and green the suite",
-      "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, validator returns no issues, green run at an exact head",
+      "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, green run at an exact head",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
-        "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02"
+        "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
+        "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
       ],
+      "blocker": ""
+    },
+    {
+      "id": "t10",
+      "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
+      "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
+      "weight": 1,
+      "status": "doing",
+      "evidence": [],
       "blocker": ""
     },
     {
@@ -28,15 +37,6 @@
       "blocker": ""
     },
     {
-      "id": "t10",
-      "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
-      "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
-      "weight": 1,
-      "status": "todo",
-      "evidence": [],
-      "blocker": ""
-    },
-    {
       "id": "t8",
       "title": "Open the v2 revision PR and merge it on a green exact head",
       "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
@@ -46,5 +46,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 0
+  "progress_percent": 25
 }
