@@ -6,13 +6,13 @@
   "tasks": [
     {
       "id": "t9",
-      "title": "Fix the chart-index status/title parity defect and green the suite",
-      "acceptance": "build_charts sources status/title from the STAGES.csv parity columns; validator returns no issues; green run at an exact head",
+      "title": "Make the validator's status/title parity read the real STAGES.csv columns and green the suite",
+      "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, validator returns no issues, green run at an exact head",
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
-        "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d"
+        "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
+        "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02"
       ],
       "blocker": ""
     },
@@ -33,9 +33,7 @@
       "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
       "weight": 1,
       "status": "todo",
-      "evidence": [
-        "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642"
-      ],
+      "evidence": [],
       "blocker": ""
     },
     {
