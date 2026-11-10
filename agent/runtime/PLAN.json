@@ -6,12 +6,13 @@
   "tasks": [
     {
       "id": "t9",
-      "title": "Diagnose the red run on a56fb761 and make the suite green on a head",
-      "acceptance": "Job log read and the failing assertion fixed; green run at an exact head",
+      "title": "Fix the chart-index status/title parity defect and green the suite",
+      "acceptance": "build_charts sources status/title from STAGES.csv; validator returns no issues; green run at an exact head",
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
+        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
       ],
       "blocker": ""
     },
