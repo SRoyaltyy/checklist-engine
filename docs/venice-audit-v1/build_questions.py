@@ -190,10 +190,9 @@ def main():
                 omissions.append({'inventory_id': key, 'lens': ln, 'reason': 'unregistered lens name'})
                 continue
             qid = 'Q-' + slug(key) + '-' + slug(ln)
-            counts['questions'] += 1
             reason = ' ; '.join(x for x in (flags, ('alias candidate: ' + alias) if alias else '') if x)
             pred = tmpl.format(q=item, p=pdom, w=tdom)
-            base = dict(question_id=qid, subject_id=key, inventory_id=key, item=item, lens=ln,
+            base = dict(subject_id=key, inventory_id=key, item=item, lens=ln,
                         timeframe_domain=tdom, parameter_domain=pdom, literal_predicate=pred, template=tmpl,
                         source_artifact=source_artifact, source_anchor=anchor, evidence_refs=source_artifact,
                         missing_work='strict definition, implementation and stored answer not proven on main' if val(l, 'implementation_status').upper() != 'MEASURED' else 'main acceptance not proven',
@@ -203,12 +202,15 @@ def main():
             for phase, sid in plan:
                 row = dict(base)
                 row.update(states(l, False))
+                row['question_id'] = qid + '-' + slug(phase)
                 row['phase'] = phase
                 row['parent_substage_id'] = sid
                 if phase == 'alias':
                     row['unresolved_reason'] = (reason + ' ; alias semantics unresolved').strip(' ;')
                 rows.append(row)
                 counts['rows'] += 1
+    counts['ids'] = len({r['inventory_id'] for r in rows})
+    counts['questions'] = len({r['question_id'] for r in rows} - {r['question_id'] for r in rows if r['lens'] == '(excluded control)'})
     with OUT.open('w', newline='', encoding='utf-8') as fh:
         writer = csv.DictWriter(fh, fieldnames=COLS, lineterminator='\n')
         writer.writeheader()
