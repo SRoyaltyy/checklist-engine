@@ -11,9 +11,9 @@
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
+        "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
       ],
-      "blocker": "patch applied; needs green run proving unique ids and reconciled counts"
+      "blocker": "generator green; artifact still must be confirmed committed on the branch"
     },
     {
       "id": "t5",
