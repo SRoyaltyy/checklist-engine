@@ -11,33 +11,31 @@
       "weight": 2,
       "status": "done",
       "evidence": [
-        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
-        "docs/venice-audit-v1/charts/S1.2.svg@670f9d5a6509eaea62b041a5d113d2f895aae97d",
         "docs/venice-audit-v1/charts/S8.1.svg@10638133fdf0739f8ffcb8b3625cfe64367bcce5"
       ],
       "blocker": ""
     },
     {
       "id": "t6",
-      "title": "Write README.md, GANTT.md, top-level GANTT visual and details/<substage-id>.md pages",
-      "acceptance": "All reporting layers exist, percentages only inside substages, cross-referenced with v1 matrices",
+      "title": "Wire build_report step and publish README.md, GANTT.md, details/<substage-id>.md pages",
+      "acceptance": "Step present in workflow and all reporting layers committed",
       "weight": 2,
       "status": "done",
       "evidence": [
         "docs/venice-audit-v1/GANTT.md@1dbe74243f1501628f3e56fe274ec0268f8e1988",
-        "docs/venice-audit-v1/README.md@b1b3664bb93a724a8ecbd565c4ec2842cc7f132e",
-        "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60"
+        "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
+        ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
       ],
       "blocker": ""
     },
     {
       "id": "t7",
-      "title": "Add validator, chart-aware tests, green run on final head, open and merge PR",
-      "acceptance": "Validator in place, tests assert per-substage chart coverage, green run on final head, merged PR",
+      "title": "Add agent/repo_requirements_audit_validate.py, chart/report assertions in tests, green run on final head, open and merge PR",
+      "acceptance": "Validator script committed, tests assert per-substage chart and details coverage, green run on final head, PR merged",
       "weight": 3,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97"
+        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
       ],
       "blocker": ""
     }
