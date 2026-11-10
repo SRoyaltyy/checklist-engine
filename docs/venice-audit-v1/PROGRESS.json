@@ -3,34 +3,31 @@
   "assignment_sha": "8e75e4f7f1e0ccf926392cca31246dcdacf1fd8b",
   "snapshot_sha": "b574d2acc6a117094db2f30cd4ba1e8658d2225a",
   "work_branch": "venice/repo-hierarchical-audit-v2",
-  "current_subtask": "t4 build_questions.py / QUESTION_INDEX.csv",
+  "current_subtask": "t6 wire build_report and publish README/GANTT/details",
   "completed_subtasks": [
     "t1 orientation on live head b574d2ac",
     "t2 PROGRESS.json re-keyed to assignment 8e75e4f7",
-    "t3 STAGES.csv + 8-status REQUIREMENTS.csv generated, rerun order proven safe"
+    "t3 STAGES.csv + 8-status REQUIREMENTS.csv generated, rerun order proven safe",
+    "t4 QUESTION_INDEX.csv generated and committed by CI",
+    "t5 charts/CHART_INDEX.csv + 23 per-substage SVGs generated and committed by CI"
   ],
   "remaining_subtasks": [
-    "t4 finish QUESTION_INDEX.csv and prove the pipeline emits it",
-    "t5 one visual Gantt SVG per substage + charts/CHART_INDEX.csv",
-    "t6 README.md, GANTT.md, top-level visual, details/<substage-id>.md",
-    "t7 commit generated outputs in CI, extend validator/tests, green run on final head, merge PR"
+    "t6 add a build_report workflow step after build_charts and publish README.md, GANTT.md, details/<substage-id>.md",
+    "t7 validator + reporting tests, green run on final head, merge PR"
   ],
   "evidence": [
-    "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
-    "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587",
-    "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60",
-    "docs/LENSES_COVERAGE_V1.csv@fa338f19ca8732829939eb30fdee473927ea0464",
-    "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv@9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd"
+    "docs/venice-audit-v1/charts@82f8374ef67b7340afae8cf67c663e7709fdc6e3",
+    "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
+    "docs/venice-audit-v1/build_report.py@97f0e83a5f8f32a357d62fdc028fc08b34f620ac",
+    "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9"
   ],
   "pitfalls": [
-    {"id": "stale-v1-progress", "status": "corrected", "lesson": "re-key PROGRESS.json to the active task id using the live blob SHA"},
-    {"id": "workflow-branch-filter-mismatch", "status": "resolved", "lesson": "workflow filter, checkout ref and tests must all name the active branch; green run on the active head closes it"},
-    {"id": "unmapped-stage8-substage", "status": "resolved", "lesson": "every gantt_group/lane pair must exist in SUBSTAGES or build_hierarchy SystemExits"},
-    {"id": "assignment-change-invalidates-write", "status": "corrected", "lesson": "re-read the target blob after an assignment sha change"},
+    {"id": "report-step-not-wired", "status": "open", "lesson": "green run proves nothing; list the output directory (details/ 404) to prove a layer published"},
+    {"id": "report-detail-chart-link-prefix", "status": "open", "lesson": "detail pages must link ../charts/<sid>.svg"},
     {"id": "committed-pycache", "status": "open", "lesson": "git rm -r --cached docs/venice-audit-v1/__pycache__ before git add"},
-    {"id": "inplace-requirements-rewrite", "status": "resolved", "lesson": "build_extra.main() must stay ahead of build_hierarchy in run_extras"},
-    {"id": "questions-need-real-substage", "status": "open", "lesson": "question rows must target S4.1/S5.1/S5B.1 only; question_design and answer_generation are NOT_APPLICABLE elsewhere"}
+    {"id": "questions-need-real-substage", "status": "open", "lesson": "question rows target S4.1/S5.1/S5B.1 only"},
+    {"id": "commit-step-blocked-by-pytest", "status": "open", "lesson": "expect one transitional red run per head; read the job log before editing the commit step"}
   ],
-  "exact_next_step": "Read the new build_questions.py blob and the edited build_matrices.py blob, confirm both landed, then check the push-triggered run for the pipeline and confirm QUESTION_INDEX.csv is produced",
-  "note": "CI still commits nothing; the PR must carry generated outputs. Audit completion never opens the world/scoring/live gates."
+  "exact_next_step": "Insert a build_report step after the build_charts step in .github/workflows/venice-repo-requirements-audit.yml, then confirm on the next run that details/ and README.md are committed",
+  "note": "charts layer is complete and published; reporting layer is not. Audit completion never opens the world/scoring/live gates."
 }
