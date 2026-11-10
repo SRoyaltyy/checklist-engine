@@ -2,25 +2,36 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t7",
+  "current_task": "t9",
   "tasks": [
     {
+      "id": "t9",
+      "title": "Diagnose the red run on a56fb761 and make the suite green on a head",
+      "acceptance": "Job log read and the failing assertion fixed; green run at an exact head",
+      "weight": 2,
+      "status": "doing",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534"
+      ],
+      "blocker": ""
+    },
+    {
       "id": "t7",
-      "title": "Add agent/repo_requirements_audit_validate.py, chart/report assertions in tests, green run on final head, open and merge PR",
-      "acceptance": "Validator script committed, tests assert per-substage chart and details coverage, green run on final head, PR merged",
+      "title": "Validator + chart/report assertions in tests",
+      "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run on final head",
       "weight": 3,
       "status": "doing",
       "evidence": [],
       "blocker": ""
     },
     {
-      "id": "t9",
-      "title": "Diagnose the red run on a56fb761 and make the suite green on a head",
-      "acceptance": "Job log read and the failing assertion or step fixed; green run at an exact head",
-      "weight": 2,
-      "status": "doing",
+      "id": "t10",
+      "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
+      "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
+      "weight": 1,
+      "status": "todo",
       "evidence": [
-        "a56fb761d9b7efeb996d56feac96fb00fcaf7835"
+        "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642"
       ],
       "blocker": ""
     },
