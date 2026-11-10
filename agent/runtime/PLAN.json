@@ -12,9 +12,9 @@
       "status": "doing",
       "evidence": [
         "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
+        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
       ],
-      "blocker": "root causes located: id lacks per-row discriminator, counts['ids'] counts unemitted source ids"
+      "blocker": "root causes located; patch must keep Q-<SLUG(INVENTORY)>- prefix and add a discriminator"
     },
     {
       "id": "t5",
