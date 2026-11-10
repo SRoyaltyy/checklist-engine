@@ -70,16 +70,16 @@
   {
     "id": "committed-pycache",
     "status": "open",
-    "problem": "docs/venice-audit-v1/__pycache__ is tracked even though .gitignore excludes pycache/ and *.pyc.",
-    "failed_approach": "Relying on .gitignore alone; ignore rules do not untrack already-committed files.",
+    "problem": "docs/venice-audit-v1/__pycache__ is tracked despite .gitignore.",
+    "failed_approach": "Relying on .gitignore alone.",
     "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step, then confirm the path is absent from list_files.",
     "evidence": [
       "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
       "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwaacbhi-7jx1ovv1",
-    "seen_at_ms": 1794290915640
+    "last_seen": "mwaakhgw-ykiriuln",
+    "seen_at_ms": 1794291077248
   },
   {
     "id": "inplace-requirements-rewrite",
@@ -100,17 +100,17 @@
   {
     "id": "questions-need-real-substage",
     "status": "open",
-    "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped; question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
+    "problem": "Question rows cannot invent a parent stage: match_substage SystemExits on unmapped (gantt_group, owner_lane); question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
     "failed_approach": "Treating the eight status dimensions as free-form columns attachable to any stage.",
-    "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification and S5B.1 for alias only, and the generator must run after build_hierarchy so the substage table is materialised.",
+    "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification, S5B.1 for alias only; generator runs after build_hierarchy.",
     "evidence": [
       "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
       "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
       "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
     ],
     "first_seen": "mwa20nlu-95rewsg5",
-    "last_seen": "mwaacbhi-7jx1ovv1",
-    "seen_at_ms": 1794290915640
+    "last_seen": "mwaakhgw-ykiriuln",
+    "seen_at_ms": 1794291077248
   },
   {
     "id": "ci-never-commits-outputs",
@@ -131,15 +131,16 @@
   {
     "id": "commit-step-blocked-by-pytest",
     "status": "open",
-    "problem": "The commit+push step has no if:always(), so the run that first carries the new workflow (52aa4bfe) died at pytest before the commit step and published nothing; a red run at a head whose tests still describe the previous workflow therefore looks identical to a broken commit script.",
-    "failed_approach": "Editing workflow and tests in two separate commits and expecting the first run to publish.",
+    "problem": "The commit+push step has no if:always(), so a head whose tests still describe the previous workflow dies at pytest before publishing, and a red run looks identical to a broken commit script.",
+    "failed_approach": "Editing workflow and tests in separate commits and expecting the first run to publish.",
     "lesson": "Read a red run's job log before touching the commit step; expect one transitional red run per head whose tests still describe the previous workflow.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534"
     ],
     "first_seen": "mwa35scv-u0czu65f",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwaakhgw-ykiriuln",
+    "seen_at_ms": 1794291077248
   },
   {
     "id": "question-ids-not-unique",
