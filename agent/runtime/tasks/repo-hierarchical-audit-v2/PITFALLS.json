@@ -86,8 +86,8 @@
       "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwade1c9-80uglvi5",
-    "seen_at_ms": 1794295825718
+    "last_seen": "mwadlawo-9rj6ksik",
+    "seen_at_ms": 1794296381667
   },
   {
     "id": "inplace-requirements-rewrite",
@@ -117,8 +117,8 @@
       "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
     ],
     "first_seen": "mwa20nlu-95rewsg5",
-    "last_seen": "mwade1c9-80uglvi5",
-    "seen_at_ms": 1794295825718
+    "last_seen": "mwadlawo-9rj6ksik",
+    "seen_at_ms": 1794296381667
   },
   {
     "id": "ci-never-commits-outputs",
@@ -149,8 +149,8 @@
       "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
     ],
     "first_seen": "mwa35scv-u0czu65f",
-    "last_seen": "mwade1c9-80uglvi5",
-    "seen_at_ms": 1794295825718
+    "last_seen": "mwadlawo-9rj6ksik",
+    "seen_at_ms": 1794296381667
   },
   {
     "id": "question-ids-not-unique",
@@ -196,7 +196,20 @@
       "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
     ],
     "first_seen": "mwaarq9u-frvzdzv8",
-    "last_seen": "mwade1c9-80uglvi5",
-    "seen_at_ms": 1794295825718
+    "last_seen": "mwadlawo-9rj6ksik",
+    "seen_at_ms": 1794296381667
+  },
+  {
+    "id": "create-pr-needs-branch",
+    "status": "open",
+    "problem": "create_pr(title,body) with no branch arg returns ok:false 'PR must use the assigned branch' and creates nothing.",
+    "failed_approach": "Relying on the default branch of the create_pr tool.",
+    "lesson": "Always pass branch: venice/repo-hierarchical-audit-v2 explicitly; the failure receipt is a repair instruction, not proof of a PR.",
+    "evidence": [
+      "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+    ],
+    "first_seen": "mwadlawo-9rj6ksik",
+    "last_seen": "mwadlawo-9rj6ksik",
+    "seen_at_ms": 1794296381667
   }
 ]
