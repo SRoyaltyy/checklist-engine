@@ -93,7 +93,8 @@ def write_detail(sub, children, charts):
     add('Next action: %s' % cell(sub.get('next_action'), 400))
     add('')
     if charts.get(sid):
-        add('Visual Gantt for this substage, one lane per child requirement and one cell per lifecycle status: [%s](%s)' % (charts[sid], charts[sid]))
+        chart_href = '../' + charts[sid]
+        add('Visual Gantt for this substage, one lane per child requirement and one cell per lifecycle status: [%s](%s)' % (charts[sid], chart_href))
     else:
         add('No chart row was published for this substage.')
     add('')
