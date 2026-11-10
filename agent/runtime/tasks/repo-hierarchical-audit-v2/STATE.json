@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T02:47:35.350Z",
-  "turn_id": "mwa35scv-u0czu65f",
-  "summary": "Run 42743730022@af4ffaac failed in the 'Run source-matched tests' step, so the newly appended QUESTION_INDEX/manifest assertions (or a NameError in them) are red and the commit step was skipped. Head is confirmed af4ffaac and docs/venice-audit-v1 still has no QUESTION_INDEX.csv, no questions/ dir and still tracks pycache. Pulling the failing job log before editing again.",
-  "next": "Read job 129590782361's log for run 42743730022 to identify the exact failing assertion or exception, then repair only that in tests/test_repo_requirements_audit.py",
+  "at": "2026-11-10T02:53:34.933Z",
+  "turn_id": "mwa3dhcx-7at18f3k",
+  "summary": "The log names both failures exactly: question_id is not unique (17637 rows, only 3537 distinct ids such as repeated 'Q-C01-ABSOLUTE'), and the manifest's counts['ids']=258 exceeds the 257 distinct inventory_ids that actually appear in rows. Reading the generator to decide whether to make ids unique per row or relax the assertion, and to reconcile the counts mismatch at its source.",
+  "next": "Read docs/venice-audit-v1/build_questions.py to locate the question_id construction and the counts['ids'] computation, then patch generator and/or tests so ids are unique and the id count reconciles",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -20,7 +20,7 @@
           "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
           "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
         ],
-        "blocker": "test step red on af4ffaac for an unidentified assertion; artifact not yet committed"
+        "blocker": "two red assertions on af4ffaac identified: duplicate question_id and off-by-one manifest id count"
       },
       {
         "id": "t5",
@@ -54,34 +54,18 @@
   },
   "tool_results": [
     {
-      "tool": "job_log",
+      "tool": "read_file",
       "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
-      "error_lines": [
-        "2026-11-10T02:35:05.5745598Z E       AssertionError: ['Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE']",
-        "2026-11-10T02:35:05.5760305Z E       AssertionError: (258, 17637)",
-        "2026-11-10T02:35:05.5764912Z FAILED tests/test_repo_requirements_audit.py::test_question_ids_are_unique_and_namespaced_to_their_inventory_id - AssertionError: ['Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE', 'Q-C01-ABSOLUTE']",
-        "2026-11-10T02:35:05.5773309Z FAILED tests/test_repo_requirements_audit.py::test_question_manifest_reconciles_counts_and_authority_shas - AssertionError: (258, 17637)",
-        "2026-11-10T02:35:05.6034686Z ##[error]Process completed with exit code 1."
-      ]
+      "path": "docs/venice-audit-v1/build_questions.py"
     },
     {
-      "tool": "annotations",
-      "ok": true
+      "tool": "read_file",
+      "ok": true,
+      "path": "docs/venice-audit-v1/build_questions.py"
     }
   ],
   "blockers": [],
   "evidence": [
-    "agent/runtime/receipts/mw99nr43-ehiegorb.0.json@dc83d3b878ed9d08e662d73e3fc0765e5ef8726c",
-    "262ca2c05af9b9a3cc54605328d90df75dc45803",
-    "agent/runtime/receipts/mw9a0aij-jq3i0ost.0.json@8eb868db9caf90a2555846ba1c695bb3ab083caa",
-    "agent/runtime/receipts/mw9a0aij-jq3i0ost.1.json@f3fbe385ac18a12ac4591a4e2aff732065aec8e5",
-    "c1c60c6d25d5ba4c3aed8261d628d98610017c54",
-    "17ec27c19e0545bb8204cf629e5bed202c76aa29",
-    "f16890509072995ded79a3d466f0f2a1b1c29a62",
-    "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
-    "venice/repo-hierarchical-audit-v2@f16890509072995ded79a3d466f0f2a1b1c29a62",
-    "a69f14e818e548d7e408d655073a21f60791311c",
     "docs/venice-audit-v1/EVIDENCE.json@a69f14e818e548d7e408d655073a21f60791311c",
     "agent/runtime/receipts/mw9abvy2-apaduzgt.1.json@c67d7deb39f56dbf24c0de040a0ef6af6c4922b8",
     "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759",
@@ -171,7 +155,17 @@
     "c4755f36e1376e3087863150fc3345bcd243cb43",
     "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
     "https://github.com/SRoyaltyy/checklist-engine/tree/af4ffaac2f521b1ef3f2eb2eb085cf816710ae92",
-    "venice/repo-hierarchical-audit-v2@af4ffaac2f521b1ef3f2eb2eb085cf816710ae92"
+    "venice/repo-hierarchical-audit-v2@af4ffaac2f521b1ef3f2eb2eb085cf816710ae92",
+    "METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b",
+    "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+    "venice/repo-hierarchical-audit-v2@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
+    "4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+    "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
+    "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
+    "96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
+    "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
+    "5bf023d09a62c98ffc41abf1c7396fb8b3b5d133",
+    "docs/venice-audit-v1/build_gantt.py@5bf023d09a62c98ffc41abf1c7396fb8b3b5d133"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -180,11 +174,9 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Proved from the job step list that generation succeeds on af4ffaac and the sole failure is the test step, with the commit step skipped because it lacks if:always(); combined with the branch listing this shows the artifact absence is a consequence of the red test step, not a broken commit script.",
+    "description": "Captured the two exact assertion failures from the job log: duplicate question_ids because ids are inventory+lens only with no per-row discriminator (3537 distinct over 17637 rows), and a manifest id count of 258 against 257 ids actually present in rows, giving a concrete repair target instead of guessing.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
-      "venice/repo-hierarchical-audit-v2@af4ffaac2f521b1ef3f2eb2eb085cf816710ae92",
-      "https://github.com/SRoyaltyy/checklist-engine/tree/af4ffaac2f521b1ef3f2eb2eb085cf816710ae92"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
     ]
   },
   "pitfalls": [
@@ -199,8 +191,8 @@
         "055b1e3440432f60755614e6e5b324e3556088d1"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "workflow-branch-filter-mismatch",
@@ -218,8 +210,8 @@
         "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "unmapped-stage8-substage",
@@ -239,8 +231,8 @@
         "aaf674d0b2502615b874a559d6407a8e97d6861c"
       ],
       "first_seen": "mw9atx46-f9hp6fok",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "assignment-change-invalidates-write",
@@ -253,8 +245,8 @@
         "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "committed-pycache",
@@ -267,8 +259,8 @@
         "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "inplace-requirements-rewrite",
@@ -282,8 +274,8 @@
         "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587"
       ],
       "first_seen": "mwa14obe-eno9cyqs",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "questions-need-real-substage",
@@ -296,8 +288,8 @@
         "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
       ],
       "first_seen": "mwa20nlu-95rewsg5",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "ci-never-commits-outputs",
@@ -310,8 +302,8 @@
         ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246"
       ],
       "first_seen": "mwa28cmm-zmf32qmp",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     },
     {
       "id": "commit-step-blocked-by-pytest",
@@ -323,8 +315,21 @@
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
       ],
       "first_seen": "mwa35scv-u0czu65f",
-      "last_seen": "mwa35scv-u0czu65f",
-      "seen_at_ms": 1794278855350
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
+    },
+    {
+      "id": "question-ids-not-unique",
+      "status": "open",
+      "problem": "QUESTION_INDEX.csv writes question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapse to 3537 distinct ids and per-row uniqueness cannot be asserted; the manifest also counts 258 source ids while only 257 inventory_ids appear in rows.",
+      "failed_approach": "Asserting global question_id uniqueness against a generator that keys ids only by inventory+lens.",
+      "lesson": "Either add a per-row discriminator to question_id or assert uniqueness of the full (question_id, timeframe_domain, parameter_domain) tuple; reconcile counts['ids'] to the ids actually emitted.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
+      ],
+      "first_seen": "mwa3dhcx-7at18f3k",
+      "last_seen": "mwa3dhcx-7at18f3k",
+      "seen_at_ms": 1794279214933
     }
   ]
 }
