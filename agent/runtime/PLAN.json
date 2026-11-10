@@ -2,33 +2,41 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t2",
+  "current_task": "t3",
   "tasks": [
     {
       "id": "t1",
-      "title": "Orient on the refreshed assignment: live head, PROGRESS.json, generator and new visual-chart spec",
+      "title": "Orient on the refreshed assignment: live head, PROGRESS.json, generator and visual-chart spec",
       "acceptance": "Head sha, PROGRESS.json sha and the chart_index/visual rules read back",
       "weight": 1,
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "venice/repo-hierarchical-audit-v2@b574d2acc6a117094db2f30cd4ba1e8658d2225a",
+        "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e",
+        "agent/tasks/REPO_REQUIREMENTS_AUDIT_V1.md@db3d5404a4a962b475de51c17f45611541674c60"
+      ],
       "blocker": ""
     },
     {
       "id": "t2",
-      "title": "Rewrite docs/venice-audit-v1/PROGRESS.json for assignment_sha 8e75e4f7 with live blob SHA",
-      "acceptance": "PROGRESS.json carries assignment_sha 8e75e4f7 and a new returned blob SHA",
+      "title": "Refresh PROGRESS.json for assignment_sha 8e75e4f7",
+      "acceptance": "PROGRESS.json carries assignment_sha 8e75e4f7 at a new blob SHA",
       "weight": 1,
-      "status": "todo",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
+      ],
       "blocker": ""
     },
     {
       "id": "t3",
-      "title": "Emit STAGES.csv plus extended REQUIREMENTS.csv (parent_substage_id, subject_id, eight status dimensions)",
-      "acceptance": "Both files generated with stage rows carrying no percentage and every requirement mapped to a substage",
+      "title": "Emit STAGES.csv plus extended REQUIREMENTS.csv from the pipeline without re-breaking a second run",
+      "acceptance": "STAGES.csv exists with blank stage percentages and every requirement carries parent_substage_id plus eight statuses",
       "weight": 2,
-      "status": "todo",
-      "evidence": [],
+      "status": "doing",
+      "evidence": [
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376"
+      ],
       "blocker": ""
     },
     {
@@ -68,5 +76,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 0
+  "progress_percent": 16
 }
