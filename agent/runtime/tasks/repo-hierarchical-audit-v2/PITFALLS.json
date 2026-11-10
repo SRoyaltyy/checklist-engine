@@ -10,8 +10,8 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mwa0psse-mterozx4",
-    "seen_at_ms": 1794274596368
+    "last_seen": "mwa0wq1e-w6e1x740",
+    "seen_at_ms": 1794275076939
   },
   {
     "id": "workflow-branch-filter-mismatch",
@@ -29,8 +29,8 @@
       "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mwa0psse-mterozx4",
-    "seen_at_ms": 1794274596368
+    "last_seen": "mwa0wq1e-w6e1x740",
+    "seen_at_ms": 1794275076939
   },
   {
     "id": "unmapped-stage8-substage",
@@ -50,21 +50,22 @@
       "aaf674d0b2502615b874a559d6407a8e97d6861c"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mwa0psse-mterozx4",
-    "seen_at_ms": 1794274596368
+    "last_seen": "mwa0wq1e-w6e1x740",
+    "seen_at_ms": 1794275076939
   },
   {
     "id": "assignment-change-invalidates-write",
-    "status": "open",
+    "status": "corrected",
     "problem": "write_file and checkpoint returned 'Task assignment changed; refresh context before mutation' because the write used the pre-refresh blob SHA during an assignment revision.",
     "failed_approach": "Issuing a mutation in the same turn the assignment sha changed, using the older PROGRESS.json SHA.",
-    "lesson": "After an assignment sha change, re-read the target blob on the live branch and use that new SHA; treat the guard rejection as a repair instruction, not proof of a failed edit.",
+    "lesson": "After an assignment sha change, re-read the target blob on the live branch; the guard rejection is a repair instruction, not proof of a failed edit. A later read showed the refreshed blob already landed at 19a64f70.",
     "evidence": [
-      "agent/runtime/receipts/mw8sxl7a-o7ta9fvz.0.json@1eaed61d29964c87017752432d9ee78fd14db22b"
+      "agent/runtime/receipts/mw8sxl7a-o7ta9fvz.0.json@1eaed61d29964c87017752432d9ee78fd14db22b",
+      "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa0psse-mterozx4",
-    "seen_at_ms": 1794274596368
+    "last_seen": "mwa0wq1e-w6e1x740",
+    "seen_at_ms": 1794275076939
   },
   {
     "id": "committed-pycache",
@@ -76,7 +77,7 @@
       "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa0psse-mterozx4",
-    "seen_at_ms": 1794274596368
+    "last_seen": "mwa0wq1e-w6e1x740",
+    "seen_at_ms": 1794275076939
   }
 ]
