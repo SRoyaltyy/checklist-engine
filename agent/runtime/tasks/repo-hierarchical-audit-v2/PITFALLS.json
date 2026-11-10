@@ -95,5 +95,19 @@
     "first_seen": "mwa14obe-eno9cyqs",
     "last_seen": "mwa1c8pc-rcxiaf6z",
     "seen_at_ms": 1794275798127
+  },
+  {
+    "id": "questions-need-real-substage",
+    "status": "open",
+    "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped, and question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
+    "failed_approach": "Treating the eight status dimensions as free-form columns attachable to any stage.",
+    "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification and S5B.1 for alias only, and the generator must run after build_hierarchy so the substage table is materialised.",
+    "evidence": [
+      "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+      "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
+    ],
+    "first_seen": "mwa20nlu-95rewsg5",
+    "last_seen": "mwa20nlu-95rewsg5",
+    "seen_at_ms": 1794276878177
   }
 ]
