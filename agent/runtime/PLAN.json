@@ -22,7 +22,9 @@
       "acceptance": "Every substage has its own SVG showing all required children and statuses, indexed at returned SHAs",
       "weight": 2,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376"
+      ],
       "blocker": ""
     },
     {
