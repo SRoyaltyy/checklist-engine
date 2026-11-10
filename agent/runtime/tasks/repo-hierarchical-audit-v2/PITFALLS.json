@@ -10,8 +10,8 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mw9c57e1-jfv7smou",
-    "seen_at_ms": 1794233267681
+    "last_seen": "mwa0psse-mterozx4",
+    "seen_at_ms": 1794274596368
   },
   {
     "id": "workflow-branch-filter-mismatch",
@@ -29,8 +29,8 @@
       "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mw9c57e1-jfv7smou",
-    "seen_at_ms": 1794233267681
+    "last_seen": "mwa0psse-mterozx4",
+    "seen_at_ms": 1794274596368
   },
   {
     "id": "unmapped-stage8-substage",
@@ -50,7 +50,33 @@
       "aaf674d0b2502615b874a559d6407a8e97d6861c"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mw9c57e1-jfv7smou",
-    "seen_at_ms": 1794233267681
+    "last_seen": "mwa0psse-mterozx4",
+    "seen_at_ms": 1794274596368
+  },
+  {
+    "id": "assignment-change-invalidates-write",
+    "status": "open",
+    "problem": "write_file and checkpoint returned 'Task assignment changed; refresh context before mutation' because the write used the pre-refresh blob SHA during an assignment revision.",
+    "failed_approach": "Issuing a mutation in the same turn the assignment sha changed, using the older PROGRESS.json SHA.",
+    "lesson": "After an assignment sha change, re-read the target blob on the live branch and use that new SHA; treat the guard rejection as a repair instruction, not proof of a failed edit.",
+    "evidence": [
+      "agent/runtime/receipts/mw8sxl7a-o7ta9fvz.0.json@1eaed61d29964c87017752432d9ee78fd14db22b"
+    ],
+    "first_seen": "mwa0psse-mterozx4",
+    "last_seen": "mwa0psse-mterozx4",
+    "seen_at_ms": 1794274596368
+  },
+  {
+    "id": "committed-pycache",
+    "status": "open",
+    "problem": "docs/venice-audit-v1/__pycache__ was tracked by the workflow commit step.",
+    "failed_approach": "Plain git add without clearing cached bytecode.",
+    "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step.",
+    "evidence": [
+      "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12"
+    ],
+    "first_seen": "mwa0psse-mterozx4",
+    "last_seen": "mwa0psse-mterozx4",
+    "seen_at_ms": 1794274596368
   }
 ]
