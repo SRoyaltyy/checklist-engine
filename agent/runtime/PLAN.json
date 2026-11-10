@@ -14,7 +14,7 @@
         "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
       ],
-      "blocker": "two red assertions on af4ffaac identified: duplicate question_id and off-by-one manifest id count"
+      "blocker": "root causes located: id lacks per-row discriminator, counts['ids'] counts unemitted source ids"
     },
     {
       "id": "t5",
