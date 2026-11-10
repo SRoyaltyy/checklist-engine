@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T03:05:33.943Z",
-  "turn_id": "mwa3swx3-cwq1xmlu",
-  "summary": "Located both failing test bodies by name and confirmed the live PROGRESS.json blob SHA (ca467443) for a later guarded rewrite; now reading the exact assertions so the generator patch satisfies them precisely.",
-  "next": "Read tests/test_repo_requirements_audit.py lines 270-400, then patch build_questions.py for a unique per-row question id and an emitted-id manifest count",
+  "at": "2026-11-10T03:08:18.944Z",
+  "turn_id": "mwa416rw-0ix8hmlf",
+  "summary": "Read the exact failing assertions for the two red tests (unique+namespaced question_id, control-row-only template-less rule, manifest count reconciliation). Now reading the live build_questions.py so the id discriminator and manifest count are patched against real code.",
+  "next": "Read build_questions.py on venice/repo-hierarchical-audit-v2, patch qid to a per-row discriminator plus counts['ids'] to emitted ids, then verify the three assertions by re-reading the changed lines.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -56,7 +56,7 @@
     {
       "tool": "read_file",
       "ok": true,
-      "path": "tests/test_repo_requirements_audit.py"
+      "path": "docs/venice-audit-v1/build_questions.py"
     }
   ],
   "blockers": [],
@@ -169,10 +169,9 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Located the exact failing test functions and constants on the live head (unique+namespaced id assertion, control-suffix row rule, manifest count reconciliation) and confirmed the live PROGRESS.json blob SHA ca467443 needed for a guarded rewrite, so the generator fix can be written against real assertions instead of the log summary.",
+    "description": "Extracted the full assertion contract of the two red tests: ids must be non-empty, unique and prefixed with Q-<SLUG(inventory_id)>-, controls must be the only template-less rows and be phase=design with an unresolved_reason, answerable rows need a '{q}' template plus all five non-empty provenance fields, and manifest counts must equal emitted inventory ids and unique ids minus controls.",
     "evidence": [
-      "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205",
-      "docs/venice-audit-v1/PROGRESS.json@ca467443eec7605387877ca68629f4831e534823"
+      "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
     ]
   },
   "pitfalls": [
