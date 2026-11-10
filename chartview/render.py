@@ -38,8 +38,13 @@ def _runs(idx, col):
 
 
 def make_figure(dates, O, H, L, C, V, cutoff, recipe_id, label, answer, ops,
-                show_bars=140, ticker=''):
-    """dates/O/H/L/C/V truncated at cutoff inclusive. All ops in bar-index space."""
+                show_bars=140, ticker='', binary=None):
+    """dates/O/H/L/C/V truncated at cutoff inclusive. All ops in bar-index space.
+
+    binary: None | list of {'qid', 'q', 'a'} — strict YES/NO derived questions
+    (§0b 2026-10-29 22:51/23:05). None = feature blank/switched off -> rendered
+    as NOT_EVALUABLE, never silently NO.
+    """
     dates = np.asarray(dates)
     n = len(dates)
     i0 = max(0, n - show_bars)
@@ -127,8 +132,18 @@ def make_figure(dates, O, H, L, C, V, cutoff, recipe_id, label, answer, ops,
         margin=dict(l=60, r=90, t=110, b=40),
         height=720,
     )
-    # label box: measured quantity + answer
+    # label box: measured quantity + answer + binary YES/NO readout
     txt = f'<b>{recipe_id}</b><br>{label}' + (f'<br><b>{answer}</b>' if answer else '')
+    if binary is not None:
+        lines = []
+        for b in binary:
+            a = b['a']
+            colour = {'YES': '#15803d', 'NO': '#b91c1c'}.get(a, '#9ca3af')
+            lines.append(f"<span style='color:{colour}'><b>{a}</b></span> "
+                         f"<b>{b['qid']}</b>: {b['q']}")
+        txt += ('<br>--- binary questions (§0b 22:51/23:05; feature + comparator '
+                '+ literal threshold; NOT_EVALUABLE excluded, never silently NO) ---'
+                + '<br>' + '<br>'.join(lines))
     fig.add_annotation(x=0.005, xref='paper', y=0.985, yref='paper', text=txt, showarrow=False,
                        align='left', bgcolor='rgba(250,250,252,0.94)', bordercolor=PURPLE_DK,
                        borderwidth=1, font=dict(size=10), xanchor='left', yanchor='top')
