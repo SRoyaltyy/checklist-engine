@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T07:39:41.667Z",
-  "turn_id": "mwadlawo-9rj6ksik",
-  "summary": "create_pr was rejected with 'PR must use the assigned branch' because the call omitted the branch argument; the receipt is agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2. Nothing was created, so the branch head is still unread. Retrying the same PR creation with branch explicitly set to the assigned branch, and reading the true head in parallel so the merge can target a green exact SHA.",
-  "next": "Read the create_pr result for the PR number and the branch_head result; if the head equals 69a278691f87c362005422b3e83344296f5409dc (green run 42775425837) call merge_pr with that expected_head_sha, otherwise make one manual edit_file push and wait for a green run on the new head before merging.",
+  "at": "2026-11-10T08:25:31.339Z",
+  "turn_id": "mwafczcj-ybk4hxdw",
+  "summary": "PR #228 is open on venice/repo-hierarchical-audit-v2 and was synced onto current main 7020524b, producing branch head 8db1c91c; read_pr now reports mergeable=true with head 8db1c91c and base 7020524b. The sync commit was produced through the API, so no workflow run is known to exist at the new head yet; the merge gate needs green checks on that exact SHA, so the head's run list and the live PROGRESS.json SHA are being read before either merging or issuing one manual push to trigger the audit workflow.",
+  "next": "Inspect the runs list for the branch: if a completed success exists at sha 8db1c91c, call merge_pr(228, expected_head_sha=8db1c91c707d27b9cbee67b95e396bd7aa3e6316); otherwise write PROGRESS.json once using the live SHA just read as expected_sha so a fresh push-triggered run starts at the new head, then wait for it to go green.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -11,38 +11,14 @@
     "current_task": "t10",
     "tasks": [
       {
-        "id": "t9",
-        "title": "Validator status/title parity mapping plus green suite",
-        "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, green run at an exact head",
-        "weight": 2,
-        "status": "done",
-        "evidence": [
-          "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
-          "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
-        ],
-        "blocker": ""
-      },
-      {
-        "id": "t7",
-        "title": "Validator + chart/report assertions in tests",
-        "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run at 9840e39e",
-        "weight": 2,
-        "status": "done",
-        "evidence": [
-          "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798",
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308/job/129674964518"
-        ],
-        "blocker": ""
-      },
-      {
         "id": "t10",
-        "title": "Open the v2 revision PR on the assigned branch and merge it on a green exact head",
-        "acceptance": "PR created with branch venice/repo-hierarchical-audit-v2, checks green on expected_head_sha, merge_pr succeeds",
+        "title": "Merge PR #228 on a green exact head",
+        "acceptance": "A completed success run exists at expected_head_sha 8db1c91c and merge_pr returns merged",
         "weight": 3,
         "status": "doing",
         "evidence": [
-          "69a278691f87c362005422b3e83344296f5409dc",
-          "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+          "https://github.com/SRoyaltyy/checklist-engine/pull/228",
+          "8db1c91c707d27b9cbee67b95e396bd7aa3e6316"
         ],
         "blocker": ""
       },
@@ -56,51 +32,21 @@
         "blocker": ""
       }
     ],
-    "progress_percent": 50
+    "progress_percent": 0
   },
   "tool_results": [
     {
-      "tool": "create_pr",
-      "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/pull/228"
+      "tool": "runs",
+      "ok": true
     },
     {
-      "tool": "branch_head",
+      "tool": "read_file",
       "ok": true,
-      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e"
+      "path": "docs/venice-audit-v1/PROGRESS.json"
     }
   ],
   "blockers": [],
   "evidence": [
-    "docs/venice-audit-v1/charts/S6.2.svg@26d299f2ce4500af7f1c495d16498861817cfcb2",
-    "6a17450b46f636683b7e9eb74e9bebb6cd24cfa0",
-    "docs/venice-audit-v1/charts/S6.3.svg@6a17450b46f636683b7e9eb74e9bebb6cd24cfa0",
-    "78536551486d4e2ec38d065a46b55ee37ed723dd",
-    "docs/venice-audit-v1/charts/S7.1.svg@78536551486d4e2ec38d065a46b55ee37ed723dd",
-    "10638133fdf0739f8ffcb8b3625cfe64367bcce5",
-    "docs/venice-audit-v1/charts/S8.1.svg@10638133fdf0739f8ffcb8b3625cfe64367bcce5",
-    "7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc",
-    "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc",
-    "dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
-    "docs/venice-audit-v1/AUDIT.md@dbdf9d978666bdbb9bf8a3f803c9296a11886aa5",
-    "531b1d197df79c5ba4388200d25d8bbbda4739e9",
-    "docs/venice-audit-v1/DATA_REQUIREMENTS.csv@531b1d197df79c5ba4388200d25d8bbbda4739e9",
-    "db4e707374d305fbd45c0300505c5b722375fbfc",
-    "docs/venice-audit-v1/GANTT.html@db4e707374d305fbd45c0300505c5b722375fbfc",
-    "4220cfdf8ba260b92767da7a74a8a908ae13ced1",
-    "docs/venice-audit-v1/GANTT_COMPARISON.csv@4220cfdf8ba260b92767da7a74a8a908ae13ced1",
-    "c4755f36e1376e3087863150fc3345bcd243cb43",
-    "docs/venice-audit-v1/SOURCE_MANIFEST.json@c4755f36e1376e3087863150fc3345bcd243cb43",
-    "b70ecf95ee429ad8df4f8959563ebf26dd95524d",
-    "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d",
-    "352110f9a4e93a7a3e4431d1da16db3d0844cc19",
-    "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
-    "5bf023d09a62c98ffc41abf1c7396fb8b3b5d133",
-    "docs/venice-audit-v1/build_gantt.py@5bf023d09a62c98ffc41abf1c7396fb8b3b5d133",
-    "3cde529c9d8f57613560ad42ba981cfb80278376",
-    "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
-    "f6ea2c85f6f4c599c24e3ed57986cade853e9bd0",
-    "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0",
     "82f8374ef67b7340afae8cf67c663e7709fdc6e3",
     "docs/venice-audit-v1/charts@82f8374ef67b7340afae8cf67c663e7709fdc6e3",
     "57d9909ee25b7107da0ee956fcf7003761d3d205",
@@ -171,7 +117,36 @@
     "https://github.com/SRoyaltyy/checklist-engine/pull/228",
     "https://github.com/SRoyaltyy/checklist-engine/tree/b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e",
     "b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e",
-    "venice/repo-hierarchical-audit-v2@b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e"
+    "venice/repo-hierarchical-audit-v2@b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42775425837",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769212849",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42758077871",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42757576652",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42757560113",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42756301903",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42751476707",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42751178434",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42748790715",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743712586",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740690420",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740672306",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42629463594",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626830246",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626811424",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624123419",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/7020524ba68ed49932e2c72ce721993991d9cd99",
+    "7020524ba68ed49932e2c72ce721993991d9cd99",
+    "main@7020524ba68ed49932e2c72ce721993991d9cd99",
+    "42983f4c6a4962d771ab0cac7eca98e92b6bcfce",
+    "docs/venice-audit-v1/PROGRESS.json@42983f4c6a4962d771ab0cac7eca98e92b6bcfce",
+    "venice/repo-hierarchical-audit-v2@42983f4c6a4962d771ab0cac7eca98e92b6bcfce",
+    "agent/runtime/receipts/mwae0r8i-qwii7wo3.0.json@7238ea62becaf8a84c86a1ce48ad7019205387ca",
+    "8db1c91c707d27b9cbee67b95e396bd7aa3e6316"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -180,9 +155,11 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "create_pr without an explicit branch argument is rejected by the bridge with 'PR must use the assigned branch'; the call must pass branch equal to the assignment branch, and the rejection produced a receipt rather than a PR.",
+    "description": "PR #228 was brought onto current main by sync_branch: branch head moved from b1ff08bd to 8db1c91c with base_sha 7020524b, and read_pr now reports mergeable=true, so the revision is merge-ready pending checks on the exact new head.",
     "evidence": [
-      "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+      "agent/runtime/receipts/mwae0r8i-qwii7wo3.0.json@7238ea62becaf8a84c86a1ce48ad7019205387ca",
+      "8db1c91c707d27b9cbee67b95e396bd7aa3e6316",
+      "https://github.com/SRoyaltyy/checklist-engine/pull/228"
     ]
   },
   "pitfalls": [
@@ -336,8 +313,8 @@
         "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
       ],
       "first_seen": "mwa35scv-u0czu65f",
-      "last_seen": "mwadlawo-9rj6ksik",
-      "seen_at_ms": 1794296381667
+      "last_seen": "mwafczcj-ybk4hxdw",
+      "seen_at_ms": 1794299131339
     },
     {
       "id": "question-ids-not-unique",
@@ -396,8 +373,8 @@
         "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
       ],
       "first_seen": "mwadlawo-9rj6ksik",
-      "last_seen": "mwadlawo-9rj6ksik",
-      "seen_at_ms": 1794296381667
+      "last_seen": "mwafczcj-ybk4hxdw",
+      "seen_at_ms": 1794299131339
     }
   ]
 }
