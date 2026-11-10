@@ -5,41 +5,27 @@
   "current_task": "t7",
   "tasks": [
     {
-      "id": "t5",
-      "title": "Render one visual Gantt SVG per substage plus charts/CHART_INDEX.csv",
-      "acceptance": "Every substage has its own committed SVG showing all required children and statuses, indexed at returned SHAs",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
-        "docs/venice-audit-v1/charts/S8.1.svg@10638133fdf0739f8ffcb8b3625cfe64367bcce5"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t6",
-      "title": "Wire build_report step and publish README.md, GANTT.md, details/<substage-id>.md pages",
-      "acceptance": "Step present in workflow and all reporting layers committed",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "docs/venice-audit-v1/GANTT.md@1dbe74243f1501628f3e56fe274ec0268f8e1988",
-        "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
-        "docs/venice-audit-v1/build_report.py@9e3031ce2b32c94de0dff971728ce3c07f7a62b2"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t7",
       "title": "Add agent/repo_requirements_audit_validate.py, chart/report assertions in tests, green run on final head, open and merge PR",
       "acceptance": "Validator script committed, tests assert per-substage chart and details coverage, green run on final head, PR merged",
       "weight": 3,
       "status": "doing",
       "evidence": [
-        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
+        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205",
+        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
+        "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d"
       ],
+      "blocker": ""
+    },
+    {
+      "id": "t8",
+      "title": "Open the v2 revision PR and merge it on a green exact head",
+      "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
+      "weight": 2,
+      "status": "todo",
+      "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 57
+  "progress_percent": 0
 }
