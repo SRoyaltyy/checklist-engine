@@ -1,0 +1,274 @@
+{
+  "version": 1,
+  "at": "2026-11-10T05:38:37.144Z",
+  "input": {
+    "task_id": "repo-hierarchical-audit-v2",
+    "assignment_sha": "8e75e4f7f1e0ccf926392cca31246dcdacf1fd8b",
+    "owner_id": "mw83wh2u-kaq8t5cl",
+    "turn_id": "mwa99p25-2q7c5nri",
+    "branch": "venice/repo-hierarchical-audit-v2",
+    "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy, with separate lifecycle statuses and percentages only within substages.",
+    "summary": "Orientation confirms the full reporting layer is now real on venice/repo-hierarchical-audit-v2: all 20 substage SVGs (S0.1 through S8.1) plus charts/CHART_INDEX.csv, GANTT.md overview, README.md and all 20 details pages are committed, and CI has advanced the branch head to 90784d74. So t5 and t6 are satisfied by artifacts; the remaining work is the validator script, chart-aware tests, a green run on the final head, then PR and merge.",
+    "next": "Read tests/test_repo_requirements_audit.py and .github/workflows/venice-repo-requirements-audit.yml to learn current chart coverage and step order, then write agent/repo_requirements_audit_validate.py and extend the tests to assert one SVG per substage plus CHART_INDEX.csv coverage.",
+    "contribution": {
+      "kind": "verification",
+      "description": "Verified by directory listing that the visual-output requirement is now fully satisfied: all 20 substages have a committed SVG and CHART_INDEX.csv indexes them, with GANTT.md linking each substage row to its chart and detail page and percentages confined to substage rows.",
+      "evidence": [
+        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
+        "docs/venice-audit-v1/charts/S1.2.svg@670f9d5a6509eaea62b041a5d113d2f895aae97d",
+        "docs/venice-audit-v1/GANTT.md@1dbe74243f1501628f3e56fe274ec0268f8e1988",
+        "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60"
+      ]
+    },
+    "plan": {
+      "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
+      "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
+      "gantt_row": "All project stages 0–8; evidence audit only",
+      "current_task": "t7",
+      "tasks": [
+        {
+          "id": "t5",
+          "title": "Render one visual Gantt SVG per substage plus charts/CHART_INDEX.csv",
+          "acceptance": "Every substage has its own committed SVG showing all required children and statuses, indexed at returned SHAs",
+          "weight": 2,
+          "status": "done",
+          "evidence": [
+            "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
+            "docs/venice-audit-v1/charts/S1.2.svg@670f9d5a6509eaea62b041a5d113d2f895aae97d",
+            "docs/venice-audit-v1/charts/S8.1.svg@10638133fdf0739f8ffcb8b3625cfe64367bcce5"
+          ]
+        },
+        {
+          "id": "t6",
+          "title": "Write README.md, GANTT.md, top-level GANTT visual and details/<substage-id>.md pages",
+          "acceptance": "All reporting layers exist, percentages only inside substages, cross-referenced with v1 matrices",
+          "weight": 2,
+          "status": "done",
+          "evidence": [
+            "docs/venice-audit-v1/GANTT.md@1dbe74243f1501628f3e56fe274ec0268f8e1988",
+            "docs/venice-audit-v1/README.md@b1b3664bb93a724a8ecbd565c4ec2842cc7f132e",
+            "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60"
+          ]
+        },
+        {
+          "id": "t7",
+          "title": "Add validator, chart-aware tests, green run on final head, open and merge PR",
+          "acceptance": "Validator in place, tests assert per-substage chart coverage, green run on final head, merged PR",
+          "weight": 3,
+          "status": "doing",
+          "evidence": [
+            "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97"
+          ]
+        }
+      ],
+      "progress_percent": 70
+    },
+    "notes": "TOOL NOTE: bridge tools are not native here; every GitHub action goes in actions[]. ACTIVE: repo-hierarchical-audit-v2, branch venice/repo-hierarchical-audit-v2, assignment_sha 8e75e4f7, allow_merge=true, publishing_enabled=true, deliverable=merged_pr. allowed_paths: docs/venice-audit-v1/**, agent/repo_requirements_audit_validate.py, tests/test_repo_requirements_audit.py, .github/workflows/venice-repo-requirements-audit.yml. HEAD 90784d74 (CI commit); PROGRESS.json@209907c2. PROVEN COMPLETE LAYERS: charts/CHART_INDEX.csv@04adc1ba + charts/S0.1@0866a718, S0.2@6fd47683, S0.3@30b0a43d, S0.4@b77fe590, S1.1@926b2ed7, S1.2@670f9d5a, S1.3@19aebffa, S1.4@813fcce5, S1.5@bfeb3390, S1.6@1d1a8600, S2.1@2b0f55b0, S3.1@8d1d1bfd, S4.1@2fca5c68, S5.1@ea643f27, S5B.1@1f19ae37, S6.1@216251c8, S6.2@26d299f2, S6.3@6a17450b, S7.1@78536551, S8.1@10638133; GANTT.md@1dbe7424 (98 lines, per-substage percent only, chart+detail links); details@a9dac9b3 (20 pages); README.md@b1b3664b. REMAINING: agent/repo_requirements_audit_validate.py, chart assertions in tests, green run on final head, PR + merge. RERUN ORDER: build_extra -> build_gantt -> build_hierarchy -> build_questions -> build_charts -> build_report. Blobs: build_charts.py@b70ecf95, build_hierarchy.py@3cde529c, build_questions.py@54262187, build_matrices.py@f6ea2c85, build_extra.py@352110f9, .gitignore@7f6ff296, test@57d9909e (28 tests), QUESTION_INDEX.csv@096587d1, STAGES.csv@e212ffb2, REQUIREMENTS.csv@5f27c04f, EVIDENCE.json@dde18e70. Pitfall note: only attach pitfalls whose evidence is an accepted identity; bare run URLs get rejected. GREEN BASELINE 42629463594 @b574d2ac; latest green 42758077871 @908c53f1.",
+    "pitfalls": [
+      {
+        "id": "committed-pycache",
+        "status": "open",
+        "problem": "docs/venice-audit-v1/__pycache__ is tracked even though .gitignore excludes pycache/ and *.pyc.",
+        "failed_approach": "Relying on .gitignore alone; ignore rules do not untrack already-committed files.",
+        "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step, then confirm the path is absent from list_files.",
+        "evidence": [
+          "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
+        ]
+      },
+      {
+        "id": "questions-need-real-substage",
+        "status": "open",
+        "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped; question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
+        "failed_approach": "Treating the eight status dimensions as free-form columns attachable to any stage.",
+        "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification and S5B.1 for alias only, and the generator must run after build_hierarchy so the substage table is materialised.",
+        "evidence": [
+          "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+          "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
+        ]
+      },
+      {
+        "id": "inplace-requirements-rewrite",
+        "status": "resolved",
+        "problem": "build_hierarchy.py rewrites REQUIREMENTS.csv in place from the v1 schema to v2 columns, so a second run could parse already-converted rows.",
+        "failed_approach": "Assuming the in-place rewrite is idempotent without checking the upstream regenerator.",
+        "lesson": "Verified safe: build_matrices.run_extras calls build_extra.main() first, which always rewrites REQUIREMENTS.csv from its hardcoded ROWS list in the v1 schema. Keep that call order if either generator is refactored.",
+        "evidence": [
+          "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+          "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
+          "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0"
+        ]
+      }
+    ]
+  },
+  "pitfalls": [
+    {
+      "id": "stale-v1-progress",
+      "status": "corrected",
+      "problem": "PROGRESS.json on venice/repo-hierarchical-audit-v2 described the superseded v1 task.",
+      "failed_approach": "Reusing the previous audit's PROGRESS.json as current assignment state.",
+      "lesson": "Rewrite PROGRESS.json for the active task id with its live blob SHA as expected_sha; confirm the new blob on the next read.",
+      "evidence": [
+        "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6",
+        "055b1e3440432f60755614e6e5b324e3556088d1"
+      ],
+      "first_seen": "mw98b8ur-tl63d9d0",
+      "last_seen": "mwa3swx3-cwq1xmlu",
+      "seen_at_ms": 1794279933943
+    },
+    {
+      "id": "workflow-branch-filter-mismatch",
+      "status": "resolved",
+      "problem": "Workflow branch filter and source-matched test referenced the v1 branch, so no green run existed on the active v2 branch.",
+      "failed_approach": "Assuming flipping the workflow filter alone would green the suite.",
+      "lesson": "Workflow branches filter + checkout ref AND tests/test_repo_requirements_audit.py must all reference venice/repo-hierarchical-audit-v2, and a green run on the active head is required to close it.",
+      "evidence": [
+        ".github/workflows/venice-repo-requirements-audit.yml@f9fe7c25c0ee3d9352a840b1c7b338b9dfa49b64",
+        "venice/repo-hierarchical-audit-v2@055b1e3440432f60755614e6e5b324e3556088d1",
+        "agent/runtime/receipts/mw9abvy2-apaduzgt.2.json@e5fb6ef8c82c0c4fc33cc25d86e0b6cbe80b6759",
+        "tests/test_repo_requirements_audit.py@4b77fe90b6344746589dd1acae134c30589712ab",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863/job/129193065738",
+        ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
+        "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
+      ],
+      "first_seen": "mw98tesh-vz882aou",
+      "last_seen": "mwa3swx3-cwq1xmlu",
+      "seen_at_ms": 1794279933943
+    },
+    {
+      "id": "unmapped-stage8-substage",
+      "status": "resolved",
+      "problem": "build_hierarchy.py raised SystemExit on requirement R8.1 because STAGES lacked S8 and SUBSTAGES lacked the '8 Shadow and live'/OPS entry.",
+      "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
+      "lesson": "Add S8 plus an S8.1 substage keyed on gantt_group '8 Shadow and live'/lane OPS, handle v1 'CLOSED', and verify build_matrices completes with no unmapped message.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
+        "eda683e7d07114ca4f0faba314b9539cce4297cc",
+        "docs/venice-audit-v1/build_hierarchy.py@f16890509072995ded79a3d466f0f2a1b1c29a62",
+        "docs/venice-audit-v1/REQUIREMENTS.csv@78ee06adf99ff652b8c654cc82d0f4a7d41b8346",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863/job/129193065738",
+        "c3e256510b6b0ea5766f6fc7526ae3104618dacf",
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+        "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
+        "aaf674d0b2502615b874a559d6407a8e97d6861c"
+      ],
+      "first_seen": "mw9atx46-f9hp6fok",
+      "last_seen": "mwa3swx3-cwq1xmlu",
+      "seen_at_ms": 1794279933943
+    },
+    {
+      "id": "assignment-change-invalidates-write",
+      "status": "corrected",
+      "problem": "write_file and checkpoint returned 'Task assignment changed; refresh context before mutation' during an assignment revision.",
+      "failed_approach": "Issuing a mutation in the same turn the assignment sha changed, using the older PROGRESS.json SHA.",
+      "lesson": "After an assignment sha change, re-read the target blob on the live branch; the guard rejection is a repair instruction, not proof of a failed edit.",
+      "evidence": [
+        "agent/runtime/receipts/mw8sxl7a-o7ta9fvz.0.json@1eaed61d29964c87017752432d9ee78fd14db22b",
+        "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
+      ],
+      "first_seen": "mwa0psse-mterozx4",
+      "last_seen": "mwa3swx3-cwq1xmlu",
+      "seen_at_ms": 1794279933943
+    },
+    {
+      "id": "committed-pycache",
+      "status": "open",
+      "problem": "docs/venice-audit-v1/__pycache__ is tracked even though .gitignore excludes pycache/ and *.pyc.",
+      "failed_approach": "Relying on .gitignore alone; ignore rules do not untrack already-committed files.",
+      "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step, then confirm the path is absent from list_files.",
+      "evidence": [
+        "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
+        "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
+      ],
+      "first_seen": "mwa0psse-mterozx4",
+      "last_seen": "mwa99p25-2q7c5nri",
+      "seen_at_ms": 1794289117144
+    },
+    {
+      "id": "inplace-requirements-rewrite",
+      "status": "resolved",
+      "problem": "build_hierarchy.py rewrites REQUIREMENTS.csv in place from the v1 schema to v2 columns, so a second run could parse already-converted rows.",
+      "failed_approach": "Assuming the in-place rewrite is idempotent without checking the upstream regenerator.",
+      "lesson": "Verified safe: build_matrices.run_extras calls build_extra.main() first, which always rewrites REQUIREMENTS.csv from its hardcoded ROWS list in the v1 schema. Keep that call order if either generator is refactored.",
+      "evidence": [
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+        "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
+        "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587",
+        "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0"
+      ],
+      "first_seen": "mwa14obe-eno9cyqs",
+      "last_seen": "mwa99p25-2q7c5nri",
+      "seen_at_ms": 1794289117144
+    },
+    {
+      "id": "questions-need-real-substage",
+      "status": "open",
+      "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped; question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
+      "failed_approach": "Treating the eight status dimensions as free-form columns attachable to any stage.",
+      "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification and S5B.1 for alias only, and the generator must run after build_hierarchy so the substage table is materialised.",
+      "evidence": [
+        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
+        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
+        "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
+      ],
+      "first_seen": "mwa20nlu-95rewsg5",
+      "last_seen": "mwa99p25-2q7c5nri",
+      "seen_at_ms": 1794289117144
+    },
+    {
+      "id": "ci-never-commits-outputs",
+      "status": "resolved",
+      "problem": "The workflow generated every artifact into the runner workspace and threw it away.",
+      "failed_approach": "Assuming a green audit run proves the artifact exists because the build step succeeded.",
+      "lesson": "Fixed: the commit step now pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push still will not retrigger the workflow, so each edit_file push remains the trigger.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793",
+        ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42748790715/job/129607177901",
+        "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9"
+      ],
+      "first_seen": "mwa28cmm-zmf32qmp",
+      "last_seen": "mwa4wsw0-h5x8uout",
+      "seen_at_ms": 1794281736931
+    },
+    {
+      "id": "commit-step-blocked-by-pytest",
+      "status": "open",
+      "problem": "The commit+push step has no if:always(), so the run that first carries the new workflow (52aa4bfe) died at pytest before the commit step and published nothing; a red run at a head whose tests still describe the previous workflow therefore looks identical to a broken commit script.",
+      "failed_approach": "Editing workflow and tests in two separate commits and expecting the first run to publish.",
+      "lesson": "Read a red run's job log before touching the commit step; expect one transitional red run per head whose tests still describe the previous workflow.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
+      ],
+      "first_seen": "mwa35scv-u0czu65f",
+      "last_seen": "mwa3swx3-cwq1xmlu",
+      "seen_at_ms": 1794279933943
+    },
+    {
+      "id": "question-ids-not-unique",
+      "status": "resolved",
+      "problem": "QUESTION_INDEX.csv writes question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapse to 3537 distinct ids and per-row uniqueness cannot be asserted; the manifest also counts 258 source ids while only 257 inventory_ids appear in rows.",
+      "failed_approach": "Asserting global question_id uniqueness against a generator that keys ids only by inventory+lens.",
+      "lesson": "Add a per-row discriminator to question_id (phase suffix after the Q-<SLUG(INVENTORY)>- prefix) and recompute counts['ids']/counts['questions'] from emitted rows after the loop; verified green.",
+      "evidence": [
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
+        "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
+      ],
+      "first_seen": "mwa3dhcx-7at18f3k",
+      "last_seen": "mwa4ntl5-ry22i9nr",
+      "seen_at_ms": 1794281375282
+    },
+    {
+      "id": "bridge-tools-not-native",
+      "status": "open",
+      "problem": "Native tool calls named read_file/edit_file return 'Tool not found' inside this turn.",
+      "failed_approach": "Invoking read_file/edit_file as native function calls instead of bridge actions.",
+      "lesson": "Put every GitHub request in actions[] as {tool,args} and read results next turn.",
+      "evidence": [
+        ".github/workflows/venice-repo-requirements-audit.yml@34dd5938defa901c57005edec219ad5c4682d676"
+      ],
+      "first_seen": "mwa5cpfl-bsvtqvrr",
+      "last_seen": "mwa5cpfl-bsvtqvrr",
+      "seen_at_ms": 1794282327161
+    }
+  ]
+}
