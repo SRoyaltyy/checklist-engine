@@ -139,15 +139,16 @@
   },
   {
     "id": "question-ids-not-unique",
-    "status": "open",
+    "status": "resolved",
     "problem": "QUESTION_INDEX.csv writes question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapse to 3537 distinct ids and per-row uniqueness cannot be asserted; the manifest also counts 258 source ids while only 257 inventory_ids appear in rows.",
     "failed_approach": "Asserting global question_id uniqueness against a generator that keys ids only by inventory+lens.",
-    "lesson": "Either add a per-row discriminator to question_id or assert uniqueness of the full (question_id, timeframe_domain, parameter_domain) tuple; reconcile counts['ids'] to the ids actually emitted.",
+    "lesson": "Add a per-row discriminator to question_id (phase suffix after the Q-<SLUG(INVENTORY)>- prefix) and recompute counts['ids']/counts['questions'] from emitted rows after the loop; verified green.",
     "evidence": [
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
+      "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
     ],
     "first_seen": "mwa3dhcx-7at18f3k",
-    "last_seen": "mwa4gj8m-b558n0m1",
-    "seen_at_ms": 1794280832691
+    "last_seen": "mwa4ntl5-ry22i9nr",
+    "seen_at_ms": 1794281375282
   }
 ]
