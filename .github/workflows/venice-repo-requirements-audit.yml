@@ -28,12 +28,18 @@ jobs:
       - name: Run source-matched tests
         if: hashFiles('tests/test_repo_requirements_audit.py') != ''
         run: python -m pytest -q tests/test_repo_requirements_audit.py
-      - name: Report regenerated matrix drift (no push)
+      - name: Commit regenerated matrices when they drift
         run: |
-          git add docs/venice-audit-v1
+          git rm -r --cached --quiet docs/venice-audit-v1/__pycache__ || true
+          git add -A docs/venice-audit-v1
           if git diff --cached --quiet; then
             echo 'no matrix drift: generated outputs match the committed state'
-          else
-            echo 'matrix drift detected: generated outputs differ from the committed state'
-            git diff --cached --stat
+            exit 0
           fi
+          echo 'matrix drift detected: generated outputs differ from the committed state'
+          git diff --cached --stat
+          git config user.name 'venice-audit-bot'
+          git config user.email 'venice-audit-bot@users.noreply.github.com'
+          git commit -m 'chore(audit): regenerate v2 audit matrices from authority files'
+          git push origin HEAD:venice/repo-hierarchical-audit-v2
+          echo 'committed and pushed regenerated outputs; the next run on the pushed head is the merge-gate check'
