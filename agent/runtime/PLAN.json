@@ -46,9 +46,10 @@
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
+        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793"
       ],
-      "blocker": "QUESTION_INDEX.csv itself is not yet emitted or committed"
+      "blocker": "generator runs but CI discards its output; commit step + test assertions missing"
     },
     {
       "id": "t5",
