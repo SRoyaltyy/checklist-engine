@@ -10,8 +10,8 @@
       "055b1e3440432f60755614e6e5b324e3556088d1"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   },
   {
     "id": "workflow-branch-filter-mismatch",
@@ -29,8 +29,8 @@
       "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   },
   {
     "id": "unmapped-stage8-substage",
@@ -50,8 +50,8 @@
       "aaf674d0b2502615b874a559d6407a8e97d6861c"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   },
   {
     "id": "assignment-change-invalidates-write",
@@ -64,34 +64,36 @@
       "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   },
   {
     "id": "committed-pycache",
     "status": "open",
-    "problem": "docs/venice-audit-v1/__pycache__ was tracked by the workflow commit step.",
-    "failed_approach": "Plain git add without clearing cached bytecode.",
-    "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step.",
+    "problem": "docs/venice-audit-v1/__pycache__ is tracked even though .gitignore now excludes __pycache__/ and *.pyc.",
+    "failed_approach": "Relying on .gitignore alone; ignore rules do not untrack already-committed files.",
+    "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step, then confirm the path is absent from list_files.",
     "evidence": [
-      "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12"
+      "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
+      "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   },
   {
     "id": "inplace-requirements-rewrite",
-    "status": "open",
+    "status": "resolved",
     "problem": "build_hierarchy.py rewrites REQUIREMENTS.csv in place from the v1 schema to v2 columns, so a second pipeline run could parse already-converted rows.",
     "failed_approach": "Assuming the in-place rewrite is idempotent without checking the upstream regenerator.",
-    "lesson": "Verify build_extra always rewrites REQUIREMENTS.csv from its hardcoded ROWS list before build_hierarchy runs; if it does not, make build_hierarchy tolerate v2 input or write a separate v2 file.",
+    "lesson": "Verified safe: build_matrices.run_extras calls build_extra.main() first, which always rewrites REQUIREMENTS.csv from its hardcoded ROWS list in the v1 schema, so build_hierarchy never reads v2 input. Keep that call order if either generator is refactored.",
     "evidence": [
       "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
-      "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19"
+      "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
+      "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587"
     ],
     "first_seen": "mwa14obe-eno9cyqs",
-    "last_seen": "mwa14obe-eno9cyqs",
-    "seen_at_ms": 1794275375881
+    "last_seen": "mwa1c8pc-rcxiaf6z",
+    "seen_at_ms": 1794275798127
   }
 ]
