@@ -12,9 +12,9 @@
       "status": "doing",
       "evidence": [
         "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793"
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361"
       ],
-      "blocker": "commit step and assertions written this turn; needs a run that actually pushes the artifacts"
+      "blocker": "test step red on af4ffaac for an unidentified assertion; artifact not yet committed"
     },
     {
       "id": "t5",
