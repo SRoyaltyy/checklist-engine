@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T06:32:42.383Z",
-  "turn_id": "mwab7521-394zqxla",
-  "summary": "Confirmed the exact defect shape from the emission block: build_charts.py already copies percent fields from the STAGES row (those pass parity) but reads substage_title from sub['title'] and substage_status from sub['status'], while the validator compares against STAGES.csv columns named substage_title/substage_status. Replacing those two keys with the parity column names fixes all 40 issues and is safe even if a column is absent, because both sides then read the same source column.",
-  "next": "Verify the edited emission block on the new blob SHA and confirm STAGES.csv carries substage_status/substage_title columns, then read the resulting run and its log before touching anything else.",
+  "at": "2026-11-10T06:38:47.466Z",
+  "turn_id": "mwabevlq-cl4u7evn",
+  "summary": "STAGES.csv header (node_id,parent_id,node_type,title,status,substage_percent,...,details_path) proves there are no substage_status/substage_title columns, so my build_charts key rename alone would leave the index status empty and trip the STATUS_VALUES vocabulary rule instead. The real defect is that the validator compares index column names against STAGES row keys; fixing it needs a column mapping in the validator plus reverting the generator rename.",
+  "next": "Read the log of run 42769212849 to confirm the new failure shape, then push the validator mapping + generator revert and watch the next run.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -12,13 +12,13 @@
     "tasks": [
       {
         "id": "t9",
-        "title": "Fix the chart-index status/title parity defect and green the suite",
-        "acceptance": "build_charts sources status/title from the STAGES.csv parity columns; validator returns no issues; green run at an exact head",
+        "title": "Make the validator's status/title parity read the real STAGES.csv columns and green the suite",
+        "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, validator returns no issues, green run at an exact head",
         "weight": 2,
         "status": "doing",
         "evidence": [
-          "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
-          "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d"
+          "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
+          "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02"
         ],
         "blocker": ""
       },
@@ -39,9 +39,7 @@
         "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
         "weight": 1,
         "status": "todo",
-        "evidence": [
-          "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642"
-        ],
+        "evidence": [],
         "blocker": ""
       },
       {
@@ -60,23 +58,24 @@
     {
       "tool": "edit_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/build_charts.py",
-      "commit": "1ad5df82a4166fd2389aed363a6d991a35bcec03",
+      "path": "agent/repo_requirements_audit_validate.py",
+      "commit": "4f3096934219205adf2f4488e22a550ccfd53340",
       "verified": true
     },
     {
-      "tool": "read_file",
+      "tool": "edit_file",
       "ok": true,
-      "path": "docs/venice-audit-v1/STAGES.csv"
+      "path": "docs/venice-audit-v1/build_charts.py",
+      "commit": "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+      "verified": true
+    },
+    {
+      "tool": "run_jobs",
+      "ok": true
     }
   ],
   "blockers": [],
   "evidence": [
-    "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642",
-    "a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
-    "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
-    "venice/repo-hierarchical-audit-v2@1dbe74243f1501628f3e56fe274ec0268f8e1988",
-    "TODO.md@c767585fdaafde1623f07036efb6939efcea9fd4",
     "METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b",
     "096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
     "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
@@ -171,7 +170,12 @@
     "venice/repo-hierarchical-audit-v2@06c2c84033e649c3fc302a3a6ae2a579ab434b02",
     "agent/runtime/receipts/mwab7521-394zqxla.0.json@4891e733682a25f46508b17bb6149e9a4003f497",
     "1ad5df82a4166fd2389aed363a6d991a35bcec03",
-    "venice/repo-hierarchical-audit-v2@e212ffb22a39cf8550109bdb612f90d0a4591980"
+    "venice/repo-hierarchical-audit-v2@e212ffb22a39cf8550109bdb612f90d0a4591980",
+    "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
+    "agent/runtime/receipts/mwabevlq-cl4u7evn.1.json@c78c622778463dc474cc1495341d71a93a3a05e9",
+    "4f3096934219205adf2f4488e22a550ccfd53340",
+    "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769212849/job/129672794778"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -180,10 +184,11 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Pinned the parity defect to two wrong key lookups: the index row takes title/status from STAGES row keys 'title'/'status' while the validator compares the 'substage_title'/'substage_status' keys, and the same row copies all four percent fields verbatim (which pass) — so the fix is a two-key rename in the generator, not a validator or test change.",
+    "description": "Disproved the earlier assumption: STAGES.csv carries only title/status, so the generator rename to substage_title/substage_status would emit empty cells and fail the STATUS_VALUES rule; the fix belongs in the validator's parity loop as an index-column to STAGES-column mapping (substage_status->status, substage_title->title) with the STAGES header left untouched.",
     "evidence": [
-      "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d",
-      "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02"
+      "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
+      "agent/runtime/receipts/mwab7521-394zqxla.0.json@4891e733682a25f46508b17bb6149e9a4003f497",
+      "1ad5df82a4166fd2389aed363a6d991a35bcec03"
     ]
   },
   "pitfalls": [
@@ -200,8 +205,8 @@
         "venice/repo-hierarchical-audit-v2@209907c2a45603f84c6a1d2bbaaca8e08309f642"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "workflow-branch-filter-mismatch",
@@ -221,14 +226,14 @@
         "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "unmapped-stage8-substage",
       "status": "resolved",
       "problem": "build_hierarchy.py raised SystemExit on requirement R8.1 because STAGES lacked S8 and SUBSTAGES lacked the '8 Shadow and live'/OPS entry.",
-      "failed_approach": "Assuming the v2 mapping covered all canonical rows; only R0.1-R6.2 had been verified.",
+      "failed_approach": "Assuming the v2 mapping covered all canonical rows.",
       "lesson": "Add S8 plus an S8.1 substage keyed on gantt_group '8 Shadow and live'/lane OPS, handle v1 'CLOSED', and verify build_matrices completes with no unmapped message.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42624144140/job/129183857092",
@@ -243,8 +248,8 @@
         "docs/venice-audit-v1/REQUIREMENTS.csv@5f27c04ff9936ab0a3e257a6cb913e7aac4ae147"
       ],
       "first_seen": "mw9atx46-f9hp6fok",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "assignment-change-invalidates-write",
@@ -259,8 +264,8 @@
         "agent/runtime/receipts/mwaa4jee-07octnpq.0.json@3d79f85b721ac173a4a715bc97c56cb328dfc73c"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "committed-pycache",
@@ -274,15 +279,15 @@
         "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "inplace-requirements-rewrite",
       "status": "resolved",
-      "problem": "build_hierarchy.py rewrites REQUIREMENTS.csv in place from the v1 schema to v2 columns, so a second run could parse already-converted rows.",
+      "problem": "build_hierarchy.py rewrites REQUIREMENTS.csv in place from the v1 schema to v2 columns.",
       "failed_approach": "Assuming the in-place rewrite is idempotent without checking the upstream regenerator.",
-      "lesson": "Verified safe: build_matrices.run_extras calls build_extra.main() first, which always rewrites REQUIREMENTS.csv from its hardcoded ROWS list in the v1 schema. Keep that call order if either generator is refactored.",
+      "lesson": "Verified safe: build_matrices.run_extras calls build_extra.main() first, which always rewrites REQUIREMENTS.csv from its hardcoded ROWS list. Keep that call order.",
       "evidence": [
         "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
         "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
@@ -290,8 +295,8 @@
         "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0"
       ],
       "first_seen": "mwa14obe-eno9cyqs",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "questions-need-real-substage",
@@ -305,15 +310,15 @@
         "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
       ],
       "first_seen": "mwa20nlu-95rewsg5",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "ci-never-commits-outputs",
       "status": "resolved",
       "problem": "The workflow generated every artifact into the runner workspace and threw it away.",
-      "failed_approach": "Assuming a green audit run proves the artifact exists because the build step succeeded.",
-      "lesson": "Fixed: the commit step now pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push still will not retrigger the workflow, so each edit_file push remains the trigger.",
+      "failed_approach": "Assuming a green audit run proves the artifact exists.",
+      "lesson": "Fixed: the commit step pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push does not retrigger the workflow, so each edit_file push remains the trigger.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793",
         ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
@@ -322,38 +327,38 @@
         ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
       ],
       "first_seen": "mwa28cmm-zmf32qmp",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "commit-step-blocked-by-pytest",
       "status": "open",
-      "problem": "The commit+push step has no if:always(), so a head whose tests still describe the previous workflow dies at pytest before publishing and nothing is pushed.",
+      "problem": "The commit+push step has no if:always(), so a head whose tests still fail dies at pytest before publishing and nothing is pushed.",
       "failed_approach": "Editing workflow and tests in separate commits and expecting the first run to publish.",
-      "lesson": "Read a red run's job log before touching the commit step; expect one transitional red run per head whose tests still describe the previous workflow.",
+      "lesson": "Read a red run's job log before touching the commit step; expect one transitional red run per head.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
         "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
       ],
       "first_seen": "mwa35scv-u0czu65f",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "question-ids-not-unique",
       "status": "resolved",
-      "problem": "QUESTION_INDEX.csv wrote question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapsed to 3537 distinct ids and per-row uniqueness could not be asserted.",
+      "problem": "QUESTION_INDEX.csv wrote question_id without a per-row discriminator, collapsing 17637 rows to 3537 distinct ids.",
       "failed_approach": "Asserting global question_id uniqueness against a generator that keys ids only by inventory+lens.",
-      "lesson": "Add a per-row discriminator to question_id and recompute counts from emitted rows after the loop; verified green.",
+      "lesson": "Add a per-row discriminator and recompute counts from emitted rows after the loop; verified green.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
         "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55",
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455"
       ],
       "first_seen": "mwa3dhcx-7at18f3k",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "bridge-tools-not-native",
@@ -366,22 +371,23 @@
         ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
       ],
       "first_seen": "mwa5cpfl-bsvtqvrr",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     },
     {
       "id": "chart-index-hardcoded-metadata",
-      "status": "open",
-      "problem": "build_charts.py emits substage_status/substage_title from the wrong STAGES.csv keys ('status'/'title') instead of the parity columns, so the validator's parity rule fails on all 20 substages (40 issues).",
-      "failed_approach": "Assuming the generator already sourced chart metadata from the STAGES matrix because the percent fields passed.",
-      "lesson": "Single source of truth: chart index rows must read substage_status/substage_title (and percentage fields) from the exact column names the validator compares, keyed off the STAGES.csv substage row.",
+      "status": "corrected",
+      "problem": "Validator compares CHART_INDEX columns substage_status/substage_title against identically named STAGES.csv keys, but STAGES.csv only has title/status, so all 20 substages fail parity (40 issues); the generator was also reading title/status.",
+      "failed_approach": "Renaming only the generator's lookups to substage_status/substage_title — that empties the index cells and swaps the parity failure for 20 STATUS_VALUES failures.",
+      "lesson": "Map index column names to the real STAGES.csv column names inside the validator (substage_status->status, substage_title->title) and keep the generator reading title/status; leave the STAGES.csv header unchanged so pinned column lists stay valid.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
-        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97"
+        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
+        "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
       ],
       "first_seen": "mwaarq9u-frvzdzv8",
-      "last_seen": "mwab7521-394zqxla",
-      "seen_at_ms": 1794292362383
+      "last_seen": "mwabevlq-cl4u7evn",
+      "seen_at_ms": 1794292727466
     }
   ]
 }
