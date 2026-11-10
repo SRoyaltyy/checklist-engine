@@ -112,17 +112,19 @@
   },
   {
     "id": "ci-never-commits-outputs",
-    "status": "open",
-    "problem": "The workflow generates every artifact into the runner workspace and then throws it away: the last step only git-adds and echoes drift text, so regenerated outputs never reach the branch.",
+    "status": "resolved",
+    "problem": "The workflow generated every artifact into the runner workspace and threw it away.",
     "failed_approach": "Assuming a green audit run proves the artifact exists because the build step succeeded.",
-    "lesson": "A green build proves generation only; commit+push (with git rm -r --cached of tracked pycache) is required before any artifact can be cited as file@sha, and a GITHUB_TOKEN push will not retrigger the workflow.",
+    "lesson": "Fixed: the commit step now pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push still will not retrigger the workflow, so each edit_file push remains the trigger.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793",
-      ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246"
+      ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42748790715/job/129607177901",
+      "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9"
     ],
     "first_seen": "mwa28cmm-zmf32qmp",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwa4wsw0-h5x8uout",
+    "seen_at_ms": 1794281736931
   },
   {
     "id": "commit-step-blocked-by-pytest",
