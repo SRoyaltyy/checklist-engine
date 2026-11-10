@@ -11,10 +11,9 @@
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
-        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
+        "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
       ],
-      "blocker": "root causes located; patch must keep Q-<SLUG(INVENTORY)>- prefix and add a discriminator"
+      "blocker": "patch applied; needs green run proving unique ids and reconciled counts"
     },
     {
       "id": "t5",
