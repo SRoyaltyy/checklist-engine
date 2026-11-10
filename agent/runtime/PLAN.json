@@ -6,7 +6,7 @@
   "tasks": [
     {
       "id": "t9",
-      "title": "Make the validator's status/title parity read the real STAGES.csv columns and green the suite",
+      "title": "Validator status/title parity mapping plus green suite",
       "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, green run at an exact head",
       "weight": 2,
       "status": "done",
@@ -17,34 +17,37 @@
       "blocker": ""
     },
     {
-      "id": "t10",
-      "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
-      "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
-      "weight": 1,
-      "status": "doing",
-      "evidence": [],
-      "blocker": ""
-    },
-    {
       "id": "t7",
       "title": "Validator + chart/report assertions in tests",
-      "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run on final head",
-      "weight": 3,
-      "status": "doing",
+      "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run at 9840e39e",
+      "weight": 2,
+      "status": "done",
       "evidence": [
-        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
+        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798",
+        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308/job/129674964518"
       ],
       "blocker": ""
     },
     {
-      "id": "t8",
+      "id": "t10",
       "title": "Open the v2 revision PR and merge it on a green exact head",
       "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
-      "weight": 2,
+      "weight": 3,
+      "status": "doing",
+      "evidence": [
+        "69a278691f87c362005422b3e83344296f5409dc"
+      ],
+      "blocker": ""
+    },
+    {
+      "id": "t11",
+      "title": "Confirm the merge commit on main and record it in PROGRESS.json",
+      "acceptance": "PR merged, main head contains the audit, PROGRESS.json notes the merge",
+      "weight": 1,
       "status": "todo",
       "evidence": [],
       "blocker": ""
     }
   ],
-  "progress_percent": 25
+  "progress_percent": 50
 }
