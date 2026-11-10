@@ -1,0 +1,111 @@
+{
+  "generated_by": "docs/venice-audit-v1/build_questions.py",
+  "authority_blob_shas": {
+    "dictionary/WORLD_SNAPSHOT_DICTIONARY.csv": "9412f478fd4fa75f9fe2d1c4282cc5a1fee81bfd",
+    "docs/LENSES_COVERAGE_V1.csv": "fa338f19ca8732829939eb30fdee473927ea0464"
+  },
+  "phase_substages": {
+    "design": "S4.1",
+    "implementation": "S5.1",
+    "answer": "S5.1",
+    "verification": "S5.1",
+    "alias": "S5B.1"
+  },
+  "counts": {
+    "ids": 257,
+    "questions": 17635,
+    "excluded_controls": 2,
+    "rows": 17637
+  },
+  "columns": [
+    "question_id",
+    "phase",
+    "parent_substage_id",
+    "subject_id",
+    "inventory_id",
+    "item",
+    "lens",
+    "timeframe_domain",
+    "parameter_domain",
+    "literal_predicate",
+    "template",
+    "source_artifact",
+    "source_anchor",
+    "design_status",
+    "implementation_status",
+    "answer_status",
+    "verification_status",
+    "evidence_refs",
+    "missing_work",
+    "next_action",
+    "unresolved_reason"
+  ],
+  "omissions": [
+    {
+      "inventory_id": "C26",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 10 are applicable: threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "C27",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 11 are applicable: absolute|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "C28",
+      "lens": null,
+      "reason": "class NO_QUESTIONS is an explicit excluded control; no answerable question"
+    },
+    {
+      "inventory_id": "C29",
+      "lens": null,
+      "reason": "class NO_QUESTIONS is an explicit excluded control; no answerable question"
+    },
+    {
+      "inventory_id": "I111",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 10 are applicable: threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I112",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 10 are applicable: threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I184",
+      "lens": null,
+      "reason": "authority lists 13 potential lenses but only 12 are applicable: absolute|position|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I190",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 11 are applicable: absolute|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I191",
+      "lens": null,
+      "reason": "authority lists 13 potential lenses but only 12 are applicable: absolute|position|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I196",
+      "lens": null,
+      "reason": "authority lists 13 potential lenses but only 12 are applicable: absolute|position|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I197",
+      "lens": null,
+      "reason": "authority lists 13 potential lenses but only 12 are applicable: absolute|position|threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    },
+    {
+      "inventory_id": "I200",
+      "lens": null,
+      "reason": "no applicable lens declared"
+    },
+    {
+      "inventory_id": "I221",
+      "lens": null,
+      "reason": "authority lists 12 potential lenses but only 10 are applicable: threshold|outlier|path|streak|cross|change_since_last|rank|percentile|extreme_vs_own_history|timeframe"
+    }
+  ],
+  "rule": "one row per (question, phase); parameter and timeframe domains stay explicit rather than hidden; UNKNOWN stays UNKNOWN"
+}
