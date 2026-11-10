@@ -11,6 +11,7 @@
       "weight": 2,
       "status": "done",
       "evidence": [
+        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
         "docs/venice-audit-v1/charts/S8.1.svg@10638133fdf0739f8ffcb8b3625cfe64367bcce5"
       ],
       "blocker": ""
@@ -24,7 +25,7 @@
       "evidence": [
         "docs/venice-audit-v1/GANTT.md@1dbe74243f1501628f3e56fe274ec0268f8e1988",
         "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
-        ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
+        "docs/venice-audit-v1/build_report.py@9e3031ce2b32c94de0dff971728ce3c07f7a62b2"
       ],
       "blocker": ""
     },
