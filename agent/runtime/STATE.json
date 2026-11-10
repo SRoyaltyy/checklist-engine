@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T03:08:18.944Z",
-  "turn_id": "mwa416rw-0ix8hmlf",
-  "summary": "Read the exact failing assertions for the two red tests (unique+namespaced question_id, control-row-only template-less rule, manifest count reconciliation). Now reading the live build_questions.py so the id discriminator and manifest count are patched against real code.",
-  "next": "Read build_questions.py on venice/repo-hierarchical-audit-v2, patch qid to a per-row discriminator plus counts['ids'] to emitted ids, then verify the three assertions by re-reading the changed lines.",
+  "at": "2026-11-10T03:17:33.278Z",
+  "turn_id": "mwa48chd-07zs6inp",
+  "summary": "Read build_questions.py lines 1-140 (constants, templates, domain/timeframe/state helpers, start of main). Need the row-emission loop and manifest block at lines 140-232 to patch the id discriminator and the emitted-id count.",
+  "next": "Read build_questions.py lines 140-232 on venice/repo-hierarchical-audit-v2, then apply the two-part patch (per-row id suffix and emitted inventory-id count) with edit_file.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -169,9 +169,9 @@
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
     "kind": "finding",
-    "description": "Extracted the full assertion contract of the two red tests: ids must be non-empty, unique and prefixed with Q-<SLUG(inventory_id)>-, controls must be the only template-less rows and be phase=design with an unresolved_reason, answerable rows need a '{q}' template plus all five non-empty provenance fields, and manifest counts must equal emitted inventory ids and unique ids minus controls.",
+    "description": "Confirmed the generator's shape up to main(): a fixed 14-template lens table that always embeds '{q}', a slug() helper matching the test's namespacing regex, and a single wsd/lens id index feeding an order list that seeds the manifest id count.",
     "evidence": [
-      "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
+      "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
     ]
   },
   "pitfalls": [
