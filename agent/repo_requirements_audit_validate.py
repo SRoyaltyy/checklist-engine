@@ -104,9 +104,13 @@ def collect_issues(root):
             issues.append('substage %s has no CHART_INDEX row' % sid)
             continue
 
-        for key in ('substage_percent', 'percent_numerator', 'percent_denominator',
-                    'percent_basis', 'substage_status', 'substage_title'):
-            if (row.get(key) or '').strip() != (sub.get(key) or '').strip():
+        for key, stage_key in (('substage_percent', 'substage_percent'),
+                               ('percent_numerator', 'percent_numerator'),
+                               ('percent_denominator', 'percent_denominator'),
+                               ('percent_basis', 'percent_basis'),
+                               ('substage_status', 'status'),
+                               ('substage_title', 'title')):
+            if (row.get(key) or '').strip() != (sub.get(stage_key) or '').strip():
                 issues.append('%s mismatch on %s for %s' % (key, row.get(key), sid))
         if (row.get('parent_stage_id') or '').strip() != parent:
             issues.append('parent_stage_id mismatch for %s' % sid)
