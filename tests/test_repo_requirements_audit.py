@@ -392,3 +392,86 @@ def test_question_manifest_phase_map_matches_every_row():
         assert phase in phases, (row['question_id'], phase)
         assert phases[phase] == row['parent_substage_id'].strip(), (row['question_id'], phase)
 
+
+VALIDATOR = ROOT / 'agent' / 'repo_requirements_audit_validate.py'
+CHART_INDEX = AUDIT / 'charts' / 'CHART_INDEX.csv'
+DETAILS = AUDIT / 'details'
+
+
+def load_validator():
+    import importlib.util
+    assert VALIDATOR.is_file(), 'missing validator %s' % VALIDATOR
+    spec = importlib.util.spec_from_file_location('repo_audit_validate', VALIDATOR)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def substage_ids():
+    _, rows = load_csv(STAGES)
+    return [r['node_id'] for r in rows if r['node_type'] == 'substage']
+
+
+def test_every_substage_has_its_own_chart_and_detail_page():
+    ids = substage_ids()
+    assert ids, 'expected substage rows'
+    for sid in ids:
+        assert (AUDIT / 'charts' / ('%s.svg' % sid)).is_file(), sid
+        assert (DETAILS / ('%s.md' % sid)).is_file(), sid
+
+
+def test_chart_index_covers_each_substage_exactly_once():
+    fields, rows = load_csv(CHART_INDEX)
+    assert fields[:2] == ['chart_id', 'substage_id'], fields
+    ids = substage_ids()
+    indexed = [r['substage_id'] for r in rows]
+    assert sorted(indexed) == sorted(ids), (sorted(set(ids) - set(indexed)),
+                                          sorted(set(indexed) - set(ids)))
+    assert len(indexed) == len(set(indexed)), 'duplicate substage rows'
+
+
+def test_each_chart_shows_every_child_and_every_status_column():
+    _, req_rows = load_csv(REQS)
+    _, index_rows = load_csv(CHART_INDEX)
+    children = {}
+    for row in req_rows:
+        children.setdefault(row['parent_substage_id'], []).append(row['requirement_id'])
+    labels = ['Scope defined', 'Data acquired', 'Strict data defined', 'Implemented',
+              'Question designed', 'Answer generated', 'Verified', 'Main accepted']
+    for row in index_rows:
+        sid = row['substage_id']
+        text = (AUDIT / row['svg_path']).read_text(encoding='utf-8')
+        for label in labels:
+            assert label in text, (sid, label)
+        kids = children.get(sid, [])
+        assert int(row['child_count']) == len(kids), (sid, row['child_count'], len(kids))
+        for rid in kids:
+            assert rid in text, (sid, rid)
+
+
+def test_detail_pages_list_every_child_of_their_substage():
+    _, req_rows = load_csv(REQS)
+    children = {}
+    for row in req_rows:
+        children.setdefault(row['parent_substage_id'], []).append(row['requirement_id'])
+    for sid, kids in children.items():
+        text = (DETAILS / ('%s.md' % sid)).read_text(encoding='utf-8')
+        for rid in kids:
+            assert rid in text, (sid, rid)
+
+
+def test_report_layers_agree_with_stages_on_every_percentage():
+    _, stage_rows = load_csv(STAGES)
+    subs = {r['node_id']: r for r in stage_rows if r['node_type'] == 'substage'}
+    _, index_rows = load_csv(CHART_INDEX)
+    for row in index_rows:
+        sub = subs[row['substage_id']]
+        for key in ('substage_percent', 'percent_numerator', 'percent_denominator'):
+            assert row[key] == sub[key], (row['substage_id'], key)
+
+
+def test_validator_reports_no_issues():
+    module = load_validator()
+    issues = module.collect_issues(AUDIT)
+    assert issues == [], issues[:10]
+
