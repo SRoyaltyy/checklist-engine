@@ -30,12 +30,13 @@
     },
     {
       "id": "t10",
-      "title": "Open the v2 revision PR and merge it on a green exact head",
-      "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
+      "title": "Open the v2 revision PR on the assigned branch and merge it on a green exact head",
+      "acceptance": "PR created with branch venice/repo-hierarchical-audit-v2, checks green on expected_head_sha, merge_pr succeeds",
       "weight": 3,
       "status": "doing",
       "evidence": [
-        "69a278691f87c362005422b3e83344296f5409dc"
+        "69a278691f87c362005422b3e83344296f5409dc",
+        "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
       ],
       "blocker": ""
     },
