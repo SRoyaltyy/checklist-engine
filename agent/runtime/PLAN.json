@@ -2,7 +2,7 @@
   "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
   "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
   "gantt_row": "All project stages 0–8; evidence audit only",
-  "current_task": "t3",
+  "current_task": "t4",
   "tasks": [
     {
       "id": "t1",
@@ -33,9 +33,10 @@
       "title": "Emit STAGES.csv plus extended REQUIREMENTS.csv from the pipeline without re-breaking a second run",
       "acceptance": "STAGES.csv exists with blank stage percentages and every requirement carries parent_substage_id plus eight statuses",
       "weight": 2,
-      "status": "doing",
+      "status": "done",
       "evidence": [
-        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376"
+        "tests/test_repo_requirements_audit.py@d772d2ef28fe8d8297afd626e1edcdd973df1e4f",
+        "venice/repo-hierarchical-audit-v2@b574d2acc6a117094db2f30cd4ba1e8658d2225a"
       ],
       "blocker": ""
     },
@@ -44,7 +45,7 @@
       "title": "Build QUESTION_INDEX.csv with canonical ids and literal predicates or template+ranges",
       "acceptance": "QUESTION_INDEX.csv exists with required columns at a returned blob SHA",
       "weight": 2,
-      "status": "todo",
+      "status": "doing",
       "evidence": [],
       "blocker": ""
     },
@@ -76,5 +77,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 16
+  "progress_percent": 33
 }
