@@ -1,9 +1,9 @@
 {
   "version": 6,
-  "at": "2026-11-10T07:30:25.718Z",
-  "turn_id": "mwade1c9-80uglvi5",
-  "summary": "PROGRESS.json is now rewritten for the active v2 task and pushed: commit 69a278691f87c362005422b3e83344296f5409dc, blob 42983f4c6a4962d771ab0cac7eca98e92b6bcfce, verified true, receipt agent/runtime/receipts/mwad5uku-aqca1y7c.0.json@cccd276c674eef75623695473c3ea82702f89f05. That push-triggered run 42775425837 completed success at 69a27869. Only publication of the revision PR remains: opening it now and reading the true branch head so the merge targets a green exact SHA.",
-  "next": "Read the create_pr result for the PR number, then merge_pr with expected_head_sha equal to the head returned by branch_head, but only if that head is 69a278691f87c362005422b3e83344296f5409dc (or a later head with its own green run); if the bot commit step advanced the head past 69a27869, make one manual edit_file push and wait for a green run on the new head first.",
+  "at": "2026-11-10T07:39:41.667Z",
+  "turn_id": "mwadlawo-9rj6ksik",
+  "summary": "create_pr was rejected with 'PR must use the assigned branch' because the call omitted the branch argument; the receipt is agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2. Nothing was created, so the branch head is still unread. Retrying the same PR creation with branch explicitly set to the assigned branch, and reading the true head in parallel so the merge can target a green exact SHA.",
+  "next": "Read the create_pr result for the PR number and the branch_head result; if the head equals 69a278691f87c362005422b3e83344296f5409dc (green run 42775425837) call merge_pr with that expected_head_sha, otherwise make one manual edit_file push and wait for a green run on the new head before merging.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
@@ -36,12 +36,13 @@
       },
       {
         "id": "t10",
-        "title": "Open the v2 revision PR and merge it on a green exact head",
-        "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
+        "title": "Open the v2 revision PR on the assigned branch and merge it on a green exact head",
+        "acceptance": "PR created with branch venice/repo-hierarchical-audit-v2, checks green on expected_head_sha, merge_pr succeeds",
         "weight": 3,
         "status": "doing",
         "evidence": [
-          "69a278691f87c362005422b3e83344296f5409dc"
+          "69a278691f87c362005422b3e83344296f5409dc",
+          "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
         ],
         "blocker": ""
       },
@@ -60,17 +61,17 @@
   "tool_results": [
     {
       "tool": "create_pr",
-      "ok": false,
-      "error": "PR must use the assigned branch"
+      "ok": true,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/pull/228"
+    },
+    {
+      "tool": "branch_head",
+      "ok": true,
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e"
     }
   ],
   "blockers": [],
   "evidence": [
-    "1f19ae3726ba4e92e6b91c37beca4706bbc62dfc",
-    "docs/venice-audit-v1/charts/S5B.1.svg@1f19ae3726ba4e92e6b91c37beca4706bbc62dfc",
-    "216251c8b91e7e0e6f9af2ca83a134ebec64cbc6",
-    "docs/venice-audit-v1/charts/S6.1.svg@216251c8b91e7e0e6f9af2ca83a134ebec64cbc6",
-    "26d299f2ce4500af7f1c495d16498861817cfcb2",
     "docs/venice-audit-v1/charts/S6.2.svg@26d299f2ce4500af7f1c495d16498861817cfcb2",
     "6a17450b46f636683b7e9eb74e9bebb6cd24cfa0",
     "docs/venice-audit-v1/charts/S6.3.svg@6a17450b46f636683b7e9eb74e9bebb6cd24cfa0",
@@ -165,7 +166,12 @@
     "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642",
     "agent/runtime/receipts/mwad5uku-aqca1y7c.0.json@cccd276c674eef75623695473c3ea82702f89f05",
     "69a278691f87c362005422b3e83344296f5409dc",
-    "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+    "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2",
+    "agent/runtime/receipts/mwadlawo-9rj6ksik.0.json@47609e1b1d46d56bcedab0dcad02f8751e2802ce",
+    "https://github.com/SRoyaltyy/checklist-engine/pull/228",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e",
+    "b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e",
+    "venice/repo-hierarchical-audit-v2@b1ff08bd5ee378eae5cdbaf428d45f12c1bc752e"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -173,11 +179,10 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
-    "kind": "implementation",
-    "description": "PROGRESS.json re-keyed to the active repo-hierarchical-audit-v2 task with all completed subtasks, published artifacts, pitfalls and exact next step; the write was verified on the branch and its push run 42775425837 succeeded.",
+    "kind": "finding",
+    "description": "create_pr without an explicit branch argument is rejected by the bridge with 'PR must use the assigned branch'; the call must pass branch equal to the assignment branch, and the rejection produced a receipt rather than a PR.",
     "evidence": [
-      "69a278691f87c362005422b3e83344296f5409dc",
-      "agent/runtime/receipts/mwad5uku-aqca1y7c.0.json@cccd276c674eef75623695473c3ea82702f89f05"
+      "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
     ]
   },
   "pitfalls": [
@@ -268,8 +273,8 @@
         "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwade1c9-80uglvi5",
-      "seen_at_ms": 1794295825718
+      "last_seen": "mwadlawo-9rj6ksik",
+      "seen_at_ms": 1794296381667
     },
     {
       "id": "inplace-requirements-rewrite",
@@ -299,8 +304,8 @@
         "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
       ],
       "first_seen": "mwa20nlu-95rewsg5",
-      "last_seen": "mwade1c9-80uglvi5",
-      "seen_at_ms": 1794295825718
+      "last_seen": "mwadlawo-9rj6ksik",
+      "seen_at_ms": 1794296381667
     },
     {
       "id": "ci-never-commits-outputs",
@@ -331,8 +336,8 @@
         "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
       ],
       "first_seen": "mwa35scv-u0czu65f",
-      "last_seen": "mwade1c9-80uglvi5",
-      "seen_at_ms": 1794295825718
+      "last_seen": "mwadlawo-9rj6ksik",
+      "seen_at_ms": 1794296381667
     },
     {
       "id": "question-ids-not-unique",
@@ -378,8 +383,21 @@
         "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
       ],
       "first_seen": "mwaarq9u-frvzdzv8",
-      "last_seen": "mwade1c9-80uglvi5",
-      "seen_at_ms": 1794295825718
+      "last_seen": "mwadlawo-9rj6ksik",
+      "seen_at_ms": 1794296381667
+    },
+    {
+      "id": "create-pr-needs-branch",
+      "status": "open",
+      "problem": "create_pr(title,body) with no branch arg returns ok:false 'PR must use the assigned branch' and creates nothing.",
+      "failed_approach": "Relying on the default branch of the create_pr tool.",
+      "lesson": "Always pass branch: venice/repo-hierarchical-audit-v2 explicitly; the failure receipt is a repair instruction, not proof of a PR.",
+      "evidence": [
+        "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+      ],
+      "first_seen": "mwadlawo-9rj6ksik",
+      "last_seen": "mwadlawo-9rj6ksik",
+      "seen_at_ms": 1794296381667
     }
   ]
 }
