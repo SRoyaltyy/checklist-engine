@@ -7,12 +7,12 @@
     {
       "id": "t9",
       "title": "Fix the chart-index status/title parity defect and green the suite",
-      "acceptance": "build_charts sources status/title from STAGES.csv; validator returns no issues; green run at an exact head",
+      "acceptance": "build_charts sources status/title from the STAGES.csv parity columns; validator returns no issues; green run at an exact head",
       "weight": 2,
       "status": "doing",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
-        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
+        "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d"
       ],
       "blocker": ""
     },
@@ -22,7 +22,9 @@
       "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run on final head",
       "weight": 3,
       "status": "doing",
-      "evidence": [],
+      "evidence": [
+        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
+      ],
       "blocker": ""
     },
     {
