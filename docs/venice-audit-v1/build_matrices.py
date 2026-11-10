@@ -138,6 +138,10 @@ def run_extras():
     # shape and emits STAGES.csv, so v1 consumers above see v1-shaped rows.
     import build_hierarchy
     build_hierarchy.main()
+    # The granular question index runs after the hierarchy so every question row
+    # can name a real parent_substage_id from the fixed SUBSTAGES table.
+    import build_questions
+    build_questions.main()
 
 
 if __name__ == '__main__':
