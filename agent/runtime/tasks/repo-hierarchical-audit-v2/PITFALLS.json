@@ -70,16 +70,16 @@
   {
     "id": "committed-pycache",
     "status": "open",
-    "problem": "docs/venice-audit-v1/pycache is tracked even though .gitignore now excludes pycache/ and *.pyc.",
+    "problem": "docs/venice-audit-v1/__pycache__ is tracked even though .gitignore excludes pycache/ and *.pyc.",
     "failed_approach": "Relying on .gitignore alone; ignore rules do not untrack already-committed files.",
-    "lesson": "Add git rm -r --cached docs/venice-audit-v1/pycache before git add in the workflow commit step, then confirm the path is absent from list_files.",
+    "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step, then confirm the path is absent from list_files.",
     "evidence": [
       "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
       "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwa99p25-2q7c5nri",
+    "seen_at_ms": 1794289117144
   },
   {
     "id": "inplace-requirements-rewrite",
@@ -90,25 +90,27 @@
     "evidence": [
       "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
       "docs/venice-audit-v1/build_extra.py@352110f9a4e93a7a3e4431d1da16db3d0844cc19",
-      "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587"
+      "docs/venice-audit-v1/build_matrices.py@9f5f57c7b70184a0572af5558a539834e5dfc587",
+      "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0"
     ],
     "first_seen": "mwa14obe-eno9cyqs",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwa99p25-2q7c5nri",
+    "seen_at_ms": 1794289117144
   },
   {
     "id": "questions-need-real-substage",
     "status": "open",
-    "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped, and question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
+    "problem": "Question rows cannot invent a parent stage: match_substage resolves parent_substage_id from (gantt_group, owner_lane) against a fixed SUBSTAGES table and SystemExits on anything unmapped; question_design/answer_generation are NOT_APPLICABLE outside S4/S5/S5B.",
     "failed_approach": "Treating the eight status dimensions as free-form columns attachable to any stage.",
     "lesson": "Question rows must target S4.1 for design, S5.1 for answer+verification and S5B.1 for alias only, and the generator must run after build_hierarchy so the substage table is materialised.",
     "evidence": [
       "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
-      "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378"
+      "docs/venice-audit-v1/build_questions.py@7cd24b6c5dbeaa2cc20897e611d73235a9454378",
+      "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
     ],
     "first_seen": "mwa20nlu-95rewsg5",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwa99p25-2q7c5nri",
+    "seen_at_ms": 1794289117144
   },
   {
     "id": "ci-never-commits-outputs",
