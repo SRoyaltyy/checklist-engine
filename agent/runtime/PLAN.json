@@ -19,11 +19,11 @@
     {
       "id": "t5",
       "title": "Render one visual Gantt SVG per substage plus charts/CHART_INDEX.csv",
-      "acceptance": "Every substage has its own SVG showing all required children and statuses, indexed at returned SHAs",
+      "acceptance": "Every substage has its own committed SVG showing all required children and statuses, indexed at returned SHAs",
       "weight": 2,
       "status": "doing",
       "evidence": [
-        "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376"
+        "500ea27869816c4a701c1ad89396bae69c9c25bb"
       ],
       "blocker": ""
     },
