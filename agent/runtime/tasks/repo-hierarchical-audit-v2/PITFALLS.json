@@ -152,5 +152,18 @@
     "first_seen": "mwa3dhcx-7at18f3k",
     "last_seen": "mwa4ntl5-ry22i9nr",
     "seen_at_ms": 1794281375282
+  },
+  {
+    "id": "bridge-tools-not-native",
+    "status": "open",
+    "problem": "Native tool calls named read_file/edit_file return 'Tool not found' inside this turn.",
+    "failed_approach": "Invoking read_file/edit_file as native function calls instead of bridge actions.",
+    "lesson": "Put every GitHub request in actions[] as {tool,args} and read results next turn.",
+    "evidence": [
+      ".github/workflows/venice-repo-requirements-audit.yml@34dd5938defa901c57005edec219ad5c4682d676"
+    ],
+    "first_seen": "mwa5cpfl-bsvtqvrr",
+    "last_seen": "mwa5cpfl-bsvtqvrr",
+    "seen_at_ms": 1794282327161
   }
 ]
