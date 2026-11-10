@@ -7,11 +7,13 @@
     "lesson": "Rewrite PROGRESS.json for the active task id with its live blob SHA as expected_sha; confirm the new blob on the next read.",
     "evidence": [
       "docs/venice-audit-v1/PROGRESS.json@b3c23c40bc4acea52b31686e77b9c3caa5dd86d6",
-      "055b1e3440432f60755614e6e5b324e3556088d1"
+      "055b1e3440432f60755614e6e5b324e3556088d1",
+      "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642",
+      "venice/repo-hierarchical-audit-v2@209907c2a45603f84c6a1d2bbaaca8e08309f642"
     ],
     "first_seen": "mw98b8ur-tl63d9d0",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "workflow-branch-filter-mismatch",
@@ -26,11 +28,13 @@
       "tests/test_repo_requirements_audit.py@4b77fe90b6344746589dd1acae134c30589712ab",
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42626845863/job/129193065738",
       ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
-      "b574d2acc6a117094db2f30cd4ba1e8658d2225a"
+      "b574d2acc6a117094db2f30cd4ba1e8658d2225a",
+      ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598",
+      "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
     ],
     "first_seen": "mw98tesh-vz882aou",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "unmapped-stage8-substage",
@@ -47,11 +51,12 @@
       "c3e256510b6b0ea5766f6fc7526ae3104618dacf",
       "docs/venice-audit-v1/build_hierarchy.py@3cde529c9d8f57613560ad42ba981cfb80278376",
       "b5d24c37f16fd49228e84ff79a766c621a8aabb0",
-      "aaf674d0b2502615b874a559d6407a8e97d6861c"
+      "aaf674d0b2502615b874a559d6407a8e97d6861c",
+      "docs/venice-audit-v1/REQUIREMENTS.csv@5f27c04ff9936ab0a3e257a6cb913e7aac4ae147"
     ],
     "first_seen": "mw9atx46-f9hp6fok",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "assignment-change-invalidates-write",
@@ -61,11 +66,13 @@
     "lesson": "After an assignment sha change, re-read the target blob on the live branch; the guard rejection is a repair instruction, not proof of a failed edit.",
     "evidence": [
       "agent/runtime/receipts/mw8sxl7a-o7ta9fvz.0.json@1eaed61d29964c87017752432d9ee78fd14db22b",
-      "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e"
+      "docs/venice-audit-v1/PROGRESS.json@19a64f70e38e94d39887b7bac81611811901fe8e",
+      "docs/venice-audit-v1/PROGRESS.json@209907c2a45603f84c6a1d2bbaaca8e08309f642",
+      "agent/runtime/receipts/mwaa4jee-07octnpq.0.json@3d79f85b721ac173a4a715bc97c56cb328dfc73c"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwa3swx3-cwq1xmlu",
-    "seen_at_ms": 1794279933943
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "committed-pycache",
@@ -75,11 +82,12 @@
     "lesson": "Add git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the workflow commit step.",
     "evidence": [
       "docs/venice-audit-v1/__pycache__@96b2fb3147498a1bbf5315a0ccc996ac29e73a12",
-      "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc"
+      "docs/venice-audit-v1/.gitignore@7f6ff2968a5c9f48ae9fddb73a79f9a157e085fc",
+      "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
     ],
     "first_seen": "mwa0psse-mterozx4",
-    "last_seen": "mwaarq9u-frvzdzv8",
-    "seen_at_ms": 1794291637093
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "inplace-requirements-rewrite",
@@ -94,8 +102,8 @@
       "docs/venice-audit-v1/build_matrices.py@f6ea2c85f6f4c599c24e3ed57986cade853e9bd0"
     ],
     "first_seen": "mwa14obe-eno9cyqs",
-    "last_seen": "mwa99p25-2q7c5nri",
-    "seen_at_ms": 1794289117144
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "questions-need-real-substage",
@@ -109,8 +117,8 @@
       "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
     ],
     "first_seen": "mwa20nlu-95rewsg5",
-    "last_seen": "mwaarq9u-frvzdzv8",
-    "seen_at_ms": 1794291637093
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "ci-never-commits-outputs",
@@ -122,11 +130,12 @@
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793",
       ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42748790715/job/129607177901",
-      "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9"
+      "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
+      ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
     ],
     "first_seen": "mwa28cmm-zmf32qmp",
-    "last_seen": "mwa4wsw0-h5x8uout",
-    "seen_at_ms": 1794281736931
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "commit-step-blocked-by-pytest",
@@ -136,25 +145,27 @@
     "lesson": "Read a red run's job log before touching the commit step; expect one transitional red run per head whose tests still describe the previous workflow.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
-      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534"
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
+      "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
     ],
     "first_seen": "mwa35scv-u0czu65f",
-    "last_seen": "mwaarq9u-frvzdzv8",
-    "seen_at_ms": 1794291637093
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "question-ids-not-unique",
     "status": "resolved",
-    "problem": "QUESTION_INDEX.csv writes question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapse to 3537 distinct ids and per-row uniqueness cannot be asserted; the manifest also counts 258 source ids while only 257 inventory_ids appear in rows.",
+    "problem": "QUESTION_INDEX.csv wrote question_id as Q-<INVENTORY>-<LENS> only, so 17637 rows collapsed to 3537 distinct ids and per-row uniqueness could not be asserted.",
     "failed_approach": "Asserting global question_id uniqueness against a generator that keys ids only by inventory+lens.",
-    "lesson": "Add a per-row discriminator to question_id (phase suffix after the Q-<SLUG(INVENTORY)>- prefix) and recompute counts['ids']/counts['questions'] from emitted rows after the loop; verified green.",
+    "lesson": "Add a per-row discriminator to question_id and recompute counts from emitted rows after the loop; verified green.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42743730022/job/129590782361",
-      "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
+      "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55",
+      "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455"
     ],
     "first_seen": "mwa3dhcx-7at18f3k",
-    "last_seen": "mwa4ntl5-ry22i9nr",
-    "seen_at_ms": 1794281375282
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "bridge-tools-not-native",
@@ -163,24 +174,25 @@
     "failed_approach": "Invoking read_file/edit_file as native function calls instead of bridge actions.",
     "lesson": "Put every GitHub request in actions[] as {tool,args} and read results next turn.",
     "evidence": [
-      ".github/workflows/venice-repo-requirements-audit.yml@34dd5938defa901c57005edec219ad5c4682d676"
+      ".github/workflows/venice-repo-requirements-audit.yml@34dd5938defa901c57005edec219ad5c4682d676",
+      ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
     ],
     "first_seen": "mwa5cpfl-bsvtqvrr",
-    "last_seen": "mwa5cpfl-bsvtqvrr",
-    "seen_at_ms": 1794282327161
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   },
   {
     "id": "chart-index-hardcoded-metadata",
     "status": "open",
-    "problem": "build_charts.py writes its own substage_status ('UNVERIFIED') and a bespoke substage_title per substage instead of copying the values in STAGES.csv, so the validator's parity rule fails on all 20 substages (40 issues).",
-    "failed_approach": "Assuming the generator already sourced chart metadata from the STAGES matrix.",
-    "lesson": "Single source of truth: chart index rows must read substage_status/substage_title (and percentage fields) directly from the STAGES.csv row keyed by substage_id, never from generator literals.",
+    "problem": "build_charts.py emits substage_status/substage_title from the wrong STAGES.csv keys ('status'/'title') instead of the parity columns, so the validator's parity rule fails on all 20 substages (40 issues).",
+    "failed_approach": "Assuming the generator already sourced chart metadata from the STAGES matrix because the percent fields passed.",
+    "lesson": "Single source of truth: chart index rows must read substage_status/substage_title (and percentage fields) from the exact column names the validator compares, keyed off the STAGES.csv substage row.",
     "evidence": [
       "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
       "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97"
     ],
     "first_seen": "mwaarq9u-frvzdzv8",
-    "last_seen": "mwaarq9u-frvzdzv8",
-    "seen_at_ms": 1794291637093
+    "last_seen": "mwab7521-394zqxla",
+    "seen_at_ms": 1794292362383
   }
 ]
