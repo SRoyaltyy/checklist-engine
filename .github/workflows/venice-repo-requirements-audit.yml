@@ -1,7 +1,7 @@
 name: venice-repo-requirements-audit
 on:
   push:
-    branches: ['venice/repo-requirements-audit-v1']
+    branches: ['venice/repo-hierarchical-audit-v2']
     paths: ['docs/venice-audit-v1/**', 'tests/test_repo_requirements_audit.py', '.github/workflows/venice-repo-requirements-audit.yml']
 permissions:
   contents: write
@@ -16,7 +16,7 @@ jobs:
       - name: Checkout audit branch
         uses: actions/checkout@v4
         with:
-          ref: venice/repo-requirements-audit-v1
+          ref: venice/repo-hierarchical-audit-v2
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -25,15 +25,25 @@ jobs:
         run: python -m pip install --quiet pytest
       - name: Build matrices from authority files
         run: python docs/venice-audit-v1/build_matrices.py
+      - name: Render one visual Gantt per substage
+        run: python docs/venice-audit-v1/build_charts.py
+      - name: Build README, GANTT overview and per-substage detail pages
+        run: python docs/venice-audit-v1/build_report.py
       - name: Run source-matched tests
         if: hashFiles('tests/test_repo_requirements_audit.py') != ''
         run: python -m pytest -q tests/test_repo_requirements_audit.py
-      - name: Report regenerated matrix drift (no push)
+      - name: Commit regenerated matrices when they drift
         run: |
-          git add docs/venice-audit-v1
+          git rm -r --cached --quiet docs/venice-audit-v1/__pycache__ || true
+          git add -A docs/venice-audit-v1
           if git diff --cached --quiet; then
             echo 'no matrix drift: generated outputs match the committed state'
-          else
-            echo 'matrix drift detected: generated outputs differ from the committed state'
-            git diff --cached --stat
+            exit 0
           fi
+          echo 'matrix drift detected: generated outputs differ from the committed state'
+          git diff --cached --stat
+          git config user.name 'venice-audit-bot'
+          git config user.email 'venice-audit-bot@users.noreply.github.com'
+          git commit -m 'chore(audit): regenerate v2 audit matrices from authority files'
+          git push origin HEAD:venice/repo-hierarchical-audit-v2
+          echo 'committed and pushed regenerated outputs; the next run on the pushed head is the merge-gate check'

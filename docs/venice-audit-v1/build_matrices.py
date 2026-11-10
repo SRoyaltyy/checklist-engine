@@ -134,6 +134,14 @@ def run_extras():
     build_extra.main()
     import build_gantt
     build_gantt.main()
+    # v2 hierarchy runs last: it rewrites REQUIREMENTS.csv into the 8-status
+    # shape and emits STAGES.csv, so v1 consumers above see v1-shaped rows.
+    import build_hierarchy
+    build_hierarchy.main()
+    # The granular question index runs after the hierarchy so every question row
+    # can name a real parent_substage_id from the fixed SUBSTAGES table.
+    import build_questions
+    build_questions.main()
 
 
 if __name__ == '__main__':
