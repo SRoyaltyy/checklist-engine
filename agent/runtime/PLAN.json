@@ -10,10 +10,17 @@
       "acceptance": "Validator script committed, tests assert per-substage chart and details coverage, green run on final head, PR merged",
       "weight": 3,
       "status": "doing",
+      "evidence": [],
+      "blocker": ""
+    },
+    {
+      "id": "t9",
+      "title": "Diagnose the red run on a56fb761 and make the suite green on a head",
+      "acceptance": "Job log read and the failing assertion or step fixed; green run at an exact head",
+      "weight": 2,
+      "status": "doing",
       "evidence": [
-        "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205",
-        "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
-        "docs/venice-audit-v1/build_charts.py@b70ecf95ee429ad8df4f8959563ebf26dd95524d"
+        "a56fb761d9b7efeb996d56feac96fb00fcaf7835"
       ],
       "blocker": ""
     },
