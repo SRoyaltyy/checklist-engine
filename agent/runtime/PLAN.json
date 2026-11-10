@@ -5,38 +5,14 @@
   "current_task": "t10",
   "tasks": [
     {
-      "id": "t9",
-      "title": "Validator status/title parity mapping plus green suite",
-      "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, green run at an exact head",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
-        "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
-      ],
-      "blocker": ""
-    },
-    {
-      "id": "t7",
-      "title": "Validator + chart/report assertions in tests",
-      "acceptance": "Validator committed, tests assert per-substage chart and details coverage, green run at 9840e39e",
-      "weight": 2,
-      "status": "done",
-      "evidence": [
-        "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798",
-        "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308/job/129674964518"
-      ],
-      "blocker": ""
-    },
-    {
       "id": "t10",
-      "title": "Open the v2 revision PR on the assigned branch and merge it on a green exact head",
-      "acceptance": "PR created with branch venice/repo-hierarchical-audit-v2, checks green on expected_head_sha, merge_pr succeeds",
+      "title": "Merge PR #228 on a green exact head",
+      "acceptance": "A completed success run exists at expected_head_sha 8db1c91c and merge_pr returns merged",
       "weight": 3,
       "status": "doing",
       "evidence": [
-        "69a278691f87c362005422b3e83344296f5409dc",
-        "agent/runtime/receipts/mwade1c9-80uglvi5.0.json@e3bb88fa0973cffe71cc9c77ad8968186f0c85e2"
+        "https://github.com/SRoyaltyy/checklist-engine/pull/228",
+        "8db1c91c707d27b9cbee67b95e396bd7aa3e6316"
       ],
       "blocker": ""
     },
@@ -50,5 +26,5 @@
       "blocker": ""
     }
   ],
-  "progress_percent": 50
+  "progress_percent": 0
 }
