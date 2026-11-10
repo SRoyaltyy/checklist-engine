@@ -1,25 +1,34 @@
 {
   "version": 6,
-  "at": "2026-11-10T06:38:47.466Z",
-  "turn_id": "mwabevlq-cl4u7evn",
-  "summary": "STAGES.csv header (node_id,parent_id,node_type,title,status,substage_percent,...,details_path) proves there are no substage_status/substage_title columns, so my build_charts key rename alone would leave the index status empty and trip the STATUS_VALUES vocabulary rule instead. The real defect is that the validator compares index column names against STAGES row keys; fixing it needs a column mapping in the validator plus reverting the generator rename.",
-  "next": "Read the log of run 42769212849 to confirm the new failure shape, then push the validator mapping + generator revert and watch the next run.",
+  "at": "2026-11-10T06:43:36.323Z",
+  "turn_id": "mwabmqs9-j7y2lk0d",
+  "summary": "The validator mapping + generator revert pair landed and the push-triggered run 42769891308 at 9840e39e came back green, so the CHART_INDEX parity defect is closed. Verifying the resulting branch head and whether the commit step published regenerated artifacts before the final PROGRESS.json push and merge.",
+  "next": "Read branch_head for venice/repo-hierarchical-audit-v2 and the job steps of run 42769891308; if the commit step pushed regenerated outputs, read PROGRESS.json at its current blob and rewrite it for the active v2 task so the push retriggers a checked run at the true head, then merge on that exact head.",
   "plan": {
     "goal": "Extend the published repository audit into a complete stage > substage > granular item/question hierarchy with separate lifecycle statuses, a real visual Gantt per substage, and percentages only within substages, delivered as a new tested and merged PR on venice/repo-hierarchical-audit-v2.",
     "why": "Satisfies the active repo-hierarchical-audit-v2 assignment in the Venice lane while preserving sealed records and other agents' lanes.",
     "gantt_row": "All project stages 0–8; evidence audit only",
-    "current_task": "t9",
+    "current_task": "t10",
     "tasks": [
       {
         "id": "t9",
         "title": "Make the validator's status/title parity read the real STAGES.csv columns and green the suite",
-        "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, validator returns no issues, green run at an exact head",
+        "acceptance": "Validator maps substage_status->status and substage_title->title, generator reads title/status, green run at an exact head",
         "weight": 2,
-        "status": "doing",
+        "status": "done",
         "evidence": [
-          "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
-          "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02"
+          "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
+          "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
         ],
+        "blocker": ""
+      },
+      {
+        "id": "t10",
+        "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
+        "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
+        "weight": 1,
+        "status": "doing",
+        "evidence": [],
         "blocker": ""
       },
       {
@@ -34,15 +43,6 @@
         "blocker": ""
       },
       {
-        "id": "t10",
-        "title": "Rewrite PROGRESS.json for the active v2 task at its live blob SHA",
-        "acceptance": "PROGRESS.json read back on branch with the active task id and current matrices",
-        "weight": 1,
-        "status": "todo",
-        "evidence": [],
-        "blocker": ""
-      },
-      {
         "id": "t8",
         "title": "Open the v2 revision PR and merge it on a green exact head",
         "acceptance": "PR created, checks green on expected_head_sha, merge_pr succeeds",
@@ -52,22 +52,13 @@
         "blocker": ""
       }
     ],
-    "progress_percent": 0
+    "progress_percent": 25
   },
   "tool_results": [
     {
-      "tool": "edit_file",
+      "tool": "branch_head",
       "ok": true,
-      "path": "agent/repo_requirements_audit_validate.py",
-      "commit": "4f3096934219205adf2f4488e22a550ccfd53340",
-      "verified": true
-    },
-    {
-      "tool": "edit_file",
-      "ok": true,
-      "path": "docs/venice-audit-v1/build_charts.py",
-      "commit": "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
-      "verified": true
+      "url": "https://github.com/SRoyaltyy/checklist-engine/tree/9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
     },
     {
       "tool": "run_jobs",
@@ -76,13 +67,6 @@
   ],
   "blockers": [],
   "evidence": [
-    "METHODOLOGY.md@b5032bb050a3a0d0a02acb905cd3328beecc836b",
-    "096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
-    "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
-    "5f27c04ff9936ab0a3e257a6cb913e7aac4ae147",
-    "docs/venice-audit-v1/REQUIREMENTS.csv@5f27c04ff9936ab0a3e257a6cb913e7aac4ae147",
-    "e212ffb22a39cf8550109bdb612f90d0a4591980",
-    "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
     "542621875e0d53026b68ed7f0f7a88e748cf2a55",
     "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55",
     "500a32d3336e91ab81447108cd005936accc4da8",
@@ -175,7 +159,14 @@
     "agent/runtime/receipts/mwabevlq-cl4u7evn.1.json@c78c622778463dc474cc1495341d71a93a3a05e9",
     "4f3096934219205adf2f4488e22a550ccfd53340",
     "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
-    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769212849/job/129672794778"
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769212849/job/129672794778",
+    "a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
+    "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
+    "venice/repo-hierarchical-audit-v2@1dbe74243f1501628f3e56fe274ec0268f8e1988",
+    "TODO.md@c767585fdaafde1623f07036efb6939efcea9fd4",
+    "https://github.com/SRoyaltyy/checklist-engine/tree/9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+    "venice/repo-hierarchical-audit-v2@9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308/job/129674964518"
   ],
   "done": false,
   "task_id": "repo-hierarchical-audit-v2",
@@ -183,12 +174,12 @@
   "owner_id": "mw83wh2u-kaq8t5cl",
   "work_branch": "venice/repo-hierarchical-audit-v2",
   "contribution": {
-    "kind": "finding",
-    "description": "Disproved the earlier assumption: STAGES.csv carries only title/status, so the generator rename to substage_title/substage_status would emit empty cells and fail the STATUS_VALUES rule; the fix belongs in the validator's parity loop as an index-column to STAGES-column mapping (substage_status->status, substage_title->title) with the STAGES header left untouched.",
+    "kind": "verification",
+    "description": "Push-triggered run 42769891308 on the exact commit 9840e39e returned success, proving the validator status/title mapping plus generator revert greens the suite at that head.",
     "evidence": [
-      "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
-      "agent/runtime/receipts/mwab7521-394zqxla.0.json@4891e733682a25f46508b17bb6149e9a4003f497",
-      "1ad5df82a4166fd2389aed363a6d991a35bcec03"
+      "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+      "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
+      "agent/runtime/receipts/mwabevlq-cl4u7evn.1.json@c78c622778463dc474cc1495341d71a93a3a05e9"
     ]
   },
   "pitfalls": [
@@ -205,8 +196,8 @@
         "venice/repo-hierarchical-audit-v2@209907c2a45603f84c6a1d2bbaaca8e08309f642"
       ],
       "first_seen": "mw98b8ur-tl63d9d0",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "workflow-branch-filter-mismatch",
@@ -226,8 +217,8 @@
         "tests/test_repo_requirements_audit.py@57d9909ee25b7107da0ee956fcf7003761d3d205"
       ],
       "first_seen": "mw98tesh-vz882aou",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "unmapped-stage8-substage",
@@ -279,8 +270,8 @@
         "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
       ],
       "first_seen": "mwa0psse-mterozx4",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "inplace-requirements-rewrite",
@@ -310,15 +301,15 @@
         "docs/venice-audit-v1/build_questions.py@542621875e0d53026b68ed7f0f7a88e748cf2a55"
       ],
       "first_seen": "mwa20nlu-95rewsg5",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "ci-never-commits-outputs",
       "status": "resolved",
       "problem": "The workflow generated every artifact into the runner workspace and threw it away.",
       "failed_approach": "Assuming a green audit run proves the artifact exists.",
-      "lesson": "Fixed: the commit step pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push does not retrigger the workflow, so each edit_file push remains the trigger.",
+      "lesson": "Fixed: the commit step pushes regenerated outputs, so a green run at a head does produce file@sha artifacts; a GITHUB_TOKEN push does not retrigger the workflow, so each edit_file push remains the trigger and a bot-advanced head needs a fresh manual commit before merge.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42740703250/job/129580820793",
         ".github/workflows/venice-repo-requirements-audit.yml@12a577d8fb94f200ef5ff1de116e191c9cc4c246",
@@ -327,8 +318,8 @@
         ".github/workflows/venice-repo-requirements-audit.yml@55866984f78cd342861be80c41a0934deeaf8598"
       ],
       "first_seen": "mwa28cmm-zmf32qmp",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "commit-step-blocked-by-pytest",
@@ -342,8 +333,8 @@
         "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798"
       ],
       "first_seen": "mwa35scv-u0czu65f",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     },
     {
       "id": "question-ids-not-unique",
@@ -377,17 +368,20 @@
     {
       "id": "chart-index-hardcoded-metadata",
       "status": "corrected",
-      "problem": "Validator compares CHART_INDEX columns substage_status/substage_title against identically named STAGES.csv keys, but STAGES.csv only has title/status, so all 20 substages fail parity (40 issues); the generator was also reading title/status.",
-      "failed_approach": "Renaming only the generator's lookups to substage_status/substage_title — that empties the index cells and swaps the parity failure for 20 STATUS_VALUES failures.",
-      "lesson": "Map index column names to the real STAGES.csv column names inside the validator (substage_status->status, substage_title->title) and keep the generator reading title/status; leave the STAGES.csv header unchanged so pinned column lists stay valid.",
+      "problem": "Validator compared CHART_INDEX columns substage_status/substage_title against STAGES.csv keys that only exist as title/status, and the generator also read title/status, so all 20 substages failed parity.",
+      "failed_approach": "Renaming only the generator's lookups to substage_status/substage_title, which empties the index cells and swaps the parity failure for 20 STATUS_VALUES failures.",
+      "lesson": "Map index column names to real STAGES.csv column names inside the validator (substage_status->status, substage_title->title) and let the generator read title/status; leave the STAGES.csv header unchanged so pinned column lists stay valid. Verified green at 9840e39e.",
       "evidence": [
         "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42765882455/job/129662140534",
         "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
-        "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980"
+        "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
+        "agent/runtime/receipts/mwabevlq-cl4u7evn.0.json@49644c371b0746bfd36f91b4d554fe61a0fe436f",
+        "agent/runtime/receipts/mwabevlq-cl4u7evn.1.json@c78c622778463dc474cc1495341d71a93a3a05e9",
+        "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2"
       ],
       "first_seen": "mwaarq9u-frvzdzv8",
-      "last_seen": "mwabevlq-cl4u7evn",
-      "seen_at_ms": 1794292727466
+      "last_seen": "mwabmqs9-j7y2lk0d",
+      "seen_at_ms": 1794293016323
     }
   ]
 }
