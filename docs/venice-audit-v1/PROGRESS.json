@@ -1,33 +1,37 @@
 {
   "task_id": "repo-hierarchical-audit-v2",
   "assignment_sha": "8e75e4f7f1e0ccf926392cca31246dcdacf1fd8b",
-  "snapshot_sha": "b574d2acc6a117094db2f30cd4ba1e8658d2225a",
   "work_branch": "venice/repo-hierarchical-audit-v2",
-  "current_subtask": "t6 wire build_report and publish README/GANTT/details",
+  "head_at_update": "9840e39e0ca8a5fffd18462c85fb7d413fbc17e2",
+  "current_subtask": "t10 open the v2 revision PR and merge it on a green expected_head_sha",
   "completed_subtasks": [
     "t1 orientation on live head b574d2ac",
     "t2 PROGRESS.json re-keyed to assignment 8e75e4f7",
     "t3 STAGES.csv + 8-status REQUIREMENTS.csv generated, rerun order proven safe",
     "t4 QUESTION_INDEX.csv generated and committed by CI",
-    "t5 charts/CHART_INDEX.csv + 23 per-substage SVGs generated and committed by CI"
+    "t5 charts/CHART_INDEX.csv + 20 per-substage SVGs generated and committed by CI",
+    "t6 build_report wired after build_charts; README.md, GANTT.md and details/<substage-id>.md published",
+    "t7 validator written with parity, STATUS_VALUES, chart and details assertions in tests",
+    "t8 validator maps CHART_INDEX substage_status/substage_title onto STAGES.csv status/title; suite green at 9840e39e"
   ],
   "remaining_subtasks": [
-    "t6 add a build_report workflow step after build_charts and publish README.md, GANTT.md, details/<substage-id>.md",
-    "t7 validator + reporting tests, green run on final head, merge PR"
+    "t10 open the revision PR for venice/repo-hierarchical-audit-v2 into main and merge it on a green expected_head_sha"
   ],
   "evidence": [
-    "docs/venice-audit-v1/charts@82f8374ef67b7340afae8cf67c663e7709fdc6e3",
     "docs/venice-audit-v1/charts/CHART_INDEX.csv@04adc1ba640d87e0b879dffccc878516b1c2ff97",
-    "docs/venice-audit-v1/build_report.py@97f0e83a5f8f32a357d62fdc028fc08b34f620ac",
-    "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9"
+    "docs/venice-audit-v1/STAGES.csv@e212ffb22a39cf8550109bdb612f90d0a4591980",
+    "docs/venice-audit-v1/details@a9dac9b327a6df66279e286c3bdcc4c55b79ca60",
+    "docs/venice-audit-v1/QUESTION_INDEX.csv@096587d124f1c0c9f7a1a07e4b7152dd9d8f69a9",
+    "agent/repo_requirements_audit_validate.py@06c2c84033e649c3fc302a3a6ae2a579ab434b02",
+    "tests/test_repo_requirements_audit.py@a29a2f697d9c40e75db9ee37ddd5130bf6032798",
+    "https://github.com/SRoyaltyy/checklist-engine/actions/runs/42769891308"
   ],
   "pitfalls": [
-    {"id": "report-step-not-wired", "status": "open", "lesson": "green run proves nothing; list the output directory (details/ 404) to prove a layer published"},
-    {"id": "report-detail-chart-link-prefix", "status": "open", "lesson": "detail pages must link ../charts/<sid>.svg"},
-    {"id": "committed-pycache", "status": "open", "lesson": "git rm -r --cached docs/venice-audit-v1/__pycache__ before git add"},
+    {"id": "committed-pycache", "status": "open", "lesson": "git rm -r --cached docs/venice-audit-v1/__pycache__ before git add in the commit step"},
+    {"id": "commit-step-blocked-by-pytest", "status": "open", "lesson": "expect one transitional red run per head; read the job log before editing the commit step"},
     {"id": "questions-need-real-substage", "status": "open", "lesson": "question rows target S4.1/S5.1/S5B.1 only"},
-    {"id": "commit-step-blocked-by-pytest", "status": "open", "lesson": "expect one transitional red run per head; read the job log before editing the commit step"}
+    {"id": "bot-push-has-no-checks", "status": "open", "lesson": "a GITHUB_TOKEN push does not retrigger the workflow, so the merge head must come from a manual write"}
   ],
-  "exact_next_step": "Insert a build_report step after the build_charts step in .github/workflows/venice-repo-requirements-audit.yml, then confirm on the next run that details/ and README.md are committed",
-  "note": "charts layer is complete and published; reporting layer is not. Audit completion never opens the world/scoring/live gates."
+  "exact_next_step": "create_pr for venice/repo-hierarchical-audit-v2 into main, then merge_pr once checks are green on the exact expected_head_sha",
+  "note": "Charts and reporting layers are published and the suite is green at 9840e39e; only PR publication remains. Audit completion never opens the world/scoring/live gates."
 }
