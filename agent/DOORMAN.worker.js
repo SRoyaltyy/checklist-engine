@@ -86,7 +86,7 @@ async function ownerGoal(env,data){
  if(previous?.owner_dashboard_project===OWNER_DASHBOARD){
   if(previous.owner_goal_revision>data.goal_revision)throw new Error('An older dashboard goal cannot replace a newer goal');
   if(previous.owner_goal_revision===data.goal_revision){
-   if(previous.owner_goal_digest!==digest)throw new Error('Dashboard revision was reused with different goal text');
+   if(previous.owner_goal_digest!==digest||previous.goal!==goal||previous.acceptance_criteria!==criteria)throw new Error('Dashboard revision or repository goal was changed outside the recorded assignment');
    return {ok:true,unchanged:true,verified:true,task:{...previous,assignment_sha:file.sha}};
   }
  }
@@ -106,6 +106,8 @@ async function ownerGoal(env,data){
   allow_merge:reuse?previous.allow_merge===true:true,
   deliverable:reuse?(previous.deliverable||'merged_pr'):'merged_pr',
   additional_spend_authorized:false,
+  predecessor_task_id:reuse?(previous.predecessor_task_id||null):(previous?.id||null),
+  handoff_paths:reuse?(previous.handoff_paths||[]):(previous?[taskRoot(previous)+'/NOTES.md',taskRoot(previous)+'/PITFALLS.json']:[]),
   owner_dashboard_project:OWNER_DASHBOARD,owner_goal_revision:data.goal_revision,owner_goal_digest:digest,
   owner_instructions:'Follow this goal and its success criteria. Coordinate against current METHODOLOGY.md. Preserve evidence, failures, notes and the exact next step between chats. Additional spending must remain zero. Never activate paid APIs, paid hosting or an account upgrade.',
   assigned_at:new Date().toISOString()};
@@ -294,7 +296,7 @@ async function runtimeContext(env) {
   if(task&&saved?.task_id===task.id){const link=[...(saved.evidence||[])].reverse().find(x=>String(x).includes('/pull/'));const n=link?.match(/\/pull\/(\d+)/)?.[1];if(n){const p=await gh(env,'/pulls/'+n);if(p.ok)task_pr={number:p.body.number,state:p.body.state,merged:p.body.merged,head_sha:p.body.head?.sha,updated_at:p.body.updated_at};}}
   return { ok:true, version:6, at:new Date().toISOString(), branch,
     assignment:task,lease,pitfalls,task_runs,task_pr,publishing_enabled:publication.enabled,publication,
-    instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific,...(task?.owner_dashboard_project?{owner_goal_precedence:task.owner_instructions,owner_success_criteria:task.acceptance_criteria}: {})},
+    instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific,...(task?.owner_dashboard_project?{owner_goal_precedence:task.owner_instructions,owner_success_criteria:task.acceptance_criteria,prior_goal_handoff:task.handoff_paths||[]}: {})},
     available_evidence:[`TODO.md@${todo.sha}`,`METHODOLOGY.md@${method.sha}`],
     progress:progress?.text || 'No v6 progress recorded yet. Begin with the current Venice lane; old SEC collector work was reassigned.',
     state:task&&saved?.task_id!==task.id?null:saved,
