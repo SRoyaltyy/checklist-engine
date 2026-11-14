@@ -57,6 +57,67 @@ async function activeTask(env){
  for(const p of t.allowed_paths)safePath(p.endsWith('/**')?p.slice(0,-3):p);
  return {...t,assignment_sha:f.sha};
 }
+// Human goal control uses the existing operator key, never the model's bridge key.
+const OWNER_DASHBOARD='appgprj_6af85fdcb2d08191aae528f291f9c885';
+const OWNER_SITE='https://cyrus-research-agent-console.magnificentcoach4.chatgpt.site';
+const INITIAL_OWNER_GOAL='Audit checklist-engine against James’s methodology and assignment. Identify every stage, substage and granular requirement; verify its status against repository evidence; produce a visual Gantt chart for each substage.';
+async function syncOwnerGoal(env,data){
+ if(!env.OWNER_SITE_KEY)throw new Error('Owner dashboard connection is not configured');
+ const response=await fetch(OWNER_SITE+'/api/console',{headers:{'OAI-Sites-Authorization':'Bearer '+env.OWNER_SITE_KEY},redirect:'error'});
+ if(!response.ok)throw new Error('Cannot read the private owner dashboard');
+ const control=(await response.json()).control;
+ if(!control||control.desired!=='run')throw new Error('The owner has not requested Run');
+ if(control.goal_revision!==data.goal_revision)throw new Error('The dashboard goal changed; refresh before activation');
+ // Caller-supplied goal text, paths and permissions are deliberately ignored.
+ return ownerGoal(env,{project_id:OWNER_DASHBOARD,goal_revision:control.goal_revision,goal:control.goal,criteria:control.criteria,
+  expected_assignment_sha:data.expected_assignment_sha,dry_run:data.dry_run===true,reuse_current_task:control.goal===INITIAL_OWNER_GOAL});
+}
+async function ownerGoal(env,data){
+ if(data.project_id!==OWNER_DASHBOARD)throw new Error('Unexpected owner dashboard');
+ if(!Number.isSafeInteger(data.goal_revision)||data.goal_revision<0)throw new Error('Valid dashboard goal revision required');
+ if(typeof data.goal!=='string'||data.goal.trim().length<10||data.goal.length>12000||typeof data.criteria!=='string'||data.criteria.length>6000)throw new Error('Goal and criteria are invalid');
+ if(!Object.prototype.hasOwnProperty.call(data,'expected_assignment_sha'))throw new Error('Expected assignment SHA required');
+ const file=await maybeRead(env,'main',ACTIVE_TASK_PATH),previous=file?JSON.parse(file.text):null;
+ if(data.expected_assignment_sha!==(file?.sha||null))throw new Error('Assignment changed; refresh before updating the goal');
+ if(previous?.status==='active'&&previous.id!=='repo-hierarchical-audit-v2'&&previous.owner_dashboard_project!==OWNER_DASHBOARD)throw new Error('Another owner assignment is active; review it before replacing it');
+ const goal=data.goal.trim(),criteria=data.criteria.trim();
+ const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify({project:OWNER_DASHBOARD,revision:data.goal_revision,goal,criteria})));
+ const digest=Array.from(new Uint8Array(bytes),x=>x.toString(16).padStart(2,'0')).join('');
+ if(previous?.owner_dashboard_project===OWNER_DASHBOARD){
+  if(previous.owner_goal_revision>data.goal_revision)throw new Error('An older dashboard goal cannot replace a newer goal');
+  if(previous.owner_goal_revision===data.goal_revision){
+   if(previous.owner_goal_digest!==digest)throw new Error('Dashboard revision was reused with different goal text');
+   return {ok:true,unchanged:true,verified:true,task:{...previous,assignment_sha:file.sha}};
+  }
+ }
+ if(previous?.status==='active'){
+  const leaseFile=await maybeRead(env,runtimeBranch(env),taskRoot(previous)+'/LEASE.json');
+  const lease=leaseFile?JSON.parse(leaseFile.text):null;
+  if(lease&&lease.assignment_sha===file.sha&&lease.expires_at>Date.now())return {ok:false,waiting:true,reason:'prior_task_lease_active',expires_at:lease.expires_at};
+ }
+ const reuse=data.reuse_current_task===true&&previous?.id==='repo-hierarchical-audit-v2';
+ const id=reuse?previous.id:'owner-goal-'+digest.slice(0,20),branch=reuse?previous.branch:'venice/goal-'+digest.slice(0,20);
+ const task={...(reuse?previous:{}),id,branch,status:'active',goal,
+  why:'The repository owner assigned this goal through the private Fieldwork dashboard.',
+  acceptance_criteria:criteria,
+  allowed_paths:reuse?previous.allowed_paths:['**'],
+  protected_paths:reuse?(previous.protected_paths||[]):['agent/**'],
+  allow_infrastructure:reuse?previous.allow_infrastructure===true:true,
+  allow_merge:reuse?previous.allow_merge===true:true,
+  deliverable:reuse?(previous.deliverable||'merged_pr'):'merged_pr',
+  additional_spend_authorized:false,
+  owner_dashboard_project:OWNER_DASHBOARD,owner_goal_revision:data.goal_revision,owner_goal_digest:digest,
+  owner_instructions:'Follow this goal and its success criteria. Coordinate against current METHODOLOGY.md. Preserve evidence, failures, notes and the exact next step between chats. Additional spending must remain zero. Never activate paid APIs, paid hosting or an account upgrade.',
+  assigned_at:new Date().toISOString()};
+ if(data.dry_run===true)return {ok:true,dry_run:true,task,expected_assignment_sha:file?.sha||null};
+ const text=JSON.stringify(task,null,2)+'\n';
+ const body={branch:'main',message:'owner: assign dashboard goal '+id,content:enc(text),...(file?{sha:file.sha}:{})};
+ const result=await gh(env,'/contents/'+ACTIVE_TASK_PATH,{method:'PUT',body:JSON.stringify(body)});
+ if(!result.ok)throw new Error('Owner assignment update failed: '+result.status);
+ const readback=await readFile(env,'main',ACTIVE_TASK_PATH);
+ if(readback.text!==text)throw new Error('Owner assignment readback mismatch');
+ return {ok:true,verified:true,commit:result.body.commit.sha,task:{...task,assignment_sha:readback.sha}};
+}
 function taskPathAllowed(task,path){safePath(path);if(path===ACTIVE_TASK_PATH)return false;const matches=p=>p==='**'||(p.endsWith('/**')?(path===p.slice(0,-3)||path.startsWith(p.slice(0,-2))):path===p);if((task.protected_paths||[]).some(matches))return false;return task.allowed_paths.some(matches);}
 async function claimTask(env,command){
  const task=await activeTask(env);if(!task||command.task_id!==task.id||command.assignment_sha!==task.assignment_sha)throw new Error('Refresh the active task assignment before claiming it');
@@ -233,7 +294,7 @@ async function runtimeContext(env) {
   if(task&&saved?.task_id===task.id){const link=[...(saved.evidence||[])].reverse().find(x=>String(x).includes('/pull/'));const n=link?.match(/\/pull\/(\d+)/)?.[1];if(n){const p=await gh(env,'/pulls/'+n);if(p.ok)task_pr={number:p.body.number,state:p.body.state,merged:p.body.merged,head_sha:p.body.head?.sha,updated_at:p.body.updated_at};}}
   return { ok:true, version:6, at:new Date().toISOString(), branch,
     assignment:task,lease,pitfalls,task_runs,task_pr,publishing_enabled:publication.enabled,publication,
-    instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific},
+    instructions:{todo_sha:todo.sha,venice_lane:section[0],methodology_sha:method.sha,methodology_start:instructions,methodology_venice_matches:specific,...(task?.owner_dashboard_project?{owner_goal_precedence:task.owner_instructions,owner_success_criteria:task.acceptance_criteria}: {})},
     available_evidence:[`TODO.md@${todo.sha}`,`METHODOLOGY.md@${method.sha}`],
     progress:progress?.text || 'No v6 progress recorded yet. Begin with the current Venice lane; old SEC collector work was reassigned.',
     state:task&&saved?.task_id!==task.id?null:saved,
@@ -420,16 +481,27 @@ async function runtimeTool(env, command) {
 export default {
  async fetch(request,env){
   if(request.method==='OPTIONS')return new Response(null,{headers:CORS});
+  const operation=new URL(request.url).searchParams.get('op');
+  if(operation==='owner_goal'){
+   if(!env.DEPLOY_KEY||request.headers.get('Authorization')!=='Bearer '+env.DEPLOY_KEY)return reply({ok:false,error:'Operator authentication required'},401);
+   if(request.method!=='POST')return reply({ok:false,error:'JSON POST required'},405);
+   try{
+    if(env.GITHUB_REPO!=='SRoyaltyy/checklist-engine')throw new Error('Unexpected repository configuration');
+    const raw=await request.text();if(raw.length>32000)throw new Error('Owner goal too large');
+    const result=await ownerGoal(env,JSON.parse(raw));return reply(result,result.waiting?409:200);
+   }catch(e){return reply({ok:false,error:String(e.message||e)},400);}
+  }
   if(!env.DOORMAN_KEY || request.headers.get('Authorization')!=='Bearer '+env.DOORMAN_KEY)return reply({ok:false,error:'Unauthorized'},401);
   const op=new URL(request.url).searchParams.get('op')||'ops';
   try{
    if(env.GITHUB_REPO!=='SRoyaltyy/checklist-engine')throw new Error('Unexpected repository configuration');
-   if(op==='ops'){const publication=await publicationStatus(env);return reply({ok:true,version:6,revision:'6.4.1',ops:['source','context','tool','checkpoint'],repository:'SRoyaltyy/checklist-engine',writes:'venice/* only',merge:publication.enabled,publication,task_leases:true,session_capsules:true});}
+   if(op==='ops'){const publication=await publicationStatus(env);return reply({ok:true,version:6,revision:'6.4.2',ops:['source','context','tool','checkpoint'],repository:'SRoyaltyy/checklist-engine',writes:'venice/* only',merge:publication.enabled,publication,task_leases:true,session_capsules:true,owner_goal_control:true,owner_site_connected:!!env.OWNER_SITE_KEY});}
    if(op==='source'&&request.method==='GET'){const f=await readFile(env,runtimeBranch(env),'agent/BRIDGE6.js');return reply({ok:true,...f});}
    if(op==='context'&&request.method==='GET')return reply(await runtimeContext(env));
    if(request.method!=='POST')return reply({ok:false,error:'JSON POST required for mutations'},405);
    const raw=await request.text();if(raw.length>300000)throw new Error('Request too large');
    const data=JSON.parse(raw);
+   if(op==='sync_owner_goal'){const result=await syncOwnerGoal(env,data);return reply(result,result.waiting?409:200);}
    if(op==='tool')return reply(await runtimeTool(env,data));
    if(op==='checkpoint')return reply(await runtimeSave(env,data));
    return reply({ok:false,error:'Unknown operation'},400);
@@ -442,3 +514,4 @@ export default {
   const stamp=new Date().toISOString();await verifiedWrite(env,branch,'agent/WAKE.json',JSON.stringify({pending:true,id:stamp,set_at:stamp,reason:'scheduled heartbeat'},null,2),'venice: scheduled wake');
  })());}
 };
+
