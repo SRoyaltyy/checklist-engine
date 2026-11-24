@@ -1,0 +1,14 @@
+{
+ "HISTORY_BUCKETS": {
+  "path": "/workspace/checklist_dials/v2.7.1/HISTORY_BUCKETS_v2.7.1_FINAL.csv",
+  "sha256": "d8adbb466dfc809e8084dd47fcea7c59b6ab2749c7f23e7e7d9f74b590e49f69"
+ },
+ "CUTOFF_GRID": {
+  "path": "/workspace/checklist_dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv",
+  "sha256": "9ccb2439126783b474f3a0c88f79852b8f3fba19fdaa98c9e6dbda2ca2f78be6"
+ },
+ "QUESTION_CUTOFFS": {
+  "path": "/workspace/checklist_dials/v2.7.2.2/QUESTION_CUTOFFS_v2.7.2.2.csv",
+  "sha256": "ca35930f82b907173c542ae779a8c3ed2ec521d95451930f724914b4d55b6c7d"
+ }
+}
