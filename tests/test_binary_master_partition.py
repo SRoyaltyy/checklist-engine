@@ -18,8 +18,8 @@ from world_binary_master import (EXACT_PARTITION_FACETS, FACETS, NativeBar,
 from world_question_grid import CanonicalGrid, ROOT
 
 SPAN = 600                      # bars; supports lb*k <= 200 rows comfortably
-CRAFTED = 3
-RANDOM_TAPES = 3
+CRAFTED = 4
+RANDOM_TAPES = 2
 TOTAL_TAPES = CRAFTED + RANDOM_TAPES
 
 # batch 21 (3ATR legs/flag/cup_handle) and batch 22 (gap/extreme families):
@@ -40,6 +40,13 @@ HEAVY_FACETS = {'last_phase', 'phase_count', 'phase_seq3', 'len_vs_prev',
                 'vol_direction_link'}
 HEAVY_ROW_CAP = 6
 HEAVY_TAPES = 4
+# The legs comparison families need a window with >= 2 swing legs, which
+# only crafted tape 4 (40-session 3ATR-scale legs) provides - the other
+# tapes' chop inflates ATR so their windows degenerate to a single leg.
+# They get that one extra tape on top of their heavy allotment.
+SWING_TAPE = 4                   # crafted tape index (0-based)
+SWING_TAPE_FACETS = {'len_vs_prev', 'size_vs_prev', 'speed_vs_prev',
+                     'vol_vs_prev'}
 # batch 24 (ADX/DI + Ichimoku) and batch 25 (Donchian remainder/tails/
 # counts): the most expensive scans; capped harder (the partition
 # property is per-row over defs - row/tape count only sets how many
@@ -55,14 +62,22 @@ ULTRA_TAPES = 2
 DEFAULT_ROW_CAP = 10
 
 
-def _tape_bars(closes, volumes, slot0=100):
+def _tape_bars(closes, volumes, slot0=100, opens=None):
     bars = {}
     base = date(2024, 3, 1)
     for i, (c, v) in enumerate(zip(closes, volumes)):
         end = base + timedelta(days=i)
+        if opens is None:
+            o = float(c)
+            hi = float(c) + 1.5
+            lo = float(c) - 1.0
+        else:
+            o = float(opens[i])
+            hi = max(o, float(c)) + 1.5
+            lo = min(o, float(c)) - 1.0
         bars[slot0 + i] = NativeBar(end=end, available_from=end + timedelta(days=1),
-                                    open=float(c), high=float(c) + 1.5,
-                                    low=float(c) - 1.0, close=float(c),
+                                    open=o, high=hi,
+                                    low=lo, close=float(c),
                                     volume=float(v))
     return bars
 
@@ -94,6 +109,40 @@ def _crafted_tapes():
         closes.append(c)
         vols.append(2.0e6 if i % 2 == 0 else 0.6e6)
     tapes.append(_tape_bars(closes, vols))
+    # 4: body-size regime shift (tiny bodies then large two-sided bodies,
+    # open = prior close) - the other tapes have open == close by design,
+    # so body-size facets (size_vs_chart, wick_evolution) need this tape
+    # for real YES coverage
+    closes, vols, opens = [100.0], [], [100.0]
+    for i in range(SPAN - 1):
+        step = 0.001 if i < 350 else 0.02
+        nxt = closes[-1] * (1 + (step if i % 2 == 0 else -step))
+        opens.append(closes[-1])
+        closes.append(nxt)
+        vols.append(1.0e6)
+    vols.append(1.0e6)
+    tapes.append(_tape_bars(closes, vols, opens=opens))
+    # 5: sustained 40-session swing legs (+/-1.2%/day, open = prior close,
+    # volume alternates per leg). The 3ATR leg partition needs swings of
+    # several ATR - the zigzag tapes above inflate ATR with their own chop,
+    # so their windows degenerate to a single leg and the legs comparison
+    # families (len/size/speed/vol_vs_prev, which need >= 2 legs) never
+    # fire. 40-session legs keep leg size ~4x the per-bar ATR on both daily
+    # and 10x-aggregated windows.
+    closes, vols, opens = [100.0], [], [100.0]
+    for i in range(SPAN - 1):
+        leg = (i - 200) // 40 if i >= 200 else -1
+        if leg >= 0:
+            step = 0.012 if leg % 2 == 0 else -0.012
+            vols.append(2.0e6 if leg % 2 == 0 else 0.5e6)
+        else:
+            step = 0.0
+            vols.append(1.0e6)
+        nxt = closes[-1] * (1 + step)
+        opens.append(closes[-1])
+        closes.append(nxt)
+    vols.append(1.0e6)
+    tapes.append(_tape_bars(closes, vols, opens=opens))
     return tapes
 
 
@@ -196,6 +245,10 @@ def test_exact_partition_property(grid, tapes):
             use_tapes = (tapes[:ULTRA_TAPES] if facet in ULTRA_HEAVY_FACETS
                          else tapes[:HEAVY_TAPES] if facet in HEAVY_FACETS
                          else tapes)
+            if facet in SWING_TAPE_FACETS and len(tapes) > SWING_TAPE:
+                swing = tapes[SWING_TAPE]
+                if swing not in use_tapes:
+                    use_tapes = list(use_tapes) + [swing]
             if len(defs) > 20:
                 if row['L2_timeframe'] != '1x10':
                     continue

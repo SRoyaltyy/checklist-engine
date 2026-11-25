@@ -1,9 +1,9 @@
 {
   "canonical_questions": 15093,
   "oat_variants": 154667,
-  "bound_source_questions": 3460,
-  "bound_unique_binary_definitions": 107201,
-  "bound_source_aliases": 109396,
+  "bound_source_questions": 3668,
+  "bound_unique_binary_definitions": 110806,
+  "bound_source_aliases": 114030,
   "bound_families": [
     "above_share",
     "absorption_day",
@@ -295,7 +295,10 @@
     "count",
     "cross_count",
     "cross_event",
+    "cross_round",
     "cup_handle",
+    "current_level_touches",
+    "days_since_partial_flip",
     "di_cross",
     "distance_route",
     "dominance",
@@ -314,6 +317,7 @@
     "gap_age",
     "gap_count",
     "gap_down",
+    "gap_given_back",
     "gap_side",
     "gap_up",
     "high_then_low",
@@ -347,10 +351,12 @@
     "range_max_position",
     "red_green_balance",
     "reentry",
+    "rejection",
     "rsi_ceiling",
     "rsi_floor",
     "run_biggest_move",
     "run_structure",
+    "run_unusual",
     "segment_compare",
     "shock",
     "size_vs_chart",
@@ -369,6 +375,7 @@
     "time_upper",
     "tk_cross",
     "touch_52w",
+    "touch_order",
     "trend",
     "trend_strength_route",
     "vol_direction_link",
@@ -376,11 +383,12 @@
     "vs_own_past",
     "weekly_stack",
     "weekly_trend",
-    "wick_body"
+    "wick_body",
+    "wick_evolution"
   ],
   "gpt_bound_fallback": "world_binary_price.bind_price_question",
-  "unbound_family_variant_count": 796,
-  "unbound_oat_variants": 132929,
+  "unbound_family_variant_count": 785,
+  "unbound_oat_variants": 132042,
   "ladder_add_on_rows": 2664,
   "ladder_source_rows": 2680,
   "ladder_alias_rows": 16,
@@ -426,14 +434,14 @@
       "note": "bound defs keyed by question_id = semantic identity hash; batch-5 fix includes the outcome label; aliases share feature_id."
     }
   },
-  "master_total_rows": 109865,
-  "csv_sha256": "ea3d3859af0df9658eafef197c0eea01d5bf050586d6f3ff642af80d626468ab",
+  "master_total_rows": 113470,
+  "csv_sha256": "b500e6227e1e900b2b2d42bf68d9c16fce2b883075eac22d936451483ac448ee",
   "csv_storage": {
     "manifest": "BINARY_MASTER_V1_STORAGE.json",
     "format": "BINARY_MASTER_CSV_GZIP_PARTS_V1",
-    "raw_bytes": 175928065,
-    "compressed_bytes": 22701401,
-    "chunk_count": 21
+    "raw_bytes": 181699344,
+    "compressed_bytes": 23613389,
+    "chunk_count": 22
   },
   "source_fingerprints": {
     "dials/v2.7.2.2/CUTOFF_GRID_v2.7.2.2.csv": "e0c1ed448483307c15dc4c1b5847d299733b523a8e46f9e77973b0f497f524d6",
@@ -445,7 +453,7 @@
     "dictionary/INDICATOR_SETTINGS.json": "015aae37cd549ab6297407b501534d2143a02c70c0b482ac330c6b9b570ad610"
   },
   "code_fingerprints": {
-    "world_binary_master.py": "0f5df41369e535dbd786dcf2aab49dfd6921b82b26e59551f6562e2badd90539",
+    "world_binary_master.py": "cc8e5ed4aa483595f41fffec9835d3f24263de0e22796733e2d3bac6c07f3ee0",
     "world_binary_price.py": "289d21af725154909eeaceac68f6f994799b155a89468fa4eb9a02bc4f428554",
     "world_binary_questions.py": "ef4b3905300481cf29bf402cce224250d376abdd04702fb58d91c16faaacf3e1",
     "ci/binary_master_build.py": "fd5d525c39604d5a9b208523b03458c9d8ef018e0122036e7262c5aa4aad0b5f",
