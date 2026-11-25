@@ -31,8 +31,7 @@ jobs:
             20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: kimi/step-a-wincompat
+        # engine ported to main (kimi/step-a-engine-port): checkout the dispatch ref, not an orphan branch
       - name: Python + system deps
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
@@ -60,8 +59,7 @@ jobs:
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: kimi/step-a-wincompat
+        # engine ported to main (kimi/step-a-engine-port): checkout the dispatch ref, not an orphan branch
       - name: Python + system deps
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
