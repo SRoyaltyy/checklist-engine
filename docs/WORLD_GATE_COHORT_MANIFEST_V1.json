@@ -1,0 +1,43 @@
+{
+ "format": "WORLD_GATE_COHORT_MANIFEST_V1",
+ "created_utc": "2026-11-25T06:40:41Z",
+ "branch": "kimi/step-a-engine-port",
+ "cohort_n": 8439,
+ "names_sorted_sha256": "5bffd00c7b92a1dc364b0a445934707de41af1fc6928551387e2e0f51dcfb4a5",
+ "identity_map": {
+  "file": "docs/SEC_RETAINED_IDENTITY_MAP_V1.json",
+  "ref": "main",
+  "blob_sha1": "3bd7dc032e6117ac13dd3f7bc1ded3cab31ac68b",
+  "sha256": "50323efcd9855061501d88010d8e812371fda7c9dd48d3a54c0f5f19cdad97ce",
+  "bytes": 5337979,
+  "records": 8439,
+  "status": "RETAINED_COHORT_IDENTITY_MAP_FROM_ARCHIVES_ONLY",
+  "source_release": "compact-world-build-composed-v1-41221028803-1",
+  "source_asset": "COMPACT_WORLD_BUILD_COMPOSED.json",
+  "original_universe": 8727
+ },
+ "status_breakdown": {
+  "UNIQUE_CIK": 3996,
+  "NO_CIK": 4419,
+  "QUARANTINED_ISSUER_PRODUCT_ALIAS": 24
+ },
+ "cross_checks": {
+  "records_len_eq_retained_n": true,
+  "names_unique": true,
+  "status_breakdown_sum_eq_n": true,
+  "method_breakdown_sum_eq_n": true,
+  "every_record_has_ticker": true
+ },
+ "cross_check_notes": {
+  "splits_lineage_vs_cohort": {
+   "splits_file": "integrity/splits_yahoo.parquet.b64",
+   "splits_sha256": "8f8dbf8f3be5439b2711dece122abfc1cd8e7678628e4147b36ffda299cb2f8a",
+   "splits_tickers": 1842,
+   "inside_cohort": 1797,
+   "outside_cohort": 45,
+   "note": "Splits lineage covers its own price-history universe; 45 split tickers are outside the retained 8,439 cohort (engine looks up splits lazily per ticker, so extra names are inert). Recorded for W2/W4 awareness, not a W1 blocker."
+  }
+ },
+ "world_gate": "W1_MANIFEST_PINNED",
+ "scoring_gate": "CLOSED"
+}
