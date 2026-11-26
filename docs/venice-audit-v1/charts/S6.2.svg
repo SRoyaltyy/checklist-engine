@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1054" height="276" viewBox="0 0 1054 276" role="img" aria-label="Gantt for substage S6.2">
+<rect width="1054" height="276" fill="#ffffff"/>
+<text x="16" y="28" font-family="sans-serif" font-size="17" font-weight="700" fill="#1b1f23">S6.2 — Exit-rule registry applied per setup</text>
+<text x="16" y="48" font-family="sans-serif" font-size="11.5" fill="#57606a">Parent stage S6 · substage status UNVERIFIED · 0 of 1 child requirements main-accepted</text>
+<text x="16" y="70" font-family="sans-serif" font-size="13" font-weight="700" fill="#1b1f23">Substage percent: 0.0</text>
+<rect x="16" y="78" width="300" height="8" fill="#eaeef2" stroke="#d0d7de" stroke-width="0.5"/>
+<rect x="16" y="78" width="0.0" height="8" fill="#1a7f37"/>
+<text x="16" y="104" font-family="sans-serif" font-size="10.5" fill="#57606a">Percent basis: numerator = child requirements with main_acceptance_status COMPLETE; denominator = child requirements in this substag…</text>
+<text x="16" y="120" font-family="sans-serif" font-size="10.5" fill="#57606a">Scope note / next action: Every registered exit rule evaluated per setup</text>
+<text x="16" y="136" font-family="sans-serif" font-size="10.5" fill="#57606a">Blocked children: none</text>
+<text x="12" y="154" font-family="sans-serif" font-size="10" font-weight="700" fill="#24292f">Requirement</text>
+<text x="434" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Scope defined</text>
+<text x="434" y="155" font-family="sans-serif" font-size="8" fill="#57606a">scope_definition</text>
+<text x="512" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Data acquired</text>
+<text x="512" y="155" font-family="sans-serif" font-size="8" fill="#57606a">data_acquisition</text>
+<text x="590" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Strict data defined</text>
+<text x="590" y="155" font-family="sans-serif" font-size="8" fill="#57606a">strict_data_definition</text>
+<text x="668" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Implemented</text>
+<text x="668" y="155" font-family="sans-serif" font-size="8" fill="#57606a">implementation</text>
+<text x="746" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Question designed</text>
+<text x="746" y="155" font-family="sans-serif" font-size="8" fill="#57606a">question_design</text>
+<text x="824" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Answer generated</text>
+<text x="824" y="155" font-family="sans-serif" font-size="8" fill="#57606a">answer_generation</text>
+<text x="902" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Verified</text>
+<text x="902" y="155" font-family="sans-serif" font-size="8" fill="#57606a">verification</text>
+<text x="980" y="144" font-family="sans-serif" font-size="9" fill="#24292f">Main accepted</text>
+<text x="980" y="155" font-family="sans-serif" font-size="8" fill="#57606a">main_acceptance</text>
+<line x1="8" y1="166" x2="1046" y2="166" stroke="#d0d7de"/>
+<rect x="8" y="168" width="1038" height="24" fill="#f6f8fa"/>
+<text x="12" y="183" font-family="sans-serif" font-size="10.5" font-weight="700" fill="#1b1f23">R6.2</text>
+<text x="78" y="183" font-family="sans-serif" font-size="10" fill="#24292f">Exit-rule registry applied per setup</text>
+<rect x="432" y="172" width="72" height="16" fill="#afb8c1" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Scope defined: NOT_STARTED</title></rect>
+<text x="468" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">NS</text>
+<rect x="510" y="172" width="72" height="16" fill="#afb8c1" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Data acquired: NOT_STARTED</title></rect>
+<text x="546" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">NS</text>
+<rect x="588" y="172" width="72" height="16" fill="#afb8c1" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Strict data defined: NOT_STARTED</title></rect>
+<text x="624" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">NS</text>
+<rect x="666" y="172" width="72" height="16" fill="#afb8c1" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Implemented: NOT_STARTED</title></rect>
+<text x="702" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">NS</text>
+<rect x="744" y="172" width="72" height="16" fill="#eaeef2" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Question designed: NOT_APPLICABLE</title></rect>
+<rect x="822" y="172" width="72" height="16" fill="#eaeef2" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Answer generated: NOT_APPLICABLE</title></rect>
+<rect x="900" y="172" width="72" height="16" fill="#8250df" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Verified: UNVERIFIED</title></rect>
+<text x="936" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">U</text>
+<rect x="978" y="172" width="72" height="16" fill="#8250df" stroke="#8c959f" stroke-width="0.5"><title>R6.2 · Main accepted: UNVERIFIED</title></rect>
+<text x="1014" y="183" font-family="sans-serif" font-size="9" fill="#ffffff" text-anchor="middle">U</text>
+<text x="878" y="183" font-family="sans-serif" font-size="8.5" fill="#57606a">EXECUTION</text>
+<g font-family="sans-serif" font-size="10">
+<text x="16" y="230" fill="#57606a">Cell legend:</text>
+<rect x="94" y="221" width="14" height="10" fill="#1a7f37" stroke="#8c959f" stroke-width="0.5"/>
+<text x="112" y="230" fill="#24292f">C</text>
+<rect x="136" y="221" width="14" height="10" fill="#bf8700" stroke="#8c959f" stroke-width="0.5"/>
+<text x="154" y="230" fill="#24292f">P</text>
+<rect x="178" y="221" width="14" height="10" fill="#0969da" stroke="#8c959f" stroke-width="0.5"/>
+<text x="196" y="230" fill="#24292f">IP</text>
+<rect x="228" y="221" width="14" height="10" fill="#cf222e" stroke="#8c959f" stroke-width="0.5"/>
+<text x="246" y="230" fill="#24292f">B</text>
+<rect x="270" y="221" width="14" height="10" fill="#afb8c1" stroke="#8c959f" stroke-width="0.5"/>
+<text x="288" y="230" fill="#24292f">NS</text>
+<rect x="320" y="221" width="14" height="10" fill="#8250df" stroke="#8c959f" stroke-width="0.5"/>
+<text x="338" y="230" fill="#24292f">U</text>
+<rect x="362" y="221" width="14" height="10" fill="#eaeef2" stroke="#8c959f" stroke-width="0.5"/>
+<text x="380" y="230" fill="#24292f">NA</text>
+</g>
+<text x="16" y="252" font-family="sans-serif" font-size="9.5" fill="#57606a">Generated by docs/venice-audit-v1/build_charts.py from STAGES.csv and REQUIREMENTS.csv. Percentages are copied from STAGES.csv and are scoped to this substage only; stage rows carry none.</text>
+</svg>
