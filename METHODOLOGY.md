@@ -2,6 +2,24 @@
 
 > **Active task lists now live in `TODO.md` (one section per agent). Read your section there first.**
 
+## Latest owner clarification — 2026-11-10 ~09:36 HKT (Cyrus)
+
+Cyrus ruled that strategies **combine everything**, with no within-group restriction and no one-question-per-data-family restriction. The 2026-10-30 01:09 HKT combination-search rule "max one question per data family per combination" is **SUPERSEDED**. This clarification takes precedence over conflicting older instructions below.
+
+The strategy flow is:
+
+1. Tag each stock-day with its world state.
+2. Answer every question for each world state (thousands of world states).
+3. Put a buy/sell strategy on top.
+4. Keep a trade only if its expected gain, or the expected gain of similar trades, is positive after fees.
+
+**OPEN — needs a Cyrus decision (values are not set here):**
+
+- **Year split.** These conflict and remain unresolved: METHODOLOGY L21 on main @ `7020524b` (train 2020–2022, confirm 2023–24, final check 2025–26); METHODOLOGY L176 on the same tip (the 2026-10-30 plan Cyrus approved: tune 2020–21, check once on 2022, confirm once on 2023–24, live/OOS 2025–26); and `docs/PROJECT_CHECKLIST.md` Phase 9 (2023–24 check of setups chosen on the 2020–22 selection window; there is no 2022 check phase).
+- **A single fee + slippage number.** Current figures in the org disagree and are not settled here: 30bp per side in checklist-engine, 10bp in the pilot, and 15bp plus borrow in Theme Radar.
+- **Shadow and live gates.** Not decided: shadow length, pass rule, go-live definition, sizing, and kill switch.
+- **Definition of "similar trades".** Not decided among: the same setup's past trades pooled together; chart-shape lookalikes (trades that look close even if they are not the exact same setup); or same world-state history.
+
 ## Latest owner clarification — 2026-10-25 23:03 HKT (Codex taking over Kimi's role)
 
 Cyrus supplied the Grok Bot conversation and restated the objective: a probability scanner for **each individual combination** built from the complete market world state, using all listed data types and indicators, the full ~20k–26k question framework plus history across all specified timeframes, evaluated under every registered exit rule. This clarification takes precedence over conflicting older instructions below.
@@ -190,7 +208,7 @@ This file explains, in plain English, what the scanner is for, how it works, and
   - **Ack in §0c.** **Signed: James.**
 - **2026-10-30 01:09 HKT — §0b — James → GPT, Kimi (Cyrus approved 01:09 HKT): Combination search plan (official).**
   1. Bitset-pack every YES/NO column over stock-days; NOT_EVALUABLE gets its own mask and is excluded (never counted as NO).
-  2. Collapse identical columns by bit-hash; cluster near-duplicates (threshold measured, mapping kept); max one question per data family per combination.
+  2. Collapse identical columns by bit-hash; cluster near-duplicates (threshold measured, mapping kept); ~~max one question per data family per combination.~~ **SUPERSEDED 2026-11-10 ~09:36 HKT (Cyrus):** this one-per-family restriction is withdrawn; strategies combine everything, with no within-group or one-per-family restriction. See the 2026-11-10 owner clarification above.
   3. Size the prize: sample 10M random pairs on 2020–21.
   4. Pairs exhaustive: count pass (AND+popcount, exact N, sharded runners); eval pass only for N>=N_min and positive early EV: win%, avg win/loss, after-fee expected profit vs same-day baseline, clustered SE.
   5. ~5 anchor exit rules during search; full exit grid on survivors only; setup scored jointly with rule.
