@@ -44,6 +44,8 @@ jobs:
     timeout-minutes: 180
     permissions:
       contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
     strategy:
       fail-fast: false
       matrix:

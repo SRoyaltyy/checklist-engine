@@ -59,5 +59,6 @@
     "counterexample_avx512_off": 1,
     "counterexample_no_numpy_dispatch": 2,
     "control": 1
-  }
+  },
+  "run_note": "rerun after measure-job GH_TOKEN fix; scope and grid unchanged"
 }
