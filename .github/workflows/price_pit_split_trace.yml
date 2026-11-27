@@ -1,0 +1,90 @@
+name: price-pit-split-trace
+on:
+  push:
+    branches: [codex/price-full-cohort-pit]
+    paths: ['ci/PRICE_PIT_SPLIT_TRACE_REQUEST.json']
+  pull_request:
+    paths: ['ci/price_pit_split_trace.py', 'ci/PRICE_PIT_SPLIT_TRACE_REQUEST.json', 'tests/test_price_pit_split_trace.py', '.github/workflows/price_pit_split_trace.yml']
+permissions:
+  contents: read
+concurrency:
+  group: price-pit-split-trace-${{ github.event_name }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      execute: ${{ steps.request.outputs.execute }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install pytest
+      - run: python -m pytest tests/test_price_pit_split_trace.py -q
+      - id: request
+        run: |
+          python - <<'PY'
+          import json, os
+          from ci.price_pit_split_trace import validate_request
+          request = validate_request(json.load(open('ci/PRICE_PIT_SPLIT_TRACE_REQUEST.json')))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write('execute=' + str(request['execute']).lower() + '\n')
+          PY
+  trace:
+    needs: verify
+    if: github.event_name != 'pull_request' && needs.verify.outputs.execute == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        ticker: [AQMS, BYRN, AZIO]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - run: python -m ci.price_pit_split_trace ticker --directory split-${{ matrix.ticker }} --ticker ${{ matrix.ticker }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-pit-split-trace-${{ matrix.ticker }}
+          path: split-${{ matrix.ticker }}/*.split.json
+          if-no-files-found: error
+  finalize:
+    needs: [verify, trace]
+    if: ${{ always() && needs.verify.outputs.execute == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.15'
+      - run: python -m pip install -r requirements-world-v2.txt numpy==2.5.4 pandas==2.3.3 pyarrow==26.0.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: price-pit-split-trace-*
+          merge-multiple: true
+          path: split-final
+      - run: python -m ci.price_pit_split_trace finalize --directory split-final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-pit-split-trace-final
+          path: split-final/PRICE_PIT_SPLIT_TRACE_V1.json
+          if-no-files-found: ignore
