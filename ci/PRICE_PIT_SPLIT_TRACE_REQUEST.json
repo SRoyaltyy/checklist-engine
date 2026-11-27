@@ -53,5 +53,6 @@
       ],
       "expected_differences": {"HV10:rising1__1d": 1}
     }
-  ]
+  ],
+  "run_note": "retrigger after verify-job numpy/pandas install fix; scope and predeclared cells unchanged"
 }
