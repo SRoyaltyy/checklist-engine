@@ -76,15 +76,17 @@ def profile_env(profile, features):
 def profile_runtime_evidence(profile, features):
     """Recorded numpy runtime under one profile (show_runtime + feature lists)."""
     env = profile_env(profile, features)
-    dump = subprocess.check_output([sys.executable, '-c',
-        'import json,numpy as np,io;u=np._core._multiarray_umath;'
-        'out=io.StringIO();np.show_runtime(out=out);'
-        'print(json.dumps(dict(show_runtime=out.getvalue(),cpu_baseline=u.__cpu_baseline__,'
+    run = subprocess.run([sys.executable, '-c',
+        'import json,numpy as np,sys;u=np._core._multiarray_umath;np.show_runtime();'
+        'print(json.dumps(dict(cpu_baseline=u.__cpu_baseline__,'
         'cpu_dispatch=u.__cpu_dispatch__,'
         'active_features=[x for x in u.__cpu_dispatch__ if u.__cpu_features__.get(x)],'
-        'active_ufunc=np.lib.introspect.opt_func_info(func_name="^log$|^sqrt$|^divide$",signature="float64"))))'],
-        text=True, env=env)
-    evidence = json.loads(dump)
+        'active_ufunc=np.lib.introspect.opt_func_info(func_name="^log$|^sqrt$|^divide$",signature="float64"))),file=sys.stderr)'],
+        capture_output=True, text=True, env=env)
+    if run.returncode or not run.stderr.strip():
+        raise RuntimeError('profile runtime evidence capture failed: ' + (run.stderr or run.stdout)[-400:])
+    evidence = json.loads(run.stderr)
+    evidence['show_runtime'] = run.stdout
     evidence['profile'] = profile
     evidence['NPY_DISABLE_CPU_FEATURES'] = (env or os.environ).get('NPY_DISABLE_CPU_FEATURES', '')
     return evidence

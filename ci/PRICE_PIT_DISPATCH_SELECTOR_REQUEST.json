@@ -60,5 +60,5 @@
     "counterexample_no_numpy_dispatch": 2,
     "control": 1
   },
-  "run_note": "rerun after measure-job GH_TOKEN fix; scope and grid unchanged"
+  "run_note": "rerun2 after show_runtime out= fix; grid unchanged"
 }
