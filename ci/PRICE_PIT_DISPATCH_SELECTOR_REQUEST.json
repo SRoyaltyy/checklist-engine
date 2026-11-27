@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "execute": true,
+  "scope": "Dispatch-selector diagnostic only: rerun the unchanged frozen worker for three observed counterexamples and three PASS controls under a small pre-declared profile grid (native, avx512_off, no_numpy_dispatch); identify empirically which profile reproduces the stored packets bit-exactly. No source packet rewrite, no quarantine mutation, no full-world acceptance claim, no open-ended pin hunt, no unsupported CPU instructions.",
+  "worker_commit": "8003fb7906c3bf86d88612495664e597de1c65ae",
+  "worker_lf_sha256": "d48f918fe27bbdab5df56d4408d74284deba47406b323a138dfd459fa3cddbc2",
+  "plan": {
+    "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
+    "asset": "PRICE_FULL_COHORT_PIT_PLAN_V1.json",
+    "sha256": "18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d"
+  },
+  "profiles": [
+    "native",
+    "avx512_off",
+    "no_numpy_dispatch"
+  ],
+  "counterexamples": [
+    {
+      "ticker": "AQMS",
+      "release": "price-full-cohort-pit-v1-41578885310-1-003",
+      "asset": "41514d53.pit.json.gz",
+      "sha256": "59cf49a9a2971d97b1fcc41926580429368a0fe36437e1ef38f4d1ca0598d8b3"
+    },
+    {
+      "ticker": "AZIO",
+      "release": "price-full-cohort-pit-v1-41578885310-1-004",
+      "asset": "415a494f.pit.json.gz",
+      "sha256": "844f0cd3b24fb6348ee862d0034e2eaf884fd34f7dc0dc71350069ea5c101389"
+    },
+    {
+      "ticker": "BYRN",
+      "release": "price-full-cohort-pit-v1-41578885310-1-005",
+      "asset": "4259524e.pit.json.gz",
+      "sha256": "55711b5aab9cf64b764dba7a0b4274f7f89ff127a83bfd44d0cf7fa935f4ca0d"
+    }
+  ],
+  "controls": [
+    {
+      "ticker": "AVGO",
+      "release": "price-full-cohort-pit-v1-41578885310-1-003",
+      "asset": "4156474f.pit.json.gz",
+      "sha256": "b6e818cd1bebb67ff6e0686e833c5dae76cfbf6753194177f4248cb7d530133b"
+    },
+    {
+      "ticker": "CHCO",
+      "release": "price-full-cohort-pit-v1-41578885310-1-003",
+      "asset": "4348434f.pit.json.gz",
+      "sha256": "00b53d0e73fde13a9bfc04fd05fa69a0f5721af9c7864e27817bb3a0ce02b09e"
+    },
+    {
+      "ticker": "DB",
+      "release": "price-full-cohort-pit-v1-41578885310-1-003",
+      "asset": "4442.pit.json.gz",
+      "sha256": "bfac1446971563373fcfa06870b4e6e35ad08312dc006d407eab832dbca97eda"
+    }
+  ],
+  "repetitions": {
+    "counterexample_native": 1,
+    "counterexample_avx512_off": 1,
+    "counterexample_no_numpy_dispatch": 2,
+    "control": 1
+  }
+}
