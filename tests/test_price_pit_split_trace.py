@@ -122,12 +122,52 @@ def test_verdict_classifies_straddle_vs_code_path_vs_mixed():
                     comparison_styles_agree=True, straddle_1ulp64=True)
         base.update(kw)
         return base
-    def trace(cells, ticker='AQMS'):
-        return dict(ticker=ticker, style_census_agree=True, cells=cells)
-    good = [trace([cell()]), trace([cell()], 'BYRN'), trace([cell()], 'AZIO')]
+    def trace(cells, ticker='AQMS', rail='build_vs_replay'):
+        return dict(ticker=ticker, rail=rail, style_census_agree=True,
+                    census_matches_expected=True, cells=cells)
+    good = [trace([cell()]), trace([cell()], 'BYRN'), trace([cell()], 'AZIO', 'replay_vs_replay')]
     assert verdict(good)['classification'] == 'FEATURE_VALUE_SPLIT_1ULP64_STRADDLES_STYLES_AGREE'
     diverged = [trace([cell(code_float32_series_style=2, comparison_styles_agree=False)]),
-                trace([cell()], 'BYRN'), trace([cell()], 'AZIO')]
+                trace([cell()], 'BYRN'), trace([cell()], 'AZIO', 'replay_vs_replay')]
     assert verdict(diverged)['classification'] == 'CODE_PATH_DIVERGENCE_SIGNAL_FIX_IN_LATER_PR_NOT_THIS_STEP'
-    mixed = [trace([cell(straddle_1ulp64=False)]), trace([cell()], 'BYRN'), trace([cell()], 'AZIO')]
+    mixed = [trace([cell(straddle_1ulp64=False)]), trace([cell()], 'BYRN'),
+             trace([cell()], 'AZIO', 'replay_vs_replay')]
     assert verdict(mixed)['classification'] == 'MIXED_OR_NON_STRADDLE_CELLS_REQUIRE_REVIEW'
+
+
+def test_verdict_reports_measured_reproduction_per_rail():
+    def cell(**kw):
+        base = dict(origin='predeclared', stored_code=2, replay_code=1,
+                    stored_code_int=2, code_float64_style=1,
+                    code_float32_series_style=1, comparison_styles_agree=True,
+                    straddle_1ulp64=True)
+        base.update(kw)
+        return base
+    def trace(cells, ticker, rail):
+        return dict(ticker=ticker, rail=rail, style_census_agree=True,
+                    census_matches_expected=False, cells=cells)
+    aqms = [cell(reproduced=True)]
+    byrn = [cell(reproduced=True), cell(reproduced=False),
+            cell(origin='runner_enumerated', reproduced=None)]
+    azio = [cell(healed=True)]
+    out = verdict([trace(aqms, 'AQMS', 'build_vs_replay'),
+                   trace(byrn, 'BYRN', 'build_vs_replay'),
+                   trace(azio, 'AZIO', 'replay_vs_replay')])
+    assert out['reproduction']['AQMS'] == dict(predeclared=1, reproduced=1,
+                                               census_matches_expected=False)
+    assert out['reproduction']['BYRN']['reproduced'] == 1
+    assert out['reproduction']['BYRN']['predeclared'] == 2
+    assert out['reproduction']['AZIO'] == dict(predeclared=1, healed=True,
+                                               census_matches_expected=False)
+    # Runner-enumerated extras count toward the cell census but not the
+    # predeclared tally.
+    assert out['cells'] == 5 and out['predeclared_cells'] == 4
+    # A runner-enumerated row whose float32 style matches stored while the
+    # float64 style does not still raises the code-path signal.
+    byrn_signal = [cell(reproduced=True),
+                   cell(origin='runner_enumerated', code_float32_series_style=2,
+                        comparison_styles_agree=False, reproduced=None)]
+    out2 = verdict([trace(aqms, 'AQMS', 'build_vs_replay'),
+                    trace(byrn_signal, 'BYRN', 'build_vs_replay'),
+                    trace(azio, 'AZIO', 'replay_vs_replay')])
+    assert out2['classification'] == 'CODE_PATH_DIVERGENCE_SIGNAL_FIX_IN_LATER_PR_NOT_THIS_STEP'

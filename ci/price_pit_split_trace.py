@@ -13,7 +13,11 @@ rails stay separate: AQMS/BYRN split original-build answers versus stable
 PIT replay; AZIO's original PIT report itself flipped between two runner
 environments. It never rewrites any source packet, never mutates
 quarantine, never rewrites predicates, never invents tolerances, and never
-claims full-world acceptance by itself.
+claims full-world acceptance by itself. Reproduction of a pre-declared cell
+and the expected difference census are MEASURED and recorded, never
+asserted: a non-reproduced cell or a census mismatch is evidence, not a
+crash, and the per-ticker file is always written. Every pre-declared cell
+AND every runner-enumerated difference row is bit-traced under both styles.
 
 Modes: ``ticker`` traces one name on one matrix runner; ``finalize``
 aggregates the per-ticker traces into the split verdict and publishes it.
@@ -214,9 +218,12 @@ def trace_ticker(root, ticker):
     if len(query) != reference['query_rows']:
         raise ValueError('split trace query rows differ')
     frames, natives, precasts, grids = {}, {}, {}, {}
-    cells, diffs64, diffs32 = [], {}, {}
-    for cell in binding['cells']:
-        qid = cell['question_id']
+    contexts = {}
+
+    def context(qid):
+        """Per-question recomputation context, built once per question."""
+        if qid in contexts:
+            return contexts[qid]
         tf = qid.rsplit('__', 1)[1]
         if tf not in frames:
             native = wt.completed_candles(bars, tf, session_calendar=calendar_index)
@@ -234,8 +241,6 @@ def trace_ticker(root, ticker):
         stored_row = codes[column]
         own64 = codes_float64_style(series)[positions]
         own32 = codes_float32_series_style(series)[positions]
-        diffs64[qid] = [int(r) for r in np.flatnonzero(own64 != stored_row)]
-        diffs32[qid] = [int(r) for r in np.flatnonzero(own32 != stored_row)]
         field64 = precasts[tf][field]
         produced = series.to_numpy(dtype=np.float32)
         restated = field64.astype(np.float32)
@@ -243,28 +248,64 @@ def trace_ticker(root, ticker):
         if (np.isfinite(produced) != np.isfinite(restated)).any() \
                 or not np.array_equal(produced[finite], restated[finite]):
             raise ValueError('split trace pre-cast restatement diverges from production: ' + field)
-        row = cell['query_row']
-        index = int(positions[row])
-        if binding['rail'] == 'build_vs_replay':
-            if row not in diffs64[qid]:
-                raise ValueError('predeclared cell not reproduced by recomputation: ' + qid + '@' + str(row))
-        elif int(own64[row]) != cell['stored_code']:
-            raise ValueError('replay_vs_replay rail did not heal on this runner: ' + qid + '@' + str(row))
-        left64, right64 = float(field64[index]), float(field64[index - 1])
-        left32, right32 = f32(left64), f32(right64)
-        cells.append(dict(cell, timeframe=tf, native_index=index, stem=stem,
-            stored_code_int=int(stored_row[row]),
-            code_float64_style=int(own64[row]), code_float32_series_style=int(own32[row]),
-            comparison_styles_agree=bool(own64[row] == own32[row]),
+        contexts[qid] = dict(field=field, stem=stem, stored_row=stored_row,
+            own64=own64, own32=own32, positions=positions, field64=field64,
             production_dtype=str(series.dtype),
+            diffs64=[int(r) for r in np.flatnonzero(own64 != stored_row)],
+            diffs32=[int(r) for r in np.flatnonzero(own32 != stored_row)])
+        return contexts[qid]
+
+    def trace_row(ctx, row):
+        """Bit-level operand evidence for one query row under both styles."""
+        index = int(ctx['positions'][row])
+        own64r, own32r = int(ctx['own64'][row]), int(ctx['own32'][row])
+        left64, right64 = float(ctx['field64'][index]), float(ctx['field64'][index - 1])
+        left32, right32 = f32(left64), f32(right64)
+        return dict(native_index=index, stem=ctx['stem'],
+            stored_code_int=int(ctx['stored_row'][row]),
+            code_float64_style=own64r, code_float32_series_style=own32r,
+            comparison_styles_agree=bool(own64r == own32r),
+            production_dtype=ctx['production_dtype'],
             left64_bits=f'{bits64(left64):016x}', right64_bits=f'{bits64(right64):016x}',
             left32_bits=f'{bits32(left32):08x}', right32_bits=f'{bits32(right32):08x}',
             left64=left64, right64=right64, left32=float(left32), right32=float(right32),
             ulp32_left_vs_right=ulp32_distance(left32, right32),
-            straddle_1ulp64=straddle(left64, right64)))
+            straddle_1ulp64=straddle(left64, right64))
+
+    cells = []
+    for cell in binding['cells']:
+        qid, row = cell['question_id'], int(cell['query_row'])
+        tf = qid.rsplit('__', 1)[1]
+        ctx = context(qid)
+        entry = dict(cell, timeframe=tf, origin='predeclared', **trace_row(ctx, row))
+        if binding['rail'] == 'build_vs_replay':
+            entry['reproduced'] = bool(row in ctx['diffs64'])
+        else:
+            entry['healed'] = bool(int(ctx['own64'][row]) == int(ctx['stored_row'][row]))
+        cells.append(entry)
+
+    declared = {(c['question_id'], int(c['query_row'])) for c in binding['cells']}
+    for qid in sorted(contexts):
+        ctx = contexts[qid]
+        tf = qid.rsplit('__', 1)[1]
+        extra_rows = sorted(set(ctx['diffs64']) | set(ctx['diffs32']))
+        for row in extra_rows:
+            if (qid, row) in declared:
+                continue
+            entry = dict(question_id=qid, query_row=row, timeframe=tf,
+                stored_code=int(ctx['stored_row'][row]), replay_code=None,
+                origin='runner_enumerated', **trace_row(ctx, row))
+            if binding['rail'] == 'build_vs_replay':
+                entry['reproduced'] = None
+            else:
+                entry['healed'] = None
+            cells.append(entry)
+
+    diffs64 = {q: ctx['diffs64'] for q, ctx in contexts.items()}
+    diffs32 = {q: ctx['diffs32'] for q, ctx in contexts.items()}
     expected = binding['expected_differences']
-    if {q: len(r) for q, r in diffs64.items()} != expected:
-        raise ValueError('split trace recomputed difference census differs')
+    census_counts = {q: len(r) for q, r in diffs64.items()}
+    census_matches_expected = bool(census_counts == expected)
     style_census_agree = all(diffs64[q] == diffs32[q] for q in diffs64)
     env = dict(python=sys.version, numpy=np.__version__, pandas=pd.__version__,
         returns_sha256={tf: sha(p['returns'].tobytes()) for tf, p in precasts.items()},
@@ -273,7 +314,9 @@ def trace_ticker(root, ticker):
     state = dict(format='PRICE_PIT_SPLIT_TRACE_STOCK_V1', request=request, ticker=ticker,
         rail=binding['rail'], source_commit=os.environ.get('GITHUB_SHA', ''), cells=cells,
         differences_float64_style=diffs64, differences_float32_series_style=diffs32,
-        style_census_agree=style_census_agree, environment=env, scoring_gate='CLOSED')
+        style_census_agree=style_census_agree, expected_census=expected,
+        census_matches_expected=census_matches_expected, environment=env,
+        scoring_gate='CLOSED')
     file = root / f"{ticker.encode().hex()}.split.json"
     file.write_bytes(encoded(state))
     print('PRICE_PIT_SPLIT_TRACE_STOCK', ticker, binding['rail'], len(cells), flush=True)
@@ -282,6 +325,7 @@ def trace_ticker(root, ticker):
 def verdict(traces):
     """Aggregate classification across both rails, per the declared rules."""
     cells = [c for trace in traces for c in trace['cells']]
+    predeclared = [c for c in cells if c.get('origin', 'predeclared') == 'predeclared']
     styles_agree = all(t['style_census_agree'] for t in traces) and all(c['comparison_styles_agree'] for c in cells)
     all_straddle = all(c['straddle_1ulp64'] for c in cells)
     float32_matches_stored = any(c['code_float32_series_style'] == c['stored_code']
@@ -292,18 +336,30 @@ def verdict(traces):
         classification = 'FEATURE_VALUE_SPLIT_1ULP64_STRADDLES_STYLES_AGREE'
     else:
         classification = 'MIXED_OR_NON_STRADDLE_CELLS_REQUIRE_REVIEW'
+    reproduction = {}
+    for trace in traces:
+        pre = [c for c in trace['cells'] if c.get('origin', 'predeclared') == 'predeclared']
+        if trace.get('rail') == 'build_vs_replay':
+            reproduction[trace['ticker']] = dict(predeclared=len(pre),
+                reproduced=sum(1 for c in pre if c.get('reproduced')),
+                census_matches_expected=trace.get('census_matches_expected'))
+        elif trace.get('rail') == 'replay_vs_replay':
+            reproduction[trace['ticker']] = dict(predeclared=len(pre),
+                healed=all(c.get('healed') for c in pre),
+                census_matches_expected=trace.get('census_matches_expected'))
     return dict(classification=classification, cells=len(cells),
+        predeclared_cells=len(predeclared), reproduction=reproduction,
         comparison_styles_agree_everywhere=styles_agree,
         all_cells_straddle=all_straddle,
         answers={
-            'Q1': 'the pre-declared flipping cells were reproduced exactly by recomputation on this runner; full difference lists included per question',
+            'Q1': 'pre-declared flipping-cell reproduction is MEASURED per cell on this runner (reproduced flags), never asserted; runner-enumerated difference rows are bit-traced too; full difference lists included per question',
             'Q2': 'raw inputs are byte-identical by sha256 (bars, calendar, registry, packet); operand bits and intermediate shas recorded',
-            'Q3': 'measured, not assumed: bound-recipe modules, float32 casts, and rolling reductions are shared; the two rising1 comparison styles (float32 Series build-style, float64 upcast replay-style) are evaluated per cell and their agreement reported',
+            'Q3': 'measured, not assumed: bound-recipe modules, casts, and rolling reductions are shared; the two rising1 comparison styles (production-Series build-style, float64 upcast replay-style) are evaluated per cell and their agreement reported',
             'Q4': 'all flipping questions sit in the fragile families of the 20-shard diagnosis (KURTOSIS/AUTOCORR/HV)',
         },
         note='AQMS/BYRN rail: original build answers versus stable PIT replay. AZIO rail: '
-             'the original PIT report itself flipped between runner environments; this '
-             'runner must reproduce the stored code (healed). A 1ulp64 straddle at a '
+             'the original PIT report itself flipped between runner environments; healing '
+             'is measured per cell on this runner, not asserted. A 1ulp64 straddle at a '
              'near-tied rising1 comparison means any last-bit environment difference '
              'flips the float32-rounded comparison deterministically. If the float32 '
              'Series style matches stored while the float64 style does not, that is a '

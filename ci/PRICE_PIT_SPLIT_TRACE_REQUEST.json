@@ -116,5 +116,5 @@
       }
     }
   ],
-  "run_note": "retrigger2 after trace-job GH_TOKEN fix; rails, styles, and predeclared cells unchanged"
+  "run_note": "retrigger3 record-not-crash tracer: per-ticker file always written, runner-enumerated difference rows bit-traced, reproduction and census measured not asserted"
 }
