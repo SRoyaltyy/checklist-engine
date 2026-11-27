@@ -1,0 +1,615 @@
+ticker,action,reason,evidence
+AIXI,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.143, share_bad=1.00"
+ALP,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.020, share_bad=1.00"
+AMTD,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.017, share_bad=1.00"
+BRTX,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.050, share_bad=1.00"
+BTLN,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.125, share_bad=1.00"
+BTOC,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.062, share_bad=1.00"
+BVC,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=10.000, share_bad=1.00"
+CAPS,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.033, share_bad=1.00"
+CPOP,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.067, share_bad=1.00"
+CTVA,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=6.665, share_bad=1.00"
+DHY,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+FRGT,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+GMEX,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.111, share_bad=1.00"
+GP,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.200, share_bad=1.00"
+GTBP,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.040, share_bad=1.00"
+HUBC,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.040, share_bad=1.00"
+IGR,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.333, share_bad=1.00"
+IMMP,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.050, share_bad=1.00"
+IZM,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.200, share_bad=1.00"
+KNDI,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+LU,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+MBRX,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.050, share_bad=1.00"
+MGF,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.200, share_bad=1.00"
+MIN,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.167, share_bad=1.00"
+MPU,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.050, share_bad=1.00"
+MTNB,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.067, share_bad=1.00"
+NFE,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.020, share_bad=1.00"
+NXXT,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+OPTT,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.033, share_bad=1.00"
+RETO,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.100, share_bad=1.00"
+REVB,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.143, share_bad=1.00"
+SKIN,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.050, share_bad=1.00"
+WCT,exclude,price_vs_yahoo_mismatch,"median our/yahoo monthly close ratio=0.200, share_bad=1.00"
+AJG,mcap_unknown,implied_mcap_over_4T,"max implied mcap $20581.0T (SEC count likely ordinary shares vs ADR, or units)"
+BABA,mcap_unknown,implied_mcap_over_4T,"max implied mcap $6.5T (SEC count likely ordinary shares vs ADR, or units)"
+BNTX,mcap_unknown,implied_mcap_over_4T,"max implied mcap $85.0T (SEC count likely ordinary shares vs ADR, or units)"
+BSAC,mcap_unknown,implied_mcap_over_4T,"max implied mcap $4.7T (SEC count likely ordinary shares vs ADR, or units)"
+BTI,mcap_unknown,implied_mcap_over_4T,"max implied mcap $98457.4T (SEC count likely ordinary shares vs ADR, or units)"
+CCL,mcap_unknown,implied_mcap_over_4T,"max implied mcap $24.9T (SEC count likely ordinary shares vs ADR, or units)"
+CSBR,mcap_unknown,implied_mcap_over_4T,"max implied mcap $111.2T (SEC count likely ordinary shares vs ADR, or units)"
+EEFT,mcap_unknown,implied_mcap_over_4T,"max implied mcap $7929280.9T (SEC count likely ordinary shares vs ADR, or units)"
+EIX,mcap_unknown,implied_mcap_over_4T,"max implied mcap $24361.1T (SEC count likely ordinary shares vs ADR, or units)"
+FOSL,mcap_unknown,implied_mcap_over_4T,"max implied mcap $41.3T (SEC count likely ordinary shares vs ADR, or units)"
+HL,mcap_unknown,implied_mcap_over_4T,"max implied mcap $4.2T (SEC count likely ordinary shares vs ADR, or units)"
+HXL,mcap_unknown,implied_mcap_over_4T,"max implied mcap $5412.5T (SEC count likely ordinary shares vs ADR, or units)"
+LTM,mcap_unknown,implied_mcap_over_4T,"max implied mcap $16.8T (SEC count likely ordinary shares vs ADR, or units)"
+PKG,mcap_unknown,implied_mcap_over_4T,"max implied mcap $17.9T (SEC count likely ordinary shares vs ADR, or units)"
+SKY,mcap_unknown,implied_mcap_over_4T,"max implied mcap $4.9T (SEC count likely ordinary shares vs ADR, or units)"
+TSM,mcap_unknown,implied_mcap_over_4T,"max implied mcap $5.1T (SEC count likely ordinary shares vs ADR, or units)"
+TXNM,mcap_unknown,implied_mcap_over_4T,"max implied mcap $4.3T (SEC count likely ordinary shares vs ADR, or units)"
+WWD,mcap_unknown,implied_mcap_over_4T,"max implied mcap $5.3T (SEC count likely ordinary shares vs ADR, or units)"
+CMMB,flag,sec_share_count_jump_gt8x,7 month(s) where share count moved >8x with no matching split
+EJH,flag,sec_share_count_jump_gt8x,6 month(s) where share count moved >8x with no matching split
+RYM,flag,sec_share_count_jump_gt8x,6 month(s) where share count moved >8x with no matching split
+ALAR,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+CENN,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+CETX,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+CHAI,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+DBGI,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+EMPD,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+GPUS,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+HURA,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+RNAZ,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+SNES,flag,sec_share_count_jump_gt8x,5 month(s) where share count moved >8x with no matching split
+ALLR,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+ASTI,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+AVTX,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+AYTU,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+BDRX,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+BEEM,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+BJDX,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+DVLT,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+LTRX,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+PPBT,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+PPCB,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+QNRX,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+SBFM,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+SHIP,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+SUNE,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+SVRN,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+TNXP,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+TOPS,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+WHLR,flag,sec_share_count_jump_gt8x,4 month(s) where share count moved >8x with no matching split
+ABTC,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+AHT,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+APVO,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+ATXG,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+AVX,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+BGLC,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+BTCT,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CANF,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CELZ,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CMG,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CNSP,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CNTN,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CPK,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+CTRM,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+EDU,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+ERNA,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+EZRA,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+GFAI,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+GRDX,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+GRI,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+GWAV,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+HOLO,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+MFG,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+MTVA,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+MYSZ,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+NUTX,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+NUWE,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+PROP,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+PSHG,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+QMCO,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+RDHL,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+TANH,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+TENX,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+TRAW,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+UAVS,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+VS,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+XHG,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+XXII,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+YYAI,flag,sec_share_count_jump_gt8x,3 month(s) where share count moved >8x with no matching split
+ACB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ACON,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ADXN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+AKAN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+AKTX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ALZN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+AMAL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+AQST,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ATHE,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ATLX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+BGDE,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+BGMS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+BNC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+BNED,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+BNGO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CHGA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CIRC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CNEY,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+COGT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CRESY,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CRVS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+CZNC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+DFSC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+DRMA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+DSS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+EDBL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ELDN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ENSC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ENVB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+FAMI,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+FEDU,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+FFAI,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+FRMM,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+FXHO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+GLBS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+GNLN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+GYRE,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+HIND,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+HLLY,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+HROW,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+HSDT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+IA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+IBIO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+INBS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+INDP,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+INM,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+IOVA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+IRON,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+IVT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+JAGX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+JXG,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+JZXN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+KMDA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+KPRX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+KRRO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+KXIN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+LOCO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+MIND,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+MLGO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+MNTS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+MTC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+NCPL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+NCTY,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+NTAP,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+NTRP,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+OLOX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ONCO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ORIO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ORKA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+PALI,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+PHIO,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+PMCB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+POET,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+QNTM,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+QTTB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+QXL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+RCON,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+RDGT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+REPX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+RMD,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+RZLT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SCNI,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SDEV,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SER,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SHOE,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SINT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SNDL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SNDX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SNGX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SOBR,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SOGP,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SONM,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SPCB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SPH,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SPRC,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+SYRE,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TBBK,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TCRT,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TGL,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TONX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TOVX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TRNR,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+TWAV,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+UCAR,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+VEON,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+VMAR,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+VRAX,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+WGS,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+WLDN,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+XTIA,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ZNB,flag,sec_share_count_jump_gt8x,2 month(s) where share count moved >8x with no matching split
+ABAT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ABEO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ABVC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ACFN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ACHV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ADIL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AEHL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AEI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AEMD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AGEN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AGIG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AGPU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AHR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AIFF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AIOS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AIRI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AKA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ALGS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMIX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMPG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMRX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AMZN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+APLM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+APRE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AQB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AQMS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ARQQ,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ARTL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ASMB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ASTC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ATER,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ATNM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ATOS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ATPC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ATRA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AUID,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AUUD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AVGO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AVPT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AXIL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AZIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+AZTR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BBLG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BCDA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BESS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BFRI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BIVI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BKKT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BKYI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BLNE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BLRX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BNTC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BOC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BON,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BRFH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BRNX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BTDR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BYRN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CATX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CBUS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CCM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CELU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CETY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CGC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CHR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CHRD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CHRN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CIA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CIFR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CING,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CISO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CLDI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CLGN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CLNN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CLRB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CMND,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CNSY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CNVS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+COCP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CQP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CRBP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CRIS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CRVO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CSGP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CTEV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CTNT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CTOR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CTXR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CVEO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CVKD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CYN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+CYPH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DARE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DCOY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DCTH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DCX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DFLI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DFTX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DMRA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DOGZ,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DOMH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DOYU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DPRO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DRIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DTIL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DTST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+DWTX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ECOR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ELTX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EMBC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ENLV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ENVX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ESLA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EVAX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EVGN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EVLV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EVTL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EXE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EYPT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+EZGO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FABC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FBIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FCEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FEED,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FET,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FIEE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FOA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FRSX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FTCI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+FWDI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GCTK,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GDC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GDEV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GENI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GNPX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GNS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GOVX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GRNQ,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GRPN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GRRR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GTE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+GXAI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HCM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HCTI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HELP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HIPO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HSCS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HTHT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+HYMC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ICU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IDR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IFBD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IKT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ILLR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IMCC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IMDX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IMNN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IMTE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+INHD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+INO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+INSG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+INTZ,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IPI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IRD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ISPC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ITP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IVF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IVR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+IXHL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+JAKK,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+JL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+JSPR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+JTAI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+JWEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KALA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KITT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KNF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KPLT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KSCP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KTTA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KUST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+KZIA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LAES,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LCFY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LEE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LGO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LIDR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LITS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LMAT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LOCL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LPCN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LRCX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LSTA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LUCY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+LXEH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MAGN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MBAI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MBIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MDRR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MGRX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MITT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MOVE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MRDN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MRKR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MUX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MVST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+MYSE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NAAS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NATL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NBR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NCEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NCMI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NCNA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NDRA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NEGG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NEUP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NIXX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NMAD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NNDM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NOAH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NOG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NRXP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NSPR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NVDA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NVNO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NWTG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NXGL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NXPL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+NXTT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ODYS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OGEN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OKUR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OKYO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OLB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ONIT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ORBS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OTLK,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OUST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+OWLT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PAAI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PAVM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PAVS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PBM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PCSA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PDS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PETZ,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PHUN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PLAG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PRAX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PRE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PRFX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PRPO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PRSO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PSFE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PTN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PULM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PVLA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+PYPD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+QCLS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+QXO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RCEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RDNW,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+REED,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RENX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RGS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RIGL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RIME,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RKDA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RKTO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RMCO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RMTI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RNAC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RNTX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+RTB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SABS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SCLX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SCNX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SCOR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SCYX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SDOT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SEGG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SGRX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SHW,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SIDU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SILO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SIRI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SKIL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SKYA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SKYE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SLDB,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SLE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SLNH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SLXN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SMCI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SNDA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SNOA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SNTI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SNWV,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SOWG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SPCE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SRXH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SRZN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+STEX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+STNG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SUIG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SURG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SVRE,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SW,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+SXTC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TAOP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TAOX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TARA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TCOM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TECX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TIL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TISI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TKLF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TLPH,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TNON,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TOON,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TPET,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TPST,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TVRD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TXMD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+TYGO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+UAN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+UHAL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+UP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+UPC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+UPXI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+USAU,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VAI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VBIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VCEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VCIG,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VELO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VHC,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VHI,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VIVO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VIVS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VRDN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VSTM,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VTGN,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VTRS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+VVOS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WATT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WFCF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WHWK,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WKHS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WKSP,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WLDS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WNW,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WPRT,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WULF,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+WYY,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XBIO,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XCUR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XOS,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XPON,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XRTX,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+XWEL,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+YARW,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+YCBD,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ZSQR,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ZSTK,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+ZVRA,flag,sec_share_count_jump_gt8x,1 month(s) where share count moved >8x with no matching split
+BLFS,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+CCO,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+CYCN,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+LPSN,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+PSKY,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+QNCX,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+QRVO,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+SLP,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+VTAK,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"
+WBD,keep_unverified,yahoo_history_starts_2026,"Yahoo has no pre-2026-07 bars (listing metadata reset); prices not externally verified, not excluded"

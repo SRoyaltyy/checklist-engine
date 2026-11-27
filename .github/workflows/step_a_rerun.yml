@@ -21,8 +21,7 @@ jobs:
     timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: kimi/dictionary-fixes
+        # engine ported to main (kimi/step-a-engine-port): checkout the dispatch ref, not an orphan branch
       - name: Python + system deps
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget

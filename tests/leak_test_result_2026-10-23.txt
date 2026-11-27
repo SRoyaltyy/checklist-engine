@@ -1,0 +1,21 @@
+{"ticker": "AAPL", "D": "2020-06-15", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "AAPL", "D": "2021-09-01", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "AAPL", "D": "2022-12-30", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "AAPL", "D": "2024-12-31", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "KO", "D": "2020-06-15", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "KO", "D": "2021-09-01", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "KO", "D": "2022-12-30", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "KO", "D": "2024-12-31", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "NVDA", "D": "2020-06-15", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "NVDA", "D": "2021-09-01", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "NVDA", "D": "2022-12-30", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "NVDA", "D": "2024-12-31", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ALDX", "D": "2020-06-15", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ALDX", "D": "2021-09-01", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ALDX", "D": "2022-12-30", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ALDX", "D": "2024-12-31", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ARQT", "D": "2020-06-15", "cols": 10029, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": [["('B', 'big_picture', 'weekly_trend')|1d|100", "ValueError('operands could not be broadcast together with shapes (94,) (100,) ')"], ["('H', 'OHLC', 'change_of_state')|1d|120", "ValueError('operands could not be broadcast together with shapes (94,) (120,) ')"], ["('H', 'OHLC', 'character_change')|1d|120", "ValueError('operands could not be broadcast together with shapes (94,) (120,) ')"]]}
+{"ticker": "ARQT", "D": "2021-09-01", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ARQT", "D": "2022-12-30", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+{"ticker": "ARQT", "D": "2024-12-31", "cols": 12306, "mismatched": 0, "examples": [], "col_set_diff": 0, "missing_examples": [], "cut_errors": []}
+LEAK TEST PASS (20 cut points, 0 mismatches)
