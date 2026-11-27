@@ -51,9 +51,7 @@ jobs:
       - name: Bytecode compilation checks
         run: python -m compileall engine.py step_a.py params.py datapaths.py facets.py facets_cal.py facets_events.py facets_ext.py facets_v26.py facets_v27.py facets_v271.py facets_worldq.py scoring/ stats/ integrity/ ci/
       - name: Run synthetic tests
-        run: |
-          python3 tests/test_facets_events.py
-          python3 tests/test_events_empty_window.py
+        run: python3 tests/test_facets_events.py
 
   leak-smoke:
     runs-on: ubuntu-latest
@@ -84,7 +82,7 @@ jobs:
           api = f"https://api.github.com/repos/{repo}"
           req = urllib.request.Request(f"{api}/releases/tags/data-2020-24-v1", headers={'Authorization': f'token {tok}'})
           rel = json.load(urllib.request.urlopen(req))
-          keep = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'etf_2015_le2024.parquet', 'VIXCLS_le2024.parquet', 'DIAL_TABLE_v2.7.csv', 'HISTORY_LEVER_v2.7.1.csv', 'HISTORY_BUCKETS_v2.7.1_FINAL.csv', 'CUTOFF_GRID_v2.7.2.2.csv', 'QUESTION_CUTOFFS_v2.7.2.2.csv', 'quarantine.csv', 'regsho_nasdaq_th_2020_24.csv', 'sec_shares_out_filed_le_2024.parquet', 'SHA256SUMS'}
+          keep = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'etf_2015_le2024.parquet', 'VIXCLS_le2024.parquet', 'DIAL_TABLE_v2.7.csv', 'HISTORY_LEVER_v2.7.1.csv', 'HISTORY_BUCKETS_v2.7.1_FINAL.csv', 'CUTOFF_GRID_v2.7.2.2.csv', 'QUESTION_CUTOFFS_v2.7.2.2.csv', 'quarantine.csv', 'regsho_nasdaq_th_2020_24.csv', 'sec_shares_out_filed_le_2024.parquet', 'QUESTION_TREE_v2.7.1.csv', 'VARIANT_SERIES_v2.7.1.csv', 'breadth_2020_24.parquet', 'SHA256SUMS'}
           for a in rel['assets']:
               if a['name'] not in keep: continue
               out = os.path.join(dest, a['name'])
@@ -101,4 +99,6 @@ jobs:
         env:
           CHECKLIST_DATA_DIR: ${{ runner.temp }}/data
           GRID_FILE: /nonexistent
-        run: python3 tests/test_leak.py AAPL,KO
+        run: |
+          python3 tests/test_leak.py AAPL,KO
+          python3 tests/test_events_empty_window.py
