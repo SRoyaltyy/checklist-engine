@@ -23,23 +23,75 @@
       "ticker": "AQMS",
       "rail": "build_vs_replay",
       "cells": [
-        {"question_id": "RETURN_EXCESS_KURTOSIS60:rising1__1d", "query_row": 233, "stored_code": 2, "replay_code": 1}
+        {
+          "question_id": "RETURN_EXCESS_KURTOSIS60:rising1__1d",
+          "query_row": 233,
+          "stored_code": 2,
+          "replay_code": 1
+        }
       ],
-      "expected_differences": {"RETURN_EXCESS_KURTOSIS60:rising1__1d": 1}
+      "expected_differences": {
+        "RETURN_EXCESS_KURTOSIS60:rising1__1d": 1
+      }
     },
     {
       "ticker": "BYRN",
       "rail": "build_vs_replay",
       "cells": [
-        {"question_id": "RETURN_AUTOCORR1_20:rising1__1d", "query_row": 25, "stored_code": 1, "replay_code": 2},
-        {"question_id": "RETURN_AUTOCORR1_20:rising1__1d", "query_row": 32, "stored_code": 1, "replay_code": 2},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__1d", "query_row": 38, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__2d", "query_row": 13, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__2d", "query_row": 14, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__2d", "query_row": 97, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__9d", "query_row": 226, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__9d", "query_row": 227, "stored_code": 2, "replay_code": 1},
-        {"question_id": "RETURN_AUTOCORR1_60:rising1__9d", "query_row": 228, "stored_code": 2, "replay_code": 1}
+        {
+          "question_id": "RETURN_AUTOCORR1_20:rising1__1d",
+          "query_row": 25,
+          "stored_code": 1,
+          "replay_code": 2
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_20:rising1__1d",
+          "query_row": 32,
+          "stored_code": 1,
+          "replay_code": 2
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__1d",
+          "query_row": 38,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__2d",
+          "query_row": 13,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__2d",
+          "query_row": 14,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__2d",
+          "query_row": 97,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__9d",
+          "query_row": 226,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__9d",
+          "query_row": 227,
+          "stored_code": 2,
+          "replay_code": 1
+        },
+        {
+          "question_id": "RETURN_AUTOCORR1_60:rising1__9d",
+          "query_row": 228,
+          "stored_code": 2,
+          "replay_code": 1
+        }
       ],
       "expected_differences": {
         "RETURN_AUTOCORR1_20:rising1__1d": 2,
@@ -52,10 +104,17 @@
       "ticker": "AZIO",
       "rail": "replay_vs_replay",
       "cells": [
-        {"question_id": "HV10:rising1__1d", "query_row": 220, "stored_code": 1, "replay_code": 2}
+        {
+          "question_id": "HV10:rising1__1d",
+          "query_row": 220,
+          "stored_code": 1,
+          "replay_code": 2
+        }
       ],
-      "expected_differences": {"HV10:rising1__1d": 0}
+      "expected_differences": {
+        "HV10:rising1__1d": 0
+      }
     }
   ],
-  "run_note": "rails and both comparison styles per Grok correction; scope unchanged"
+  "run_note": "retrigger2 after trace-job GH_TOKEN fix; rails, styles, and predeclared cells unchanged"
 }
