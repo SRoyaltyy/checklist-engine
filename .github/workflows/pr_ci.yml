@@ -1,0 +1,104 @@
+name: pr-ci
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  leftover-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify splits_yahoo integrity
+        run: |
+          FILE="integrity/splits_yahoo.parquet.b64"
+          if [ ! -f "$FILE" ]; then
+            echo "Missing $FILE"
+            exit 1
+          fi
+          SIZE=$(stat -c%s "$FILE")
+          if [ "$SIZE" -ne 46020 ]; then
+            echo "Wrong size $SIZE"
+            exit 1
+          fi
+          SHA=$(sha256sum "$FILE" | awk '{print $1}')
+          if [ "$SHA" != "8f8dbf8f3be5439b2711dece122abfc1cd8e7678628e4147b36ffda299cb2f8a" ]; then
+            echo "Wrong sha256 $SHA"
+            exit 1
+          fi
+      - name: Check for orphan-branch re-pins
+        run: |
+          FILES=".github/workflows/leak_verify.yml .github/workflows/leak_sweep.yml .github/workflows/step_a.yml .github/workflows/step_a_rerun.yml"
+          for f in $FILES; do
+            if [ -f "$f" ]; then
+              if grep -qE "ref: kimi/step-a-wincompat|ref: kimi/dictionary-fixes" "$f"; then
+                echo "Found bad ref in $f"
+                exit 1
+              fi
+            fi
+          done
+
+  engine-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python3 -m pip install -q --upgrade pip
+          pip install pandas numpy pyarrow
+      - name: Bytecode compilation checks
+        run: python -m compileall engine.py step_a.py params.py datapaths.py facets.py facets_cal.py facets_events.py facets_ext.py facets_v26.py facets_v27.py facets_v271.py facets_worldq.py scoring/ stats/ integrity/ ci/
+      - name: Run synthetic tests
+        run: |
+          python3 tests/test_facets_events.py
+          python3 tests/test_events_empty_window.py
+
+  leak-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python + system deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential wget
+          python3 -m pip install -q --upgrade pip
+      - name: TA-Lib C library + Python wrapper
+        run: |
+          cd /tmp && wget -q http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+            && tar xzf ta-lib-0.4.0-src.tar.gz && cd ta-lib \
+            && ./configure --prefix=/usr >/dev/null && sudo make -s install >/dev/null
+          python3 -m pip install -q TA-Lib pandas numpy pyarrow
+      - name: Download data release + verify
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/data"
+          python3 - "$RUNNER_TEMP/data" <<'PY'
+          import sys, json, os, urllib.request
+          dest = sys.argv[1]
+          tok = os.environ['GITHUB_TOKEN']
+          repo = os.environ.get('GH_REPO') or os.environ.get('GITHUB_REPOSITORY', '')
+          api = f"https://api.github.com/repos/{repo}"
+          req = urllib.request.Request(f"{api}/releases/tags/data-2020-24-v1", headers={'Authorization': f'token {tok}'})
+          rel = json.load(urllib.request.urlopen(req))
+          keep = {'bars_all_le2024.parquet', 'universe_2020_survivors_le2024.parquet', 'etf_2015_le2024.parquet', 'VIXCLS_le2024.parquet', 'DIAL_TABLE_v2.7.csv', 'HISTORY_LEVER_v2.7.1.csv', 'HISTORY_BUCKETS_v2.7.1_FINAL.csv', 'CUTOFF_GRID_v2.7.2.2.csv', 'QUESTION_CUTOFFS_v2.7.2.2.csv', 'quarantine.csv', 'regsho_nasdaq_th_2020_24.csv', 'sec_shares_out_filed_le_2024.parquet', 'SHA256SUMS'}
+          for a in rel['assets']:
+              if a['name'] not in keep: continue
+              out = os.path.join(dest, a['name'])
+              req = urllib.request.Request(a['url'], headers={'Authorization': f'token {tok}', 'Accept': 'application/octet-stream'})
+              with urllib.request.urlopen(req) as r, open(out, 'wb') as f:
+                  while True:
+                      b = r.read(1 << 20)
+                      if not b: break
+                      f.write(b)
+              print('downloaded', a['name'])
+          PY
+          cd "$RUNNER_TEMP/data" && sha256sum --ignore-missing -c SHA256SUMS
+      - name: Run leak smoke test
+        env:
+          CHECKLIST_DATA_DIR: ${{ runner.temp }}/data
+          GRID_FILE: /nonexistent
+        run: python3 tests/test_leak.py AAPL,KO
