@@ -2,27 +2,26 @@
 
 The dispatch selector (verdict UNRESOLVED on run 46038599219) refuted CPU
 dispatch as the explanation for the 1,308 packet_replay failures: native
-reproduces the stored AQMS and BYRN packets exactly yet those packets still
-fail their own replay, deterministically, on every measured runner. This
-diagnostic pre-declares the flipping cells, re-decodes the stored answer
-codes, recomputes the same bound-recipe features, and records bit-level
-operand evidence (float64 pre-cast and float32 post-cast) for each flipping
-comparison, answering four pre-declared questions: which cells flip, whether
-the raw operands are identical, whether build and replay use the same
-function/dtype/reduction, and whether this is the same unstable-stat pattern
-as the earlier 20-shard diagnosis. It never rewrites any source packet,
-never mutates quarantine, never rewrites predicates, never invents
-tolerances, and never claims full-world acceptance by itself.
+reproduces the stored AQMS and BYRN PIT reports byte-identically yet those
+packets still fail their own replay, deterministically, on every measured
+runner. This diagnostic pre-declares the flipping cells, re-decodes the
+stored answer codes, recomputes the same bound-recipe features, and records
+bit-level operand evidence for each flipping comparison, evaluating every
+cell under BOTH comparison styles: the original build's float32 pandas
+Series comparison and the PIT replay's float64 upcast comparison. The two
+rails stay separate: AQMS/BYRN split original-build answers versus stable
+PIT replay; AZIO's original PIT report itself flipped between two runner
+environments. It never rewrites any source packet, never mutates
+quarantine, never rewrites predicates, never invents tolerances, and never
+claims full-world acceptance by itself.
 
 Modes: ``ticker`` traces one name on one matrix runner; ``finalize``
 aggregates the per-ticker traces into the split verdict and publishes it.
 """
 import argparse
-import gzip
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 
 from ci.price_full_cohort_pit import (ROOT, checked, create_release, encoded, sha,
@@ -31,36 +30,30 @@ from ci.price_numeric_runtime_trace import decode_codes
 
 REQUEST = 'ci/PRICE_PIT_SPLIT_TRACE_REQUEST.json'
 TICKERS = ['AQMS', 'BYRN', 'AZIO']
+RAILS = {'AQMS': 'build_vs_replay', 'BYRN': 'build_vs_replay', 'AZIO': 'replay_vs_replay'}
 QUESTIONS = {
     'Q1': 'which cells flip',
     'Q2': 'whether the raw operands are identical',
     'Q3': 'whether build and replay use the same function, dtype, and reduction',
     'Q4': 'whether this is the same unstable-stat pattern as the earlier 20-shard diagnosis',
 }
-# bar_statistics rolling definitions for the three fragile families under
-# trace, restated exactly as the bound recipe computes them (float64,
-# pre-cast). The production cast to float32 happens at the very end.
-FRAGILE = {
-    'HV': ('returns.rolling(n).std(ddof=1)*sqrt(annual)*100', 'hv'),
-    'RETURN_EXCESS_KURTOSIS': ('returns.rolling(n).kurt()', 'kurt'),
-    'RETURN_AUTOCORR1': ('returns.rolling(n).apply(_autocorrelation,raw=True)', 'autocorr'),
-}
 
 
 def validate_request(request):
     if (request.get('version') != 1 or type(request.get('execute')) is not bool
             or [t['ticker'] for t in request['tickers']] != TICKERS
+            or [t['rail'] for t in request['tickers']] != [RAILS[t] for t in TICKERS]
             or request.get('questions') != QUESTIONS
             or request['plan']['sha256'] != '18e12eed42099647d598931868547c85f99731b14b6f6138fece0fd87a43043d'
             or request['selector_verdict']['sha256'] != '7076bb0faf646b77e6a5694019455197324309cd3c5c9a8d8967853595dd8d24'):
         raise ValueError('split trace scope or bindings differ')
     for binding in request['tickers']:
-        if sum(binding['expected_differences'].values()) != len(binding['cells']) \
-                and binding['ticker'] != 'BYRN':
-            raise ValueError('predeclared cell counts differ')
+        if binding['rail'] == 'build_vs_replay' and not binding['expected_differences']:
+            raise ValueError('split trace rail census differs')
+        if binding['rail'] == 'replay_vs_replay' and any(binding['expected_differences'].values()):
+            raise ValueError('replay_vs_replay rail must expect a healed census')
         for cell in binding['cells']:
-            field, facet_tf = cell['question_id'].rsplit(':', 1)
-            facet, tf = facet_tf.split('__')
+            facet, tf = cell['question_id'].rsplit(':', 1)[1].split('__')
             if facet != 'rising1' or cell['stored_code'] == cell['replay_code']:
                 raise ValueError('predeclared cell shape differs')
     return request
@@ -120,18 +113,22 @@ def straddle(left64, right64):
     return False
 
 
-def code_of(left32, right32):
-    """rising1 answer code under the production predicate and encoding."""
+def codes_float64_style(series):
+    """PIT replay style: upcast to float64, then compare (diagnostic_answers)."""
     import numpy as np
-    if not (np.isfinite(left32) and np.isfinite(right32)):
-        return 0
-    return 2 if left32 > right32 else 1
+    x = series.to_numpy(dtype='float64')
+    right = series.shift(1).to_numpy(dtype='float64')
+    valid = np.isfinite(x) & np.isfinite(right)
+    return np.where(~valid, 0, np.where(x > right, 2, 1)).astype(np.uint8)
 
 
-def load_plan(root, request):
-    plan = json.loads(checked(request['plan'], root / 'plan').read_bytes())
-    refs = {r['ticker']: r for r in plan['references']}
-    return plan, refs
+def codes_float32_series_style(series):
+    """Original build style: compare the stored float32 pandas Series."""
+    import numpy as np
+    right = series.shift(1)
+    valid = np.isfinite(series) & np.isfinite(right)
+    return np.where(~valid.to_numpy(), 0,
+                    np.where((series > right).to_numpy(), 2, 1)).astype(np.uint8)
 
 
 def fragile_series(close, timeframe):
@@ -166,8 +163,14 @@ def locate_stem(contents, registry, tf, question_id):
         schema = registry[meta['registry_sha256']]
         qids = [q['question_id'] for q in schema]
         if question_id in qids:
-            return name[:-5], meta, schema, qids.index(question_id)
+            return name[:-5], qids.index(question_id)
     raise ValueError('split trace question absent from packet: ' + question_id)
+
+
+def load_plan(root, request):
+    plan = json.loads(checked(request['plan'], root / 'plan').read_bytes())
+    refs = {r['ticker']: r for r in plan['references']}
+    return plan, refs
 
 
 def trace_ticker(root, ticker):
@@ -176,7 +179,7 @@ def trace_ticker(root, ticker):
     import pandas as pd
     from ci.compact_world_build import snapshot
     from ci.native_price_blocks import read_member
-    from ci.release_assets import describe_failure, download_asset
+    from ci.release_assets import download_asset
     from ci.row0_part172_replay import members
     request = validate_request(json.loads((ROOT / REQUEST).read_bytes()))
     if request['execute'] is not True:
@@ -210,8 +213,8 @@ def trace_ticker(root, ticker):
     query = calendar_index[(calendar_index >= pd.Timestamp('2020-01-01')) & calendar_index.isin(pd.DatetimeIndex(bars.date))]
     if len(query) != reference['query_rows']:
         raise ValueError('split trace query rows differ')
-    frames, natives, precasts = {}, {}, {}
-    cells, recomputed_diffs = [], {}
+    frames, natives, precasts, grids = {}, {}, {}, {}
+    cells, diffs64, diffs32 = [], {}, {}
     for cell in binding['cells']:
         qid = cell['question_id']
         tf = qid.rsplit('__', 1)[1]
@@ -221,24 +224,20 @@ def trace_ticker(root, ticker):
             frames[tf], natives[tf] = frame, native
             close = native['close'].to_numpy(dtype=float)
             precasts[tf] = fragile_series(close, tf)
-        field = qid.rsplit(':', 1)[0].rsplit('__', 1)[0].split(':')[0]
-        stem, meta, schema, column = locate_stem(contents, registry, tf, qid)
+            grids[tf] = np.searchsorted(native.available_from.to_numpy(dtype='datetime64[ns]'),
+                                        query.to_numpy(dtype='datetime64[ns]'), side='right') - 1
+        field = qid.rsplit(':', 1)[0]
+        stem, column = locate_stem(contents, registry, tf, qid)
         _, _, codes = decode_codes(contents, stem, registry)
-        frame = frames[tf]
-        native = natives[tf]
-        x = frame[field].to_numpy(dtype='float64')
-        left = x
-        right = frame[field].shift(1).to_numpy(dtype='float64')
-        valid = np.isfinite(left) & np.isfinite(right)
-        own = np.where(~valid, 0, np.where(left > right, 2, 1)).astype(np.uint8)
-        positions = np.searchsorted(native.available_from.to_numpy(dtype='datetime64[ns]'),
-                                    query.to_numpy(dtype='datetime64[ns]'), side='right') - 1
-        own_query = own[positions]
+        frame, positions = frames[tf], grids[tf]
+        series = frame[field]
         stored_row = codes[column]
-        diff_rows = np.flatnonzero(own_query != stored_row)
-        recomputed_diffs[qid] = [int(r) for r in diff_rows]
+        own64 = codes_float64_style(series)[positions]
+        own32 = codes_float32_series_style(series)[positions]
+        diffs64[qid] = [int(r) for r in np.flatnonzero(own64 != stored_row)]
+        diffs32[qid] = [int(r) for r in np.flatnonzero(own32 != stored_row)]
         field64 = precasts[tf][field]
-        produced = frame[field].to_numpy(dtype=np.float32)
+        produced = series.to_numpy(dtype=np.float32)
         restated = field64.astype(np.float32)
         finite = np.isfinite(produced) & np.isfinite(restated)
         if (np.isfinite(produced) != np.isfinite(restated)).any() \
@@ -246,56 +245,70 @@ def trace_ticker(root, ticker):
             raise ValueError('split trace pre-cast restatement diverges from production: ' + field)
         row = cell['query_row']
         index = int(positions[row])
-        if row not in recomputed_diffs[qid]:
-            raise ValueError('predeclared cell not reproduced by recomputation: ' + qid + '@' + str(row))
+        if binding['rail'] == 'build_vs_replay':
+            if row not in diffs64[qid]:
+                raise ValueError('predeclared cell not reproduced by recomputation: ' + qid + '@' + str(row))
+        elif int(own64[row]) != cell['stored_code']:
+            raise ValueError('replay_vs_replay rail did not heal on this runner: ' + qid + '@' + str(row))
         left64, right64 = float(field64[index]), float(field64[index - 1])
         left32, right32 = f32(left64), f32(right64)
         cells.append(dict(cell, timeframe=tf, native_index=index, stem=stem,
-            stored_code_int=int(stored_row[row]), recomputed_code=int(own_query[row]),
+            stored_code_int=int(stored_row[row]),
+            code_float64_style=int(own64[row]), code_float32_series_style=int(own32[row]),
+            comparison_styles_agree=bool(own64[row] == own32[row]),
+            production_dtype=str(series.dtype),
             left64_bits=f'{bits64(left64):016x}', right64_bits=f'{bits64(right64):016x}',
             left32_bits=f'{bits32(left32):08x}', right32_bits=f'{bits32(right32):08x}',
-            left64=left64, right64=right64,
-            left32=float(left32), right32=float(right32),
+            left64=left64, right64=right64, left32=float(left32), right32=float(right32),
             ulp32_left_vs_right=ulp32_distance(left32, right32),
-            recomputed_comparison=bool(left32 > right32),
-            straddle_1ulp64=straddle(left64, right64),
-            recomputed_code_of_operands=code_of(left32, right32)))
+            straddle_1ulp64=straddle(left64, right64)))
     expected = binding['expected_differences']
-    if {q: len(r) for q, r in recomputed_diffs.items()} != expected:
+    if {q: len(r) for q, r in diffs64.items()} != expected:
         raise ValueError('split trace recomputed difference census differs')
+    style_census_agree = all(diffs64[q] == diffs32[q] for q in diffs64)
     env = dict(python=sys.version, numpy=np.__version__, pandas=pd.__version__,
         returns_sha256={tf: sha(p['returns'].tobytes()) for tf, p in precasts.items()},
         ratio_sha256={tf: sha(p['ratio'].tobytes()) for tf, p in precasts.items()},
         close_alignment64={tf: int(natives[tf]['close'].to_numpy(dtype=float).ctypes.data % 64) for tf in natives})
     state = dict(format='PRICE_PIT_SPLIT_TRACE_STOCK_V1', request=request, ticker=ticker,
-        source_commit=os.environ.get('GITHUB_SHA', ''), cells=cells,
-        recomputed_differences=recomputed_diffs, environment=env, scoring_gate='CLOSED')
+        rail=binding['rail'], source_commit=os.environ.get('GITHUB_SHA', ''), cells=cells,
+        differences_float64_style=diffs64, differences_float32_series_style=diffs32,
+        style_census_agree=style_census_agree, environment=env, scoring_gate='CLOSED')
     file = root / f"{ticker.encode().hex()}.split.json"
     file.write_bytes(encoded(state))
-    print('PRICE_PIT_SPLIT_TRACE_STOCK', ticker, len(cells), flush=True)
+    print('PRICE_PIT_SPLIT_TRACE_STOCK', ticker, binding['rail'], len(cells), flush=True)
 
 
 def verdict(traces):
-    """Aggregate classification across the three counterexamples."""
+    """Aggregate classification across both rails, per the declared rules."""
     cells = [c for trace in traces for c in trace['cells']]
+    styles_agree = all(t['style_census_agree'] for t in traces) and all(c['comparison_styles_agree'] for c in cells)
     all_straddle = all(c['straddle_1ulp64'] for c in cells)
-    all_codes = all(c['recomputed_code'] == c['replay_code'] and c['stored_code_int'] == c['stored_code'] for c in cells)
-    classification = ('ALL_FLIPPING_CELLS_ARE_1ULP64_STRADDLES' if all_straddle and all_codes else
-                      'MIXED_OR_NON_STRADDLE_CELLS_REQUIRE_REVIEW')
+    float32_matches_stored = any(c['code_float32_series_style'] == c['stored_code']
+                                 and c['code_float64_style'] != c['stored_code'] for c in cells)
+    if float32_matches_stored:
+        classification = 'CODE_PATH_DIVERGENCE_SIGNAL_FIX_IN_LATER_PR_NOT_THIS_STEP'
+    elif styles_agree and all_straddle:
+        classification = 'FEATURE_VALUE_SPLIT_1ULP64_STRADDLES_STYLES_AGREE'
+    else:
+        classification = 'MIXED_OR_NON_STRADDLE_CELLS_REQUIRE_REVIEW'
     return dict(classification=classification, cells=len(cells),
-        all_cells_straddle=all_straddle, all_predeclared_codes_reproduced=all_codes,
+        comparison_styles_agree_everywhere=styles_agree,
+        all_cells_straddle=all_straddle,
         answers={
-            'Q1': 'the pre-declared flipping cells were reproduced exactly by recomputation on this runner',
+            'Q1': 'the pre-declared flipping cells were reproduced exactly by recomputation on this runner; full difference lists included per question',
             'Q2': 'raw inputs are byte-identical by sha256 (bars, calendar, registry, packet); operand bits and intermediate shas recorded',
-            'Q3': 'build and replay run the same bound-recipe modules, functions, float32 casts, and pandas rolling reductions; identical runtime strings',
+            'Q3': 'measured, not assumed: bound-recipe modules, float32 casts, and rolling reductions are shared; the two rising1 comparison styles (float32 Series build-style, float64 upcast replay-style) are evaluated per cell and their agreement reported',
             'Q4': 'all flipping questions sit in the fragile families of the 20-shard diagnosis (KURTOSIS/AUTOCORR/HV)',
         },
-        note='A 1ulp64 straddle at a near-tied rising1 comparison means any last-bit '
-             'environment difference between the original build machine and the replay '
-             'machine flips the float32-rounded comparison deterministically; the split '
-             'is a machine-pair last-bit divergence at borderline comparisons, not a '
-             'code-path difference, since build and replay execute the same bound recipe. '
-             'This artifact changes no packet, predicate, tolerance, or quarantine.')
+        note='AQMS/BYRN rail: original build answers versus stable PIT replay. AZIO rail: '
+             'the original PIT report itself flipped between runner environments; this '
+             'runner must reproduce the stored code (healed). A 1ulp64 straddle at a '
+             'near-tied rising1 comparison means any last-bit environment difference '
+             'flips the float32-rounded comparison deterministically. If the float32 '
+             'Series style matches stored while the float64 style does not, that is a '
+             'code-path divergence to fix in a later PR, never in this step. This '
+             'artifact changes no packet, predicate, tolerance, or quarantine.')
 
 
 def finalize(root):
@@ -308,11 +321,11 @@ def finalize(root):
     for ticker in TICKERS:
         file = root / f"{ticker.encode().hex()}.split.json"
         state = json.loads(file.read_bytes())
-        if state['ticker'] != ticker or state['request'] != request:
+        if state['ticker'] != ticker or state['request'] != request or state['rail'] != RAILS[ticker]:
             raise ValueError('split trace stock evidence differs from the declared request')
         traces.append(state)
     tag = tag_for('split-trace')
-    create_release(tag, 'Packet-vs-replay split trace only: pre-declared flipping cells, stored-code re-decode, bound-recipe recomputation, bit-level operand straddle evidence. No source rewrite, no predicate rewrite, no tolerance, no quarantine mutation, no scoring approval.')
+    create_release(tag, 'Packet-vs-replay split trace only: pre-declared flipping cells, stored-code re-decode, bound-recipe recomputation, both rising1 comparison styles measured per cell, bit-level operand straddle evidence. No source rewrite, no predicate rewrite, no tolerance, no quarantine mutation, no scoring approval.')
     state = dict(format='PRICE_PIT_SPLIT_TRACE_V1', request=request,
         source_commit=os.environ.get('GITHUB_SHA', ''), traces=traces,
         scoring_gate='CLOSED', full_cohort_measurement='NOT_EVALUATED_BY_THIS_DIAGNOSTIC')

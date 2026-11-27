@@ -1,7 +1,7 @@
 {
   "version": 1,
   "execute": true,
-  "scope": "Packet-vs-replay split trace only: pre-declare the flipping cells observed by the dispatch selector (run 46038599219, verdict UNRESOLVED), re-decode the stored answer codes, recompute the same bound-recipe features, and record bit-level operand evidence (float64 pre-cast, float32 post-cast, ulp distances, 1-ulp straddle tests) for each flipping comparison. Answers four pre-declared questions: which cells flip, whether the raw operands are identical, whether build and replay use the same function/dtype/reduction, and whether this is the same unstable-stat pattern as the earlier 20-shard diagnosis. No source packet rewrite, no quarantine mutation, no predicate rewrite, no invented tolerance, no merge, no scoring approval.",
+  "scope": "Packet-vs-replay split trace only: pre-declare the flipping cells observed by the dispatch selector (run 46038599219, verdict UNRESOLVED), re-decode the stored answer codes, recompute the same bound-recipe features, and record bit-level operand evidence (float64 pre-cast, float32 post-cast, ulp distances, 1-ulp straddle tests) for each flipping comparison, evaluated under BOTH rising1 comparison styles (float32 pandas Series build-style and float64 upcast replay-style). Rails stay separate: AQMS/BYRN split original-build answers versus stable PIT replay; AZIO's original PIT report itself flipped between runner environments and must reproduce the stored code on this runner. Answers four pre-declared questions: which cells flip, whether the raw operands are identical, whether build and replay use the same function/dtype/reduction, and whether this is the same unstable-stat pattern as the earlier 20-shard diagnosis. No source packet rewrite, no quarantine mutation, no predicate rewrite, no invented tolerance, no merge, no scoring approval.",
   "plan": {
     "release": "price-full-cohort-pit-v1-41578885310-1-inputs",
     "asset": "PRICE_FULL_COHORT_PIT_PLAN_V1.json",
@@ -21,6 +21,7 @@
   "tickers": [
     {
       "ticker": "AQMS",
+      "rail": "build_vs_replay",
       "cells": [
         {"question_id": "RETURN_EXCESS_KURTOSIS60:rising1__1d", "query_row": 233, "stored_code": 2, "replay_code": 1}
       ],
@@ -28,6 +29,7 @@
     },
     {
       "ticker": "BYRN",
+      "rail": "build_vs_replay",
       "cells": [
         {"question_id": "RETURN_AUTOCORR1_20:rising1__1d", "query_row": 25, "stored_code": 1, "replay_code": 2},
         {"question_id": "RETURN_AUTOCORR1_20:rising1__1d", "query_row": 32, "stored_code": 1, "replay_code": 2},
@@ -48,11 +50,12 @@
     },
     {
       "ticker": "AZIO",
+      "rail": "replay_vs_replay",
       "cells": [
         {"question_id": "HV10:rising1__1d", "query_row": 220, "stored_code": 1, "replay_code": 2}
       ],
-      "expected_differences": {"HV10:rising1__1d": 1}
+      "expected_differences": {"HV10:rising1__1d": 0}
     }
   ],
-  "run_note": "retrigger after verify-job numpy/pandas install fix; scope and predeclared cells unchanged"
+  "run_note": "rails and both comparison styles per Grok correction; scope unchanged"
 }
